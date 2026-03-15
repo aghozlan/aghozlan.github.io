@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahmad Ghozlan — Interactive Science Labs</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c14;--bg2:#0d1525;--panel:#111927;--panel2:#1a2538;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e4eaf5;--muted:#5a6a85;--muted2:#8a9ab5;
+  --cyan:#00d4ff;--orange:#ff7340;--amber:#ffb730;--green:#00e676;
+  --fh:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);min-height:100vh;overflow-x:hidden;}
+
+/* HERO */
+.hero{position:relative;padding:100px 40px 80px;text-align:center;overflow:hidden;}
+canvas#bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.15;}
+.hero-inner{position:relative;z-index:2;max-width:700px;margin:0 auto;}
+.hero-tag{font-family:var(--fm);font-size:.65rem;color:var(--orange);text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(255,115,64,.3);padding:4px 14px;border-radius:2px;display:inline-block;margin-bottom:24px;}
+.hero-name{font-size:clamp(2.4rem,5vw,4rem);font-weight:800;letter-spacing:-2px;color:#fff;line-height:1;margin-bottom:12px;}
+.hero-name span{color:var(--cyan);}
+.hero-role{font-size:1rem;color:var(--muted2);margin-bottom:8px;}
+.hero-tagline{font-size:.88rem;color:var(--muted);max-width:480px;margin:0 auto 32px;line-height:1.7;}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:40px;}
+.stat{text-align:center;}
+.stat-num{font-family:var(--fm);font-size:1.6rem;font-weight:500;color:var(--cyan);}
+.stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
+.hero-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.hl{padding:10px 22px;border-radius:7px;font-family:var(--fh);font-weight:600;font-size:.85rem;text-decoration:none;transition:all .2s;cursor:pointer;border:none;}
+.hl-cyan{background:var(--cyan);color:#000;}
+.hl-cyan:hover{background:#00aad4;}
+.hl-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.hl-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:0 40px;}
+
+/* LESSONS */
+.lessons{padding:72px 40px;max-width:1100px;margin:0 auto;}
+.section-label{font-family:var(--fm);font-size:.65rem;color:var(--orange);text-transform:uppercase;letter-spacing:3px;margin-bottom:8px;}
+.section-title{font-size:1.8rem;font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:6px;}
+.section-sub{font-size:.9rem;color:var(--muted2);margin-bottom:40px;}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+
+/* LESSON CARD */
+.lcard{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .3s;text-decoration:none;display:flex;flex-direction:column;position:relative;}
+.lcard:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 20px 40px rgba(0,0,0,.4);}
+.lcard-banner{height:140px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.lcard-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.lcard-icon{font-size:3rem;position:relative;z-index:2;}
+.lcard-body{padding:20px 22px;flex:1;display:flex;flex-direction:column;}
+.lcard-grade{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+.lcard-title{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.3px;}
+.lcard-desc{font-size:.82rem;color:var(--muted2);line-height:1.65;margin-bottom:16px;flex:1;}
+.lcard-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.tag{font-size:.6rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:3px;}
+.lcard-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:14px;}
+.lcard-status{font-size:.7rem;font-family:var(--fm);}
+.lcard-arrow{font-size:.85rem;color:var(--muted);}
+.lcard:hover .lcard-arrow{color:var(--cyan);}
+
+/* COMING SOON CARD */
+.lcard.soon{opacity:.5;pointer-events:none;}
+.lcard.soon .lcard-banner{filter:grayscale(.8);}
+
+/* ABOUT */
+.about{padding:72px 40px;background:var(--bg2);border-top:1px solid var(--border);}
+.about-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+@media(max-width:640px){.about-inner{grid-template-columns:1fr;}}
+.about-quote{font-size:1.15rem;color:var(--text);line-height:1.75;font-style:italic;border-left:3px solid var(--cyan);padding-left:20px;margin-bottom:20px;}
+.about-meta{font-size:.82rem;color:var(--muted2);line-height:1.8;}
+.about-meta strong{color:var(--text);}
+.about-right{}
+.skill-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.skill-label{font-size:.78rem;color:var(--muted2);width:120px;flex-shrink:0;}
+.skill-bar{flex:1;height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+
+/* FOOTER */
+footer{padding:32px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--border);}
+.ft-brand{font-size:1rem;font-weight:800;letter-spacing:-1px;color:#fff;}
+.ft-brand span{color:var(--cyan);}
+.ft-meta{font-size:.72rem;color:var(--muted);}
+.ft-links{display:flex;gap:10px;}
+.ft-link{font-size:.72rem;color:var(--cyan);text-decoration:none;border:1px solid rgba(0,212,255,.2);padding:5px 12px;border-radius:4px;transition:all .2s;}
+.ft-link:hover{background:rgba(0,212,255,.06);}
+
+@media(max-width:600px){
+  .hero{padding:60px 20px 50px;}
+  .lessons,.about{padding:48px 20px;}
+  footer{padding:24px 20px;}
+  .hero-stats{gap:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="bg"></canvas>
+  <div class="hero-inner">
+    <div class="hero-tag">Interactive Science · Lebanon</div>
+    <h1 class="hero-name">Ahmad<br><span>Ghozlan</span></h1>
+    <p class="hero-role">Physics & Science Teacher · AI in Education</p>
+    <p class="hero-tagline">Building interactive, research-informed science lessons for Lebanese students — one simulation at a time.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="lessonCount">2</div><div class="stat-label">Lessons Live</div></div>
+      <div class="stat"><div class="stat-num">5E</div><div class="stat-label">Pedagogy</div></div>
+      <div class="stat"><div class="stat-num">G7–8</div><div class="stat-label">Grades</div></div>
+      <div class="stat"><div class="stat-num">AI</div><div class="stat-label">Powered</div></div>
+    </div>
+    <div class="hero-links">
+      <a class="hl hl-cyan" href="#lessons">View All Lessons</a>
+      <a class="hl hl-ghost" href="https://linkedin.com" target="_blank">LinkedIn Profile ↗</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LESSONS -->
+<div class="lessons" id="lessons">
+  <div class="section-label">// Interactive Modules</div>
+  <h2 class="section-title">Science Labs</h2>
+  <p class="section-sub">Each lesson is a fully interactive 5E experience — no download, no login, works on any device.</p>
+
+  <div class="cards">
+
+    <!-- WaveLab -->
+    <a class="lcard" href="./wavelab" target="_blank">
+      <div class="lcard-banner" style="background:linear-gradient(135deg,#080c14,#0d1525);">
+        <canvas class="lcard-canvas" id="waveCanvas"></canvas>
+        <div class="lcard-icon">〜</div>
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-grade" style="color:#00d4ff;">Grade 8 · Physics</div>
+        <div class="lcard-title">WaveLab — Mechanical Waves</div>
+        <div class="lcard-desc">Discover wave speed, frequency, wavelength, and period through live simulations. Transverse vs longitudinal waves, the lightning mystery, and more.</div>
+        <div class="lcard-tags">
+          <span class="tag" style="background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.2);">Transverse</span>
+          <span class="tag" style="background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.2);">Longitudinal</span>
+          <span class="tag" style="background:rgba(255,115,64,.1);color:#ff7340;border:1px solid rgba(255,115,64,.2);">v = f·λ</span>
+          <span class="tag" style="background:rgba(0,230,118,.1);color:#00e676;border:1px solid rgba(0,230,118,.2);">5E Lesson</span>
+        </div>
+        <div class="lcard-footer">
+          <span class="lcard-status" style="color:#00e676;">● Live</span>
+          <span class="lcard-arrow">Open lesson →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- HeatLab -->
+    <a class="lcard" href="./heatlab" target="_blank">
+      <div class="lcard-banner" style="background:linear-gradient(135deg,#0f0a06,#1e1008);">
+        <canvas class="lcard-canvas" id="heatCanvas"></canvas>
+        <div class="lcard-icon">🔥</div>
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-grade" style="color:#ffb730;">Grade 7 · Science</div>
+        <div class="lcard-title">HeatLab — Heat Transfer</div>
+        <div class="lcard-desc">Explore the difference between heat and temperature, then master conduction, convection, and radiation through animated particle simulations.</div>
+        <div class="lcard-tags">
+          <span class="tag" style="background:rgba(255,183,48,.1);color:#ffb730;border:1px solid rgba(255,183,48,.2);">Conduction</span>
+          <span class="tag" style="background:rgba(255,123,26,.1);color:#ff7b1a;border:1px solid rgba(255,123,26,.2);">Convection</span>
+          <span class="tag" style="background:rgba(255,61,26,.1);color:#ff3d1a;border:1px solid rgba(255,61,26,.2);">Radiation</span>
+          <span class="tag" style="background:rgba(0,230,118,.1);color:#00e676;border:1px solid rgba(0,230,118,.2);">5E Lesson</span>
+        </div>
+        <div class="lcard-footer">
+          <span class="lcard-status" style="color:#00e676;">● Live</span>
+          <span class="lcard-arrow">Open lesson →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Forces — coming soon -->
+    <div class="lcard soon">
+      <div class="lcard-banner" style="background:linear-gradient(135deg,#080c14,#0d1525);">
+        <div class="lcard-icon">⚡</div>
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-grade" style="color:#a78bfa;">Grade 8 · Physics</div>
+        <div class="lcard-title">ForceLab — Newton's Laws</div>
+        <div class="lcard-desc">Interactive force diagrams, Newton's three laws with simulations, and real-world applications.</div>
+        <div class="lcard-tags">
+          <span class="tag" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Coming Soon</span>
+        </div>
+        <div class="lcard-footer">
+          <span class="lcard-status" style="color:#5a6a85;">○ In Development</span>
+          <span class="lcard-arrow">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optics — coming soon -->
+    <div class="lcard soon">
+      <div class="lcard-banner" style="background:linear-gradient(135deg,#080c14,#0d1525);">
+        <div class="lcard-icon">🔭</div>
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-grade" style="color:#f472b6;">Grade 8 · Physics</div>
+        <div class="lcard-title">OpticsLab — Light & Optics</div>
+        <div class="lcard-desc">Reflection, refraction, lenses, and the wave-particle nature of light through interactive ray diagrams.</div>
+        <div class="lcard-tags">
+          <span class="tag" style="background:rgba(244,114,182,.1);color:#f472b6;border:1px solid rgba(244,114,182,.2);">Coming Soon</span>
+        </div>
+        <div class="lcard-footer">
+          <span class="lcard-status" style="color:#5a6a85;">○ In Development</span>
+          <span class="lcard-arrow">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about">
+  <div class="about-inner">
+    <div>
+      <div class="section-label" style="margin-bottom:16px;">// About</div>
+      <div class="about-quote">"In Lebanon's classrooms, technology is not a luxury — it is the bridge between crisis and continuity."</div>
+      <div class="about-meta">
+        <strong>Ahmad Ghozlan</strong> is a physics and science teacher based in Lebanon, developing AI-powered interactive lessons that bring the 5E inquiry model to life in online and hybrid classrooms.<br><br>
+        Each module combines live simulations, misconception-targeted exercises, AI-assisted feedback, and automated grade collection — building toward a research-based portfolio in educational technology.
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="section-label" style="margin-bottom:20px;">// Skills & Tools</div>
+      <div class="skill-row">
+        <span class="skill-label">5E Pedagogy</span>
+        <div class="skill-bar"><div class="skill-fill" style="width:95%;background:var(--cyan);"></div></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-label">HTML/JS/Canvas</span>
+        <div class="skill-bar"><div class="skill-fill" style="width:85%;background:var(--orange);"></div></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-label">AI Integration</span>
+        <div class="skill-bar"><div class="skill-fill" style="width:80%;background:var(--amber);"></div></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-label">Data Analysis (R)</span>
+        <div class="skill-bar"><div class="skill-fill" style="width:90%;background:var(--green);"></div></div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-label">Google Workspace</span>
+        <div class="skill-bar"><div class="skill-fill" style="width:88%;background:#a78bfa;"></div></div>
+      </div>
+      <div style="margin-top:24px;padding:16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--muted2);line-height:1.7;">
+        All lessons are <strong style="color:var(--text);">open access</strong> — free for any student with a link. Built with care for Lebanese classrooms under difficult circumstances.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="ft-brand">Ahmad <span>Ghozlan</span></div>
+    <div class="ft-meta">AI in Education · Lebanon · aghozlan.github.io</div>
+  </div>
+  <div class="ft-links">
+    <a class="ft-link" href="https://linkedin.com" target="_blank">LinkedIn</a>
+    <a class="ft-link" href="./wavelab" target="_blank">WaveLab</a>
+    <a class="ft-link" href="./heatlab" target="_blank">HeatLab</a>
+  </div>
+</footer>
+
+<script>
+// ── BACKGROUND CANVAS ──
+const bgC=document.getElementById('bg'),bgX=bgC.getContext('2d');
+let t=0;
+function resizeBg(){bgC.width=bgC.offsetWidth;bgC.height=bgC.offsetHeight;}
+window.addEventListener('resize',resizeBg);resizeBg();
+function drawBg(){
+  bgX.clearRect(0,0,bgC.width,bgC.height);
+  // Two wave families — cyan (waves) and amber (heat)
+  [[0.006,0.04,'0,212,255'],[0.004,0.03,'255,183,48']].forEach(([f,sp,col],ri)=>{
+    for(let row=0;row<3;row++){
+      bgX.beginPath();
+      const amp=25-row*6;
+      const alpha=0.5-row*0.15;
+      bgX.strokeStyle=`rgba(${col},${alpha})`;
+      bgX.lineWidth=1.5-row*0.4;
+      for(let x=0;x<=bgC.width;x++){
+        const y=bgC.height*(0.3+ri*0.4)+Math.sin(x*f+t*sp+row*0.8)*amp;
+        x===0?bgX.moveTo(x,y):bgX.lineTo(x,y);
+      }
+      bgX.stroke();
+    }
+  });
+  t+=1;requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// ── WAVE CARD CANVAS ──
+const wc=document.getElementById('waveCanvas'),wx=wc.getContext('2d');
+let wt=0;
+function drawWaveCard(){
+  wc.width=wc.offsetWidth;wc.height=wc.offsetHeight;
+  wx.clearRect(0,0,wc.width,wc.height);
+  wx.beginPath();
+  for(let x=0;x<=wc.width;x++){
+    const y=wc.height/2+Math.sin(x*0.04+wt)*28;
+    x===0?wx.moveTo(x,y):wx.lineTo(x,y);
+  }
+  wx.strokeStyle='rgba(0,212,255,0.5)';wx.lineWidth=2.5;wx.stroke();
+  wx.beginPath();
+  for(let x=0;x<=wc.width;x++){
+    const y=wc.height/2+Math.sin(x*0.04+wt+1)*18;
+    x===0?wx.moveTo(x,y):wx.lineTo(x,y);
+  }
+  wx.strokeStyle='rgba(0,212,255,0.2)';wx.lineWidth=1.5;wx.stroke();
+  wt+=0.04;requestAnimationFrame(drawWaveCard);
+}
+drawWaveCard();
+
+// ── HEAT CARD CANVAS ──
+const heatC=document.getElementById('heatCanvas'),heatX=heatC.getContext('2d');
+let ht2=0;
+function drawHeatCard(){
+  heatC.width=heatC.offsetWidth;heatC.height=heatC.offsetHeight;
+  heatX.clearRect(0,0,heatC.width,heatC.height);
+  // Shimmer heat waves
+  ['rgba(255,183,48,0.4)','rgba(255,123,26,0.3)','rgba(255,61,26,0.2)'].forEach((col,i)=>{
+    heatX.beginPath();
+    for(let x=0;x<=heatC.width;x++){
+      const y=heatC.height/2+Math.sin(x*0.05+ht2+i*1.1)*20*(1-i*0.2)+Math.sin(x*0.02+ht2*0.7)*8;
+      x===0?heatX.moveTo(x,y):heatX.lineTo(x,y);
+    }
+    heatX.strokeStyle=col;heatX.lineWidth=2-i*0.4;heatX.stroke();
+  });
+  // Rising heat particles
+  for(let p=0;p<6;p++){
+    const px2=30+p*(heatC.width/7);
+    const py=heatC.height-((ht2*1.5+p*20)%(heatC.height+10));
+    heatX.beginPath();heatX.arc(px2,py,3,0,Math.PI*2);
+    heatX.fillStyle=`rgba(255,${150-p*10},30,0.6)`;heatX.fill();
+  }
+  ht2+=0.04;requestAnimationFrame(drawHeatCard);
+}
+drawHeatCard();
+</script>
+</body>
+</html>
