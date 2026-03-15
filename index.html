@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaveLab — Mechanical Waves | Ahmad Ghozlan</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg:       #07090f;
+  --bg2:      #0d1220;
+  --bg3:      #131929;
+  --panel:    #161f32;
+  --panel2:   #1c2740;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --text:     #e4eaf5;
+  --muted:    #5a6a85;
+  --muted2:   #8a9ab5;
+  --cyan:     #00d4ff;
+  --cyan2:    #0099bb;
+  --orange:   #ff7340;
+  --orange2:  #cc4f20;
+  --green:    #00e676;
+  --green2:   #00a050;
+  --purple:   #a78bfa;
+  --yellow:   #fbbf24;
+  --red:      #f87171;
+  --fh:       'Outfit', sans-serif;
+  --fm:       'DM Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.6;}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh;}
+aside{width:240px;background:var(--bg2);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0;z-index:100;}
+main{flex:1;min-width:0;}
+
+/* ── SIDEBAR ── */
+.sb-logo{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-size:1.4rem;font-weight:800;letter-spacing:-1px;color:var(--cyan);}
+.sb-logo p{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
+.sb-nav{flex:1;padding:12px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:10px;padding:9px 20px;text-decoration:none;font-size:.82rem;font-weight:500;color:var(--muted);border-left:3px solid transparent;transition:all .2s;cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;font-family:var(--fh);}
+.sn:hover,.sn.active{color:var(--text);background:rgba(0,212,255,.05);border-left-color:var(--orange);}
+.sn .badge{font-size:.6rem;font-family:var(--fm);background:var(--panel2);padding:2px 6px;border-radius:3px;color:var(--orange);margin-left:auto;}
+.sb-foot{padding:16px 20px;border-top:1px solid var(--border);}
+.sb-foot .name{font-weight:700;font-size:.9rem;}
+.sb-foot .role{font-size:.6rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;}
+.sb-foot .school{font-size:.65rem;color:var(--muted);margin-top:2px;}
+
+/* ── SECTIONS ── */
+section{padding:72px 56px;border-bottom:1px solid var(--border);}
+@media(max-width:860px){aside{display:none;}section{padding:40px 18px;}}
+
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.65rem;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:3px;margin-bottom:20px;}
+.e-tag.engage {background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25);}
+.e-tag.explore{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25);}
+.e-tag.explain{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.e-tag.elaborate{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.25);}
+.e-tag.evaluate{background:rgba(255,115,64,.1);color:var(--orange);border:1px solid rgba(255,115,64,.25);}
+
+.sec-title{font-size:2rem;font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:10px;}
+.sec-desc{color:var(--muted2);font-size:.95rem;max-width:600px;line-height:1.7;margin-bottom:32px;}
+
+/* ── CARDS ── */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* ── INPUTS ── */
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--panel2);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--orange);cursor:pointer;}
+input[type=text],input[type=number],textarea,select{background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;color:var(--text);font-family:var(--fh);font-size:.9rem;outline:none;transition:border-color .2s;width:100%;}
+input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{border-color:var(--cyan);}
+textarea{resize:vertical;min-height:90px;}
+
+/* ── BUTTONS ── */
+.btn{padding:11px 24px;border-radius:7px;font-family:var(--fh);font-weight:600;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;}
+.btn-cyan{background:var(--cyan);color:#000;}
+.btn-cyan:hover{background:var(--cyan2);color:#fff;}
+.btn-orange{background:var(--orange);color:#fff;animation:pulseBtn 2.5s infinite;}
+.btn-orange:hover{background:var(--orange2);}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-green{background:var(--green);color:#000;}
+.btn-green:hover{background:var(--green2);color:#fff;}
+.btn:disabled{opacity:.4;cursor:not-allowed;animation:none;}
+@keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(255,115,64,.4);}60%{box-shadow:0 0 0 10px rgba(255,115,64,0);}}
+
+/* ── FORMULA CARDS ── */
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.fc{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px 20px;transition:border-color .2s;}
+.fc:hover{border-color:var(--cyan);}
+.fc-name{font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--orange);margin-bottom:8px;}
+.fc-eq{font-family:var(--fm);font-size:1.5rem;color:var(--cyan);margin-bottom:8px;font-weight:500;}
+.fc-vars{font-size:.78rem;color:var(--muted2);line-height:1.8;}
+.fc-vars span{color:var(--text);}
+
+/* ── EXPLORE SLIDERS ── */
+.slider-wrap{margin-bottom:20px;}
+.sl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+.sl-val{font-family:var(--fm);background:var(--panel2);padding:3px 10px;border-radius:4px;font-size:.78rem;color:var(--text);}
+.derived-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;}
+.dbox{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;}
+.dbox-label{font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+.dbox-val{font-family:var(--fm);font-size:1.1rem;color:var(--green);font-weight:500;}
+
+/* ── QUIZ STYLES ── */
+.q-block{margin-bottom:28px;padding:24px;background:var(--panel);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden;}
+.q-block::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--purple);}
+.q-num{font-family:var(--fm);font-size:.65rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+.q-text{font-size:1rem;color:var(--text);margin-bottom:16px;line-height:1.7;}
+.q-text strong{color:var(--cyan);}
+.q-canvas{background:var(--panel2);border:1px solid var(--border);border-radius:8px;width:100%;height:100px;display:block;margin-bottom:14px;}
+
+/* MCQ */
+.mcq-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.mcq-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.mcq-opt:hover{border-color:var(--cyan);}
+.mcq-opt.selected{border-color:var(--purple);background:rgba(167,139,250,.08);}
+.mcq-opt.correct{border-color:var(--green);background:rgba(0,230,118,.08);color:var(--green);}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(248,113,113,.08);color:var(--red);}
+.mcq-letter{font-family:var(--fm);font-size:.75rem;color:var(--orange);background:var(--panel);padding:2px 7px;border-radius:3px;flex-shrink:0;}
+
+/* Fill-in */
+.fill-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.fill-unit{font-family:var(--fm);font-size:.82rem;color:var(--muted2);}
+.fill-inp{width:140px;flex-shrink:0;}
+.check-btn{padding:10px 18px;background:var(--panel2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--fh);font-weight:600;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.check-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* Feedback */
+.fb{margin-top:12px;padding:10px 16px;border-radius:6px;font-family:var(--fm);font-size:.82rem;display:none;}
+.fb.ok{background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);color:var(--green);}
+.fb.bad{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:var(--red);}
+.fb.info{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:var(--cyan);}
+
+/* Misconception trap */
+.trap-tag{display:inline-block;font-size:.6rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:1.5px;padding:2px 8px;border-radius:3px;background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2);margin-bottom:8px;}
+
+/* ── DRAG & DROP ── */
+.drag-area{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.draggable{padding:10px 16px;background:var(--panel2);border:1px solid var(--border2);border-radius:7px;cursor:grab;font-family:var(--fm);font-size:.82rem;color:var(--text);user-select:none;transition:all .2s;}
+.draggable:hover{border-color:var(--purple);color:var(--purple);}
+.draggable.dragging{opacity:.4;}
+.drop-zone{min-height:44px;background:var(--panel2);border:2px dashed var(--border2);border-radius:7px;padding:8px 14px;transition:all .2s;font-size:.82rem;color:var(--muted);display:flex;align-items:center;}
+.drop-zone.over{border-color:var(--purple);background:rgba(167,139,250,.06);}
+.drop-zone.filled{border-style:solid;border-color:var(--green);color:var(--green);font-family:var(--fm);}
+.drop-zone.wrong-fill{border-color:var(--red);color:var(--red);}
+
+/* ── AI TUTOR ── */
+.ai-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;}
+.ai-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.ai-response{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:.9rem;line-height:1.7;color:var(--text);min-height:80px;margin-top:14px;display:none;}
+.ai-response.show{display:block;}
+.ai-thinking{display:flex;gap:4px;align-items:center;padding:12px 0;}
+.ai-dot-anim{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:dots .8s infinite;}
+.ai-dot-anim:nth-child(2){animation-delay:.15s;}
+.ai-dot-anim:nth-child(3){animation-delay:.3s;}
+@keyframes dots{0%,80%,100%{transform:scale(0.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+
+/* ── SUBMIT SECTION ── */
+.submit-card{background:linear-gradient(135deg,var(--panel) 0%,var(--panel2) 100%);border:1px solid var(--border2);border-radius:16px;padding:32px;text-align:center;}
+.submit-score{font-family:var(--fm);font-size:3rem;font-weight:500;color:var(--cyan);line-height:1;}
+.submit-label{font-size:.65rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-top:4px;}
+.progress-bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:20px 0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:3px;transition:width .5s ease;}
+.name-row{display:flex;gap:12px;margin-bottom:16px;}
+
+/* ── HERO SPECIAL ── */
+#hero{position:relative;min-height:88vh;display:flex;align-items:center;background:radial-gradient(ellipse at 15% 60%,rgba(0,212,255,.06) 0%,transparent 55%),radial-gradient(ellipse at 85% 20%,rgba(255,115,64,.05) 0%,transparent 55%);}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.hero-inner{position:relative;z-index:2;max-width:700px;}
+.hero-tag{font-family:var(--fm);font-size:.65rem;color:var(--orange);text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(255,115,64,.3);padding:4px 12px;border-radius:2px;display:inline-block;margin-bottom:20px;}
+.hero-title{font-size:clamp(3rem,5.5vw,5.5rem);font-weight:800;letter-spacing:-2px;line-height:.9;color:#fff;margin-bottom:16px;}
+.hero-title span{color:var(--cyan);}
+.hero-q{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:20px 24px;margin-bottom:28px;max-width:580px;}
+.hero-q p{font-size:1.1rem;color:var(--yellow);font-weight:500;}
+.hero-q .hint{font-size:.82rem;color:var(--muted2);margin-top:6px;}
+.btns{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--green);color:var(--green);padding:12px 24px;border-radius:8px;font-family:var(--fm);font-size:.82rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+#toast.show{opacity:1;}
+
+/* ── DIVIDER ── */
+hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab{padding:8px 18px;cursor:pointer;font-weight:600;font-size:.82rem;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--fh);}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+/* footer */
+footer{padding:40px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--border);background:var(--bg2);}
+.ft-brand{font-size:1.1rem;font-weight:800;letter-spacing:-1px;color:#fff;}
+.ft-brand span{color:var(--cyan);}
+.ft-meta{font-size:.72rem;color:var(--muted);line-height:1.8;}
+.ft-links{display:flex;gap:10px;}
+.ft-link{font-size:.72rem;color:var(--cyan);text-decoration:none;border:1px solid rgba(0,212,255,.2);padding:5px 12px;border-radius:4px;transition:all .2s;cursor:pointer;background:none;font-family:var(--fh);}
+.ft-link:hover{background:rgba(0,212,255,.06);}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<input type="text" id="copyInput" style="position:fixed;top:-100px;opacity:0;pointer-events:none;">
+
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside>
+  <div class="sb-logo">
+    <h1>WaveLab</h1>
+    <p>5E Interactive Physics</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="scrollTo('hero')"><span>⚡</span> Engage <span class="badge">E1</span></button>
+    <button class="sn" onclick="scrollTo('explore')"><span>🔬</span> Explore <span class="badge">E2</span></button>
+    <button class="sn" onclick="scrollTo('explain')"><span>📐</span> Explain <span class="badge">E3</span></button>
+    <button class="sn" onclick="scrollTo('wavetypes')"><span>🌊</span> Wave Types <span class="badge">E3</span></button>
+    <button class="sn" onclick="scrollTo('elaborate')"><span>🎯</span> Elaborate <span class="badge">E4</span></button>
+    <button class="sn" onclick="scrollTo('evaluate')"><span>📊</span> Evaluate <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="role">AI in Education</div>
+    <div class="school">Grade 8 · Lebanon</div>
+    <button class="btn btn-ghost" style="margin-top:12px;width:100%;font-size:.75rem;" onclick="shareModule()">🔗 Share Lesson</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+<!-- ═══ E1: ENGAGE ═══ -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-inner">
+    <div class="hero-tag">Grade 8 · Unit 4 · Mechanical Waves</div>
+    <h1 class="hero-title">Why does sound<br><span>travel?</span></h1>
+    <div class="hero-q">
+      <p>⚡ You see lightning. Then — 8 seconds later — you hear thunder.</p>
+      <p class="hint">They happened at the exact same moment. So why the delay? What does this tell us about how energy moves?</p>
+    </div>
+    <div class="btns">
+      <button class="btn btn-orange" id="triggerPulse">Trigger Energy Pulse</button>
+      <button class="btn btn-ghost" onclick="scrollTo('explore')">Start Exploring →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E2: EXPLORE ═══ -->
+<section id="explore" style="background:var(--bg2);">
+  <div class="e-tag explore">E2 · Explore</div>
+  <h2 class="sec-title">Discover it yourself</h2>
+  <p class="sec-desc">No formulas yet. Just drag the sliders and watch what happens. Try to figure out the relationship between these three mystery quantities before moving on.</p>
+
+  <div class="g2" style="align-items:start;">
+    <!-- Controls (unlabeled intentionally) -->
+    <div class="card">
+      <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:20px;">Mystery Controls — what do you notice?</p>
+
+      <div class="slider-wrap">
+        <div class="sl-top" style="color:var(--cyan);">
+          <span>🔵 Mystery A</span><span class="sl-val" id="xAmp">5.0</span>
+        </div>
+        <input type="range" id="xAmpSlider" min="1" max="10" step="0.1" value="5">
+      </div>
+      <div class="slider-wrap">
+        <div class="sl-top" style="color:var(--orange);">
+          <span>🟠 Mystery B</span><span class="sl-val" id="xFreq">2.0</span>
+        </div>
+        <input type="range" id="xFreqSlider" min="0.5" max="5" step="0.1" value="2">
+      </div>
+      <div class="slider-wrap">
+        <div class="sl-top" style="color:var(--purple);">
+          <span>🟣 Mystery C</span><span class="sl-val" id="xSpeed">343</span>
+        </div>
+        <input type="range" id="xSpeedSlider" min="100" max="1500" step="10" value="343">
+      </div>
+      <hr>
+      <p style="font-size:.75rem;color:var(--muted);margin-bottom:12px;">What do you notice about these hidden results?</p>
+      <div class="derived-grid">
+        <div class="dbox"><div class="dbox-label">Result X</div><div class="dbox-val" id="xPeriod">0.50</div></div>
+        <div class="dbox"><div class="dbox-label">Result Y</div><div class="dbox-val" id="xLambda">171.5</div></div>
+        <div class="dbox"><div class="dbox-label">Result Z</div><div class="dbox-val" id="xEnergy">25.0</div></div>
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn btn-ghost" style="width:100%;font-size:.8rem;" onclick="revealExplore()">I see a pattern — reveal the labels!</button>
+      </div>
+      <div id="revealBox" style="display:none;margin-top:14px;padding:14px;background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:8px;font-size:.85rem;line-height:1.8;">
+        <strong style="color:var(--green);">🎉 You just discovered it!</strong><br>
+        🔵 Mystery A = <strong style="color:var(--cyan);">Amplitude (A)</strong> — how tall the wave is<br>
+        🟠 Mystery B = <strong style="color:var(--cyan);">Frequency (f)</strong> — cycles per second<br>
+        🟣 Mystery C = <strong style="color:var(--cyan);">Wave Speed (v)</strong><br>
+        Result X = <strong style="color:var(--green);">Period T = 1/f</strong><br>
+        Result Y = <strong style="color:var(--green);">Wavelength λ = v/f</strong><br>
+        Result Z = <strong style="color:var(--green);">Energy ∝ A²</strong>
+      </div>
+    </div>
+
+    <!-- Live chart -->
+    <div class="card">
+      <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;">Live Wave Shape</p>
+      <div style="position:relative;height:220px;"><canvas id="exploreChart"></canvas></div>
+      <div style="margin-top:14px;display:flex;gap:16px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);">
+        <span>↕ Changes with Mystery A</span>
+        <span>← → Cycles change with Mystery B</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E3: EXPLAIN ═══ -->
+<section id="explain">
+  <div class="e-tag explain">E3 · Explain</div>
+  <h2 class="sec-title">The Formula Reference</h2>
+  <p class="sec-desc">Now that you've seen the patterns, here are the names and formulas. Notice how they match what you discovered above.</p>
+
+  <div class="formula-grid">
+    <div class="fc"><div class="fc-name">Wave Speed</div><div class="fc-eq">v = f × λ</div><div class="fc-vars"><span>v</span> = speed (m/s) · <span>f</span> = frequency (Hz) · <span>λ</span> = wavelength (m)</div></div>
+    <div class="fc"><div class="fc-name">Frequency ↔ Period</div><div class="fc-eq">f = 1 / T</div><div class="fc-vars"><span>f</span> = frequency (Hz) · <span>T</span> = period (s) · They are reciprocals</div></div>
+    <div class="fc"><div class="fc-name">Period</div><div class="fc-eq">T = 1 / f</div><div class="fc-vars"><span>T</span> = time for one full cycle · <span>f</span> = frequency</div></div>
+    <div class="fc"><div class="fc-name">Wavelength</div><div class="fc-eq">λ = v / f</div><div class="fc-vars"><span>λ</span> = wavelength (m) · <span>v</span> = speed · <span>f</span> = frequency</div></div>
+    <div class="fc"><div class="fc-name">Energy & Amplitude</div><div class="fc-eq">E ∝ A²</div><div class="fc-vars">Double the amplitude → <span>4×</span> the energy</div></div>
+    <div class="fc"><div class="fc-name">Distance (d = vt)</div><div class="fc-eq">d = v × t</div><div class="fc-vars"><span>d</span> = distance (m) · <span>v</span> = speed · <span>t</span> = time (s)</div></div>
+    <div class="fc"><div class="fc-name">Speed of Sound</div><div class="fc-eq">343 m/s</div><div class="fc-vars">In dry air at 20°C. The answer to the lightning mystery!</div></div>
+    <div class="fc"><div class="fc-name">Wave Types</div><div class="fc-eq">T vs L</div><div class="fc-vars"><span>Transverse</span>: vibration ⊥ travel (light, water) · <span>Longitudinal</span>: vibration ∥ travel (sound)</div></div>
+  </div>
+
+  <div style="margin-top:24px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:10px;padding:20px 24px;max-width:680px;">
+    <strong style="color:var(--cyan);">💡 Back to the mystery:</strong>
+    <p style="color:var(--muted2);font-size:.9rem;margin-top:6px;line-height:1.7;">Lightning and thunder happen simultaneously. Light reaches you almost instantly (3×10⁸ m/s). Sound travels at only 343 m/s. Using d = v × t: 343 × 8 = <strong style="color:var(--green);">2,744 metres</strong> away. That's the power of wave speed!</p>
+  </div>
+</section>
+
+
+<!-- ═══ E3b: WAVE TYPES ═══ -->
+<section id="wavetypes" style="background:var(--bg);">
+  <div class="e-tag explain">E3 · Wave Types</div>
+  <h2 class="sec-title">Transverse vs. Longitudinal</h2>
+  <p class="sec-desc">The direction particles vibrate relative to the wave's travel defines everything. Master this distinction — it appears in every wave question.</p>
+
+  <!-- TAB SWITCHER -->
+  <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;">
+    <button id="btnT" onclick="switchWaveType('T')" style="padding:10px 28px;border-radius:7px;font-family:var(--fh);font-weight:700;font-size:.9rem;cursor:pointer;border:2px solid var(--cyan);background:var(--cyan);color:#000;transition:all .2s;">Transverse</button>
+    <button id="btnL" onclick="switchWaveType('L')" style="padding:10px 28px;border-radius:7px;font-family:var(--fh);font-weight:700;font-size:.9rem;cursor:pointer;border:2px solid var(--border2);background:transparent;color:var(--muted2);transition:all .2s;">Longitudinal</button>
+  </div>
+
+  <div class="g2" style="align-items:start;margin-bottom:32px;">
+
+    <!-- LEFT: info panel -->
+    <div>
+      <!-- TRANSVERSE PANEL -->
+      <div id="panelT" class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-family:var(--fm);font-size:.65rem;color:#000;background:var(--cyan);padding:3px 10px;border-radius:3px;text-transform:uppercase;letter-spacing:1.5px;">Transverse</span>
+          <span style="font-size:.75rem;color:var(--muted2);">vibration ⊥ direction of travel</span>
+        </div>
+        <p style="color:var(--muted2);font-size:.9rem;line-height:1.75;margin-bottom:18px;">Particles move <strong style="color:var(--cyan);">up and down</strong> (perpendicular) while the wave energy travels <strong style="color:var(--cyan);">horizontally</strong>. Think of a rope being flicked — each point rises and falls while the pulse moves forward.</p>
+
+        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Key features</div>
+        <div class="g2" style="gap:10px;margin-bottom:18px;">
+          <div class="card2" style="text-align:center;">
+            <div style="font-family:var(--fm);font-size:1.1rem;color:var(--cyan);margin-bottom:4px;">Crest</div>
+            <div style="font-size:.75rem;color:var(--muted2);">Highest point above equilibrium</div>
+          </div>
+          <div class="card2" style="text-align:center;">
+            <div style="font-family:var(--fm);font-size:1.1rem;color:var(--orange);margin-bottom:4px;">Trough</div>
+            <div style="font-size:.75rem;color:var(--muted2);">Lowest point below equilibrium</div>
+          </div>
+          <div class="card2" style="text-align:center;">
+            <div style="font-family:var(--fm);font-size:1.1rem;color:var(--green);margin-bottom:4px;">Amplitude</div>
+            <div style="font-size:.75rem;color:var(--muted2);">Max displacement from centre</div>
+          </div>
+          <div class="card2" style="text-align:center;">
+            <div style="font-family:var(--fm);font-size:1.1rem;color:var(--purple);margin-bottom:4px;">Wavelength λ</div>
+            <div style="font-size:.75rem;color:var(--muted2);">Crest to next crest</div>
+          </div>
+        </div>
+
+        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Real-world examples</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🌊</span>
+            <div><strong style="font-size:.88rem;">Water waves</strong><br><span style="font-size:.75rem;color:var(--muted2);">Surface ripples — water moves up/down, wave travels outward</span></div>
+          </div>
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">💡</span>
+            <div><strong style="font-size:.88rem;">Light (electromagnetic)</strong><br><span style="font-size:.75rem;color:var(--muted2);">Electric & magnetic fields oscillate perpendicular to direction</span></div>
+          </div>
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🎸</span>
+            <div><strong style="font-size:.88rem;">Guitar string vibration</strong><br><span style="font-size:.75rem;color:var(--muted2);">String moves up/down while wave travels along its length</span></div>
+          </div>
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🌍</span>
+            <div><strong style="font-size:.88rem;">Seismic S-waves</strong><br><span style="font-size:.75rem;color:var(--muted2);">Secondary earthquake waves — shake ground side to side</span></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:14px 16px;background:rgba(0,212,255,.05);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;">
+          <strong style="color:var(--cyan);font-size:.85rem;">Ahmad's Note:</strong>
+          <p style="font-size:.82rem;color:var(--muted2);margin-top:4px;">"We rise and fall, yet we stay grounded — transferring energy forward without moving from our position."</p>
+        </div>
+      </div>
+
+      <!-- LONGITUDINAL PANEL -->
+      <div id="panelL" class="card" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-family:var(--fm);font-size:.65rem;color:#000;background:var(--orange);padding:3px 10px;border-radius:3px;text-transform:uppercase;letter-spacing:1.5px;">Longitudinal</span>
+          <span style="font-size:.75rem;color:var(--muted2);">vibration ∥ direction of travel</span>
+        </div>
+        <p style="color:var(--muted2);font-size:.9rem;line-height:1.75;margin-bottom:18px;">Particles move <strong style="color:var(--orange);">back and forth</strong> (parallel) in the same direction the wave travels. Think of a slinky being pushed — compressions and rarefactions travel along it.</p>
+
+        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Key features</div>
+        <div class="g2" style="gap:10px;margin-bottom:18px;">
+          <div class="card2" style="text-align:center;">
+            <div style="font-family:var(--fm);font-size:1.1rem;color:var(--cyan);margin-bottom:4px;">Compression</div>
+            <div style="font-size:.75rem;color:var(--muted2);">Particles pushed close together — high pressure zone</div>
+          </div>
+          <div class="card2" style="text-align:center;">
+            <div style="font-family:var(--fm);font-size:1.1rem;color:var(--orange);margin-bottom:4px;">Rarefaction</div>
+            <div style="font-size:.75rem;color:var(--muted2);">Particles spread apart — low pressure zone</div>
+          </div>
+        </div>
+
+        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Real-world examples</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🔊</span>
+            <div><strong style="font-size:.88rem;">Sound in air</strong><br><span style="font-size:.75rem;color:var(--muted2);">Air molecules push and pull along direction of sound travel</span></div>
+          </div>
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🏥</span>
+            <div><strong style="font-size:.88rem;">Ultrasound (medical)</strong><br><span style="font-size:.75rem;color:var(--muted2);">High-frequency sound — longitudinal waves through body tissue</span></div>
+          </div>
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🌀</span>
+            <div><strong style="font-size:.88rem;">Slinky spring</strong><br><span style="font-size:.75rem;color:var(--muted2);">Push one end — compressions travel along the length</span></div>
+          </div>
+          <div class="card2" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.3rem;">🌍</span>
+            <div><strong style="font-size:.88rem;">Seismic P-waves</strong><br><span style="font-size:.75746;">Primary earthquake waves — compress and stretch rock</span></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:14px 16px;background:rgba(255,115,64,.05);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;">
+          <strong style="color:var(--orange);font-size:.85rem;">Ahmad's Note:</strong>
+          <p style="font-size:.82rem;color:var(--muted2);margin-top:4px;">"Sound travels through the push and pull of struggle — yet the message always arrives at its destination."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: live canvas simulation -->
+    <div class="card" style="position:sticky;top:20px;">
+      <div id="simLabelT" style="font-size:.65rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Live simulation — Transverse wave</div>
+      <div id="simLabelL" style="font-size:.65rem;color:var(--orange);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:none;">Live simulation — Longitudinal wave</div>
+
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:8px;overflow:hidden;padding:8px;">
+        <canvas id="wtCanvas" width="500" height="130" style="width:100%;display:block;"></canvas>
+      </div>
+
+      <div id="simHintT" style="font-size:.75rem;color:var(--muted2);margin-top:10px;line-height:1.6;">
+        Each <span style="color:var(--cyan);">● dot</span> represents a particle.<br>
+        Notice: dots move <strong style="color:var(--text);">up and down</strong> while the wave travels <strong style="color:var(--text);">left to right →</strong>
+      </div>
+      <div id="simHintL" style="font-size:.75rem;color:var(--muted2);margin-top:10px;line-height:1.6;display:none;">
+        Each <span style="color:var(--orange);">| line</span> represents a layer of particles.<br>
+        Notice: lines move <strong style="color:var(--text);">left and right</strong> — same direction as wave travel →<br>
+        <span style="color:var(--cyan);">Bunched lines</span> = compression · <span style="color:var(--orange);">Spread lines</span> = rarefaction
+      </div>
+
+      <!-- comparison table -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">Quick comparison</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem;">
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;"></th>
+            <th style="text-align:center;padding:6px 8px;color:var(--cyan);font-weight:600;">Transverse</th>
+            <th style="text-align:center;padding:6px 8px;color:var(--orange);font-weight:600;">Longitudinal</th>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--muted2);">Vibration direction</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--text);">⊥ perpendicular</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--text);">∥ parallel</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--muted2);">Features</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--text);">Crests & troughs</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--text);">Compression & rarefaction</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:6px 8px;color:var(--muted2);">Examples</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--text);">Light, water, strings</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--text);">Sound, ultrasound, P-waves</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 8px;color:var(--muted2);">Needs medium?</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--green);">Not always</td>
+            <td style="text-align:center;padding:6px 8px;color:var(--orange);">Always</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINI QUIZ on wave types -->
+  <div style="margin-top:8px;">
+    <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--purple);margin-bottom:16px;">✦ Quick check — wave type identification</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;" id="wtQuiz">
+    </div>
+    <div class="fb" id="wtFb" style="margin-top:14px;"></div>
+  </div>
+</section>
+
+<!-- ═══ E4: ELABORATE ═══ -->
+<section id="elaborate" style="background:var(--bg2);">
+  <div class="e-tag elaborate">E4 · Elaborate</div>
+  <h2 class="sec-title">Apply & Challenge</h2>
+  <p class="sec-desc">Each problem comes with a live simulation. Study the wave, then solve. Watch out — one question contains a common misconception trap!</p>
+
+  <!-- Q1: Fill-in with canvas -->
+  <div class="q-block">
+    <div class="q-num">Problem 01 · Fill in the blank · Wave Speed</div>
+    <canvas class="q-canvas" id="q1canvas"></canvas>
+    <div class="q-text">The wave above has a <strong>frequency of 4 Hz</strong> and a <strong>wavelength of 2 m</strong>.<br>Calculate the wave speed using <span style="font-family:var(--fm);color:var(--cyan);">v = f × λ</span></div>
+    <div class="fill-row">
+      <input type="number" class="fill-inp" id="q1ans" placeholder="answer…">
+      <span class="fill-unit">m/s</span>
+      <button class="check-btn" onclick="checkFill(1)">Check</button>
+    </div>
+    <div class="fb" id="q1fb"></div>
+  </div>
+
+  <!-- Q2: Fill-in with canvas -->
+  <div class="q-block">
+    <div class="q-num">Problem 02 · Fill in the blank · Period</div>
+    <canvas class="q-canvas" id="q2canvas"></canvas>
+    <div class="q-text">The wave above completes <strong>5 full cycles per second</strong>.<br>Find its <strong>period</strong> using <span style="font-family:var(--fm);color:var(--cyan);">T = 1 / f</span></div>
+    <div class="fill-row">
+      <input type="number" class="fill-inp" id="q2ans" placeholder="answer…" step="0.01">
+      <span class="fill-unit">s</span>
+      <button class="check-btn" onclick="checkFill(2)">Check</button>
+    </div>
+    <div class="fb" id="q2fb"></div>
+  </div>
+
+  <!-- Q3: Drag & Drop -->
+  <div class="q-block" style="--accent:var(--green);">
+    <div class="q-num">Problem 03 · Drag & Drop · Match the formula</div>
+    <div class="q-text">Drag each formula to the correct description.</div>
+    <div class="drag-area" id="dragPieces">
+      <div class="draggable" draggable="true" data-val="v = f × λ">v = f × λ</div>
+      <div class="draggable" draggable="true" data-val="T = 1 / f">T = 1 / f</div>
+      <div class="draggable" draggable="true" data-val="λ = v / f">λ = v / f</div>
+      <div class="draggable" draggable="true" data-val="E ∝ A²">E ∝ A²</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:.85rem;color:var(--muted2);min-width:220px;">Calculates how fast a wave travels</span>
+        <div class="drop-zone" id="drop1" data-ans="v = f × λ">Drop here</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:.85rem;color:var(--muted2);min-width:220px;">Time for one complete cycle</span>
+        <div class="drop-zone" id="drop2" data-ans="T = 1 / f">Drop here</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:.85rem;color:var(--muted2);min-width:220px;">Distance between two crests</span>
+        <div class="drop-zone" id="drop3" data-ans="λ = v / f">Drop here</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:.85rem;color:var(--muted2);min-width:220px;">Energy depends on this wave property</span>
+        <div class="drop-zone" id="drop4" data-ans="E ∝ A²">Drop here</div>
+      </div>
+    </div>
+    <div class="fb" id="q3fb"></div>
+  </div>
+
+  <!-- Q4: MCQ with misconception trap -->
+  <div class="q-block">
+    <div class="trap-tag">⚠ Common Misconception Trap</div>
+    <div class="q-num">Problem 04 · Multiple Choice · Think carefully!</div>
+    <canvas class="q-canvas" id="q4canvas"></canvas>
+    <div class="q-text">Wave A has a <strong>larger amplitude</strong> than Wave B. Both waves travel in the same medium.<br>Which statement is TRUE?</div>
+    <div class="mcq-options" id="q4opts">
+      <div class="mcq-opt" onclick="selectMCQ(4,'A')"><span class="mcq-letter">A</span>Wave A travels faster because it has more energy</div>
+      <div class="mcq-opt" onclick="selectMCQ(4,'B')"><span class="mcq-letter">B</span>Both waves travel at the same speed — amplitude doesn't affect speed</div>
+      <div class="mcq-opt" onclick="selectMCQ(4,'C')"><span class="mcq-letter">C</span>Wave A has a longer wavelength</div>
+      <div class="mcq-opt" onclick="selectMCQ(4,'D')"><span class="mcq-letter">D</span>Wave B carries more energy because it's faster</div>
+    </div>
+    <button class="check-btn" onclick="checkMCQ(4,'B')">Check Answer</button>
+    <div class="fb" id="q4fb"></div>
+  </div>
+
+  <!-- Q5: Fill-in -->
+  <div class="q-block">
+    <div class="q-num">Problem 05 · Fill in the blank · Storm Distance</div>
+    <canvas class="q-canvas" id="q5canvas"></canvas>
+    <div class="q-text">You see lightning. Thunder arrives <strong>9 seconds later</strong>. Speed of sound = <strong>343 m/s</strong>.<br>How far is the storm? Use <span style="font-family:var(--fm);color:var(--cyan);">d = v × t</span></div>
+    <div class="fill-row">
+      <input type="number" class="fill-inp" id="q5ans" placeholder="answer…" step="0.01">
+      <span class="fill-unit">km</span>
+      <button class="check-btn" onclick="checkFill(5)">Check</button>
+    </div>
+    <div class="fb" id="q5fb"></div>
+  </div>
+
+  <!-- AI Open Question -->
+  <div class="ai-box" style="margin-top:8px;">
+    <div class="ai-header">
+      <div class="ai-dot"></div>
+      <span style="font-weight:600;font-size:.95rem;">Bonus · Open Question · AI Tutor</span>
+    </div>
+    <div class="q-text" style="margin-bottom:14px;">A doctor uses ultrasound (v = 1540 m/s, f = 3.5 MHz) to scan a patient.<br><em style="color:var(--muted2);">What is the wavelength? What type of wave is ultrasound and why? What happens to wavelength if the doctor increases the frequency?</em></div>
+    <textarea id="bonusAnswer" placeholder="Write your full answer here in complete sentences…"></textarea>
+    <button class="btn btn-cyan" style="margin-top:10px;" onclick="askAI()">Get AI Feedback</button>
+    <div class="ai-response" id="aiResponse"></div>
+  </div>
+</section>
+
+<!-- ═══ E5: EVALUATE ═══ -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · Evaluate</div>
+  <h2 class="sec-title">Submit Your Work</h2>
+  <p class="sec-desc">Enter your name and class, then submit. Your answers go directly to your teacher's grade sheet.</p>
+
+  <div class="g2" style="align-items:start;max-width:800px;">
+    <div class="card">
+      <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Your Information</p>
+      <div class="name-row">
+        <div style="flex:2;">
+          <label style="font-size:.75rem;color:var(--muted2);display:block;margin-bottom:6px;">Full Name *</label>
+          <input type="text" id="stuName" placeholder="Your full name…">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:.75rem;color:var(--muted2);display:block;margin-bottom:6px;">Class *</label>
+          <input type="text" id="stuClass" placeholder="e.g. 8A">
+        </div>
+      </div>
+      <hr>
+      <p style="font-size:.75rem;color:var(--muted2);margin-bottom:12px;">Your answers are collected automatically from the exercises above. Review them here:</p>
+      <div id="answerReview" style="font-size:.82rem;line-height:2;font-family:var(--fm);color:var(--muted2);"></div>
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.75rem;color:var(--muted);margin-bottom:16px;">0 / 5 questions attempted</p>
+      <button class="btn btn-green" style="width:100%;" onclick="submitToSheets()">📊 Submit to Teacher's Grade Sheet</button>
+    </div>
+
+    <div class="submit-card">
+      <div style="font-size:2rem;margin-bottom:8px;">📈</div>
+      <div class="submit-score" id="scoreDisplay">—</div>
+      <div class="submit-label">Your score</div>
+      <hr style="margin:20px 0;">
+      <p style="font-size:.82rem;color:var(--muted2);line-height:1.7;">Once you submit, Ahmad receives your answers instantly in Google Sheets. You'll get feedback in your next class.</p>
+      <div id="submitConfirm" style="display:none;margin-top:16px;padding:12px;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.25);border-radius:8px;font-size:.82rem;color:var(--green);">
+        ✓ Submitted successfully! Ahmad has your answers.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="ft-brand">Wave<span>Lab</span></div>
+    <div class="ft-meta">Ahmad Ghozlan · AI in Education · Grade 8 Physics · Lebanon</div>
+  </div>
+  <div class="ft-links">
+    <button class="ft-link" onclick="shareModule()">📤 Share</button>
+    <a class="ft-link" href="https://linkedin.com" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+</main>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// GOOGLE FORM CONFIG
+// ══════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const answers = {q1:'',q2:'',q3:'',q4:'',q5:'',bonus:''};
+const correct  = {q1:false,q2:false,q3:false,q4:false,q5:false};
+let mcqSelected = {};
+let dragSrc = null;
+
+// ══════════════════════════════════════════
+// SCROLL NAV
+// ══════════════════════════════════════════
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+const sections = document.querySelectorAll('section, #hero');
+const navBtns  = document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  let cur='hero';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-200)cur=s.id;});
+  navBtns.forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('onclick')?.includes("'"+cur+"'"));
+  });
+});
+
+// ══════════════════════════════════════════
+// HERO CANVAS
+// ══════════════════════════════════════════
+const hc=document.getElementById('heroCanvas');
+const hx=hc.getContext('2d');
+let ht=0,pulseOn=false,pulseT=0;
+function resizeHero(){hc.width=hc.offsetWidth;hc.height=hc.offsetHeight;}
+window.addEventListener('resize',resizeHero);resizeHero();
+function drawHero(){
+  hx.clearRect(0,0,hc.width,hc.height);
+  const amp=pulseOn?220*Math.max(0,1-(pulseT/70)):35;
+  for(let row=0;row<4;row++){
+    hx.beginPath();
+    const alpha=0.55-row*0.12;
+    hx.strokeStyle=`rgba(0,212,255,${alpha})`;
+    hx.lineWidth=2.5-row*0.5;
+    for(let x=0;x<=hc.width;x++){
+      const y=hc.height/2+Math.sin(x*0.006+ht+row*0.7)*amp*(1-row*0.22);
+      x===0?hx.moveTo(x,y):hx.lineTo(x,y);
+    }
+    hx.stroke();
+  }
+  ht+=0.04;
+  if(pulseOn){pulseT++;if(pulseT>70){pulseOn=false;pulseT=0;}}
+  requestAnimationFrame(drawHero);
+}
+drawHero();
+document.getElementById('triggerPulse').addEventListener('click',()=>{pulseOn=true;pulseT=0;});
+
+// ══════════════════════════════════════════
+// EXPLORE CHART
+// ══════════════════════════════════════════
+const ectx=document.getElementById('exploreChart').getContext('2d');
+function genWave(A,f){return Array.from({length:201},(_,x)=>A*Math.sin((x/200)*Math.PI*2*f));}
+const exploreChart=new Chart(ectx,{
+  type:'line',
+  data:{labels:Array.from({length:201},(_,i)=>i),datasets:[{data:genWave(5,2),borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.06)',borderWidth:2.5,pointRadius:0,tension:0.4,fill:true}]},
+  options:{responsive:true,maintainAspectRatio:false,animation:{duration:0},plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:-12,max:12,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6a85',font:{family:'DM Mono',size:10}}}}}
+});
+
+const xAS=document.getElementById('xAmpSlider');
+const xFS=document.getElementById('xFreqSlider');
+const xSS=document.getElementById('xSpeedSlider');
+function updateExplore(){
+  const A=parseFloat(xAS.value),f=parseFloat(xFS.value),v=parseFloat(xSS.value);
+  document.getElementById('xAmp').textContent=A.toFixed(1);
+  document.getElementById('xFreq').textContent=f.toFixed(1);
+  document.getElementById('xSpeed').textContent=v;
+  document.getElementById('xPeriod').textContent=(1/f).toFixed(3);
+  document.getElementById('xLambda').textContent=(v/f).toFixed(2);
+  document.getElementById('xEnergy').textContent=(A*A).toFixed(1);
+  exploreChart.data.datasets[0].data=genWave(A,f);
+  exploreChart.update();
+}
+xAS.addEventListener('input',updateExplore);
+xFS.addEventListener('input',updateExplore);
+xSS.addEventListener('input',updateExplore);
+
+function revealExplore(){
+  document.getElementById('revealBox').style.display='block';
+}
+
+// ══════════════════════════════════════════
+// PROBLEM CANVASES
+// ══════════════════════════════════════════
+let qTime=0;
+function drawQ(canvasId,freq,amp,color,speed,label1,label2){
+  const c=document.getElementById(canvasId);
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  c.width=c.offsetWidth;c.height=100;
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.beginPath();
+  for(let x=0;x<=c.width;x++){
+    const y=50+Math.sin((x/c.width)*Math.PI*2*freq+qTime*speed)*amp;
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();
+  if(label1){ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px DM Mono';ctx.fillText(label1,8,14);}
+  if(label2){ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px DM Mono';ctx.fillText(label2,8,30);}
+}
+
+function animateProblems(){
+  drawQ('q1canvas',4,32,'#00d4ff',0.6,'f = 4 Hz','λ = 2 m  →  v = ?');
+  drawQ('q2canvas',5,28,'#a78bfa',0.8,'f = 5 Hz','T = ?');
+  // Q4: two waves same x different amp
+  const c4=document.getElementById('q4canvas');
+  if(c4){
+    c4.width=c4.offsetWidth;c4.height=100;
+    const ctx4=c4.getContext('2d');
+    ctx4.clearRect(0,0,c4.width,c4.height);
+    // Wave A large amp
+    ctx4.beginPath();
+    for(let x=0;x<=c4.width;x++){
+      const y=50+Math.sin((x/c4.width)*Math.PI*4+qTime*0.5)*38;
+      x===0?ctx4.moveTo(x,y):ctx4.lineTo(x,y);
+    }
+    ctx4.strokeStyle='#ff7340';ctx4.lineWidth=2.5;ctx4.stroke();
+    ctx4.fillStyle='rgba(255,115,64,0.7)';ctx4.font='11px DM Mono';ctx4.fillText('Wave A (large amplitude)',8,14);
+    // Wave B small amp
+    ctx4.beginPath();
+    for(let x=0;x<=c4.width;x++){
+      const y=50+Math.sin((x/c4.width)*Math.PI*4+qTime*0.5)*16;
+      x===0?ctx4.moveTo(x,y):ctx4.lineTo(x,y);
+    }
+    ctx4.strokeStyle='#00d4ff';ctx4.lineWidth=2;ctx4.stroke();
+    ctx4.fillStyle='rgba(0,212,255,0.7)';ctx4.font='11px DM Mono';ctx4.fillText('Wave B (small amplitude)',8,30);
+  }
+  drawQ('q5canvas',1.5,30,'#fbbf24',0.3,'v = 343 m/s','t = 9 s  →  d = ?');
+  qTime+=0.04;
+  requestAnimationFrame(animateProblems);
+}
+animateProblems();
+
+// ══════════════════════════════════════════
+// FILL-IN CHECKER
+// ══════════════════════════════════════════
+const fillAnswers={1:{val:8,tol:0.1,hint:'v = 4 × 2 = 8 m/s ✓',key:'q1'},2:{val:0.2,tol:0.01,hint:'T = 1/5 = 0.2 s ✓',key:'q2'},5:{val:3.087,tol:0.06,hint:'d = 343 × 9 = 3087 m = 3.087 km ✓',key:'q5'}};
+function checkFill(n){
+  const inp=document.getElementById('q'+n+'ans');
+  const fb=document.getElementById('q'+n+'fb');
+  const v=parseFloat(inp.value);
+  const a=fillAnswers[n];
+  fb.style.display='block';
+  answers[a.key]=inp.value;
+  if(isNaN(v)){fb.className='fb bad';fb.textContent='⚠ Enter a number.';return;}
+  if(Math.abs(v-a.val)<=a.tol){
+    fb.className='fb ok';fb.textContent='✓ Correct! '+a.hint;
+    correct[a.key]=true;
+  } else {
+    fb.className='fb bad';fb.textContent='✗ Not quite. Check your formula and units. Try again!';
+    correct[a.key]=false;
+  }
+  updateProgress();
+}
+
+// ══════════════════════════════════════════
+// MCQ
+// ══════════════════════════════════════════
+function selectMCQ(q,letter){
+  mcqSelected[q]=letter;
+  document.querySelectorAll('#q'+q+'opts .mcq-opt').forEach((o,i)=>{
+    o.classList.toggle('selected',['A','B','C','D'][i]===letter);
+  });
+}
+function checkMCQ(q,correctLetter){
+  const fb=document.getElementById('q'+q+'fb');
+  fb.style.display='block';
+  const sel=mcqSelected[q];
+  answers.q3=sel||'';
+  if(!sel){fb.className='fb info';fb.textContent='Select an option first.';return;}
+  const opts=document.querySelectorAll('#q'+q+'opts .mcq-opt');
+  const letters=['A','B','C','D'];
+  opts.forEach((o,i)=>{
+    o.classList.remove('selected');
+    if(letters[i]===correctLetter)o.classList.add('correct');
+    else if(letters[i]===sel)o.classList.add('wrong');
+  });
+  if(sel===correctLetter){
+    fb.className='fb ok';
+    fb.textContent='✓ Correct! Wave speed depends only on the medium — not on amplitude or frequency. This is a very common misconception!';
+    correct.q3=true;
+  } else {
+    fb.className='fb bad';
+    fb.textContent='✗ This is the classic misconception! Amplitude affects energy (E ∝ A²) but NOT speed. Speed is determined by the medium alone.';
+    correct.q3=false;
+  }
+  updateProgress();
+}
+
+// ══════════════════════════════════════════
+// DRAG & DROP
+// ══════════════════════════════════════════
+document.querySelectorAll('.draggable').forEach(d=>{
+  d.addEventListener('dragstart',e=>{dragSrc=d;d.classList.add('dragging');e.dataTransfer.setData('text',d.dataset.val);});
+  d.addEventListener('dragend',()=>d.classList.remove('dragging'));
+});
+document.querySelectorAll('.drop-zone').forEach(zone=>{
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.classList.remove('over');
+    const val=e.dataTransfer.getData('text');
+    zone.textContent=val;
+    zone.classList.add('filled');
+    checkDragDrop();
+  });
+});
+function checkDragDrop(){
+  const zones=document.querySelectorAll('.drop-zone');
+  let allFilled=true,allCorrect=true;
+  zones.forEach(z=>{if(!z.classList.contains('filled'))allFilled=false;});
+  if(!allFilled)return;
+  zones.forEach(z=>{
+    const ok=z.textContent===z.dataset.ans;
+    z.classList.toggle('filled',ok);
+    z.classList.toggle('wrong-fill',!ok);
+    if(!ok)allCorrect=false;
+  });
+  const fb=document.getElementById('q3fb');
+  fb.style.display='block';
+  if(allCorrect){
+    fb.className='fb ok';fb.textContent='✓ Perfect! All formulas matched correctly.';
+    answers.q2='correct';correct.q4=true;
+  } else {
+    fb.className='fb bad';fb.textContent='✗ Some are wrong. Try swapping the ones marked in red.';
+  }
+  updateProgress();
+}
+
+// ══════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════
+function updateProgress(){
+  const done=Object.values(correct).filter(Boolean).length;
+  const total=5;
+  const pct=Math.round((done/total)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=`${done} / ${total} questions correct`;
+  document.getElementById('scoreDisplay').textContent=pct+'%';
+  // Collect answers for review
+  const rev=document.getElementById('answerReview');
+  rev.innerHTML=[
+    `Q1 (Wave Speed): ${document.getElementById('q1ans')?.value||'—'} m/s ${correct.q1?'✓':''}`,
+    `Q2 (Period): ${document.getElementById('q2ans')?.value||'—'} s ${correct.q2?'✓':''}`,
+    `Q3 (Drag & Drop): ${correct.q3?'Correct ✓':'Not yet'}`,
+    `Q4 (MCQ): ${mcqSelected[4]||'—'} ${correct.q3?'✓':''}`,
+    `Q5 (Distance): ${document.getElementById('q5ans')?.value||'—'} km ${correct.q5?'✓':''}`,
+  ].map(l=>`<div>${l}</div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// AI TUTOR
+// ══════════════════════════════════════════
+function askAI(){
+  const answer = document.getElementById('bonusAnswer').value.trim();
+  const resp   = document.getElementById('aiResponse');
+  if(!answer){showToast('Write your answer first!');return;}
+  answers.bonus = answer;
+  resp.className='ai-response show';
+  resp.innerHTML='<div class="ai-thinking"><div class="ai-dot-anim"></div><div class="ai-dot-anim"></div><div class="ai-dot-anim"></div></div>';
+  setTimeout(()=>{ resp.textContent = buildPhysicsFeedback(answer.toLowerCase()); }, 1200);
+}
+
+function buildPhysicsFeedback(a){
+  const hasWavelength   = /0\.00044|0\.44\s*mm|4\.4\s*[\u00d7x]\s*10|wavelength\s*=|\u03bb\s*=/.test(a);
+  const hasFormula      = /v\s*[\/\u00f7]\s*f|lambda|\u03bb|v\/f/.test(a);
+  const hasLongitudinal = /longitudinal/.test(a);
+  const hasParallel     = /parallel|same direction|along the/.test(a);
+  const hasTransverse   = /transverse/.test(a) && !hasLongitudinal;
+  const hasFreqEffect   = /increas|higher|shorter|decreas|invers/.test(a);
+  const hasFreqInverse  = /(higher|increas).{0,30}(shorter|decreas)|(shorter|decreas).{0,30}(higher|increas)|invers/.test(a);
+  const hasRealWorld    = /scan|doctor|baby|organ|medical|image|hospital/.test(a);
+  const score = [hasWavelength,hasFormula,hasLongitudinal,hasFreqInverse].filter(Boolean).length;
+
+  const rights=[];
+  if(hasLongitudinal) rights.push('correctly identifying ultrasound as a longitudinal wave');
+  if(hasWavelength)   rights.push('calculating the wavelength correctly (0.00044 m)');
+  if(hasFormula)      rights.push('using the right formula \u03bb = v/f');
+  if(hasFreqInverse)  rights.push('understanding that higher frequency means shorter wavelength');
+  if(hasRealWorld)    rights.push('connecting this to real medical applications');
+
+  let part1 = rights.length===0 ? "You've made a start — keep going!"
+    : rights.length===1 ? 'Well done on '+rights[0]+'.'
+    : 'Great work on '+rights.slice(0,-1).join(', ')+' and '+rights[rights.length-1]+'.';
+
+  const fixes=[];
+  if(!hasWavelength && !hasFormula)
+    fixes.push('try calculating: \u03bb = v/f = 1540 \u00f7 3,500,000 = 0.00044 m (0.44 mm)');
+  if(hasTransverse)
+    fixes.push('ultrasound is actually longitudinal \u2014 particles vibrate parallel to the direction of travel, not perpendicular');
+  if(!hasLongitudinal && !hasTransverse)
+    fixes.push('state the wave type: ultrasound is longitudinal because tissue particles push and pull along the same direction the wave travels');
+  if(!hasFreqEffect)
+    fixes.push('for the last part: since v stays constant in the same medium, increasing f makes \u03bb shorter (\u03bb = v/f)');
+
+  let part2 = fixes.length===0
+    ? 'Your answer covers all the key points \u2014 excellent physics thinking!'
+    : 'One thing to refine: '+fixes[0]+'.';
+
+  const connections=[
+    'Doctors use these exact calculations to choose ultrasound frequencies \u2014 higher frequency gives finer detail for scanning small structures like blood vessels!',
+    'Medical ultrasound machines are programmed with \u03bb = v/f to focus their beams \u2014 you now understand the science behind life-saving technology.',
+    'Ultrasound wavelengths of 0.44 mm can image structures smaller than 1 mm \u2014 that is how doctors detect tiny issues early!',
+    'The same physics you used is how engineers design sonar for submarines and how bats navigate in complete darkness.'
+  ];
+  return part1+' '+part2+' '+connections[score % connections.length];
+}
+
+// ══════════════════════════════════════════
+// SUBMIT TO GOOGLE SHEETS
+// ══════════════════════════════════════════
+async function submitToSheets(){
+  const name  = document.getElementById('stuName').value.trim();
+  const cls   = document.getElementById('stuClass').value.trim();
+  if(!name||!cls){showToast('⚠ Please enter your name and class first!');return;}
+
+  const btn = document.querySelector('[onclick="submitToSheets()"]');
+  btn.disabled = true;
+  btn.textContent = '⏳ Submitting…';
+
+  const done  = Object.values(correct).filter(Boolean).length;
+  const score = Math.round((done/5)*100)+'%';
+
+  const payload = {
+    name,
+    class:  cls,
+    q1:     (document.getElementById('q1ans').value||'—')+' m/s',
+    q2:     (document.getElementById('q2ans').value||'—')+' s',
+    q3:     correct.q3 ? 'Drag&Drop: correct ✓' : 'Drag&Drop: incorrect',
+    q4:     mcqSelected[4] ? 'MCQ: '+mcqSelected[4]+(correct.q3?' ✓':'') : 'MCQ: not answered',
+    q5:     (document.getElementById('q5ans').value||'—')+' km',
+    bonus:  document.getElementById('bonusAnswer').value||'not answered',
+    score
+  };
+
+  try {
+    // Apps Script requires no-cors mode — it still writes successfully
+    await fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body:    JSON.stringify(payload)
+    });
+    // no-cors returns opaque response — if no throw, it worked
+    document.getElementById('submitConfirm').style.display='block';
+    btn.textContent = '✓ Submitted!';
+    btn.style.background = 'var(--green2)';
+    showToast('✓ Submitted to Ahmad\'s grade sheet!');
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = '📊 Submit to Teacher\'s Grade Sheet';
+    showToast('⚠ Submission failed — check your internet connection.');
+    console.error(err);
+  }
+}
+
+// ══════════════════════════════════════════
+// SHARE & TOAST
+// ══════════════════════════════════════════
+function shareModule(){
+  const ci=document.getElementById('copyInput');
+  ci.value=window.location.href;ci.select();ci.setSelectionRange(0,9999);
+  try{document.execCommand('copy');}catch(e){}
+  showToast('✓ Link copied — share with students!');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ══════════════════════════════════════════
+// WAVE TYPES — simulation + quiz
+// ══════════════════════════════════════════
+let wtTime = 0;
+let currentWaveType = 'T';
+const wtCanvas = document.getElementById('wtCanvas');
+const wtCtx = wtCanvas.getContext('2d');
+
+function switchWaveType(type) {
+  currentWaveType = type;
+  document.getElementById('panelT').style.display  = type==='T' ? 'block' : 'none';
+  document.getElementById('panelL').style.display  = type==='L' ? 'block' : 'none';
+  document.getElementById('simLabelT').style.display = type==='T' ? 'block' : 'none';
+  document.getElementById('simLabelL').style.display = type==='L' ? 'block' : 'none';
+  document.getElementById('simHintT').style.display  = type==='T' ? 'block' : 'none';
+  document.getElementById('simHintL').style.display  = type==='L' ? 'block' : 'none';
+  const btnT = document.getElementById('btnT');
+  const btnL = document.getElementById('btnL');
+  if(type==='T'){
+    btnT.style.background=btnT.style.borderColor='var(--cyan)';btnT.style.color='#000';
+    btnL.style.background='transparent';btnL.style.borderColor='var(--border2)';btnL.style.color='var(--muted2)';
+  } else {
+    btnL.style.background=btnL.style.borderColor='var(--orange)';btnL.style.color='#fff';
+    btnT.style.background='transparent';btnT.style.borderColor='var(--border2)';btnT.style.color='var(--muted2)';
+  }
+}
+
+function drawWaveTypeSim() {
+  const w = wtCanvas.width = wtCanvas.offsetWidth * (window.devicePixelRatio||1);
+  const h = wtCanvas.height = 130 * (window.devicePixelRatio||1);
+  wtCtx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+  const W = wtCanvas.offsetWidth, H = 130;
+  wtCtx.clearRect(0,0,W,H);
+
+  if(currentWaveType === 'T') {
+    // Draw connecting wave line first
+    wtCtx.beginPath();
+    for(let x=0;x<=W;x++){
+      const y = H/2 + Math.sin((x/W)*Math.PI*4 + wtTime)*38;
+      x===0 ? wtCtx.moveTo(x,y) : wtCtx.lineTo(x,y);
+    }
+    wtCtx.strokeStyle='rgba(0,212,255,0.2)';wtCtx.lineWidth=2;wtCtx.stroke();
+
+    // Particles as dots
+    const nParts = 18;
+    for(let i=0;i<nParts;i++){
+      const x = (i/(nParts-1))*W;
+      const y = H/2 + Math.sin((i/(nParts-1))*Math.PI*4 + wtTime)*38;
+      const phase = Math.sin((i/(nParts-1))*Math.PI*4 + wtTime);
+      // colour by displacement: cyan=up, orange=down
+      const r = phase>0 ? Math.round(0+phase*0) : Math.round(255*Math.abs(phase));
+      const g = phase>0 ? Math.round(212) : Math.round(115*(1-Math.abs(phase)));
+      const b = phase>0 ? Math.round(255) : Math.round(64);
+      wtCtx.beginPath();
+      wtCtx.arc(x,y,5,0,Math.PI*2);
+      wtCtx.fillStyle=`rgb(${r},${g},${b})`;
+      wtCtx.fill();
+    }
+    // Equilibrium line
+    wtCtx.beginPath();wtCtx.moveTo(0,H/2);wtCtx.lineTo(W,H/2);
+    wtCtx.strokeStyle='rgba(255,255,255,0.06)';wtCtx.lineWidth=1;wtCtx.stroke();
+
+    // Labels
+    wtCtx.fillStyle='rgba(0,212,255,0.6)';wtCtx.font='10px DM Mono';
+    wtCtx.fillText('crest',W*0.12-10,H/2-42);
+    wtCtx.fillStyle='rgba(255,115,64,0.6)';
+    wtCtx.fillText('trough',W*0.62-12,H/2+52);
+    // arrow showing particle direction
+    wtCtx.fillStyle='rgba(255,255,255,0.3)';wtCtx.font='10px DM Mono';
+    wtCtx.fillText('wave travel →',W-90,H-6);
+
+  } else {
+    // LONGITUDINAL
+    const nLines = 44;
+    for(let i=0;i<nLines;i++){
+      const baseX = (i/(nLines-1))*(W-20)+10;
+      const disp  = Math.sin(wtTime*1.6 - i*0.42)*13;
+      const x     = baseX + disp;
+      // density: how compressed are neighbours?
+      const density = Math.abs(Math.sin(wtTime*1.6 - i*0.42));
+      // cyan = compressed, orange = rarefied
+      const r = Math.round(255*(1-density));
+      const g = Math.round(115 + (212-115)*density);
+      const b = Math.round(64 + (255-64)*density);
+      wtCtx.beginPath();
+      wtCtx.moveTo(x, 18); wtCtx.lineTo(x, H-18);
+      wtCtx.strokeStyle = `rgb(${r},${g},${b})`;
+      wtCtx.lineWidth = 2;
+      wtCtx.stroke();
+    }
+    // Labels
+    wtCtx.fillStyle='rgba(0,212,255,0.7)';wtCtx.font='10px DM Mono';
+    wtCtx.fillText('compression',8,13);
+    wtCtx.fillStyle='rgba(255,115,64,0.7)';
+    wtCtx.fillText('rarefaction',W/2+10,13);
+    wtCtx.fillStyle='rgba(255,255,255,0.3)';
+    wtCtx.fillText('wave travel →',W-90,H-4);
+  }
+
+  wtTime += 0.035;
+  requestAnimationFrame(drawWaveTypeSim);
+}
+drawWaveTypeSim();
+
+// ── WAVE TYPE MINI QUIZ ──
+const wtQuestions = [
+  { q:'A ripple spreading across a pond', ans:'T', hint:'Water surface moves up/down — perpendicular to wave travel.' },
+  { q:'Sound travelling from a speaker to your ear', ans:'L', hint:'Air molecules push and pull along the direction the sound travels.' },
+  { q:'Light from the sun reaching Earth', ans:'T', hint:'Electromagnetic waves are always transverse — they can travel through a vacuum.' },
+  { q:'A slinky spring being pushed from one end', ans:'L', hint:'Compressions and rarefactions travel along the length of the spring.' },
+  { q:'A guitar string vibrating after being plucked', ans:'T', hint:'The string moves up/down while the wave runs along its length.' },
+  { q:'An ultrasound scan at a hospital', ans:'L', hint:'Ultrasound is high-frequency sound — all sound waves are longitudinal.' },
+];
+
+const wtQuizEl = document.getElementById('wtQuiz');
+wtQuestions.forEach((item, idx) => {
+  const div = document.createElement('div');
+  div.className = 'card2';
+  div.style.cssText='border:1px solid var(--border);border-radius:8px;padding:14px;';
+  div.innerHTML=`
+    <div style="font-size:.72rem;color:var(--purple);font-family:var(--fm);margin-bottom:6px;">Identify the wave type</div>
+    <div style="font-size:.88rem;color:var(--text);margin-bottom:12px;line-height:1.6;">${item.q}</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="checkWT(${idx},'T',this)" style="flex:1;padding:7px;border-radius:5px;border:1px solid var(--border2);background:var(--panel);color:var(--cyan);font-family:var(--fh);font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;">Transverse</button>
+      <button onclick="checkWT(${idx},'L',this)" style="flex:1;padding:7px;border-radius:5px;border:1px solid var(--border2);background:var(--panel);color:var(--orange);font-family:var(--fh);font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;">Longitudinal</button>
+    </div>
+    <div id="wtFb${idx}" style="font-size:.75rem;margin-top:8px;display:none;padding:7px 10px;border-radius:5px;font-family:var(--fm);line-height:1.5;"></div>`;
+  wtQuizEl.appendChild(div);
+});
+
+let wtCorrect = 0, wtAnswered = 0;
+function checkWT(idx, choice, btn) {
+  const item = wtQuestions[idx];
+  const fbEl = document.getElementById('wtFb'+idx);
+  const parent = btn.parentElement;
+  // Disable both buttons
+  Array.from(parent.querySelectorAll('button')).forEach(b=>{b.disabled=true;b.style.opacity='.5';});
+  fbEl.style.display='block';
+  wtAnswered++;
+  if(choice === item.ans){
+    wtCorrect++;
+    btn.style.opacity='1';
+    btn.style.background='rgba(0,230,118,.15)';
+    btn.style.borderColor='var(--green)';
+    btn.style.color='var(--green)';
+    fbEl.style.background='rgba(0,230,118,.08)';
+    fbEl.style.border='1px solid rgba(0,230,118,.2)';
+    fbEl.style.color='var(--green)';
+    fbEl.textContent='✓ Correct! '+item.hint;
+  } else {
+    btn.style.opacity='1';
+    btn.style.background='rgba(248,113,113,.1)';
+    btn.style.borderColor='var(--red)';
+    btn.style.color='var(--red)';
+    fbEl.style.background='rgba(248,113,113,.08)';
+    fbEl.style.border='1px solid rgba(248,113,113,.2)';
+    fbEl.style.color='var(--red)';
+    fbEl.textContent='✗ Not quite. '+item.hint;
+    // Highlight correct answer
+    Array.from(parent.querySelectorAll('button')).forEach(b=>{
+      if((b.textContent.includes('Transverse')&&item.ans==='T')||(b.textContent.includes('Longitudinal')&&item.ans==='L')){
+        b.style.opacity='1';b.style.borderColor='var(--green)';b.style.color='var(--green)';
+      }
+    });
+  }
+  if(wtAnswered===wtQuestions.length){
+    const overallFb=document.getElementById('wtFb');
+    overallFb.style.display='block';
+    const pct=Math.round((wtCorrect/wtQuestions.length)*100);
+    overallFb.className = pct>=80 ? 'fb ok' : pct>=50 ? 'fb info' : 'fb bad';
+    overallFb.textContent = pct===100
+      ? `Perfect score! ${wtCorrect}/${wtQuestions.length} — you have completely mastered wave type identification.`
+      : pct>=80
+      ? `Great work! ${wtCorrect}/${wtQuestions.length} correct. Review the ones you missed before the assessment.`
+      : `${wtCorrect}/${wtQuestions.length} correct. Re-read the transverse vs longitudinal panel above and try again.`;
+  }
+}
+
+</script>
+</body>
+</html>
