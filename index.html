@@ -177,24 +177,26 @@ footer{padding:32px 40px;display:flex;align-items:center;justify-content:space-b
       </div>
     </a>
 
-    <!-- Forces — coming soon -->
-    <div class="lcard soon">
-      <div class="lcard-banner" style="background:linear-gradient(135deg,#080c14,#0d1525);">
-        <div class="lcard-icon">⚡</div>
+    <!-- ForcesLab — LIVE -->
+    <a class="lcard" href="https://aghozlan.github.io/forceslab" target="_blank" style="text-decoration:none;">
+      <div class="lcard-banner" style="background:linear-gradient(135deg,#06080f,#0c1428);">
+        <canvas id="forceCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+        <div class="lcard-icon" style="position:relative;z-index:2;">⚡</div>
       </div>
       <div class="lcard-body">
-        <div class="lcard-grade" style="color:#a78bfa;">Grade 8 · Physics</div>
-        <div class="lcard-title">ForceLab — Newton's Laws</div>
-        <div class="lcard-desc">Interactive force diagrams, Newton's three laws with simulations, and real-world applications.</div>
+        <div class="lcard-grade" style="color:#ffd600;">Grade 9 · Physics · Forces</div>
+        <div class="lcard-title">ForcesLab — Forces on Objects</div>
+        <div class="lcard-desc">Contact vs distance forces, free body diagrams with interactive arrow tool, 6 real scenarios.</div>
         <div class="lcard-tags">
-          <span class="tag" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Coming Soon</span>
+          <span class="tag" style="background:rgba(255,214,0,.1);color:#ffd600;border:1px solid rgba(255,214,0,.2);">Free Body Diagrams</span>
+          <span class="tag" style="background:rgba(0,230,118,.1);color:#00e676;border:1px solid rgba(0,230,118,.2);">Live Now</span>
         </div>
         <div class="lcard-footer">
-          <span class="lcard-status" style="color:#5a6a85;">○ In Development</span>
-          <span class="lcard-arrow">—</span>
+          <span class="lcard-status" style="color:#00e676;">● Live</span>
+          <span class="lcard-arrow">→</span>
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- Optics — coming soon -->
     <div class="lcard soon">
@@ -344,6 +346,34 @@ function drawHeatCard(){
   ht2+=0.04;requestAnimationFrame(drawHeatCard);
 }
 drawHeatCard();
+
+// ── FORCES CARD CANVAS ──
+const frc=document.getElementById('forceCanvas');
+if(frc){
+  const frx=frc.getContext('2d');let ft=0;
+  function drawForceCard(){
+    frc.width=frc.offsetWidth;frc.height=frc.offsetHeight||120;
+    frx.clearRect(0,0,frc.width,frc.height);
+    const cx=frc.width/2,cy=frc.height/2;
+    frx.fillStyle='rgba(255,214,0,.15)';frx.strokeStyle='rgba(255,214,0,.4)';frx.lineWidth=1.5;
+    frx.beginPath();frx.roundRect(cx-20,cy-20,40,40,4);frx.fill();frx.stroke();
+    frx.fillStyle='rgba(255,255,255,.6)';frx.font='bold 10px DM Mono';frx.textAlign='center';
+    frx.fillText('m',cx,cy+4);frx.textAlign='left';
+    [[0,-1,'#ff8800',40],[0,1,'#00e676',40],[1,0,'#3c82ff',35],[-1,0,'#aa66ff',28]].forEach(([dx,dy,col,len],i)=>{
+      const w=Math.sin(ft+i*1.2)*3;
+      const ex=cx+dx*(len+w),ey=cy+dy*(len+w);
+      frx.beginPath();frx.moveTo(cx,cy);frx.lineTo(ex,ey);
+      frx.strokeStyle=col;frx.lineWidth=2;frx.stroke();
+      const a=Math.atan2(ey-cy,ex-cx);
+      frx.beginPath();frx.moveTo(ex,ey);
+      frx.lineTo(ex-7*Math.cos(a-.4),ey-7*Math.sin(a-.4));
+      frx.lineTo(ex-7*Math.cos(a+.4),ey-7*Math.sin(a+.4));
+      frx.closePath();frx.fillStyle=col;frx.fill();
+    });
+    ft+=0.03;requestAnimationFrame(drawForceCard);
+  }
+  drawForceCard();
+}
 </script>
 </body>
 </html>
