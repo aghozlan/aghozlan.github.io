@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaveLab 2 — Wave Investigations | Ahmad Ghozlan | Grade 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080f;--bg2:#090c18;--bg3:#0c1020;
+  --panel:#0f1428;--panel2:#141c35;
+  --border:rgba(60,130,255,.1);--border2:rgba(60,130,255,.22);
+  --text:#dde8ff;--muted:#3a4870;--muted2:#7a90c8;
+  --blue:#3c82ff;--blue2:#1a5fd4;
+  --cyan:#00cfff;--green:#00e676;--green2:#00a050;
+  --yellow:#ffd600;--orange:#ff8800;--red:#ff4466;
+  --purple:#aa66ff;
+  --fh:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.6;}
+
+/* SESSION BAR */
+.session-bar{position:sticky;top:0;z-index:200;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.phase{padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:700;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;opacity:.4;transition:all .3s;}
+.phase.active{opacity:1;}
+.phase.p1{background:rgba(255,68,102,.12);color:var(--red);border:1px solid rgba(255,68,102,.25);}
+.phase.p2{background:rgba(255,214,0,.12);color:var(--yellow);border:1px solid rgba(255,214,0,.25);}
+.phase.p3{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25);}
+.timer{font-family:var(--fm);font-size:1rem;font-weight:700;color:var(--cyan);min-width:55px;}
+.sbtn{padding:4px 12px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted2);font-family:var(--fh);font-size:.75rem;cursor:pointer;transition:all .2s;}
+.sbtn:hover{border-color:var(--cyan);color:var(--cyan);}
+.sprog{flex:1;max-width:160px;}
+.spbar{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;}
+.spfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--green));transition:width 1s linear;}
+.slbl{font-size:.58rem;color:var(--muted2);margin-top:2px;font-family:var(--fm);}
+
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:24px 20px;}
+
+/* HEADER */
+.lab-tag{font-family:var(--fm);font-size:.6rem;color:var(--cyan);text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(0,207,255,.22);padding:4px 12px;border-radius:2px;display:inline-block;margin-bottom:12px;}
+.lab-title{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:5px;}
+.lab-title span{color:var(--cyan);}
+.lab-sub{font-size:.88rem;color:var(--muted2);max-width:580px;line-height:1.7;margin-bottom:16px;}
+.obj-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+.obj{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:3px;background:rgba(60,130,255,.07);color:var(--blue);border:1px solid rgba(60,130,255,.18);}
+
+/* TEACHER GUIDE */
+.teacher-guide{background:rgba(170,102,255,.05);border:1px solid rgba(170,102,255,.18);border-radius:10px;padding:14px 18px;margin-bottom:20px;}
+.tg-title{font-size:.72rem;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;}
+.tg-phase{display:flex;gap:10px;margin-bottom:8px;font-size:.8rem;color:var(--muted2);line-height:1.65;}
+.tg-num{background:var(--purple);color:#fff;width:20px;height:20px;border-radius:50%;font-size:.68rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.tg-phase strong{color:var(--text);}
+
+/* PHET LAUNCHER */
+.phet-launcher{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.phet-info h3{font-weight:700;font-size:.95rem;color:#fff;margin-bottom:4px;}
+.phet-info p{font-size:.78rem;color:var(--muted2);line-height:1.6;max-width:500px;}
+.phet-info .tip{margin-top:8px;font-size:.75rem;color:var(--cyan);background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.15);border-radius:5px;padding:6px 10px;display:inline-block;}
+.launch-btn{background:var(--cyan);color:#000;padding:11px 22px;border-radius:7px;font-family:var(--fh);font-weight:800;font-size:.88rem;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.launch-btn:hover{background:#00aad4;transform:scale(1.03);}
+.launch-btn.open{background:var(--green);color:#000;}
+
+/* FLOATING PHET WINDOW */
+.phet-window{position:fixed;top:60px;right:20px;width:640px;height:420px;background:var(--panel2);border:2px solid var(--cyan);border-radius:10px;z-index:300;display:none;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.7);resize:both;overflow:hidden;min-width:320px;min-height:250px;}
+.phet-window.visible{display:flex;}
+.phet-titlebar{background:var(--panel);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;cursor:move;user-select:none;flex-shrink:0;}
+.phet-titlebar span{font-family:var(--fm);font-size:.7rem;color:var(--cyan);}
+.phet-controls{display:flex;gap:6px;}
+.phet-ctrl-btn{width:20px;height:20px;border-radius:50%;border:none;cursor:pointer;font-size:.6rem;display:flex;align-items:center;justify-content:center;}
+.phet-ctrl-btn.close{background:var(--red);color:#fff;}
+.phet-ctrl-btn.min{background:var(--yellow);color:#000;}
+.phet-ctrl-btn.max{background:var(--green);color:#000;}
+.phet-window iframe{flex:1;border:none;width:100%;display:block;}
+.phet-resize-hint{text-align:center;font-size:.65rem;color:var(--muted);padding:4px;background:var(--panel);flex-shrink:0;}
+
+/* SIM GUIDE */
+.sim-guide{background:rgba(0,207,255,.03);border:1px solid rgba(0,207,255,.1);border-radius:9px;padding:14px 18px;margin-bottom:20px;}
+.sg-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
+.sg-title{font-weight:700;font-size:.85rem;color:var(--cyan);}
+.sg-tog{font-size:.78rem;color:var(--muted2);transition:transform .2s;}
+.sg-tog.open{transform:rotate(180deg);}
+.sg-body{display:none;margin-top:12px;}
+.sg-body.open{display:block;}
+.sg-step{display:flex;gap:10px;margin-bottom:10px;font-size:.82rem;color:var(--muted2);line-height:1.65;}
+.sg-num{background:var(--cyan);color:#000;width:18px;height:18px;border-radius:50%;font-size:.65rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sg-step strong{color:var(--text);}
+.sg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.sg-card{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:9px 11px;}
+.sg-card-name{font-family:var(--fm);font-size:.62rem;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+.sg-card-desc{font-size:.76rem;color:var(--muted2);line-height:1.5;}
+
+/* ANSWER KEY CARD */
+.answer-key{background:rgba(255,214,0,.04);border:1px solid rgba(255,214,0,.15);border-radius:9px;padding:14px 18px;margin-bottom:20px;}
+.ak-title{font-size:.68rem;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;}
+.ak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;}
+.ak-item{background:var(--panel2);border-radius:6px;padding:8px 10px;}
+.ak-label{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:var(--fm);margin-bottom:3px;}
+.ak-val{font-family:var(--fm);font-size:.88rem;color:var(--yellow);font-weight:600;}
+
+/* INVESTIGATIONS */
+.inv-hdr{font-size:.7rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.inv-card{background:var(--panel);border:1px solid var(--border);border-radius:11px;margin-bottom:16px;overflow:hidden;transition:border-color .3s;}
+.inv-card.active{border-color:var(--cyan);}
+.inv-card.done{border-color:var(--green);}
+.inv-head{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.inv-badge{width:30px;height:30px;border-radius:50%;font-family:var(--fm);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--muted);color:var(--muted);}
+.inv-card.active .inv-badge{border-color:var(--cyan);color:var(--cyan);background:rgba(0,207,255,.08);}
+.inv-card.done .inv-badge{border-color:var(--green);color:var(--green);background:rgba(0,230,118,.08);}
+.inv-meta{flex:1;}
+.inv-name{font-weight:700;font-size:.92rem;color:#fff;margin-bottom:1px;}
+.inv-goal{font-size:.75rem;color:var(--muted2);}
+.inv-stat{font-size:.7rem;font-family:var(--fm);color:var(--muted);}
+.inv-card.active .inv-stat{color:var(--cyan);}
+.inv-card.done .inv-stat{color:var(--green);}
+.inv-chev{color:var(--muted);font-size:.85rem;transition:transform .2s;}
+.inv-chev.open{transform:rotate(180deg);}
+.inv-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+.inv-body.open{display:block;}
+
+/* STEP */
+.step{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px;}
+.step-lbl{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--blue);margin-bottom:7px;}
+.step-txt{font-size:.85rem;color:var(--muted2);line-height:1.75;margin-bottom:10px;}
+.step-txt strong{color:var(--text);}
+.sim-act{display:inline-flex;align-items:center;gap:5px;background:rgba(0,207,255,.07);border:1px solid rgba(0,207,255,.18);border-radius:4px;padding:2px 8px;font-size:.76rem;color:var(--cyan);font-family:var(--fm);}
+
+/* INPUTS */
+.meas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;margin-bottom:12px;}
+.meas-item label{display:block;font-size:.65rem;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-family:var(--fm);}
+.meas-item input{width:100%;background:var(--panel);border:1px solid var(--border2);border-radius:5px;padding:8px 11px;color:var(--text);font-family:var(--fm);font-size:.88rem;outline:none;transition:border-color .2s;}
+.meas-item input:focus{border-color:var(--cyan);}
+.meas-item .unit{font-size:.62rem;color:var(--muted);margin-top:2px;}
+.calc-box{background:var(--panel);border:1px solid var(--border2);border-radius:5px;padding:8px 11px;font-family:var(--fm);font-size:.88rem;color:var(--cyan);min-height:36px;display:flex;align-items:center;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:12px;}
+.data-table th{padding:7px 10px;text-align:left;color:var(--muted2);font-family:var(--fm);font-size:.62rem;text-transform:uppercase;background:var(--panel2);}
+.data-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
+.data-table input{width:90px;padding:4px 7px;font-size:.8rem;}
+
+/* CONCLUSION */
+.concl{background:rgba(60,130,255,.04);border:1px solid rgba(60,130,255,.18);border-radius:8px;padding:14px;margin-top:10px;}
+.concl-lbl{font-size:.62rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--blue);margin-bottom:7px;}
+textarea{width:100%;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:9px 12px;color:var(--text);font-family:var(--fh);font-size:.85rem;outline:none;resize:vertical;min-height:75px;transition:border-color .2s;}
+textarea:focus{border-color:var(--blue);}
+
+/* BUTTONS */
+.btn{padding:9px 20px;border-radius:6px;font-family:var(--fh);font-weight:700;font-size:.84rem;cursor:pointer;border:none;transition:all .2s;}
+.btn-cyan{background:var(--cyan);color:#000;}
+.btn-green{background:var(--green);color:#000;}
+.btn-chk{padding:7px 16px;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:var(--fh);font-weight:600;font-size:.78rem;cursor:pointer;transition:all .2s;}
+.btn-chk:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* FEEDBACK */
+.fb{margin-top:9px;padding:9px 13px;border-radius:6px;font-size:.8rem;display:none;line-height:1.7;}
+.fb.ok{background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);color:var(--green);}
+.fb.bad{background:rgba(255,68,102,.07);border:1px solid rgba(255,68,102,.2);color:var(--red);}
+.fb.hint{background:rgba(255,214,0,.05);border:1px solid rgba(255,214,0,.18);color:var(--yellow);}
+.fb.info{background:rgba(60,130,255,.07);border:1px solid rgba(60,130,255,.2);color:var(--blue);}
+
+/* AI */
+.ai-box{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:16px;}
+.ai-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+.ai-pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-resp{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:.85rem;line-height:1.75;margin-top:10px;display:none;}
+.ai-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:dots .8s infinite;display:inline-block;margin:0 2px;}
+.ai-dot:nth-child(2){animation-delay:.15s;}
+.ai-dot:nth-child(3){animation-delay:.3s;}
+@keyframes dots{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+
+/* SUBMIT */
+.sub-card{background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+@media(max-width:700px){.sub-grid{grid-template-columns:1fr;}}
+input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:8px 12px;color:var(--text);font-family:var(--fh);font-size:.85rem;outline:none;transition:border-color .2s;}
+input[type=text]:focus{border-color:var(--cyan);}
+.name-row{display:flex;gap:10px;margin-bottom:12px;}
+.prog-bar{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:10px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:3px;transition:width .5s;}
+.score-big{font-family:var(--fm);font-size:2.6rem;font-weight:700;color:var(--cyan);text-align:center;line-height:1;}
+
+/* TOAST */
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--cyan);color:var(--cyan);padding:9px 20px;border-radius:7px;font-family:var(--fm);font-size:.78rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+footer{padding:28px 20px;text-align:center;border-top:1px solid var(--border);background:var(--bg2);font-size:.68rem;color:var(--muted2);}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<input type="text" id="ci" style="position:fixed;top:-100px;opacity:0;pointer-events:none;">
+
+<!-- SESSION BAR -->
+<div class="session-bar">
+  <div class="phase p1 active" id="ph1">⏱ Intro (0–15 min)</div>
+  <div class="phase p2" id="ph2">🔬 Investigation (15–40 min)</div>
+  <div class="phase p3" id="ph3">✓ Review (40–50 min)</div>
+  <div class="sprog">
+    <div class="spbar"><div class="spfill" id="spf" style="width:0%"></div></div>
+    <div class="slbl" id="slbl">Click Start to begin session</div>
+  </div>
+  <div class="timer" id="timer">50:00</div>
+  <button class="sbtn" id="timerBtn" onclick="startTimer()">▶ Start</button>
+  <button class="sbtn" onclick="togglePhet()">🌊 PhET Window</button>
+  <button class="sbtn" onclick="shareIt()">🔗 Share</button>
+</div>
+
+<!-- FLOATING PHET WINDOW -->
+<div class="phet-window" id="phetWin">
+  <div class="phet-titlebar" id="phetDragBar">
+    <span>🌊 PhET — Wave on a String</span>
+    <div class="phet-controls">
+      <button class="phet-ctrl-btn min" title="Minimise" onclick="togglePhet()">–</button>
+      <button class="phet-ctrl-btn max" title="Full screen" onclick="fullscreenPhet()">⛶</button>
+      <button class="phet-ctrl-btn close" title="Close" onclick="togglePhet()">✕</button>
+    </div>
+  </div>
+  <iframe id="phetFrame" src="" allowfullscreen></iframe>
+  <div class="phet-resize-hint">↔ Drag corners to resize · Drag title bar to move</div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="lab-tag">Grade 8 · Physics · Wave Investigations · Part 2</div>
+  <h1 class="lab-title">Wave<span>Lab</span> 2</h1>
+  <p class="lab-sub">Use the PhET simulation to investigate wave properties. Click <strong style="color:var(--cyan);">🌊 PhET Window</strong> in the top bar to open the simulation — you can drag it, resize it, and keep it visible alongside this worksheet the whole time.</p>
+  <div class="obj-row">
+    <span class="obj">Amplitude</span>
+    <span class="obj">Wavelength λ</span>
+    <span class="obj">Period T & Frequency f</span>
+    <span class="obj">Wave Speed v=fλ</span>
+    <span class="obj">Frequency ↔ λ Relationship</span>
+    <span class="obj">Amplitude ↔ Speed</span>
+  </div>
+
+  <!-- TEACHER GUIDE -->
+  <div class="teacher-guide">
+    <div class="tg-title">🎥 50-Minute Teams Session Guide — Ahmad Ghozlan</div>
+    <div class="tg-phase"><div class="tg-num">1</div><div><strong>0–15 min · Share your screen:</strong> Open this page. Click "🌊 PhET Window" → the sim opens as a floating window you can drag and resize. Show students how to: set Oscillate mode, set Tension to High, set Damping to None, enable Rulers and Timer. Do Investigation 1 (amplitude) together live. Share the link in Teams chat.</div></div>
+    <div class="tg-phase"><div class="tg-num">2</div><div><strong>15–40 min · Students work independently:</strong> Students open the link on their own devices — sim and worksheet on the same page. You stay on Teams. Monitor chat. The answer key card below (yellow) is visible only on this page to help you guide students who are stuck.</div></div>
+    <div class="tg-phase"><div class="tg-num">3</div><div><strong>40–50 min · Review together:</strong> Share screen again. Walk through answers — ask students to share their v=fλ calculations in the chat. Discuss the amplitude-speed discovery. Students submit before session ends.</div></div>
+  </div>
+
+  <!-- PHET LAUNCHER -->
+  <div class="phet-launcher">
+    <div class="phet-info">
+      <h3>🌊 PhET Simulation — Wave on a String</h3>
+      <p>The simulation opens as a floating window you can drag to any position on your screen and resize. Keep it next to the worksheet so you never need to switch tabs.</p>
+      <div class="tip">💡 Tip for students: Drag the PhET window to the right side of your screen, and use the left side for the worksheet.</div>
+    </div>
+    <button class="launch-btn" id="launchBtn" onclick="togglePhet()">🌊 Open PhET Window</button>
+  </div>
+
+  <!-- SIM GUIDE -->
+  <div class="sim-guide">
+    <div class="sg-header" onclick="toggleGuide()">
+      <div class="sg-title">📋 How to Use the Simulation — Read Before Starting</div>
+      <div class="sg-tog" id="sgTog">▼</div>
+    </div>
+    <div class="sg-body" id="sgBody">
+      <div class="sg-step"><div class="sg-num">1</div><div>Select <strong>Oscillate</strong> at the top — this creates a continuous wave.</div></div>
+      <div class="sg-step"><div class="sg-num">2</div><div>Set <strong>Tension to High</strong> — keep this for ALL investigations so results are consistent.</div></div>
+      <div class="sg-step"><div class="sg-num">3</div><div>Set <strong>Damping to None</strong> — slider all the way left so the wave doesn't fade.</div></div>
+      <div class="sg-step"><div class="sg-num">4</div><div>Select <strong>No End</strong> — the wave travels freely without reflecting.</div></div>
+      <div class="sg-step"><div class="sg-num">5</div><div>Tick <strong>Rulers</strong> — a ruler appears. Drag it to measure wavelength (crest to crest).</div></div>
+      <div class="sg-step"><div class="sg-num">6</div><div>Tick <strong>Timer</strong> — a stopwatch appears. Use it to time one full oscillation.</div></div>
+      <div class="sg-step"><div class="sg-num">7</div><div>Press <strong>Pause ⏸</strong> to freeze the wave — much easier to measure a still wave!</div></div>
+      <div class="sg-grid">
+        <div class="sg-card"><div class="sg-card-name">Frequency slider</div><div class="sg-card-desc">Controls oscillations per second (Hz). Higher = more waves, shorter wavelength.</div></div>
+        <div class="sg-card"><div class="sg-card-name">Amplitude slider</div><div class="sg-card-desc">Controls wave height (cm). Does NOT affect speed — you will prove this!</div></div>
+        <div class="sg-card"><div class="sg-card-name">Ruler tool</div><div class="sg-card-desc">Drag to measure crest-to-crest distance = wavelength λ in cm.</div></div>
+        <div class="sg-card"><div class="sg-card-name">Timer tool</div><div class="sg-card-desc">Time one full up-down-up cycle of any dot = period T in seconds.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANSWER KEY (teacher reference) -->
+  <div class="answer-key">
+    <div class="ak-title">📋 Expected Values — Teacher Reference (Tension: High, No End)</div>
+    <div class="ak-grid">
+      <div class="ak-item"><div class="ak-label">f = 1.00 Hz → λ</div><div class="ak-val">≈ 6.2 cm</div></div>
+      <div class="ak-item"><div class="ak-label">f = 1.50 Hz → λ</div><div class="ak-val">≈ 4.1 cm</div></div>
+      <div class="ak-item"><div class="ak-label">f = 2.00 Hz → λ</div><div class="ak-val">≈ 3.1 cm</div></div>
+      <div class="ak-item"><div class="ak-label">f = 3.00 Hz → λ</div><div class="ak-val">≈ 2.0 cm</div></div>
+      <div class="ak-item"><div class="ak-label">T at f=1.50 Hz</div><div class="ak-val">≈ 0.67 s</div></div>
+      <div class="ak-item"><div class="ak-label">Wave speed v = fλ</div><div class="ak-val">≈ 6.0–6.5 cm/s</div></div>
+      <div class="ak-item"><div class="ak-label">Amplitude effect on v</div><div class="ak-val">None — v constant</div></div>
+      <div class="ak-item"><div class="ak-label">f ↔ λ relationship</div><div class="ak-val">Inverse (fλ = const)</div></div>
+    </div>
+  </div>
+
+  <!-- INVESTIGATIONS -->
+  <div class="inv-hdr">
+    <span>🔬 Wave Investigations</span>
+    <span id="invProg" style="font-family:var(--fm);font-size:.7rem;color:var(--muted2);">0 / 5 completed</span>
+  </div>
+
+  <!-- INV 1 -->
+  <div class="inv-card" id="inv1">
+    <div class="inv-head" onclick="tog(1)">
+      <div class="inv-badge">1</div>
+      <div class="inv-meta">
+        <div class="inv-name">Measuring Amplitude</div>
+        <div class="inv-goal">Observe what amplitude is and how it affects the wave</div>
+      </div>
+      <div class="inv-stat" id="s1">Not started</div>
+      <div class="inv-chev" id="c1">▼</div>
+    </div>
+    <div class="inv-body" id="b1">
+      <div class="step">
+        <div class="step-lbl">Setup</div>
+        <div class="step-txt">In the PhET sim: <span class="sim-act">Oscillate</span> · <span class="sim-act">Tension: High</span> · <span class="sim-act">Damping: None</span> · <span class="sim-act">No End</span>. Set <strong>Frequency = 1.50 Hz</strong>. Enable <span class="sim-act">Rulers</span>. Wait 3 seconds for the wave to develop. Then <span class="sim-act">⏸ Pause</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-lbl">Measure</div>
+        <div class="step-txt">Use the ruler to measure the <strong>amplitude</strong> — the height from the flat centre line (equilibrium) up to the highest point (crest). Try three different amplitude settings and record the wavelength each time.</div>
+        <div class="meas-grid">
+          <div class="meas-item"><label>Amplitude set (cm)</label><input type="number" id="inv1_a" placeholder="e.g. 0.75" step="0.05"><div class="unit">cm — read from slider</div></div>
+          <div class="meas-item"><label>Measured height (cm)</label><input type="number" id="inv1_h" placeholder="crest to centre" step="0.05"><div class="unit">cm — use ruler</div></div>
+          <div class="meas-item"><label>Wavelength at this amplitude (cm)</label><input type="number" id="inv1_l" placeholder="crest to crest" step="0.1"><div class="unit">cm — should stay ~4.1 cm</div></div>
+        </div>
+        <button class="btn-chk" onclick="chk1()">✓ Check</button>
+        <div class="fb" id="f1"></div>
+      </div>
+      <div class="concl">
+        <div class="concl-lbl">What does amplitude represent?</div>
+        <textarea id="inv1_c" placeholder="Define amplitude in your own words. Does changing amplitude affect the wavelength?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- INV 2 -->
+  <div class="inv-card" id="inv2">
+    <div class="inv-head" onclick="tog(2)">
+      <div class="inv-badge">2</div>
+      <div class="inv-meta">
+        <div class="inv-name">Measuring Wavelength (λ)</div>
+        <div class="inv-goal">Use the ruler to measure crest-to-crest distance precisely</div>
+      </div>
+      <div class="inv-stat" id="s2">Not started</div>
+      <div class="inv-chev" id="c2">▼</div>
+    </div>
+    <div class="inv-body" id="b2">
+      <div class="step">
+        <div class="step-lbl">Setup & Measure</div>
+        <div class="step-txt">Set <strong>Frequency = 1.50 Hz</strong>, <strong>Amplitude = 0.75 cm</strong>, Tension High, Damping None. Let the wave develop, then <span class="sim-act">⏸ Pause</span>. Drag the ruler to measure from one crest to the next crest. This is wavelength λ.</div>
+        <div class="meas-grid">
+          <div class="meas-item"><label>Frequency (Hz)</label><input type="number" id="inv2_f" value="1.50" step="0.01"><div class="unit">set on slider</div></div>
+          <div class="meas-item"><label>Wavelength λ (cm)</label><input type="number" id="inv2_l" placeholder="crest to crest" step="0.1" onchange="autoCalc()"><div class="unit">cm — pause sim & use ruler</div></div>
+        </div>
+        <button class="btn-chk" onclick="chk2()">✓ Check Measurement</button>
+        <div class="fb" id="f2"></div>
+      </div>
+      <div class="concl">
+        <div class="concl-lbl">Define wavelength in your own words</div>
+        <textarea id="inv2_c" placeholder="What is wavelength? How did you measure it?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- INV 3 -->
+  <div class="inv-card" id="inv3">
+    <div class="inv-head" onclick="tog(3)">
+      <div class="inv-badge">3</div>
+      <div class="inv-meta">
+        <div class="inv-name">Period (T) and Frequency (f = 1/T)</div>
+        <div class="inv-goal">Time one full oscillation and verify f = 1/T</div>
+      </div>
+      <div class="inv-stat" id="s3">Not started</div>
+      <div class="inv-chev" id="c3">▼</div>
+    </div>
+    <div class="inv-body" id="b3">
+      <div class="step">
+        <div class="step-lbl">Measure Period T</div>
+        <div class="step-txt">Keep <strong>f = 1.50 Hz</strong>. Enable the <span class="sim-act">Timer</span> in the sim. <strong>Unpause</strong>. Watch the green dot at the source go up, reach the top, come back down, go to the bottom, and return to centre — that is <strong>one complete oscillation</strong>. Start and stop the timer for exactly one cycle. This time is period <strong>T</strong>.</div>
+        <div class="meas-grid">
+          <div class="meas-item"><label>Period T measured (s)</label><input type="number" id="inv3_T" placeholder="e.g. 0.67" step="0.01" onchange="calcF()"><div class="unit">seconds — one full cycle</div></div>
+          <div class="meas-item"><label>Calculated f = 1/T</label><div class="calc-box" id="inv3_fcalc">Enter T above</div><div class="unit">Hz — should match slider</div></div>
+          <div class="meas-item"><label>Frequency on slider (Hz)</label><input type="number" id="inv3_fsim" placeholder="1.50" step="0.01"><div class="unit">Hz — read from sim</div></div>
+        </div>
+        <button class="btn-chk" onclick="chk3()">✓ Check f = 1/T</button>
+        <div class="fb" id="f3"></div>
+      </div>
+      <div class="concl">
+        <div class="concl-lbl">Relationship between T and f</div>
+        <textarea id="inv3_c" placeholder="If frequency doubles, what happens to period? Write the mathematical relationship."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- INV 4 -->
+  <div class="inv-card" id="inv4">
+    <div class="inv-head" onclick="tog(4)">
+      <div class="inv-badge">4</div>
+      <div class="inv-meta">
+        <div class="inv-name">Wave Speed: v = f × λ</div>
+        <div class="inv-goal">Calculate wave speed and prove it stays constant</div>
+      </div>
+      <div class="inv-stat" id="s4">Not started</div>
+      <div class="inv-chev" id="c4">▼</div>
+    </div>
+    <div class="inv-body" id="b4">
+      <div class="step">
+        <div class="step-lbl">Calculate Speed at f = 1.50 Hz</div>
+        <div class="step-txt">Use your values from Investigations 2 and 3. Calculate <strong>v = f × λ</strong>. Keep λ in cm and f in Hz — your speed will be in cm/s.</div>
+        <div class="meas-grid">
+          <div class="meas-item"><label>f (Hz)</label><input type="number" id="inv4_f1" placeholder="1.50" step="0.01" onchange="calcV1()"></div>
+          <div class="meas-item"><label>λ (cm)</label><input type="number" id="inv4_l1" placeholder="from Inv 2" step="0.1" onchange="calcV1()"></div>
+          <div class="meas-item"><label>v = f × λ (cm/s)</label><div class="calc-box" id="inv4_v1">—</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-lbl">Now change frequency to 3.00 Hz and repeat</div>
+        <div class="step-txt"><span class="sim-act">Change frequency to 3.00 Hz</span>. Pause and measure the new wavelength λ. Calculate the new speed. Does the speed change?</div>
+        <div class="meas-grid">
+          <div class="meas-item"><label>f (Hz)</label><input type="number" id="inv4_f2" value="3.00" step="0.01" onchange="calcV2()"></div>
+          <div class="meas-item"><label>λ (cm)</label><input type="number" id="inv4_l2" placeholder="measure again" step="0.1" onchange="calcV2()"></div>
+          <div class="meas-item"><label>v = f × λ (cm/s)</label><div class="calc-box" id="inv4_v2">—</div></div>
+        </div>
+        <button class="btn-chk" onclick="chk4()">✓ Compare the Two Speeds</button>
+        <div class="fb" id="f4"></div>
+      </div>
+      <div class="concl">
+        <div class="concl-lbl">What did you discover about wave speed?</div>
+        <textarea id="inv4_c" placeholder="What happens to wave speed when frequency changes? What does v = fλ tell us?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- INV 5 -->
+  <div class="inv-card" id="inv5">
+    <div class="inv-head" onclick="tog(5)">
+      <div class="inv-badge">5</div>
+      <div class="inv-meta">
+        <div class="inv-name">Frequency ↔ Wavelength Relationship</div>
+        <div class="inv-goal">Discover the inverse relationship using a data table</div>
+      </div>
+      <div class="inv-stat" id="s5">Not started</div>
+      <div class="inv-chev" id="c5">▼</div>
+    </div>
+    <div class="inv-body" id="b5">
+      <div class="step">
+        <div class="step-lbl">Data Collection — 4 different frequencies</div>
+        <div class="step-txt">Set each frequency below, let the wave develop, pause, measure λ. Keep Tension High and Damping None throughout.</div>
+        <table class="data-table">
+          <thead><tr>
+            <th>Trial</th><th>Frequency f (Hz)</th><th>Wavelength λ (cm)</th><th>Speed v=fλ (cm/s)</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="color:var(--cyan);font-family:var(--fm);">1</td>
+              <td><input type="number" class="meas-item" id="v5f1" value="1.00" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td><input type="number" id="v5l1" placeholder="measure" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td style="font-family:var(--fm);color:var(--green);" id="v5v1">—</td></tr>
+            <tr><td style="color:var(--cyan);font-family:var(--fm);">2</td>
+              <td><input type="number" id="v5f2" value="1.50" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td><input type="number" id="v5l2" placeholder="measure" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td style="font-family:var(--fm);color:var(--green);" id="v5v2">—</td></tr>
+            <tr><td style="color:var(--cyan);font-family:var(--fm);">3</td>
+              <td><input type="number" id="v5f3" value="2.00" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td><input type="number" id="v5l3" placeholder="measure" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td style="font-family:var(--fm);color:var(--green);" id="v5v3">—</td></tr>
+            <tr><td style="color:var(--cyan);font-family:var(--fm);">4</td>
+              <td><input type="number" id="v5f4" value="3.00" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td><input type="number" id="v5l4" placeholder="measure" step="0.1" style="width:80px;" onchange="calcT5()"></td>
+              <td style="font-family:var(--fm);color:var(--green);" id="v5v4">—</td></tr>
+          </tbody>
+        </table>
+        <button class="btn-chk" onclick="chk5()">✓ Analyse My Data</button>
+        <div class="fb" id="f5"></div>
+      </div>
+      <div class="concl">
+        <div class="concl-lbl">The relationship between frequency and wavelength</div>
+        <textarea id="inv5_c" placeholder="When frequency increases, what happens to wavelength? When frequency halves, what happens to wavelength? What stays constant? Can you write a formula?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- BONUS -->
+  <div class="inv-card" id="inv6" style="border-color:rgba(255,214,0,.15);">
+    <div class="inv-head" onclick="tog(6)">
+      <div class="inv-badge" style="border-color:var(--yellow);color:var(--yellow);">★</div>
+      <div class="inv-meta">
+        <div class="inv-name">Bonus — Does Amplitude Affect Wave Speed?</div>
+        <div class="inv-goal">Test a common misconception — challenge your intuition!</div>
+      </div>
+      <div class="inv-stat" id="s6" style="color:var(--yellow);">Optional</div>
+      <div class="inv-chev" id="c6">▼</div>
+    </div>
+    <div class="inv-body" id="b6">
+      <div class="step">
+        <div class="step-lbl">Predict first, then test</div>
+        <div class="step-txt">Set <strong>f = 1.50 Hz</strong>. Try three amplitude values: <strong>0.25 cm, 0.75 cm, and 1.25 cm</strong>. For each, pause and measure λ, then calculate v = fλ.</div>
+        <div class="meas-grid">
+          <div class="meas-item"><label>Amplitude 0.25 cm → λ (cm)</label><input type="number" id="b_l1" placeholder="measure" step="0.1" onchange="calcBonus()"></div>
+          <div class="meas-item"><label>Amplitude 0.75 cm → λ (cm)</label><input type="number" id="b_l2" placeholder="measure" step="0.1" onchange="calcBonus()"></div>
+          <div class="meas-item"><label>Amplitude 1.25 cm → λ (cm)</label><input type="number" id="b_l3" placeholder="measure" step="0.1" onchange="calcBonus()"></div>
+          <div class="meas-item"><label>Speeds compared</label><div class="calc-box" id="b_comp" style="font-size:.75rem;">Enter λ values above</div></div>
+        </div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:700;font-size:.85rem;">AI Tutor — Was your prediction correct?</span></div>
+        <textarea id="b_concl" placeholder="Was amplitude prediction correct? What did you discover? Why does amplitude NOT affect speed?"></textarea>
+        <button class="btn" style="background:var(--yellow);color:#000;margin-top:9px;font-size:.8rem;" onclick="getAI()">Get AI Feedback</button>
+        <div class="ai-resp" id="aiR"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <hr>
+  <div class="sub-card" style="margin-bottom:40px;">
+    <h3 style="font-weight:700;font-size:.95rem;color:#fff;margin-bottom:18px;">📊 Submit Your Investigation Results</h3>
+    <div class="sub-grid">
+      <div>
+        <div class="name-row">
+          <div style="flex:2;"><label style="font-size:.7rem;color:var(--muted2);display:block;margin-bottom:4px;">Full Name *</label><input type="text" id="sName" placeholder="Your full name…"></div>
+          <div style="flex:1;"><label style="font-size:.7rem;color:var(--muted2);display:block;margin-bottom:4px;">Class *</label><input type="text" id="sClass" placeholder="e.g. 8A"></div>
+        </div>
+        <div id="aRev" style="font-size:.76rem;line-height:2;font-family:var(--fm);color:var(--muted2);"></div>
+        <div class="prog-bar"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+        <p id="pTxt" style="font-size:.7rem;color:var(--muted);margin-bottom:12px;">0 / 5 investigations completed</p>
+        <button class="btn btn-green" style="width:100%;" onclick="submit()">📊 Submit to Ahmad's Grade Sheet</button>
+      </div>
+      <div style="text-align:center;padding:18px;background:var(--panel2);border-radius:9px;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">⚡</div>
+        <div class="score-big" id="sDsp">—</div>
+        <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-top:4px;">Your Score</div>
+        <hr>
+        <p style="font-size:.76rem;color:var(--muted2);line-height:1.7;">Ahmad reviews your wave speed calculations and conclusions in the next class.</p>
+        <div id="subOk" style="display:none;margin-top:10px;padding:9px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:6px;font-size:.78rem;color:var(--green);">✓ Submitted! Ahmad has your results.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .page -->
+
+<footer>
+  Wave<span style="color:var(--cyan);">Lab</span> 2 · Ahmad Ghozlan · AI in Education · Grade 8 Physics · Lebanon ·
+  <button onclick="shareIt()" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-size:.68rem;">🔗 Share</button>
+</footer>
+
+<script>
+const URL_AS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+// Expected λ values at Tension=High (cm) for validation
+const EXP={1.0:6.2, 1.5:4.1, 2.0:3.1, 3.0:2.0};
+const TOL=0.8; // ±0.8 cm tolerance
+
+// ── SESSION TIMER ──
+var sec=50*60,running=false,iv=null;
+function startTimer(){
+  if(running){clearInterval(iv);running=false;document.getElementById('timerBtn').textContent='▶ Resume';return;}
+  running=true;document.getElementById('timerBtn').textContent='⏸ Pause';
+  iv=setInterval(()=>{
+    if(sec<=0){clearInterval(iv);showToast('⏰ Session ended!');return;}
+    sec--;
+    const m=Math.floor(sec/60),s=sec%60;
+    document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const el=50*60-sec,pct=Math.round(el/(50*60)*100),em=el/60;
+    document.getElementById('spf').style.width=pct+'%';
+    document.getElementById('ph1').classList.toggle('active',em<15);
+    document.getElementById('ph2').classList.toggle('active',em>=15&&em<40);
+    document.getElementById('ph3').classList.toggle('active',em>=40);
+    const rem=Math.round(50-em);
+    document.getElementById('slbl').textContent=(em<15?'Phase 1: Intro':em<40?'Phase 2: Investigation':'Phase 3: Review')+' · '+rem+' min left';
+  },1000);
+}
+
+// ── PHET FLOATING WINDOW ──
+var phetOpen=false;
+function togglePhet(){
+  const win=document.getElementById('phetWin');
+  const btn=document.getElementById('launchBtn');
+  phetOpen=!phetOpen;
+  win.classList.toggle('visible',phetOpen);
+  btn.textContent=phetOpen?'🌊 Close PhET Window':'🌊 Open PhET Window';
+  btn.classList.toggle('open',phetOpen);
+  if(phetOpen&&!document.getElementById('phetFrame').src.includes('phet')){
+    document.getElementById('phetFrame').src='https://phet.colorado.edu/sims/html/wave-on-a-string/latest/wave-on-a-string_en.html';
+  }
+}
+function fullscreenPhet(){
+  const frame=document.getElementById('phetFrame');
+  if(frame.requestFullscreen)frame.requestFullscreen();
+  else if(frame.webkitRequestFullscreen)frame.webkitRequestFullscreen();
+}
+// Drag functionality
+(function(){
+  const win=document.getElementById('phetWin');
+  const bar=document.getElementById('phetDragBar');
+  let ox=0,oy=0,mx=0,my=0;
+  bar.addEventListener('mousedown',e=>{
+    e.preventDefault();
+    mx=e.clientX;my=e.clientY;
+    document.addEventListener('mousemove',drag);
+    document.addEventListener('mouseup',()=>document.removeEventListener('mousemove',drag));
+  });
+  function drag(e){
+    ox=mx-e.clientX;oy=my-e.clientY;mx=e.clientX;my=e.clientY;
+    win.style.top=(win.offsetTop-oy)+'px';
+    win.style.right='auto';
+    win.style.left=(win.offsetLeft-ox)+'px';
+  }
+})();
+
+// ── SIM GUIDE ──
+function toggleGuide(){
+  document.getElementById('sgBody').classList.toggle('open');
+  document.getElementById('sgTog').classList.toggle('open');
+}
+
+// ── INVESTIGATION TOGGLE ──
+var done={1:false,2:false,3:false,4:false,5:false};
+function tog(n){
+  const b=document.getElementById('b'+n),c=document.getElementById('c'+n);
+  const o=b.classList.contains('open');
+  b.classList.toggle('open',!o);c.classList.toggle('open',!o);
+  if(!o)document.getElementById('inv'+n).classList.add('active');
+}
+function markDone(n){
+  done[n]=true;
+  document.getElementById('inv'+n).classList.remove('active');
+  document.getElementById('inv'+n).classList.add('done');
+  document.getElementById('s'+n).textContent='✓ Completed';
+  const cnt=Object.values(done).filter(Boolean).length;
+  document.getElementById('invProg').textContent=cnt+' / 5 completed';
+  updateProg();
+  if(n<5){setTimeout(()=>{tog(n+1);document.getElementById('inv'+(n+1)).scrollIntoView({behavior:'smooth',block:'start'});},300);}
+}
+
+// ── LIVE CALCULATIONS ──
+function calcF(){
+  const T=parseFloat(document.getElementById('inv3_T').value);
+  document.getElementById('inv3_fcalc').textContent=isNaN(T)||T<=0?'Enter T above':(1/T).toFixed(2)+' Hz';
+}
+function autoCalc(){}
+function calcV1(){
+  const f=parseFloat(document.getElementById('inv4_f1').value);
+  const l=parseFloat(document.getElementById('inv4_l1').value);
+  document.getElementById('inv4_v1').textContent=isNaN(f)||isNaN(l)?'—':(f*l).toFixed(2)+' cm/s';
+}
+function calcV2(){
+  const f=parseFloat(document.getElementById('inv4_f2').value);
+  const l=parseFloat(document.getElementById('inv4_l2').value);
+  document.getElementById('inv4_v2').textContent=isNaN(f)||isNaN(l)?'—':(f*l).toFixed(2)+' cm/s';
+}
+function calcT5(){
+  [1,2,3,4].forEach(i=>{
+    const f=parseFloat(document.getElementById('v5f'+i).value);
+    const l=parseFloat(document.getElementById('v5l'+i).value);
+    document.getElementById('v5v'+i).textContent=isNaN(f)||isNaN(l)?'—':(f*l).toFixed(2)+' cm/s';
+  });
+}
+function calcBonus(){
+  const f=1.5;
+  const ls=[1,2,3].map(i=>parseFloat(document.getElementById('b_l'+i).value));
+  if(ls.some(isNaN)){document.getElementById('b_comp').textContent='Enter λ values above';return;}
+  const vs=ls.map(l=>(f*l).toFixed(2));
+  const allSame=Math.max(...ls.map(parseFloat))-Math.min(...ls.map(parseFloat))<0.5;
+  document.getElementById('b_comp').textContent=vs.join(' · ')+' cm/s '+(allSame?'✓ All equal!':'— check measurements');
+  document.getElementById('b_comp').style.color=allSame?'var(--green)':'var(--yellow)';
+}
+
+// ── CHECK FUNCTIONS ──
+// Validate λ against expected value for a given frequency
+function validateLambda(f,l){
+  const expected=EXP[Math.round(f*2)/2]||null;
+  if(!expected)return{ok:true,msg:''};
+  return{ok:Math.abs(l-expected)<=TOL,expected,diff:(l-expected).toFixed(1)};
+}
+
+function chk1(){
+  const a=parseFloat(document.getElementById('inv1_a').value);
+  const h=parseFloat(document.getElementById('inv1_h').value);
+  const l=parseFloat(document.getElementById('inv1_l').value);
+  const fb=document.getElementById('f1');fb.style.display='block';
+  if(isNaN(a)||isNaN(h)){fb.className='fb info';fb.textContent='Enter both amplitude and measured height.';return;}
+  if(Math.abs(a-h)<=0.15){
+    fb.className='fb ok';
+    fb.textContent='✓ Your measured height ('+h+' cm) matches the amplitude set ('+a+' cm). Amplitude = height from centre to crest. '+(l?'Wavelength stays ~4.1 cm regardless of amplitude — amplitude does not change λ!':'Now also measure the wavelength to confirm it stays at ~4.1 cm when you change amplitude.');
+    markDone(1);
+  } else {
+    fb.className='fb hint';
+    fb.textContent='💡 Your measured height ('+h+' cm) differs from the amplitude set ('+a+' cm) by more than expected. Make sure you are measuring from the flat centre line to the very top of a crest — not crest to trough (that would be double). Try again!';
+  }
+}
+
+function chk2(){
+  const l=parseFloat(document.getElementById('inv2_l').value);
+  const fb=document.getElementById('f2');fb.style.display='block';
+  if(isNaN(l)){fb.className='fb info';fb.textContent='Enter your measured wavelength first.';return;}
+  const res=validateLambda(1.5,l);
+  if(res.ok){
+    fb.className='fb ok';
+    fb.textContent='✓ λ = '+l+' cm at f = 1.50 Hz. Expected ≈ 4.1 cm — excellent measurement! Remember this value for Investigation 4.';
+    markDone(2);
+  } else {
+    fb.className='fb hint';
+    fb.textContent='💡 Your λ = '+l+' cm. Expected ≈ '+res.expected+' cm (difference: '+res.diff+' cm). Make sure you: (1) set Tension to High, (2) paused the sim, (3) measured crest-to-crest (not half a wave). At f=1.50 Hz with High tension the wavelength is about 4 cm.';
+  }
+}
+
+function chk3(){
+  const T=parseFloat(document.getElementById('inv3_T').value);
+  const fsim=parseFloat(document.getElementById('inv3_fsim').value);
+  const fb=document.getElementById('f3');fb.style.display='block';
+  if(isNaN(T)){fb.className='fb info';fb.textContent='Enter your measured period T first.';return;}
+  const fcalc=1/T;
+  if(T>0.5&&T<0.9){
+    fb.className='fb ok';
+    fb.textContent='✓ T = '+T+' s → f = 1/T = '+fcalc.toFixed(2)+' Hz. '+(fsim&&Math.abs(fcalc-fsim)/fsim<0.15?'This matches the slider setting of '+fsim+' Hz — f = 1/T confirmed!':'Also check: does your calculated f match the slider? They should be very close.');
+    markDone(3);
+  } else {
+    fb.className='fb hint';
+    fb.textContent='💡 T = '+T+' s gives f = '+fcalc.toFixed(2)+' Hz. At f=1.50 Hz, T should be about 0.67 s. Make sure you timed exactly one complete oscillation: start at centre→up→top→down→bottom→back to centre. The timer in the sim helps — try pausing at the start and end of the cycle.';
+  }
+}
+
+function chk4(){
+  const v1=parseFloat(document.getElementById('inv4_v1').textContent);
+  const v2=parseFloat(document.getElementById('inv4_v2').textContent);
+  const fb=document.getElementById('f4');fb.style.display='block';
+  if(isNaN(v1)||isNaN(v2)){fb.className='fb info';fb.textContent='Complete both speed calculations above first.';return;}
+  const diff=Math.abs(v1-v2)/Math.max(v1,v2)*100;
+  if(diff<12){
+    fb.className='fb ok';
+    fb.textContent='✓ v₁ = '+v1.toFixed(2)+' cm/s and v₂ = '+v2.toFixed(2)+' cm/s are approximately equal ('+diff.toFixed(0)+'% difference). Wave speed is CONSTANT in the same medium — changing frequency changes λ inversely, but v = fλ stays the same!';
+    markDone(4);
+  } else {
+    fb.className='fb hint';
+    fb.textContent='💡 v₁ = '+v1.toFixed(2)+' and v₂ = '+v2.toFixed(2)+' differ by '+diff.toFixed(0)+'%. They should be within ~10% of each other. Check your λ measurements — pause the sim carefully and measure crest-to-crest precisely. Expected: at f=3.00 Hz, λ ≈ 2.0 cm.';
+  }
+}
+
+function chk5(){
+  const ls=[1,2,3,4].map(i=>parseFloat(document.getElementById('v5l'+i).value));
+  const fs=[1,2,3,4].map(i=>parseFloat(document.getElementById('v5f'+i).value));
+  const fb=document.getElementById('f5');fb.style.display='block';
+  if(ls.some(isNaN)){fb.className='fb info';fb.textContent='Measure all four wavelengths first.';return;}
+  // Check that λ decreases as f increases
+  const lDecreasing=ls[0]>ls[1]&&ls[1]>ls[2]&&ls[2]>ls[3];
+  // Check inverse: f1*l1 ≈ f4*l4
+  const v1=fs[0]*ls[0],v4=fs[3]*ls[3];
+  const consistent=Math.abs(v1-v4)/Math.max(v1,v4)<0.15;
+  if(lDecreasing&&consistent){
+    fb.className='fb ok';
+    fb.textContent='✓ Perfect data! As frequency increased from '+fs[0]+' to '+fs[3]+' Hz, wavelength decreased from '+ls[0]+' to '+ls[3]+' cm. And f×λ ≈ constant ('+v1.toFixed(1)+' ≈ '+v4.toFixed(1)+'). This is the inverse relationship: f ↑ → λ ↓, but v = fλ = constant!';
+    markDone(5);
+  } else if(lDecreasing){
+    fb.className='fb ok';
+    fb.textContent='✓ Good — wavelength decreases as frequency increases. Your data shows the inverse trend. Make sure all measurements use Tension=High for consistency.';
+    markDone(5);
+  } else {
+    fb.className='fb hint';
+    fb.textContent='💡 Your wavelength values should decrease as frequency increases. Check: at f=1.00 Hz expect λ≈6.2 cm, at f=3.00 Hz expect λ≈2.0 cm. Make sure Tension stays on High for all trials. Pause the sim and measure crest-to-crest carefully each time.';
+  }
+}
+
+// ── AI TUTOR ──
+function getAI(){
+  const a=document.getElementById('b_concl').value.trim();
+  const r=document.getElementById('aiR');
+  if(!a){showToast('Write your conclusion first!');return;}
+  r.style.display='block';
+  r.innerHTML='<div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>';
+  setTimeout(()=>{r.textContent=buildFB(a);},1200);
+}
+function buildFB(a){
+  const noEffect=/no effect|same|constant|does not|doesn't|unchanged|not affect/i.test(a);
+  const hasMedium=/medium|tension|string|material|depend/i.test(a);
+  const hasEnergy=/energy|louder|bigger|height|intensity/i.test(a);
+  const score=[noEffect,hasMedium,hasEnergy].filter(Boolean).length;
+  let p1=noEffect?'✓ Correct — amplitude does NOT affect wave speed. Your data proved it.':'Your data should show all three speeds are approximately equal despite different amplitudes.';
+  let p2=hasMedium?'Well done for connecting speed to the medium (string tension) rather than the source.':'Key insight: wave speed depends on the medium (string tension), not on how you shake the source.';
+  let p3=['This is why loud and quiet sounds travel at the same speed in air — amplitude (loudness) does not change speed, only the medium does.','A tsunami travels at the same speed as a tiny ripple in deep ocean — their enormous height (amplitude) does not make them faster. The water depth determines speed.'][score%2];
+  return p1+' '+p2+' '+p3;
+}
+
+// ── PROGRESS & SUBMIT ──
+function updateProg(){
+  const cnt=Object.values(done).filter(Boolean).length;
+  const pct=Math.round(cnt/5*100);
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('pTxt').textContent=cnt+' / 5 investigations completed';
+  document.getElementById('sDsp').textContent=pct+'%';
+  document.getElementById('aRev').innerHTML=[
+    'Inv 1 (Amplitude): '+(done[1]?'✓':'—'),
+    'Inv 2 (Wavelength): '+(done[2]?'✓':'—'),
+    'Inv 3 (Period & f): '+(done[3]?'✓':'—'),
+    'Inv 4 (Wave Speed): '+(done[4]?'✓':'—'),
+    'Inv 5 (f ↔ λ): '+(done[5]?'✓':'—'),
+  ].map(l=>'<div>'+l+'</div>').join('');
+}
+
+async function submit(){
+  const name=document.getElementById('sName').value.trim();
+  const cls=document.getElementById('sClass').value.trim();
+  if(!name||!cls){showToast('Enter your name and class first!');return;}
+  const btn=document.querySelector('[onclick="submit()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+  const cnt=Object.values(done).filter(Boolean).length;
+  const payload={
+    sheet:'Waves2_G8',name,class:cls,
+    inv1:done[1]?'Amplitude: '+document.getElementById('inv1_a').value+'cm ✓':'—',
+    inv2:done[2]?'λ='+document.getElementById('inv2_l').value+'cm ✓':'—',
+    inv3:done[3]?'T='+document.getElementById('inv3_T').value+'s ✓':'—',
+    inv4:done[4]?'v='+document.getElementById('inv4_v1').textContent+' ✓':'—',
+    inv5:done[5]?'f↔λ inverse confirmed ✓':'—',
+    bonus:document.getElementById('b_concl').value||'—',
+    score:Math.round(cnt/5*100)+'%'
+  };
+  try{
+    await fetch(URL_AS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('subOk').style.display='block';
+    btn.textContent='✓ Submitted!';btn.style.background='var(--green2)';
+    showToast('✓ Submitted to Ahmad\'s grade sheet!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 Submit to Ahmad\'s Grade Sheet';
+    showToast('⚠ Check internet connection.');
+  }
+}
+
+function shareIt(){
+  const ci=document.getElementById('ci');ci.value=window.location.href;ci.select();ci.setSelectionRange(0,9999);
+  try{document.execCommand('copy');}catch(e){}
+  showToast('✓ Link copied!');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
