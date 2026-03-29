@@ -638,66 +638,151 @@ function checkWaveType(correct){
   answers.waveType=sel;updateProg();
 }
 
-// Q5-7: Numerical Calculations (3 questions, shuffled numbers)
+// Q5-7: Numerical Calculations — fixed checking, 2 input boxes for 2-step questions
 function buildCalcQs(){
   const el=document.getElementById('calcQuestions');
   const [v,f,lam,T,A,v2,lam2]=N;
-  const calcs=[
-    {
-      num:5,
-      text:`A wave travels at <em>v = ${v} m/s</em> with a frequency of <em>f = ${f} Hz</em>.`,
-      ask:'Calculate the wavelength λ.',
-      given:[`v = ${v} m/s`,`f = ${f} Hz`],
-      unit:'m',hint:'Use λ = v/f',
-      correct:(v/f).toFixed(2),inputId:'calcA',scoreKey:'calc1',
-      check:(ans)=>Math.abs(parseFloat(ans)-v/f)<0.05
-    },
-    {
-      num:6,
-      text:`A wave has a period of <em>T = ${T} s</em>.`,
-      ask:'Calculate the frequency f, then calculate the wave speed if the wavelength is '+lam+' m.',
-      given:[`T = ${T} s`,`λ = ${lam} m`],
-      unit:'Hz then m/s',hint:'f = 1/T, then v = fλ',
-      correct:(1/T).toFixed(2)+' Hz → v = '+((1/T)*lam).toFixed(2)+' m/s',
-      inputId:'calcB',scoreKey:'calc2',
-      check:(ans)=>{const fCalc=1/T;const vCalc=fCalc*lam;const num=parseFloat(ans);return(Math.abs(num-fCalc)<0.05||Math.abs(num-vCalc)<0.5);}
-    },
-    {
-      num:7,
-      text:`Sound waves travel in water at <em>v = ${v2} m/s</em>. The wavelength measured is <em>λ = ${lam2} m</em>.`,
-      ask:'Calculate the frequency f, then the period T.',
-      given:[`v = ${v2} m/s`,`λ = ${lam2} m`],
-      unit:'Hz then s',hint:'f = v/λ, then T = 1/f',
-      correct:(v2/lam2).toFixed(1)+' Hz → T = '+(lam2/v2).toFixed(4)+' s',
-      inputId:'calcC',scoreKey:'calc3',
-      check:(ans)=>{const fC=v2/lam2;const tC=1/fC;const num=parseFloat(ans);return(Math.abs(num-fC)<2||Math.abs(num-tC)<0.001);}
-    }
-  ];
 
-  calcs.forEach(q=>{
-    const div=document.createElement('div');
-    div.className='q-card';
-    div.innerHTML=`
-      <div class="q-num">Question ${q.num} · Numerical Calculation</div>
-      <div class="q-text">${q.text}<br><strong>${q.ask}</strong></div>
-      <div class="q-given">${q.given.map(g=>`<span class="gv">Given:</span>${g}`).join('<br>')}</div>
-      <input class="ans-input" id="${q.inputId}" placeholder="Enter your answer... (${q.unit})" oninput="updateProg()">
-      <div class="unit-hint">💡 Hint: ${q.hint}</div>
-      <button class="btn-chk" onclick="checkCalc('${q.inputId}','${q.scoreKey}','${q.correct}',${q.check.toString()})">✓ Check</button>
-      <div class="fb" id="fb_${q.inputId}"></div>`;
-    el.appendChild(div);
-  });
-  window._calcs=calcs;
+  // ── Q5: single answer λ = v/f ──────────────────────────────
+  const q5=document.createElement('div');q5.className='q-card';
+  const ans5=+(v/f).toFixed(3);
+  q5.innerHTML=`
+    <div class="q-num">Question 5 · Numerical Calculation</div>
+    <div class="q-text">A wave travels at <em>v = ${v} m/s</em> with a frequency of <em>f = ${f} Hz</em>.<br><strong>Calculate the wavelength λ.</strong></div>
+    <div class="q-given"><span class="gv">Given:</span> v = ${v} m/s &nbsp;|&nbsp; f = ${f} Hz</div>
+    <label style="font-size:.7rem;color:var(--muted2);font-family:var(--fm);display:block;margin-bottom:5px;">Wavelength λ (m)</label>
+    <input class="ans-input" id="calc5" type="number" step="0.001" placeholder="e.g. ${ans5}" oninput="updateProg()">
+    <div class="unit-hint">💡 Use: λ = v ÷ f &nbsp; Unit: metre (m)</div>
+    <button class="btn-chk" onclick="checkCalc5()">✓ Check Answer</button>
+    <div class="fb" id="fb5"></div>`;
+  el.appendChild(q5);
+  window._ans5=ans5;
+
+  // ── Q6: two answers f = 1/T then v = fλ ───────────────────
+  const q6=document.createElement('div');q6.className='q-card';
+  const ans6f=+(1/T).toFixed(3);
+  const ans6v=+(ans6f*lam).toFixed(3);
+  q6.innerHTML=`
+    <div class="q-num">Question 6 · Numerical Calculation — Two Steps</div>
+    <div class="q-text">A wave has a period of <em>T = ${T} s</em> and a wavelength of <em>λ = ${lam} m</em>.<br><strong>Step 1:</strong> Calculate the frequency f.&nbsp; <strong>Step 2:</strong> Calculate the wave speed v.</div>
+    <div class="q-given"><span class="gv">Given:</span> T = ${T} s &nbsp;|&nbsp; λ = ${lam} m</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;">
+      <div>
+        <label style="font-size:.7rem;color:var(--muted2);font-family:var(--fm);display:block;margin-bottom:5px;">Step 1 — Frequency f (Hz)</label>
+        <input class="ans-input" id="calc6f" type="number" step="0.001" placeholder="e.g. ${ans6f}" oninput="updateProg()">
+        <div class="unit-hint">💡 f = 1/T &nbsp; Unit: Hz</div>
+      </div>
+      <div>
+        <label style="font-size:.7rem;color:var(--muted2);font-family:var(--fm);display:block;margin-bottom:5px;">Step 2 — Wave speed v (m/s)</label>
+        <input class="ans-input" id="calc6v" type="number" step="0.001" placeholder="e.g. ${ans6v}" oninput="updateProg()">
+        <div class="unit-hint">💡 v = f × λ &nbsp; Unit: m/s</div>
+      </div>
+    </div>
+    <button class="btn-chk" onclick="checkCalc6()">✓ Check Both Answers</button>
+    <div class="fb" id="fb6"></div>`;
+  el.appendChild(q6);
+  window._ans6f=ans6f; window._ans6v=ans6v;
+
+  // ── Q7: two answers f = v/λ then T = 1/f ──────────────────
+  const q7=document.createElement('div');q7.className='q-card';
+  const ans7f=+(v2/lam2).toFixed(3);
+  const ans7T=+(1/ans7f).toFixed(6);
+  q7.innerHTML=`
+    <div class="q-num">Question 7 · Numerical Calculation — Two Steps</div>
+    <div class="q-text">Sound waves travel in water at <em>v = ${v2} m/s</em>. The wavelength measured is <em>λ = ${lam2} m</em>.<br><strong>Step 1:</strong> Calculate the frequency f.&nbsp; <strong>Step 2:</strong> Calculate the period T.</div>
+    <div class="q-given"><span class="gv">Given:</span> v = ${v2} m/s &nbsp;|&nbsp; λ = ${lam2} m</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;">
+      <div>
+        <label style="font-size:.7rem;color:var(--muted2);font-family:var(--fm);display:block;margin-bottom:5px;">Step 1 — Frequency f (Hz)</label>
+        <input class="ans-input" id="calc7f" type="number" step="0.1" placeholder="e.g. ${ans7f}" oninput="updateProg()">
+        <div class="unit-hint">💡 f = v ÷ λ &nbsp; Unit: Hz</div>
+      </div>
+      <div>
+        <label style="font-size:.7rem;color:var(--muted2);font-family:var(--fm);display:block;margin-bottom:5px;">Step 2 — Period T (s)</label>
+        <input class="ans-input" id="calc7T" type="number" step="0.0001" placeholder="e.g. ${ans7T.toFixed(4)}" oninput="updateProg()">
+        <div class="unit-hint">💡 T = 1/f &nbsp; Unit: second (s)</div>
+      </div>
+    </div>
+    <button class="btn-chk" onclick="checkCalc7()">✓ Check Both Answers</button>
+    <div class="fb" id="fb7"></div>`;
+  el.appendChild(q7);
+  window._ans7f=ans7f; window._ans7T=ans7T;
 }
 
-function checkCalc(inputId,scoreKey,correct,checkFn){
-  const val=document.getElementById(inputId).value.trim();
-  const fb=document.getElementById('fb_'+inputId);fb.style.display='block';
-  if(!val){fb.className='fb bad';fb.textContent='Enter your answer first.';return;}
-  const ok=checkFn(val);
-  if(ok){fb.className='fb ok';fb.textContent='✓ Correct! Full answer: '+correct;scores[scoreKey]=4;}
-  else{fb.className='fb bad';fb.textContent='✗ Not quite. Full working: '+correct;scores[scoreKey]=0;}
-  answers[scoreKey]=val+'(correct:'+correct+')';updateProg();
+// ── CHECK FUNCTIONS — use stored window values, no closure issues ──
+
+function checkCalc5(){
+  const val=parseFloat(document.getElementById('calc5').value);
+  const fb=document.getElementById('fb5');fb.style.display='block';
+  if(isNaN(val)){fb.className='fb bad';fb.textContent='Enter a number first.';return;}
+  const ok=Math.abs(val-window._ans5)<=Math.max(0.05,window._ans5*0.02);
+  if(ok){
+    fb.className='fb ok';
+    fb.textContent='✓ Correct! λ = v/f = '+window._ans5+' m';
+    scores.calc1=4;
+  } else {
+    fb.className='fb bad';
+    fb.textContent='✗ Check your working. λ = v/f = '+window._ans5+' m. Did you divide v by f (not multiply)?';
+    scores.calc1=0;
+  }
+  answers.calc1=val+'→correct:'+window._ans5;
+  updateProg();
+}
+
+function checkCalc6(){
+  const vf=parseFloat(document.getElementById('calc6f').value);
+  const vv=parseFloat(document.getElementById('calc6v').value);
+  const fb=document.getElementById('fb6');fb.style.display='block';
+  if(isNaN(vf)&&isNaN(vv)){fb.className='fb bad';fb.textContent='Enter both answers first.';return;}
+  const okF=!isNaN(vf)&&Math.abs(vf-window._ans6f)<=Math.max(0.05,window._ans6f*0.02);
+  const okV=!isNaN(vv)&&Math.abs(vv-window._ans6v)<=Math.max(0.5,window._ans6v*0.02);
+  if(okF&&okV){
+    fb.className='fb ok';
+    fb.textContent='✓ Both correct! f = 1/T = '+window._ans6f+' Hz  →  v = fλ = '+window._ans6v+' m/s';
+    scores.calc2=4;
+  } else if(okF){
+    fb.className='fb part';
+    fb.textContent='◐ f is correct ('+window._ans6f+' Hz), but v needs revision. v = f × λ = '+window._ans6f+' × '+window._ans6v.toFixed(3)/window._ans6f+' = '+window._ans6v+' m/s';
+    scores.calc2=2;
+  } else if(okV){
+    fb.className='fb part';
+    fb.textContent='◐ v is correct ('+window._ans6v+' m/s), but f needs revision. f = 1/T = 1/'+N[3]+' = '+window._ans6f+' Hz';
+    scores.calc2=2;
+  } else {
+    fb.className='fb bad';
+    fb.textContent='✗ f = 1/T = '+window._ans6f+' Hz  →  v = f × λ = '+window._ans6v+' m/s. Check both steps.';
+    scores.calc2=0;
+  }
+  answers.calc2='f='+vf+'('+window._ans6f+') v='+vv+'('+window._ans6v+')';
+  updateProg();
+}
+
+function checkCalc7(){
+  const vf=parseFloat(document.getElementById('calc7f').value);
+  const vT=parseFloat(document.getElementById('calc7T').value);
+  const fb=document.getElementById('fb7');fb.style.display='block';
+  if(isNaN(vf)&&isNaN(vT)){fb.className='fb bad';fb.textContent='Enter both answers first.';return;}
+  const okF=!isNaN(vf)&&Math.abs(vf-window._ans7f)<=Math.max(1,window._ans7f*0.02);
+  const okT=!isNaN(vT)&&Math.abs(vT-window._ans7T)<=Math.max(0.0001,window._ans7T*0.02);
+  if(okF&&okT){
+    fb.className='fb ok';
+    fb.textContent='✓ Both correct! f = v/λ = '+window._ans7f+' Hz  →  T = 1/f = '+window._ans7T.toFixed(6)+' s';
+    scores.calc3=4;
+  } else if(okF){
+    fb.className='fb part';
+    fb.textContent='◐ f is correct ('+window._ans7f+' Hz). T = 1/f = '+window._ans7T.toFixed(6)+' s';
+    scores.calc3=2;
+  } else if(okT){
+    fb.className='fb part';
+    fb.textContent='◐ T is correct ('+window._ans7T.toFixed(6)+' s). f = v/λ = '+window._ans7f+' Hz';
+    scores.calc3=2;
+  } else {
+    fb.className='fb bad';
+    fb.textContent='✗ f = v/λ = '+window._ans7f+' Hz  →  T = 1/f = '+window._ans7T.toFixed(6)+' s. Check both steps.';
+    scores.calc3=0;
+  }
+  answers.calc3='f='+vf+'('+window._ans7f+') T='+vT+'('+window._ans7T.toFixed(6)+')';
+  updateProg();
 }
 
 // Q8: Graph Interpretation
@@ -821,7 +906,7 @@ function updateProg(){
   const keys=['match','units','diagram','waveType','calc1','calc2','calc3','graph','mcq1','mcq2'];
   const answered=keys.filter(k=>answers[k]&&answers[k]!=='—').length;
   // Also count partial answers
-  const inputIds=['diagA','diagL','calcA','calcB','calcC'];
+  const inputIds=['diagA','diagL','calc5','calc6f','calc6v','calc7f','calc7T'];
   const inputAnswered=inputIds.filter(id=>{const el=document.getElementById(id);return el&&el.value.trim();}).length;
   const total=keys.length+inputIds.length;
   const done=answered+inputAnswered;
@@ -853,7 +938,9 @@ async function submitAssessment(autoSubmit){
     q2_units:Object.entries(unitAns).map(([k,v])=>k+':'+v).join('|')||'—',
     q3_diagram:'A='+diagA+' λ='+diagL,
     q4_wavetype:answers.waveType||'—',
-    q5_calc:calcA,q6_calc:calcB,q7_calc:calcC,
+    q5_calc:document.getElementById('calc5')?.value||'—',
+    q6_calc:'f='+( document.getElementById('calc6f')?.value||'—')+' v='+(document.getElementById('calc6v')?.value||'—'),
+    q7_calc:'f='+( document.getElementById('calc7f')?.value||'—')+' T='+(document.getElementById('calc7T')?.value||'—'),
     q8_graph:answers.graphQ||'—',
     q9_mcq:answers.mcq1||'—',
     q10_mcq:answers.mcq2||'—',
