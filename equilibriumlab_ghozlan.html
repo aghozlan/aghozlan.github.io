@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EquilibriumLab — Forces & Interaction | Ahmad Ghozlan | Grade 9</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040d1a;--bg2:#060f20;--bg3:#081228;
+  --panel:#0a1530;--panel2:#0d1a38;--panel3:#102040;
+  --border:rgba(40,120,255,.12);--border2:rgba(40,120,255,.25);
+  --text:#c8d8f0;--muted:#2a4070;--muted2:#5a7ab8;
+  --blue:#2878ff;--blue2:#1a5cd4;--blue3:#4a90ff;
+  --cyan:#00d4ff;--green:#00e676;--green2:#00a050;
+  --yellow:#ffd600;--orange:#ff8c00;--red:#ff3355;
+  --purple:#8866ff;
+  --fh:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.65;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(40,120,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(40,120,255,.07) 1px,transparent 1px),linear-gradient(rgba(40,120,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(40,120,255,.03) 1px,transparent 1px);
+  background-size:80px 80px,80px 80px,16px 16px,16px 16px;}
+.app{display:flex;min-height:100vh;}
+aside{width:248px;background:rgba(4,13,26,.96);border-right:1px solid var(--border2);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0;z-index:100;backdrop-filter:blur(12px);}
+main{flex:1;min-width:0;position:relative;z-index:1;}
+@media(max-width:860px){aside{display:none;}section{padding:36px 16px!important;}}
+.sb-logo{padding:20px 18px 14px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-size:1.2rem;font-weight:900;color:#fff;letter-spacing:-0.5px;}
+.sb-logo h1 span{color:var(--cyan);}
+.sb-logo p{font-size:.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;justify-content:space-between;padding:9px 18px;font-size:.78rem;font-weight:600;color:var(--muted2);border-left:3px solid transparent;transition:all .2s;cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;font-family:var(--fh);text-align:left;}
+.sn:hover,.sn.active{color:var(--cyan);background:rgba(0,212,255,.05);border-left-color:var(--cyan);}
+.sn .badge{font-size:.52rem;background:var(--panel2);padding:2px 6px;border-radius:2px;color:var(--cyan);font-family:var(--fm);}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border);background:var(--bg2);}
+.sb-foot .name{font-weight:700;font-size:.86rem;color:#fff;}
+.sb-foot .role{font-size:.56rem;color:var(--blue3);text-transform:uppercase;letter-spacing:2px;}
+section{padding:56px 50px;border-bottom:1px solid var(--border);position:relative;}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.56rem;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:2px;margin-bottom:16px;}
+.e-tag.engage{background:rgba(255,214,0,.08);color:var(--yellow);border:1px solid rgba(255,214,0,.2);}
+.e-tag.explore{background:rgba(0,212,255,.08);color:var(--cyan);border:1px solid rgba(0,212,255,.2);}
+.e-tag.explain{background:rgba(40,120,255,.08);color:var(--blue3);border:1px solid rgba(40,120,255,.2);}
+.e-tag.elaborate{background:rgba(136,102,255,.08);color:var(--purple);border:1px solid rgba(136,102,255,.2);}
+.e-tag.evaluate{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.sec-title{font-size:1.8rem;font-weight:900;letter-spacing:-1px;color:#fff;margin-bottom:8px;}
+.sec-desc{color:var(--muted2);font-size:.86rem;max-width:600px;line-height:1.8;margin-bottom:24px;}
+.card{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:20px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:13px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* FORCE PLACEMENT CANVAS */
+.fbd-wrap{position:relative;background:var(--panel2);border:2px solid var(--border2);border-radius:10px;overflow:hidden;touch-action:none;cursor:crosshair;}
+.fbd-wrap canvas{display:block;width:100%;height:auto;}
+.fbd-label{position:absolute;top:8px;left:10px;font-family:var(--fm);font-size:.52rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;pointer-events:none;}
+.fbd-hint{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:.68rem;color:var(--muted2);pointer-events:none;}
+
+/* FORCE TOOLBAR */
+.force-toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;margin-bottom:10px;}
+.force-btn{padding:6px 12px;border-radius:5px;border:2px solid;font-family:var(--fm);font-size:.68rem;cursor:pointer;transition:all .2s;background:transparent;}
+.force-btn:hover{transform:scale(1.05);}
+.force-btn.active{opacity:1;}
+.force-btn.inactive{opacity:.4;}
+.force-btn.placed{opacity:.25;cursor:not-allowed;pointer-events:none;}
+
+/* MCQ */
+.mcq-options{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:center;gap:9px;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;font-size:.85rem;}
+.mcq-opt:hover{border-color:var(--blue);}
+.mcq-opt.selected{border-color:var(--blue3);background:rgba(40,120,255,.08);}
+.mcq-opt.correct{border-color:var(--green);background:rgba(0,230,118,.07);color:var(--green);}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(255,51,85,.07);color:var(--red);}
+.mcq-letter{font-family:var(--fm);font-size:.66rem;color:var(--cyan);background:var(--panel);padding:2px 7px;border-radius:3px;flex-shrink:0;}
+
+/* FORMULA */
+.formula{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:8px;padding:14px 18px;margin:12px 0;text-align:center;}
+.formula-main{font-family:var(--fm);font-size:1.35rem;color:#fff;letter-spacing:1px;margin-bottom:5px;}
+.formula-sub{font-size:.74rem;color:var(--muted2);}
+.vec{color:var(--cyan);}
+.vec-neg{color:var(--orange);}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:6px;font-family:var(--fh);font-weight:700;font-size:.82rem;cursor:pointer;border:none;transition:all .2s;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:var(--blue2);}
+.btn-green{background:var(--green);color:#000;}
+.btn-green:hover{background:var(--green2);color:#fff;}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-chk{padding:8px 18px;background:var(--panel2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--fh);font-weight:600;font-size:.78rem;cursor:pointer;transition:all .2s;}
+.btn-chk:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* FEEDBACK */
+.fb{margin-top:10px;padding:11px 15px;border-radius:7px;font-size:.82rem;display:none;line-height:1.7;}
+.fb.ok{background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);color:var(--green);}
+.fb.bad{background:rgba(255,51,85,.07);border:1px solid rgba(255,51,85,.2);color:var(--red);}
+.fb.info{background:rgba(40,120,255,.07);border:1px solid rgba(40,120,255,.2);color:var(--blue3);}
+.fb.hint{background:rgba(255,214,0,.06);border:1px solid rgba(255,214,0,.18);color:var(--yellow);}
+
+/* INTERACTION CANVAS */
+.interact-section{background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:18px;}
+#icv{display:block;margin:0 auto;max-width:100%;}
+.slider-row{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap;}
+.slider-label{font-family:var(--fm);font-size:.7rem;color:var(--muted2);min-width:130px;}
+input[type=range]{flex:1;min-width:80px;accent-color:var(--cyan);cursor:pointer;}
+.slider-val{font-family:var(--fm);font-size:.76rem;color:var(--cyan);min-width:80px;text-align:right;}
+
+/* EXAMPLE CARDS */
+.ex-card{background:var(--panel);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.ex-hdr{background:var(--panel2);padding:11px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ex-num{font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;}
+.ex-title{font-weight:700;font-size:.9rem;color:#fff;}
+.ex-body{padding:16px;}
+.ex-row{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start;}
+@media(max-width:600px){.ex-row{grid-template-columns:1fr;}}
+
+/* Q BLOCKS */
+.q-block{margin-bottom:20px;padding:18px;background:var(--panel);border:1px solid var(--border);border-radius:10px;position:relative;}
+.q-block::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--blue);border-radius:10px 0 0 10px;}
+.q-num{font-family:var(--fm);font-size:.58rem;color:var(--blue3);text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.88rem;color:var(--text);margin-bottom:13px;line-height:1.75;}
+.trap-tag{display:inline-block;font-size:.58rem;font-weight:700;padding:2px 9px;border-radius:10px;background:rgba(255,51,85,.1);color:var(--red);border:1px solid rgba(255,51,85,.22);margin-bottom:8px;}
+
+/* AI */
+.ai-box{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:18px;}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ai-pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-resp{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:14px;font-size:.86rem;line-height:1.75;margin-top:12px;display:none;}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:dots .8s infinite;display:inline-block;margin:0 2px;}
+.ai-dot:nth-child(2){animation-delay:.15s;}.ai-dot:nth-child(3){animation-delay:.3s;}
+@keyframes dots{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+
+/* SUBMIT */
+.submit-card{background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;}
+.name-row{display:flex;gap:12px;margin-bottom:14px;}
+.prog-bar{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:12px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:3px;transition:width .5s;}
+input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:9px 13px;color:var(--text);font-family:var(--fh);font-size:.86rem;outline:none;transition:border-color .2s;}
+input[type=text]:focus{border-color:var(--cyan);}
+textarea{width:100%;background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:10px 13px;color:var(--text);font-family:var(--fh);font-size:.86rem;outline:none;resize:vertical;min-height:80px;transition:border-color .2s;}
+textarea:focus{border-color:var(--blue);}
+
+#hero{min-height:75vh;display:flex;align-items:center;background:linear-gradient(135deg,#020810,#040e22,#020810);}
+.hero-inner{max-width:660px;padding:56px 50px;}
+.hero-badge{font-family:var(--fm);font-size:.56rem;color:var(--cyan);border:1px solid rgba(0,212,255,.25);padding:4px 12px;border-radius:2px;display:inline-block;margin-bottom:14px;text-transform:uppercase;letter-spacing:3px;}
+.hero-title{font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-2px;margin-bottom:12px;}
+.hero-title span{color:var(--cyan);}
+.hero-q{background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:8px;padding:14px 18px;margin:18px 0;}
+.hero-q p{font-size:.9rem;color:var(--text);line-height:1.75;}
+.hero-q em{color:var(--cyan);}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--cyan);color:var(--cyan);padding:9px 20px;border-radius:6px;font-family:var(--fm);font-size:.74rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
+footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.ft-link{font-size:.68rem;color:var(--blue3);text-decoration:none;border:1px solid var(--border2);padding:5px 12px;border-radius:5px;transition:all .2s;cursor:pointer;background:none;font-family:var(--fh);}
+.ft-link:hover{border-color:var(--cyan);color:var(--cyan);}
+.pair-a{color:var(--cyan);font-weight:700;font-family:var(--fm);}
+.pair-b{color:var(--orange);font-weight:700;font-family:var(--fm);}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<input type="text" id="ci" style="position:fixed;top:-100px;opacity:0;pointer-events:none;">
+
+<div class="app">
+<aside>
+  <div class="sb-logo"><h1>Equilibrium<span>Lab</span></h1><p>Grade 9 · Physics · Forces</p></div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">⚡ Engage <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('explore')">🔬 Explore <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('equilibrium')">⚖ Equilibrium <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('interaction')">🔄 Interaction <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('elaborate')">✏ Practice <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 Submit <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="role">Physics · Grade 9</div>
+    <button class="btn btn-ghost" style="margin-top:10px;width:100%;font-size:.7rem;" onclick="shareIt()">🔗 Share Lab</button>
+  </div>
+</aside>
+
+<main>
+
+<!-- E1 ENGAGE -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Grade 9 · Physics · Forces Part 2</div>
+    <h1 class="hero-title">Forces in <span>Equilibrium</span></h1>
+    <p style="color:var(--muted2);font-size:.9rem;line-height:1.8;margin-bottom:8px;">A body at rest is held perfectly still by forces that cancel each other out. Discover the condition for that balance — then explore what happens when two bodies interact.</p>
+    <div class="hero-q">
+      <p>🤔 <em>A book rests motionless on a table. Gravity pulls it down — yet it does not fall. A spring stretches and holds still. A ball floats without sinking.</em></p>
+      <p style="margin-top:8px;">What is the <strong>exact condition</strong> that keeps each body perfectly still?</p>
+    </div>
+    <button class="btn btn-blue" onclick="goTo('explore')">Start Investigating →</button>
+  </div>
+</section>
+
+<!-- E2 EXPLORE — STUDENT PLACES FORCE ARROWS -->
+<section id="explore" style="background:var(--bg2);">
+  <div class="e-tag explore">E2 · Explore</div>
+  <h2 class="sec-title">Place the Force Arrows</h2>
+  <p class="sec-desc">For each diagram, tap a force button to select it, then tap on the figure to place the arrow at the correct point. <strong>Weight</strong> starts from G (centre of gravity). <strong>Contact forces</strong> start from the exact contact point.</p>
+
+  <div class="g3">
+    <!-- FBD A: Book on table -->
+    <div>
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">A — Book on Table</div>
+      <div class="fbd-wrap" id="wrapA">
+        <div class="fbd-label">Click to place arrows</div>
+        <canvas id="cvA" width="240" height="260"></canvas>
+        <div class="fbd-hint">Tap a force below, then tap the diagram</div>
+      </div>
+      <div class="force-toolbar" id="tbA">
+        <button class="force-btn" style="color:#ff8c00;border-color:#ff8c00;" onclick="selectForce('A','W')" id="btnA_W">⬇ Weight W</button>
+        <button class="force-btn" style="color:#00d4ff;border-color:#00d4ff;" onclick="selectForce('A','N')" id="btnA_N">⬆ Normal N</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn-chk" onclick="checkFBD('A')">✓ Check Diagram</button>
+        <button class="btn-chk" onclick="resetFBD('A')" style="color:var(--red);border-color:rgba(255,51,85,.3);">↺ Reset</button>
+      </div>
+      <div class="fb" id="fbdA"></div>
+      <!-- Q after FBD -->
+      <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:7px;">The normal reaction N is a:</div>
+      <div class="mcq-options" id="qA">
+        <div class="mcq-opt" onclick="selMCQ('qA','contact',this)"><span class="mcq-letter">A</span>Contact force</div>
+        <div class="mcq-opt" onclick="selMCQ('qA','distance',this)"><span class="mcq-letter">B</span>Force at a distance</div>
+      </div>
+      <div class="fb" id="fbqA"></div>
+    </div>
+
+    <!-- FBD B: Ball on water -->
+    <div>
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">B — Ball Floating on Water</div>
+      <div class="fbd-wrap" id="wrapB">
+        <div class="fbd-label">Click to place arrows</div>
+        <canvas id="cvB" width="240" height="260"></canvas>
+        <div class="fbd-hint">Tap a force below, then tap the diagram</div>
+      </div>
+      <div class="force-toolbar" id="tbB">
+        <button class="force-btn" style="color:#ff8c00;border-color:#ff8c00;" onclick="selectForce('B','W')" id="btnB_W">⬇ Weight W</button>
+        <button class="force-btn" style="color:#00d4ff;border-color:#00d4ff;" onclick="selectForce('B','Fb')" id="btnB_Fb">⬆ Buoyancy F̄b</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn-chk" onclick="checkFBD('B')">✓ Check Diagram</button>
+        <button class="btn-chk" onclick="resetFBD('B')" style="color:var(--red);border-color:rgba(255,51,85,.3);">↺ Reset</button>
+      </div>
+      <div class="fb" id="fbdB"></div>
+      <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:7px;">Buoyancy is a:</div>
+      <div class="mcq-options" id="qB">
+        <div class="mcq-opt" onclick="selMCQ('qB','contact',this)"><span class="mcq-letter">A</span>Contact force (water touches ball)</div>
+        <div class="mcq-opt" onclick="selMCQ('qB','distance',this)"><span class="mcq-letter">B</span>Force at a distance</div>
+      </div>
+      <div class="fb" id="fbqB"></div>
+    </div>
+
+    <!-- FBD C: Body on spring -->
+    <div>
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">C — Body Suspended from Spring</div>
+      <div class="fbd-wrap" id="wrapC">
+        <div class="fbd-label">Click to place arrows</div>
+        <canvas id="cvC" width="240" height="260"></canvas>
+        <div class="fbd-hint">Tap a force below, then tap the diagram</div>
+      </div>
+      <div class="force-toolbar" id="tbC">
+        <button class="force-btn" style="color:#ff8c00;border-color:#ff8c00;" onclick="selectForce('C','W')" id="btnC_W">⬇ Weight W</button>
+        <button class="force-btn" style="color:#00d4ff;border-color:#00d4ff;" onclick="selectForce('C','T')" id="btnC_T">⬆ Tension T</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn-chk" onclick="checkFBD('C')">✓ Check Diagram</button>
+        <button class="btn-chk" onclick="resetFBD('C')" style="color:var(--red);border-color:rgba(255,51,85,.3);">↺ Reset</button>
+      </div>
+      <div class="fb" id="fbdC"></div>
+      <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:7px;">Weight is a:</div>
+      <div class="mcq-options" id="qC">
+        <div class="mcq-opt" onclick="selMCQ('qC','contact',this)"><span class="mcq-letter">A</span>Contact force</div>
+        <div class="mcq-opt" onclick="selMCQ('qC','distance',this)"><span class="mcq-letter">B</span>Force at a distance (gravity)</div>
+      </div>
+      <div class="fb" id="fbqC"></div>
+    </div>
+  </div>
+</section>
+
+<!-- E3a EQUILIBRIUM -->
+<section id="equilibrium">
+  <div class="e-tag explain">E3 · Equilibrium Condition</div>
+  <h2 class="sec-title">Condition of Equilibrium</h2>
+  <p class="sec-desc">A body acted on by two forces is in equilibrium when:</p>
+
+  <div class="formula">
+    <div class="formula-main"><span class="vec">F⃗₁</span> = <span class="vec-neg">−F⃗₂</span></div>
+    <div class="formula-sub">Equal magnitudes · Opposite directions · Same line of action</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:28px;">
+    <div class="card2"><div style="color:var(--cyan);font-weight:700;font-size:.8rem;margin-bottom:5px;">|F⃗₁| = |F⃗₂|</div><div style="font-size:.76rem;color:var(--muted2);">The two forces are equally strong</div></div>
+    <div class="card2"><div style="color:var(--orange);font-weight:700;font-size:.8rem;margin-bottom:5px;">Opposite directions</div><div style="font-size:.76rem;color:var(--muted2);">One up, one down — or one left, one right</div></div>
+    <div class="card2"><div style="color:var(--purple);font-weight:700;font-size:.8rem;margin-bottom:5px;">Same line of action</div><div style="font-size:.76rem;color:var(--muted2);">Both forces along the same straight line</div></div>
+  </div>
+
+  <div style="font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;">Three Examples with Complete Diagrams</div>
+  <div style="display:flex;flex-direction:column;gap:14px;">
+
+    <!-- Ex 1: Book on table -->
+    <div class="ex-card">
+      <div class="ex-hdr"><div><div class="ex-num">Example 1</div><div class="ex-title">Book Resting on a Horizontal Table</div></div></div>
+      <div class="ex-body">
+        <div class="ex-row">
+          <canvas id="exCv1" width="220" height="240" style="border-radius:8px;background:var(--panel2);display:block;"></canvas>
+          <div>
+            <div style="font-size:.8rem;color:var(--muted2);line-height:1.8;margin-bottom:10px;">
+              <strong style="color:#fff;">Forces on the book:</strong><br>
+              • <strong style="color:var(--orange);">Weight W⃗</strong> — gravitational force, origin: <em>centre of gravity G</em>, direction: vertically downward, type: distance force<br>
+              • <strong style="color:var(--cyan);">Normal reaction N⃗</strong> — from table surface, origin: <em>contact point (bottom face of book)</em>, direction: vertically upward, type: contact force
+            </div>
+            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vec">N⃗</span> = <span class="vec-neg">−W⃗</span></div><div class="formula-sub">N: vertical ↑ from contact point · W: vertical ↓ from G · |N| = |W|</div></div>
+            <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;">If W = 5 N downward, deduce N:</div>
+            <div class="mcq-options" id="qEx1">
+              <div class="mcq-opt" onclick="selMCQ('qEx1','A',this)"><span class="mcq-letter">A</span>N = 5 N, vertically downward</div>
+              <div class="mcq-opt" onclick="selMCQ('qEx1','B',this)"><span class="mcq-letter">B</span>N = 5 N, vertically upward</div>
+              <div class="mcq-opt" onclick="selMCQ('qEx1','C',this)"><span class="mcq-letter">C</span>N = 10 N, vertically upward</div>
+            </div>
+            <button class="btn-chk" onclick="chkMCQ('qEx1','B','✓ N = 5 N vertically upward. N⃗ = −W⃗: same magnitude (5 N), opposite direction (upward), same vertical line through G.')">✓ Check</button>
+            <div class="fb" id="fbex1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ex 2: Ball floating -->
+    <div class="ex-card">
+      <div class="ex-hdr"><div><div class="ex-num">Example 2</div><div class="ex-title">Ball Floating on the Surface of Water</div></div></div>
+      <div class="ex-body">
+        <div class="ex-row">
+          <canvas id="exCv2" width="220" height="240" style="border-radius:8px;background:var(--panel2);display:block;"></canvas>
+          <div>
+            <div style="font-size:.8rem;color:var(--muted2);line-height:1.8;margin-bottom:10px;">
+              <strong style="color:#fff;">Forces on the ball:</strong><br>
+              • <strong style="color:var(--orange);">Weight W⃗</strong> — origin: <em>centre of ball G</em>, direction: vertically downward<br>
+              • <strong style="color:var(--cyan);">Buoyancy F⃗b</strong> — from water, origin: <em>lowest contact point of ball with water</em>, direction: vertically upward
+            </div>
+            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vec">F⃗b</span> = <span class="vec-neg">−W⃗</span></div><div class="formula-sub">F⃗b: vertical ↑ from contact · W: vertical ↓ from G · |Fb| = |W|</div></div>
+            <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;">Buoyancy is exerted by the water. It is a:</div>
+            <div class="mcq-options" id="qEx2">
+              <div class="mcq-opt" onclick="selMCQ('qEx2','A',this)"><span class="mcq-letter">A</span>Contact force — water touches the ball directly</div>
+              <div class="mcq-opt" onclick="selMCQ('qEx2','B',this)"><span class="mcq-letter">B</span>Force at a distance — like gravity</div>
+            </div>
+            <button class="btn-chk" onclick="chkMCQ('qEx2','A','✓ Buoyancy is a contact force — the water must physically touch the ball to push it upward.')">✓ Check</button>
+            <div class="fb" id="fbex2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ex 3: Body on spring -->
+    <div class="ex-card">
+      <div class="ex-hdr"><div><div class="ex-num">Example 3</div><div class="ex-title">Body Suspended from a Spring</div></div></div>
+      <div class="ex-body">
+        <div class="ex-row">
+          <canvas id="exCv3" width="220" height="240" style="border-radius:8px;background:var(--panel2);display:block;"></canvas>
+          <div>
+            <div style="font-size:.8rem;color:var(--muted2);line-height:1.8;margin-bottom:10px;">
+              <strong style="color:#fff;">Forces on the body:</strong><br>
+              • <strong style="color:var(--orange);">Weight W⃗</strong> — origin: <em>centre of gravity G</em>, direction: vertically downward<br>
+              • <strong style="color:var(--cyan);">Tension T⃗</strong> — from spring, origin: <em>top contact point of body with spring</em>, direction: vertically upward
+            </div>
+            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vec">T⃗</span> = <span class="vec-neg">−W⃗</span></div><div class="formula-sub">T: vertical ↑ from contact point · W: vertical ↓ from G · |T| = |W|</div></div>
+            <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;">If W = 12 N downward, deduce T:</div>
+            <div class="mcq-options" id="qEx3">
+              <div class="mcq-opt" onclick="selMCQ('qEx3','A',this)"><span class="mcq-letter">A</span>T = 12 N, vertically downward</div>
+              <div class="mcq-opt" onclick="selMCQ('qEx3','B',this)"><span class="mcq-letter">B</span>T = 6 N, vertically upward</div>
+              <div class="mcq-opt" onclick="selMCQ('qEx3','C',this)"><span class="mcq-letter">C</span>T = 12 N, vertically upward</div>
+            </div>
+            <button class="btn-chk" onclick="chkMCQ('qEx3','C','✓ T = 12 N vertically upward. T⃗ = −W⃗: same magnitude (12 N), opposite direction (upward), same vertical line of action.')">✓ Check</button>
+            <div class="fb" id="fbex3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- E3b PRINCIPLE OF INTERACTION -->
+<section id="interaction" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Principle of Interaction</div>
+  <h2 class="sec-title">Principle of Interaction</h2>
+
+  <div style="background:rgba(136,102,255,.06);border:1px solid rgba(136,102,255,.2);border-radius:10px;padding:16px 20px;margin-bottom:22px;">
+    <div style="font-family:var(--fm);font-size:.56rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:9px;">Statement</div>
+    <p style="font-size:.92rem;color:var(--text);line-height:1.8;margin-bottom:10px;">
+      When body <span class="pair-a">A</span> exerts a force on body <span class="pair-b">B</span>, at the same moment, body <span class="pair-b">B</span> exerts a force on body <span class="pair-a">A</span>.
+    </p>
+    <div class="formula"><div class="formula-main"><span class="vec" style="color:var(--cyan);">F⃗<sub>A/B</sub></span> = <span class="vec-neg">−F⃗<sub>B/A</sub></span></div><div class="formula-sub">|F⃗A/B| = |F⃗B/A| — equal magnitudes, opposite directions, different bodies</div></div>
+    <div style="margin-top:10px;font-size:.78rem;color:var(--muted2);">⚠ <strong style="color:var(--yellow);">Key:</strong> These forces act on <strong>different bodies</strong> — they do NOT cancel each other.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Box / Table: </strong><span class="pair-a">F⃗<sub>table/box</sub></span> (table pushes box ↑) = −<span class="pair-b">F⃗<sub>box/table</sub></span> (box pushes table ↓)</div></div>
+    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Ball / Water: </strong><span class="pair-a">F⃗<sub>water/ball</sub></span> (water pushes ball ↑) = −<span class="pair-b">F⃗<sub>ball/water</sub></span> (ball pushes water ↓)</div></div>
+    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Body / Spring: </strong><span class="pair-a">F⃗<sub>spring/body</sub></span> (spring pulls body ↑) = −<span class="pair-b">F⃗<sub>body/spring</sub></span> (body pulls spring ↓)</div></div>
+  </div>
+
+  <!-- CINEMATIC INTERACTION ANIMATION -->
+  <div style="font-family:var(--fm);font-size:.58rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">🎬 Live Demo — Person Pushing a Wall</div>
+  <div class="interact-section">
+    <canvas id="icv" width="700" height="340"></canvas>
+    <div class="slider-row">
+      <span class="slider-label">Push force (N)</span>
+      <input type="range" id="slMag" min="10" max="150" value="60" oninput="drawInteract()">
+      <span class="slider-val" id="svMag">60 N</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label">Push direction</span>
+      <input type="range" id="slDir" min="-40" max="40" value="0" oninput="drawInteract()">
+      <span class="slider-val" id="svDir">→ Horizontal</span>
+    </div>
+    <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;">
+      <div style="font-size:.74rem;color:var(--muted2);">
+        <span style="display:inline-block;width:14px;height:3px;background:var(--cyan);margin-right:6px;vertical-align:middle;"></span>
+        <span class="pair-a">F⃗<sub>person/wall</sub></span> — person pushes wall
+      </div>
+      <div style="font-size:.74rem;color:var(--muted2);">
+        <span style="display:inline-block;width:14px;height:3px;background:var(--orange);margin-right:6px;vertical-align:middle;"></span>
+        <span class="pair-b">F⃗<sub>wall/person</sub></span> — wall pushes back on person
+      </div>
+    </div>
+  </div>
+
+  <!-- Q about interaction -->
+  <div style="margin-top:20px;">
+    <div style="font-size:.78rem;color:var(--muted2);margin-bottom:8px;">When the person pushes harder on the wall, the reaction force from the wall:</div>
+    <div class="mcq-options" id="qInter">
+      <div class="mcq-opt" onclick="selMCQ('qInter','A',this)"><span class="mcq-letter">A</span>Stays the same — it doesn't change</div>
+      <div class="mcq-opt" onclick="selMCQ('qInter','B',this)"><span class="mcq-letter">B</span>Increases by the same amount — always equal in magnitude</div>
+      <div class="mcq-opt" onclick="selMCQ('qInter','C',this)"><span class="mcq-letter">C</span>Decreases — the wall resists less</div>
+    </div>
+    <button class="btn-chk" onclick="chkMCQ('qInter','B','✓ Correct! The reaction always equals the action in magnitude. Push harder → wall pushes back harder. Always simultaneous, always equal, always opposite.')">✓ Check</button>
+    <div class="fb" id="fbqInter"></div>
+  </div>
+</section>
+
+<!-- E4 PRACTICE -->
+<section id="elaborate">
+  <div class="e-tag elaborate">E4 · Practice</div>
+  <h2 class="sec-title">Apply What You Know</h2>
+
+  <div class="q-block">
+    <div class="q-num">Question 1 · Deduce Force Characteristics</div>
+    <div class="q-text">A ball floats on water. Its weight is <strong>W = 8 N, vertically downward</strong>. Deduce all characteristics of the buoyancy force F<sub>b</sub>.</div>
+    <div class="mcq-options" id="q1opts">
+      <div class="mcq-opt" onclick="selMCQ('q1','A',this)"><span class="mcq-letter">A</span>Fb = 8 N, vertically downward, vertical line of action</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','B',this)"><span class="mcq-letter">B</span>Fb = 4 N, vertically upward, vertical line of action</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','C',this)"><span class="mcq-letter">C</span>Fb = 8 N, vertically upward, vertical line of action</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','D',this)"><span class="mcq-letter">D</span>Fb = 8 N, horizontally, horizontal line of action</div>
+    </div>
+    <button class="btn-chk" onclick="chkMCQ('q1','C','✓ F⃗b = −W⃗ → same magnitude (8 N), opposite direction (upward), same vertical line of action.')">✓ Check</button>
+    <div class="fb" id="fbq1"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Question 2 · Deduce Force Characteristics</div>
+    <div class="q-text">A body hangs from a spring at rest. Tension T = <strong>15 N, vertically upward</strong>. What are the characteristics of the weight W?</div>
+    <div class="mcq-options" id="q2opts">
+      <div class="mcq-opt" onclick="selMCQ('q2','A',this)"><span class="mcq-letter">A</span>W = 15 N, vertically downward, vertical line of action</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','B',this)"><span class="mcq-letter">B</span>W = 15 N, vertically upward, vertical line of action</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','C',this)"><span class="mcq-letter">C</span>W = 7.5 N, vertically downward</div>
+    </div>
+    <button class="btn-chk" onclick="chkMCQ('q2','A','✓ W⃗ = −T⃗ → same magnitude (15 N), opposite direction to T (downward), same vertical line of action.')">✓ Check</button>
+    <div class="fb" id="fbq2"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Question 3 · Interaction Pair</div>
+    <div class="q-text">A box rests on a table. The table exerts a force on the box of <strong>20 N upward</strong>. Identify the reaction force — who exerts it, on whom, and what are its characteristics?</div>
+    <div class="mcq-options" id="q3opts">
+      <div class="mcq-opt" onclick="selMCQ('q3','A',this)"><span class="mcq-letter">A</span>Earth exerts 20 N downward on the box</div>
+      <div class="mcq-opt" onclick="selMCQ('q3','B',this)"><span class="mcq-letter">B</span>Box exerts 20 N downward on the table</div>
+      <div class="mcq-opt" onclick="selMCQ('q3','C',this)"><span class="mcq-letter">C</span>Box exerts 20 N upward on the table</div>
+    </div>
+    <button class="btn-chk" onclick="chkMCQ('q3','B','✓ F⃗(table/box) = 20 N upward → F⃗(box/table) = 20 N downward. The box pushes DOWN on the table with the same force the table pushes UP on the box.')">✓ Check</button>
+    <div class="fb" id="fbq3"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="trap-tag">⚠ Critical Thinking</div>
+    <div class="q-num">Question 4 · Common Misconception</div>
+    <div class="q-text">A student says: <em>"The weight of the box and the normal reaction of the table form an interaction pair."</em> Is this correct?</div>
+    <div class="mcq-options" id="q4opts">
+      <div class="mcq-opt" onclick="selMCQ('q4','A',this)"><span class="mcq-letter">A</span>Yes — they are equal, opposite, and on the same line</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','B',this)"><span class="mcq-letter">B</span>No — they both act on the same body (the box), so they cannot be an interaction pair</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','C',this)"><span class="mcq-letter">C</span>No — they are not equal in magnitude</div>
+    </div>
+    <button class="btn-chk" onclick="chkMCQ('q4','B','✓ Weight W and Normal N both act on the BOX — they are the equilibrium pair, not an interaction pair. The true interaction pair is: F(table/box) ↑ and F(box/table) ↓ — acting on DIFFERENT bodies.')">✓ Check</button>
+    <div class="fb" id="fbq4"></div>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:700;font-size:.9rem;">Question 5 · Open Question · AI Tutor</span></div>
+    <div class="q-text" style="margin-bottom:10px;">A body of weight W = 10 N rests on a horizontal table.<br>
+    <strong>(a)</strong> Name all forces on the body and classify each.<br>
+    <strong>(b)</strong> Write the equilibrium condition as a vector relation.<br>
+    <strong>(c)</strong> Deduce all characteristics of normal reaction N.<br>
+    <strong>(d)</strong> Identify the true interaction pair involving the table and body.<br>
+    <strong>(e)</strong> Write the vector relation for this interaction pair.</div>
+    <textarea id="openAnswer" placeholder="Write your complete answer here..."></textarea>
+    <button class="btn btn-blue" style="margin-top:10px;" onclick="getAI()">Get AI Feedback 🤖</button>
+    <div class="ai-resp" id="aiResp"></div>
+  </div>
+</section>
+
+<!-- E5 EVALUATE -->
+<section id="evaluate" style="background:var(--bg2);">
+  <div class="e-tag evaluate">E5 · Submit</div>
+  <h2 class="sec-title">Submit Your Work</h2>
+  <div class="g2" style="align-items:start;max-width:860px;">
+    <div class="card">
+      <div class="name-row">
+        <div style="flex:2;"><label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;">Full Name *</label><input type="text" id="stuName" placeholder="Your full name…"></div>
+        <div style="flex:1;"><label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;">Class *</label><input type="text" id="stuClass" placeholder="e.g. 9A"></div>
+      </div>
+      <hr>
+      <div id="ansReview" style="font-size:.74rem;line-height:2;font-family:var(--fm);color:var(--muted2);"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.7rem;color:var(--muted2);margin-bottom:14px;">0 / 11 questions answered correctly</p>
+      <button class="btn btn-green" style="width:100%;" onclick="submitWork()">📊 Submit to Ahmad's Grade Sheet</button>
+    </div>
+    <div class="submit-card" style="text-align:center;">
+      <div style="font-size:2rem;margin-bottom:6px;">⚖</div>
+      <div style="font-family:var(--fm);font-size:2.6rem;font-weight:700;color:var(--cyan);" id="scoreDisp">—</div>
+      <div style="font-size:.58rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted2);margin-top:4px;">Score</div>
+      <hr>
+      <p style="font-size:.76rem;color:var(--muted2);line-height:1.7;">Ahmad reviews your force diagrams and open answer in the next class.</p>
+      <div id="submitOk" style="display:none;margin-top:10px;padding:10px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.22);border-radius:7px;font-size:.78rem;color:var(--green);">✓ Submitted! Ahmad has your answers.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div><div style="font-size:.95rem;font-weight:900;color:#fff;">Equilibrium<span style="color:var(--cyan);">Lab</span></div><div style="font-size:.66rem;color:var(--muted2);">Ahmad Ghozlan · Physics · Grade 9 · Lebanon</div></div>
+  <div style="display:flex;gap:8px;"><button class="ft-link" onclick="shareIt()">📤 Share</button><a class="ft-link" href="https://aghozlan.github.io" target="_blank">↗ All Labs</a></div>
+</footer>
+</main>
+</div>
+
+<script>
+const APPS_URL='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const secs=['hero','explore','equilibrium','interaction','elaborate','evaluate'];
+  let cur='hero';
+  secs.forEach(s=>{const el=document.getElementById(s);if(el&&window.scrollY>=el.offsetTop-200)cur=s;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+});
+
+// ═══════════════════════════════════════════════════════════
+// DRAWING HELPERS
+// ═══════════════════════════════════════════════════════════
+function drawGrid(ctx,w,h){
+  ctx.save();
+  ctx.strokeStyle='rgba(40,120,255,.08)';ctx.lineWidth=0.5;
+  for(let x=0;x<w;x+=16){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=16){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  ctx.strokeStyle='rgba(40,120,255,.18)';
+  for(let x=0;x<w;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  ctx.restore();
+}
+
+function drawForceArrow(ctx, ox, oy, dx, dy, color, label, arrowLen=55){
+  // ox,oy = origin point, dx,dy = unit direction vector
+  const ex=ox+dx*arrowLen, ey=oy+dy*arrowLen;
+  const hL=12, hW=7;
+  ctx.save();
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;
+  ctx.shadowColor=color;ctx.shadowBlur=10;
+  // shaft
+  ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ex,ey);ctx.stroke();
+  // arrowhead
+  ctx.beginPath();
+  ctx.moveTo(ex,ey);
+  ctx.lineTo(ex-dx*hL+dy*hW, ey-dy*hL-dx*hW);
+  ctx.lineTo(ex-dx*hL-dy*hW, ey-dy*hL+dx*hW);
+  ctx.closePath();ctx.fill();
+  // dot at origin
+  ctx.beginPath();ctx.arc(ox,oy,3.5,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+  // label
+  if(label){
+    ctx.font='bold 12px DM Mono,monospace';
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    const lx=ex+dx*8+Math.abs(dy)*8, ly=ey+dy*8;
+    ctx.fillText(label,lx,ly);
+  }
+  ctx.restore();
+}
+
+function drawGpoint(ctx,x,y,label='G'){
+  ctx.save();
+  ctx.fillStyle='#ffffff';ctx.strokeStyle='#ffffff';
+  ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+  ctx.fill();
+  ctx.font='bold 11px DM Mono';ctx.fillStyle='#ffffff';
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(label,x+7,y);
+  ctx.restore();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATIC EXAMPLE DIAGRAMS (teacher reference — all correct)
+// ═══════════════════════════════════════════════════════════
+function drawExDiagram(cvId, type){
+  const cv=document.getElementById(cvId);if(!cv)return;
+  const W=220,H=240;
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#040d1a';ctx.fillRect(0,0,W,H);
+  drawGrid(ctx,W,H);
+
+  if(type==='table'){
+    // Table surface
+    ctx.fillStyle='#0d2050';ctx.fillRect(15,150,190,14);
+    ctx.strokeStyle='#2878ff';ctx.lineWidth=1;ctx.strokeRect(15,150,190,14);
+    ctx.fillStyle='#1a3060';ctx.fillRect(25,164,16,50);ctx.fillRect(179,164,16,50);
+    // Book
+    const bx=70,by=118,bw=80,bh=32;
+    ctx.fillStyle='#0d2a5a';ctx.strokeStyle='#2878ff';ctx.lineWidth=2;
+    ctx.fillRect(bx,by,bw,bh);ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle='#1a4080';ctx.fillRect(bx+2,by+2,bw-4,bh-4);
+    ctx.fillStyle='#c8d8f0';ctx.font='bold 10px Outfit';ctx.textAlign='center';
+    ctx.fillText('Book',110,138);
+    // G at centre of book
+    const gx=110, gy=134;
+    drawGpoint(ctx,gx,gy);
+    // W from G downward
+    drawForceArrow(ctx,gx,gy,0,1,'#ff8c00','W⃗',52);
+    // N from contact point (bottom of book = by+bh) upward
+    const cx=110, cy=150; // contact point = bottom of book = top of table
+    drawForceArrow(ctx,cx,cy,0,-1,'#00d4ff','N⃗',52);
+    // contact point label
+    ctx.fillStyle='#00d4ff';ctx.font='9px DM Mono';ctx.textAlign='center';
+    ctx.fillText('contact',cx,cy+10);
+
+  } else if(type==='water'){
+    // Water
+    ctx.fillStyle='rgba(0,60,160,.4)';ctx.fillRect(10,148,200,82);
+    ctx.strokeStyle='#00d4ff';ctx.lineWidth=1;ctx.strokeRect(10,148,200,82);
+    // Water surface line
+    ctx.strokeStyle='rgba(0,212,255,.5)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(10,148);ctx.lineTo(210,148);ctx.stroke();
+    ctx.fillStyle='rgba(0,180,255,.12)';ctx.font='10px Outfit';ctx.textAlign='center';
+    ctx.fillText('Water',110,180);
+    // Ball (half submerged look)
+    const bx=110,by=134,br=22;
+    ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);
+    ctx.fillStyle='#0d2a5a';ctx.fill();
+    ctx.strokeStyle='#2878ff';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#c8d8f0';ctx.font='bold 9px Outfit';ctx.textAlign='center';
+    ctx.fillText('Ball',bx,by+4);
+    // G at centre of ball
+    drawGpoint(ctx,bx,by);
+    // W from G downward
+    drawForceArrow(ctx,bx,by,0,1,'#ff8c00','W⃗',52);
+    // Fb from bottom contact point upward
+    const cpx=bx, cpy=by+br; // lowest point of ball = contact with water
+    drawForceArrow(ctx,cpx,cpy,0,-1,'#00d4ff','F⃗b',52);
+    ctx.fillStyle='#00d4ff';ctx.font='9px DM Mono';ctx.textAlign='center';
+    ctx.fillText('contact',cpx,cpy+10);
+
+  } else if(type==='spring'){
+    // Ceiling
+    ctx.fillStyle='#0d2050';ctx.fillRect(60,0,100,10);
+    ctx.strokeStyle='#2878ff';ctx.lineWidth=1;
+    for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(60+i*20,10);ctx.lineTo(68+i*20,22);ctx.stroke();}
+    // Spring coils
+    ctx.strokeStyle='#4a90ff';ctx.lineWidth=2.5;
+    for(let i=0;i<7;i++){
+      ctx.beginPath();ctx.moveTo(110,22+i*10);
+      ctx.bezierCurveTo(132,22+i*10+2,132,22+i*10+8,110,22+i*10+10);
+      ctx.stroke();
+    }
+    // Body
+    const bx=80,by=92,bw=60,bh=36;
+    ctx.fillStyle='#0d2a5a';ctx.strokeStyle='#2878ff';ctx.lineWidth=2;
+    ctx.fillRect(bx,by,bw,bh);ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle='#c8d8f0';ctx.font='bold 10px Outfit';ctx.textAlign='center';
+    ctx.fillText('Body',110,113);
+    // G at centre of body
+    const gx=110,gy=110;
+    drawGpoint(ctx,gx,gy);
+    // W from G downward
+    drawForceArrow(ctx,gx,gy,0,1,'#ff8c00','W⃗',52);
+    // T from top contact point (top of body = by) upward
+    const cpx=110, cpy=by; // top of body = contact with spring
+    drawForceArrow(ctx,cpx,cpy,0,-1,'T⃗',52);
+    // Fix: pass color properly
+    drawForceArrow(ctx,cpx,cpy,0,-1,'#00d4ff','T⃗',52);
+    ctx.fillStyle='#00d4ff';ctx.font='9px DM Mono';ctx.textAlign='center';
+    ctx.fillText('contact',cpx,cpy-62);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// FBD INTERACTIVE — STUDENT PLACES ARROWS
+// ═══════════════════════════════════════════════════════════
+const FBD={
+  A:{selectedForce:null, placed:{}, W:{color:'#ff8c00'}, N:{color:'#00d4ff'}},
+  B:{selectedForce:null, placed:{}, W:{color:'#ff8c00'}, Fb:{color:'#00d4ff'}},
+  C:{selectedForce:null, placed:{}, W:{color:'#ff8c00'}, T:{color:'#00d4ff'}}
+};
+
+// Correct answers: where each force MUST originate and which direction
+// G = centre of body, CP = contact point
+const FBD_CORRECT={
+  A:{W:{origin:'G',dir:'down'}, N:{origin:'contact',dir:'up'}},
+  B:{W:{origin:'G',dir:'down'}, Fb:{origin:'contact',dir:'up'}},
+  C:{W:{origin:'G',dir:'down'}, T:{origin:'contact',dir:'up'}}
+};
+
+function drawFBDBase(sc){
+  const cv=document.getElementById('cv'+sc);if(!cv)return;
+  const W=240,H=260;cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#040d1a';ctx.fillRect(0,0,W,H);
+  drawGrid(ctx,W,H);
+
+  if(sc==='A'){
+    // Table
+    ctx.fillStyle='#0d2050';ctx.fillRect(15,160,210,14);ctx.strokeStyle='#2878ff';ctx.lineWidth=1;ctx.strokeRect(15,160,210,14);
+    ctx.fillStyle='#1a3060';ctx.fillRect(25,174,16,50);ctx.fillRect(199,174,16,50);
+    // Book
+    ctx.fillStyle='#0d2a5a';ctx.strokeStyle='#2878ff';ctx.lineWidth=2;
+    ctx.fillRect(75,128,90,32);ctx.strokeRect(75,128,90,32);
+    ctx.fillStyle='#c8d8f0';ctx.font='bold 10px Outfit';ctx.textAlign='center';ctx.fillText('Book',120,148);
+    // G marker (white dot)
+    drawGpoint(ctx,120,144,'G');
+    // Contact zone hint
+    ctx.fillStyle='rgba(0,212,255,.1)';ctx.fillRect(75,158,90,4);
+    ctx.strokeStyle='rgba(0,212,255,.3)';ctx.lineWidth=1;ctx.strokeRect(75,158,90,4);
+    ctx.fillStyle='rgba(0,212,255,.5)';ctx.font='8px DM Mono';ctx.textAlign='center';
+    ctx.fillText('contact point',120,170);
+    return {gx:120,gy:144,cpx:120,cpy:160};
+  }
+  if(sc==='B'){
+    // Water
+    ctx.fillStyle='rgba(0,60,160,.35)';ctx.fillRect(10,158,220,92);
+    ctx.strokeStyle='rgba(0,212,255,.4)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(10,158);ctx.lineTo(230,158);ctx.stroke();
+    ctx.fillStyle='rgba(0,180,255,.12)';ctx.font='10px Outfit';ctx.textAlign='center';ctx.fillText('Water',120,200);
+    // Ball
+    ctx.beginPath();ctx.arc(120,142,28,0,Math.PI*2);
+    ctx.fillStyle='#0d2a5a';ctx.fill();ctx.strokeStyle='#2878ff';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#c8d8f0';ctx.font='bold 10px Outfit';ctx.textAlign='center';ctx.fillText('Ball',120,146);
+    drawGpoint(ctx,120,142,'G');
+    // contact point indicator
+    ctx.fillStyle='rgba(0,212,255,.5)';ctx.font='8px DM Mono';ctx.textAlign='center';
+    ctx.fillText('contact point',120,175);
+    return {gx:120,gy:142,cpx:120,cpy:170};
+  }
+  if(sc==='C'){
+    // Ceiling + spring
+    ctx.fillStyle='#0d2050';ctx.fillRect(70,0,100,10);
+    ctx.strokeStyle='#2878ff';ctx.lineWidth=1;
+    for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(70+i*25,10);ctx.lineTo(80+i*25,22);ctx.stroke();}
+    ctx.strokeStyle='#4a90ff';ctx.lineWidth=2.5;
+    for(let i=0;i<7;i++){ctx.beginPath();ctx.moveTo(120,22+i*11);ctx.bezierCurveTo(144,22+i*11+3,144,22+i*11+8,120,22+i*11+11);ctx.stroke();}
+    // Body
+    ctx.fillStyle='#0d2a5a';ctx.strokeStyle='#2878ff';ctx.lineWidth=2;
+    ctx.fillRect(85,99,70,38);ctx.strokeRect(85,99,70,38);
+    ctx.fillStyle='#c8d8f0';ctx.font='bold 10px Outfit';ctx.textAlign='center';ctx.fillText('Body',120,121);
+    drawGpoint(ctx,120,118,'G');
+    ctx.fillStyle='rgba(0,212,255,.5)';ctx.font='8px DM Mono';ctx.textAlign='center';
+    ctx.fillText('contact point',120,96);
+    return {gx:120,gy:118,cpx:120,cpy:99};
+  }
+}
+
+function renderFBD(sc){
+  const pts=drawFBDBase(sc);if(!pts)return;
+  const cv=document.getElementById('cv'+sc);
+  const ctx=cv.getContext('2d');
+  const placed=FBD[sc].placed;
+  const forces=Object.keys(FBD[sc]).filter(k=>k!=='selectedForce'&&k!=='placed');
+  forces.forEach(f=>{
+    if(placed[f]){
+      const d=placed[f]; // {origin:'G'|'contact', dir:'up'|'down'}
+      const ox=d.origin==='G'?pts.gx:pts.cpx;
+      const oy=d.origin==='G'?pts.gy:pts.cpy;
+      const dy=d.dir==='up'?-1:1;
+      const color=FBD[sc][f].color;
+      const label=f==='Fb'?'F⃗b':f+'⃗';
+      drawForceArrow(ctx,ox,oy,0,dy,color,label,60);
+    }
+  });
+  // Show selected force highlight
+  if(FBD[sc].selectedForce){
+    ctx.save();
+    ctx.fillStyle='rgba(0,212,255,.15)';ctx.fillRect(0,cv.height-20,cv.width,20);
+    ctx.fillStyle='#00d4ff';ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText('Now tap where '+FBD[sc].selectedForce+' starts: G (centre) or contact point',cv.width/2,cv.height-6);
+    ctx.restore();
+  }
+}
+
+function selectForce(sc,force){
+  FBD[sc].selectedForce=force;
+  // Highlight active button
+  const toolbar=document.getElementById('tb'+sc);
+  toolbar.querySelectorAll('.force-btn').forEach(b=>{
+    b.classList.toggle('active',b.id==='btn'+sc+'_'+force);
+    b.classList.toggle('inactive',b.id!=='btn'+sc+'_'+force);
+  });
+  renderFBD(sc);
+}
+
+function getCanvasCoords(cv,e){
+  const rect=cv.getBoundingClientRect();
+  const scaleX=cv.width/rect.width,scaleY=cv.height/rect.height;
+  const clientX=e.touches?e.touches[0].clientX:e.clientX;
+  const clientY=e.touches?e.touches[0].clientY:e.clientY;
+  return{x:(clientX-rect.left)*scaleX, y:(clientY-rect.top)*scaleY};
+}
+
+// Click zones: top half of body = contact area for contact forces, centre = G
+function getClickZone(sc,x,y){
+  // Returns 'G' or 'contact' based on click position
+  if(sc==='A'){
+    if(y>=128&&y<=160&&x>=75&&x<=165) return y<144?'contact':'G'; // top half = contact, centre/below = G
+    if(y>=140&&y<=165) return 'contact';
+    return 'G';
+  }
+  if(sc==='B'){
+    if(y>=114&&y<=142) return 'G';
+    if(y>=155&&y<=180) return 'contact';
+    return y<142?'G':'contact';
+  }
+  if(sc==='C'){
+    if(y>=99&&y<=118) return 'contact';
+    if(y>=118&&y<=137) return 'G';
+    return y<110?'contact':'G';
+  }
+  return 'G';
+}
+
+['A','B','C'].forEach(sc=>{
+  const cv=document.getElementById('cv'+sc);
+  function onTap(e){
+    e.preventDefault();
+    const f=FBD[sc].selectedForce;if(!f)return;
+    const pts={A:{gx:120,gy:144,cpx:120,cpy:160},B:{gx:120,gy:142,cpx:120,cpy:170},C:{gx:120,gy:118,cpx:120,cpy:99}};
+    const {x,y}=getCanvasCoords(cv,e);
+    // Determine origin based on click proximity to G or contact point
+    const pt=pts[sc];
+    const dG=Math.hypot(x-pt.gx,y-pt.gy);
+    const dCP=Math.hypot(x-pt.cpx,y-pt.cpy);
+    // Also accept clicks in body region — smart assignment
+    let origin;
+    if(dG<dCP||y<pt.cpy-20){origin='G';}else{origin='contact';}
+    // Direction: weight forces are placed downward, contact forces upward
+    const dir=(f==='W')?'down':'up';
+    FBD[sc].placed[f]={origin,dir};
+    FBD[sc].selectedForce=null;
+    // Reset button states
+    const toolbar=document.getElementById('tb'+sc);
+    toolbar.querySelectorAll('.force-btn').forEach(b=>{b.classList.remove('active','inactive');});
+    renderFBD(sc);
+  }
+  cv.addEventListener('click',onTap);
+  cv.addEventListener('touchstart',onTap,{passive:false});
+});
+
+function checkFBD(sc){
+  const fb=document.getElementById('fbd'+sc);
+  fb.style.display='block';
+  const placed=FBD[sc].placed;
+  const correct=FBD_CORRECT[sc];
+  const forces=Object.keys(correct);
+  const allPlaced=forces.every(f=>placed[f]);
+  if(!allPlaced){
+    fb.className='fb info';
+    fb.textContent='Place all force arrows first ('+forces.filter(f=>!placed[f]).join(', ')+' missing).';
+    return;
+  }
+  const errors=forces.filter(f=>placed[f].origin!==correct[f].origin||placed[f].dir!==correct[f].dir);
+  if(errors.length===0){
+    fb.className='fb ok';
+    const names={A:'book',B:'ball',C:'body'};
+    const cforces={A:'Weight W (from G, downward) and Normal N (from contact point, upward)',B:'Weight W (from G, downward) and Buoyancy Fb (from contact point, upward)',C:'Weight W (from G, downward) and Tension T (from contact point, upward)'};
+    fb.textContent='✓ Correct! '+cforces[sc]+'. Forces on the '+names[sc]+' are perfectly placed!';
+    correct_fbd[sc]=true;
+    updateProg();
+  } else {
+    fb.className='fb hint';
+    fb.textContent='💡 Check: '+errors.map(f=>{
+      if(f==='W') return 'Weight W must start from G (centre of gravity) and point downward';
+      return f+' must start from the contact point and point upward';
+    }).join('. ')+'.';
+  }
+}
+
+function resetFBD(sc){
+  FBD[sc].placed={};FBD[sc].selectedForce=null;
+  const toolbar=document.getElementById('tb'+sc);
+  toolbar.querySelectorAll('.force-btn').forEach(b=>{b.classList.remove('active','inactive','placed');});
+  document.getElementById('fbd'+sc).style.display='none';
+  drawFBDBase(sc);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CINEMATIC INTERACTION ANIMATION — Person pushing wall
+// ═══════════════════════════════════════════════════════════
+const icv=document.getElementById('icv');
+const ictx=icv.getContext('2d');
+let animT=0;
+let animFrame=null;
+
+function drawInteract(){
+  const mag=parseInt(document.getElementById('slMag').value);
+  const angleDeg=parseInt(document.getElementById('slDir').value);
+  document.getElementById('svMag').textContent=mag+' N';
+  const dirs=[[-40,'↙ Down-left'],[-30,'↙'],[-20,'↙'],[-10,'↗ Slightly up'],
+    [0,'→ Horizontal'],[10,'↘ Slightly down'],[20,'↘'],[30,'↘'],[40,'↘ Down-right']];
+  const label=angleDeg===0?'→ Horizontal':angleDeg<0?'↖ Upward':'↘ Downward';
+  document.getElementById('svDir').textContent=label;
+
+  if(animFrame)cancelAnimationFrame(animFrame);
+  animT=0;
+  function loop(){
+    animT+=0.04;
+    renderInteract(mag,angleDeg*Math.PI/180,animT);
+    animFrame=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function renderInteract(mag,angleRad,t){
+  const W=icv.width,H=icv.height;
+  ictx.clearRect(0,0,W,H);
+
+  // Background
+  ictx.fillStyle='#020810';ictx.fillRect(0,0,W,H);
+  drawGrid(ictx,W,H);
+
+  // Scene label
+  ictx.fillStyle='rgba(136,102,255,.08)';
+  ictx.fillRect(0,0,W,H);
+  ictx.fillStyle='#8866ff';ictx.font='11px DM Mono';ictx.textAlign='right';
+  ictx.fillText('PRINCIPLE OF INTERACTION — REAL WORLD SCENE',W-14,18);
+
+  // GROUND
+  ictx.fillStyle='#0d1a38';ictx.fillRect(0,H-50,W,50);
+  ictx.strokeStyle='#2878ff';ictx.lineWidth=1;
+  ictx.beginPath();ictx.moveTo(0,H-50);ictx.lineTo(W,H-50);ictx.stroke();
+  // Ground texture
+  ictx.strokeStyle='rgba(40,120,255,.15)';ictx.lineWidth=1;
+  for(let x=0;x<W;x+=30){ictx.beginPath();ictx.moveTo(x,H-50);ictx.lineTo(x-15,H-30);ictx.stroke();}
+
+  // WALL
+  const wallX=W-130;
+  ictx.fillStyle='#0a1828';
+  ictx.fillRect(wallX,20,90,H-70);
+  ictx.strokeStyle='#2878ff';ictx.lineWidth=2;
+  ictx.strokeRect(wallX,20,90,H-70);
+  // Brick pattern
+  ictx.strokeStyle='rgba(40,120,255,.2)';ictx.lineWidth=0.5;
+  for(let y=30;y<H-50;y+=22){
+    ictx.beginPath();ictx.moveTo(wallX,y);ictx.lineTo(wallX+90,y);ictx.stroke();
+    const offset=(Math.floor((y-30)/22)%2)*22;
+    ictx.beginPath();ictx.moveTo(wallX+offset,y);ictx.lineTo(wallX+offset,y+22);ictx.stroke();
+    ictx.beginPath();ictx.moveTo(wallX+offset+44,y);ictx.lineTo(wallX+offset+44,y+22);ictx.stroke();
+  }
+  ictx.fillStyle='#5a7ab8';ictx.font='bold 11px Outfit';ictx.textAlign='center';
+  ictx.fillText('WALL',wallX+45,H-62);
+  ictx.fillStyle='var(--orange)';
+
+  // PERSON (stylized stick figure leaning into wall)
+  const personX=230;
+  const lean=Math.min(0.3,mag/400); // lean more when pushing harder
+  const bounce=Math.sin(t*3)*1.5; // subtle breathing animation
+  const fy=H-50; // floor y
+
+  // Body lean angle based on force magnitude
+  const bodyAngle=lean;
+
+  // Legs
+  ictx.strokeStyle='#c8d8f0';ictx.lineWidth=3;ictx.lineCap='round';
+  // Left leg
+  ictx.beginPath();ictx.moveTo(personX,fy-60);
+  ictx.lineTo(personX-18+lean*20,fy);ictx.stroke();
+  // Right leg (back leg, braced)
+  ictx.beginPath();ictx.moveTo(personX,fy-60);
+  ictx.lineTo(personX+20+lean*15,fy);ictx.stroke();
+
+  // Torso (leaning forward)
+  const tx1=personX,ty1=fy-60;
+  const tx2=personX+Math.sin(bodyAngle)*55+lean*25,ty2=fy-60-Math.cos(bodyAngle)*55+bounce;
+  ictx.beginPath();ictx.moveTo(tx1,ty1);ictx.lineTo(tx2,ty2);ictx.stroke();
+
+  // Arms pushing wall
+  ictx.strokeStyle='#c8d8f0';ictx.lineWidth=3;
+  // Both hands at wall contact
+  const handX=wallX;
+  const handY=ty2+15;
+  // Left arm
+  ictx.beginPath();ictx.moveTo(tx2-8,ty2+10);ictx.lineTo(handX,handY-8);ictx.stroke();
+  // Right arm
+  ictx.beginPath();ictx.moveTo(tx2+8,ty2+10);ictx.lineTo(handX,handY+8);ictx.stroke();
+
+  // Head
+  ictx.beginPath();ictx.arc(tx2,ty2-14,12,0,Math.PI*2);
+  ictx.fillStyle='#c8d8f0';ictx.fill();
+
+  // PERSON label
+  ictx.fillStyle='#00d4ff';ictx.font='bold 11px Outfit';ictx.textAlign='center';
+  ictx.fillText('Person (A)',personX,fy+20);
+
+  // FORCE ARROWS
+  const scale=Math.max(0.6,mag/60)*1.2;
+  const arrowLen=Math.min(140,mag*scale*0.9);
+
+  // Contact point (hands on wall)
+  const cpX=wallX, cpY=(handY-8+handY+8)/2;
+
+  // F(A/B): person pushes wall — cyan arrow pointing from hands INTO wall
+  const pAngleRad=angleRad;
+  const px=Math.cos(pAngleRad),py=Math.sin(pAngleRad);
+  // Arrow starts at hands, goes toward wall (rightward + angle)
+  const pEx=cpX+px*arrowLen, pEy=cpY+py*arrowLen;
+  drawBigForceArrow(ictx,cpX,cpY,pEx,pEy,'#00d4ff');
+  ictx.fillStyle='#00d4ff';ictx.font='bold 11px DM Mono';ictx.textAlign='center';
+  ictx.fillText('F⃗(A/B) = '+mag+' N',cpX+px*arrowLen*0.5-30,cpY+py*arrowLen*0.5-12);
+
+  // F(B/A): wall pushes back — orange arrow exactly opposite, same contact point
+  const rx=-px,ry=-py;
+  const rEx=cpX+rx*arrowLen, rEy=cpY+ry*arrowLen;
+  drawBigForceArrow(ictx,cpX,cpY,rEx,rEy,'#ff8c00');
+  ictx.fillStyle='#ff8c00';ictx.font='bold 11px DM Mono';ictx.textAlign='center';
+  ictx.fillText('F⃗(B/A) = '+mag+' N',cpX+rx*arrowLen*0.5+30,cpY+ry*arrowLen*0.5-12);
+
+  // Contact point dot
+  ictx.beginPath();ictx.arc(cpX,cpY,5,0,Math.PI*2);
+  ictx.fillStyle='#ffffff';ictx.fill();
+  ictx.fillStyle='#ffffff';ictx.font='9px DM Mono';ictx.textAlign='left';
+  ictx.fillText('contact',cpX+8,cpY+4);
+
+  // Bottom equation
+  ictx.fillStyle='rgba(0,212,255,.08)';ictx.fillRect(0,H-50,W,50);
+  ictx.fillStyle='#c8d8f0';ictx.font='bold 13px DM Mono';ictx.textAlign='center';
+  ictx.fillText('F⃗(person/wall) = −F⃗(wall/person)    |F| = '+mag+' N    Always simultaneous',W/2,H-30);
+  ictx.fillStyle='#5a7ab8';ictx.font='11px DM Mono';
+  ictx.fillText('Slide the controls to change the push — the reaction always mirrors it exactly',W/2,H-12);
+}
+
+function drawBigForceArrow(ctx,x1,y1,x2,y2,color){
+  const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+  if(len<4)return;
+  const ux=dx/len,uy=dy/len;
+  const hL=16,hW=9;
+  ctx.save();
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3.5;
+  ctx.shadowColor=color;ctx.shadowBlur=14;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-ux*hL+uy*hW,y2-uy*hL-ux*hW);
+  ctx.lineTo(x2-ux*hL-uy*hW,y2-uy*hL+ux*hW);
+  ctx.closePath();ctx.fill();
+  ctx.shadowBlur=0;ctx.restore();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MCQ & SCORING
+// ═══════════════════════════════════════════════════════════
+var answers={};
+var correct={};
+var correct_fbd={A:false,B:false,C:false};
+
+function selMCQ(key,val,btn){
+  answers[key]=val;
+  btn.parentElement.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function chkMCQ(key,ca,msg){
+  const fb=document.getElementById('fb'+key);
+  const sel=answers[key];
+  fb.style.display='block';
+  if(!sel){fb.className='fb info';fb.textContent='Select an answer first.';return;}
+  const opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
+  if(!opts.length)return;
+  const letters=['A','B','C','D'];
+  opts.forEach((o,i)=>{o.classList.remove('selected');if(letters[i]===ca)o.classList.add('correct');else if(letters[i]===sel)o.classList.add('wrong');});
+  if(sel===ca){fb.className='fb ok';fb.textContent=msg;correct[key]=true;}
+  else{fb.className='fb bad';fb.textContent='✗ Not quite. '+msg;}
+  updateProg();
+}
+
+// Simple check for MCQs without options div
+function selAndChkMCQ(key,ca,val,btn,msg){
+  selMCQ(key,val,btn);
+  if(val===ca){
+    btn.classList.add('correct');
+    const fb=document.getElementById('fb'+key);
+    fb.style.display='block';fb.className='fb ok';fb.textContent=msg;
+    correct[key]=true;updateProg();
+  }
+}
+
+function updateProg(){
+  const fbdDone=Object.values(correct_fbd).filter(Boolean).length;
+  const mcqKeys=['qA','qB','qC','qEx1','qEx2','qEx3','qInter','q1','q2','q3','q4'];
+  const mcqDone=mcqKeys.filter(k=>correct[k]).length;
+  const total=3+mcqKeys.length;
+  const done=fbdDone+mcqDone;
+  const pct=Math.round(done/total*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=done+' / '+total+' questions answered correctly';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  document.getElementById('ansReview').innerHTML=[
+    'FBD A: '+(correct_fbd.A?'✓':'—'),
+    'FBD B: '+(correct_fbd.B?'✓':'—'),
+    'FBD C: '+(correct_fbd.C?'✓':'—'),
+    ...mcqKeys.map(k=>k+': '+(correct[k]?'✓':answers[k]?'✗':'—'))
+  ].map(l=>'<div>'+l+'</div>').join('');
+}
+
+// Override chkMCQ for inline MCQs (qA, qB, qC, qInter) that don't have opts divs
+function checkInlineMCQ(key,ca,msg){
+  const sel=answers[key];
+  const fb=document.getElementById('fbq'+key.replace('q',''));
+  if(!sel){
+    const f2=document.getElementById('fb'+key);
+    if(f2){f2.style.display='block';f2.className='fb info';f2.textContent='Select an answer first.';}
+    return;
+  }
+  const f=document.getElementById('fb'+key)||document.getElementById('fbq'+key);
+  if(!f)return;
+  f.style.display='block';
+  if(sel===ca){f.className='fb ok';f.textContent=msg;correct[key]=true;}
+  else{f.className='fb bad';f.textContent='✗ '+msg;}
+  updateProg();
+}
+
+// Patch chkMCQ to handle qA, qB, qC that have opts divs
+const _orig=window.chkMCQ;
+
+// ── AI TUTOR ──────────────────────────────────────────────
+function getAI(){
+  const ans=document.getElementById('openAnswer').value.trim();
+  const resp=document.getElementById('aiResp');
+  if(!ans){showToast('Write your answer first!');return;}
+  resp.style.display='block';
+  resp.innerHTML='<div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>';
+  setTimeout(()=>{resp.textContent=buildAI(ans);},1300);
+}
+function buildAI(a){
+  const h={
+    twoForces:/(two forces|weight|normal)/i.test(a),
+    weight:/weight|W\s*=/i.test(a),
+    normal:/normal|N\s*=/i.test(a),
+    vecRel:/N.*=.*-.*W|F1.*=.*-.*F2/i.test(a),
+    mag:/10\s*N/i.test(a),
+    contact:/contact/i.test(a),
+    distance:/distance/i.test(a),
+    interaction:/interaction|F.*table.*box|F.*box.*table/i.test(a),
+    vecInter:/F.*=.*-.*F/i.test(a)
+  };
+  const score=Object.values(h).filter(Boolean).length;
+  const goods=[];
+  if(h.twoForces)goods.push('identified both forces');
+  if(h.vecRel)goods.push('wrote the equilibrium vector relation');
+  if(h.mag)goods.push('correctly deduced N = 10 N');
+  if(h.interaction)goods.push('identified the interaction pair');
+  if(h.contact&&h.distance)goods.push('classified contact vs distance forces');
+  let p1=goods.length?'Well done on '+goods.join(', ')+'.':'Good start — keep going.';
+  const fixes=[];
+  if(!h.twoForces)fixes.push('Name both forces: Weight W (gravity, distance) and Normal N (contact)');
+  if(!h.vecRel)fixes.push('Write equilibrium: N⃗ = −W⃗');
+  if(!h.mag)fixes.push('N characteristics: 10 N, upward, vertical line');
+  if(!h.interaction)fixes.push('Interaction pair: F(table/box) and F(box/table) — not W and N!');
+  if(!h.vecInter)fixes.push('Write: F⃗(table/box) = −F⃗(box/table)');
+  let p2=fixes.length?'To complete: '+fixes[0]+'.':'Excellent — complete and correct!';
+  const tips=['Equilibrium pair: same body. Interaction pair: different bodies. This distinction is the key to the whole topic.',
+    'Exam tip: W and N both act on the box (equilibrium). F(table/box) and F(box/table) act on different objects (interaction).'];
+  return p1+' '+p2+' '+tips[score%tips.length];
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+async function submitWork(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!name||!cls){showToast('Enter your name and class first!');return;}
+  const btn=document.querySelector('[onclick="submitWork()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+  const fbdScore=['A','B','C'].map(k=>k+':'+(correct_fbd[k]?'✓':'✗')).join(' ');
+  const mcqKeys=['qA','qB','qC','qEx1','qEx2','qEx3','qInter','q1','q2','q3','q4'];
+  const mcqScore=mcqKeys.map(k=>k+':'+(correct[k]?'✓':'✗')).join(' ');
+  const total=3+mcqKeys.length;
+  const done=Object.values(correct_fbd).filter(Boolean).length+mcqKeys.filter(k=>correct[k]).length;
+  const payload={
+    sheet:'Equilibrium_G9',name,class:cls,
+    explore:fbdScore,
+    examples:['qEx1','qEx2','qEx3'].map(k=>k+':'+(correct[k]?'✓':'✗')).join(' '),
+    practice:['q1','q2','q3','q4'].map(k=>k+':'+(correct[k]?'✓':'✗')).join(' '),
+    open:document.getElementById('openAnswer').value||'—',
+    score:Math.round(done/total*100)+'%'
+  };
+  try{
+    await fetch(APPS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    btn.textContent='✓ Submitted!';btn.style.background='var(--green2)';
+    showToast('✓ Submitted to Ahmad\'s grade sheet!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 Submit to Ahmad\'s Grade Sheet';
+    showToast('⚠ Check internet connection.');
+  }
+}
+
+function shareIt(){
+  const ci=document.getElementById('ci');ci.value=window.location.href;ci.select();ci.setSelectionRange(0,9999);
+  try{document.execCommand('copy');}catch(e){}
+  showToast('✓ Link copied!');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  ['A','B','C'].forEach(sc=>drawFBDBase(sc));
+  drawExDiagram('exCv1','table');
+  drawExDiagram('exCv2','water');
+  drawExDiagram('exCv3','spring');
+  drawInteract();
+});
+window.addEventListener('resize',()=>{
+  ['A','B','C'].forEach(sc=>renderFBD(sc));
+  drawExDiagram('exCv1','table');
+  drawExDiagram('exCv2','water');
+  drawExDiagram('exCv3','spring');
+});
+</script>
+</body>
+</html>
