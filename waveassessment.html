@@ -43,7 +43,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 /* ENTRY SCREEN */
 #entryScreen{position:fixed;inset:0;z-index:300;background:var(--bg);
-  display:flex;align-items:center;justify-content:center;}
+  overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .entry-card{background:var(--panel);border:1px solid var(--border2);border-radius:16px;
   padding:40px 48px;max-width:520px;width:90%;text-align:center;}
 .entry-card .wave-icon{font-size:3rem;margin-bottom:16px;}
@@ -175,21 +175,46 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
 
 <!-- ENTRY SCREEN -->
 <div id="entryScreen">
-  <div class="entry-card">
+  <div class="entry-card" style="margin:20px auto;">
+    <!-- TITLE -->
     <div class="wave-icon">🌊</div>
     <h1>Wave <span>Assessment</span></h1>
-    <p>Grade 8 Physics · Ahmad Ghozlan<br>Read all instructions carefully before starting.</p>
-    <ul class="entry-rules">
-      <li>You have <strong style="color:var(--teal);">30 minutes</strong> — the timer starts when you click Begin.</li>
-      <li>The assessment auto-submits when time runs out.</li>
-      <li>Each student receives a unique set of numbers.</li>
-      <li>Work independently. Show your working in your notebook.</li>
-      <li>Submit answers using the button at the bottom.</li>
-    </ul>
-    <input type="text" id="entryName" placeholder="Enter your full name…">
-    <input type="text" id="entryClass" placeholder="Enter your class (e.g. 8A)">
-    <div class="review-hint">💡 Before you start — <a href="wave3d.html" target="_blank" style="color:var(--teal);">review wave concepts in 3D</a></div>
-    <button class="btn btn-teal" style="width:100%;font-size:.95rem;padding:14px;" onclick="startAssessment()">▶ Begin Assessment</button>
+    <p style="font-size:.82rem;color:var(--muted2);margin-bottom:18px;">Grade 8 Physics · Ahmad Ghozlan · 30 minutes</p>
+
+    <!-- NAME FIELDS — BIG AND OBVIOUS -->
+    <div style="background:rgba(0,200,180,.07);border:2px solid rgba(0,200,180,.3);border-radius:10px;padding:16px;margin-bottom:16px;">
+      <div style="font-family:var(--fm);font-size:.65rem;color:var(--teal);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Step 1 — Enter your details</div>
+      <input type="text" id="entryName" placeholder="👤 Your full name…" style="font-size:1rem;padding:13px 16px;margin-bottom:10px;">
+      <input type="text" id="entryClass" placeholder="🏫 Your class (e.g. 8A)…" style="font-size:1rem;padding:13px 16px;">
+    </div>
+
+    <!-- BIG GREEN BEGIN BUTTON — prominent position -->
+    <button class="btn btn-teal" id="beginBtn"
+      style="width:100%;font-size:1.1rem;padding:18px;border-radius:10px;
+             background:var(--teal);color:#000;font-weight:900;letter-spacing:1px;
+             box-shadow:0 4px 24px rgba(0,200,180,.4);margin-bottom:18px;"
+      onclick="startAssessment()">
+      ▶ BEGIN ASSESSMENT
+    </button>
+
+    <!-- REVIEW LINK -->
+    <div class="review-hint" style="margin-bottom:14px;">
+      💡 Not ready? <a href="wave3d" target="_blank" style="color:var(--teal);font-weight:700;">Review wave concepts in 3D first →</a>
+    </div>
+
+    <!-- RULES — smaller, below the button -->
+    <details style="background:var(--panel2);border-radius:8px;padding:12px 16px;">
+      <summary style="font-size:.78rem;color:var(--muted2);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;">
+        <span style="color:var(--teal);">ℹ</span> Assessment Rules (tap to read)
+      </summary>
+      <ul class="entry-rules" style="margin-top:10px;">
+        <li>You have <strong style="color:var(--teal);">30 minutes</strong> — timer starts when you click Begin.</li>
+        <li>The assessment <strong>auto-submits</strong> when time runs out.</li>
+        <li>Each student receives a unique set of numbers.</li>
+        <li>Work independently. Show your working in your notebook.</li>
+        <li>Submit answers using the button at the bottom of the page.</li>
+      </ul>
+    </details>
   </div>
 </div>
 
@@ -302,7 +327,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;}
     <hr style="margin:20px 0;">
     <p style="font-size:.76rem;color:var(--muted2);">Ahmad has received your answers. Results will be reviewed in the next class.</p>
     <div style="margin-top:16px;padding:10px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:7px;font-size:.8rem;color:var(--green);">✓ Submitted successfully!</div>
-    <button class="btn btn-ghost" style="margin-top:16px;width:100%;" onclick="location.href='wave3d.html'">← Back to Wave Review</button>
+    <button class="btn btn-ghost" style="margin-top:16px;width:100%;" onclick="location.href='wave3d'">← Back to Wave Review</button>
   </div>
 </div>
 
