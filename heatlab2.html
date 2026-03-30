@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HeatLab 2 — Heat Transfer & Temperature | Ahmad Ghozlan | Grade 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fffbf5;--bg2:#fff7ee;--bg3:#fff3e6;
+  --panel:#ffffff;--panel2:#fef5e4;--panel3:#fdebd0;
+  --border:rgba(200,100,0,.12);--border2:rgba(200,100,0,.25);
+  --text:#2c1a00;--muted:#b07840;--muted2:#7a4a20;
+  --orange:#ff6b00;--orange2:#e55a00;
+  --red:#e53935;--red2:#c62828;
+  --yellow:#ffb300;--yellow2:#e65100;
+  --blue:#1565c0;--teal:#00796b;
+  --green:#2e7d32;--green2:#1b5e20;
+  --purple:#6a1b9a;
+  --fh:'Nunito',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.6;}
+
+/* HEADER */
+.lab-header{background:linear-gradient(135deg,#bf360c,#e64a19,#ff6d00);padding:20px 20px 16px;text-align:center;position:relative;overflow:hidden;}
+.lab-header::before{content:'🔥';position:absolute;font-size:6rem;opacity:.08;top:-10px;left:-20px;}
+.lab-header::after{content:'🌡️';position:absolute;font-size:5rem;opacity:.08;top:-5px;right:-10px;}
+.lab-header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:900;color:#fff;letter-spacing:-0.5px;}
+.lab-header h1 span{color:#ffd54f;}
+.lab-header p{font-size:.8rem;color:rgba(255,255,255,.8);margin-top:4px;}
+
+/* NAV PILLS */
+.nav-pills{display:flex;overflow-x:auto;gap:8px;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav-pills::-webkit-scrollbar{display:none;}
+.nav-pill{flex-shrink:0;padding:7px 16px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .2s;white-space:nowrap;background:var(--panel);color:var(--muted2);}
+.nav-pill:hover,.nav-pill.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+
+/* SECTIONS */
+section{padding:24px 16px;border-bottom:2px solid var(--border);max-width:900px;margin:0 auto;}
+.sec-tag{display:inline-flex;align-items:center;gap:6px;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:20px;margin-bottom:12px;}
+.sec-tag.engage{background:rgba(255,107,0,.12);color:var(--orange);border:1.5px solid rgba(255,107,0,.3);}
+.sec-tag.explore{background:rgba(21,101,192,.1);color:var(--blue);border:1.5px solid rgba(21,101,192,.25);}
+.sec-tag.explain{background:rgba(0,121,107,.1);color:var(--teal);border:1.5px solid rgba(0,121,107,.25);}
+.sec-tag.elaborate{background:rgba(106,27,154,.1);color:var(--purple);border:1.5px solid rgba(106,27,154,.25);}
+.sec-tag.evaluate{background:rgba(46,125,50,.1);color:var(--green);border:1.5px solid rgba(46,125,50,.25);}
+.sec-title{font-size:1.4rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+.sec-desc{font-size:.88rem;color:var(--muted2);line-height:1.75;margin-bottom:20px;max-width:600px;}
+
+/* CARDS */
+.card{background:var(--panel);border:1.5px solid var(--border2);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(200,100,0,.06);}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.g2{grid-template-columns:1fr;}}
+
+/* CONCEPT BOXES */
+.concept-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+@media(max-width:550px){.concept-row{grid-template-columns:1fr;}}
+.concept-box{border-radius:14px;padding:18px;text-align:center;border:2px solid;}
+.concept-box.heat{background:rgba(229,57,53,.07);border-color:rgba(229,57,53,.3);}
+.concept-box.temp{background:rgba(21,101,192,.07);border-color:rgba(21,101,192,.3);}
+.concept-icon{font-size:2.8rem;margin-bottom:8px;display:block;}
+.concept-title{font-size:1rem;font-weight:900;margin-bottom:6px;}
+.concept-box.heat .concept-title{color:var(--red);}
+.concept-box.temp .concept-title{color:var(--blue);}
+.concept-def{font-size:.8rem;line-height:1.7;color:var(--muted2);}
+.concept-unit{display:inline-block;font-family:var(--fm);font-size:.85rem;font-weight:700;padding:4px 14px;border-radius:20px;margin-top:8px;}
+.concept-box.heat .concept-unit{background:rgba(229,57,53,.12);color:var(--red);}
+.concept-box.temp .concept-unit{background:rgba(21,101,192,.12);color:var(--blue);}
+
+/* MCQ */
+.mcq-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--panel2);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:.88rem;font-weight:600;-webkit-tap-highlight-color:transparent;}
+.mcq-opt:hover,.mcq-opt:active{border-color:var(--orange);background:rgba(255,107,0,.05);}
+.mcq-opt.selected{border-color:var(--orange);background:rgba(255,107,0,.08);}
+.mcq-opt.correct{border-color:var(--green);background:rgba(46,125,50,.08);color:var(--green2);}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(229,57,53,.07);color:var(--red2);}
+.mcq-letter{width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;font-size:.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mcq-opt.correct .mcq-letter{background:var(--green);}
+.mcq-opt.wrong .mcq-letter{background:var(--red);}
+
+/* FEEDBACK */
+.fb{margin-top:10px;padding:12px 16px;border-radius:10px;font-size:.84rem;display:none;line-height:1.7;font-weight:600;}
+.fb.ok{background:rgba(46,125,50,.08);border:2px solid rgba(46,125,50,.25);color:var(--green2);}
+.fb.bad{background:rgba(229,57,53,.07);border:2px solid rgba(229,57,53,.22);color:var(--red2);}
+.fb.info{background:rgba(21,101,192,.07);border:2px solid rgba(21,101,192,.2);color:var(--blue);}
+.fb.hint{background:rgba(255,179,0,.1);border:2px solid rgba(255,179,0,.3);color:var(--yellow2);}
+
+/* BUTTONS */
+.btn{padding:12px 26px;border-radius:10px;font-family:var(--fh);font-weight:800;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 3px 10px rgba(255,107,0,.3);}
+.btn-orange:hover{background:var(--orange2);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green2);}
+.btn-ghost{background:transparent;border:2px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange);}
+.btn-check{padding:10px 22px;border-radius:8px;border:2px solid var(--border2);background:var(--panel2);color:var(--text);font-family:var(--fh);font-weight:700;font-size:.84rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.btn-check:hover{border-color:var(--orange);background:rgba(255,107,0,.06);}
+
+/* THERMOMETER */
+.thermo-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.thermo-svg-wrap{width:60px;flex-shrink:0;}
+.thermo-question{text-align:center;}
+.thermo-input-row{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:8px;}
+.thermo-input{width:80px;padding:9px 10px;border-radius:8px;border:2px solid var(--border2);background:var(--panel2);font-family:var(--fm);font-size:.95rem;text-align:center;outline:none;color:var(--text);}
+.thermo-input:focus{border-color:var(--orange);}
+select{padding:9px 12px;border-radius:8px;border:2px solid var(--border2);background:var(--panel2);font-family:var(--fh);font-size:.88rem;color:var(--text);outline:none;min-height:44px;cursor:pointer;}
+select:focus{border-color:var(--orange);}
+
+/* ANIMATION CANVASES */
+.anim-wrap{background:var(--panel2);border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;position:relative;}
+.anim-wrap canvas{display:block;width:100%;height:auto;}
+.anim-label{position:absolute;top:8px;left:12px;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--orange);}
+.anim-ctrl{display:flex;gap:8px;padding:10px 14px;background:var(--panel);border-top:1px solid var(--border);flex-wrap:wrap;align-items:center;}
+.anim-btn{padding:8px 18px;border-radius:20px;font-size:.78rem;font-weight:800;border:none;cursor:pointer;min-height:40px;}
+.anim-speed{font-family:var(--fm);font-size:.72rem;color:var(--muted2);}
+
+/* DRAG MATCH */
+.drag-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.drag-chip{padding:9px 18px;border-radius:20px;font-size:.84rem;font-weight:700;cursor:pointer;border:2px solid;transition:all .2s;user-select:none;-webkit-user-select:none;min-height:44px;display:flex;align-items:center;}
+.drag-chip:hover{transform:scale(1.04);}
+.drag-chip.active{transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.15);}
+.drag-chip.placed{opacity:.3;pointer-events:none;}
+.drop-zone{min-height:48px;border-radius:10px;border:2px dashed var(--border2);padding:8px 14px;display:flex;align-items:center;gap:8px;transition:all .2s;background:var(--panel2);}
+.drop-zone.over{border-color:var(--orange);background:rgba(255,107,0,.06);}
+.drop-zone.filled{border-style:solid;border-color:var(--orange);}
+.drop-zone .dz-label{font-size:.75rem;color:var(--muted2);font-weight:700;}
+.drop-zone .dz-content{font-size:.84rem;font-weight:700;color:var(--orange);}
+
+/* TRUE/FALSE BUTTONS */
+.tf-row{display:flex;gap:10px;margin-bottom:10px;}
+.tf-btn{flex:1;padding:12px;border-radius:10px;font-size:.9rem;font-weight:800;border:2px solid;cursor:pointer;transition:all .2s;min-height:48px;}
+.tf-true{background:rgba(46,125,50,.07);border-color:rgba(46,125,50,.3);color:var(--green);}
+.tf-false{background:rgba(229,57,53,.07);border-color:rgba(229,57,53,.3);color:var(--red);}
+.tf-btn.selected.tf-true{background:var(--green);color:#fff;}
+.tf-btn.selected.tf-false{background:var(--red);color:#fff;}
+
+/* SUBMIT */
+.submit-card{background:linear-gradient(135deg,var(--panel),var(--panel2));border:1.5px solid var(--border2);border-radius:14px;padding:24px;}
+.name-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+input[type=text]{padding:11px 14px;border-radius:8px;border:2px solid var(--border2);background:var(--panel2);font-family:var(--fh);font-size:.9rem;color:var(--text);outline:none;transition:border-color .2s;min-height:44px;width:100%;}
+input[type=text]:focus{border-color:var(--orange);}
+.prog-bar{height:8px;background:var(--panel3);border-radius:4px;overflow:hidden;margin:10px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--red));border-radius:4px;transition:width .4s;}
+.score-big{font-family:var(--fm);font-size:3rem;font-weight:900;color:var(--orange);text-align:center;line-height:1;}
+
+/* AI TUTOR */
+.ai-box{background:rgba(255,107,0,.04);border:2px solid rgba(255,107,0,.2);border-radius:14px;padding:18px;}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ai-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-resp{background:var(--panel2);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:.86rem;line-height:1.75;margin-top:12px;display:none;}
+textarea{width:100%;background:var(--panel2);border:2px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--fh);font-size:.88rem;outline:none;resize:vertical;min-height:90px;transition:border-color .2s;}
+textarea:focus{border-color:var(--orange);}
+
+/* Q BLOCKS */
+.q-block{margin-bottom:18px;padding:18px;background:var(--panel);border:1.5px solid var(--border);border-radius:12px;position:relative;}
+.q-block::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--orange);border-radius:12px 0 0 12px;}
+.q-num{font-family:var(--fm);font-size:.6rem;color:var(--orange);text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.88rem;color:var(--text);margin-bottom:12px;line-height:1.75;}
+
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 22px;border-radius:8px;font-size:.82rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;}
+footer{padding:28px 16px;text-align:center;border-top:2px solid var(--border);background:var(--panel2);}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- HEADER -->
+<div class="lab-header">
+  <h1>Heat<span>Lab</span> 2 🌡️</h1>
+  <p>Ahmad Ghozlan · Science · Grade 7 · Heat Transfer & Temperature</p>
+</div>
+
+<!-- NAV -->
+<div class="nav-pills">
+  <div class="nav-pill active" onclick="goTo('engage')">🔥 Engage</div>
+  <div class="nav-pill" onclick="goTo('concepts')">📖 Concepts</div>
+  <div class="nav-pill" onclick="goTo('thermometers')">🌡️ Thermometers</div>
+  <div class="nav-pill" onclick="goTo('conduction')">🔩 Conduction</div>
+  <div class="nav-pill" onclick="goTo('convection')">🌊 Convection</div>
+  <div class="nav-pill" onclick="goTo('radiation')">☀️ Radiation</div>
+  <div class="nav-pill" onclick="goTo('comparison')">⚖️ Compare</div>
+  <div class="nav-pill" onclick="goTo('practice')">✏️ Practice</div>
+  <div class="nav-pill" onclick="goTo('evaluate')">📊 Submit</div>
+</div>
+
+<!-- ═══ E1 ENGAGE ═══ -->
+<section id="engage">
+  <div class="sec-tag engage">E1 · Engage</div>
+  <h2 class="sec-title">Hot or High Temperature?</h2>
+  <p class="sec-desc">These two words sound the same — but in science they mean very different things. Let's find out why!</p>
+
+  <div class="card" style="border-color:rgba(255,107,0,.3);background:rgba(255,107,0,.04);">
+    <div style="font-size:.9rem;line-height:1.85;margin-bottom:16px;">
+      🤔 <strong>Think about this:</strong> A small cup of boiling water and a large swimming pool at 30°C.<br>
+      Which has more <em>heat</em>? Which has a higher <em>temperature</em>? Are they the same thing?
+    </div>
+    <div class="mcq-opts" id="engOpts">
+      <div class="mcq-opt" onclick="selMCQ('eng','A',this)"><span class="mcq-letter">A</span>The boiling water has more heat AND higher temperature</div>
+      <div class="mcq-opt" onclick="selMCQ('eng','B',this)"><span class="mcq-letter">B</span>The boiling water has higher temperature, but the pool has more total heat</div>
+      <div class="mcq-opt" onclick="selMCQ('eng','C',this)"><span class="mcq-letter">C</span>They are the same — heat and temperature mean the same thing</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('eng','B','✓ Correct! The boiling water is HOTTER (higher temperature = 100°C) but the huge pool contains FAR MORE total heat energy because it has millions of times more water molecules. This is the key difference!','Not quite — heat and temperature are different. A tiny boiling drop and a huge warm pool are very different in total heat energy.')">✓ Check My Answer</button>
+    <div class="fb" id="fbeng"></div>
+  </div>
+</section>
+
+<!-- ═══ E2 CONCEPTS ═══ -->
+<section id="concepts">
+  <div class="sec-tag explore">E2 · Concepts</div>
+  <h2 class="sec-title">Heat vs Temperature</h2>
+  <p class="sec-desc">Two completely different quantities — learn them both!</p>
+
+  <div class="concept-row">
+    <div class="concept-box heat">
+      <span class="concept-icon">🔥</span>
+      <div class="concept-title">HEAT (Q)</div>
+      <div class="concept-def">Heat is a form of <strong>energy</strong> that flows from a hot object to a cold one. It depends on the number of particles AND their speed.</div>
+      <div class="concept-unit">Unit: Joule (J)</div>
+    </div>
+    <div class="concept-box temp">
+      <span class="concept-icon">🌡️</span>
+      <div class="concept-title">TEMPERATURE (T)</div>
+      <div class="concept-def">Temperature measures how <strong>fast the particles</strong> of an object are moving on average. Higher temperature = faster particles.</div>
+      <div class="concept-unit">Unit: degree Celsius (°C)</div>
+    </div>
+  </div>
+
+  <div class="card2" style="margin-bottom:14px;">
+    <div style="font-weight:800;font-size:.88rem;margin-bottom:8px;color:var(--orange);">🔑 Key Difference</div>
+    <div style="font-size:.84rem;line-height:1.8;color:var(--muted2);">
+      • <strong style="color:var(--red);">Heat</strong> = total energy → depends on <em>how much material</em> there is<br>
+      • <strong style="color:var(--blue);">Temperature</strong> = average particle energy → does NOT depend on amount<br>
+      • A small spark and a large fire can reach the same temperature, but the fire has FAR more heat energy.
+    </div>
+  </div>
+
+  <!-- Quick classification game -->
+  <div style="font-weight:800;font-size:.88rem;margin-bottom:10px;">🎯 Quick Game — Is it Heat or Temperature?</div>
+  <div id="classifyGame"></div>
+  <button class="btn-check" style="margin-top:4px;" onclick="checkClassify()">✓ Check All</button>
+  <div class="fb" id="fbClassify"></div>
+</section>
+
+<!-- ═══ E3 THERMOMETERS ═══ -->
+<section id="thermometers">
+  <div class="sec-tag explain">E3 · Read the Thermometer</div>
+  <h2 class="sec-title">Thermometer Readings 🌡️</h2>
+  <p class="sec-desc">Read each thermometer carefully. Give the <strong>value</strong> and choose the correct <strong>unit</strong>. Look at where the liquid level is and count the scale carefully!</p>
+
+  <div style="background:rgba(21,101,192,.06);border:1.5px solid rgba(21,101,192,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.82rem;color:var(--blue);">
+    📏 <strong>How to read:</strong> Find where the top of the liquid is. Read the number on the scale at that exact level. Each small line between numbers = 2°C. Give your answer as a number, then choose °C.
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;" id="thermoGrid"></div>
+
+  <button class="btn-check" style="margin-top:14px;width:100%;max-width:300px;" onclick="checkAllThermos()">✓ Check All Thermometers</button>
+  <div class="fb" id="fbThermos"></div>
+</section>
+
+<!-- ═══ E3 CONDUCTION ═══ -->
+<section id="conduction">
+  <div class="sec-tag explain">E3 · Heat Transfer</div>
+  <h2 class="sec-title">🔩 Conduction</h2>
+  <p class="sec-desc">Heat travels through a solid material by passing energy from particle to particle — like dominoes falling! Watch the animation below.</p>
+
+  <div class="anim-wrap" style="margin-bottom:14px;">
+    <div class="anim-label">CONDUCTION — Metal Rod</div>
+    <canvas id="cvCond" width="600" height="200"></canvas>
+    <div class="anim-ctrl">
+      <button class="anim-btn" style="background:var(--orange);color:#fff;" onclick="toggleCond()" id="condBtn">▶ Heat the Rod</button>
+      <button class="anim-btn" style="background:var(--panel2);border:1px solid var(--border2);color:var(--text);" onclick="resetCond()">↺ Reset</button>
+      <span class="anim-speed" id="condStatus">Click to apply heat to the left end</span>
+    </div>
+  </div>
+
+  <div class="card2" style="margin-bottom:16px;">
+    <div style="font-weight:800;margin-bottom:6px;color:var(--orange);">What you see:</div>
+    <div style="font-size:.84rem;line-height:1.8;color:var(--muted2);">
+      🔴 The nails (wax-attached) fall off one by one as heat reaches each position.<br>
+      ➡️ Heat travels from <strong>hot end → cold end</strong> through the solid.<br>
+      🏠 Examples: metal spoon in hot soup, iron handle heating up, heat spreading through a wall.
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Conduction Question</div>
+    <div class="q-text">Heat travels through solids because:</div>
+    <div class="mcq-opts" id="condOpts">
+      <div class="mcq-opt" onclick="selMCQ('cond','A',this)"><span class="mcq-letter">A</span>Hot particles move from one place to another carrying energy</div>
+      <div class="mcq-opt" onclick="selMCQ('cond','B',this)"><span class="mcq-letter">B</span>Particles vibrate and pass energy to their neighbours without moving</div>
+      <div class="mcq-opt" onclick="selMCQ('cond','C',this)"><span class="mcq-letter">C</span>Heat rays travel through the solid material</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('cond','B','✓ Correct! In solids, particles CANNOT move to another place — they vibrate in place and pass energy like a chain to their neighbours. That is conduction!','Not quite. In conduction, particles do not travel — they only vibrate and pass energy to their neighbours, like a row of dominoes.')">✓ Check</button>
+    <div class="fb" id="fbcond"></div>
+  </div>
+</section>
+
+<!-- ═══ E3 CONVECTION ═══ -->
+<section id="convection">
+  <div class="sec-tag explain">E3 · Heat Transfer</div>
+  <h2 class="sec-title">🌊 Convection</h2>
+  <p class="sec-desc">Heat travels through liquids and gases by the actual movement of the fluid itself — hot fluid rises, cool fluid sinks, creating a current!</p>
+
+  <div class="anim-wrap" style="margin-bottom:14px;">
+    <div class="anim-label">CONVECTION — Fluid Current</div>
+    <canvas id="cvConv" width="600" height="240"></canvas>
+    <div class="anim-ctrl">
+      <button class="anim-btn" style="background:var(--red);color:#fff;" onclick="toggleConv()" id="convBtn">▶ Start Heating</button>
+      <button class="anim-btn" style="background:var(--panel2);border:1px solid var(--border2);color:var(--text);" onclick="resetConv()">↺ Reset</button>
+      <span class="anim-speed" id="convStatus">Click to heat the bottom</span>
+    </div>
+  </div>
+
+  <div class="card2" style="margin-bottom:16px;">
+    <div style="font-weight:800;margin-bottom:6px;color:var(--red);">What happens:</div>
+    <div style="font-size:.84rem;line-height:1.8;color:var(--muted2);">
+      🔴 Hot fluid at the bottom <strong>expands → becomes lighter → rises</strong><br>
+      🔵 Cool fluid at the top <strong>contracts → becomes heavier → sinks</strong><br>
+      🌀 This creates a <strong>convection current</strong> — a circular loop of moving fluid<br>
+      🏠 Examples: boiling water in a pot, sea breezes, heating a room with a radiator
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Convection Question</div>
+    <div class="q-text">In convection, why does heated fluid rise?</div>
+    <div class="mcq-opts" id="convOpts">
+      <div class="mcq-opt" onclick="selMCQ('conv','A',this)"><span class="mcq-letter">A</span>It becomes heavier so it floats up</div>
+      <div class="mcq-opt" onclick="selMCQ('conv','B',this)"><span class="mcq-letter">B</span>It expands and becomes less dense (lighter) so it rises</div>
+      <div class="mcq-opt" onclick="selMCQ('conv','C',this)"><span class="mcq-letter">C</span>Heat always moves upward</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('conv','B','✓ Correct! When a fluid is heated it expands — the same mass takes up more space — so it becomes less dense. Less dense = lighter = rises! The cool, denser fluid sinks to replace it.','Not quite. Heated fluid expands and becomes LESS dense (lighter), not heavier. This is why it rises!')">✓ Check</button>
+    <div class="fb" id="fbconv"></div>
+  </div>
+</section>
+
+<!-- ═══ E3 RADIATION ═══ -->
+<section id="radiation">
+  <div class="sec-tag explain">E3 · Heat Transfer</div>
+  <h2 class="sec-title">☀️ Radiation</h2>
+  <p class="sec-desc">Heat travels as invisible waves — no material needed at all! This is how the Sun heats the Earth across empty space.</p>
+
+  <div class="anim-wrap" style="margin-bottom:14px;">
+    <div class="anim-label">RADIATION — Heat Waves</div>
+    <canvas id="cvRad" width="600" height="200"></canvas>
+    <div class="anim-ctrl">
+      <button class="anim-btn" style="background:var(--yellow);color:#000;" onclick="toggleRad()" id="radBtn">▶ Emit Heat</button>
+      <button class="anim-btn" style="background:var(--panel2);border:1px solid var(--border2);color:var(--text);" onclick="resetRad()">↺ Reset</button>
+      <span class="anim-speed" id="radStatus">Click to start radiation</span>
+    </div>
+  </div>
+
+  <div class="card2" style="margin-bottom:16px;">
+    <div style="font-weight:800;margin-bottom:6px;color:var(--yellow2);">Key facts:</div>
+    <div style="font-size:.84rem;line-height:1.8;color:var(--muted2);">
+      ☀️ Radiation travels as <strong>infrared waves</strong> — a type of electromagnetic wave<br>
+      🚀 It can travel through <strong>empty space</strong> (vacuum) — no particles needed<br>
+      ⚫ <strong>Dark, rough surfaces</strong> absorb AND emit radiation better<br>
+      ⚪ <strong>Shiny, light surfaces</strong> reflect radiation — they absorb and emit less<br>
+      🏠 Examples: Sun heating Earth, sitting near a fire, microwave oven
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Radiation Question</div>
+    <div class="q-text">Which surface absorbs the most radiation?</div>
+    <div class="mcq-opts" id="radOpts">
+      <div class="mcq-opt" onclick="selMCQ('rad','A',this)"><span class="mcq-letter">A</span>Shiny silver surface</div>
+      <div class="mcq-opt" onclick="selMCQ('rad','B',this)"><span class="mcq-letter">B</span>White smooth surface</div>
+      <div class="mcq-opt" onclick="selMCQ('rad','C',this)"><span class="mcq-letter">C</span>Dull black surface</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('rad','C','✓ Correct! Dull black surfaces are the BEST absorbers of radiation. Shiny surfaces reflect radiation away — that is why solar panels are dark and emergency blankets are shiny silver.','Not quite. Dark, dull (matte) surfaces absorb radiation best. Shiny surfaces reflect radiation rather than absorbing it.')">✓ Check</button>
+    <div class="fb" id="fbrad"></div>
+  </div>
+</section>
+
+<!-- ═══ COMPARISON ═══ -->
+<section id="comparison">
+  <div class="sec-tag elaborate">E4 · Compare</div>
+  <h2 class="sec-title">⚖️ All Three Side by Side</h2>
+  <p class="sec-desc">Tap each panel to see the animation for each method. Then complete the comparison table!</p>
+
+  <!-- Mini comparison canvases -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;" id="miniComps">
+    <div style="text-align:center;">
+      <div style="font-weight:800;font-size:.78rem;color:var(--orange);margin-bottom:6px;">🔩 CONDUCTION</div>
+      <canvas id="cvMiniCond" width="160" height="120" style="width:100%;border-radius:8px;background:var(--panel2);border:1px solid var(--border);"></canvas>
+      <div style="font-size:.7rem;color:var(--muted2);margin-top:4px;">Solids only</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-weight:800;font-size:.78rem;color:var(--red);margin-bottom:6px;">🌊 CONVECTION</div>
+      <canvas id="cvMiniConv" width="160" height="120" style="width:100%;border-radius:8px;background:var(--panel2);border:1px solid var(--border);"></canvas>
+      <div style="font-size:.7rem;color:var(--muted2);margin-top:4px;">Liquids & gases</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-weight:800;font-size:.78rem;color:var(--yellow2);margin-bottom:6px;">☀️ RADIATION</div>
+      <canvas id="cvMiniRad" width="160" height="120" style="width:100%;border-radius:8px;background:var(--panel2);border:1px solid var(--border);"></canvas>
+      <div style="font-size:.7rem;color:var(--muted2);margin-top:4px;">No material needed</div>
+    </div>
+  </div>
+
+  <!-- Drag and match comparison table -->
+  <div style="font-weight:800;font-size:.9rem;margin-bottom:12px;">🎯 Match Each Description to the Correct Method</div>
+  <div class="drag-bank" id="compBank"></div>
+  <div style="display:flex;flex-direction:column;gap:8px;" id="compTargets"></div>
+  <button class="btn-check" style="margin-top:12px;" onclick="checkComp()">✓ Check Matching</button>
+  <div class="fb" id="fbComp"></div>
+</section>
+
+<!-- ═══ E4 PRACTICE ═══ -->
+<section id="practice">
+  <div class="sec-tag elaborate">E4 · Practice</div>
+  <h2 class="sec-title">✏️ Test Your Knowledge</h2>
+  <p class="sec-desc">Five questions mixing all the topics from today's lab.</p>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="q-num">Question 1 · Heat vs Temperature</div>
+    <div class="q-text">A student has a small cup of water at 80°C and a large bathtub of water at 40°C. Which statement is TRUE?</div>
+    <div class="mcq-opts" id="q1opts">
+      <div class="mcq-opt" onclick="selMCQ('q1','A',this)"><span class="mcq-letter">A</span>The cup has more heat because it is hotter</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','B',this)"><span class="mcq-letter">B</span>The bathtub has more heat even though it is cooler</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','C',this)"><span class="mcq-letter">C</span>The cup and bathtub have the same heat because heat = temperature</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('q1','B','✓ Correct! Heat depends on BOTH temperature AND the amount of material. The bathtub has far more water molecules, so it contains much more total heat energy — even though each molecule is moving slower (lower temperature).','Heat and temperature are different! The bathtub has more total water molecules even at lower temperature, so more total heat energy.')">✓ Check</button>
+    <div class="fb" id="fbq1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="q-num">Question 2 · Units</div>
+    <div class="q-text">A student measures the temperature of boiling water. She records: "The temperature is 100 ___". What is the correct unit?</div>
+    <div class="mcq-opts" id="q2opts">
+      <div class="mcq-opt" onclick="selMCQ('q2','A',this)"><span class="mcq-letter">A</span>Joules (J)</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','B',this)"><span class="mcq-letter">B</span>Degrees Celsius (°C)</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','C',this)"><span class="mcq-letter">C</span>Metres (m)</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('q2','B','✓ Correct! Temperature is measured in degrees Celsius (°C). Joules (J) is the unit for heat energy, not temperature.','Temperature is measured in degrees Celsius (°C). Joules (J) is for heat energy.')">✓ Check</button>
+    <div class="fb" id="fbq2"></div>
+  </div>
+
+  <!-- Q3 True/False -->
+  <div class="q-block">
+    <div class="q-num">Question 3 · True or False</div>
+    <div class="q-text">The Sun heats the Earth by convection through space.</div>
+    <div class="tf-row">
+      <button class="tf-btn tf-true" id="tf3T" onclick="selTF(3,'T')">✓ TRUE</button>
+      <button class="tf-btn tf-false" id="tf3F" onclick="selTF(3,'F')">✗ FALSE</button>
+    </div>
+    <button class="btn-check" onclick="chkTF(3,'F','✓ FALSE! The Sun heats the Earth by RADIATION — not convection. Convection needs a fluid (liquid or gas) to move. Space is a vacuum with no material at all, so only radiation can travel through it.')">✓ Check</button>
+    <div class="fb" id="fbtf3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-block">
+    <div class="q-num">Question 4 · Identify the Method</div>
+    <div class="q-text">When you hold a metal spoon in hot soup, the handle gradually gets hot even though it is not in the soup. This is an example of:</div>
+    <div class="mcq-opts" id="q4opts">
+      <div class="mcq-opt" onclick="selMCQ('q4','A',this)"><span class="mcq-letter">A</span>Convection</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','B',this)"><span class="mcq-letter">B</span>Radiation</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','C',this)"><span class="mcq-letter">C</span>Conduction</div>
+    </div>
+    <button class="btn-check" onclick="chkMCQ('q4','C','✓ Correct! The heat travels through the SOLID metal spoon from the hot end (in soup) to the cold end (handle). Particles vibrate and pass energy along the spoon — this is conduction.','Heat travels through the solid metal spoon from particle to particle — that is conduction.')">✓ Check</button>
+    <div class="fb" id="fbq4"></div>
+  </div>
+
+  <!-- Q5 open + AI -->
+  <div class="ai-box">
+    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:800;font-size:.92rem;">Question 5 · Open Question · AI Tutor 🤖</span></div>
+    <div class="q-text" style="margin-bottom:10px;">
+      A thermos flask (vacuum flask) keeps hot drinks hot for a long time.<br>
+      <strong>Explain how it reduces heat loss by all three methods of heat transfer.</strong><br>
+      <em style="font-size:.8rem;color:var(--muted2);">Hint: think about what each layer of the flask does.</em>
+    </div>
+    <textarea id="openAnswer" placeholder="Write your answer here...&#10;Example: For conduction, the flask...&#10;For convection, it...&#10;For radiation, it..."></textarea>
+    <button class="btn btn-orange" style="margin-top:10px;width:100%;" onclick="getAI()">Get Feedback from AI Tutor 🤖</button>
+    <div class="ai-resp" id="aiResp"></div>
+  </div>
+</section>
+
+<!-- ═══ E5 EVALUATE ═══ -->
+<section id="evaluate">
+  <div class="sec-tag evaluate">E5 · Submit</div>
+  <h2 class="sec-title">📊 Submit Your Work</h2>
+  <div class="g2" style="align-items:start;max-width:800px;">
+    <div class="submit-card">
+      <div class="name-row">
+        <div style="flex:2;"><label style="font-size:.72rem;color:var(--muted2);display:block;margin-bottom:5px;font-weight:700;">Full Name *</label><input type="text" id="stuName" placeholder="Your full name…"></div>
+        <div style="flex:1;"><label style="font-size:.72rem;color:var(--muted2);display:block;margin-bottom:5px;font-weight:700;">Class *</label><input type="text" id="stuClass" placeholder="e.g. 7A"></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <div id="ansReview" style="font-size:.76rem;line-height:2;font-family:var(--fm);color:var(--muted2);"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.72rem;color:var(--muted2);margin-bottom:14px;">0 / 8 activities completed</p>
+      <button class="btn btn-green" style="width:100%;" onclick="submitWork()">📊 Submit to Ahmad's Grade Sheet</button>
+    </div>
+    <div style="background:var(--panel);border:1.5px solid var(--border2);border-radius:14px;padding:22px;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:6px;">🌡️</div>
+      <div class="score-big" id="scoreDisp">—</div>
+      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-top:4px;">Your Score</div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <p style="font-size:.78rem;color:var(--muted2);line-height:1.7;">Ahmad reviews your thermometer readings and open answer in the next class.</p>
+      <div id="submitOk" style="display:none;margin-top:10px;padding:10px;background:rgba(46,125,50,.08);border:1.5px solid rgba(46,125,50,.25);border-radius:8px;font-size:.82rem;color:var(--green2);font-weight:700;">✓ Submitted! Ahmad has your answers.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="font-size:1rem;font-weight:900;color:var(--text);">Heat<span style="color:var(--orange);">Lab</span> 2</div>
+  <div style="font-size:.7rem;color:var(--muted2);margin-top:4px;">Ahmad Ghozlan · Science · Grade 7 · Lebanon</div>
+</footer>
+
+<script>
+const APPS_URL='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+function goTo(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.nav-pill').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ── MCQ & TF ──────────────────────────────────────────────
+var answers={},correct={};
+function selMCQ(key,val,btn){
+  answers[key]=val;
+  btn.parentElement.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function chkMCQ(key,ca,okMsg,badMsg){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=answers[key];
+  if(!sel){fb.className='fb info';fb.textContent='Tap an answer first!';return;}
+  const opts=document.querySelectorAll('#'+key+'opts .mcq-opt, #'+key+'Opts .mcq-opt');
+  const letters=['A','B','C','D'];
+  opts.forEach((o,i)=>{o.classList.remove('selected');if(letters[i]===ca)o.classList.add('correct');else if(letters[i]===sel)o.classList.add('wrong');});
+  if(sel===ca){fb.className='fb ok';fb.textContent=okMsg;correct[key]=true;}
+  else{fb.className='fb bad';fb.textContent='✗ '+badMsg;}
+  updateProg();
+}
+var tfAnswers={};
+function selTF(n,v){
+  tfAnswers[n]=v;
+  document.getElementById('tf'+n+'T').classList.toggle('selected',v==='T');
+  document.getElementById('tf'+n+'F').classList.toggle('selected',v==='F');
+}
+function chkTF(n,ca,msg){
+  const fb=document.getElementById('fbtf'+n);fb.style.display='block';
+  const sel=tfAnswers[n];
+  if(!sel){fb.className='fb info';fb.textContent='Choose True or False first!';return;}
+  if(sel===ca){fb.className='fb ok';fb.textContent=msg;correct['tf'+n]=true;}
+  else{fb.className='fb bad';fb.textContent=msg.replace('✓','✗');}
+  updateProg();
+}
+
+// ── CLASSIFICATION GAME ──────────────────────────────────
+const classifyItems=[
+  {text:'Temperature of boiling water = 100°C',correct:'T',label:'Temperature'},
+  {text:'The Sun gives off 3.8 × 10²⁶ Joules per second',correct:'H',label:'Heat'},
+  {text:'Body temperature = 37°C',correct:'T',label:'Temperature'},
+  {text:'A bonfire releases heat energy into the air',correct:'H',label:'Heat'},
+  {text:'Ice water at 0°C',correct:'T',label:'Temperature'},
+  {text:'Room heater outputs 2000 J/s',correct:'H',label:'Heat'},
+];
+var classifyAns={};
+function buildClassify(){
+  const el=document.getElementById('classifyGame');
+  classifyItems.forEach((item,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;';
+    row.innerHTML=`<span style="flex:1;font-size:.83rem;min-width:180px;padding:4px 0;">${item.text}</span>`;
+    const btnH=document.createElement('button');
+    btnH.style.cssText='padding:8px 18px;border-radius:20px;border:2px solid rgba(229,57,53,.3);background:rgba(229,57,53,.06);color:var(--red);font-weight:800;font-size:.78rem;cursor:pointer;min-height:40px;transition:all .2s;';
+    btnH.textContent='🔥 Heat';
+    btnH.onclick=()=>{classifyAns[i]='H';[btnH,btnT].forEach(b=>b.style.opacity='.5');btnH.style.opacity='1';btnH.style.background='rgba(229,57,53,.2)';};
+    const btnT=document.createElement('button');
+    btnT.style.cssText='padding:8px 18px;border-radius:20px;border:2px solid rgba(21,101,192,.3);background:rgba(21,101,192,.06);color:var(--blue);font-weight:800;font-size:.78rem;cursor:pointer;min-height:40px;transition:all .2s;';
+    btnT.textContent='🌡️ Temp';
+    btnT.onclick=()=>{classifyAns[i]='T';[btnH,btnT].forEach(b=>b.style.opacity='.5');btnT.style.opacity='1';btnT.style.background='rgba(21,101,192,.2)';};
+    row.appendChild(btnH);row.appendChild(btnT);
+    el.appendChild(row);
+  });
+}
+function checkClassify(){
+  const fb=document.getElementById('fbClassify');fb.style.display='block';
+  let c=0;
+  classifyItems.forEach((item,i)=>{if(classifyAns[i]===item.correct)c++;});
+  if(c===classifyItems.length){fb.className='fb ok';fb.textContent='✓ Perfect! All 6 correct. You understand the difference between heat (Joules) and temperature (°C)!';correct.classify=true;}
+  else if(c>=4){fb.className='fb hint';fb.textContent='Good — '+c+'/6 correct. Remember: if it mentions Joules or energy → Heat. If it mentions degrees → Temperature.';}
+  else{fb.className='fb bad';fb.textContent='✗ '+c+'/6 correct. Hint: Temperature uses °C, Heat uses Joules (J).';}
+  updateProg();
+}
+
+// ── THERMOMETERS ─────────────────────────────────────────
+// 6 thermometers with exact temperatures
+// Scale: 0-100°C range, each labeled every 10°C, subdivisions every 2°C
+const THERMOS=[
+  {min:0,  max:100,value:36, label:'A'},
+  {min:0,  max:100,value:72, label:'B'},
+  {min:-10,max:50, value:18, label:'C'},
+  {min:0,  max:100,value:54, label:'D'},
+  {min:0,  max:100,value:88, label:'E'},
+  {min:-20,max:60, value:6,  label:'F'},
+];
+var thermoAns={};
+
+function buildThermos(){
+  const grid=document.getElementById('thermoGrid');
+  THERMOS.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.style.cssText='background:var(--panel);border:1.5px solid var(--border2);border-radius:12px;padding:14px;text-align:center;';
+
+    // Draw thermometer SVG
+    const svgNS='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width','60');svg.setAttribute('height','180');
+    svg.setAttribute('viewBox','0 0 60 180');
+
+    const tubeX=30,tubeTop=15,tubeBot=140,tubeH=tubeBot-tubeTop;
+    const bulbR=12,bulbY=152;
+    // Outer tube
+    const outerRect=document.createElementNS(svgNS,'rect');
+    outerRect.setAttribute('x','22');outerRect.setAttribute('y',tubeTop.toString());
+    outerRect.setAttribute('width','16');outerRect.setAttribute('height',tubeH.toString());
+    outerRect.setAttribute('rx','8');outerRect.setAttribute('fill','rgba(200,100,0,.1)');
+    outerRect.setAttribute('stroke','rgba(200,100,0,.4)');outerRect.setAttribute('stroke-width','1.5');
+    svg.appendChild(outerRect);
+    // Bulb
+    const bulb=document.createElementNS(svgNS,'circle');
+    bulb.setAttribute('cx','30');bulb.setAttribute('cy',bulbY.toString());
+    bulb.setAttribute('r',bulbR.toString());
+    bulb.setAttribute('fill','#e53935');bulb.setAttribute('stroke','rgba(200,100,0,.4)');bulb.setAttribute('stroke-width','1.5');
+    svg.appendChild(bulb);
+    // Liquid fill
+    const range=t.max-t.min;
+    const fillFraction=(t.value-t.min)/range;
+    const fillH=Math.round(tubeH*fillFraction);
+    const fillY=tubeBot-fillH;
+    const fillRect=document.createElementNS(svgNS,'rect');
+    fillRect.setAttribute('x','25');fillRect.setAttribute('y',fillY.toString());
+    fillRect.setAttribute('width','10');fillRect.setAttribute('height',(fillH+bulbR).toString());
+    fillRect.setAttribute('rx','3');fillRect.setAttribute('fill','#e53935');
+    svg.appendChild(fillRect);
+    // Scale marks
+    const step=10;
+    for(let v=t.min;v<=t.max;v+=2){
+      const frac=(v-t.min)/range;
+      const y=tubeBot-Math.round(tubeH*frac);
+      const isMajor=v%10===0;
+      const tick=document.createElementNS(svgNS,'line');
+      tick.setAttribute('x1',isMajor?'14':'18');tick.setAttribute('y1',y.toString());
+      tick.setAttribute('x2','22');tick.setAttribute('y2',y.toString());
+      tick.setAttribute('stroke','rgba(100,50,0,.5)');tick.setAttribute('stroke-width',isMajor?'1.5':'1');
+      svg.appendChild(tick);
+      if(isMajor){
+        const lbl=document.createElementNS(svgNS,'text');
+        lbl.setAttribute('x','12');lbl.setAttribute('y',(y+4).toString());
+        lbl.setAttribute('text-anchor','end');lbl.setAttribute('font-size','9');
+        lbl.setAttribute('fill','rgba(100,50,0,.7)');lbl.setAttribute('font-family','DM Mono,monospace');
+        lbl.textContent=v;
+        svg.appendChild(lbl);
+      }
+    }
+
+    div.appendChild(svg);
+
+    // Label and input
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-weight:800;font-size:.82rem;color:var(--orange);margin-bottom:8px;';
+    lbl.textContent='Thermometer '+t.label;
+    div.insertBefore(lbl,svg);
+
+    const inputRow=document.createElement('div');
+    inputRow.style.cssText='display:flex;gap:5px;align-items:center;justify-content:center;margin-top:8px;';
+    const inp=document.createElement('input');
+    inp.type='number';inp.id='thermo'+i;
+    inp.style.cssText='width:60px;padding:8px 6px;border-radius:7px;border:2px solid var(--border2);background:var(--panel2);font-family:var(--fm);font-size:.9rem;text-align:center;outline:none;color:var(--text);';
+    inp.placeholder='?';
+    inp.oninput=()=>updateProg();
+
+    const sel=document.createElement('select');
+    sel.id='thermoU'+i;
+    sel.style.cssText='padding:8px 6px;border-radius:7px;border:2px solid var(--border2);background:var(--panel2);font-size:.8rem;color:var(--text);outline:none;';
+    ['Unit','°C','J','m'].forEach(u=>{
+      const opt=document.createElement('option');opt.value=u;opt.textContent=u;sel.appendChild(opt);
+    });
+
+    inputRow.appendChild(inp);inputRow.appendChild(sel);
+    div.appendChild(inputRow);
+
+    const fb=document.createElement('div');
+    fb.id='thermoFb'+i;
+    fb.style.cssText='font-size:.72rem;margin-top:5px;display:none;font-weight:700;';
+    div.appendChild(fb);
+
+    grid.appendChild(div);
+  });
+}
+
+function checkAllThermos(){
+  let allCorrect=0;
+  THERMOS.forEach((t,i)=>{
+    const val=parseFloat(document.getElementById('thermo'+i).value);
+    const unit=document.getElementById('thermoU'+i).value;
+    const fb=document.getElementById('thermoFb'+i);
+    fb.style.display='block';
+    const valOK=Math.abs(val-t.value)<=1; // ±1°C tolerance
+    const unitOK=unit==='°C';
+    if(valOK&&unitOK){
+      fb.style.color='var(--green)';fb.textContent='✓ Correct!';allCorrect++;
+    } else if(valOK&&!unitOK){
+      fb.style.color='var(--yellow2)';fb.textContent='Value ✓ but unit wrong — use °C';
+    } else if(!valOK&&unitOK){
+      fb.style.color='var(--red)';fb.textContent='✗ Should be '+t.value+'°C — count the scale carefully';
+    } else {
+      fb.style.color='var(--red)';fb.textContent='✗ Should be '+t.value+' °C';
+    }
+  });
+  const fb=document.getElementById('fbThermos');fb.style.display='block';
+  if(allCorrect===THERMOS.length){
+    fb.className='fb ok';fb.textContent='🌡️ All 6 thermometers correct! You can read a thermometer perfectly.';
+    correct.thermos=true;
+  } else {
+    fb.className='fb hint';fb.textContent=allCorrect+'/6 correct. Check each one — count from a labelled number and add 2°C for each small line.';
+  }
+  updateProg();
+}
+
+// ── CONDUCTION ANIMATION ─────────────────────────────────
+const cvCond=document.getElementById('cvCond');
+const ctxCond=cvCond.getContext('2d');
+let condRunning=false,condAnim=null,condHeat=0;
+const NAIL_COUNT=8;
+
+function drawCond(){
+  const W=cvCond.width,H=cvCond.height;
+  ctxCond.fillStyle='#fff7ee';ctxCond.fillRect(0,0,W,H);
+
+  // ROD
+  const rodY=H/2,rodX1=60,rodX2=W-60,rodH=20;
+  // Colour gradient based on heat level
+  const grad=ctxCond.createLinearGradient(rodX1,rodY,rodX2,rodY);
+  const heatFrac=Math.min(1,condHeat/NAIL_COUNT);
+  grad.addColorStop(0,'#e53935');
+  grad.addColorStop(Math.min(1,heatFrac+0.05),'#ff7043');
+  grad.addColorStop(Math.min(1,heatFrac+0.12),'#ffb74d');
+  grad.addColorStop(1,'#bdbdbd');
+  ctxCond.fillStyle=grad;
+  ctxCond.beginPath();
+  ctxCond.roundRect?ctxCond.roundRect(rodX1,rodY-rodH/2,rodX2-rodX1,rodH,6):ctxCond.fillRect(rodX1,rodY-rodH/2,rodX2-rodX1,rodH);
+  ctxCond.fill();
+  ctxCond.strokeStyle='rgba(100,50,0,.3)';ctxCond.lineWidth=1.5;
+  ctxCond.beginPath();
+  ctxCond.roundRect?ctxCond.roundRect(rodX1,rodY-rodH/2,rodX2-rodX1,rodH,6):ctxCond.strokeRect(rodX1,rodY-rodH/2,rodX2-rodX1,rodH);
+  ctxCond.stroke();
+
+  // FLAME at left
+  if(condRunning||condHeat>0){
+    ctxCond.save();
+    ctxCond.font='2rem Nunito';ctxCond.textAlign='center';
+    ctxCond.fillText('🔥',rodX1-20,rodY+10);
+    ctxCond.restore();
+  }
+
+  // NAILS (wax-held, fall off as heat progresses)
+  const nailSpacing=(rodX2-rodX1)/(NAIL_COUNT+1);
+  for(let n=0;n<NAIL_COUNT;n++){
+    const nx=rodX1+nailSpacing*(n+1);
+    const fallen=n<Math.floor(condHeat);
+    const falling=n===Math.floor(condHeat)&&condHeat%1>0;
+    const fallProgress=falling?condHeat%1:0;
+
+    if(fallen){
+      // Nail on ground
+      ctxCond.save();
+      ctxCond.fillStyle='#607d8b';
+      ctxCond.fillRect(nx-2,rodY+rodH/2+25,4,2);
+      ctxCond.restore();
+    } else {
+      // Nail hanging
+      const nailDrop=falling?fallProgress*40:0;
+      ctxCond.save();
+      ctxCond.strokeStyle=n<condHeat+1?'#e53935':'#90a4ae';ctxCond.lineWidth=2.5;
+      ctxCond.beginPath();ctxCond.moveTo(nx,rodY+rodH/2);ctxCond.lineTo(nx,rodY+rodH/2+18+nailDrop);ctxCond.stroke();
+      ctxCond.fillStyle='#607d8b';
+      ctxCond.beginPath();ctxCond.arc(nx,rodY+rodH/2+20+nailDrop,4,0,Math.PI*2);ctxCond.fill();
+      // Wax drop
+      if(!fallen){
+        ctxCond.fillStyle=n<condHeat+0.5?'rgba(229,57,53,.4)':'rgba(200,160,80,.5)';
+        ctxCond.beginPath();ctxCond.arc(nx,rodY+rodH/2+2,3,0,Math.PI*2);ctxCond.fill();
+      }
+      ctxCond.restore();
+    }
+  }
+
+  // Labels
+  ctxCond.fillStyle='#c62828';ctxCond.font='bold 12px Nunito';ctxCond.textAlign='center';
+  ctxCond.fillText('HOT',rodX1,H-10);
+  ctxCond.fillStyle='#90a4ae';ctxCond.fillText('COLD',rodX2,H-10);
+  ctxCond.fillStyle='rgba(100,50,0,.5)';ctxCond.font='11px Nunito';ctxCond.textAlign='center';
+  ctxCond.fillText('← Heat travels this way',W/2,20);
+}
+
+function toggleCond(){
+  condRunning=!condRunning;
+  document.getElementById('condBtn').textContent=condRunning?'⏸ Pause':'▶ Heat the Rod';
+  if(condRunning)runCond();else{clearTimeout(condAnim);}
+}
+function runCond(){
+  if(!condRunning)return;
+  if(condHeat<NAIL_COUNT){condHeat+=0.012;document.getElementById('condStatus').textContent='Heat reaching nail '+(Math.floor(condHeat)+1)+'...';}
+  else{condRunning=false;document.getElementById('condBtn').textContent='▶ Heat the Rod';document.getElementById('condStatus').textContent='All nails have fallen — rod fully heated!';}
+  drawCond();
+  if(condRunning)condAnim=requestAnimationFrame(runCond);
+}
+function resetCond(){
+  condRunning=false;cancelAnimationFrame(condAnim);
+  condHeat=0;document.getElementById('condBtn').textContent='▶ Heat the Rod';
+  document.getElementById('condStatus').textContent='Click to apply heat to the left end';
+  drawCond();
+}
+
+// ── CONVECTION ANIMATION ─────────────────────────────────
+const cvConv=document.getElementById('cvConv');
+const ctxConv=cvConv.getContext('2d');
+let convRunning=false,convAnim=null,convT=0;
+const CONV_PARTICLES=20;
+const convParticles=[];
+function initConvParticles(){
+  convParticles.length=0;
+  for(let i=0;i<CONV_PARTICLES;i++){
+    convParticles.push({
+      x:Math.random()*300+50,y:Math.random()*120+60,
+      phase:Math.random()*Math.PI*2,speed:0.4+Math.random()*0.4,
+      size:4+Math.random()*3
+    });
+  }
+}
+initConvParticles();
+
+function drawConv(){
+  const W=cvConv.width,H=cvConv.height;
+  ctxConv.clearRect(0,0,W,H);
+  ctxConv.fillStyle='#fff7ee';ctxConv.fillRect(0,0,W,H);
+
+  // Container (pot)
+  const px=40,py=40,pw=W-80,ph=H-80;
+  // Water gradient (hot at bottom, cool at top)
+  const waterGrad=ctxConv.createLinearGradient(0,py,0,py+ph);
+  waterGrad.addColorStop(0,'rgba(100,160,255,.25)');
+  waterGrad.addColorStop(1,'rgba(255,100,50,.3)');
+  ctxConv.fillStyle=waterGrad;
+  ctxConv.fillRect(px,py,pw,ph);
+  ctxConv.strokeStyle='rgba(100,50,0,.3)';ctxConv.lineWidth=2;
+  ctxConv.strokeRect(px,py,pw,ph);
+
+  // Flame at bottom
+  if(convRunning||convT>0){
+    ctxConv.font='1.8rem Nunito';ctxConv.textAlign='center';
+    ctxConv.fillText('🔥🔥🔥',W/2,py+ph+28);
+  }
+
+  // HOT label bottom, COLD label top
+  ctxConv.fillStyle='#c62828';ctxConv.font='bold 11px Nunito';ctxConv.textAlign='left';
+  ctxConv.fillText('HOT (expands, rises) ↑',px+6,py+ph-6);
+  ctxConv.fillStyle='#1565c0';
+  ctxConv.fillText('COOL (contracts, sinks) ↓',px+6,py+16);
+
+  if(convRunning||convT>0){
+    // Convection current arrows
+    const cx=W/2,cy=py+ph/2;
+    const rx=pw/2-20,ry=ph/2-20;
+    // Draw oval current path
+    for(let a=0;a<Math.PI*2;a+=0.15){
+      const x=cx+Math.cos(a)*rx;
+      const y=cy+Math.sin(a)*ry;
+      const x2=cx+Math.cos(a+0.15)*rx;
+      const y2=cy+Math.sin(a+0.15)*ry;
+      const hot=Math.sin(a)>0;// bottom half = hot
+      ctxConv.strokeStyle=hot?'rgba(229,57,53,.4)':'rgba(21,101,192,.4)';
+      ctxConv.lineWidth=2;
+      ctxConv.beginPath();ctxConv.moveTo(x,y);ctxConv.lineTo(x2,y2);ctxConv.stroke();
+    }
+
+    // Animated particles moving along current
+    convParticles.forEach((p,i)=>{
+      const angle=p.phase+convT*p.speed;
+      p.x=cx+Math.cos(angle)*(pw/2-25);
+      p.y=cy+Math.sin(angle)*(ph/2-22);
+      const hot=Math.sin(angle)>0;
+      ctxConv.beginPath();ctxConv.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctxConv.fillStyle=hot?'rgba(229,57,53,.7)':'rgba(21,101,192,.7)';ctxConv.fill();
+    });
+
+    // Big arrows showing direction
+    ctxConv.save();
+    ctxConv.fillStyle='rgba(229,57,53,.6)';ctxConv.font='18px Nunito';ctxConv.textAlign='center';
+    ctxConv.fillText('↑',cx-rx+10,cy+10);// left side rising
+    ctxConv.fillStyle='rgba(21,101,192,.6)';
+    ctxConv.fillText('↓',cx+rx-10,cy+10);// right side sinking
+    ctxConv.restore();
+  }
+}
+
+function toggleConv(){
+  convRunning=!convRunning;
+  document.getElementById('convBtn').textContent=convRunning?'⏸ Pause':'▶ Start Heating';
+  if(convRunning)runConv();else cancelAnimationFrame(convAnim);
+}
+function runConv(){
+  if(!convRunning)return;
+  convT+=0.015;
+  document.getElementById('convStatus').textContent='Convection current flowing — hot rises, cool sinks!';
+  drawConv();
+  convAnim=requestAnimationFrame(runConv);
+}
+function resetConv(){
+  convRunning=false;cancelAnimationFrame(convAnim);
+  convT=0;initConvParticles();
+  document.getElementById('convBtn').textContent='▶ Start Heating';
+  document.getElementById('convStatus').textContent='Click to heat the bottom';
+  drawConv();
+}
+
+// ── RADIATION ANIMATION ──────────────────────────────────
+const cvRad=document.getElementById('cvRad');
+const ctxRad=cvRad.getContext('2d');
+let radRunning=false,radAnim=null,radT=0;
+const radWaves=[];
+
+function drawRad(){
+  const W=cvRad.width,H=cvRad.height;
+  ctxRad.fillStyle='#020a0f';ctxRad.fillRect(0,0,W,H);// dark space
+
+  // Source (hot object left)
+  const srcX=80,srcY=H/2;
+  const glow=ctxRad.createRadialGradient(srcX,srcY,0,srcX,srcY,50);
+  glow.addColorStop(0,'rgba(255,200,50,.9)');
+  glow.addColorStop(0.4,'rgba(255,100,0,.5)');
+  glow.addColorStop(1,'transparent');
+  ctxRad.fillStyle=glow;
+  ctxRad.beginPath();ctxRad.arc(srcX,srcY,50,0,Math.PI*2);ctxRad.fill();
+  ctxRad.fillStyle='#ff6d00';
+  ctxRad.beginPath();ctxRad.arc(srcX,srcY,22,0,Math.PI*2);ctxRad.fill();
+  ctxRad.fillStyle='#fff';ctxRad.font='bold 11px Nunito';ctxRad.textAlign='center';
+  ctxRad.fillText('HOT',srcX,srcY+4);
+
+  // Receiving object (right side)
+  const recX=W-80,recY=H/2;
+  const warmth=Math.min(1,radT*0.015);
+  const recColor=`rgb(${Math.round(50+warmth*180)},${Math.round(60-warmth*20)},${Math.round(60-warmth*20)})`;
+  ctxRad.fillStyle=recColor;
+  ctxRad.beginPath();ctxRad.arc(recX,recY,22,0,Math.PI*2);ctxRad.fill();
+  ctxRad.fillStyle='#fff';ctxRad.font='bold 10px Nunito';ctxRad.textAlign='center';
+  ctxRad.fillText('COLD',recX,recY-2);ctxRad.fillText('→ WARM',recX,recY+10);
+
+  // SPACE label
+  ctxRad.fillStyle='rgba(255,255,255,.2)';ctxRad.font='10px Nunito';ctxRad.textAlign='center';
+  ctxRad.fillText('EMPTY SPACE (vacuum — no particles)',W/2,20);
+
+  // Heat waves (animated)
+  if(radRunning||radT>0){
+    radWaves.forEach(wave=>{
+      wave.x+=2.5;
+      if(wave.x>recX-30)wave.x=srcX+30;
+      const alpha=Math.max(0,(1-(wave.x-srcX)/(recX-srcX-60))*0.8);
+      ctxRad.strokeStyle=`rgba(255,${150-Math.round(wave.freq*20)},0,${alpha})`;
+      ctxRad.lineWidth=1.5;
+      ctxRad.beginPath();
+      for(let dx=0;dx<30;dx++){
+        const y=srcY+Math.sin((wave.x+dx+radT*5)*wave.freq*0.4+wave.phase)*wave.amp;
+        if(dx===0)ctxRad.moveTo(wave.x+dx,y);else ctxRad.lineTo(wave.x+dx,y);
+      }
+      ctxRad.stroke();
+    });
+  }
+}
+
+function initRadWaves(){
+  radWaves.length=0;
+  for(let i=0;i<8;i++){
+    radWaves.push({x:90+i*30,y:0,amp:8+Math.random()*10,freq:1+Math.random(),phase:Math.random()*Math.PI*2});
+  }
+}
+initRadWaves();
+
+function toggleRad(){
+  radRunning=!radRunning;
+  document.getElementById('radBtn').textContent=radRunning?'⏸ Pause':'▶ Emit Heat';
+  if(radRunning)runRad();else cancelAnimationFrame(radAnim);
+}
+function runRad(){
+  if(!radRunning)return;
+  radT++;
+  document.getElementById('radStatus').textContent='Heat waves travel through empty space at 300,000 km/s!';
+  drawRad();
+  radAnim=requestAnimationFrame(runRad);
+}
+function resetRad(){
+  radRunning=false;cancelAnimationFrame(radAnim);
+  radT=0;initRadWaves();
+  document.getElementById('radBtn').textContent='▶ Emit Heat';
+  document.getElementById('radStatus').textContent='Click to start radiation';
+  drawRad();
+}
+
+// ── MINI COMPARISON CANVASES ─────────────────────────────
+let miniT=0,miniAnim=null;
+function drawMinis(){
+  // Mini conduction
+  const cc=document.getElementById('cvMiniCond');if(!cc)return;
+  const cx=cc.getContext('2d');cx.fillStyle='#fff7ee';cx.fillRect(0,0,160,120);
+  const grad=cx.createLinearGradient(10,0,150,0);
+  grad.addColorStop(0,'#e53935');grad.addColorStop(0.6+Math.sin(miniT*0.02)*0.1,'#ffb74d');grad.addColorStop(1,'#bdbdbd');
+  cx.fillStyle=grad;cx.fillRect(10,50,140,18);cx.strokeStyle='rgba(100,50,0,.3)';cx.lineWidth=1;cx.strokeRect(10,50,140,18);
+  cx.font='18px Nunito';cx.textAlign='left';cx.fillText('🔥',2,68);
+  cx.fillStyle='#c62828';cx.font='bold 9px Nunito';cx.textAlign='center';cx.fillText('Solid only — particle vibration',80,112);
+
+  // Mini convection
+  const cv2=document.getElementById('cvMiniConv');if(!cv2)return;
+  const cv=cv2.getContext('2d');cv.fillStyle='#fff7ee';cv.fillRect(0,0,160,120);
+  cv.fillStyle='rgba(100,180,255,.2)';cv.fillRect(15,15,130,80);cv.strokeStyle='rgba(100,50,0,.2)';cv.lineWidth=1;cv.strokeRect(15,15,130,80);
+  for(let a=0;a<Math.PI*2;a+=0.3){
+    const x=80+Math.cos(a)*40;const y=55+Math.sin(a)*28;
+    const x2=80+Math.cos(a+0.3)*40;const y2=55+Math.sin(a+0.3)*28;
+    cv.strokeStyle=Math.sin(a)>0?'rgba(229,57,53,.5)':'rgba(21,101,192,.5)';cv.lineWidth=1.5;
+    cv.beginPath();cv.moveTo(x,y);cv.lineTo(x2,y2);cv.stroke();
+  }
+  const ax=80+Math.cos(miniT*0.04)*40,ay=55+Math.sin(miniT*0.04)*28;
+  cv.beginPath();cv.arc(ax,ay,4,0,Math.PI*2);cv.fillStyle=Math.sin(miniT*0.04)>0?'#e53935':'#1565c0';cv.fill();
+  cv.font='🔥';cv.font='14px Nunito';cv.textAlign='center';cv.fillText('🔥',80,110);
+  cv.fillStyle='#c62828';cv.font='bold 9px Nunito';cv.fillText('Fluid — particles move',80,118);
+
+  // Mini radiation
+  const cr2=document.getElementById('cvMiniRad');if(!cr2)return;
+  const cr=cr2.getContext('2d');cr.fillStyle='#020a0f';cr.fillRect(0,0,160,120);
+  cr.fillStyle='#ff6d00';cr.beginPath();cr.arc(25,60,14,0,Math.PI*2);cr.fill();
+  cr.fillStyle='#bdbdbd';cr.beginPath();cr.arc(135,60,14,0,Math.PI*2);cr.fill();
+  for(let i=0;i<4;i++){
+    const wx=(miniT*2+i*30)%100+40;
+    cr.strokeStyle='rgba(255,150,0,.6)';cr.lineWidth=1.5;
+    cr.beginPath();
+    for(let dx=0;dx<20;dx++){cr.lineTo?0:0;const y=60+Math.sin((wx+dx)*0.4)*6;if(dx===0)cr.moveTo(wx+dx,y);else cr.lineTo(wx+dx,y);}
+    cr.stroke();
+  }
+  cr.fillStyle='rgba(255,255,255,.4)';cr.font='bold 9px Nunito';cr.textAlign='center';cr.fillText('No material needed',80,112);
+  miniAnim=requestAnimationFrame(()=>{miniT++;drawMinis();});
+}
+
+// ── COMPARISON MATCHING ──────────────────────────────────
+const COMP_ITEMS=[
+  {id:'c1',text:'Needs a solid material',color:'#ff6b00',correct:'Conduction'},
+  {id:'c2',text:'Hot fluid rises, cool fluid sinks',color:'#e53935',correct:'Convection'},
+  {id:'c3',text:'Can travel through vacuum',color:'#f9a825',correct:'Radiation'},
+  {id:'c4',text:'Infrared waves carry the energy',color:'#f9a825',correct:'Radiation'},
+  {id:'c5',text:'Used to heat a room with a radiator',color:'#e53935',correct:'Convection'},
+  {id:'c6',text:'Metal spoon gets hot in soup',color:'#ff6b00',correct:'Conduction'},
+];
+let compSel=null,compPlaced={};
+
+function buildComp(){
+  const bank=document.getElementById('compBank');
+  const targets=document.getElementById('compTargets');
+
+  // Shuffle chips
+  const shuffled=[...COMP_ITEMS].sort(()=>Math.random()-.5);
+  shuffled.forEach(item=>{
+    const chip=document.createElement('div');
+    chip.className='drag-chip';chip.id='chip_'+item.id;
+    chip.style.color=item.color;chip.style.borderColor=item.color+'66';chip.style.background=item.color+'11';
+    chip.textContent=item.text;
+    chip.onclick=()=>{
+      if(chip.classList.contains('placed'))return;
+      document.querySelectorAll('.drag-chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');compSel=item;
+    };
+    bank.appendChild(chip);
+  });
+
+  // Targets
+  ['Conduction','Convection','Radiation'].forEach(method=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;';
+    const lbl=document.createElement('div');
+    lbl.style.cssText='width:100px;font-weight:800;font-size:.82rem;flex-shrink:0;padding-top:10px;color:'+(method==='Conduction'?'#ff6b00':method==='Convection'?'#e53935':'#f9a825');
+    lbl.textContent=method;
+    const zone=document.createElement('div');
+    zone.style.cssText='flex:1;display:flex;flex-wrap:wrap;gap:6px;min-height:48px;border:2px dashed rgba(200,100,0,.2);border-radius:10px;padding:8px;background:var(--panel2);';
+    zone.id='zone_'+method;
+    zone.onclick=()=>{
+      if(!compSel)return;
+      // Place chip
+      const placed=document.createElement('div');
+      placed.style.cssText='padding:6px 12px;border-radius:16px;font-size:.78rem;font-weight:700;background:'+compSel.color+'22;color:'+compSel.color+';border:1.5px solid '+compSel.color+'66;';
+      placed.textContent=compSel.text;
+      placed.dataset.itemId=compSel.id;
+      placed.dataset.method=method;
+      placed.onclick=(e)=>{e.stopPropagation();zone.removeChild(placed);const ch=document.getElementById('chip_'+compSel.id);if(ch){ch.classList.remove('placed');}delete compPlaced[compSel.id];};
+      zone.appendChild(placed);
+      const ch=document.getElementById('chip_'+compSel.id);if(ch)ch.classList.add('placed');
+      compPlaced[compSel.id]=method;
+      document.querySelectorAll('.drag-chip').forEach(c=>c.classList.remove('active'));
+      compSel=null;
+    };
+    row.appendChild(lbl);row.appendChild(zone);
+    targets.appendChild(row);
+  });
+}
+
+function checkComp(){
+  const fb=document.getElementById('fbComp');fb.style.display='block';
+  let c=0;
+  // Check each zone
+  document.querySelectorAll('[id^=zone_]').forEach(zone=>{
+    zone.querySelectorAll('[data-item-id]').forEach(chip=>{
+      const item=COMP_ITEMS.find(i=>i.id===chip.dataset.itemId);
+      const method=chip.dataset.method;
+      if(item&&item.correct===method){c++;chip.style.background=item.color.replace(')',',0.15)').replace('rgb','rgba');chip.style.borderColor='rgba(46,125,50,.5)';chip.style.color='var(--green2)';}
+      else{chip.style.background='rgba(229,57,53,.1)';chip.style.borderColor='rgba(229,57,53,.3)';chip.style.color='var(--red2)';}
+    });
+  });
+  if(c===COMP_ITEMS.length){fb.className='fb ok';fb.textContent='✓ Perfect! All 6 descriptions matched correctly.';correct.comp=true;}
+  else{fb.className='fb hint';fb.textContent=c+'/6 correct. Hint: Conduction=solids, Convection=fluids moving, Radiation=waves/vacuum.';}
+  updateProg();
+}
+
+// ── AI TUTOR ──────────────────────────────────────────────
+function getAI(){
+  const ans=document.getElementById('openAnswer').value.trim();
+  const resp=document.getElementById('aiResp');
+  if(!ans){showToast('Write your answer first!');return;}
+  resp.style.display='block';
+  resp.innerHTML='<span style="color:var(--orange);">🤖 Thinking...</span>';
+  setTimeout(()=>{resp.innerHTML=buildHeatFeedback(ans);},1200);
+}
+function buildHeatFeedback(a){
+  const hasCond=/(conduction|conduct|solid wall|glass|no air between)/i.test(a);
+  const hasConv=/(convection|convect|fluid|air|vacuum|no air circul)/i.test(a);
+  const hasRad=/(radiation|radiat|infrared|silver|shiny|reflect|mirror)/i.test(a);
+  const hasVac=/(vacuum|empty|no air|no medium|space)/i.test(a);
+  const hasSilver=/(silver|shiny|mirror|reflect)/i.test(a);
+  const score=[hasCond,hasConv,hasRad,hasVac,hasSilver].filter(Boolean).length;
+  const goods=[];
+  if(hasCond)goods.push('explaining how the vacuum prevents conduction');
+  if(hasConv)goods.push('describing how convection is stopped');
+  if(hasRad)goods.push('addressing radiation reduction');
+  if(hasSilver)goods.push('mentioning the silver walls reflecting infrared radiation');
+  let p1=goods.length===0?'Good start — now add more detail for each method.':'Well done on '+goods.join(', ')+'.';
+  const fixes=[];
+  if(!hasCond)fixes.push('For conduction: the vacuum between the glass walls means no particles to conduct heat through.');
+  if(!hasConv)fixes.push('For convection: the vacuum eliminates all air — no fluid can move to create convection currents.');
+  if(!hasRad)fixes.push('For radiation: the silver-coated inner walls reflect infrared radiation back, reducing heat loss by radiation.');
+  let p2=fixes.length===0?'Your answer covers all three methods — excellent scientific thinking!':'One thing to add: '+fixes[0];
+  const p3=['The thermos flask uses all THREE insulation methods — that is why it is so effective. Engineers call this multi-barrier thermal insulation!',
+    'The same principle keeps astronauts alive: their suits use a vacuum layer and reflective material to block all three heat transfer methods.'][score%2];
+  return '<span style="color:var(--green2);">'+p1+'</span> '+p2+' <span style="color:var(--muted2);font-size:.82rem;">'+p3+'</span>';
+}
+
+// ── PROGRESS ──────────────────────────────────────────────
+function updateProg(){
+  const keys=['eng','classify','thermos','cond','conv','rad','comp','q1','q2','tf3','q4'];
+  const done=keys.filter(k=>correct[k]).length;
+  const pct=Math.round(done/keys.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=done+' / '+keys.length+' activities completed';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  document.getElementById('ansReview').innerHTML=keys.map(k=>`<div>${k}: ${correct[k]?'✓':'—'}</div>`).join('');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+async function submitWork(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!name||!cls){showToast('Enter your name and class first!');return;}
+  const btn=document.querySelector('[onclick="submitWork()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+  const thermoStr=THERMOS.map((t,i)=>{
+    const v=document.getElementById('thermo'+i)?.value||'—';
+    const u=document.getElementById('thermoU'+i)?.value||'—';
+    return t.label+'='+v+u+'(correct:'+t.value+'°C)';
+  }).join(' | ');
+  const keys=['eng','classify','thermos','cond','conv','rad','comp','q1','q2','tf3','q4'];
+  const done=keys.filter(k=>correct[k]).length;
+  const payload={
+    sheet:'HeatTransfer2_G7',name,class:cls,
+    engage:correct.eng?'✓':'—',
+    classify:correct.classify?'✓':'—',
+    thermometers:thermoStr,
+    conduction:correct.cond?'✓':'—',
+    convection:correct.conv?'✓':'—',
+    radiation:correct.rad?'✓':'—',
+    comparison:correct.comp?'✓':'—',
+    practice:['q1','q2','tf3','q4'].map(k=>k+':'+(correct[k]?'✓':'—')).join(' '),
+    bonus:document.getElementById('openAnswer').value||'—',
+    score:Math.round(done/keys.length*100)+'%'
+  };
+  try{
+    await fetch(APPS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    btn.textContent='✓ Submitted!';btn.style.background='var(--green)';btn.style.color='#fff';
+    showToast('✓ Submitted to Ahmad\'s grade sheet!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 Submit to Ahmad\'s Grade Sheet';
+    showToast('⚠ Check internet connection.');
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  buildClassify();
+  buildThermos();
+  buildComp();
+  drawCond();
+  drawConv();
+  drawRad();
+  drawMinis();
+  updateProg();
+});
+</script>
+</body>
+</html>
