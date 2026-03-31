@@ -161,6 +161,32 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
 .ft-link:hover{border-color:var(--cyan);color:var(--cyan);}
 .pair-a{color:var(--cyan);font-weight:700;font-family:var(--fm);}
 .pair-b{color:var(--orange);font-weight:700;font-family:var(--fm);}
+
+/* Vector symbol — SVG arrow above letter, works on ALL devices */
+.vr{display:inline-block;position:relative;padding-top:9px;font-family:var(--fm);font-weight:700;line-height:1;}
+.vr::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;
+  background-repeat:no-repeat;background-size:contain;background-position:center;}
+.vr.cyan{color:var(--cyan);}
+.vr.cyan::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cline x1='1' y1='5' x2='16' y2='5' stroke='%2300d4ff' stroke-width='1.8'/%3E%3Cpolygon points='13,2 19,5 13,8' fill='%2300d4ff'/%3E%3C/svg%3E");}
+.vr.orange{color:var(--orange);}
+.vr.orange::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cline x1='1' y1='5' x2='16' y2='5' stroke='%23ff8c00' stroke-width='1.8'/%3E%3Cpolygon points='13,2 19,5 13,8' fill='%23ff8c00'/%3E%3C/svg%3E");}
+.vr.white{color:#fff;}
+.vr.white::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cline x1='1' y1='5' x2='16' y2='5' stroke='%23ffffff' stroke-width='1.8'/%3E%3Cpolygon points='13,2 19,5 13,8' fill='%23ffffff'/%3E%3C/svg%3E");}
+.vr.purple{color:var(--purple);}
+.vr.purple::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cline x1='1' y1='5' x2='16' y2='5' stroke='%238866ff' stroke-width='1.8'/%3E%3Cpolygon points='13,2 19,5 13,8' fill='%238866ff'/%3E%3C/svg%3E");}
+/* Formula builder tiles for Q5 */
+.fml-tile{display:inline-flex;align-items:center;justify-content:center;
+  padding:8px 16px;border-radius:8px;font-family:var(--fm);font-size:1rem;
+  cursor:pointer;border:2px solid;transition:all .2s;user-select:none;min-height:44px;margin:3px;}
+.fml-tile:hover{transform:scale(1.06);}
+.fml-tile.selected{box-shadow:0 0 0 3px rgba(0,212,255,.5);}
+.fml-built{background:var(--panel3);border:2px solid var(--border2);border-radius:10px;
+  min-height:52px;padding:8px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;
+  font-family:var(--fm);font-size:1rem;margin-top:8px;}
+.fml-placed{display:inline-flex;align-items:center;padding:4px 10px;
+  border-radius:6px;font-size:.92rem;cursor:pointer;margin:2px;
+  border:1.5px solid;}
+.fml-placed:hover{opacity:.6;}
 </style>
 </head>
 <body>
@@ -293,12 +319,12 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
   <p class="sec-desc">A body acted on by two forces is in equilibrium when:</p>
 
   <div class="formula">
-    <div class="formula-main"><span class="vec">F⃗₁</span> = <span class="vec-neg">−F⃗₂</span></div>
+    <div class="formula-main"><span class="vr cyan">F<sub>1</sub></span> = −<span class="vr orange">F<sub>2</sub></span></div>
     <div class="formula-sub">Equal magnitudes · Opposite directions · Same line of action</div>
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:28px;">
-    <div class="card2"><div style="color:var(--cyan);font-weight:700;font-size:.8rem;margin-bottom:5px;">|F⃗₁| = |F⃗₂|</div><div style="font-size:.76rem;color:var(--muted2);">The two forces are equally strong</div></div>
+    <div class="card2"><div style="color:var(--cyan);font-weight:700;font-size:.8rem;margin-bottom:5px;">|<span class="vr white">F</span>₁| = |<span class="vr white">F</span>₂|</div><div style="font-size:.76rem;color:var(--muted2);">The two forces are equally strong</div></div>
     <div class="card2"><div style="color:var(--orange);font-weight:700;font-size:.8rem;margin-bottom:5px;">Opposite directions</div><div style="font-size:.76rem;color:var(--muted2);">One up, one down — or one left, one right</div></div>
     <div class="card2"><div style="color:var(--purple);font-weight:700;font-size:.8rem;margin-bottom:5px;">Same line of action</div><div style="font-size:.76rem;color:var(--muted2);">Both forces along the same straight line</div></div>
   </div>
@@ -315,17 +341,17 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
           <div>
             <div style="font-size:.8rem;color:var(--muted2);line-height:1.8;margin-bottom:10px;">
               <strong style="color:#fff;">Forces on the book:</strong><br>
-              • <strong style="color:var(--orange);">Weight W⃗</strong> — gravitational force, origin: <em>centre of gravity G</em>, direction: vertically downward, type: distance force<br>
-              • <strong style="color:var(--cyan);">Normal reaction N⃗</strong> — from table surface, origin: <em>contact point (bottom face of book)</em>, direction: vertically upward, type: contact force
+              • <strong style="color:var(--orange);">Weight <span class="vr orange">W</span></strong> — gravitational force, origin: <em>centre of gravity G</em>, direction: vertically downward, type: distance force<br>
+              • <strong style="color:var(--cyan);">Normal reaction <span class="vr cyan">N</span></strong> — from table surface, origin: <em>contact point (bottom face of book)</em>, direction: vertically upward, type: contact force
             </div>
-            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vec">N⃗</span> = <span class="vec-neg">−W⃗</span></div><div class="formula-sub">N: vertical ↑ from contact point · W: vertical ↓ from G · |N| = |W|</div></div>
+            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vr cyan">N</span> = −<span class="vr orange">W</span></div><div class="formula-sub">N: vertical ↑ from contact point · W: vertical ↓ from G · |N| = |W|</div></div>
             <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;">If W = 5 N downward, deduce N:</div>
             <div class="mcq-options" id="qEx1">
               <div class="mcq-opt" onclick="selMCQ('qEx1','A',this)"><span class="mcq-letter">A</span>N = 5 N, vertically downward</div>
               <div class="mcq-opt" onclick="selMCQ('qEx1','B',this)"><span class="mcq-letter">B</span>N = 5 N, vertically upward</div>
               <div class="mcq-opt" onclick="selMCQ('qEx1','C',this)"><span class="mcq-letter">C</span>N = 10 N, vertically upward</div>
             </div>
-            <button class="btn-chk" onclick="chkMCQ('qEx1','B','✓ N = 5 N vertically upward. N⃗ = −W⃗: same magnitude (5 N), opposite direction (upward), same vertical line through G.')">✓ Check</button>
+            <button class="btn-chk" onclick="chkMCQ('qEx1','B','✓ N = 5 N vertically upward. <span class="vr cyan">N</span> = −<span class="vr orange">W</span>: same magnitude (5 N), opposite direction (upward), same vertical line through G.')">✓ Check</button>
             <div class="fb" id="fbex1"></div>
           </div>
         </div>
@@ -341,10 +367,10 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
           <div>
             <div style="font-size:.8rem;color:var(--muted2);line-height:1.8;margin-bottom:10px;">
               <strong style="color:#fff;">Forces on the ball:</strong><br>
-              • <strong style="color:var(--orange);">Weight W⃗</strong> — origin: <em>centre of ball G</em>, direction: vertically downward<br>
-              • <strong style="color:var(--cyan);">Buoyancy F⃗b</strong> — from water, origin: <em>lowest contact point of ball with water</em>, direction: vertically upward
+              • <strong style="color:var(--orange);">Weight <span class="vr orange">W</span></strong> — origin: <em>centre of ball G</em>, direction: vertically downward<br>
+              • <strong style="color:var(--cyan);">Buoyancy <span class="vr white">F</span>b</strong> — from water, origin: <em>lowest contact point of ball with water</em>, direction: vertically upward
             </div>
-            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vec">F⃗b</span> = <span class="vec-neg">−W⃗</span></div><div class="formula-sub">F⃗b: vertical ↑ from contact · W: vertical ↓ from G · |Fb| = |W|</div></div>
+            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vr cyan">F<sub>b</sub></span> = −<span class="vr orange">W</span></div><div class="formula-sub"><span class="vr white">F</span>b: vertical ↑ from contact · W: vertical ↓ from G · |Fb| = |W|</div></div>
             <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;">Buoyancy is exerted by the water. It is a:</div>
             <div class="mcq-options" id="qEx2">
               <div class="mcq-opt" onclick="selMCQ('qEx2','A',this)"><span class="mcq-letter">A</span>Contact force — water touches the ball directly</div>
@@ -366,17 +392,17 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
           <div>
             <div style="font-size:.8rem;color:var(--muted2);line-height:1.8;margin-bottom:10px;">
               <strong style="color:#fff;">Forces on the body:</strong><br>
-              • <strong style="color:var(--orange);">Weight W⃗</strong> — origin: <em>centre of gravity G</em>, direction: vertically downward<br>
-              • <strong style="color:var(--cyan);">Tension T⃗</strong> — from spring, origin: <em>top contact point of body with spring</em>, direction: vertically upward
+              • <strong style="color:var(--orange);">Weight <span class="vr orange">W</span></strong> — origin: <em>centre of gravity G</em>, direction: vertically downward<br>
+              • <strong style="color:var(--cyan);">Tension <span class="vr cyan">T</span></strong> — from spring, origin: <em>top contact point of body with spring</em>, direction: vertically upward
             </div>
-            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vec">T⃗</span> = <span class="vec-neg">−W⃗</span></div><div class="formula-sub">T: vertical ↑ from contact point · W: vertical ↓ from G · |T| = |W|</div></div>
+            <div class="formula" style="text-align:left;"><div class="formula-main" style="font-size:1.05rem;"><span class="vr cyan">T</span> = −<span class="vr orange">W</span></div><div class="formula-sub">T: vertical ↑ from contact point · W: vertical ↓ from G · |T| = |W|</div></div>
             <div style="margin-top:12px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;">If W = 12 N downward, deduce T:</div>
             <div class="mcq-options" id="qEx3">
               <div class="mcq-opt" onclick="selMCQ('qEx3','A',this)"><span class="mcq-letter">A</span>T = 12 N, vertically downward</div>
               <div class="mcq-opt" onclick="selMCQ('qEx3','B',this)"><span class="mcq-letter">B</span>T = 6 N, vertically upward</div>
               <div class="mcq-opt" onclick="selMCQ('qEx3','C',this)"><span class="mcq-letter">C</span>T = 12 N, vertically upward</div>
             </div>
-            <button class="btn-chk" onclick="chkMCQ('qEx3','C','✓ T = 12 N vertically upward. T⃗ = −W⃗: same magnitude (12 N), opposite direction (upward), same vertical line of action.')">✓ Check</button>
+            <button class="btn-chk" onclick="chkMCQ('qEx3','C','✓ T = 12 N vertically upward. <span class="vr cyan">T</span> = −<span class="vr orange">W</span>: same magnitude (12 N), opposite direction (upward), same vertical line of action.')">✓ Check</button>
             <div class="fb" id="fbex3"></div>
           </div>
         </div>
@@ -395,41 +421,39 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
     <p style="font-size:.92rem;color:var(--text);line-height:1.8;margin-bottom:10px;">
       When body <span class="pair-a">A</span> exerts a force on body <span class="pair-b">B</span>, at the same moment, body <span class="pair-b">B</span> exerts a force on body <span class="pair-a">A</span>.
     </p>
-    <div class="formula"><div class="formula-main"><span class="vec" style="color:var(--cyan);">F⃗<sub>A/B</sub></span> = <span class="vec-neg">−F⃗<sub>B/A</sub></span></div><div class="formula-sub">|F⃗A/B| = |F⃗B/A| — equal magnitudes, opposite directions, different bodies</div></div>
+    <div class="formula"><div class="formula-main"><span class="vr cyan">F<sub>A/B</sub></span> = −<span class="vr orange">F<sub>B/A</sub></span></div><div class="formula-sub">|<span class="vr white">F</span>A/B| = |<span class="vr white">F</span>B/A| — equal magnitudes, opposite directions, different bodies</div></div>
     <div style="margin-top:10px;font-size:.78rem;color:var(--muted2);">⚠ <strong style="color:var(--yellow);">Key:</strong> These forces act on <strong>different bodies</strong> — they do NOT cancel each other.</div>
   </div>
 
   <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
-    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Box / Table: </strong><span class="pair-a">F⃗<sub>table/box</sub></span> (table pushes box ↑) = −<span class="pair-b">F⃗<sub>box/table</sub></span> (box pushes table ↓)</div></div>
-    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Ball / Water: </strong><span class="pair-a">F⃗<sub>water/ball</sub></span> (water pushes ball ↑) = −<span class="pair-b">F⃗<sub>ball/water</sub></span> (ball pushes water ↓)</div></div>
-    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Body / Spring: </strong><span class="pair-a">F⃗<sub>spring/body</sub></span> (spring pulls body ↑) = −<span class="pair-b">F⃗<sub>body/spring</sub></span> (body pulls spring ↓)</div></div>
+    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Box / Table: </strong><span class="pair-a"><span class="vr cyan">F<sub>table/box</sub></span></span> (table pushes box ↑) = −<span class="pair-b"><span class="vr orange">F<sub>box/table</sub></span></span> (box pushes table ↓)</div></div>
+    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Ball / Water: </strong><span class="pair-a"><span class="vr cyan">F<sub>water/ball</sub></span></span> (water pushes ball ↑) = −<span class="pair-b"><span class="vr orange">F<sub>ball/water</sub></span></span> (ball pushes water ↓)</div></div>
+    <div class="card2" style="border-left:3px solid var(--cyan);"><div style="font-size:.82rem;line-height:1.8;"><strong style="color:#fff;">Body / Spring: </strong><span class="pair-a"><span class="vr cyan">F<sub>spring/body</sub></span></span> (spring pulls body ↑) = −<span class="pair-b"><span class="vr orange">F<sub>body/spring</sub></span></span> (body pulls spring ↓)</div></div>
   </div>
 
   <!-- CINEMATIC INTERACTION ANIMATION -->
   <div style="font-family:var(--fm);font-size:.58rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">🎬 Live Demo — Person Pushing a Wall</div>
-  <div class="interact-section">
-    <canvas id="icv" width="700" height="340"></canvas>
+  <class="interact-section">
+    <canvas id="icv" width="700" height="320"></canvas>
     <div class="slider-row">
-      <span class="slider-label">Push force (N)</span>
-      <input type="range" id="slMag" min="10" max="150" value="60" oninput="drawInteract()">
+      <span class="slider-label">Force magnitude (N)</span>
+      <input type="range" id="slMag" min="20" max="150" value="60" oninput="drawInteract()">
       <span class="slider-val" id="svMag">60 N</span>
     </div>
     <div class="slider-row">
-      <span class="slider-label">Push direction</span>
-      <input type="range" id="slDir" min="-40" max="40" value="0" oninput="drawInteract()">
-      <span class="slider-val" id="svDir">→ Horizontal</span>
+      <span class="slider-label">Bounce angle</span>
+      <input type="range" id="slDir" min="-35" max="35" value="0" oninput="drawInteract()">
+      <span class="slider-val" id="svDir">↓ Straight down</span>
     </div>
-    <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;">
-      <div style="font-size:.74rem;color:var(--muted2);">
-        <span style="display:inline-block;width:14px;height:3px;background:var(--cyan);margin-right:6px;vertical-align:middle;"></span>
-        <span class="pair-a">F⃗<sub>person/wall</sub></span> — person pushes wall
-      </div>
-      <div style="font-size:.74rem;color:var(--muted2);">
-        <span style="display:inline-block;width:14px;height:3px;background:var(--orange);margin-right:6px;vertical-align:middle;"></span>
-        <span class="pair-b">F⃗<sub>wall/person</sub></span> — wall pushes back on person
-      </div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-chk" id="aBtn2" onclick="dropBall()" style="padding:9px 20px;font-size:.82rem;">▶ Drop Ball</button>
+      <span style="font-size:.74rem;color:var(--muted2);" id="iStatus">Drop the ball — watch interaction forces at impact!</span>
     </div>
-  </div>
+    <div style="display:flex;gap:20px;margin-top:8px;flex-wrap:wrap;">
+      <div style="font-size:.74rem;color:var(--muted2);"><span style="display:inline-block;width:14px;height:3px;background:var(--cyan);margin-right:5px;vertical-align:middle;"></span><span class="pair-a">F(ball/floor)</span> — ball pushes floor ↓</div>
+      <div style="font-size:.74rem;color:var(--muted2);"><span style="display:inline-block;width:14px;height:3px;background:var(--orange);margin-right:5px;vertical-align:middle;"></span><span class="pair-b">F(floor/ball)</span> — floor pushes ball ↑ (reaction)</div>
+    </div>
+  </diviv>
 
   <!-- Q about interaction -->
   <div style="margin-top:20px;">
@@ -458,7 +482,7 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
       <div class="mcq-opt" onclick="selMCQ('q1','C',this)"><span class="mcq-letter">C</span>Fb = 8 N, vertically upward, vertical line of action</div>
       <div class="mcq-opt" onclick="selMCQ('q1','D',this)"><span class="mcq-letter">D</span>Fb = 8 N, horizontally, horizontal line of action</div>
     </div>
-    <button class="btn-chk" onclick="chkMCQ('q1','C','✓ F⃗b = −W⃗ → same magnitude (8 N), opposite direction (upward), same vertical line of action.')">✓ Check</button>
+    <button class="btn-chk" onclick="chkMCQ('q1','C','✓ <span class="vr white">F</span>b = −<span class="vr orange">W</span> → same magnitude (8 N), opposite direction (upward), same vertical line of action.')">✓ Check</button>
     <div class="fb" id="fbq1"></div>
   </div>
 
@@ -470,7 +494,7 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
       <div class="mcq-opt" onclick="selMCQ('q2','B',this)"><span class="mcq-letter">B</span>W = 15 N, vertically upward, vertical line of action</div>
       <div class="mcq-opt" onclick="selMCQ('q2','C',this)"><span class="mcq-letter">C</span>W = 7.5 N, vertically downward</div>
     </div>
-    <button class="btn-chk" onclick="chkMCQ('q2','A','✓ W⃗ = −T⃗ → same magnitude (15 N), opposite direction to T (downward), same vertical line of action.')">✓ Check</button>
+    <button class="btn-chk" onclick="chkMCQ('q2','A','✓ <span class="vr orange">W</span> = −<span class="vr cyan">T</span> → same magnitude (15 N), opposite direction to T (downward), same vertical line of action.')">✓ Check</button>
     <div class="fb" id="fbq2"></div>
   </div>
 
@@ -482,7 +506,7 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
       <div class="mcq-opt" onclick="selMCQ('q3','B',this)"><span class="mcq-letter">B</span>Box exerts 20 N downward on the table</div>
       <div class="mcq-opt" onclick="selMCQ('q3','C',this)"><span class="mcq-letter">C</span>Box exerts 20 N upward on the table</div>
     </div>
-    <button class="btn-chk" onclick="chkMCQ('q3','B','✓ F⃗(table/box) = 20 N upward → F⃗(box/table) = 20 N downward. The box pushes DOWN on the table with the same force the table pushes UP on the box.')">✓ Check</button>
+    <button class="btn-chk" onclick="chkMCQ('q3','B','✓ <span class="vr white">F</span>(table/box) = 20 N upward → <span class="vr white">F</span>(box/table) = 20 N downward. The box pushes DOWN on the table with the same force the table pushes UP on the box.')">✓ Check</button>
     <div class="fb" id="fbq3"></div>
   </div>
 
@@ -500,14 +524,40 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
   </div>
 
   <div class="ai-box">
-    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:700;font-size:.9rem;">Question 5 · Open Question · AI Tutor</span></div>
-    <div class="q-text" style="margin-bottom:10px;">A body of weight W = 10 N rests on a horizontal table.<br>
-    <strong>(a)</strong> Name all forces on the body and classify each.<br>
-    <strong>(b)</strong> Write the equilibrium condition as a vector relation.<br>
+    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:700;font-size:.9rem;">Question 5 · Formula Builder + AI Tutor</span></div>
+    <div class="q-text" style="margin-bottom:14px;">A body of weight W = 10 N rests on a horizontal table.<br>
+    <strong>(a)</strong> Name all forces and classify each.<br>
+    <strong>(b)</strong> Build the equilibrium condition by tapping the tiles below.<br>
     <strong>(c)</strong> Deduce all characteristics of normal reaction N.<br>
-    <strong>(d)</strong> Identify the true interaction pair involving the table and body.<br>
-    <strong>(e)</strong> Write the vector relation for this interaction pair.</div>
-    <textarea id="openAnswer" placeholder="Write your complete answer here..."></textarea>
+    <strong>(d)</strong> Identify and build the interaction pair vector relation.</div>
+
+    <!-- PART b: Equilibrium formula builder -->
+    <div style="font-family:var(--fm);font-size:.6rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Part (b) — Tap tiles to build the equilibrium condition:</div>
+    <div id="eqTiles" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;"></div>
+    <div class="fml-built" id="eqBuilt" style="min-height:52px;">
+      <span style="color:var(--muted2);font-size:.78rem;">Your formula appears here...</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:16px;">
+      <button class="btn-chk" onclick="checkEqFormula()" style="font-size:.76rem;">✓ Check Formula</button>
+      <button class="btn-chk" onclick="clearEqFormula()" style="font-size:.76rem;color:var(--red);">✕ Clear</button>
+    </div>
+    <div class="fb" id="fbEqFormula"></div>
+
+    <!-- PART d: Interaction pair builder -->
+    <div style="font-family:var(--fm);font-size:.6rem;color:var(--purple);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;margin-top:14px;">Part (d) — Build the interaction pair relation:</div>
+    <div id="intTiles" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;"></div>
+    <div class="fml-built" id="intBuilt" style="min-height:52px;">
+      <span style="color:var(--muted2);font-size:.78rem;">Your interaction formula appears here...</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:16px;">
+      <button class="btn-chk" onclick="checkIntFormula()" style="font-size:.76rem;">✓ Check Formula</button>
+      <button class="btn-chk" onclick="clearIntFormula()" style="font-size:.76rem;color:var(--red);">✕ Clear</button>
+    </div>
+    <div class="fb" id="fbIntFormula"></div>
+
+    <!-- Open remarks -->
+    <div style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Parts (a) and (c) — write your answers:</div>
+    <textarea id="openAnswer" placeholder="(a) Two forces act on the body: ...&#10;(c) N characteristics: ..."></textarea>
     <button class="btn btn-blue" style="margin-top:10px;" onclick="getAI()">Get AI Feedback 🤖</button>
     <div class="ai-resp" id="aiResp"></div>
   </div>
@@ -639,10 +689,10 @@ function drawExDiagram(cvId, type){
     const gx=110, gy=134;
     drawGpoint(ctx,gx,gy);
     // W from G downward
-    drawForceArrow(ctx,gx,gy,0,1,'#ff8c00','W⃗',52);
+    drawForceArrow(ctx,gx,gy,0,1,'#ff8c00','<span class="vr orange">W</span>',52);
     // N from contact point (bottom of book = by+bh) upward
     const cx=110, cy=150; // contact point = bottom of book = top of table
-    drawForceArrow(ctx,cx,cy,0,-1,'#00d4ff','N⃗',52);
+    drawForceArrow(ctx,cx,cy,0,-1,'#00d4ff','<span class="vr cyan">N</span>',52);
     // contact point label
     ctx.fillStyle='#00d4ff';ctx.font='9px DM Mono';ctx.textAlign='center';
     ctx.fillText('contact',cx,cy+10);
@@ -666,10 +716,10 @@ function drawExDiagram(cvId, type){
     // G at centre of ball
     drawGpoint(ctx,bx,by);
     // W from G downward
-    drawForceArrow(ctx,bx,by,0,1,'#ff8c00','W⃗',52);
+    drawForceArrow(ctx,bx,by,0,1,'#ff8c00','<span class="vr orange">W</span>',52);
     // Fb from bottom contact point upward
     const cpx=bx, cpy=by+br; // lowest point of ball = contact with water
-    drawForceArrow(ctx,cpx,cpy,0,-1,'#00d4ff','F⃗b',52);
+    drawForceArrow(ctx,cpx,cpy,0,-1,'#00d4ff','<span class="vr white">F</span>b',52);
     ctx.fillStyle='#00d4ff';ctx.font='9px DM Mono';ctx.textAlign='center';
     ctx.fillText('contact',cpx,cpy+10);
 
@@ -695,12 +745,12 @@ function drawExDiagram(cvId, type){
     const gx=110,gy=110;
     drawGpoint(ctx,gx,gy);
     // W from G downward
-    drawForceArrow(ctx,gx,gy,0,1,'#ff8c00','W⃗',52);
+    drawForceArrow(ctx,gx,gy,0,1,'#ff8c00','<span class="vr orange">W</span>',52);
     // T from top contact point (top of body = by) upward
     const cpx=110, cpy=by; // top of body = contact with spring
-    drawForceArrow(ctx,cpx,cpy,0,-1,'T⃗',52);
+    drawForceArrow(ctx,cpx,cpy,0,-1,'<span class="vr cyan">T</span>',52);
     // Fix: pass color properly
-    drawForceArrow(ctx,cpx,cpy,0,-1,'#00d4ff','T⃗',52);
+    drawForceArrow(ctx,cpx,cpy,0,-1,'#00d4ff','<span class="vr cyan">T</span>',52);
     ctx.fillStyle='#00d4ff';ctx.font='9px DM Mono';ctx.textAlign='center';
     ctx.fillText('contact',cpx,cpy-62);
   }
@@ -794,7 +844,7 @@ function renderFBD(sc){
       const oy=d.origin==='G'?pts.gy:pts.cpy;
       const dy=d.dir==='up'?-1:1;
       const color=FBD[sc][f].color;
-      const label=f==='Fb'?'F⃗b':f+'⃗';
+      const label=f==='Fb'?'<span class="vr white">F</span>b':f+'';
       drawForceArrow(ctx,ox,oy,0,dy,color,label,60);
     }
   });
@@ -913,165 +963,153 @@ function resetFBD(sc){
 }
 
 // ═══════════════════════════════════════════════════════════
-// CINEMATIC INTERACTION ANIMATION — Person pushing wall
+// BOUNCING BALL INTERACTION ANIMATION
+// Ball hits floor → F(ball/floor) downward = −F(floor/ball) upward
 // ═══════════════════════════════════════════════════════════
 const icv=document.getElementById('icv');
 const ictx=icv.getContext('2d');
-let animT=0;
-let animFrame=null;
+let ballY=60, ballVY=0, ballR=28, gravity=0.45, bounce=0.78;
+let ballAnim=null, ballRunning=false, impactFlash=0;
+let ballMag=60, ballAngleDeg=0;
+const FLOOR_Y=icv.height-55;
 
 function drawInteract(){
-  const mag=parseInt(document.getElementById('slMag').value);
-  const angleDeg=parseInt(document.getElementById('slDir').value);
-  document.getElementById('svMag').textContent=mag+' N';
-  const dirs=[[-40,'↙ Down-left'],[-30,'↙'],[-20,'↙'],[-10,'↗ Slightly up'],
-    [0,'→ Horizontal'],[10,'↘ Slightly down'],[20,'↘'],[30,'↘'],[40,'↘ Down-right']];
-  const label=angleDeg===0?'→ Horizontal':angleDeg<0?'↖ Upward':'↘ Downward';
-  document.getElementById('svDir').textContent=label;
-
-  if(animFrame)cancelAnimationFrame(animFrame);
-  animT=0;
-  function loop(){
-    animT+=0.04;
-    renderInteract(mag,angleDeg*Math.PI/180,animT);
-    animFrame=requestAnimationFrame(loop);
+  ballMag=parseInt(document.getElementById('slMag').value);
+  document.getElementById('svMag').textContent=ballMag+' N';
+  const dirEl=document.getElementById('slDir');
+  if(dirEl){
+    const v=parseInt(dirEl.value);
+    document.getElementById('svDir').textContent=v<0?'← Left':v>0?'→ Right':'↓ Straight down';
+    ballAngleDeg=v;
   }
-  loop();
+  renderBall();
 }
 
-function renderInteract(mag,angleRad,t){
+function renderBall(){
   const W=icv.width,H=icv.height;
   ictx.clearRect(0,0,W,H);
-
-  // Background
   ictx.fillStyle='#020810';ictx.fillRect(0,0,W,H);
-  drawGrid(ictx,W,H);
+
+  // Background grid
+  ictx.strokeStyle='rgba(40,120,255,.06)';ictx.lineWidth=0.5;
+  for(let x=0;x<W;x+=40){ictx.beginPath();ictx.moveTo(x,0);ictx.lineTo(x,H);ictx.stroke();}
+  for(let y=0;y<H;y+=40){ictx.beginPath();ictx.moveTo(0,y);ictx.lineTo(W,y);ictx.stroke();}
 
   // Scene label
-  ictx.fillStyle='rgba(136,102,255,.08)';
-  ictx.fillRect(0,0,W,H);
-  ictx.fillStyle='#8866ff';ictx.font='11px DM Mono';ictx.textAlign='right';
-  ictx.fillText('PRINCIPLE OF INTERACTION — REAL WORLD SCENE',W-14,18);
+  ictx.fillStyle='rgba(136,102,255,.6)';ictx.font='10px DM Mono';ictx.textAlign='right';
+  ictx.fillText('PRINCIPLE OF INTERACTION — BOUNCING BALL',W-12,16);
 
-  // GROUND
-  ictx.fillStyle='#0d1a38';ictx.fillRect(0,H-50,W,50);
-  ictx.strokeStyle='#2878ff';ictx.lineWidth=1;
-  ictx.beginPath();ictx.moveTo(0,H-50);ictx.lineTo(W,H-50);ictx.stroke();
-  // Ground texture
-  ictx.strokeStyle='rgba(40,120,255,.15)';ictx.lineWidth=1;
-  for(let x=0;x<W;x+=30){ictx.beginPath();ictx.moveTo(x,H-50);ictx.lineTo(x-15,H-30);ictx.stroke();}
-
-  // WALL
-  const wallX=W-130;
-  ictx.fillStyle='#0a1828';
-  ictx.fillRect(wallX,20,90,H-70);
+  // Floor
+  ictx.fillStyle='#0a1830';ictx.fillRect(0,FLOOR_Y,W,H-FLOOR_Y);
   ictx.strokeStyle='#2878ff';ictx.lineWidth=2;
-  ictx.strokeRect(wallX,20,90,H-70);
-  // Brick pattern
-  ictx.strokeStyle='rgba(40,120,255,.2)';ictx.lineWidth=0.5;
-  for(let y=30;y<H-50;y+=22){
-    ictx.beginPath();ictx.moveTo(wallX,y);ictx.lineTo(wallX+90,y);ictx.stroke();
-    const offset=(Math.floor((y-30)/22)%2)*22;
-    ictx.beginPath();ictx.moveTo(wallX+offset,y);ictx.lineTo(wallX+offset,y+22);ictx.stroke();
-    ictx.beginPath();ictx.moveTo(wallX+offset+44,y);ictx.lineTo(wallX+offset+44,y+22);ictx.stroke();
+  ictx.beginPath();ictx.moveTo(0,FLOOR_Y);ictx.lineTo(W,FLOOR_Y);ictx.stroke();
+  // Floor hatching
+  ictx.strokeStyle='rgba(40,120,255,.2)';ictx.lineWidth=1;
+  for(let x=0;x<W;x+=18){
+    ictx.beginPath();ictx.moveTo(x,FLOOR_Y);ictx.lineTo(x-12,FLOOR_Y+20);ictx.stroke();
   }
   ictx.fillStyle='#5a7ab8';ictx.font='bold 11px Outfit';ictx.textAlign='center';
-  ictx.fillText('WALL',wallX+45,H-62);
-  ictx.fillStyle='var(--orange)';
+  ictx.fillText('F L O O R',W/2,FLOOR_Y+22);
 
-  // PERSON (stylized stick figure leaning into wall)
-  const personX=230;
-  const lean=Math.min(0.3,mag/400); // lean more when pushing harder
-  const bounce=Math.sin(t*3)*1.5; // subtle breathing animation
-  const fy=H-50; // floor y
+  // Ball shadow
+  const shadowSize=Math.max(6,20-Math.abs(ballY-(FLOOR_Y-ballR))*0.2);
+  ictx.fillStyle='rgba(0,100,200,.25)';
+  ictx.beginPath();ictx.ellipse(W/2,FLOOR_Y+4,shadowSize,4,0,0,Math.PI*2);ictx.fill();
 
-  // Body lean angle based on force magnitude
-  const bodyAngle=lean;
+  // Ball
+  const ballX=W/2;
+  const ballGrad=ictx.createRadialGradient(ballX-8,ballY-8,3,ballX,ballY,ballR);
+  ballGrad.addColorStop(0,'#3399ff');ballGrad.addColorStop(0.6,'#1155cc');ballGrad.addColorStop(1,'#003388');
+  ictx.beginPath();ictx.arc(ballX,ballY,ballR,0,Math.PI*2);
+  ictx.fillStyle=ballGrad;ictx.fill();
+  ictx.strokeStyle='rgba(100,180,255,.6)';ictx.lineWidth=2;ictx.stroke();
 
-  // Legs
-  ictx.strokeStyle='#c8d8f0';ictx.lineWidth=3;ictx.lineCap='round';
-  // Left leg
-  ictx.beginPath();ictx.moveTo(personX,fy-60);
-  ictx.lineTo(personX-18+lean*20,fy);ictx.stroke();
-  // Right leg (back leg, braced)
-  ictx.beginPath();ictx.moveTo(personX,fy-60);
-  ictx.lineTo(personX+20+lean*15,fy);ictx.stroke();
+  // Shine
+  ictx.fillStyle='rgba(255,255,255,.25)';
+  ictx.beginPath();ictx.ellipse(ballX-8,ballY-9,7,4,-.5,0,Math.PI*2);ictx.fill();
 
-  // Torso (leaning forward)
-  const tx1=personX,ty1=fy-60;
-  const tx2=personX+Math.sin(bodyAngle)*55+lean*25,ty2=fy-60-Math.cos(bodyAngle)*55+bounce;
-  ictx.beginPath();ictx.moveTo(tx1,ty1);ictx.lineTo(tx2,ty2);ictx.stroke();
+  // Impact flash
+  if(impactFlash>0){
+    const r=impactFlash*60;
+    const grad=ictx.createRadialGradient(ballX,FLOOR_Y,0,ballX,FLOOR_Y,r);
+    grad.addColorStop(0,'rgba(255,200,50,'+(impactFlash*0.8)+')');
+    grad.addColorStop(1,'rgba(255,100,0,0)');
+    ictx.fillStyle=grad;ictx.beginPath();ictx.arc(ballX,FLOOR_Y,r,0,Math.PI*2);ictx.fill();
+    impactFlash=Math.max(0,impactFlash-0.06);
+  }
 
-  // Arms pushing wall
-  ictx.strokeStyle='#c8d8f0';ictx.lineWidth=3;
-  // Both hands at wall contact
-  const handX=wallX;
-  const handY=ty2+15;
-  // Left arm
-  ictx.beginPath();ictx.moveTo(tx2-8,ty2+10);ictx.lineTo(handX,handY-8);ictx.stroke();
-  // Right arm
-  ictx.beginPath();ictx.moveTo(tx2+8,ty2+10);ictx.lineTo(handX,handY+8);ictx.stroke();
+  // FORCE ARROWS — only show at/near impact
+  const nearFloor=ballY>FLOOR_Y-ballR-40;
+  const contactY=FLOOR_Y;
+  const arrowLen=Math.min(130,ballMag*1.1);
+  const ang=(ballAngleDeg||0)*Math.PI/180;
 
-  // Head
-  ictx.beginPath();ictx.arc(tx2,ty2-14,12,0,Math.PI*2);
-  ictx.fillStyle='#c8d8f0';ictx.fill();
+  if(nearFloor){
+    // F(ball/floor) — ball pushes floor DOWN (action)
+    const a1x=Math.sin(ang)*arrowLen*0.3, a1y=arrowLen;
+    drawBigForceArrow(ictx,ballX,contactY,ballX+a1x,contactY+a1y,'#00d4ff');
+    ictx.fillStyle='#00d4ff';ictx.font='bold 10px DM Mono';ictx.textAlign='center';
+    ictx.fillText('F(ball/floor) = '+ballMag+' N',ballX+a1x/2+40,contactY+a1y/2+12);
 
-  // PERSON label
-  ictx.fillStyle='#00d4ff';ictx.font='bold 11px Outfit';ictx.textAlign='center';
-  ictx.fillText('Person (A)',personX,fy+20);
+    // F(floor/ball) — floor pushes ball UP (reaction) — exact opposite
+    const a2x=-Math.sin(ang)*arrowLen*0.3, a2y=-arrowLen;
+    drawBigForceArrow(ictx,ballX,contactY,ballX+a2x,contactY+a2y,'#ff8c00');
+    ictx.fillStyle='#ff8c00';ictx.font='bold 10px DM Mono';ictx.textAlign='center';
+    ictx.fillText('F(floor/ball) = '+ballMag+' N',ballX+a2x/2-40,contactY+a2y/2-12);
 
-  // FORCE ARROWS
-  const scale=Math.max(0.6,mag/60)*1.2;
-  const arrowLen=Math.min(140,mag*scale*0.9);
+    // Equation at bottom
+    ictx.fillStyle='rgba(0,212,255,.08)';ictx.fillRect(0,H-46,W,46);
+    ictx.fillStyle='#c8d8f0';ictx.font='bold 12px DM Mono';ictx.textAlign='center';
+    ictx.fillText('F(ball/floor) = −F(floor/ball)   |F| = '+ballMag+' N   Simultaneous!',W/2,H-26);
+    ictx.fillStyle='#5a7ab8';ictx.font='10px DM Mono';
+    ictx.fillText('The floor pushes back with exactly the same force — always',W/2,H-10);
+  } else {
+    // Ball in air — show weight and air
+    ictx.fillStyle='rgba(255,140,0,.6)';ictx.font='bold 10px DM Mono';ictx.textAlign='center';
+    ictx.fillText('Ball falling... interaction occurs at contact!',W/2,H-22);
+  }
 
-  // Contact point (hands on wall)
-  const cpX=wallX, cpY=(handY-8+handY+8)/2;
+  // Ball label
+  ictx.fillStyle='#c8d8f0';ictx.font='bold 11px Outfit';ictx.textAlign='center';
+  ictx.fillText('Ball (A)',ballX,ballY+4);
+}
 
-  // F(A/B): person pushes wall — cyan arrow pointing from hands INTO wall
-  const pAngleRad=angleRad;
-  const px=Math.cos(pAngleRad),py=Math.sin(pAngleRad);
-  // Arrow starts at hands, goes toward wall (rightward + angle)
-  const pEx=cpX+px*arrowLen, pEy=cpY+py*arrowLen;
-  drawBigForceArrow(ictx,cpX,cpY,pEx,pEy,'#00d4ff');
-  ictx.fillStyle='#00d4ff';ictx.font='bold 11px DM Mono';ictx.textAlign='center';
-  ictx.fillText('F⃗(A/B) = '+mag+' N',cpX+px*arrowLen*0.5-30,cpY+py*arrowLen*0.5-12);
+function animateBall(){
+  if(!ballRunning)return;
+  ballVY+=gravity;
+  ballY+=ballVY;
+  if(ballY>=FLOOR_Y-ballR){
+    ballY=FLOOR_Y-ballR;
+    ballVY=-ballVY*bounce;
+    impactFlash=1.0;
+    if(Math.abs(ballVY)<1){ballVY=0;ballRunning=false;
+      document.getElementById('aBtn2').textContent='▶ Drop Again';
+      document.getElementById('iStatus').textContent='Ball at rest — interaction forces are now the weight and normal reaction!';}
+  }
+  renderBall();
+  ballAnim=requestAnimationFrame(animateBall);
+}
 
-  // F(B/A): wall pushes back — orange arrow exactly opposite, same contact point
-  const rx=-px,ry=-py;
-  const rEx=cpX+rx*arrowLen, rEy=cpY+ry*arrowLen;
-  drawBigForceArrow(ictx,cpX,cpY,rEx,rEy,'#ff8c00');
-  ictx.fillStyle='#ff8c00';ictx.font='bold 11px DM Mono';ictx.textAlign='center';
-  ictx.fillText('F⃗(B/A) = '+mag+' N',cpX+rx*arrowLen*0.5+30,cpY+ry*arrowLen*0.5-12);
-
-  // Contact point dot
-  ictx.beginPath();ictx.arc(cpX,cpY,5,0,Math.PI*2);
-  ictx.fillStyle='#ffffff';ictx.fill();
-  ictx.fillStyle='#ffffff';ictx.font='9px DM Mono';ictx.textAlign='left';
-  ictx.fillText('contact',cpX+8,cpY+4);
-
-  // Bottom equation
-  ictx.fillStyle='rgba(0,212,255,.08)';ictx.fillRect(0,H-50,W,50);
-  ictx.fillStyle='#c8d8f0';ictx.font='bold 13px DM Mono';ictx.textAlign='center';
-  ictx.fillText('F⃗(person/wall) = −F⃗(wall/person)    |F| = '+mag+' N    Always simultaneous',W/2,H-30);
-  ictx.fillStyle='#5a7ab8';ictx.font='11px DM Mono';
-  ictx.fillText('Slide the controls to change the push — the reaction always mirrors it exactly',W/2,H-12);
+function dropBall(){
+  ballY=40+Math.random()*30;ballVY=0;ballRunning=true;impactFlash=0;
+  document.getElementById('aBtn2').textContent='⏸ Watching...';
+  document.getElementById('iStatus').textContent='Watch the forces appear at impact!';
+  cancelAnimationFrame(ballAnim);animateBall();
 }
 
 function drawBigForceArrow(ctx,x1,y1,x2,y2,color){
   const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
   if(len<4)return;
-  const ux=dx/len,uy=dy/len;
-  const hL=16,hW=9;
+  const ux=dx/len,uy=dy/len,hL=14,hW=8;
   ctx.save();
   ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3.5;
-  ctx.shadowColor=color;ctx.shadowBlur=14;
+  ctx.shadowColor=color;ctx.shadowBlur=12;
   ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(x2,y2);
   ctx.lineTo(x2-ux*hL+uy*hW,y2-uy*hL-ux*hW);
   ctx.lineTo(x2-ux*hL-uy*hW,y2-uy*hL+ux*hW);
-  ctx.closePath();ctx.fill();
-  ctx.shadowBlur=0;ctx.restore();
+  ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.restore();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1110,6 +1148,82 @@ function selAndChkMCQ(key,ca,val,btn,msg){
     fb.style.display='block';fb.className='fb ok';fb.textContent=msg;
     correct[key]=true;updateProg();
   }
+}
+
+
+// ── FORMULA BUILDER ─────────────────────────────────────────
+const EQ_TILES=[
+  {txt:'N',color:'#00d4ff',bg:'rgba(0,212,255,.12)',key:'N'},
+  {txt:'=',color:'#c8d8f0',bg:'rgba(200,216,240,.08)',key:'eq'},
+  {txt:'−',color:'#ff8c00',bg:'rgba(255,140,0,.12)',key:'neg'},
+  {txt:'W',color:'#ff8c00',bg:'rgba(255,140,0,.12)',key:'W'},
+  {txt:'T',color:'#00d4ff',bg:'rgba(0,212,255,.12)',key:'T'},
+  {txt:'Fb',color:'#00d4ff',bg:'rgba(0,212,255,.12)',key:'Fb'},
+];
+const INT_TILES=[
+  {txt:'F(table/box)',color:'#00d4ff',bg:'rgba(0,212,255,.12)',key:'Ftb'},
+  {txt:'F(box/table)',color:'#ff8c00',bg:'rgba(255,140,0,.12)',key:'Fbt'},
+  {txt:'=',color:'#c8d8f0',bg:'rgba(200,216,240,.08)',key:'eq'},
+  {txt:'−',color:'#ff8c00',bg:'rgba(255,140,0,.12)',key:'neg'},
+];
+let eqBuilt=[],intBuilt=[];
+function renderTileHTML(t){
+  if(t.key==='N') return '<span class="vr cyan" style="font-size:1rem;">N</span>';
+  if(t.key==='W') return '<span class="vr orange" style="font-size:1rem;">W</span>';
+  if(t.key==='T') return '<span class="vr cyan" style="font-size:1rem;">T</span>';
+  if(t.key==='Fb') return '<span class="vr cyan" style="font-size:.95rem;">F<sub>b</sub></span>';
+  if(t.key==='Ftb') return '<span class="vr cyan" style="font-size:.82rem;">F<sub>table/box</sub></span>';
+  if(t.key==='Fbt') return '<span class="vr orange" style="font-size:.82rem;">F<sub>box/table</sub></span>';
+  return t.txt;
+}
+function buildTiles(){
+  ['eqTiles','intTiles'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.innerHTML='';});
+  const eqEl=document.getElementById('eqTiles');
+  const intEl=document.getElementById('intTiles');
+  if(eqEl) EQ_TILES.forEach(t=>{
+    const b=document.createElement('button');b.className='fml-tile';
+    b.style.color=t.color;b.style.background=t.bg;b.style.borderColor=t.color+'55';
+    b.innerHTML=renderTileHTML(t);b.onclick=()=>addTile('eq',t);eqEl.appendChild(b);
+  });
+  if(intEl) INT_TILES.forEach(t=>{
+    const b=document.createElement('button');b.className='fml-tile';
+    b.style.color=t.color;b.style.background=t.bg;b.style.borderColor=t.color+'55';
+    b.innerHTML=renderTileHTML(t);b.onclick=()=>addTile('int',t);intEl.appendChild(b);
+  });
+}
+function addTile(which,t){
+  const arr=which==='eq'?eqBuilt:intBuilt;
+  arr.push(t);refreshBuilt(which);
+}
+function removeTile(which,i){
+  const arr=which==='eq'?eqBuilt:intBuilt;arr.splice(i,1);refreshBuilt(which);
+}
+function refreshBuilt(which){
+  const arr=which==='eq'?eqBuilt:intBuilt;
+  const el=document.getElementById(which==='eq'?'eqBuilt':'intBuilt');
+  if(!el)return;
+  if(!arr.length){el.innerHTML='<span style="color:var(--muted2);font-size:.78rem;">Your formula appears here...</span>';return;}
+  el.innerHTML=arr.map((t,i)=>`<span class="fml-placed" style="color:${t.color};border-color:${t.color}55;background:${t.bg};" onclick="removeTile('${which}',${i})">${renderTileHTML(t)}</span>`).join('');
+}
+function clearEqFormula(){eqBuilt=[];refreshBuilt('eq');document.getElementById('fbEqFormula').style.display='none';}
+function clearIntFormula(){intBuilt=[];refreshBuilt('int');document.getElementById('fbIntFormula').style.display='none';}
+function checkEqFormula(){
+  const fb=document.getElementById('fbEqFormula');fb.style.display='block';
+  const keys=eqBuilt.map(t=>t.key).join('-');
+  const valid=['N-eq-neg-W','T-eq-neg-W','Fb-eq-neg-W'];
+  if(valid.includes(keys)){fb.className='fb ok';fb.textContent='✓ Correct! Equilibrium condition written perfectly.';correct.eqFormula=true;}
+  else if(keys.includes('eq')&&keys.includes('neg')){fb.className='fb hint';fb.textContent='Almost! Format: [force] = − W  e.g. N = −W';}
+  else{fb.className='fb bad';fb.textContent='✗ Try: tap N, then =, then −, then W. Result: N = −W';}
+  updateProg();
+}
+function checkIntFormula(){
+  const fb=document.getElementById('fbIntFormula');fb.style.display='block';
+  const keys=intBuilt.map(t=>t.key).join('-');
+  const valid=['Ftb-eq-neg-Fbt','Fbt-eq-neg-Ftb'];
+  if(valid.includes(keys)){fb.className='fb ok';fb.textContent='✓ Correct! F(table/box) = −F(box/table). Perfect interaction pair!';correct.intFormula=true;}
+  else if(keys.includes('Ftb')&&keys.includes('Fbt')){fb.className='fb hint';fb.textContent='Good — now add = and − between them!';}
+  else{fb.className='fb bad';fb.textContent='✗ Build: F(table/box) = −F(box/table)';}
+  updateProg();
 }
 
 function updateProg(){
@@ -1181,10 +1295,10 @@ function buildAI(a){
   let p1=goods.length?'Well done on '+goods.join(', ')+'.':'Good start — keep going.';
   const fixes=[];
   if(!h.twoForces)fixes.push('Name both forces: Weight W (gravity, distance) and Normal N (contact)');
-  if(!h.vecRel)fixes.push('Write equilibrium: N⃗ = −W⃗');
+  if(!h.vecRel)fixes.push('Write equilibrium: <span class="vr cyan">N</span> = −<span class="vr orange">W</span>');
   if(!h.mag)fixes.push('N characteristics: 10 N, upward, vertical line');
   if(!h.interaction)fixes.push('Interaction pair: F(table/box) and F(box/table) — not W and N!');
-  if(!h.vecInter)fixes.push('Write: F⃗(table/box) = −F⃗(box/table)');
+  if(!h.vecInter)fixes.push('Write: <span class="vr white">F</span>(table/box) = −<span class="vr white">F</span>(box/table)');
   let p2=fixes.length?'To complete: '+fixes[0]+'.':'Excellent — complete and correct!';
   const tips=['Equilibrium pair: same body. Interaction pair: different bodies. This distinction is the key to the whole topic.',
     'Exam tip: W and N both act on the box (equilibrium). F(table/box) and F(box/table) act on different objects (interaction).'];
@@ -1234,6 +1348,7 @@ function showToast(msg){
 
 // ── INIT ─────────────────────────────────────────────────
 window.addEventListener('load',()=>{
+  buildTiles();
   ['A','B','C'].forEach(sc=>drawFBDBase(sc));
   drawExDiagram('exCv1','table');
   drawExDiagram('exCv2','water');
