@@ -352,7 +352,7 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
               <div class="mcq-opt" onclick="selMCQ('qEx1','C',this)"><span class="mcq-letter">C</span>N = 10 N, vertically upward</div>
             </div>
             <button class="btn-chk" onclick="chkMCQ('qEx1','B','ex1')">✓ Check</button>
-            <div class="fb" id="fbex1"></div>
+            <div class="fb" id="fbqEx1"></div>
           </div>
         </div>
       </div>
@@ -376,8 +376,8 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
               <div class="mcq-opt" onclick="selMCQ('qEx2','A',this)"><span class="mcq-letter">A</span>Contact force — water touches the ball directly</div>
               <div class="mcq-opt" onclick="selMCQ('qEx2','B',this)"><span class="mcq-letter">B</span>Force at a distance — like gravity</div>
             </div>
-            <button class="btn-chk" onclick="chkMCQ('qEx2','A','✓ Buoyancy is a contact force — the water must physically touch the ball to push it upward.')">✓ Check</button>
-            <div class="fb" id="fbex2"></div>
+            <button class="btn-chk" onclick="chkMCQ('qEx2','A','ex2')">✓ Check</button>
+            <div class="fb" id="fbqEx2"></div>
           </div>
         </div>
       </div>
@@ -403,7 +403,7 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
               <div class="mcq-opt" onclick="selMCQ('qEx3','C',this)"><span class="mcq-letter">C</span>T = 12 N, vertically upward</div>
             </div>
             <button class="btn-chk" onclick="chkMCQ('qEx3','C','ex3')">✓ Check</button>
-            <div class="fb" id="fbex3"></div>
+            <div class="fb" id="fbqEx3"></div>
           </div>
         </div>
       </div>
@@ -453,7 +453,7 @@ footer{padding:26px 50px;border-top:1px solid var(--border);background:var(--bg2
       <div class="mcq-opt" onclick="selMCQ('qInter','B',this)"><span class="mcq-letter">B</span>Increases by the same amount — always equal in magnitude</div>
       <div class="mcq-opt" onclick="selMCQ('qInter','C',this)"><span class="mcq-letter">C</span>Decreases — the wall resists less</div>
     </div>
-    <button class="btn-chk" onclick="chkMCQ('qInter','B','✓ Correct! The reaction always equals the action in magnitude. Push harder → wall pushes back harder. Always simultaneous, always equal, always opposite.')">✓ Check</button>
+    <button class="btn-chk" onclick="chkMCQ('qInter','B','qInter')">✓ Check</button>
     <div class="fb" id="fbqInter"></div>
   </div>
 </section>
@@ -1113,18 +1113,23 @@ function selMCQ(key,val,btn){
 }
 
 const MSGS={
-  'ex1':'✓ Correct! N = 5 N, vertically upward. The equilibrium condition N̅ = −W̅ means: same magnitude (5 N), opposite direction (upward), same vertical line through G.',
-  'ex3':'✓ Correct! T = 12 N, vertically upward. T̅ = −W̅: same magnitude (12 N), opposite direction (upward), same vertical line of action.',
-  'q1':'✓ Correct! F̅b = −W̅ → Fb = 8 N, vertically upward, same vertical line of action.',
-  'q2':'✓ Correct! W̅ = −T̅ → W = 15 N, vertically downward, same vertical line of action.',
+  'ex1':'✓ Correct! N = 5 N, vertically upward. Equilibrium: N = −W means same magnitude (5 N), opposite direction (upward), same vertical line through G.',
+  'ex2':'✓ Correct! Buoyancy is a contact force — the water must physically touch the ball to push it upward.',
+  'ex3':'✓ Correct! T = 12 N, vertically upward. T = −W means same magnitude (12 N), opposite direction (upward), same vertical line of action.',
+  'q1':'✓ Correct! Fb = −W → Fb = 8 N, vertically upward, same vertical line of action.',
+  'q2':'✓ Correct! W = −T → W = 15 N, vertically downward, same vertical line of action.',
   'q3':'✓ Correct! F(table/box) = 20 N upward → F(box/table) = 20 N downward. The box pushes DOWN on the table with the same force the table pushes UP on the box.',
+  'qInter':'✓ Correct! The reaction always equals the action in magnitude. Harder impact → larger reaction. Always simultaneous, always equal, always opposite.',
 };
 function chkMCQ(key,ca,msg){
   const fb=document.getElementById('fb'+key);
   const sel=answers[key];
   fb.style.display='block';
   if(!sel){fb.className='fb info';fb.textContent='Select an answer first.';return;}
-  const opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
+  // Try id="qXxxopts" first, then id="qXxx" (examples use the latter)
+  let opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
+  if(!opts.length) opts=document.querySelectorAll('#'+key+' .mcq-opt');
+  if(!opts.length) opts=document.querySelectorAll('#'+key+'MCQ .mcq-opt');
   if(!opts.length)return;
   const letters=['A','B','C','D'];
   opts.forEach((o,i)=>{o.classList.remove('selected');if(letters[i]===ca)o.classList.add('correct');else if(letters[i]===sel)o.classList.add('wrong');});
