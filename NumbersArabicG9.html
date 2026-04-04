@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>العدد الأصلي | أبير | الصف التاسع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Bright colorful HeatLab2 style — warm white base, vivid accents */
+  --bg:#fffbf5;--bg2:#fff7ee;--bg3:#fff0da;
+  --panel:#ffffff;--panel2:#fef6e8;--panel3:#fdebd0;
+  --border:rgba(220,100,0,.12);--border2:rgba(220,100,0,.25);
+  --text:#2c1200;--muted:#b07030;--muted2:#7a4010;
+  /* Primary: vivid orange */
+  --orange:#f05a00;--orange2:#c84800;
+  /* Secondary accents: vivid, distinct */
+  --teal:#00897b;--teal2:#00695c;
+  --blue:#1565c0;--blue2:#0d47a1;
+  --red:#c62828;--green:#2e7d32;--green2:#1b5e20;
+  --gold:#f9a825;--gold2:#e65100;
+  --purple:#6a1b9a;
+  --fh:'Cairo',sans-serif;
+  --fn:'Noto Naskh Arabic',serif;
+  --fa:'Amiri',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.7;direction:rtl;}
+/* LAYOUT */
+.app{display:flex;min-height:100vh;}
+aside{width:256px;background:linear-gradient(180deg,#fff7ee,#ffefd0);
+  border-left:2px solid var(--border2);
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0;z-index:100;
+  box-shadow:-3px 0 18px rgba(220,100,0,.08);}
+main{flex:1;min-width:0;position:relative;}
+@media(max-width:860px){aside{display:none;}section{padding:36px 16px!important;}}
+
+/* SIDEBAR */
+.sb-logo{padding:22px 18px 16px;border-bottom:2px solid var(--border2);
+  background:linear-gradient(135deg,var(--orange),var(--orange2));}
+.sb-logo h1{font-size:1.2rem;font-weight:900;color:#fff;letter-spacing:.5px;}
+.sb-logo p{font-size:.6rem;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:2px;margin-top:3px;}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:10px 18px;
+  font-size:.82rem;font-weight:700;color:var(--muted2);border-right:3px solid transparent;
+  transition:all .2s;cursor:pointer;background:none;border-left:none;border-top:none;
+  border-bottom:none;width:100%;font-family:var(--fh);text-align:right;}
+.sn:hover,.sn.active{color:var(--orange);background:rgba(240,90,0,.08);border-right-color:var(--orange);}
+.sn .badge{font-size:.54rem;background:rgba(240,90,0,.12);padding:2px 7px;border-radius:3px;color:var(--orange);margin-left:auto;margin-right:0;}
+.sb-foot{padding:14px 18px;border-top:2px solid var(--border2);background:var(--bg3);}
+.sb-foot .name{font-weight:900;font-size:.92rem;color:var(--orange2);}
+.sb-foot .role{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;}
+
+/* SECTIONS */
+section{padding:60px 52px;border-bottom:2px solid var(--border);position:relative;}
+section:nth-child(odd) .e-tag.explain{color:var(--blue);}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:700;
+  letter-spacing:1px;padding:5px 14px;border-radius:20px;margin-bottom:16px;}
+.e-tag.engage{background:rgba(230,126,0,.1);color:var(--orange);border:1.5px solid rgba(230,126,0,.3);}
+.e-tag.explore{background:rgba(13,122,102,.1);color:var(--teal);border:1.5px solid rgba(13,122,102,.3);}
+.e-tag.explain{background:rgba(26,75,138,.1);color:var(--blue);border:1.5px solid rgba(26,75,138,.3);}
+.e-tag.elaborate{background:rgba(139,26,26,.1);color:var(--red);border:1.5px solid rgba(139,26,26,.3);}
+.e-tag.evaluate{background:rgba(26,106,42,.1);color:var(--green);border:1.5px solid rgba(26,106,42,.3);}
+.sec-title{font-size:1.85rem;font-weight:900;color:var(--text);margin-bottom:8px;line-height:1.2;}
+.sec-desc{color:var(--muted);font-size:.92rem;max-width:660px;line-height:1.9;margin-bottom:26px;direction:rtl;}
+
+/* CARDS */
+.card{background:var(--panel);border:1.5px solid var(--border2);border-radius:14px;padding:22px;
+  box-shadow:0 2px 12px rgba(180,100,0,.07);margin-bottom:14px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:15px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* ARABIC TEXT */
+.ar-big{font-family:var(--fa);font-size:1.6rem;direction:rtl;line-height:2;color:var(--text);}
+.ar-med{font-family:var(--fn);font-size:1.15rem;direction:rtl;line-height:1.9;}
+.ar-q{font-family:var(--fa);font-size:1.3rem;direction:rtl;text-align:center;
+  padding:16px 20px;background:var(--bg2);border-radius:12px;
+  border-right:4px solid var(--orange);line-height:2;margin-bottom:12px;}
+.highlight-num{display:inline-block;color:var(--orange);font-weight:900;
+  border-bottom:2px solid var(--orange);padding:0 2px;}
+.highlight-mad{display:inline-block;color:var(--teal);font-weight:900;
+  border-bottom:2px dashed var(--teal);padding:0 2px;}
+.highlight-rule{background:rgba(230,126,0,.1);padding:2px 8px;border-radius:4px;color:var(--orange2);font-weight:700;}
+
+/* DEFINITION BOX */
+.def-box{background:linear-gradient(135deg,#fff8ee,#ffe8c0);
+  border:2.5px solid var(--orange);border-radius:14px;padding:20px 22px;margin-bottom:18px;
+  box-shadow:0 4px 18px rgba(240,90,0,.1);}
+.def-title{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;
+  color:var(--orange2);margin-bottom:10px;font-family:var(--fh);}
+.def-text{font-family:var(--fn);font-size:1.1rem;direction:rtl;line-height:1.9;color:var(--text);}
+
+/* RULE TABLE */
+.rule-table{width:100%;border-collapse:collapse;font-family:var(--fn);direction:rtl;margin:14px 0;border-radius:10px;overflow:hidden;}
+.rule-table th{background:var(--orange);color:#fff;padding:12px 16px;font-size:.88rem;font-weight:700;text-align:center;}
+.rule-table td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:.9rem;text-align:center;background:var(--panel);}
+.rule-table tr:nth-child(even) td{background:var(--panel2);}
+.rule-table tr:hover td{background:rgba(230,126,0,.06);}
+.cell-num{font-family:var(--fa);font-size:1.1rem;color:var(--orange2);font-weight:700;}
+.cell-rule{font-size:.82rem;line-height:1.7;}
+.cell-ex{font-family:var(--fa);font-size:1rem;color:var(--blue2);}
+.badge-green{background:rgba(26,106,42,.12);color:var(--green2);border:1px solid rgba(26,106,42,.3);
+  padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;display:inline-block;}
+.badge-red{background:rgba(139,26,26,.12);color:var(--red);border:1px solid rgba(139,26,26,.3);
+  padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:700;display:inline-block;}
+
+/* MCQ */
+.mcq-options{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--panel2);
+  border:2px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;
+  font-family:var(--fn);font-size:.96rem;direction:rtl;text-align:right;min-height:48px;}
+.mcq-opt:hover{border-color:var(--orange);background:rgba(230,126,0,.05);}
+.mcq-opt.selected{border-color:var(--orange);background:rgba(230,126,0,.08);}
+.mcq-opt.correct{border-color:var(--green);background:rgba(26,106,42,.07);color:var(--green2);}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(139,26,26,.06);color:var(--red);}
+.mcq-letter{min-width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;
+  font-size:.72rem;font-weight:900;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-family:var(--fh);box-shadow:0 2px 6px rgba(240,90,0,.3);}
+.mcq-opt.correct .mcq-letter{background:var(--green);}
+.mcq-opt.wrong .mcq-letter{background:var(--red);}
+
+/* FEEDBACK */
+.fb{margin-top:10px;padding:12px 16px;border-radius:9px;font-size:.9rem;
+  display:none;line-height:1.9;direction:rtl;font-family:var(--fn);}
+.fb.ok{background:rgba(26,106,42,.07);border:2px solid rgba(26,106,42,.25);color:var(--green2);}
+.fb.bad{background:rgba(139,26,26,.06);border:2px solid rgba(139,26,26,.22);color:var(--red);}
+.fb.hint{background:rgba(230,126,0,.07);border:2px solid rgba(230,126,0,.25);color:var(--orange2);}
+.fb.info{background:rgba(26,75,138,.07);border:2px solid rgba(26,75,138,.22);color:var(--blue2);}
+
+/* BUTTONS */
+.btn{padding:11px 24px;border-radius:9px;font-family:var(--fh);font-weight:700;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 4px 18px rgba(240,90,0,.35);font-size:.92rem;letter-spacing:.3px;}
+.btn-orange:hover{background:var(--orange2);box-shadow:0 6px 22px rgba(240,90,0,.4);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green2);}
+.btn-ghost{background:transparent;border:2px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange);}
+.check-btn{padding:9px 22px;background:var(--panel2);border:2px solid var(--border2);
+  border-radius:8px;color:var(--orange2);font-family:var(--fh);font-weight:800;
+  font-size:.82rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.check-btn:hover{border-color:var(--orange);background:rgba(240,90,0,.07);color:var(--orange);}
+
+/* FILL BLANK */
+input[type=text]{background:var(--panel2);border:2px solid var(--border2);border-radius:8px;
+  padding:9px 14px;color:var(--text);font-family:var(--fn);font-size:1rem;
+  outline:none;transition:border-color .2s;direction:rtl;text-align:right;min-height:44px;}
+input[type=text]:focus{border-color:var(--orange);}
+
+/* DRAG MATCH */
+.drag-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;justify-content:flex-end;}
+.drag-chip{padding:8px 18px;border-radius:22px;font-family:var(--fn);font-size:.95rem;
+  cursor:pointer;border:2px solid;transition:all .2s;user-select:none;min-height:44px;
+  display:flex;align-items:center;}
+.drag-chip:hover{transform:scale(1.04);}
+.drag-chip.active-chip{transform:scale(1.07);box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.drag-chip.placed{opacity:.25;pointer-events:none;}
+.drop-zone{min-height:52px;border-radius:10px;border:2px dashed var(--border2);
+  padding:8px 14px;display:flex;align-items:center;gap:8px;transition:all .2s;
+  background:var(--panel2);font-family:var(--fn);font-size:.9rem;direction:rtl;}
+.drop-zone.over{border-color:var(--orange);background:rgba(230,126,0,.06);}
+.drop-zone.filled{border-style:solid;border-color:var(--orange);}
+
+/* Q BLOCKS */
+.q-block{margin-bottom:20px;padding:20px;background:var(--panel);border:1.5px solid var(--border2);
+  border-radius:12px;position:relative;box-shadow:0 2px 10px rgba(220,100,0,.07);}
+.q-block::before{content:'';position:absolute;top:0;right:0;width:5px;height:100%;
+  background:linear-gradient(180deg,var(--orange),var(--gold));border-radius:0 12px 12px 0;}
+.q-num{font-size:.62rem;color:var(--orange);font-weight:900;letter-spacing:1px;
+  margin-bottom:8px;font-family:var(--fh);text-transform:uppercase;}
+.q-text{font-family:var(--fn);font-size:1rem;color:var(--text);margin-bottom:13px;
+  line-height:1.9;direction:rtl;}
+.trap-tag{display:inline-block;font-size:.64rem;font-weight:700;padding:2px 10px;
+  border-radius:12px;background:rgba(139,26,26,.1);color:var(--red);
+  border:1px solid rgba(139,26,26,.25);margin-bottom:8px;}
+
+/* AI TUTOR */
+.ai-box{background:rgba(230,126,0,.04);border:2px solid rgba(230,126,0,.2);border-radius:14px;padding:20px;}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-direction:row-reverse;}
+.ai-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-resp{background:var(--panel2);border:1.5px solid var(--border);border-radius:10px;
+  padding:14px;font-size:.92rem;line-height:1.9;margin-top:12px;display:none;
+  direction:rtl;font-family:var(--fn);}
+textarea{width:100%;background:var(--panel2);border:2px solid var(--border2);border-radius:8px;
+  padding:11px 14px;color:var(--text);font-family:var(--fn);font-size:1rem;outline:none;
+  resize:vertical;min-height:90px;transition:border-color .2s;direction:rtl;text-align:right;}
+textarea:focus{border-color:var(--orange);}
+
+/* SUBMIT */
+.submit-card{background:var(--panel);border:1.5px solid var(--border2);border-radius:14px;padding:26px;}
+.name-row{display:flex;gap:12px;margin-bottom:14px;flex-direction:row-reverse;}
+.prog-bar{height:8px;background:var(--panel3);border-radius:4px;overflow:hidden;margin:12px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;transition:width .5s;}
+.score-big{font-family:var(--fh);font-size:3.2rem;font-weight:900;
+  color:var(--orange);text-align:center;line-height:1;
+  text-shadow:0 2px 12px rgba(240,90,0,.2);}
+
+/* INTERACTIVE GAME */
+.num-cards{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:14px 0;}
+.num-card{padding:14px 22px;border-radius:12px;font-family:var(--fa);font-size:1.3rem;
+  cursor:pointer;border:2px solid;transition:all .3s;text-align:center;min-width:80px;
+  user-select:none;}
+.num-card:hover{transform:translateY(-3px);}
+.num-card.selected{transform:scale(1.08);}
+
+/* HERO */
+#hero{min-height:80vh;display:flex;align-items:center;
+  background:linear-gradient(135deg,#fff8f0 0%,#fff0d8 40%,#ffe4b0 100%);
+  position:relative;overflow:hidden;}
+#hero::before{content:'١٢٣';position:absolute;font-family:var(--fa);
+  font-size:16rem;color:rgba(240,90,0,.04);left:-40px;bottom:-40px;
+  line-height:1;pointer-events:none;}
+#hero::after{content:'العدد';position:absolute;font-family:var(--fa);
+  font-size:9rem;color:rgba(240,90,0,.05);right:-20px;top:10px;
+  line-height:1;pointer-events:none;}
+.hero-inner{max-width:700px;padding:60px 52px;position:relative;z-index:1;}
+.hero-badge{font-family:var(--fh);font-size:.62rem;color:#fff;
+  background:var(--orange);padding:5px 16px;border-radius:20px;
+  display:inline-block;margin-bottom:14px;text-transform:uppercase;letter-spacing:3px;
+  box-shadow:0 3px 12px rgba(240,90,0,.3);}
+.hero-title{font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:900;color:var(--text);
+  line-height:1.1;letter-spacing:-1px;margin-bottom:12px;font-family:var(--fh);}
+.hero-title span{color:var(--orange);}
+.hero-q{background:rgba(240,90,0,.07);border:2px solid rgba(240,90,0,.25);
+  border-right:5px solid var(--orange);border-radius:0 14px 14px 0;
+  padding:16px 20px;margin:20px 0;}
+.hero-q p{font-family:var(--fn);font-size:1rem;direction:rtl;line-height:1.9;}
+
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;padding:10px 24px;border-radius:8px;
+  font-size:.82rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;
+  font-family:var(--fh);white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;}
+footer{padding:28px 52px;border-top:3px solid var(--border2);
+  background:linear-gradient(135deg,#fff7ee,#ffe8c0);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<input type="text" id="ci" style="position:fixed;top:-100px;opacity:0;pointer-events:none;">
+
+<div class="app">
+<aside>
+  <div class="sb-logo">
+    <h1>العدد الأصلي</h1>
+    <p>الصف التاسع · لغة عربية</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">⚡ تهيئة <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('explore')">🔍 اكتشاف <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('explain1')">📖 تعريف العدد <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('explain2')">📐 واحد واثنان <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('explain3')">📐 ٣ – ١٠ <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('explain4')">📐 ١١ و ١٢ <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('explain5')">📐 ١٣ – ١٩ <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('explain6')">📐 المعدود <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('elaborate')">✏️ تدريب <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 إرسال <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">أبير</div>
+    <div class="role">لغة عربية · الصف التاسع</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- E1 تهيئة -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">الصف التاسع · لغة عربية</div>
+    <h1 class="hero-title">العدد <span>الأصلي</span></h1>
+    <p style="color:var(--muted);font-size:.96rem;line-height:1.9;margin-bottom:8px;direction:rtl;font-family:var(--fn);">
+      نستخدم الأعداد في كلامنا كل يوم — لكن هل تتطابق مع المعدود أم تخالفه؟ ولماذا نقول "ثلاثةُ طلابٍ" و"ثلاثُ طالباتٍ"؟
+    </p>
+    <div class="hero-q">
+      <p>🤔 ما الفرق بين قولنا: <strong style="color:var(--orange);font-family:var(--fa);font-size:1.1rem;">جاء ثلاثةٌ وعشرون طالباً</strong> و <strong style="color:var(--teal);font-family:var(--fa);font-size:1.1rem;">جاءت ثلاثٌ وعشرون طالبةً</strong>؟</p>
+    </div>
+    <button class="btn btn-orange" onclick="goTo('explore')">ابدأ الاكتشاف ←</button>
+  </div>
+</section>
+
+<!-- E2 اكتشاف -->
+<section id="explore" style="background:var(--bg2);">
+  <div class="e-tag explore">E2 · اكتشاف</div>
+  <h2 class="sec-title">لاحظ وتأمّل</h2>
+  <p class="sec-desc">اقرأ الجمل الآتية بتمعّن، ثم أجب عن الأسئلة لتكتشف قاعدة العدد الأصلي بنفسك.</p>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="ar-q">عندي <span class="highlight-num">كتابٌ واحدٌ</span> وقرأتُ <span class="highlight-num">كتابَيْنِ اثنَيْنِ</span>.</div>
+    <div class="ar-q">في الصف <span class="highlight-num">ثلاثةُ</span> <span class="highlight-mad">طلابٍ</span> و <span class="highlight-num">ثلاثُ</span> <span class="highlight-mad">طالباتٍ</span>.</div>
+    <div class="ar-q">رأيتُ <span class="highlight-num">أحدَ عشرَ</span> <span class="highlight-mad">رجلاً</span> و <span class="highlight-num">إحدى عشرةَ</span> <span class="highlight-mad">امرأةً</span>.</div>
+    <div class="ar-q">حضرَ <span class="highlight-num">ثلاثةَ عشرَ</span> <span class="highlight-mad">طالباً</span> وحضرَتْ <span class="highlight-num">ثلاثَ عشرةَ</span> <span class="highlight-mad">طالبةً</span>.</div>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-top:6px;font-family:var(--fh);">
+      <span style="background:rgba(230,126,0,.12);padding:2px 8px;border-radius:8px;color:var(--orange2);">العدد بالبرتقالي</span>
+      &nbsp;&nbsp;
+      <span style="background:rgba(13,122,102,.12);padding:2px 8px;border-radius:8px;color:var(--teal2);">المعدود بالأخضر</span>
+    </div>
+  </div>
+
+  <!-- Observation MCQs -->
+  <div class="q-block">
+    <div class="q-num">ملاحظة ١</div>
+    <div class="q-text">في الجملة "كتابٌ واحدٌ" — كيف يتصرّف العدد "واحد" مع المعدود؟</div>
+    <div class="mcq-options" id="obs1">
+      <div class="mcq-opt" onclick="selMCQ('obs1','A',this)"><span class="mcq-letter">أ</span>يخالف المعدود في التذكير والتأنيث</div>
+      <div class="mcq-opt" onclick="selMCQ('obs1','B',this)"><span class="mcq-letter">ب</span>يطابق المعدود في التذكير والتأنيث</div>
+      <div class="mcq-opt" onclick="selMCQ('obs1','C',this)"><span class="mcq-letter">ج</span>لا علاقة له بالمعدود</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('obs1','B','✓ صحيح! العدد «واحد» و«اثنان» يطابقان المعدود — مذكر مع مذكر، ومؤنث مع مؤنث.','✗ لاحظ: «كتابٌ واحدٌ» — الكتاب مذكر والعدد واحد مذكر. «قصةٌ واحدةٌ» — مؤنث مع مؤنث. إذاً هما يتطابقان!')">✓ تحقق</button>
+    <div class="fb" id="fbobs1"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">ملاحظة ٢</div>
+    <div class="q-text">في الجملة "ثلاثةُ طلابٍ" المعدود "طلاب" مذكر — والعدد "ثلاثة" بالتاء. وفي "ثلاثُ طالباتٍ" المعدود "طالبات" مؤنث — والعدد "ثلاث" بدون تاء. ما الحكم؟</div>
+    <div class="mcq-options" id="obs2">
+      <div class="mcq-opt" onclick="selMCQ('obs2','A',this)"><span class="mcq-letter">أ</span>الأعداد من ٣ إلى ١٠ تطابق المعدود</div>
+      <div class="mcq-opt" onclick="selMCQ('obs2','B',this)"><span class="mcq-letter">ب</span>الأعداد من ٣ إلى ١٠ تخالف المعدود (تذكّر مع المؤنث وتؤنّث مع المذكر)</div>
+      <div class="mcq-opt" onclick="selMCQ('obs2','C',this)"><span class="mcq-letter">ج</span>لا قاعدة ثابتة</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('obs2','B','✓ ممتاز! هذه القاعدة اسمها «مخالفة العدد للمعدود» — العدد من ٣ إلى ١٠ يخالف المعدود دائماً في التذكير والتأنيث.','✗ تأمّل مرة أخرى: طلاب (مذكر) → ثلاثة (مؤنث). طالبات (مؤنث) → ثلاث (مذكر). إذن العدد يخالف المعدود!')">✓ تحقق</button>
+    <div class="fb" id="fbobs2"></div>
+  </div>
+</section>
+
+<!-- E3a: تعريف العدد الأصلي وأنواعه -->
+<section id="explain1">
+  <div class="e-tag explain">E3 · تعريف وأنواع</div>
+  <h2 class="sec-title">العدد الأصلي — تعريفه وأنواعه</h2>
+
+  <div class="def-box">
+    <div class="def-title">تعريف العدد الأصلي</div>
+    <div class="def-text">العدد الأصلي هو الذي يدلُّ على <strong>الكمية</strong> أو <strong>التعداد</strong> المجرّد، كقولنا: واحد، اثنان، ثلاثة... وهو يختلف عن العدد الترتيبي الذي يدل على الترتيب والرتبة كـ"الأول، الثاني...".</div>
+  </div>
+
+  <div style="font-weight:900;font-size:1rem;margin-bottom:14px;color:var(--orange2);">أنواع العدد الأصلي:</div>
+  <div class="g3">
+    <div class="card" style="border-top:3px solid var(--orange);text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">١</div>
+      <div style="font-weight:900;font-size:1rem;color:var(--orange2);margin-bottom:8px;">العدد المفرد</div>
+      <div class="ar-med" style="font-size:.95rem;color:var(--muted2);">عدد غير مركّب: ١، ٢، ٣... ١٠</div>
+      <div class="ar-q" style="margin-top:10px;font-size:1.1rem;">ثلاثةُ كتبٍ</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--teal);text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">١١</div>
+      <div style="font-weight:900;font-size:1rem;color:var(--teal2);margin-bottom:8px;">العدد المركّب</div>
+      <div class="ar-med" style="font-size:.95rem;color:var(--muted2);">مكوّن من جزأين متصلَين: ١١ – ١٩</div>
+      <div class="ar-q" style="margin-top:10px;font-size:1.1rem;border-right-color:var(--teal);">أحدَ عشرَ طالباً</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">٢١</div>
+      <div style="font-weight:900;font-size:1rem;color:var(--blue2);margin-bottom:8px;">العدد المعطوف</div>
+      <div class="ar-med" style="font-size:.95rem;color:var(--muted2);">جزءان بينهما الواو: ٢١ – ٩٩</div>
+      <div class="ar-q" style="margin-top:10px;font-size:1.1rem;border-right-color:var(--blue);">واحدٌ وعشرون كتاباً</div>
+    </div>
+  </div>
+
+  <div class="q-block" style="margin-top:20px;">
+    <div class="q-num">سؤال تطبيقي</div>
+    <div class="q-text">العدد في جملة "قرأتُ خمسةً وأربعين صفحةً" هو:</div>
+    <div class="mcq-options" id="qtype1">
+      <div class="mcq-opt" onclick="selMCQ('qtype1','A',this)"><span class="mcq-letter">أ</span>عدد مفرد</div>
+      <div class="mcq-opt" onclick="selMCQ('qtype1','B',this)"><span class="mcq-letter">ب</span>عدد مركّب</div>
+      <div class="mcq-opt" onclick="selMCQ('qtype1','C',this)"><span class="mcq-letter">ج</span>عدد معطوف</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('qtype1','C','✓ صحيح! «خمسةً وأربعين» عدد معطوف — جزءان يصلهما حرف الواو.','✗ العدد «خمسةً وأربعين» مكوّن من جزأين: خمسة (معطوف عليه) + الواو + أربعين (معطوف). فهو عدد معطوف.')">✓ تحقق</button>
+    <div class="fb" id="fbqtype1"></div>
+  </div>
+</section>
+
+<!-- E3b: واحد واثنان -->
+<section id="explain2" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · الحكم والإعراب</div>
+  <h2 class="sec-title">العددان: واحد واثنان</h2>
+
+  <div class="def-box" style="border-color:var(--teal);">
+    <div class="def-title" style="color:var(--teal2);">القاعدة الذهبية</div>
+    <div class="def-text">
+      العددان <strong>"واحد"</strong> و<strong>"اثنان"</strong> يتبعان المعدود ويطابقانه تذكيراً وتأنيثاً — كأنهما صفة له تماماً.
+    </div>
+  </div>
+
+  <table class="rule-table">
+    <tr><th>العدد</th><th>مع المذكر</th><th>مع المؤنث</th><th>إعرابه</th></tr>
+    <tr>
+      <td class="cell-num">واحد</td>
+      <td class="cell-ex">كتابٌ <span class="highlight-num">واحدٌ</span></td>
+      <td class="cell-ex">قصةٌ <span class="highlight-num">واحدةٌ</span></td>
+      <td class="cell-rule">يُعرب نعتاً (صفة) تبعاً للمعدود في رفعه ونصبه وجرّه</td>
+    </tr>
+    <tr>
+      <td class="cell-num">اثنان</td>
+      <td class="cell-ex"><span class="highlight-num">اثنانِ</span> / كتابَيْنِ <span class="highlight-num">اثنَيْنِ</span></td>
+      <td class="cell-ex"><span class="highlight-num">اثنتانِ</span> / قصتَيْنِ <span class="highlight-num">اثنَتَيْنِ</span></td>
+      <td class="cell-rule">يُعرب نعتاً، ويأتي بصيغة المثنى (رفع بالألف، نصب وجر بالياء)</td>
+    </tr>
+  </table>
+
+  <div class="g2" style="margin-top:16px;">
+    <div class="card2">
+      <div style="font-weight:900;color:var(--orange2);margin-bottom:10px;">أمثلة مُعربة</div>
+      <div class="ar-med" style="font-size:.95rem;line-height:2.1;">
+        جاءَ <span class="highlight-num">طالبٌ واحدٌ</span>.<br>
+        <span style="font-size:.78rem;color:var(--muted);">واحدٌ: نعت مرفوع وعلامة رفعه الضمة</span><br><br>
+        رأيتُ <span class="highlight-num">طالبَيْنِ اثنَيْنِ</span>.<br>
+        <span style="font-size:.78rem;color:var(--muted);">اثنَيْنِ: نعت منصوب وعلامة نصبه الياء</span><br><br>
+        مررتُ <span class="highlight-num">بطالبتَيْنِ اثنتَيْنِ</span>.<br>
+        <span style="font-size:.78rem;color:var(--muted);">اثنتَيْنِ: نعت مجرور وعلامة جره الياء</span>
+      </div>
+    </div>
+    <div class="card2">
+      <div style="font-weight:900;color:var(--orange2);margin-bottom:10px;">🎯 تدريب تطبيقي</div>
+      <div class="q-text" style="font-size:.92rem;">أكمل: "اشتريتُ ________ وأعرتُ قلمَيْنِ ________"</div>
+      <div class="mcq-options" id="q12ex">
+        <div class="mcq-opt" onclick="selMCQ('q12ex','A',this)"><span class="mcq-letter">أ</span>قلماً واحداً — اثنَيْنِ</div>
+        <div class="mcq-opt" onclick="selMCQ('q12ex','B',this)"><span class="mcq-letter">ب</span>قلماً واحدةً — اثنانِ</div>
+        <div class="mcq-opt" onclick="selMCQ('q12ex','C',this)"><span class="mcq-letter">ج</span>قلماً واحداً — اثنانِ</div>
+      </div>
+      <button class="check-btn" onclick="chkMCQ('q12ex','A','✓ ممتاز! قلماً واحداً (واحد يطابق قلم المذكر، منصوب). اثنَيْنِ (مثنى منصوب بالياء بعد المعدود المنصوب).','✗ قلم مذكر → واحداً (مذكر منصوب). قلمَيْنِ مثنى منصوب → اثنَيْنِ (مثنى منصوب).')">✓ تحقق</button>
+      <div class="fb" id="fbq12ex"></div>
+    </div>
+  </div>
+</section>
+
+<!-- E3c: الأعداد ٣ إلى ١٠ -->
+<section id="explain3">
+  <div class="e-tag explain">E3 · أحكام وإعراب</div>
+  <h2 class="sec-title">الأعداد المفردة من ٣ إلى ١٠</h2>
+
+  <div class="def-box">
+    <div class="def-title">القاعدة الجوهرية — المخالفة</div>
+    <div class="def-text">
+      الأعداد من <strong>٣ إلى ١٠</strong> تُخالف المعدود في التذكير والتأنيث:<br>
+      • مع المعدود <strong>المذكر</strong> → العدد يأتي <strong>بالتاء (مؤنث)</strong> مثل: ثلاثةُ كتبٍ<br>
+      • مع المعدود <strong>المؤنث</strong> → العدد يأتي <strong>بدون تاء (مذكر)</strong> مثل: ثلاثُ قصصٍ
+    </div>
+  </div>
+
+  <div style="font-weight:900;color:var(--orange2);margin-bottom:12px;">جدول المطابقة والمخالفة</div>
+  <table class="rule-table">
+    <tr><th>العدد</th><th>مع مذكر (بالتاء)</th><th>مع مؤنث (بلا تاء)</th></tr>
+    <tr><td class="cell-num">٣</td><td class="cell-ex">ثلاثةُ طلابٍ</td><td class="cell-ex">ثلاثُ طالباتٍ</td></tr>
+    <tr><td class="cell-num">٤</td><td class="cell-ex">أربعةُ كتبٍ</td><td class="cell-ex">أربعُ قصصٍ</td></tr>
+    <tr><td class="cell-num">٥</td><td class="cell-ex">خمسةُ أقلامٍ</td><td class="cell-ex">خمسُ ورقاتٍ</td></tr>
+    <tr><td class="cell-num">٦</td><td class="cell-ex">ستةُ أيامٍ</td><td class="cell-ex">ستُّ ساعاتٍ</td></tr>
+    <tr><td class="cell-num">٧</td><td class="cell-ex">سبعةُ رجالٍ</td><td class="cell-ex">سبعُ نساءٍ</td></tr>
+    <tr><td class="cell-num">٨</td><td class="cell-ex">ثمانيةُ أشهرٍ</td><td class="cell-ex">ثمانُ دقائقَ</td></tr>
+    <tr><td class="cell-num">٩</td><td class="cell-ex">تسعةُ دروسٍ</td><td class="cell-ex">تسعُ مسائلَ</td></tr>
+    <tr><td class="cell-num">١٠</td><td class="cell-ex">عشرةُ طلابٍ</td><td class="cell-ex">عشرُ طالباتٍ</td></tr>
+  </table>
+
+  <div class="card" style="margin-top:18px;">
+    <div style="font-weight:900;color:var(--orange2);margin-bottom:12px;">الإعراب</div>
+    <div class="ar-med" style="font-size:.95rem;line-height:2.2;">
+      • العدد من ٣ إلى ١٠ يُعرب <strong>حسب موقعه من الجملة</strong> (فاعل، مفعول، مبتدأ...) وهو <strong>مضاف</strong>.<br>
+      • المعدود (تمييزه): يُعرب <strong>مضافاً إليه مجروراً</strong> وهو دائماً <strong>جمع</strong>.<br><br>
+      مثال: <span class="ar-q" style="display:inline-block;margin:0;padding:8px 14px;">حفظَ الطلابُ <span class="highlight-num">خمسةَ</span> <span class="highlight-mad">دروسٍ</span>.</span><br>
+      <span style="font-size:.82rem;color:var(--muted);">خمسةَ: مفعول به منصوب وعلامة نصبه الفتحة، وهو مضاف.</span><br>
+      <span style="font-size:.82rem;color:var(--muted);">دروسٍ: مضاف إليه مجرور وعلامة جره الكسرة.</span>
+    </div>
+  </div>
+
+  <!-- Interactive game: select correct form -->
+  <div class="q-block" style="margin-top:18px;">
+    <div class="q-num">اختر الصحيح</div>
+    <div class="q-text">اختر الصيغة الصحيحة للعدد في كل جملة:</div>
+
+    <div style="margin-bottom:14px;">
+      <div class="ar-q" style="margin-bottom:8px;">في المكتبة ___ قصيدةٍ جميلةٍ. (المعدود: قصيدة — مؤنث)</div>
+      <div class="mcq-options" id="q310_1">
+        <div class="mcq-opt" onclick="selMCQ('q310_1','A',this)"><span class="mcq-letter">أ</span><span class="ar-med">سبعةُ</span></div>
+        <div class="mcq-opt" onclick="selMCQ('q310_1','B',this)"><span class="mcq-letter">ب</span><span class="ar-med">سبعُ</span></div>
+      </div>
+      <button class="check-btn" style="margin-top:6px;" onclick="chkMCQ('q310_1','B','✓ سبعُ — المعدود «قصيدة» مؤنث، فالعدد يخالفه ويأتي بدون تاء.','✗ قصيدة مؤنث → العدد يخالف ويأتي بدون تاء: سبعُ قصائدَ.')">✓ تحقق</button>
+      <div class="fb" id="fbq310_1"></div>
+    </div>
+
+    <div>
+      <div class="ar-q" style="margin-bottom:8px;">جاء ___ لاعبينَ إلى الملعب. (المعدود: لاعب — مذكر)</div>
+      <div class="mcq-options" id="q310_2">
+        <div class="mcq-opt" onclick="selMCQ('q310_2','A',this)"><span class="mcq-letter">أ</span><span class="ar-med">تسعةُ</span></div>
+        <div class="mcq-opt" onclick="selMCQ('q310_2','B',this)"><span class="mcq-letter">ب</span><span class="ar-med">تسعُ</span></div>
+      </div>
+      <button class="check-btn" style="margin-top:6px;" onclick="chkMCQ('q310_2','A','✓ تسعةُ — المعدود «لاعب» مذكر، فالعدد يخالفه ويأتي بالتاء.','✗ لاعب مذكر → العدد يخالف ويأتي بالتاء: تسعةُ لاعبينَ.')">✓ تحقق</button>
+      <div class="fb" id="fbq310_2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- E3d: ١١ و١٢ -->
+<section id="explain4" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · المركّب</div>
+  <h2 class="sec-title">العددان المركّبان: ١١ و١٢</h2>
+
+  <div class="g2">
+    <div class="def-box" style="border-color:var(--orange);">
+      <div class="def-title">العدد ١١ (أحد عشر)</div>
+      <div class="def-text">
+        يُطابق المعدود تذكيراً وتأنيثاً:<br>
+        • مذكر: <span class="ar-big" style="font-size:1.2rem;">أحدَ عشرَ</span> طالباً<br>
+        • مؤنث: <span class="ar-big" style="font-size:1.2rem;">إحدى عشرةَ</span> طالبةً<br><br>
+        <strong>إعرابه:</strong> مبني على فتح الجزأين في محل رفع أو نصب أو جر.
+      </div>
+    </div>
+    <div class="def-box" style="border-color:var(--teal);">
+      <div class="def-title" style="color:var(--teal2);">العدد ١٢ (اثنا عشر)</div>
+      <div class="def-text">
+        يُطابق المعدود تذكيراً وتأنيثاً:<br>
+        • مذكر: <span class="ar-big" style="font-size:1.2rem;">اثنا عشرَ</span> طالباً (رفع)<br>
+        • مؤنث: <span class="ar-big" style="font-size:1.2rem;">اثنتا عشرةَ</span> طالبةً (رفع)<br><br>
+        <strong>إعرابه:</strong> الجزء الأول يُعرب إعراب المثنى (ألف رفع، ياء نصب وجر). الجزء الثاني (عشر) مبني على الفتح.
+      </div>
+    </div>
+  </div>
+
+  <table class="rule-table" style="margin-top:16px;">
+    <tr><th>العدد</th><th>الحكم</th><th>مع مذكر</th><th>مع مؤنث</th></tr>
+    <tr>
+      <td class="cell-num">١١</td>
+      <td class="cell-rule"><span class="badge-green">يطابق</span> — مبني على فتح الجزأين</td>
+      <td class="cell-ex">أحدَ عشرَ كتاباً</td>
+      <td class="cell-ex">إحدى عشرةَ قصةً</td>
+    </tr>
+    <tr>
+      <td class="cell-num">١٢</td>
+      <td class="cell-rule"><span class="badge-green">يطابق</span> — الجزء الأول كالمثنى</td>
+      <td class="cell-ex">اثنا / اثنَيْ عشرَ كتاباً</td>
+      <td class="cell-ex">اثنتا / اثنتَيْ عشرةَ قصةً</td>
+    </tr>
+  </table>
+
+  <div class="q-block" style="margin-top:18px;">
+    <div class="q-num">سؤال تطبيقي</div>
+    <div class="q-text">اختر الجملة الصحيحة نحوياً:</div>
+    <div class="mcq-options" id="q1112">
+      <div class="mcq-opt" onclick="selMCQ('q1112','A',this)"><span class="mcq-letter">أ</span><span class="ar-med">حضرتْ إحدى عشرَ طالبةً.</span></div>
+      <div class="mcq-opt" onclick="selMCQ('q1112','B',this)"><span class="mcq-letter">ب</span><span class="ar-med">حضرتْ إحدى عشرةَ طالبةً.</span></div>
+      <div class="mcq-opt" onclick="selMCQ('q1112','C',this)"><span class="mcq-letter">ج</span><span class="ar-med">حضرتْ أحدَ عشرةَ طالبةً.</span></div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('q1112','B','✓ إحدى عشرةَ طالبةً — المعدود «طالبة» مؤنث، فالعدد ١١ يطابقه: إحدى عشرةَ (مؤنث).','✗ المعدود «طالبة» مؤنث → العدد يطابقه: إحدى عشرةَ (ليس أحدَ عشرَ).')">✓ تحقق</button>
+    <div class="fb" id="fbq1112"></div>
+  </div>
+</section>
+
+<!-- E3e: ١٣ إلى ١٩ -->
+<section id="explain5">
+  <div class="e-tag explain">E3 · أحكام وإعراب</div>
+  <h2 class="sec-title">الأعداد المركّبة من ١٣ إلى ١٩</h2>
+
+  <div class="def-box">
+    <div class="def-title">القاعدة المزدوجة — خالف وطابق</div>
+    <div class="def-text">
+      في الأعداد من <strong>١٣ إلى ١٩</strong>، الجزء الأول (٣-٩) <strong>يخالف</strong> المعدود، والجزء الثاني (عشرة/عشر) <strong>يطابق</strong> المعدود:<br><br>
+      مثال مع مذكر: <span class="ar-big" style="font-size:1.2rem;">ثلاثةَ عشرَ</span> طالباً ← (ثلاثة مؤنث لأن المعدود مذكر ← عشرَ مذكر لأن المعدود مذكر)<br>
+      مثال مع مؤنث: <span class="ar-big" style="font-size:1.2rem;">ثلاثَ عشرةَ</span> طالبةً ← (ثلاث مذكر لأن المعدود مؤنث ← عشرةَ مؤنث لأن المعدود مؤنث)
+    </div>
+  </div>
+
+  <table class="rule-table">
+    <tr><th>العدد</th><th>مع مذكر</th><th>مع مؤنث</th></tr>
+    <tr><td class="cell-num">١٣</td><td class="cell-ex">ثلاثةَ عشرَ</td><td class="cell-ex">ثلاثَ عشرةَ</td></tr>
+    <tr><td class="cell-num">١٤</td><td class="cell-ex">أربعةَ عشرَ</td><td class="cell-ex">أربعَ عشرةَ</td></tr>
+    <tr><td class="cell-num">١٥</td><td class="cell-ex">خمسةَ عشرَ</td><td class="cell-ex">خمسَ عشرةَ</td></tr>
+    <tr><td class="cell-num">١٦</td><td class="cell-ex">ستةَ عشرَ</td><td class="cell-ex">ستَّ عشرةَ</td></tr>
+    <tr><td class="cell-num">١٧</td><td class="cell-ex">سبعةَ عشرَ</td><td class="cell-ex">سبعَ عشرةَ</td></tr>
+    <tr><td class="cell-num">١٨</td><td class="cell-ex">ثمانيةَ عشرَ</td><td class="cell-ex">ثمانيَ عشرةَ</td></tr>
+    <tr><td class="cell-num">١٩</td><td class="cell-ex">تسعةَ عشرَ</td><td class="cell-ex">تسعَ عشرةَ</td></tr>
+  </table>
+
+  <div class="card" style="margin-top:16px;">
+    <div style="font-weight:900;color:var(--orange2);margin-bottom:10px;">الإعراب</div>
+    <div class="ar-med" style="font-size:.95rem;line-height:2.2;">
+      جميع الأعداد المركبة من ١١ إلى ١٩ (ما عدا ١٢) مبنيّة على <strong>فتح الجزأين</strong>، وتُعرب:<br>
+      <span class="highlight-rule">عدد مبني على فتح الجزأين في محل رفع/نصب/جر حسب موقعه</span><br><br>
+      مثال: <span class="ar-q" style="display:inline-block;margin:0;padding:8px 14px;">في الصف <span class="highlight-num">خمسةَ عشرَ</span> <span class="highlight-mad">طالباً</span>.</span><br>
+      <span style="font-size:.82rem;color:var(--muted);">خمسةَ عشرَ: عدد مبني على فتح الجزأين في محل رفع (خبر).</span><br>
+      <span style="font-size:.82rem;color:var(--muted);">طالباً: تمييز منصوب وعلامة نصبه الفتحة.</span>
+    </div>
+  </div>
+
+  <!-- Interactive drag game -->
+  <div class="q-block" style="margin-top:18px;">
+    <div class="q-num">لعبة: رتّب العدد الصحيح</div>
+    <div class="q-text">اسحب (أو انقر) العدد المناسب ليملأ الفراغ في كل جملة:</div>
+
+    <div style="margin-bottom:16px;">
+      <div class="ar-q" style="margin-bottom:8px;">أقام الفريقُ ___ <span class="highlight-mad">نشاطاً</span>. (نشاط: مذكر، العدد ١٥)</div>
+      <div class="drag-bank" id="bank1519">
+        <div class="drag-chip" style="color:var(--orange);border-color:rgba(230,126,0,.4);background:rgba(230,126,0,.07);" onclick="selChip('bank1519','خمسةَ عشرَ',this)" id="chip_1519a">خمسةَ عشرَ</div>
+        <div class="drag-chip" style="color:var(--teal);border-color:rgba(13,122,102,.4);background:rgba(13,122,102,.07);" onclick="selChip('bank1519','خمسَ عشرةَ',this)" id="chip_1519b">خمسَ عشرةَ</div>
+      </div>
+      <div class="drop-zone" id="drop1519"><span style="color:var(--muted);font-size:.9rem;">انقر الإجابة أعلاه لتظهر هنا</span></div>
+      <button class="check-btn" style="margin-top:8px;" onclick="chkDrop('drop1519','خمسةَ عشرَ','✓ خمسةَ عشرَ — نشاط مذكر، فالجزء الأول يخالف (مؤنث: خمسة) والجزء الثاني يطابق (مذكر: عشرَ).','✗ نشاط مذكر → الجزء الأول يخالف (خمسة بالتاء) والجزء الثاني يطابق (عشرَ بلا تاء).')">✓ تحقق</button>
+      <div class="fb" id="fbdrop1519"></div>
+    </div>
+  </div>
+</section>
+
+<!-- E3f: إعراب المعدود -->
+<section id="explain6" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · المعدود</div>
+  <h2 class="sec-title">إعراب المعدود (التمييز)</h2>
+
+  <div class="def-box">
+    <div class="def-title">قاعدة المعدود</div>
+    <div class="def-text">
+      المعدود هو الاسم الذي يأتي بعد العدد ليبيّن ما يُعدّ — ويُسمّى أيضاً <strong>تمييز العدد</strong>.
+    </div>
+  </div>
+
+  <table class="rule-table">
+    <tr><th>نوع العدد</th><th>حكم المعدود</th><th>مثال</th></tr>
+    <tr>
+      <td class="cell-num">١ و٢</td>
+      <td class="cell-rule">يُعرب نعتاً — يتبع المعدود في إعرابه</td>
+      <td class="cell-ex">كتابٌ واحدٌ ← طالبَيْنِ اثنَيْنِ</td>
+    </tr>
+    <tr>
+      <td class="cell-num">٣ إلى ١٠</td>
+      <td class="cell-rule"><span class="badge-red">جمع مجرور</span> — مضاف إليه</td>
+      <td class="cell-ex">ثلاثةُ <span class="highlight-mad">كتبٍ</span> — خمسُ <span class="highlight-mad">قصصٍ</span></td>
+    </tr>
+    <tr>
+      <td class="cell-num">١١ إلى ١٩</td>
+      <td class="cell-rule"><span class="badge-green">مفرد منصوب</span> — تمييز</td>
+      <td class="cell-ex">أحدَ عشرَ <span class="highlight-mad">طالباً</span> — ثلاثَ عشرةَ <span class="highlight-mad">قصةً</span></td>
+    </tr>
+    <tr>
+      <td class="cell-num">٢٠ إلى ٩٩</td>
+      <td class="cell-rule"><span class="badge-green">مفرد منصوب</span> — تمييز</td>
+      <td class="cell-ex">عشرون <span class="highlight-mad">كتاباً</span> — خمسةٌ وأربعون <span class="highlight-mad">طالباً</span></td>
+    </tr>
+  </table>
+
+  <div class="q-block" style="margin-top:18px;">
+    <div class="q-num">تدريب إعرابي</div>
+    <div class="q-text">كيف يُعرب المعدود في: "قرأتُ <span class="ar-med">سبعةَ</span> <span class="ar-med" style="color:var(--teal);">كتبٍ</span>"؟</div>
+    <div class="mcq-options" id="qmaadood">
+      <div class="mcq-opt" onclick="selMCQ('qmaadood','A',this)"><span class="mcq-letter">أ</span>تمييز منصوب وعلامة نصبه الفتحة</div>
+      <div class="mcq-opt" onclick="selMCQ('qmaadood','B',this)"><span class="mcq-letter">ب</span>مضاف إليه مجرور وعلامة جره الكسرة</div>
+      <div class="mcq-opt" onclick="selMCQ('qmaadood','C',this)"><span class="mcq-letter">ج</span>مفعول به منصوب وعلامة نصبه الفتحة</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('qmaadood','B','✓ صحيح! «كتبٍ» معدود للعدد سبعة (٣-١٠) → مضاف إليه مجرور وعلامة جره الكسرة الظاهرة.','✗ معدود الأعداد من ٣ إلى ١٠ يُعرب مضافاً إليه مجروراً.')">✓ تحقق</button>
+    <div class="fb" id="fbqmaadood"></div>
+  </div>
+</section>
+
+<!-- E4 تدريب -->
+<section id="elaborate">
+  <div class="e-tag elaborate">E4 · تدريب</div>
+  <h2 class="sec-title">طبّق ما تعلّمته</h2>
+  <p class="sec-desc">خمسة أسئلة شاملة تغطي جميع أحكام العدد الأصلي.</p>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="q-num">سؤال ١ · التذكير والتأنيث</div>
+    <div class="q-text">أيّ الجمل صحيحة نحوياً؟</div>
+    <div class="mcq-options" id="eq1opts">
+      <div class="mcq-opt" onclick="selMCQ('eq1','A',this)"><span class="mcq-letter">أ</span><span class="ar-med">عندي أربعُ كتبٍ وثلاثةُ قصصٍ.</span></div>
+      <div class="mcq-opt" onclick="selMCQ('eq1','B',this)"><span class="mcq-letter">ب</span><span class="ar-med">عندي أربعةُ كتبٍ وثلاثُ قصصٍ.</span></div>
+      <div class="mcq-opt" onclick="selMCQ('eq1','C',this)"><span class="mcq-letter">ج</span><span class="ar-med">عندي أربعةُ كتبٍ وثلاثةُ قصصٍ.</span></div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('eq1','B','✓ ممتاز! كتب (مذكر) → أربعةُ (بالتاء). قصص (مؤنث، مفردها قصة) → ثلاثُ (بلا تاء).','✗ كتاب مذكر → عدده بالتاء: أربعةُ. قصة مؤنث → عدده بلا تاء: ثلاثُ.')">✓ تحقق</button>
+    <div class="fb" id="fbeq1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="q-num">سؤال ٢ · العدد المركّب</div>
+    <div class="q-text">أكمل الجملة بالشكل الصحيح: "استقبلتْ المدرسةُ ___ معلمةً جديدة." (المطلوب: العدد ١٧)</div>
+    <div class="mcq-options" id="eq2opts">
+      <div class="mcq-opt" onclick="selMCQ('eq2','A',this)"><span class="mcq-letter">أ</span><span class="ar-med">سبعةَ عشرَ</span></div>
+      <div class="mcq-opt" onclick="selMCQ('eq2','B',this)"><span class="mcq-letter">ب</span><span class="ar-med">سبعَ عشرةَ</span></div>
+      <div class="mcq-opt" onclick="selMCQ('eq2','C',this)"><span class="mcq-letter">ج</span><span class="ar-med">سبعَ عشرَ</span></div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('eq2','B','✓ سبعَ عشرةَ — معلمة مؤنث: الجزء الأول يخالف (سبع بلا تاء) والجزء الثاني يطابق (عشرة بالتاء).','✗ معلمة مؤنث → الجزء الأول يخالف (بلا تاء: سبعَ) والثاني يطابق (بالتاء: عشرةَ) → سبعَ عشرةَ.')">✓ تحقق</button>
+    <div class="fb" id="fbeq2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block">
+    <div class="q-num">سؤال ٣ · الإعراب</div>
+    <div class="q-text">ما إعراب المعدود في جملة: "حضرَ <span class="ar-med">أحدَ عشرَ</span> <span class="ar-med" style="color:var(--teal);">لاعباً</span>"؟</div>
+    <div class="mcq-options" id="eq3opts">
+      <div class="mcq-opt" onclick="selMCQ('eq3','A',this)"><span class="mcq-letter">أ</span>مضاف إليه مجرور</div>
+      <div class="mcq-opt" onclick="selMCQ('eq3','B',this)"><span class="mcq-letter">ب</span>تمييز منصوب وعلامة نصبه الفتحة</div>
+      <div class="mcq-opt" onclick="selMCQ('eq3','C',this)"><span class="mcq-letter">ج</span>فاعل مرفوع</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('eq3','B','✓ تمييز منصوب — معدود الأعداد المركبة (١١-١٩) يكون مفرداً منصوباً على التمييز.','✗ معدود الأعداد من ١١ إلى ١٩ يُعرب تمييزاً منصوباً وعلامة نصبه الفتحة.')">✓ تحقق</button>
+    <div class="fb" id="fbeq3"></div>
+  </div>
+
+  <!-- Q4 الفخ -->
+  <div class="q-block">
+    <div class="trap-tag">⚠ سؤال الفخ</div>
+    <div class="q-num">سؤال ٤ · التفكير النقدي</div>
+    <div class="q-text">قال طالب: «العدد واحد يخالف المعدود في التذكير والتأنيث مثل بقية الأعداد من ٣ إلى ١٠». هل هذا صحيح؟</div>
+    <div class="mcq-options" id="eq4opts">
+      <div class="mcq-opt" onclick="selMCQ('eq4','A',this)"><span class="mcq-letter">أ</span>صحيح — كل الأعداد تخالف المعدود</div>
+      <div class="mcq-opt" onclick="selMCQ('eq4','B',this)"><span class="mcq-letter">ب</span>خطأ — واحد واثنان يطابقان المعدود، وليس يخالفانه</div>
+      <div class="mcq-opt" onclick="selMCQ('eq4','C',this)"><span class="mcq-letter">ج</span>صحيح أحياناً وخطأ أحياناً</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('eq4','B','✓ ممتاز! العددان واحد واثنان يطابقان المعدود تماماً: كتاب واحد، قصة واحدة. المخالفة خاصة بالأعداد من ٣ إلى ١٠.','✗ العددان واحد واثنان استثناء مهم — هما يطابقان المعدود لا يخالفانه.')">✓ تحقق</button>
+    <div class="fb" id="fbeq4"></div>
+  </div>
+
+  <!-- Q5 AI -->
+  <div class="ai-box">
+    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:900;font-size:.94rem;">سؤال ٥ · تعبير حر · المعلم الذكي 🤖</span></div>
+    <div class="q-text" style="margin-bottom:10px;">
+      اكتب ثلاث جمل مستخدماً أعداداً مختلفة (واحدة من ٣-١٠، وأخرى من ١١-١٢، وثالثة من ١٣-١٩)، مع ضبط العدد والمعدود بالشكل الصحيح.
+    </div>
+    <textarea id="openAnswer" placeholder="اكتب إجاباتك هنا...&#10;مثال: ١ - في الصف ستةُ طلابٍ...&#10;٢ - حضرتْ اثنتا عشرةَ طالبةً...&#10;٣ - قرأتُ أربعةَ عشرَ كتاباً..."></textarea>
+    <button class="btn btn-orange" style="margin-top:10px;width:100%;" onclick="getAI()">احصل على تغذية راجعة 🤖</button>
+    <div class="ai-resp" id="aiResp"></div>
+  </div>
+</section>
+
+<!-- E5 إرسال -->
+<section id="evaluate" style="background:var(--bg2);">
+  <div class="e-tag evaluate">E5 · إرسال</div>
+  <h2 class="sec-title">📊 إرسال العمل</h2>
+  <p class="sec-desc">أدخل اسمك وصفّك ثم أرسل إجاباتك إلى أبير.</p>
+
+  <div class="g2" style="align-items:start;max-width:860px;">
+    <div class="submit-card">
+      <div class="name-row">
+        <div style="flex:2;">
+          <label style="font-size:.7rem;color:var(--muted);display:block;margin-bottom:5px;font-weight:700;">الاسم الكامل *</label>
+          <input type="text" id="stuName" placeholder="اكتب اسمك هنا..." style="text-align:right;direction:rtl;">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:.7rem;color:var(--muted);display:block;margin-bottom:5px;font-weight:700;">الصف *</label>
+          <input type="text" id="stuClass" placeholder="مثال: ٩أ" style="text-align:right;direction:rtl;">
+        </div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+      <div id="ansReview" style="font-size:.78rem;line-height:2.1;color:var(--muted);direction:rtl;"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.72rem;color:var(--muted);margin-bottom:14px;">٠ / ١١ سؤال تم الإجابة عنه</p>
+      <button class="btn btn-green" style="width:100%;" onclick="submitWork()">📊 إرسال إلى أبير</button>
+    </div>
+
+    <div class="submit-card" style="text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">📚</div>
+      <div class="score-big" id="scoreDisp">—</div>
+      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-top:4px;">نتيجتك</div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.7;">تراجع أبير إجاباتك المكتوبة في الحصة القادمة.</p>
+      <div id="submitOk" style="display:none;margin-top:10px;padding:10px;background:rgba(26,106,42,.07);border:1.5px solid rgba(26,106,42,.25);border-radius:8px;font-size:.84rem;color:var(--green2);font-weight:700;">✓ تم الإرسال! استلمت أبير إجاباتك.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div style="font-size:1rem;font-weight:900;color:var(--text);">العدد <span style="color:var(--orange);">الأصلي</span></div>
+    <div style="font-size:.68rem;color:var(--muted);">أبير · لغة عربية · الصف التاسع · لبنان</div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a style="font-size:.7rem;color:var(--orange);text-decoration:none;border:1.5px solid var(--border2);padding:5px 14px;border-radius:20px;cursor:pointer;" href="https://aghozlan.github.io" target="_blank">↗ جميع الدروس</a>
+  </div>
+</footer>
+</main>
+</div>
+
+<script>
+const APPS_URL='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const secs=['hero','explore','explain1','explain2','explain3','explain4','explain5','explain6','elaborate','evaluate'];
+  let cur='hero';
+  secs.forEach(s=>{const el=document.getElementById(s);if(el&&window.scrollY>=el.offsetTop-200)cur=s;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+});
+
+// MCQ
+var answers={},correct={};
+function selMCQ(key,val,btn){
+  answers[key]=val;
+  btn.parentElement.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function chkMCQ(key,ca,okMsg,badMsg){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=answers[key];
+  if(!sel){fb.className='fb info';fb.textContent='اختر إجابة أولاً.';return;}
+  let opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
+  if(!opts.length)opts=document.querySelectorAll('#'+key+' .mcq-opt');
+  const letters=['A','B','C','D'];
+  opts.forEach((o,i)=>{o.classList.remove('selected');if(letters[i]===ca)o.classList.add('correct');else if(letters[i]===sel)o.classList.add('wrong');});
+  if(sel===ca){fb.className='fb ok';fb.textContent=okMsg;correct[key]=true;}
+  else{fb.className='fb bad';fb.textContent=badMsg;}
+  updateProg();
+}
+
+// Drag/click game
+var chipSel=null;
+function selChip(bankId,val,btn){
+  chipSel={bank:bankId,val,btn};
+  document.querySelectorAll(`#${bankId} .drag-chip`).forEach(c=>c.classList.remove('active-chip'));
+  btn.classList.add('active-chip');
+  const dz=document.getElementById('drop'+bankId.replace('bank',''));
+  if(dz){dz.innerHTML=`<span style="font-family:var(--fa);font-size:1.1rem;color:var(--orange);">${val}</span>`;dz.classList.add('filled');dz.dataset.val=val;}
+}
+
+function chkDrop(dropId,correct,okMsg,badMsg){
+  const dz=document.getElementById(dropId);
+  const fb=document.getElementById('fb'+dropId);
+  fb.style.display='block';
+  if(!dz.dataset.val||dz.dataset.val===''){fb.className='fb info';fb.textContent='اختر إجابة أولاً.';return;}
+  if(dz.dataset.val===correct){fb.className='fb ok';fb.textContent=okMsg;this.correct&&(this.correct[dropId]=true);}
+  else{fb.className='fb bad';fb.textContent=badMsg;}
+  updateProg();
+}
+
+// AI Tutor
+function getAI(){
+  const ans=document.getElementById('openAnswer').value.trim();
+  const resp=document.getElementById('aiResp');
+  if(!ans){toast('اكتب إجابتك أولاً!');return;}
+  resp.style.display='block';
+  resp.innerHTML='<span style="color:var(--orange);">🤖 جارٍ التحليل...</span>';
+  setTimeout(()=>{resp.innerHTML=buildFeedback(ans);},1400);
+}
+
+function buildFeedback(a){
+  const has310=/ثلاث[ةَ]|أربع[ةَ]|خمس[ةَ]|ست[ةَّ]|سبع[ةَ]|ثماني[ةَ]|تسع[ةَ]|عشر[ةَ]/u.test(a);
+  const has1112=/أحدَ عشرَ|إحدى عشرةَ|اثنا عشرَ|اثنتا عشرةَ/u.test(a);
+  const has1319=/ثلاثةَ عشرَ|أربعةَ عشرَ|خمسةَ عشرَ|سبعةَ عشرَ|ثلاثَ عشرةَ|أربعَ عشرةَ|خمسَ عشرةَ/u.test(a);
+  const hasTanween=/ٍ|ً/.test(a);
+  const score=[has310,has1112,has1319,hasTanween].filter(Boolean).length;
+  const goods=[];
+  if(has310)goods.push('استخدمت عدداً من ٣ إلى ١٠ بصورة صحيحة');
+  if(has1112)goods.push('استخدمت العدد ١١ أو ١٢ بشكل سليم');
+  if(has1319)goods.push('استخدمت عدداً مركّباً من ١٣-١٩ بنجاح');
+  if(hasTanween)goods.push('ضبطت الحركات على المعدود');
+  let p1=goods.length?'أحسنت! '+goods.join('، ')+'.':'جيد — تابع التحسين.';
+  const fixes=[];
+  if(!has310)fixes.push('اكتب جملة تحتوي عدداً من ٣ إلى ١٠ مع مراعاة المخالفة');
+  if(!has1112)fixes.push('استخدم «إحدى عشرةَ» أو «اثنا عشرَ» مع مناسب');
+  if(!has1319)fixes.push('أضف جملة مع عدد مركّب كـ«ثلاثةَ عشرَ طالباً»');
+  let p2=fixes.length?'ملاحظة: '+fixes[0]+'.':'إجابتك كاملة وشاملة — أداء ممتاز!';
+  const tips=['تذكّر القاعدة الذهبية: ١و٢ يطابقان — ٣ إلى ١٠ يخالفان — ١١-١٩ جزء أول يخالف وجزء ثانٍ يطابق.',
+    'نصيحة الامتحان: ابدأ دائماً بتحديد جنس المعدود (مذكر/مؤنث) ثم طبّق القاعدة على العدد.'][score%2];
+  return `<strong style="color:var(--green2);">${p1}</strong> ${p2} <span style="color:var(--muted);font-size:.85rem;">${tips}</span>`;
+}
+
+// Progress
+function updateProg(){
+  const keys=['obs1','obs2','qtype1','q12ex','q310_1','q310_2','q1112','qmaadood','eq1','eq2','eq3','eq4'];
+  const done=keys.filter(k=>correct[k]).length;
+  const pct=Math.round(done/keys.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=done+' / '+keys.length+' سؤال تم الإجابة عنه بشكل صحيح';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  document.getElementById('ansReview').innerHTML=keys.map(k=>`<div style="display:flex;justify-content:space-between;"><span>${k}</span><span>${correct[k]?'✓':'—'}</span></div>`).join('');
+}
+
+// Submit
+async function submitWork(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!name||!cls){toast('أدخل اسمك وصفّك أولاً!');return;}
+  const btn=document.querySelector('[onclick="submitWork()"]');
+  btn.disabled=true;btn.textContent='⏳ جارٍ الإرسال…';
+  const keys=['obs1','obs2','qtype1','q12ex','q310_1','q310_2','q1112','qmaadood','eq1','eq2','eq3','eq4'];
+  const done=keys.filter(k=>correct[k]).length;
+  const payload={
+    sheet:'Arabic_Adad_G9',name,class:cls,
+    observation:['obs1','obs2'].map(k=>k+':'+(correct[k]?'✓':'✗')).join(' | '),
+    types:['qtype1'].map(k=>correct[k]?'✓':'✗').join(''),
+    oneTwo:['q12ex'].map(k=>correct[k]?'✓':'✗').join(''),
+    three_ten:['q310_1','q310_2'].map(k=>correct[k]?'✓':'✗').join(' | '),
+    eleven_twelve:['q1112'].map(k=>correct[k]?'✓':'✗').join(''),
+    maadood:['qmaadood'].map(k=>correct[k]?'✓':'✗').join(''),
+    practice:['eq1','eq2','eq3','eq4'].map(k=>k+':'+(correct[k]?'✓':'✗')).join(' | '),
+    open:document.getElementById('openAnswer').value||'—',
+    score:Math.round(done/keys.length*100)+'%'
+  };
+  try{
+    await fetch(APPS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    btn.textContent='✓ تم الإرسال!';btn.style.background='var(--green)';
+    toast('✓ تم الإرسال إلى أبير بنجاح!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 إرسال إلى أبير';
+    toast('⚠ تحقق من الاتصال بالإنترنت.');
+  }
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>
