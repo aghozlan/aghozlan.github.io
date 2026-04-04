@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Waves Exam — Grade 8 | Ahmad Ghozlan</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#010e14;--bg2:#011520;--panel:#031e2c;--panel2:#042535;
@@ -13,9 +13,10 @@
   --teal:#00ccc0;--teal2:#007f7a;--cyan:#00e5ff;
   --green:#00e676;--red:#ff3355;--yellow:#ffd600;--orange:#ff8c00;
   --fh:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+  --far:'Noto Kufi Arabic','Outfit',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.6;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.6;}
 
 /* TIMER */
 #TB{display:none;position:sticky;top:0;z-index:300;background:rgba(1,14,20,.98);
@@ -28,47 +29,66 @@ body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hid
 .tl{font-family:var(--fm);font-size:.52rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;}
 .tp{flex:1;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;max-width:260px;}
 .tpf{height:100%;border-radius:3px;transition:width 1s linear,background .5s;}
-.vb{font-family:var(--fm);font-size:.62rem;color:#000;background:var(--teal);
-  padding:3px 10px;border-radius:10px;font-weight:800;}
-.sn{font-family:var(--fm);font-size:.66rem;color:var(--muted2);margin-left:auto;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.vb{font-family:var(--fm);font-size:.62rem;color:#000;background:var(--teal);padding:3px 10px;border-radius:10px;font-weight:800;}
+.snd{font-family:var(--far);font-size:.72rem;color:var(--muted2);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;}
 
-/* ENTRY */
+/* ENTRY SCREEN */
 #ES{position:fixed;inset:0;z-index:400;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .ec{background:var(--panel);border:1px solid var(--border2);border-radius:16px;
-  padding:36px 38px;max-width:480px;width:92%;margin:28px auto;text-align:center;}
-.ec h1{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:4px;}
+  padding:32px 30px;max-width:500px;width:94%;margin:24px auto;text-align:center;}
+.ec h1{font-size:1.45rem;font-weight:900;color:#fff;margin-bottom:4px;}
 .ec h1 span{color:var(--teal);}
-.ef{background:rgba(0,200,180,.06);border:2px solid rgba(0,200,180,.25);
-  border-radius:10px;padding:16px;margin:16px 0;text-align:left;}
-.ef label{font-size:.66rem;color:var(--teal);font-family:var(--fm);text-transform:uppercase;
-  letter-spacing:2px;display:block;margin-bottom:6px;margin-top:10px;}
-.ef label:first-child{margin-top:0;}
-input[type=text]{width:100%;background:var(--panel2);border:2px solid var(--border2);
-  border-radius:8px;padding:12px 14px;color:var(--text);font-family:var(--fh);
-  font-size:.95rem;outline:none;transition:border-color .2s;min-height:48px;}
-input[type=text]:focus{border-color:var(--teal);}
+.ec p{font-size:.8rem;color:var(--muted2);margin-bottom:18px;}
+
+/* SECTION SELECTOR */
+.sec-tabs{display:flex;gap:8px;margin-bottom:16px;justify-content:center;flex-wrap:wrap;}
+.sec-tab{padding:9px 20px;border-radius:8px;border:2px solid var(--border2);
+  background:var(--panel2);color:var(--text);font-family:var(--fh);font-weight:700;
+  font-size:.88rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.sec-tab:hover{border-color:var(--teal);}
+.sec-tab.active{background:var(--teal);color:#000;border-color:var(--teal);}
+
+/* NAME SEARCH */
+.search-wrap{position:relative;margin-bottom:10px;}
+#nameSearch{width:100%;background:var(--panel2);border:2px solid var(--border2);
+  border-radius:8px;padding:12px 14px;color:#fff;font-family:var(--far);
+  font-size:1rem;outline:none;transition:border-color .2s;min-height:48px;
+  direction:rtl;text-align:right;}
+#nameSearch:focus{border-color:var(--teal);}
+#nameSearch::placeholder{color:var(--muted2);font-family:var(--far);}
+.name-list{background:var(--panel2);border:2px solid var(--teal);border-radius:8px;
+  max-height:220px;overflow-y:auto;display:none;text-align:right;margin-top:4px;
+  -webkit-overflow-scrolling:touch;}
+.name-item{padding:12px 15px;font-family:var(--far);font-size:.92rem;
+  color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);
+  direction:rtl;min-height:48px;display:flex;align-items:center;}
+.name-item:hover,.name-item.hl{background:rgba(0,200,180,.12);color:var(--teal);}
+.name-item:last-child{border-bottom:none;}
+.selected-name{background:rgba(0,200,180,.1);border:2px solid var(--teal);
+  border-radius:8px;padding:12px 15px;margin-bottom:14px;display:none;
+  font-family:var(--far);font-size:1rem;color:var(--teal);
+  direction:rtl;text-align:right;font-weight:700;}
+.no-match{padding:12px 15px;font-size:.82rem;color:var(--muted2);text-align:center;}
+
+/* BEGIN BUTTON */
 .bb{width:100%;font-size:1rem;padding:16px;border-radius:10px;background:var(--teal);
   color:#000;font-weight:900;border:none;cursor:pointer;min-height:52px;
-  box-shadow:0 4px 20px rgba(0,200,180,.3);letter-spacing:.5px;margin-top:4px;}
+  box-shadow:0 4px 20px rgba(0,200,180,.3);transition:all .2s;letter-spacing:.5px;margin-top:4px;}
 .bb:hover{background:var(--teal2);color:#fff;}
-.rules{background:var(--panel2);border-radius:8px;padding:12px 15px;margin-top:12px;text-align:left;}
-.rules summary{font-size:.78rem;color:var(--muted2);cursor:pointer;list-style:none;}
-.rules li{font-size:.74rem;color:var(--muted2);margin-top:5px;padding-left:14px;position:relative;}
+.bb:disabled{opacity:.35;cursor:not-allowed;}
+.rules{background:var(--panel2);border-radius:8px;padding:11px 14px;margin-top:10px;text-align:left;}
+.rules summary{font-size:.76rem;color:var(--muted2);cursor:pointer;list-style:none;}
+.rules li{font-size:.72rem;color:var(--muted2);margin-top:5px;padding-left:12px;position:relative;}
 .rules li::before{content:'›';position:absolute;left:0;color:var(--teal);}
 
 /* PAGE */
 .pg{max-width:840px;margin:0 auto;padding:22px 16px 80px;position:relative;z-index:1;}
-
-/* SECTION */
 .sh{display:flex;align-items:center;gap:10px;margin:30px 0 14px;}
 .sb{font-family:var(--fm);font-size:.52rem;color:var(--teal);text-transform:uppercase;
   letter-spacing:2px;border:1px solid rgba(0,200,180,.25);padding:3px 10px;border-radius:2px;}
 .st{font-size:.98rem;font-weight:800;color:#fff;}
 .sp{font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-left:auto;
   background:var(--panel2);padding:3px 10px;border-radius:10px;}
-
-/* QUESTION CARD */
 .qc{background:var(--panel);border:1px solid var(--border);border-radius:11px;
   padding:18px;margin-bottom:12px;position:relative;overflow:hidden;}
 .qc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--teal);}
@@ -81,18 +101,8 @@ input[type=text]:focus{border-color:var(--teal);}
   border-radius:6px;padding:8px 13px;margin-bottom:10px;
   font-family:var(--fm);font-size:.82rem;color:var(--text);}
 .gv span{color:var(--teal);margin-right:6px;}
-
-/* MCQ */
-.mcq{display:flex;flex-direction:column;gap:8px;}
-.mo{display:flex;align-items:center;gap:10px;padding:11px 14px;
-  background:var(--panel2);border:2px solid var(--border);border-radius:8px;
-  cursor:pointer;transition:all .2s;font-size:.85rem;user-select:none;min-height:48px;}
-.mo:hover{border-color:var(--teal);}
-.mo.sel{border-color:var(--teal);background:rgba(0,200,180,.1);}
-.ml{font-family:var(--fm);font-size:.62rem;color:var(--teal);background:var(--panel);
-  padding:2px 7px;border-radius:4px;flex-shrink:0;min-width:24px;text-align:center;}
-
-/* INPUTS */
+.al{font-size:.66rem;color:var(--muted2);font-family:var(--fm);display:block;
+  margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;}
 input[type=number]{background:var(--panel2);border:2px solid var(--border2);
   border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--fm);
   font-size:.95rem;outline:none;transition:border-color .2s;min-height:48px;width:100%;}
@@ -101,19 +111,12 @@ select{background:var(--panel2);border:2px solid var(--border2);border-radius:8p
   padding:10px 12px;color:var(--text);font-family:var(--fh);font-size:.86rem;
   outline:none;cursor:pointer;min-height:48px;width:100%;}
 select:focus{border-color:var(--teal);}
-.al{font-size:.66rem;color:var(--muted2);font-family:var(--fm);display:block;
-  margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;}
 .tcol{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media(max-width:480px){.tcol{grid-template-columns:1fr;}}
-
-/* DIAGRAM */
-.dw{background:#020e14;border:2px solid rgba(0,200,180,.3);border-radius:10px;
-  overflow:hidden;margin:12px 0;}
+.dw{background:#020e14;border:2px solid rgba(0,200,180,.3);border-radius:10px;overflow:hidden;margin:12px 0;}
 .dw canvas{display:block;width:100%;height:auto;}
 .dn{font-size:.7rem;color:var(--muted2);padding:7px 12px;
   background:rgba(0,200,180,.04);border-top:1px solid var(--border);font-family:var(--fm);}
-
-/* UNIT SELECTOR */
 .ur{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
 .ulb{font-family:var(--fm);font-size:.78rem;color:var(--text);min-width:115px;}
 .uo{padding:7px 14px;border-radius:20px;border:2px solid var(--border2);
@@ -121,8 +124,6 @@ select:focus{border-color:var(--teal);}
   font-size:.76rem;cursor:pointer;transition:all .2s;min-height:40px;}
 .uo:hover{border-color:var(--teal);}
 .uo.sel{background:rgba(0,200,180,.14);border-color:var(--teal);color:var(--teal);}
-
-/* TRUE/FALSE */
 .tf{display:flex;gap:10px;margin-top:8px;}
 .tfb{flex:1;padding:12px;border-radius:8px;font-size:.88rem;font-weight:800;
   border:2px solid;cursor:pointer;transition:all .2s;min-height:48px;}
@@ -130,43 +131,22 @@ select:focus{border-color:var(--teal);}
 .tff{background:rgba(255,51,85,.06);border-color:rgba(255,51,85,.25);color:var(--red);}
 .tfb.sel.tft{background:var(--green);color:#000;}
 .tfb.sel.tff{background:var(--red);color:#fff;}
-
-/* MATCHING */
-.ma{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
-@media(max-width:480px){.ma{grid-template-columns:1fr;}}
-.fc{padding:10px 14px;background:var(--teal2);color:#fff;border-radius:8px;
-  font-family:var(--fm);font-size:.88rem;cursor:pointer;user-select:none;
-  text-align:center;border:2px solid transparent;transition:all .2s;min-height:44px;
-  display:flex;align-items:center;justify-content:center;}
-.fc:hover{border-color:rgba(255,255,255,.4);}
-.fc.active{border-color:#fff;box-shadow:0 0 12px rgba(0,200,180,.4);}
-.fc.placed{opacity:.22;pointer-events:none;}
-.ft{min-height:48px;border-radius:8px;border:2px dashed var(--border2);
-  padding:8px 13px;display:flex;align-items:center;gap:8px;transition:all .2s;
-  background:var(--panel2);font-size:.82rem;cursor:pointer;}
-.ft.over{border-color:var(--teal);background:rgba(0,200,180,.06);}
-.ft.filled{border-style:solid;border-color:var(--teal2);}
-.ft .tq{font-family:var(--fm);font-size:.66rem;color:var(--muted2);flex-shrink:0;}
-.ft .tv{font-family:var(--fm);font-size:.88rem;color:var(--teal);font-weight:700;}
-
-/* SUBMIT */
-.ss{background:var(--panel);border:1px solid var(--border2);border-radius:12px;
-  padding:22px;margin-top:28px;}
+.mcq{display:flex;flex-direction:column;gap:8px;}
+.mo{display:flex;align-items:center;gap:10px;padding:11px 14px;
+  background:var(--panel2);border:2px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:all .2s;font-size:.85rem;user-select:none;min-height:48px;}
+.mo:hover{border-color:var(--teal);}
+.mo.sel{border-color:var(--teal);background:rgba(0,200,180,.1);}
+.ml{font-family:var(--fm);font-size:.62rem;color:var(--teal);background:var(--panel);
+  padding:2px 7px;border-radius:4px;flex-shrink:0;min-width:24px;text-align:center;}
+.ss{background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:22px;margin-top:28px;}
 .pb{height:7px;background:var(--panel2);border-radius:4px;overflow:hidden;margin:10px 0;}
-.pf{height:100%;background:linear-gradient(90deg,var(--teal),var(--cyan));
-  border-radius:4px;transition:width .4s;}
+.pf{height:100%;background:linear-gradient(90deg,var(--teal),var(--cyan));border-radius:4px;transition:width .4s;}
 .sub{width:100%;font-size:.95rem;padding:15px;border-radius:9px;
-  background:var(--teal);color:#000;font-weight:900;border:none;cursor:pointer;
-  transition:all .2s;min-height:52px;}
+  background:var(--teal);color:#000;font-weight:900;border:none;cursor:pointer;transition:all .2s;min-height:52px;}
 .sub:hover{background:var(--teal2);color:#fff;}
-.sub:disabled{opacity:.4;cursor:not-allowed;}
-
-/* RESULTS */
-#RS{display:none;position:fixed;inset:0;z-index:500;background:var(--bg);
-  overflow-y:auto;padding:40px 16px;}
-.rc{max-width:500px;margin:0 auto;background:var(--panel);
-  border:1px solid var(--border2);border-radius:16px;padding:32px;text-align:center;}
-
+#RS{display:none;position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:40px 16px;}
+.rc{max-width:500px;margin:0 auto;background:var(--panel);border:1px solid var(--border2);border-radius:16px;padding:32px;text-align:center;}
 #toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
   background:var(--panel);border:1px solid var(--teal);color:var(--teal);
   padding:10px 22px;border-radius:8px;font-family:var(--fm);font-size:.74rem;
@@ -180,24 +160,38 @@ select:focus{border-color:var(--teal);}
 <!-- ENTRY -->
 <div id="ES">
   <div class="ec">
-    <div style="font-size:2.8rem;margin-bottom:8px;">🌊</div>
+    <div style="font-size:2.6rem;margin-bottom:8px;">🌊</div>
     <h1>Waves <span>Exam</span></h1>
-    <p style="font-size:.8rem;color:var(--muted2);margin-bottom:4px;">Grade 8 Physics · Ahmad Ghozlan · 25 minutes</p>
-    <div class="ef">
-      <label>Your Full Name</label>
-      <input type="text" id="eName" placeholder="Write your full name…" autocomplete="off" autocorrect="off">
-      <label>Your Class</label>
-      <input type="text" id="eClass" placeholder="e.g. 8A" autocomplete="off">
+    <p>Grade 8 Physics · Ahmad Ghozlan · 25 minutes</p>
+
+    <!-- STEP 1: CHOOSE SECTION -->
+    <div style="font-family:var(--fm);font-size:.58rem;color:var(--teal);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Step 1 — Select your section</div>
+    <div class="sec-tabs">
+      <button class="sec-tab" onclick="setSection('8A')">8A</button>
+      <button class="sec-tab" onclick="setSection('8B')">8B</button>
+      <button class="sec-tab" onclick="setSection('8C')">8C</button>
+      <button class="sec-tab" onclick="setSection('8D')">8D</button>
     </div>
-    <button class="bb" onclick="beginExam()">▶ BEGIN EXAM</button>
+
+    <!-- STEP 2: SEARCH NAME -->
+    <div style="font-family:var(--fm);font-size:.58rem;color:var(--teal);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;" id="step2lbl" style="display:none;">Step 2 — Find your name</div>
+    <div class="search-wrap" id="searchWrap" style="display:none;">
+      <input type="text" id="nameSearch" placeholder="ابحث عن اسمك هنا..." autocomplete="off" autocorrect="off" oninput="filterNames()" onfocus="showList()">
+      <div class="name-list" id="nameList"></div>
+    </div>
+    <div class="selected-name" id="selectedName" dir="rtl"></div>
+
+    <!-- BEGIN BUTTON -->
+    <button class="bb" id="beginBtn" onclick="beginExam()" disabled>▶ BEGIN EXAM</button>
+
     <details class="rules">
-      <summary>ℹ Exam Rules</summary>
+      <summary>ℹ Exam Rules (tap to read)</summary>
       <ul>
         <li>You have exactly <strong style="color:var(--teal);">25 minutes</strong> — auto-submits at zero.</li>
-        <li>Each student gets a unique version with different numbers.</li>
-        <li>No answers or hints shown during the exam.</li>
-        <li>Work independently — notebook for calculations.</li>
-        <li>Submit once — cannot go back.</li>
+        <li>Each student receives a unique version with different numbers.</li>
+        <li>No answers or hints are shown during the exam.</li>
+        <li>Work independently — use your notebook for calculations.</li>
+        <li>Submit once — you cannot go back.</li>
       </ul>
     </details>
   </div>
@@ -209,41 +203,36 @@ select:focus{border-color:var(--teal);}
     <div><div class="tl">Time Left</div><div id="TD">25:00</div></div>
     <div class="tp"><div class="tpf" id="TF" style="width:100%;background:linear-gradient(90deg,var(--teal),var(--cyan));"></div></div>
     <div class="vb" id="VB">—</div>
-    <div class="sn" id="SN"></div>
+    <div class="snd" id="SN"></div>
   </div>
 </div>
 
 <!-- EXAM PAGE -->
 <div class="pg" id="EP" style="display:none;">
 
-  <!-- PART A: DIAGRAM READING -->
   <div class="sh"><div class="sb">Part A</div><div class="st">Read the Wave Diagram</div><div class="sp">6 pts</div></div>
   <div class="qc">
     <div class="qn">Questions 1 & 2</div>
-    <div class="qt">The wave below is drawn on a grid. Study the diagram carefully and read off the required values.</div>
-    <div class="dw"><canvas id="cvD" width="640" height="220"></canvas>
-    <div class="dn" id="dNote"></div></div>
+    <div class="qt">The wave is drawn on a grid. Study the diagram carefully and read the values directly.</div>
+    <div class="dw"><canvas id="cvD" width="640" height="220"></canvas><div class="dn" id="dNote"></div></div>
     <div class="tcol" style="margin-top:14px;">
       <div>
         <label class="al">Q1 — Amplitude A</label>
-        <input type="number" id="a1v" step="0.01" placeholder="Numeric value only" oninput="upd()">
+        <input type="number" id="a1v" step="0.01" placeholder="Numeric value" oninput="upd()">
         <select id="a1u" onchange="upd()" style="margin-top:8px;">
-          <option value="">— unit —</option>
-          <option>m</option><option>cm</option><option>Hz</option><option>s</option>
+          <option value="">— unit —</option><option>m</option><option>cm</option><option>Hz</option><option>s</option>
         </select>
       </div>
       <div>
         <label class="al">Q2 — Wavelength λ</label>
-        <input type="number" id="a2v" step="0.01" placeholder="Numeric value only" oninput="upd()">
+        <input type="number" id="a2v" step="0.01" placeholder="Numeric value" oninput="upd()">
         <select id="a2u" onchange="upd()" style="margin-top:8px;">
-          <option value="">— unit —</option>
-          <option>m</option><option>cm</option><option>Hz</option><option>s</option>
+          <option value="">— unit —</option><option>m</option><option>cm</option><option>Hz</option><option>s</option>
         </select>
       </div>
     </div>
   </div>
 
-  <!-- PART B: WAVE TYPES -->
   <div class="sh"><div class="sb">Part B</div><div class="st">Wave Types</div><div class="sp">4 pts</div></div>
   <div class="qc">
     <div class="qn">Question 3</div>
@@ -259,51 +248,44 @@ select:focus{border-color:var(--teal);}
     </div>
   </div>
 
-  <!-- PART C: UNITS -->
-  <div class="sh"><div class="sb">Part C</div><div class="st">Units of Wave Quantities</div><div class="sp">5 pts</div></div>
+  <div class="sh"><div class="sb">Part C</div><div class="st">Units</div><div class="sp">5 pts</div></div>
   <div class="qc">
     <div class="qn">Question 5 · Choose the correct unit for each quantity</div>
     <div id="unitQ"></div>
   </div>
 
-  <!-- PART D: CALCULATIONS -->
   <div class="sh"><div class="sb">Part D</div><div class="st">Calculations</div><div class="sp">12 pts</div></div>
-
   <div class="qc">
-    <div class="qn">Question 6 · Single step</div>
+    <div class="qn">Question 6 · Single calculation</div>
     <div class="qt" id="q6t"></div>
     <div class="gv" id="q6g"></div>
     <label class="al" id="q6l">Answer</label>
     <input type="number" id="a6" step="any" placeholder="Your answer" oninput="upd()">
   </div>
-
   <div class="qc">
-    <div class="qn">Question 7 · Two steps — show both answers</div>
+    <div class="qn">Question 7 · Two steps</div>
     <div class="qt" id="q7t"></div>
     <div class="gv" id="q7g"></div>
     <div class="tcol">
-      <div><label class="al" id="q7l1">Step 1</label><input type="number" id="a7a" step="any" placeholder="Step 1 answer" oninput="upd()"></div>
-      <div><label class="al" id="q7l2">Step 2</label><input type="number" id="a7b" step="any" placeholder="Step 2 answer" oninput="upd()"></div>
+      <div><label class="al" id="q7l1">Step 1</label><input type="number" id="a7a" step="any" placeholder="Step 1" oninput="upd()"></div>
+      <div><label class="al" id="q7l2">Step 2</label><input type="number" id="a7b" step="any" placeholder="Step 2" oninput="upd()"></div>
     </div>
   </div>
-
   <div class="qc">
-    <div class="qn">Question 8 · Two steps — show both answers</div>
+    <div class="qn">Question 8 · Two steps</div>
     <div class="qt" id="q8t"></div>
     <div class="gv" id="q8g"></div>
     <div class="tcol">
-      <div><label class="al" id="q8l1">Step 1</label><input type="number" id="a8a" step="any" placeholder="Step 1 answer" oninput="upd()"></div>
-      <div><label class="al" id="q8l2">Step 2</label><input type="number" id="a8b" step="any" placeholder="Step 2 answer" oninput="upd()"></div>
+      <div><label class="al" id="q8l1">Step 1</label><input type="number" id="a8a" step="any" placeholder="Step 1" oninput="upd()"></div>
+      <div><label class="al" id="q8l2">Step 2</label><input type="number" id="a8b" step="any" placeholder="Step 2" oninput="upd()"></div>
     </div>
   </div>
 
-  <!-- PART E: GRAPH -->
   <div class="sh"><div class="sb">Part E</div><div class="st">Graph Interpretation</div><div class="sp">4 pts</div></div>
   <div class="qc">
     <div class="qn">Questions 9 & 10</div>
-    <div class="qt">Two waves X and Y travel through the same medium. Study the graph and answer.</div>
-    <div class="dw"><canvas id="cvG" width="640" height="200"></canvas>
-    <div class="dn">Wave X (teal) and Wave Y (orange) — same medium, same speed</div></div>
+    <div class="qt">Two waves X and Y travel through the same medium. Study the graph carefully.</div>
+    <div class="dw"><canvas id="cvG" width="640" height="200"></canvas><div class="dn">Wave X (teal) · Wave Y (orange) · same medium → same speed</div></div>
     <div class="qc" style="margin-top:12px;margin-bottom:0;">
       <div class="qn">Question 9</div>
       <div class="qt">Which wave has the greater wavelength?</div>
@@ -311,15 +293,14 @@ select:focus{border-color:var(--teal);}
     </div>
     <div class="qc" style="margin-top:10px;margin-bottom:0;">
       <div class="qn">Question 10</div>
-      <div class="qt">Which wave has the higher frequency? Explain your reasoning.</div>
+      <div class="qt">Which wave has the higher frequency and why?</div>
       <div class="mcq" id="q10m"></div>
     </div>
   </div>
 
-  <!-- PART F: CONCEPTUAL -->
-  <div class="sh"><div class="sb">Part F</div><div class="st">Conceptual Questions</div><div class="sp">4 pts</div></div>
+  <div class="sh"><div class="sb">Part F</div><div class="st">Conceptual</div><div class="sp">4 pts</div></div>
   <div class="qc">
-    <div class="qn">Question 11 · Multiple Choice</div>
+    <div class="qn">Question 11</div>
     <div class="qt" id="q11t"></div>
     <div class="mcq" id="q11m"></div>
   </div>
@@ -332,12 +313,11 @@ select:focus{border-color:var(--teal);}
     </div>
   </div>
 
-  <!-- SUBMIT -->
   <div class="ss">
     <h3 style="font-weight:800;font-size:.9rem;color:#fff;margin-bottom:10px;">📤 Submit Your Exam</h3>
     <div class="pb"><div class="pf" id="PF" style="width:0%"></div></div>
     <p id="PT" style="font-size:.7rem;color:var(--muted2);margin-bottom:12px;">Complete all questions before submitting.</p>
-    <button class="sub" id="SB" onclick="submit(false)">📊 Submit Exam to Ahmad</button>
+    <button class="sub" onclick="submitExam(false)">📊 Submit Exam to Ahmad</button>
   </div>
 </div>
 
@@ -348,11 +328,11 @@ select:focus{border-color:var(--teal);}
     <h2 style="font-weight:900;font-size:1.15rem;color:#fff;margin-bottom:4px;">Exam Submitted!</h2>
     <p style="font-size:.78rem;color:var(--muted2);margin-bottom:18px;" id="rName"></p>
     <div style="font-family:var(--fm);font-size:3.5rem;font-weight:900;color:var(--teal);" id="rScore">—</div>
-    <div style="font-size:.88rem;font-weight:700;color:var(--teal);margin-top:6px;" id="rGrade">Submitted</div>
+    <div style="font-size:.88rem;font-weight:700;color:var(--teal);margin-top:6px;" id="rGrade">—</div>
     <hr style="border:none;border-top:1px solid var(--border);margin:18px 0;">
-    <p style="font-size:.76rem;color:var(--muted2);line-height:1.7;">Ahmad has received your answers. Marks will be announced in the next class.</p>
+    <p style="font-size:.76rem;color:var(--muted2);line-height:1.7;">Ahmad has received your answers. Results will be announced in the next class.</p>
     <div id="rOK" style="margin-top:12px;padding:10px;background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:7px;font-size:.8rem;color:var(--green);">✓ Submitted successfully!</div>
-    <div id="rAuto" style="display:none;margin-top:8px;padding:8px;background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.2);border-radius:7px;font-size:.74rem;color:var(--orange);">⏱ Time expired — auto-submitted.</div>
+    <div id="rAuto" style="display:none;margin-top:8px;padding:8px;background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.2);border-radius:7px;font-size:.74rem;color:var(--orange);">⏱ Auto-submitted — time expired.</div>
   </div>
 </div>
 
@@ -360,43 +340,44 @@ select:focus{border-color:var(--teal);}
 const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
 const EXAM_S=25*60;
 
-// ── 6 VERSIONS (A-E regular, F absentee — never auto-assigned) ─────────────
-// Fields: v(m/s), f(Hz), T(s), diagA(m), diagL(m), v2(m/s), lam2(m),
-//         q3type, q3scenario, tfQ4, tfA4, concQ11, concOpts11, concCA11, tfQ12, tfA12
+// ── STUDENT DATABASE ────────────────────────────────────────
+const STUDENTS={
+'8A':['أسماء هيثم علي ندوه','ابراهيم طارق صلاح معروف','ابراهيم محمد رفعت ابو حميد','احسان محمد وليد الشحبري','ادم وليد توفيق الخطيب','الين رشيد محمد احمد','تالا محمد عدنان العمري','تيا احمد محمد الركن','جنى ماهر غالب الدالي','جنى محي الدين فاعور','جود محمد مروان الشامي','حسين احمد محمود اسماعيل','حنين علي ابراهيم ميعاد','راما احمد توفيق الزقه','رهف سعيد شحادة فلاح','زينب محمد رياض حماده','سعاد مازن محمد الشامي','سمر محمد صابر ظاهر','سيلين منصور عبد شحاده','عادل محمد عادل أبو عرب','عبد الرحمن وليد محمد علي','مصطفى حسن سالم علي','ياسر نمر فاعور عمران','مازن صالح مرعي فاطمه','محمد خالد قاسم قمر','حسين عمر حمزة كريم','محمود عبد الحفيظ ليا','محمد عمر عباس لين','لين رشدي موسى الصالح','لين ماهر احمد العيسى','لين وسام احمد حسين','ماريا طلعت احمد مراد','محمد احمد محمد الصعيدي','محمد سامر محمد الصالح','محمد علي محمد ابو شقير','محمد علي محمد عبد الجليل','محمد قاسم عادل عفيفي','محمود شادي محمود شحادة','مرام احمد كايد خضره','نرجس هاني احمد عقلة','نور محمد علي علي','هلا شفيق علي فلوس','يارا محمود السيد السعدني'],
+'8B':['أسينات احمد فريد العلي','اسامة بسام عبد الرحمن حمو','امال ساري علي زيداني','امنة محمد كمال قدورة','امير هشام مصطفى كروم','ايمان بسام خالد محمد','بيسان بسام عبد الرحمن حمو','تاليا انس ابراهيم المنديل','حبيبة عوني علي الزبيدات','حلا اشرف احمد الحاج علي','حنين فتحي علي حميد','راما خالد محمد عطعوط','رضوان جهاد رضوان ديب','رواد مروان ابراهيم العبدالله','زهراء عماد وليد شيخه','سارة فادي عدنان فارس','سامي يسار سامي معروف','سعيد ماهر سعيد سعيد','سهى عامر احمد عطية','صلاح الدين مصطفى بللي','علي مصطفى علي سريس','عمر حسام حسين الموسى','فاطمه جمال احمد المحمود','فضل احمد محمد حسين','كريم رائد محمد دلاشي','لارا محمد خالد عبد الغني','ليلاس وسيم شحادة شحاده','ماريه يحيى محمد ابو هموس','محمد احمد محمد شريده','محمد حسام عاطف أبو شباب','محمد حكمت غاندي عبدالله','محمد علي محمود احمد','محمد هشام احمد مره','محمود نايف مصطفى قاسميه','مريم محمود محي الدين مرّه','ملاك يونس محمد رحال','ميريانا احمد مصطفى عيتاني','هدى محمود محمد الركن','وسيله سعدو درويش ششنيه','يحيى زكريا سميح حمو'],
+'8C':['آلاء رباح محمود شراب','آلاء محمود صالح أدلبي','ابراهيم محمد إبراهيم عزيز','امير ماجد احمد اسماعيل','بتول فايز محمد حمود','بهاء الدين بلال بهاء الدين رشيد','بيان كمال احمد ابو سويد','تبارك محمد محمد السيد يوسف','تغريد خالد عزات يحيى','جمال محمد جمال حوحو','جنى حسن محمد الظريف','جهاد فادي حسن سالم','حلا محمد حسن ابو شنار','حلا مصطفى محمد خير بللي','خالد وسيم خالد حسن','راما زياد علي الحاج علي','راما عبد المجيد محمد سالم','راما محمد يوسف العلي','رزان زياد عبد الناصر اصمهان','روان عماد فوزي ابراهيم','ريم اديب احمد حسين','ريم ماهر عطا الخطيب','ريم نور الدين فايز عبد الرازق','سلام عصام حمودة ناجي','سلام محمد بديع فيصل العلي','سيلا هشام امين الطه','شهد صالح احمد مطر','صالح محمد سامي الشورى','عبد الله حسن سعيد سليمان','علي محمد ابراهيم صالح','علي ناصر علي حماده','عمر عصام الصادق فرح','وائل باسل غزلان لانا','لانا باسم امين صيداوي','لين احمد عيسى قاسم','لين وائل زياد الهبطه','ماسة عمار علي علي','محمد حسين احمد ندوه','محمود محمد سالم نجمي','ملكه سعد الدين برجاوي','نور الهدى جهاد عزات عليان'],
+'8D':['إسراء ايمن محمد قدسيه','احمد زاهر جهاد قدورة','احمد علاء احمد اسماعيل','احمد محمد رياض الخطيب','ادم خالد محمود قدورة','اسراء احمد داري نوفل','الما محمد جمال ششنيه','اياد احمد حسين محمود','اياد احمد سمير قدوره','بيسان علي احمد قاسم','تقى احمد موسى عبدالله','حسن علي حسن حبقزي','حمزة عاطف محمد الحاج محمد','دانا نبيل نور الدين الهندي','راما فادي علي سليم','رهف خليل عبدالله شاهين','روزا محمود علي عودي','ريتال نضال موسى مناد','زهراء محمد حسن بركات','زينب محمد عبد غنام','سالي فادي عثمان عباس','سماح احمد عطا أبو عنزه','علا محمد زيد عثمان','علي كمال علي سعد','عمر محمود عباس الحايك','غزل محمد خليل ابو عرب','غفران محمد يوسف داوود','كريم عوني خالد عبد الغني','لين علي نايف حميد','ماريا ابراهيم درويش خزعل','محمد براء محمود حسن','محمد بهاء ابراهيم العيسى','محمد خالد محمود مطر','محمد ربيع محمد هنداوي','محمود علي محمود يوسف','مصطفى عماد الدين تراوي','ميار سعيد محمد حسن','نور عباس محمد عمر','هبة يحيى عيسى ابو مايهه','هيلين فيصل فضل الله الراشدي','يوسف عامر محمد مصريه','يوسف هيثم فايز بركة']
+};
+
+// ── VERSIONS ─────────────────────────────────────────────
 const V=[
-  // Version A
   {v:340,f:2,T:0.5,dA:0.3,dL:1.4,v2:1500,lam2:0.5,
    wt:'transverse',
    q3:'A guitar string is plucked and vibrates up and down. The wave travels along the string horizontally.',
-   q4:'Sound waves are transverse waves.', q4a:'F',
+   q4:'Sound waves are transverse waves.',q4a:'F',
    q11:'A wave has frequency 4 Hz and wavelength 2 m. Its speed is:',
    q11o:['2 m/s','6 m/s','8 m/s','0.5 m/s'],q11a:'C',
    q12:'Increasing the amplitude of a wave increases its speed.',q12a:'F'},
-  // Version B
   {v:300,f:1.5,T:0.4,dA:0.4,dL:1.6,v2:340,lam2:0.68,
    wt:'longitudinal',
-   q3:'Sound travels through a metal bar. Air molecules are pushed and pulled in the direction the sound travels.',
-   q4:'The wavelength of a wave is the distance from crest to crest.',q4a:'T',
-   q11:'A wave\'s period is 0.25 s. Its frequency is:',
+   q3:'Sound travels through a metal bar. Air particles are pushed and pulled in the direction the sound travels.',
+   q4:'The wavelength is the distance from crest to crest.',q4a:'T',
+   q11:'A wave period is 0.25 s. Its frequency is:',
    q11o:['25 Hz','0.25 Hz','4 Hz','2.5 Hz'],q11a:'C',
    q12:'In a transverse wave, particles move perpendicular to the direction of wave travel.',q12a:'T'},
-  // Version C
   {v:400,f:2.5,T:0.25,dA:0.5,dL:2.0,v2:330,lam2:0.33,
    wt:'transverse',
-   q3:'A rope is moved up and down quickly at one end. A wave pattern travels along the rope horizontally.',
+   q3:'A rope is moved up and down quickly at one end. The wave pattern travels horizontally along the rope.',
    q4:'Electromagnetic waves can travel through a vacuum.',q4a:'T',
-   q11:'Two waves travel at the same speed. Wave P has wavelength 3 m and Wave Q has wavelength 6 m. Which has the higher frequency?',
-   q11o:['Wave P','Wave Q','They are equal','Cannot be determined'],q11a:'A',
-   q12:'The period and frequency of a wave are directly proportional (both increase together).',q12a:'F'},
-  // Version D
+   q11:'Two waves travel at the same speed. Wave P has λ = 3 m and Wave Q has λ = 6 m. Which has the higher frequency?',
+   q11o:['Wave P','Wave Q','Equal','Cannot be determined'],q11a:'A',
+   q12:'The period and frequency of a wave are directly proportional.',q12a:'F'},
   {v:320,f:4,T:0.25,dA:0.2,dL:1.6,v2:1500,lam2:0.6,
    wt:'longitudinal',
-   q3:'In a slinky spring, compressions and rarefactions travel along its length in the same direction as the disturbance.',
+   q3:'In a slinky spring, compressions and rarefactions travel along its length in the same direction as the push.',
    q4:'Amplitude affects the wavelength of a wave.',q4a:'F',
    q11:'A wave travels at 400 m/s with period T = 0.5 s. Its wavelength is:',
    q11o:['200 m','800 m','0.8 m','2 m'],q11a:'A',
-   q12:'Longitudinal waves require a material medium — they cannot travel through empty space.',q12a:'T'},
-  // Version E
+   q12:'Longitudinal waves require a material medium to travel.',q12a:'T'},
   {v:500,f:2,T:0.5,dA:0.6,dL:2.0,v2:340,lam2:0.85,
    wt:'transverse',
    q3:'Light waves travel through space. Electric and magnetic fields oscillate at right angles to the direction of travel.',
@@ -404,46 +385,96 @@ const V=[
    q11:'A wave has speed 600 m/s and frequency 3 Hz. How many complete waves fit in 600 m?',
    q11o:['1','3','600','200'],q11a:'B',
    q12:'The speed of a wave depends only on the medium through which it travels.',q12a:'T'},
-  // Version F — ABSENTEE ONLY (never auto-assigned)
+  // Version F — ABSENTEE (never auto-assigned)
   {v:280,f:3.5,T:0.4,dA:0.35,dL:1.4,v2:1450,lam2:0.58,
    wt:'longitudinal',
    q3:'Ultrasound passes through body tissue. The tissue particles vibrate back and forth in the same direction as the wave.',
-   q4:'A wave with a higher frequency has a longer wavelength if speed is constant.',q4a:'F',
-   q11:'Wave speed = 280 m/s. If the frequency doubles, what happens to the wavelength?',
+   q4:'A higher frequency wave always has a longer wavelength.',q4a:'F',
+   q11:'If the frequency of a wave doubles while its speed stays constant, the wavelength:',
    q11o:['Doubles','Halves','Stays the same','Quadruples'],q11a:'B',
-   q12:'Amplitude is measured from the equilibrium position to the crest (or trough).',q12a:'T'},
+   q12:'Amplitude is measured from the equilibrium position to the crest (or trough).',q12a:'T'}
 ];
 
-// Scoring rubric (total = 35 marks)
-// Q1:3, Q2:3, Q3:2, Q4:2, Q5:5(1 each), Q6:4, Q7:4(2+2), Q8:4(2+2), Q9:2, Q10:2, Q11:2, Q12:2
-
-let VD,ver=0,studentName='',studentClass='';
+let VD,ver=0,studentName='',studentSection='';
 let tSecs=EXAM_S,tInt=null,done=false;
-let ans={},uAns={},mSt={},mSel=null,tfAns={};
+let ans={},uAns={},tfAns={};
+let chosenSection='',filteredNames=[];
 
-// Hash: A-E only (ver%5), F reserved
-function hashV(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;return h%5;}
+// ── SECTION & NAME SELECTION ──────────────────────────────
+function setSection(sec){
+  chosenSection=sec;studentName='';studentSection=sec;
+  document.querySelectorAll('.sec-tab').forEach(t=>t.classList.toggle('active',t.textContent===sec));
+  document.getElementById('step2lbl').style.display='block';
+  document.getElementById('searchWrap').style.display='block';
+  document.getElementById('nameSearch').value='';
+  document.getElementById('selectedName').style.display='none';
+  document.getElementById('beginBtn').disabled=true;
+  document.getElementById('nameList').style.display='none';
+  filterNames();
+}
 
+function filterNames(){
+  const q=document.getElementById('nameSearch').value.trim();
+  const list=STUDENTS[chosenSection]||[];
+  filteredNames=q?list.filter(n=>n.includes(q)):list;
+  renderList();
+}
+
+function showList(){
+  if(chosenSection)renderList();
+}
+
+function renderList(){
+  const el=document.getElementById('nameList');
+  el.innerHTML='';
+  if(!filteredNames.length){
+    el.innerHTML='<div class="no-match">لا توجد نتائج</div>';
+    el.style.display='block';return;
+  }
+  filteredNames.forEach(name=>{
+    const d=document.createElement('div');d.className='name-item';d.textContent=name;
+    d.dir='rtl';
+    d.onclick=()=>selectName(name);
+    el.appendChild(d);
+  });
+  el.style.display='block';
+}
+
+function selectName(name){
+  studentName=name;
+  document.getElementById('nameSearch').value='';
+  document.getElementById('nameList').style.display='none';
+  const sel=document.getElementById('selectedName');
+  sel.textContent='✓ '+name;sel.style.display='block';
+  document.getElementById('beginBtn').disabled=false;
+  // Hash from name for version
+  let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
+  ver=h%5;VD=V[ver];
+}
+
+// Hide list when clicking outside
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrap'))
+    document.getElementById('nameList').style.display='none';
+});
+
+// ── BEGIN EXAM ────────────────────────────────────────────
 function beginExam(){
-  const n=document.getElementById('eName').value.trim();
-  const cl=document.getElementById('eClass').value.trim();
-  if(!n){toast('Enter your full name!');return;}
-  if(!cl){toast('Enter your class!');return;}
-  studentName=n;studentClass=cl;
-  ver=hashV(n);VD=V[ver];
+  if(!studentName){toast('Select your name first!');return;}
   document.getElementById('ES').style.display='none';
   document.getElementById('TB').style.display='block';
   document.getElementById('EP').style.display='block';
   document.getElementById('VB').textContent='Version '+String.fromCharCode(65+ver);
-  document.getElementById('SN').textContent=n+' · '+cl;
+  document.getElementById('SN').textContent=studentName+' · '+studentSection;
   build();startTimer();window.scrollTo(0,0);
 }
 
+// ── TIMER ────────────────────────────────────────────────
 function startTimer(){
-  tSecs=EXAM_S;updTimer();
-  tInt=setInterval(()=>{tSecs--;updTimer();if(tSecs<=0){clearInterval(tInt);submit(true);}},1000);
+  tSecs=EXAM_S;updT();
+  tInt=setInterval(()=>{tSecs--;updT();if(tSecs<=0){clearInterval(tInt);submitExam(true);}},1000);
 }
-function updTimer(){
+function updT(){
   const m=Math.floor(tSecs/60),s=tSecs%60;
   document.getElementById('TD').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
   const p=(tSecs/EXAM_S)*100;
@@ -451,366 +482,189 @@ function updTimer(){
   f.style.width=p+'%';
   f.style.background=tSecs<300?'linear-gradient(90deg,#ff3355,#ff8c00)':
     tSecs<600?'linear-gradient(90deg,#ffd600,#ff8c00)':'linear-gradient(90deg,var(--teal),var(--cyan))';
-  const td=document.getElementById('TD');
-  td.className=tSecs<300?'danger':tSecs<600?'warn':'';
+  document.getElementById('TD').className=tSecs<300?'danger':tSecs<600?'warn':'';
 }
 
-// ── BUILD ───────────────────────────────────────────────────
-function build(){
-  drawDiagram();
-  buildQ3();
-  document.getElementById('q4t').textContent=VD.q4;
-  buildUnits();
-  buildCalcs();
-  drawGraph();
-  buildQ9Q10();
-  buildQ11();
-  document.getElementById('q12t').textContent=VD.q12;
-}
+// ── BUILD EXAM ───────────────────────────────────────────
+function build(){drawDiag();buildQ3();document.getElementById('q4t').textContent=VD.q4;buildUnits();buildCalcs();drawGraph();buildQ9Q10();buildQ11();document.getElementById('q12t').textContent=VD.q12;}
 
-// ── DIAGRAM ─────────────────────────────────────────────────
-function drawDiagram(){
-  const cv=document.getElementById('cvD');
-  const ctx=cv.getContext('2d');
-  const W=cv.width,H=cv.height;
-  const A=VD.dA,L=VD.dL;
+function drawDiag(){
+  const cv=document.getElementById('cvD');const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,A=VD.dA,L=VD.dL;
   const ox=58,oy=H/2,plotW=W-ox-12;
-  // Scale: fit 2 full wavelengths minimum, max 3
-  const nWaves=Math.min(3,Math.floor(plotW/(L*160)));
-  const ppm=Math.floor(plotW/(Math.max(2,nWaves)*L)); // pixels per metre
-  const pA=A*ppm;
-
+  const ppm=Math.floor(plotW/(2.5*L));const pA=A*ppm;const xDiv=0.2*ppm;
   ctx.fillStyle='#020e14';ctx.fillRect(0,0,W,H);
-
-  // MINOR grid (0.2m divisions on x, 0.5*A on y)
-  ctx.strokeStyle='rgba(0,200,180,.16)';ctx.lineWidth=0.7;
-  const xDiv=0.2*ppm; // pixels per 0.2m
+  // Minor grid
+  ctx.strokeStyle='rgba(0,200,180,.15)';ctx.lineWidth=0.7;
   for(let x=ox;x<W-8;x+=xDiv){ctx.beginPath();ctx.moveTo(x,12);ctx.lineTo(x,H-12);ctx.stroke();}
   for(let y=oy-pA;y<=oy+pA+1;y+=pA/2){ctx.beginPath();ctx.moveTo(ox,y);ctx.lineTo(W-8,y);ctx.stroke();}
-
-  // MAJOR grid (1m on x, amplitude on y) — clearly distinct
-  ctx.strokeStyle='rgba(0,200,180,.38)';ctx.lineWidth=1.3;
+  // Major grid
+  ctx.strokeStyle='rgba(0,200,180,.4)';ctx.lineWidth=1.3;
   for(let x=ox;x<W-8;x+=ppm){ctx.beginPath();ctx.moveTo(x,12);ctx.lineTo(x,H-12);ctx.stroke();}
   for(let y=oy-pA;y<=oy+pA+1;y+=pA){ctx.beginPath();ctx.moveTo(ox,y);ctx.lineTo(W-8,y);ctx.stroke();}
-
-  // AXES
+  // Axes
   ctx.strokeStyle='rgba(0,229,255,.65)';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(ox,H-12);ctx.lineTo(ox,12);ctx.stroke();
   ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(W-8,oy);ctx.stroke();
-
-  // LABELS — x axis (every 1m)
+  // x labels
   ctx.fillStyle='rgba(0,200,180,.7)';ctx.font='10px DM Mono';
   for(let n=1;n*ppm+ox<W-8;n++){
     ctx.textAlign='center';ctx.fillText(n+'.0',ox+n*ppm,H-2);
     ctx.strokeStyle='rgba(0,200,180,.4)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(ox+n*ppm,oy-4);ctx.lineTo(ox+n*ppm,oy+4);ctx.stroke();
   }
-  // y axis labels
-  ctx.textAlign='right';
-  ctx.fillText('+'+A,ox-3,oy-pA+4);
-  ctx.fillText('0',ox-3,oy+4);
-  ctx.fillText('-'+A,ox-3,oy+pA+4);
-  // axis names
-  ctx.fillStyle='rgba(0,200,180,.45)';ctx.font='10px DM Mono';ctx.textAlign='left';
-  ctx.fillText('x (m)',W-26,oy-6);
-  ctx.save();ctx.translate(13,H/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';
-  ctx.fillText('y (m)',0,0);ctx.restore();
-
-  // WAVE — teal, thick, clear glow
+  ctx.textAlign='right';ctx.fillText('+'+A,ox-3,oy-pA+4);ctx.fillText('0',ox-3,oy+4);ctx.fillText('-'+A,ox-3,oy+pA+4);
+  ctx.fillStyle='rgba(0,200,180,.45)';ctx.font='10px DM Mono';ctx.textAlign='left';ctx.fillText('x (m)',W-26,oy-6);
+  ctx.save();ctx.translate(13,H/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('y (m)',0,0);ctx.restore();
+  // Wave
   ctx.strokeStyle='#00e5cc';ctx.lineWidth=3.2;ctx.shadowColor='#00e5cc';ctx.shadowBlur=5;
   ctx.beginPath();
-  for(let px=ox;px<W-8;px++){
-    const xm=(px-ox)/ppm;
-    const y=oy-pA*Math.sin(2*Math.PI*xm/L);
-    if(px===ox)ctx.moveTo(px,y);else ctx.lineTo(px,y);
-  }
+  for(let px=ox;px<W-8;px++){const xm=(px-ox)/ppm;const y=oy-pA*Math.sin(2*Math.PI*xm/L);if(px===ox)ctx.moveTo(px,y);else ctx.lineTo(px,y);}
   ctx.stroke();ctx.shadowBlur=0;
-
-  // AMPLITUDE ANNOTATION — orange
+  // Amplitude arrow
   const cx1=ox+L/4*ppm;
   ctx.strokeStyle='#ff8c00';ctx.lineWidth=2;ctx.setLineDash([5,4]);
-  ctx.beginPath();ctx.moveTo(cx1,oy);ctx.lineTo(cx1,oy-pA);ctx.stroke();
-  ctx.setLineDash([]);
-  // arrowheads
-  [[cx1,oy,0,1],[cx1,oy-pA,0,-1]].forEach(([x,y,dx,dy])=>{
-    ctx.beginPath();ctx.moveTo(x,y);
-    ctx.lineTo(x-5,y+dy*10);ctx.lineTo(x+5,y+dy*10);ctx.closePath();
-    ctx.fillStyle='#ff8c00';ctx.fill();
-  });
-  ctx.fillStyle='#ff8c00';ctx.font='bold 11px DM Mono';ctx.textAlign='left';
-  ctx.fillText('A = ?',cx1+5,oy-pA*0.45);
-
-  // WAVELENGTH ANNOTATION — yellow
+  ctx.beginPath();ctx.moveTo(cx1,oy);ctx.lineTo(cx1,oy-pA);ctx.stroke();ctx.setLineDash([]);
+  [[cx1,oy,1],[cx1,oy-pA,-1]].forEach(([x,y,d])=>{ctx.fillStyle='#ff8c00';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-5,y+d*10);ctx.lineTo(x+5,y+d*10);ctx.closePath();ctx.fill();});
+  ctx.fillStyle='#ff8c00';ctx.font='bold 11px DM Mono';ctx.textAlign='left';ctx.fillText('A = ?',cx1+5,oy-pA*0.45);
+  // Wavelength arrow
   const lamY=oy+pA+22;
   ctx.strokeStyle='#ffd600';ctx.lineWidth=2;ctx.setLineDash([5,4]);
-  ctx.beginPath();ctx.moveTo(ox,lamY);ctx.lineTo(ox+L*ppm,lamY);ctx.stroke();
-  ctx.setLineDash([]);
-  [[ox,lamY],[ox+L*ppm,lamY]].forEach(([x,y])=>{
-    ctx.strokeStyle='#ffd600';ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(x,y-6);ctx.lineTo(x,y+6);ctx.stroke();
-  });
-  ctx.fillStyle='#ffd600';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
-  ctx.fillText('λ = ?',ox+L*ppm/2,lamY-7);
-
-  document.getElementById('dNote').textContent=
-    'Grid: each small square = 0.2 m · Major lines = 1.0 m · Count divisions carefully';
-
-  // Store correct answers privately
+  ctx.beginPath();ctx.moveTo(ox,lamY);ctx.lineTo(ox+L*ppm,lamY);ctx.stroke();ctx.setLineDash([]);
+  [[ox,lamY],[ox+L*ppm,lamY]].forEach(([x,y])=>{ctx.strokeStyle='#ffd600';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y-6);ctx.lineTo(x,y+6);ctx.stroke();});
+  ctx.fillStyle='#ffd600';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.fillText('λ = ?',ox+L*ppm/2,lamY-7);
+  document.getElementById('dNote').textContent='Grid: each small square = 0.2 m · Major lines = 1.0 m · Count carefully';
   window._dA=A;window._dL=L;
 }
 
-// ── Q3 WAVE TYPE ────────────────────────────────────────────
 function buildQ3(){
-  document.getElementById('q3t').innerHTML=
-    '<strong>Scenario:</strong> '+VD.q3+'<br><br>What type of wave is described?';
-  const opts=[
-    {k:'transverse',t:'Transverse — particles vibrate perpendicular (⊥) to wave direction'},
-    {k:'longitudinal',t:'Longitudinal — particles vibrate parallel (∥) to wave direction'},
-  ];
+  document.getElementById('q3t').innerHTML='<strong>Scenario:</strong> '+VD.q3+'<br><br>What type of wave is described?';
+  const opts=[{k:'transverse',t:'Transverse — particles vibrate perpendicular (⊥) to wave direction'},{k:'longitudinal',t:'Longitudinal — particles vibrate parallel (∥) to wave direction'}];
   const el=document.getElementById('q3m');
-  opts.forEach((o,i)=>{
-    const d=document.createElement('div');d.className='mo';
-    d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o.t}`;
-    d.onclick=()=>sMCQ('q3',o.k,d);el.appendChild(d);
-  });
+  opts.forEach((o,i)=>{const d=document.createElement('div');d.className='mo';d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o.t}`;d.onclick=()=>sMCQ('q3',o.k,d);el.appendChild(d);});
 }
 
-// ── Q5 UNITS ────────────────────────────────────────────────
-const UQ=[
-  {q:'Frequency (f)',c:'Hz',o:['m','s','Hz','m/s']},
-  {q:'Wavelength (λ)',c:'m',o:['Hz','m','s','m/s']},
-  {q:'Wave speed (v)',c:'m/s',o:['m','Hz','s','m/s']},
-  {q:'Period (T)',c:'s',o:['Hz','m/s','s','m']},
-  {q:'Amplitude (A)',c:'m',o:['Hz','m','s','m/s']},
-];
+const UQ=[{q:'Frequency (f)',c:'Hz',o:['m','s','Hz','m/s']},{q:'Wavelength (λ)',c:'m',o:['Hz','m','s','m/s']},{q:'Wave speed (v)',c:'m/s',o:['m','Hz','s','m/s']},{q:'Period (T)',c:'s',o:['Hz','m/s','s','m']},{q:'Amplitude (A)',c:'m',o:['Hz','m','s','m/s']}];
 function buildUnits(){
   const el=document.getElementById('unitQ');
-  UQ.forEach((q,i)=>{
+  UQ.forEach((q)=>{
     const row=document.createElement('div');row.className='ur';
     row.innerHTML=`<span class="ulb">${q.q}</span>`;
     [...q.o].sort(()=>Math.random()-.5).forEach(opt=>{
       const b=document.createElement('button');b.className='uo';b.textContent=opt;
-      b.onclick=()=>{row.querySelectorAll('.uo').forEach(x=>x.classList.remove('sel'));
-        b.classList.add('sel');uAns[q.q]=opt;upd();};
+      b.onclick=()=>{row.querySelectorAll('.uo').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');uAns[q.q]=opt;upd();};
       row.appendChild(b);
-    });
-    el.appendChild(row);
+    });el.appendChild(row);
   });
 }
 
-// ── CALCULATIONS ────────────────────────────────────────────
 function buildCalcs(){
-  const {v,f,T,v2,lam2}=VD;
-  // Q6: λ = v/f  (single step — no formula given)
+  const {v,f,T,dL,v2,lam2}=VD;
   const a6=+(v/f).toFixed(2);
-  document.getElementById('q6t').innerHTML=
-    `A wave travels at <em>${v} m/s</em> with a frequency of <em>${f} Hz</em>.<br><strong>Calculate the wavelength λ (in metres).</strong>`;
+  document.getElementById('q6t').innerHTML=`A wave travels at <em>${v} m/s</em> with a frequency of <em>${f} Hz</em>.<br><strong>Calculate the wavelength λ (metres).</strong>`;
   document.getElementById('q6g').innerHTML=`<span>Given:</span>v = ${v} m/s &nbsp;&nbsp; f = ${f} Hz`;
   document.getElementById('q6l').textContent='λ = ? (m)';
   window._a6=a6;
-
-  // Q7: f=1/T then v=f×λ (use dL as λ for Q7)
-  const a7a=+(1/T).toFixed(3);
-  const a7b=+(a7a*VD.dL).toFixed(2);
-  document.getElementById('q7t').innerHTML=
-    `A wave has a period of <em>T = ${T} s</em> and wavelength <em>λ = ${VD.dL} m</em>.<br>
-    <strong>Step 1:</strong> Calculate the frequency f (Hz).<br>
-    <strong>Step 2:</strong> Calculate the wave speed v (m/s).`;
-  document.getElementById('q7g').innerHTML=`<span>Given:</span>T = ${T} s &nbsp;&nbsp; λ = ${VD.dL} m`;
+  const a7a=+(1/T).toFixed(3),a7b=+(a7a*dL).toFixed(2);
+  document.getElementById('q7t').innerHTML=`A wave has period <em>T = ${T} s</em> and wavelength <em>λ = ${dL} m</em>.<br><strong>Step 1:</strong> Calculate frequency f (Hz). <strong>Step 2:</strong> Calculate wave speed v (m/s).`;
+  document.getElementById('q7g').innerHTML=`<span>Given:</span>T = ${T} s &nbsp;&nbsp; λ = ${dL} m`;
   document.getElementById('q7l1').textContent='Frequency f (Hz)';
   document.getElementById('q7l2').textContent='Wave speed v (m/s)';
   window._a7a=a7a;window._a7b=a7b;
-
-  // Q8: f=v2/lam2 then T=1/f (two steps)
-  const a8a=+(v2/lam2).toFixed(2);
-  const a8b=+(1/a8a).toFixed(5);
-  document.getElementById('q8t').innerHTML=
-    `Waves travel through a medium at <em>v = ${v2} m/s</em>. The wavelength is <em>λ = ${lam2} m</em>.<br>
-    <strong>Step 1:</strong> Calculate the frequency f (Hz).<br>
-    <strong>Step 2:</strong> Calculate the period T (s).`;
+  const a8a=+(v2/lam2).toFixed(2),a8b=+(1/a8a).toFixed(5);
+  document.getElementById('q8t').innerHTML=`Waves travel through a medium at <em>v = ${v2} m/s</em> with wavelength <em>λ = ${lam2} m</em>.<br><strong>Step 1:</strong> Calculate frequency f (Hz). <strong>Step 2:</strong> Calculate period T (s).`;
   document.getElementById('q8g').innerHTML=`<span>Given:</span>v = ${v2} m/s &nbsp;&nbsp; λ = ${lam2} m`;
   document.getElementById('q8l1').textContent='Frequency f (Hz)';
   document.getElementById('q8l2').textContent='Period T (s)';
   window._a8a=a8a;window._a8b=a8b;
 }
 
-// ── GRAPH ───────────────────────────────────────────────────
 function drawGraph(){
-  const cv=document.getElementById('cvG');
-  const ctx=cv.getContext('2d');
-  const W=cv.width,H=cv.height;
+  const cv=document.getElementById('cvG');const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
   ctx.fillStyle='#020e14';ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='rgba(0,200,180,.1)';ctx.lineWidth=0.6;
   for(let x=40;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=25){ctx.beginPath();ctx.moveTo(40,y);ctx.lineTo(W,y);ctx.stroke();}
-  ctx.strokeStyle='rgba(0,229,255,.35)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(40,H/2);ctx.lineTo(W-5,H/2);ctx.stroke();
-  // Wave X — longer λ (lower f)
+  ctx.strokeStyle='rgba(0,229,255,.35)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(40,H/2);ctx.lineTo(W-5,H/2);ctx.stroke();
   ctx.strokeStyle='#00e5cc';ctx.lineWidth=2.8;ctx.shadowColor='#00e5cc';ctx.shadowBlur=5;
-  ctx.beginPath();
-  for(let px=40;px<W-5;px++){
-    const y=H/2-54*Math.sin(2*Math.PI*(px-40)/220);
-    if(px===40)ctx.moveTo(px,y);else ctx.lineTo(px,y);
-  }
-  ctx.stroke();ctx.shadowBlur=0;
-  ctx.fillStyle='#00e5cc';ctx.font='bold 12px DM Mono';ctx.textAlign='left';
-  ctx.fillText('Wave X',48,20);
-  // Wave Y — shorter λ (higher f)
+  ctx.beginPath();for(let px=40;px<W-5;px++){const y=H/2-54*Math.sin(2*Math.PI*(px-40)/220);if(px===40)ctx.moveTo(px,y);else ctx.lineTo(px,y);}
+  ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#00e5cc';ctx.font='bold 12px DM Mono';ctx.textAlign='left';ctx.fillText('Wave X',48,20);
   ctx.strokeStyle='#ff8c00';ctx.lineWidth=2.8;ctx.shadowColor='#ff8c00';ctx.shadowBlur=5;
-  ctx.beginPath();
-  for(let px=40;px<W-5;px++){
-    const y=H/2-36*Math.sin(2*Math.PI*(px-40)/110);
-    if(px===40)ctx.moveTo(px,y);else ctx.lineTo(px,y);
-  }
-  ctx.stroke();ctx.shadowBlur=0;
-  ctx.fillStyle='#ff8c00';ctx.font='bold 12px DM Mono';ctx.textAlign='left';
-  ctx.fillText('Wave Y',48,38);
-  ctx.fillStyle='rgba(0,200,180,.35)';ctx.font='10px DM Mono';ctx.textAlign='center';
-  ctx.fillText('→ distance (m)',W/2,H-2);
+  ctx.beginPath();for(let px=40;px<W-5;px++){const y=H/2-36*Math.sin(2*Math.PI*(px-40)/110);if(px===40)ctx.moveTo(px,y);else ctx.lineTo(px,y);}
+  ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#ff8c00';ctx.font='bold 12px DM Mono';ctx.textAlign='left';ctx.fillText('Wave Y',48,38);
+  ctx.fillStyle='rgba(0,200,180,.35)';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.fillText('→ distance (m)',W/2,H-2);
 }
 
 function buildQ9Q10(){
-  // Q9: wavelength — X longer
-  const q9o=[
-    {k:'X',t:'Wave X — it has more crests per unit distance'},
-    {k:'Y',t:'Wave Y — it has fewer crests per unit distance'},
-    {k:'X_longer',t:'Wave X — the distance between its crests is greater'},
-    {k:'equal',t:'Both waves have the same wavelength'},
-  ];
+  const q9o=[{k:'X_correct',t:'Wave X — the distance between its crests is greater'},{k:'Y',t:'Wave Y — it has more crests per unit distance'},{k:'equal',t:'Both have the same wavelength'},{k:'X_wrong',t:'Wave X — because it has smaller amplitude'}];
   const e9=document.getElementById('q9m');
-  q9o.forEach((o,i)=>{
-    const d=document.createElement('div');d.className='mo';
-    d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o.t}`;
-    d.onclick=()=>sMCQ('q9',o.k,d);e9.appendChild(d);
-  });
-  // correct: C (Wave X — distance between crests is greater)
-
-  // Q10: frequency — Y higher
-  const q10o=[
-    {k:'X',t:'Wave X — because it has a longer wavelength'},
-    {k:'Y',t:'Wave Y — more complete waves pass a point per second'},
-    {k:'equal',t:'Both have the same frequency — same medium'},
-    {k:'Y_amp',t:'Wave Y — because it has a smaller amplitude'},
-  ];
+  q9o.forEach((o,i)=>{const d=document.createElement('div');d.className='mo';d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o.t}`;d.onclick=()=>sMCQ('q9',o.k,d);e9.appendChild(d);});
+  const q10o=[{k:'Y_correct',t:'Wave Y — shorter wavelength means more waves per second at the same speed'},{k:'X',t:'Wave X — because it has a longer wavelength'},{k:'equal',t:'Both have the same frequency — same medium, same speed'},{k:'Y_wrong',t:'Wave Y — because it has a smaller amplitude'}];
   const e10=document.getElementById('q10m');
-  q10o.forEach((o,i)=>{
-    const d=document.createElement('div');d.className='mo';
-    d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o.t}`;
-    d.onclick=()=>sMCQ('q10',o.k,d);e10.appendChild(d);
-  });
-  // correct: B
+  q10o.forEach((o,i)=>{const d=document.createElement('div');d.className='mo';d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o.t}`;d.onclick=()=>sMCQ('q10',o.k,d);e10.appendChild(d);});
 }
 
 function buildQ11(){
   document.getElementById('q11t').innerHTML=VD.q11;
   const el=document.getElementById('q11m');
-  VD.q11o.forEach((o,i)=>{
-    const d=document.createElement('div');d.className='mo';
-    d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o}`;
-    d.onclick=()=>sMCQ('q11',String.fromCharCode(65+i),d);
-    el.appendChild(d);
-  });
+  VD.q11o.forEach((o,i)=>{const d=document.createElement('div');d.className='mo';d.innerHTML=`<span class="ml">${String.fromCharCode(65+i)}</span>${o}`;d.onclick=()=>sMCQ('q11',String.fromCharCode(65+i),d);el.appendChild(d);});
 }
 
-// ── MCQ & TF ────────────────────────────────────────────────
-function sMCQ(k,v,btn){
-  ans[k]=v;
-  btn.parentElement.querySelectorAll('.mo').forEach(o=>o.classList.remove('sel'));
-  btn.classList.add('sel');upd();
-}
-function stf(n,v){
-  ans['tf'+n]=v;
-  document.getElementById('t'+n+'T').classList.toggle('sel',v==='T');
-  document.getElementById('t'+n+'F').classList.toggle('sel',v==='F');
-  upd();
-}
+function sMCQ(k,v,btn){ans[k]=v;btn.parentElement.querySelectorAll('.mo').forEach(o=>o.classList.remove('sel'));btn.classList.add('sel');upd();}
+function stf(n,v){ans['tf'+n]=v;document.getElementById('t'+n+'T').classList.toggle('sel',v==='T');document.getElementById('t'+n+'F').classList.toggle('sel',v==='F');upd();}
 
-// ── PROGRESS ────────────────────────────────────────────────
 function upd(){
-  let c=0,tot=17;
-  if(document.getElementById('a1v')?.value)c++;
-  if(document.getElementById('a1u')?.value)c++;
-  if(document.getElementById('a2v')?.value)c++;
-  if(document.getElementById('a2u')?.value)c++;
-  if(ans.q3)c++;
-  if(ans.tf4)c++;
-  c+=Object.keys(uAns).length; // 5 units
-  if(document.getElementById('a6')?.value)c++;
-  if(document.getElementById('a7a')?.value)c++;
-  if(document.getElementById('a7b')?.value)c++;
-  if(document.getElementById('a8a')?.value)c++;
-  if(document.getElementById('a8b')?.value)c++;
-  if(ans.q9)c++;
-  if(ans.q10)c++;
-  if(ans.q11)c++;
-  if(ans.tf12)c++;
-  tot=16;
-  const p=Math.round(c/tot*100);
+  let c=0;
+  const ids=['a1v','a1u','a2v','a2u','a6','a7a','a7b','a8a','a8b'];
+  ids.forEach(id=>{if(document.getElementById(id)?.value)c++;});
+  c+=Object.keys(uAns).length;
+  ['q3','q9','q10','q11'].forEach(k=>{if(ans[k])c++;});
+  ['tf4','tf12'].forEach(k=>{if(ans[k])c++;});
+  const tot=20;const p=Math.round(c/tot*100);
   document.getElementById('PF').style.width=p+'%';
   document.getElementById('PT').textContent=c+' / '+tot+' fields answered';
 }
 
-// ── SCORE CALCULATION ────────────────────────────────────────
+// ── SCORE ────────────────────────────────────────────────
 function calcScore(){
-  // Rubric: Q1=3,Q2=3,Q3=2,Q4=2,Q5=5,Q6=4,Q7=4,Q8=4,Q9=2,Q10=2,Q11=2,Q12=2 → total 35
-  let sc=0,tot=35;
-  const tol=(ans,corr,pct=0.03)=>Math.abs(parseFloat(ans)-corr)<=Math.max(corr*pct,0.05);
-
-  // Q1 Amplitude
-  const a1v=document.getElementById('a1v')?.value;
-  const a1u=document.getElementById('a1u')?.value;
-  if(tol(a1v,window._dA)&&a1u==='m')sc+=3;
-  else if(tol(a1v,window._dA))sc+=2;
-
-  // Q2 Wavelength
-  const a2v=document.getElementById('a2v')?.value;
-  const a2u=document.getElementById('a2u')?.value;
-  if(tol(a2v,window._dL)&&a2u==='m')sc+=3;
-  else if(tol(a2v,window._dL))sc+=2;
-
-  // Q3 wave type
+  let sc=0;const tot=35;
+  const tol=(v,c,pct=0.03)=>!isNaN(parseFloat(v))&&Math.abs(parseFloat(v)-c)<=Math.max(c*pct,0.05);
+  // Q1 A (3pts)
+  const a1v=document.getElementById('a1v')?.value,a1u=document.getElementById('a1u')?.value;
+  if(tol(a1v,window._dA)&&a1u==='m')sc+=3;else if(tol(a1v,window._dA))sc+=2;
+  // Q2 L (3pts)
+  const a2v=document.getElementById('a2v')?.value,a2u=document.getElementById('a2u')?.value;
+  if(tol(a2v,window._dL)&&a2u==='m')sc+=3;else if(tol(a2v,window._dL))sc+=2;
+  // Q3 (2pts)
   if(ans.q3===VD.wt)sc+=2;
-
-  // Q4 TF
+  // Q4 (2pts)
   if(ans.tf4===VD.q4a)sc+=2;
-
-  // Q5 units (1 each)
+  // Q5 units (5pts)
   UQ.forEach(q=>{if(uAns[q.q]===q.c)sc+=1;});
-
-  // Q6 λ=v/f
+  // Q6 (4pts)
   if(tol(document.getElementById('a6')?.value,window._a6))sc+=4;
-
-  // Q7 two steps
+  // Q7 (4pts: 2+2)
   if(tol(document.getElementById('a7a')?.value,window._a7a))sc+=2;
   if(tol(document.getElementById('a7b')?.value,window._a7b))sc+=2;
-
-  // Q8 two steps
+  // Q8 (4pts: 2+2)
   if(tol(document.getElementById('a8a')?.value,window._a8a,0.02))sc+=2;
   if(tol(document.getElementById('a8b')?.value,window._a8b,0.03))sc+=2;
-
-  // Q9 wavelength graph — correct key is X_longer or X
-  if(ans.q9==='X_longer'||ans.q9==='X')sc+=2;
-
-  // Q10 frequency graph — correct is B (Wave Y)
-  if(ans.q10==='Y')sc+=2;
-
-  // Q11 conceptual
+  // Q9 (2pts)
+  if(ans.q9==='X_correct')sc+=2;
+  // Q10 (2pts)
+  if(ans.q10==='Y_correct')sc+=2;
+  // Q11 (2pts)
   if(ans.q11===VD.q11a)sc+=2;
-
-  // Q12 TF
+  // Q12 (2pts)
   if(ans.tf12===VD.q12a)sc+=2;
-
-  return {sc,tot,pct:Math.round(sc/tot*100)};
+  return{sc,tot,pct:Math.round(sc/tot*100)};
 }
 
-// ── SUBMIT ──────────────────────────────────────────────────
-async function submit(auto){
-  if(done)return;done=true;
-  clearInterval(tInt);
-
-  const {sc,tot,pct}=calcScore();
-
-  // Collect all student answers
+// ── SUBMIT ───────────────────────────────────────────────
+async function submitExam(auto){
+  if(done)return;done=true;clearInterval(tInt);
+  const{sc,tot,pct}=calcScore();
+  const g=pct>=90?'Excellent 🌟':pct>=75?'Very Good':pct>=60?'Good':pct>=50?'Pass':'Needs Revision';
   const a1v=document.getElementById('a1v')?.value||'—';
   const a1u=document.getElementById('a1u')?.value||'—';
   const a2v=document.getElementById('a2v')?.value||'—';
@@ -820,26 +674,37 @@ async function submit(auto){
   const a7b=document.getElementById('a7b')?.value||'—';
   const a8a=document.getElementById('a8a')?.value||'—';
   const a8b=document.getElementById('a8b')?.value||'—';
+  const unitStr=UQ.map(q=>q.q.split(' ')[0]+':'+( uAns[q.q]||'—')).join(' | ');
 
-  const unitStr=UQ.map(q=>`${q.q.split(' ')[0]}:${uAns[q.q]||'—'}`).join(' | ');
-  const corrAns=[
-    'Q1='+window._dA+'m','Q2='+window._dL+'m',
-    'Q3='+VD.wt,'Q4='+VD.q4a,'Q5=f:Hz|λ:m|v:m/s|T:s|A:m',
-    'Q6='+window._a6+'m','Q7=f:'+window._a7a+'Hz,v:'+window._a7b+'ms',
-    'Q8=f:'+window._a8a+'Hz,T:'+window._a8b+'s',
-    'Q9=X_longer','Q10=Y','Q11='+VD.q11a,'Q12='+VD.q12a
-  ].join(' | ');
+  // Full answer detail string — every answer with correct value for Ahmad
+  const detail=[
+    `Q1 Amplitude: student=${a1v} ${a1u} | correct=${window._dA} m`,
+    `Q2 Wavelength: student=${a2v} ${a2u} | correct=${window._dL} m`,
+    `Q3 Wave type: student=${ans.q3||'—'} | correct=${VD.wt}`,
+    `Q4 T/F: student=${ans.tf4||'—'} | correct=${VD.q4a}`,
+    `Q5 Units: ${unitStr} | correct=f:Hz|λ:m|v:m/s|T:s|A:m`,
+    `Q6 λ=v/f: student=${a6} | correct=${window._a6}`,
+    `Q7 Step1 f=1/T: student=${a7a} | correct=${window._a7a}`,
+    `Q7 Step2 v=fλ: student=${a7b} | correct=${window._a7b}`,
+    `Q8 Step1 f=v/λ: student=${a8a} | correct=${window._a8a}`,
+    `Q8 Step2 T=1/f: student=${a8b} | correct=${window._a8b}`,
+    `Q9 Wavelength graph: student=${ans.q9||'—'} | correct=X_correct`,
+    `Q10 Frequency graph: student=${ans.q10||'—'} | correct=Y_correct`,
+    `Q11 Conceptual: student=${ans.q11||'—'} | correct=${VD.q11a}`,
+    `Q12 T/F: student=${ans.tf12||'—'} | correct=${VD.q12a}`,
+  ].join(' || ');
 
   const payload={
     sheet:'WaveExam_G8',
-    name:studentName,class:studentClass,
+    name:studentName,
+    class:studentSection,
     version:String.fromCharCode(65+ver),
     q1_amp:a1v+' '+a1u,
     q2_lam:a2v+' '+a2u,
     q3_wavetype:ans.q3||'—',
     q4_tf:ans.tf4||'—',
     q5_units:unitStr,
-    q6_match:'—', // not used in this version
+    q6_match:'—',
     q7_calc:a6,
     q8_calc:'f='+a7a+' v='+a7b,
     q9_calc:'f='+a8a+' T='+a8b,
@@ -847,36 +712,25 @@ async function submit(auto){
     q11_graph:ans.q10||'—',
     q12_concept:ans.q11||'—',
     score:pct+'% ('+sc+'/'+tot+')',
-    correct_answers:corrAns,
-    note:auto?'AUTO-SUBMITTED (time expired)':'Student submitted',
-    time_used:Math.floor((EXAM_S-tSecs)/60)+'m '+(((EXAM_S-tSecs)%60))+'s'
+    correct_answers:detail,
+    note:auto?'AUTO-SUBMITTED':'Student submitted',
+    time_used:Math.floor((EXAM_S-tSecs)/60)+'m '+((EXAM_S-tSecs)%60)+'s'
   };
 
-  // Show results immediately
   document.getElementById('TB').style.display='none';
   document.getElementById('EP').style.display='none';
   document.getElementById('RS').style.display='block';
-  document.getElementById('rName').textContent=studentName+' · '+studentClass+' · Version '+String.fromCharCode(65+ver);
+  document.getElementById('rName').textContent=studentName+' · '+studentSection+' · Version '+String.fromCharCode(65+ver);
   document.getElementById('rScore').textContent=pct+'%';
-  const g=pct>=90?'Excellent 🌟':pct>=75?'Very Good':pct>=60?'Good':pct>=50?'Pass':'Needs Revision';
-  document.getElementById('rGrade').textContent=g;
+  document.getElementById('rGrade').textContent=g+' ('+sc+'/'+tot+')';
   if(auto)document.getElementById('rAuto').style.display='block';
   window.scrollTo(0,0);
 
-  try{await fetch(APPS,{method:'POST',mode:'no-cors',
-    headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
+  try{await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
 }
 
-window.addEventListener('beforeunload',e=>{
-  if(!done&&document.getElementById('EP').style.display!=='none'){
-    e.preventDefault();e.returnValue='';
-  }
-});
-
-function toast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
+window.addEventListener('beforeunload',e=>{if(!done&&document.getElementById('EP').style.display!=='none'){e.preventDefault();e.returnValue='';}});
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 </script>
 </body>
 </html>
