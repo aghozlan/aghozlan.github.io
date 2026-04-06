@@ -184,7 +184,12 @@ select:focus{border-color:var(--teal);}
     <!-- BEGIN BUTTON -->
     <button class="bb" id="beginBtn" onclick="beginExam()" disabled>▶ BEGIN EXAM</button>
 
-    <details class="rules">
+    <div id="vfBadge" style="display:none;background:rgba(255,140,0,.12);border:2px solid rgba(255,140,0,.35);
+  border-radius:10px;padding:10px 16px;margin-bottom:12px;font-size:.82rem;
+  color:#ff8c00;font-weight:700;text-align:center;">
+  ⚠ Absentee Exam — Version F &nbsp;|&nbsp; Share only with students who missed the original exam.
+</div>
+<details class="rules">
       <summary>ℹ Exam Rules (tap to read)</summary>
       <ul>
         <li>You have exactly <strong style="color:var(--teal);">25 minutes</strong> — auto-submits at zero.</li>
@@ -447,9 +452,15 @@ function selectName(name){
   const sel=document.getElementById('selectedName');
   sel.textContent='✓ '+name;sel.style.display='block';
   document.getElementById('beginBtn').disabled=false;
-  // Hash from name for version
-  let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
-  ver=h%5;VD=V[ver];
+  // Hash from name for version (A-E only; F reserved for absentees via ?v=F URL)
+  const urlForced=(new URLSearchParams(window.location.search)).get('v');
+  if(urlForced&&urlForced.toUpperCase()==='F'){
+    ver=5;
+  } else {
+    let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
+    ver=h%5;
+  }
+  VD=V[ver];
 }
 
 // Hide list when clicking outside
@@ -731,6 +742,14 @@ async function submitExam(auto){
 
 window.addEventListener('beforeunload',e=>{if(!done&&document.getElementById('EP').style.display!=='none'){e.preventDefault();e.returnValue='';}});
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// On load: show Version F warning if ?v=F in URL
+window.addEventListener('load',()=>{
+  const p=new URLSearchParams(window.location.search);
+  if(p.get('v')?.toUpperCase()==='F'){
+    document.getElementById('vfBadge').style.display='block';
+  }
+});
 </script>
 </body>
 </html>
