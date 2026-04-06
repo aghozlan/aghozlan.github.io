@@ -754,7 +754,7 @@ footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2
       <div class="mcq-opt" onclick="selMCQ('q5','C',this)"><span class="ml">C</span>A connecting wire</div>
       <div class="mcq-opt" onclick="selMCQ('q5','D',this)"><span class="ml">D</span>One cell (dry cell / battery)</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('q5','D','✓ Correct! A single cell is drawn as one long line (positive terminal +) and one short line (negative terminal −). Multiple cells stacked together form a battery symbol.','✗ Two parallel lines — one long (+) and one short (−) — is the symbol for a single dry cell (battery). The longer line is the positive terminal.')">✓ Check</button>
+    <button class="check-btn" onclick="chkMCQ('q5','D','✓ Correct! A single cell is drawn as one long line (positive terminal +) and one short line (negative terminal -). Multiple cells stacked together form a battery symbol.','✗ Two parallel lines — one long (+) and one short (-) — is the symbol for a single dry cell (battery). The longer line is the positive terminal.')">✓ Check</button>
     <div class="fb" id="fbq5"></div>
   </div>
 
@@ -849,9 +849,9 @@ const COMPS=[
    color:'rgba(251,191,36,.25)',bColor:'rgba(251,191,36,.5)',
    detail:`<strong style="color:var(--yellow);">Role:</strong> A generator converts chemical energy into electrical energy and pushes current around the circuit.<br><br>
    <strong style="color:#fff;">Real examples:</strong> AA batteries, phone batteries, car batteries<br><br>
-   <strong style="color:var(--yellow);">Key fact:</strong> The longer line in its symbol = positive (+) terminal. The shorter line = negative (−) terminal. Current flows from + to −.`,
+   <strong style="color:var(--yellow);">Key fact:</strong> The longer line in its symbol = positive (+) terminal. The shorter line = negative (-) terminal. Current flows from + to -.`,
    drawSym:(ctx,cx,cy)=>{
-     // Standard cell symbol: lead—longLine(+)—gap—shortLine(−)—lead
+     // Standard cell symbol: lead—longLine(+)—gap—shortLine(-)—lead
      ctx.strokeStyle='#fbbf24';
      // Left lead wire
      ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-28,cy);ctx.lineTo(cx-8,cy);ctx.stroke();
@@ -863,7 +863,7 @@ const COMPS=[
      ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx+8,cy);ctx.lineTo(cx+28,cy);ctx.stroke();
      // Labels
      ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
-     ctx.fillText('+',cx-8,cy-19);ctx.fillText('−',cx+8,cy-13);
+     ctx.fillText('+',cx-8,cy-19);ctx.fillText('-',cx+8,cy-13);
    }},
   {id:'lamp',icon:'💡',name:'Lamp (Light Bulb)',role:'Receiver — Converts electricity to light',
    color:'rgba(96,165,250,.2)',bColor:'rgba(96,165,250,.45)',
@@ -950,7 +950,7 @@ function showComp(id){
 
 // ── SYMBOL GRID ─────────────────────────────────────────
 const SYMBOLS=[
-  {name:'Dry Cell',desc:'Long thick line = + (positive)  ·  Short thin line = − (negative)',
+  {name:'Dry Cell',desc:'Long thick line = + (positive)  ·  Short thin line = - (negative)',
    draw:(ctx,cx,cy)=>{
      ctx.strokeStyle='#fbbf24';
      ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-26,cy);ctx.lineTo(cx-7,cy);ctx.stroke();
@@ -958,7 +958,7 @@ const SYMBOLS=[
      ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(cx+7,cy-9);ctx.lineTo(cx+7,cy+9);ctx.stroke();
      ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx+7,cy);ctx.lineTo(cx+26,cy);ctx.stroke();
      ctx.fillStyle='#fbbf24';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
-     ctx.fillText('+',cx-7,cy-20);ctx.fillText('−',cx+7,cy-13);
+     ctx.fillText('+',cx-7,cy-20);ctx.fillText('-',cx+7,cy-13);
    }},
   {name:'Lamp',desc:'Circle with X inside — X = filament',
    draw:(ctx,cx,cy)=>{ctx.strokeStyle='#60a5fa';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-12,cy-12);ctx.lineTo(cx+12,cy+12);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+12,cy-12);ctx.lineTo(cx-12,cy+12);ctx.stroke();}},
@@ -1078,11 +1078,21 @@ function drawSwitchCircuit(ctx,closed){
   // Draw circuit rectangle
   ctx.beginPath();ctx.moveTo(30,30);ctx.lineTo(190,30);ctx.lineTo(190,130);ctx.lineTo(30,130);ctx.lineTo(30,30);ctx.stroke();
   ctx.shadowBlur=0;
-  // Cell on left
-  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.moveTo(30,60);ctx.lineTo(30,80);ctx.stroke();
-  ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(30,70);ctx.lineTo(30,90);ctx.stroke();
-  ctx.fillStyle='#fbbf24';ctx.font='8px DM Mono';ctx.textAlign='left';ctx.fillText('+',10,62);ctx.fillText('−',10,86);
+  // Cell on left vertical wire — rotated 90°: horizontal lines on vertical wire
+  // long horizontal line = + (top), short horizontal line = - (below), leads connect vertically
+  const cy_cell=80;  // centre of cell on left wire x=30
+  ctx.strokeStyle='#fbbf24';
+  ctx.lineWidth=2;   // top lead (wire above cell)
+  ctx.beginPath();ctx.moveTo(30,30);ctx.lineTo(30,cy_cell-11);ctx.stroke();
+  ctx.lineWidth=3.5; // long horizontal line = + terminal
+  ctx.beginPath();ctx.moveTo(30-14,cy_cell-11);ctx.lineTo(30+14,cy_cell-11);ctx.stroke();
+  ctx.lineWidth=1.8; // short horizontal line = - terminal
+  ctx.beginPath();ctx.moveTo(30-8,cy_cell+5);ctx.lineTo(30+8,cy_cell+5);ctx.stroke();
+  ctx.lineWidth=2;   // bottom lead (wire below cell)
+  ctx.beginPath();ctx.moveTo(30,cy_cell+5);ctx.lineTo(30,130);ctx.stroke();
+  ctx.fillStyle='#fbbf24';ctx.font='bold 8px DM Mono';ctx.textAlign='right';
+  ctx.fillText('+',30-17,cy_cell-7);   // left of long line
+  ctx.fillText('-',30-11,cy_cell+10); // left of short line
   // Lamp on top right
   const lx=155,ly=30;
   ctx.strokeStyle=closed?'#fbbf24':'#3a5080';ctx.lineWidth=2;
@@ -1297,29 +1307,41 @@ function drawCB(){
 }
 
 function drawCBComp(ctx,type,col){
+  // All coordinates relative to (0,0) — caller does ctx.translate(p.x,p.y)
   ctx.strokeStyle=col;ctx.lineWidth=2.5;
   if(type==='cell'){
-    // Standard: lead—longLine(+)—gap—shortLine(−)—lead
-    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(-8,0);ctx.stroke();
-    ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(-8,-16);ctx.lineTo(-8,16);ctx.stroke();
-    ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(8,-10);ctx.lineTo(8,10);ctx.stroke();
-    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(26,0);ctx.stroke();
-    ctx.fillStyle=col;ctx.font='9px DM Mono';ctx.textAlign='center';
-    ctx.fillText('+',cx-8,cy-22);ctx.fillText('-',cx+8,cy-14);
+    // Horizontal cell: lead→longLine(+)→gap→shortLine(-)→lead
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(-9,0);ctx.stroke();   // left lead
+    ctx.lineWidth=3.5;
+    ctx.beginPath();ctx.moveTo(-9,-16);ctx.lineTo(-9,16);ctx.stroke(); // long line = +
+    ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.moveTo(9,-10);ctx.lineTo(9,10);ctx.stroke();   // short line = -
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(26,0);ctx.stroke();     // right lead
+    ctx.fillStyle=col;ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+    ctx.fillText('+',-9,-20);    // above long line
+    ctx.fillText('-',9,-14);     // above short line
   } else if(type==='lamp'){
     ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(-12,-12);ctx.lineTo(12,12);ctx.moveTo(12,-12);ctx.lineTo(-12,12);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-12,-12);ctx.lineTo(12,12);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(12,-12);ctx.lineTo(-12,12);ctx.stroke();
   } else if(type==='motor'){
     ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle=col;ctx.font='bold 14px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('M',0,1);
+    ctx.fillStyle=col;ctx.font='bold 14px Syne';ctx.textAlign='center';
+    ctx.textBaseline='middle';ctx.fillText('M',0,1);ctx.textBaseline='alphabetic';
   } else if(type==='switch'){
     ctx.beginPath();ctx.moveTo(-22,0);ctx.lineTo(-6,0);ctx.stroke();
-    ctx.fillStyle=col;ctx.beginPath();ctx.arc(-6,0,3,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(8,-12);ctx.stroke();
+    ctx.fillStyle=col;
+    ctx.beginPath();ctx.arc(-6,0,3,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=col;
+    ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(8,-13);ctx.stroke();   // open lever
     ctx.beginPath();ctx.arc(16,0,3,0,Math.PI*2);ctx.fill();
     ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(22,0);ctx.stroke();
   }
-  ctx.fillStyle=col;ctx.font='9px Outfit';ctx.textAlign='center';ctx.fillText(CB_COMPS_INFO[type].label,0,28);
+  ctx.fillStyle=col;ctx.font='9px Outfit';ctx.textAlign='center';
+  ctx.textBaseline='alphabetic';
+  ctx.fillText(CB_COMPS_INFO[type].label,0,34);
   ctx.shadowBlur=0;
 }
 
@@ -1501,7 +1523,7 @@ function animConductor(){
   ctx.beginPath();ctx.moveTo(cellX-8,wireY-18);ctx.lineTo(cellX-8,wireY+18);ctx.stroke();
   ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(cellX+8,wireY-11);ctx.lineTo(cellX+8,wireY+11);ctx.stroke();
   ctx.fillStyle='#fbbf24';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
-  ctx.fillText('+',cellX-8,wireY-22);ctx.fillText('−',cellX+8,wireY-15);
+  ctx.fillText('+',cellX-8,wireY-22);ctx.fillText('-',cellX+8,wireY-15);
   ctx.fillText('Cell',cellX,wireY+52);
 
   // MATERIAL GAP
@@ -1565,17 +1587,18 @@ function animConductor(){
         ctx.fillStyle='#60a5fa';ctx.shadowBlur=6;ctx.shadowColor='#60a5fa';
         ctx.beginPath();ctx.arc(ex2,wireY,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
       }
-      // Return wire bottom
-      const t3=(condT*0.4+i/8+0.7)%1;
-      const ex3=lampX-(t3*(lampX-cellX));
-      ctx.fillStyle='#3b82f6';ctx.beginPath();ctx.arc(ex3,wireY+40,3.5,0,Math.PI*2);ctx.fill();
+      // Return wire bottom — conventional current flows from lamp (right) back to cell (left)
+      const t3=(condT*0.4+i/8+0.55)%1;
+      const ex3=lampX-t3*(lampX-cellX);  // right to left = lampX towards cellX ✓
+      ctx.fillStyle='#3b82f6';ctx.shadowBlur=4;ctx.shadowColor='#3b82f6';
+      ctx.beginPath();ctx.arc(ex3,wireY+40,3.5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
     }
-    // Arrows showing direction
-    ctx.fillStyle='rgba(96,165,250,.4)';ctx.font='14px DM Mono';ctx.textAlign='center';
-    ctx.fillText('→',matX1-40,wireY-10);
-    ctx.fillText('←',lampX-40,wireY+32);
-    ctx.fillStyle='rgba(96,165,250,.5)';ctx.font='9px DM Mono';
-    ctx.fillText('conventional current (+→−)',W/2,wireY-32);
+    // Arrows — conventional current direction: + terminal → through circuit → - terminal
+    ctx.fillStyle='rgba(96,165,250,.5)';ctx.font='13px DM Mono';ctx.textAlign='center';
+    ctx.fillText('→',matX1-50,wireY-8);        // top wire: left to right (away from +)
+    ctx.fillText('←',lampX-55,wireY+55);       // bottom wire: right to left (back to -)
+    ctx.fillStyle='rgba(96,165,250,.45)';ctx.font='9px DM Mono';
+    ctx.fillText('Conventional current: exits + terminal → through circuit → enters - terminal',W/2,wireY-34);
   }
 
   condAnim=requestAnimationFrame(animConductor);
@@ -1685,7 +1708,7 @@ function toggleElectronSwitch(){
   const btn=document.getElementById('switchToggle');
   const st=document.getElementById('electronStatus');
   btn.textContent=eSwitch?'🔒 Switch Closed — Tap to Open':'🔓 Switch Open — Tap to Close';
-  st.textContent=eSwitch?'Current flows! Electrons move from − to + inside cell, and + to − in the external circuit.':'Switch open — no electrons flow. Circuit is broken.';
+  st.textContent=eSwitch?'Current flows! Electrons move from - to + inside cell, and + to - in the external circuit.':'Switch open — no electrons flow. Circuit is broken.';
   st.style.color=eSwitch?'var(--green)':'var(--muted2)';
   if(!eAnim)animElectron();
 }
@@ -1715,7 +1738,7 @@ function animElectron(){
   ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(L,cyC-20);ctx.lineTo(L,cyC+20);ctx.stroke();
   ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(L+16,cyC-12);ctx.lineTo(L+16,cyC+12);ctx.stroke();
   ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='left';
-  ctx.fillText('+',L+2,cyC-24);ctx.fillText('−',L+18,cyC-16);
+  ctx.fillText('+',L+2,cyC-24);ctx.fillText('-',L+18,cyC-16);
   ctx.fillText('Cell',L+2,cyC+32);
 
   // Switch (bottom wire, middle)
@@ -1775,7 +1798,7 @@ function animElectron(){
     ctx.fillText('←',(L+R)/2,B+16);
     ctx.fillText('↑',L-20,(T+B)/2);
     ctx.fillStyle='rgba(96,165,250,.35)';ctx.font='9px DM Mono';
-    ctx.fillText('Conventional current: + → −',  (L+R)/2,T-24);
+    ctx.fillText('Conventional current: + → -',  (L+R)/2,T-24);
   }
 
   eAnim=requestAnimationFrame(animElectron);
