@@ -875,18 +875,18 @@ Your job:
   const messages=history.map(h=>({role:h.role,content:h.content}));
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    // Route through Apps Script proxy (handles API key securely)
+    const resp=await fetch(APPS_SCRIPT_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
+        action:'claude',
         system:systemPrompt,
         messages:messages
       })
     });
     const data=await resp.json();
-    const aiText=data.content?.find(b=>b.type==='text')?.text||'Could not get a response. Please try again.';
+    const aiText=data.text||data.error||'Could not get a response. Please try again.';
     chatHistories[key].push({role:'assistant',content:aiText});
     chatEl.removeChild(typing);
     appendMsg(chatEl,'ai',aiText);
