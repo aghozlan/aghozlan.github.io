@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر البيان — التشبيه والاستعارة | عبير | الصف التاسع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf8f0;--bg2:#f7f0e4;--bg3:#ede4d4;
+  --panel:#fffcf5;--panel2:#f5ede0;
+  --border:rgba(120,80,20,.12);--border2:rgba(120,80,20,.25);
+  --text:#1e1208;--muted:#8a7050;--muted2:#5a4025;
+  --gold:#b5850a;--gold2:#8a6000;
+  --rose:#8b2020;--rose2:#6a1515;
+  --teal:#0e6655;--teal2:#0b5045;
+  --blue:#1a4a7a;--blue2:#12356a;
+  --green:#1a6a2a;--green2:#125020;
+  --red:#c0392b;
+  --fh:'Cairo',sans-serif;--fn:'Noto Naskh Arabic',serif;--fa:'Amiri',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);overflow-x:hidden;line-height:1.7;direction:rtl;}
+
+/* MANUSCRIPT PATTERN */
+body::before{content:'';position:fixed;inset:0;opacity:.025;pointer-events:none;z-index:0;
+background-image:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b5850a' fill-opacity='1'%3E%3Cpath d='M40 0 L45 35 L80 40 L45 45 L40 80 L35 45 L0 40 L35 35 Z'/%3E%3C/g%3E%3C/svg%3E");}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh;}
+aside{width:256px;background:var(--panel);border-left:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0;z-index:100;box-shadow:-2px 0 12px rgba(120,80,20,.06);}
+main{flex:1;min-width:0;}
+@media(max-width:860px){aside{display:none;}section{padding:40px 18px!important;}}
+
+/* SIDEBAR */
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#2d1a08,#1e1208);}
+.sb-logo h1{font-size:1.4rem;font-weight:900;color:var(--gold);letter-spacing:1px;}
+.sb-logo p{font-size:.62rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
+.sb-nav{flex:1;padding:10px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:10px 18px;font-size:.84rem;font-weight:600;color:var(--muted);border-right:3px solid transparent;transition:all .2s;cursor:pointer;background:none;border-left:none;border-top:none;border-bottom:none;width:100%;font-family:var(--fh);text-align:right;}
+.sn:hover,.sn.active{color:var(--gold2);background:rgba(181,133,10,.06);border-right-color:var(--gold);}
+.sn .badge{font-size:.58rem;background:var(--panel2);padding:2px 6px;border-radius:3px;color:var(--gold);margin-left:auto;margin-right:0;}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border);background:var(--bg2);}
+.sb-foot .name{font-weight:700;font-size:.9rem;}
+.sb-foot .role{font-size:.6rem;color:var(--rose);text-transform:uppercase;letter-spacing:2px;}
+
+/* SECTIONS */
+section{padding:64px 52px;border-bottom:1px solid var(--border);position:relative;z-index:1;}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:700;letter-spacing:1px;padding:4px 14px;border-radius:20px;margin-bottom:18px;}
+.e-tag.engage{background:rgba(181,133,10,.1);color:var(--gold2);border:1px solid rgba(181,133,10,.3);}
+.e-tag.explore{background:rgba(14,102,85,.1);color:var(--teal);border:1px solid rgba(14,102,85,.3);}
+.e-tag.explain{background:rgba(26,74,122,.1);color:var(--blue);border:1px solid rgba(26,74,122,.3);}
+.e-tag.elaborate{background:rgba(139,32,32,.1);color:var(--rose);border:1px solid rgba(139,32,32,.3);}
+.e-tag.evaluate{background:rgba(26,106,42,.1);color:var(--green);border:1px solid rgba(26,106,42,.3);}
+.sec-title{font-size:1.9rem;font-weight:900;color:var(--text);margin-bottom:8px;line-height:1.2;}
+.sec-desc{color:var(--muted);font-size:.92rem;max-width:640px;line-height:1.8;margin-bottom:28px;direction:rtl;}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:0 2px 12px rgba(120,80,20,.05);}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:700px){.g2{grid-template-columns:1fr;}}
+
+/* LITERARY TEXT */
+.lit-text{font-family:var(--fa);font-size:1.5rem;direction:rtl;text-align:center;line-height:2;color:var(--text);padding:20px;background:var(--bg2);border-radius:12px;border:1px solid var(--border2);border-right:4px solid var(--gold);margin-bottom:14px;}
+.lit-source{font-size:.72rem;color:var(--muted);text-align:left;margin-top:6px;font-family:var(--fh);}
+
+/* RUKN CARDS */
+.rukn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.rukn{border-radius:10px;padding:16px;border:2px solid;text-align:center;transition:transform .2s;}
+.rukn:hover{transform:translateY(-3px);}
+.rukn.mushabbah{background:rgba(26,74,122,.06);border-color:rgba(26,74,122,.3);}
+.rukn.mushabbah-beh{background:rgba(14,102,85,.06);border-color:rgba(14,102,85,.3);}
+.rukn.adah{background:rgba(181,133,10,.06);border-color:rgba(181,133,10,.3);}
+.rukn.wajh{background:rgba(139,32,32,.06);border-color:rgba(139,32,32,.3);}
+.rukn-label{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px;}
+.rukn.mushabbah .rukn-label{color:var(--blue);}
+.rukn.mushabbah-beh .rukn-label{color:var(--teal);}
+.rukn.adah .rukn-label{color:var(--gold2);}
+.rukn.wajh .rukn-label{color:var(--rose);}
+.rukn-word{font-family:var(--fa);font-size:1.4rem;font-weight:700;direction:rtl;}
+.rukn.mushabbah .rukn-word{color:var(--blue);}
+.rukn.mushabbah-beh .rukn-word{color:var(--teal);}
+.rukn.adah .rukn-word{color:var(--gold2);}
+.rukn.wajh .rukn-word{color:var(--rose);}
+
+/* TASHBEEH TYPE CARDS */
+.type-card{border-radius:14px;padding:20px;border:2px solid;transition:all .2s;cursor:pointer;}
+.type-card:hover{transform:translateY(-3px);}
+.type-card.tam{background:rgba(26,74,122,.05);border-color:rgba(26,74,122,.3);}
+.type-card.mujmal{background:rgba(181,133,10,.05);border-color:rgba(181,133,10,.3);}
+.type-card.balegh{background:rgba(139,32,32,.05);border-color:rgba(139,32,32,.3);}
+.type-card.tasrihiya{background:rgba(14,102,85,.05);border-color:rgba(14,102,85,.3);}
+.type-card.makniya{background:rgba(26,106,42,.05);border-color:rgba(26,106,42,.3);}
+.type-name{font-size:.9rem;font-weight:900;margin-bottom:8px;}
+.type-card.tam .type-name{color:var(--blue);}
+.type-card.mujmal .type-name{color:var(--gold2);}
+.type-card.balegh .type-name{color:var(--rose);}
+.type-card.tasrihiya .type-name{color:var(--teal);}
+.type-card.makniya .type-name{color:var(--green);}
+.type-def{font-size:.8rem;color:var(--muted2);line-height:1.7;margin-bottom:12px;direction:rtl;}
+.type-example{font-family:var(--fa);font-size:1.2rem;direction:rtl;padding:10px 14px;border-radius:8px;margin-bottom:10px;line-height:1.8;}
+.type-card.tam .type-example{background:rgba(26,74,122,.08);color:var(--blue2);}
+.type-card.mujmal .type-example{background:rgba(181,133,10,.08);color:var(--gold2);}
+.type-card.balegh .type-example{background:rgba(139,32,32,.08);color:var(--rose2);}
+.type-card.tasrihiya .type-example{background:rgba(14,102,85,.08);color:var(--teal2);}
+.type-card.makniya .type-example{background:rgba(26,106,42,.08);color:var(--green2);}
+.missing-badge{display:inline-block;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:10px;text-decoration:line-through;opacity:.5;margin:2px;}
+
+/* COMPARISON TABLE */
+.comp-table{width:100%;border-collapse:collapse;font-family:var(--fn);direction:rtl;}
+.comp-table th{padding:10px 14px;font-size:.82rem;font-weight:700;text-align:right;}
+.comp-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:.88rem;line-height:1.7;text-align:right;}
+.comp-table tr:hover td{background:var(--bg2);}
+
+/* EXPLORE SENTENCES */
+.explore-sent{background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px;transition:all .2s;}
+.explore-sent .arabic{font-family:var(--fa);font-size:1.3rem;direction:rtl;margin-bottom:12px;line-height:1.8;}
+.exp-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.exp-btn{padding:7px 18px;border-radius:6px;font-family:var(--fh);font-weight:700;font-size:.8rem;cursor:pointer;border:2px solid;transition:all .2s;}
+
+/* INPUTS */
+input[type=text],textarea{background:var(--panel2);border:2px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--fn);font-size:1rem;outline:none;transition:border-color .2s;width:100%;direction:rtl;text-align:right;}
+input[type=text]:focus,textarea:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:100px;}
+
+/* BUTTONS */
+.btn{padding:11px 24px;border-radius:8px;font-family:var(--fh);font-weight:700;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-gold:hover{background:var(--gold2);}
+.btn-rose{background:var(--rose);color:#fff;}
+.btn-rose:hover{background:var(--rose2);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green2);}
+.btn-ghost{background:transparent;border:2px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold2);}
+
+/* QUIZ */
+.q-block{margin-bottom:22px;padding:22px;background:var(--panel);border:2px solid var(--border);border-radius:14px;position:relative;}
+.q-block::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--gold);border-radius:0 14px 14px 0;}
+.q-num{font-size:.65rem;color:var(--gold2);font-weight:700;letter-spacing:1px;margin-bottom:8px;font-family:var(--fh);}
+.q-text{font-family:var(--fn);font-size:1rem;color:var(--text);margin-bottom:14px;line-height:1.8;direction:rtl;}
+.q-text strong{color:var(--rose);}
+.q-lit{font-family:var(--fa);font-size:1.2rem;direction:rtl;padding:12px 16px;background:var(--bg2);border-radius:8px;border-right:3px solid var(--gold);margin-bottom:14px;line-height:1.8;}
+.mcq-options{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--panel2);border:2px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;font-family:var(--fn);font-size:.95rem;direction:rtl;text-align:right;}
+.mcq-opt:hover{border-color:var(--gold);}
+.mcq-opt.selected{border-color:var(--gold);background:rgba(181,133,10,.08);}
+.mcq-opt.correct{border-color:var(--green);background:rgba(26,106,42,.08);color:var(--green2);}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(192,57,43,.08);color:var(--red);}
+.mcq-letter{font-size:.75rem;font-weight:700;color:var(--gold);background:var(--bg2);padding:2px 8px;border-radius:5px;flex-shrink:0;margin-right:0;margin-left:8px;}
+.check-btn{padding:9px 20px;background:var(--bg2);border:2px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--fh);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;}
+.check-btn:hover{border-color:var(--gold);color:var(--gold2);}
+.fb{margin-top:10px;padding:11px 16px;border-radius:9px;font-size:.88rem;display:none;line-height:1.8;direction:rtl;font-family:var(--fn);}
+.fb.ok{background:rgba(26,106,42,.08);border:2px solid rgba(26,106,42,.22);color:var(--green2);}
+.fb.bad{background:rgba(192,57,43,.08);border:2px solid rgba(192,57,43,.22);color:var(--red);}
+.fb.info{background:rgba(181,133,10,.08);border:2px solid rgba(181,133,10,.22);color:var(--gold2);}
+.trap-tag{display:inline-block;font-size:.62rem;font-weight:700;padding:2px 10px;border-radius:10px;background:rgba(192,57,43,.1);color:var(--red);border:1px solid rgba(192,57,43,.2);margin-bottom:8px;}
+
+/* TAP MATCH */
+.match-verb{padding:8px 16px;background:var(--panel);border:2px solid var(--border2);border-radius:8px;cursor:pointer;font-family:var(--fn);font-size:1rem;font-weight:600;color:var(--text);transition:all .2s;direction:rtl;}
+.match-verb:hover{border-color:var(--gold);color:var(--gold2);}
+.match-verb.selected{background:var(--gold);border-color:var(--gold);color:#fff;transform:scale(1.04);}
+.match-verb.placed{opacity:.35;cursor:default;pointer-events:none;}
+.match-cat{padding:8px 18px;background:var(--panel);border:2px solid;border-radius:8px;cursor:pointer;font-family:var(--fh);font-size:.84rem;font-weight:700;transition:all .2s;}
+.result-tag{font-family:var(--fn);font-size:.88rem;font-weight:700;padding:4px 12px;border-radius:6px;background:var(--panel);border:1px solid var(--border2);display:inline-block;margin:3px;}
+.result-tag.correct{background:rgba(26,106,42,.1);border-color:rgba(26,106,42,.3);color:var(--green2);}
+.result-tag.wrong{background:rgba(192,57,43,.1);border-color:rgba(192,57,43,.3);color:var(--red);}
+
+/* AI TUTOR */
+.ai-box{background:var(--panel);border:2px solid var(--border2);border-radius:14px;padding:24px;}
+.ai-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:dots .8s infinite;}
+.ai-dot:nth-child(2){animation-delay:.15s;}
+.ai-dot:nth-child(3){animation-delay:.3s;}
+@keyframes dots{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+.ai-resp{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:.92rem;line-height:1.9;color:var(--text);margin-top:14px;display:none;direction:rtl;font-family:var(--fn);}
+
+/* HERO */
+#hero{position:relative;min-height:85vh;display:flex;align-items:center;background:linear-gradient(135deg,#1e1208 0%,#2d1a08 45%,#1e1208 100%);overflow:hidden;}
+.hero-ornament{position:absolute;font-family:var(--fa);font-size:8rem;color:rgba(181,133,10,.06);line-height:1;user-select:none;}
+.hero-ornament.top-right{top:10px;left:10px;}
+.hero-ornament.bottom-left{bottom:10px;right:10px;}
+.hero-inner{position:relative;z-index:2;max-width:680px;padding-right:52px;}
+.hero-bismillah{font-family:var(--fa);font-size:1.3rem;color:rgba(181,133,10,.7);margin-bottom:18px;direction:rtl;}
+.hero-tag{font-size:.65rem;font-weight:700;letter-spacing:2px;color:var(--gold);border:1px solid rgba(181,133,10,.3);padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:18px;}
+.hero-title{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;color:#fff;line-height:1.05;margin-bottom:16px;direction:rtl;}
+.hero-title span{color:var(--gold);}
+.hero-verse{background:rgba(181,133,10,.08);border:1px solid rgba(181,133,10,.2);border-radius:12px;padding:20px 24px;margin-bottom:26px;direction:rtl;}
+.hero-verse .verse{font-family:var(--fa);font-size:1.2rem;color:rgba(255,255,255,.9);line-height:2;}
+.hero-verse .source{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:6px;text-align:left;}
+.hero-verse .hint{font-size:.82rem;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.6;}
+
+/* PROGRESS */
+.prog-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:14px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--rose));border-radius:3px;transition:width .5s;}
+
+/* SUBMIT */
+.submit-card{background:linear-gradient(135deg,var(--panel),var(--panel2));border:2px solid var(--border2);border-radius:16px;padding:28px;text-align:center;}
+.name-row{display:flex;gap:12px;margin-bottom:14px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:50%;transform:translateX(50%);background:var(--text);border:1px solid var(--gold);color:var(--gold);padding:10px 22px;border-radius:8px;font-size:.82rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+#toast.show{opacity:1;}
+hr{border:none;border-top:1px solid var(--border);margin:18px 0;}
+footer{padding:36px 52px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;border-top:1px solid var(--border);background:var(--panel);}
+.ft-link{font-size:.72rem;color:var(--gold2);text-decoration:none;border:1px solid var(--border2);padding:5px 14px;border-radius:6px;transition:all .2s;cursor:pointer;background:none;font-family:var(--fh);}
+.ft-link:hover{background:rgba(181,133,10,.07);}
+
+/* HIGHLIGHT SPANS */
+.h-m{color:var(--blue);font-weight:700;}
+.h-mb{color:var(--teal);font-weight:700;}
+.h-a{color:var(--gold2);font-weight:700;}
+.h-w{color:var(--rose);font-weight:700;}
+.h-del{text-decoration:line-through;opacity:.4;font-size:.85em;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<input type="text" id="copyInput" style="position:fixed;top:-100px;opacity:0;pointer-events:none;">
+
+<div class="app">
+<aside>
+  <div class="sb-logo"><h1>مختبر البيان</h1><p>الصف التاسع · اللغة العربية</p></div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">✦ الاستثارة <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('explore')">🔍 الاستكشاف <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('tashbeeh')">📖 التشبيه <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('istiarah')">🌙 الاستعارة <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('compare')">⚖ المقارنة <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('elaborate')">✏ التطبيق <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 التقييم <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">عبير</div>
+    <div class="role">معلمة اللغة العربية</div>
+    <button class="btn btn-ghost" style="margin-top:10px;width:100%;font-size:.76rem;" onclick="shareModule()">🔗 مشاركة الدرس</button>
+  </div>
+</aside>
+
+<main>
+
+<!-- ═══ E1: الاستثارة ═══ -->
+<section id="hero">
+  <div class="hero-ornament top-right">﷽</div>
+  <div class="hero-ornament bottom-left">❋</div>
+  <div class="hero-inner">
+    <div class="hero-bismillah">بسم الله الرحمن الرحيم</div>
+    <div class="hero-tag">الصف التاسع · علم البيان · الصور البيانية</div>
+    <h1 class="hero-title">حين تتكلم<br><span>الصورة</span></h1>
+    <div class="hero-verse">
+      <div class="verse">وَالشُّعَرَاءُ يَتَّبِعُهُمُ الْغَاوُونَ</div>
+      <div style="font-family:var(--fa);font-size:1.1rem;color:rgba(255,255,255,.8);line-height:2;margin-top:8px;">أَنَا الَّذِي نَظَرَ الْأَعْمَى إِلَى أَدَبِي — وَأَسْمَعَتْ كَلِمَاتِي مَنْ بِهِ صَمَمُ</div>
+      <div class="source">المتنبي</div>
+      <div class="hint">😮 كيف ينظر الأعمى؟ وكيف يسمع الأصم؟ هل يكذب الشاعر — أم يقول شيئاً أعمق من الحقيقة؟</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="goTo('explore')">ابدأ الرحلة ←</button>
+      <button class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.25);" onclick="goTo('tashbeeh')">اذهب إلى القواعد</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E2: الاستكشاف ═══ -->
+<section id="explore" style="background:var(--bg2);">
+  <div class="e-tag explore">E2 · الاستكشاف</div>
+  <h2 class="sec-title">حقيقي أم مجازي؟</h2>
+  <p class="sec-desc">قبل أي تعريف — اقرأ هذه الجمل وصنِّفها: هل المعنى حرفي حقيقي، أم أن الكاتب يقصد شيئاً أعمق؟</p>
+
+  <div id="exploreContainer"></div>
+  <div class="fb" id="exploreFb" style="margin-top:14px;max-width:640px;"></div>
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+    <button class="btn btn-gold" onclick="checkExplore()">✓ تحقق من إجاباتي</button>
+    <button class="btn btn-ghost" style="font-size:.82rem;" onclick="revealExplore()">أريد رؤية الإجابات</button>
+  </div>
+</section>
+
+<!-- ═══ E3a: التشبيه ═══ -->
+<section id="tashbeeh">
+  <div class="e-tag explain">E3 · التشبيه</div>
+  <h2 class="sec-title">التشبيه وأركانه</h2>
+  <p class="sec-desc">التشبيه هو المقاربة بين شيئين اشتركا في صفة أو أكثر بأداة التشبيه، لبيان حال المشبَّه وتوضيح صورته.</p>
+
+  <!-- الأركان الأربعة -->
+  <div style="margin-bottom:28px;">
+    <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:14px;">الأركان الأربعة لأي تشبيه</div>
+    <div class="rukn-grid">
+      <div class="rukn mushabbah"><div class="rukn-label">الركن الأول</div><div class="rukn-word">المشبَّه</div><div style="font-size:.75rem;color:var(--muted2);margin-top:6px;direction:rtl;">الشيء المراد تشبيهه</div></div>
+      <div class="rukn mushabbah-beh"><div class="rukn-label">الركن الثاني</div><div class="rukn-word">المشبَّه به</div><div style="font-size:.75rem;color:var(--muted2);margin-top:6px;direction:rtl;">الشيء الذي نشبِّه به</div></div>
+      <div class="rukn adah"><div class="rukn-label">الركن الثالث</div><div class="rukn-word">أداة التشبيه</div><div style="font-size:.75rem;color:var(--muted2);margin-top:6px;direction:rtl;">كَ · كأنَّ · مثل · يشبه · يحاكي</div></div>
+      <div class="rukn wajh"><div class="rukn-label">الركن الرابع</div><div class="rukn-word">وجه الشبه</div><div style="font-size:.75rem;color:var(--muted2);margin-top:6px;direction:rtl;">الصفة المشتركة بين الطرفين</div></div>
+    </div>
+  </div>
+
+  <!-- أنواع التشبيه -->
+  <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:14px;">أنواع التشبيه</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:28px;">
+
+    <div class="type-card tam">
+      <div class="type-name">التشبيه التام</div>
+      <div class="type-def">يذكر فيه جميع الأركان الأربعة</div>
+      <div class="type-example"><span class="h-m">العلمُ</span> <span class="h-a">كالنور</span> <span class="h-w">في الإضاءة</span></div>
+      <div style="font-size:.75rem;direction:rtl;line-height:1.8;color:var(--muted2);">
+        <span class="h-m">م: العلم</span> · <span class="h-mb">مب: النور</span><br>
+        <span class="h-a">أ: الكاف</span> · <span class="h-w">و: الإضاءة</span>
+      </div>
+    </div>
+
+    <div class="type-card mujmal">
+      <div class="type-name">التشبيه المجمل</div>
+      <div class="type-def">حُذف منه وجه الشبه فقط — أقوى من التام</div>
+      <div class="type-example"><span class="h-m">العلمُ</span> <span class="h-a">كالنور</span> <span class="h-del">[في الإضاءة]</span></div>
+      <div style="font-size:.75rem;direction:rtl;line-height:1.8;color:var(--muted2);">
+        <span class="h-m">م: العلم</span> · <span class="h-mb">مب: النور</span><br>
+        <span class="h-a">أ: الكاف</span> · <span style="color:var(--red);">وجه الشبه محذوف ✗</span>
+      </div>
+    </div>
+
+    <div class="type-card balegh">
+      <div class="type-name">التشبيه البليغ</div>
+      <div class="type-def">حُذفت الأداة ووجه الشبه — أبلغ وأقوى</div>
+      <div class="type-example"><span class="h-m">العلمُ</span> <span class="h-mb">نورٌ</span></div>
+      <div style="font-size:.75rem;direction:rtl;line-height:1.8;color:var(--muted2);">
+        <span class="h-m">م: العلم</span> · <span class="h-mb">مب: نور</span><br>
+        <span style="color:var(--red);">الأداة محذوفة ✗</span> · <span style="color:var(--red);">وجه الشبه محذوف ✗</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- أمثلة غنية -->
+  <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:14px;">أمثلة من القرآن والشعر والحياة</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+    <!-- تام: القرآن -->
+    <div class="card2" style="border-right:3px solid var(--gold);">
+      <div style="font-size:.62rem;color:var(--gold2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تشبيه تام — من القرآن الكريم</div>
+      <div style="font-family:var(--fa);font-size:1.15rem;direction:rtl;line-height:2;color:var(--text);">مَثَلُهُمْ <span class="h-a">كَ</span><span class="h-mb">مَثَلِ الَّذِي اسْتَوْقَدَ نَاراً</span> <span class="h-w">فَلَمَّا أَضَاءَتْ</span></div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:4px;direction:rtl;">البقرة ١٧ — م: المنافقون · مب: الذي استوقد ناراً · أ: الكاف · و: الاستضاءة ثم الخسارة</div>
+    </div>
+
+    <!-- مجمل: القرآن -->
+    <div class="card2" style="border-right:3px solid var(--rose);">
+      <div style="font-size:.62rem;color:var(--rose);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تشبيه مجمل — من القرآن الكريم</div>
+      <div style="font-family:var(--fa);font-size:1.15rem;direction:rtl;line-height:2;color:var(--text);">﴿يَوْمَ يَكُونُ النَّاسُ <span class="h-a">كَ</span><span class="h-mb">الْفَرَاشِ الْمَبْثُوثِ</span>﴾</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:4px;direction:rtl;">القارعة ٤ — م: الناس · مب: الفراش المبثوث · أ: الكاف · <span style="color:var(--red);">وجه الشبه محذوف ✗</span></div>
+    </div>
+
+    <!-- بليغ: الحياة -->
+    <div class="card2" style="border-right:3px solid var(--blue);">
+      <div style="font-size:.62rem;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تشبيه تام — من الحياة اليومية</div>
+      <div style="font-family:var(--fa);font-size:1.15rem;direction:rtl;line-height:2;color:var(--text);">الكلمةُ الطيبةُ <span class="h-a">مثلُ</span> <span class="h-mb">الشجرةِ الطيبةِ</span></div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:4px;direction:rtl;">إبراهيم ١٤ — م: الكلمة الطيبة · مب: الشجرة · أ: مثل · و: محذوف (النفع والثبات) → تشبيه مجمل في الحقيقة</div>
+    </div>
+
+    <!-- بليغ: حديث -->
+    <div class="card2" style="border-right:3px solid var(--teal);">
+      <div style="font-size:.62rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تشبيه بليغ — حديث</div>
+      <div style="font-family:var(--fa);font-size:1.15rem;direction:rtl;line-height:2;color:var(--text);">لبنانُ <span class="h-mb">جوهرةٌ</span> في جبين المشرق</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:4px;direction:rtl;">م: لبنان · مب: جوهرة · <span style="color:var(--red);">الأداة والوجه محذوفان ✗</span> — أبلغ وأقوى</div>
+    </div>
+
+    <!-- مجمل: الشعر -->
+    <div class="card2" style="border-right:3px solid var(--rose);" style="grid-column:1/-1;">
+      <div style="font-size:.62rem;color:var(--rose);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تشبيه مجمل — من الشعر العربي</div>
+      <div style="font-family:var(--fa);font-size:1.15rem;direction:rtl;line-height:2;color:var(--text);">إنَّما الدُّنيا <span class="h-a">كَ</span><span class="h-mb">ظِلٍّ</span> زائلٍ ... أو <span class="h-a">كَ</span><span class="h-mb">ضَيْفٍ</span> باتَ لَيلاً ثُمَّ رَحَلْ</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:4px;direction:rtl;">م: الدنيا · مب: ظل زائل / ضيف · أ: الكاف · <span style="color:var(--red);">وجه الشبه محذوف ✗</span> — تشبيه مجمل</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ E3b: الاستعارة ═══ -->
+<section id="istiarah" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · الاستعارة</div>
+  <h2 class="sec-title">الاستعارة</h2>
+  <p class="sec-desc">الاستعارة تشبيهٌ بليغٌ حُذف أحد طرفيه — إما المشبَّه أو المشبَّه به — مع قرينة تمنع المعنى الحرفي.</p>
+
+  <div class="g2" style="margin-bottom:28px;">
+    <div class="type-card tasrihiya">
+      <div class="type-name">الاستعارة التصريحية</div>
+      <div class="type-def" style="direction:rtl;">حُذف <strong>المشبَّه</strong> وصُرِّح بالمشبَّه به — كأنك تسمي الشيء باسم غيره صراحةً</div>
+      <div class="type-example">رأيتُ <span class="h-del">[الشجاعَ]</span> <span class="h-mb">أسداً</span> يتقدَّم</div>
+      <div style="font-size:.78rem;direction:rtl;line-height:1.9;color:var(--muted2);margin-top:8px;">
+        الأصل: رأيتُ <span class="h-m">الشجاعَ</span> <span class="h-a">كـ</span><span class="h-mb">الأسدِ</span> <span class="h-w">في الشجاعة</span><br>
+        → حُذف المشبَّه (الشجاع) والأداة ووجه الشبه<br>
+        → بقي المشبَّه به (أسداً) مُصرَّحاً به<br>
+        <strong style="color:var(--teal);">القرينة:</strong> استحالة المعنى الحرفي
+      </div>
+    </div>
+
+    <div class="type-card makniya">
+      <div class="type-name">الاستعارة المكنية</div>
+      <div class="type-def" style="direction:rtl;">حُذف <strong>المشبَّه به</strong> وأُبقي على لازمة من لوازمه — تُفهم الصورة من السياق</div>
+      <div class="type-example">افتَرَسَ <span class="h-m">الموتُ</span> الضحيَّةَ</div>
+      <div style="font-size:.78rem;direction:rtl;line-height:1.9;color:var(--muted2);margin-top:8px;">
+        الأصل: الموتُ <span class="h-a">كـ</span><span class="h-mb">الأسدِ</span> <span class="h-w">في الافتراس</span><br>
+        → حُذف المشبَّه به (الأسد) من النص<br>
+        → بقيت لازمته (الإفتراس) تدل عليه<br>
+        <strong style="color:var(--green);">القرينة:</strong> إسناد فعل الحيوان للموت
+      </div>
+    </div>
+  </div>
+
+  <!-- أمثلة غنية -->
+  <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:14px;">أمثلة من المصادر المختلفة</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="card2" style="border-right:3px solid var(--teal);">
+      <div style="font-size:.62rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تصريحية — من القرآن الكريم</div>
+      <div style="font-family:var(--fa);font-size:1.1rem;direction:rtl;line-height:1.9;color:var(--text);">﴿الر كِتَابٌ أَنزَلْنَاهُ إِلَيْكَ لِتُخْرِجَ النَّاسَ مِنَ <span class="h-m">الظُّلُمَاتِ</span> إِلَى <span class="h-mb">النُّورِ</span>﴾</div>
+      <div style="font-size:.75rem;color:var(--muted2);margin-top:4px;direction:rtl;">إبراهيم ١ — حُذف المشبَّه (الكفر/الإيمان) وصُرِّح بالمشبَّه به (الظلمات/النور) — <strong>استعارة تصريحية</strong></div>
+    </div>
+    <div class="card2" style="border-right:3px solid var(--green);">
+      <div style="font-size:.62rem;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">مكنية — من الشعر</div>
+      <div style="font-family:var(--fa);font-size:1.1rem;direction:rtl;line-height:1.9;color:var(--text);">قالَتِ <span class="h-m">الدنيا</span> لساكنيها</div>
+      <div style="font-size:.75rem;color:var(--muted2);margin-top:4px;direction:rtl;">شُبِّهت الدنيا بإنسان — حُذف المشبَّه به (الإنسان) وأُبقي على لازمته (القول) — <strong>مكنية</strong> ← القرينة: إسناد فعل القول للدنيا</div>
+    </div>
+    <div class="card2" style="border-right:3px solid var(--teal);">
+      <div style="font-size:.62rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">تصريحية — دياتية</div>
+      <div style="font-family:var(--fa);font-size:1.1rem;direction:rtl;line-height:1.9;color:var(--text);">سقطَ <span class="h-mb">اللؤلؤُ</span> على خدِّ أمي</div>
+      <div style="font-size:.75rem;color:var(--muted2);margin-top:4px;direction:rtl;">شُبِّهت الدموع باللؤلؤ — حُذف المشبَّه (الدموع) وصُرِّح بالمشبَّه به (اللؤلؤ) — <strong>تصريحية</strong> ← القرينة: استحالة سقوط اللؤلؤ الحقيقي</div>
+    </div>
+    <div class="card2" style="border-right:3px solid var(--green);">
+      <div style="font-size:.62rem;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">مكنية — من المتنبي</div>
+      <div style="font-family:var(--fa);font-size:1.1rem;direction:rtl;line-height:1.9;color:var(--text);">فَوَطِئْتَ <span class="h-m">الهُمُومَ</span> وَطْءَ المَطَرِ</div>
+      <div style="font-size:.75rem;color:var(--muted2);margin-top:4px;direction:rtl;">شُبِّهت الهموم بالأرض — حُذف المشبَّه به (الأرض) وأُبقي على لازمته (الوطء) — <strong>مكنية</strong> ← القرينة: إسناد الوطء للهموم</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E3c: المقارنة ═══ -->
+<section id="compare">
+  <div class="e-tag explain">E3 · المقارنة والوظيفة</div>
+  <h2 class="sec-title">التشبيه vs الاستعارة</h2>
+  <p class="sec-desc">الاستعارة أبلغ من التشبيه لأنها تُماهي بين الطرفين كلياً — ووظيفة كليهما أن تُحيي الصورة في ذهن القارئ.</p>
+
+  <div class="card" style="overflow-x:auto;margin-bottom:24px;">
+    <table class="comp-table">
+      <thead style="background:linear-gradient(90deg,#1e1208,#2d1a08);">
+        <tr>
+          <th style="color:var(--gold);padding:12px 16px;">وجه المقارنة</th>
+          <th style="color:#88c9ff;padding:12px 16px;">التشبيه</th>
+          <th style="color:#88ffbb;padding:12px 16px;">الاستعارة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="font-weight:700;">المشبَّه</td><td>مذكور دائماً</td><td>محذوف (تصريحية) أو مذكور (مكنية)</td></tr>
+        <tr><td style="font-weight:700;">المشبَّه به</td><td>مذكور دائماً</td><td>مذكور (تصريحية) أو محذوف (مكنية)</td></tr>
+        <tr><td style="font-weight:700;">الأداة</td><td>مذكورة (تام) أو محذوفة (بليغ)</td><td>محذوفة دائماً</td></tr>
+        <tr><td style="font-weight:700;">درجة البلاغة</td><td>متفاوتة حسب النوع</td><td><strong style="color:var(--rose);">أبلغ — تُوحِّد الطرفين</strong></td></tr>
+        <tr><td style="font-weight:700;">الأساس</td><td>مقاربة بين شيئين</td><td>تشبيه بليغ حُذف أحد طرفيه</td></tr>
+        <tr><td style="font-weight:700;">مثال</td><td style="font-family:var(--fa);">العلمُ كالنور</td><td style="font-family:var(--fa);">نورُ العلمِ أضاءَ الطريق</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- وظيفة الصور البيانية -->
+  <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:14px;">وظيفة الصور البيانية</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+    <div class="card2" style="border-top:3px solid var(--gold);text-align:center;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">🎨</div>
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">إيضاح المعنى</div>
+      <div style="font-size:.78rem;color:var(--muted2);direction:rtl;">تُقرِّب المعنى المجرد إلى الذهن بصورة حسية ملموسة</div>
+    </div>
+    <div class="card2" style="border-top:3px solid var(--rose);text-align:center;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">💡</div>
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">تأثير في المتلقي</div>
+      <div style="font-size:.78rem;color:var(--muted2);direction:rtl;">تُحرِّك المشاعر وتُثير الخيال أكثر من الكلام المباشر</div>
+    </div>
+    <div class="card2" style="border-top:3px solid var(--teal);text-align:center;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">✨</div>
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">الجمال الفني</div>
+      <div style="font-size:.78rem;color:var(--muted2);direction:rtl;">ترفع مستوى النص الأدبي وتمنحه قيمة جمالية رفيعة</div>
+    </div>
+    <div class="card2" style="border-top:3px solid var(--blue);text-align:center;">
+      <div style="font-size:1.4rem;margin-bottom:8px;">🔗</div>
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:6px;">الإيجاز والتكثيف</div>
+      <div style="font-size:.78rem;color:var(--muted2);direction:rtl;">تقول في كلمة واحدة ما يحتاج شرحه إلى سطور</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E4: التطبيق ═══ -->
+<section id="elaborate" style="background:var(--bg2);">
+  <div class="e-tag elaborate">E4 · التطبيق والتدريب</div>
+  <h2 class="sec-title">طبِّق ما تعلَّمتَ</h2>
+  <p class="sec-desc">خمسة تدريبات من مستويات مختلفة — واحدة منها فخ للتفكير النقدي. والسؤال الأخير مع التقييم الذكي.</p>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="q-num">تدريب ١ · تحديد الأركان</div>
+    <div class="q-lit">العلمُ كالسيفِ في قطعِ الجهل</div>
+    <div class="q-text">ما نوع هذا التشبيه؟ وما أركانه؟</div>
+    <div class="mcq-options" id="q1opts">
+      <div class="mcq-opt" onclick="selMCQ(1,'A')"><span class="mcq-letter">أ</span>تشبيه بليغ — م: العلم · مب: السيف · الأداة والوجه محذوفان</div>
+      <div class="mcq-opt" onclick="selMCQ(1,'B')"><span class="mcq-letter">ب</span>تشبيه تام — م: العلم · مب: السيف · أ: الكاف · و: قطع الجهل</div>
+      <div class="mcq-opt" onclick="selMCQ(1,'C')"><span class="mcq-letter">ج</span>تشبيه مجمل — م: العلم · مب: السيف · أ: الكاف · الوجه محذوف</div>
+      <div class="mcq-opt" onclick="selMCQ(1,'D')"><span class="mcq-letter">د</span>استعارة تصريحية — حُذف المشبَّه</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ(1,'B')">تحقق</button>
+    <div class="fb" id="q1fb"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="q-num">تدريب ٢ · تحويل التشبيه إلى استعارة</div>
+    <div class="q-lit">الصديقُ الوفيُّ كالكنزِ النفيس</div>
+    <div class="q-text">حوِّل هذا التشبيه إلى استعارة تصريحية:</div>
+    <div class="mcq-options" id="q2opts">
+      <div class="mcq-opt" onclick="selMCQ(2,'A')"><span class="mcq-letter">أ</span><span style="font-family:var(--fa);">الصديقُ الوفيُّ يشبه الكنز</span></div>
+      <div class="mcq-opt" onclick="selMCQ(2,'B')"><span class="mcq-letter">ب</span><span style="font-family:var(--fa);">وجدتُ كنزاً وفياً في حياتي</span></div>
+      <div class="mcq-opt" onclick="selMCQ(2,'C')"><span class="mcq-letter">ج</span><span style="font-family:var(--fa);">الصداقةُ الوفيةُ كنزٌ نفيس</span></div>
+      <div class="mcq-opt" onclick="selMCQ(2,'D')"><span class="mcq-letter">د</span><span style="font-family:var(--fa);">الصديقُ الوفيُّ كنزٌ لا يُقدَّر</span></div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ(2,'B')">تحقق</button>
+    <div class="fb" id="q2fb"></div>
+  </div>
+
+  <!-- Q3 TRAP -->
+  <div class="q-block">
+    <div class="trap-tag">⚠ فخ التفكير النقدي</div>
+    <div class="q-num">تدريب ٣ · تمييز الصورة</div>
+    <div class="q-lit">نَثَرَ الليلُ نجومَه على الأرض</div>
+    <div class="q-text">قال طالب: "هذه استعارة تصريحية لأن المشبَّه محذوف." هل هو محق؟</div>
+    <div class="mcq-options" id="q3opts">
+      <div class="mcq-opt" onclick="selMCQ(3,'A')"><span class="mcq-letter">أ</span>نعم — المشبَّه محذوف وهذا يجعلها تصريحية</div>
+      <div class="mcq-opt" onclick="selMCQ(3,'B')"><span class="mcq-letter">ب</span>لا — هي استعارة مكنية: شُبِّه الليل بإنسان ينثر (المشبَّه به محذوف وبقيت لازمته: النثر)</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ(3,'B')">تحقق</button>
+    <div class="fb" id="q3fb"></div>
+  </div>
+
+  <!-- Q4 tap-match -->
+  <div class="q-block">
+    <div class="q-num">تدريب ٤ · اضغط وصنِّف</div>
+    <div class="q-text">اضغط على كل جملة ثم اختر نوعها:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-bottom:16px;" id="matchVerbs">
+      <button class="match-verb" data-type="tam" onclick="selectVerb(this)">العلمُ كالنورِ في الإضاءةِ</button>
+      <button class="match-verb" data-type="tasrihiya" onclick="selectVerb(this)">رأيتُ أسداً يُحاضِر</button>
+      <button class="match-verb" data-type="balegh" onclick="selectVerb(this)">الحياةُ حلمٌ</button>
+      <button class="match-verb" data-type="makniya" onclick="selectVerb(this)">تكلَّمَ القلمُ بصدقٍ</button>
+      <button class="match-verb" data-type="mujmal" onclick="selectVerb(this)">الأملُ كالفجرِ</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;direction:rtl;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:.84rem;color:var(--blue);font-weight:700;min-width:160px;text-align:right;">تشبيه تام</span>
+        <button class="match-cat" data-cat="tam" onclick="assignMatchCat('tam')" style="border-color:rgba(26,74,122,.4);color:var(--blue);">اختر هنا</button>
+      </div>
+      <div id="res-tam" style="min-height:36px;background:rgba(26,74,122,.05);border:1px dashed rgba(26,74,122,.2);border-radius:8px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;direction:rtl;"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <span style="font-size:.84rem;color:var(--gold2);font-weight:700;min-width:160px;text-align:right;">تشبيه مجمل</span>
+        <button class="match-cat" data-cat="mujmal" onclick="assignMatchCat('mujmal')" style="border-color:rgba(181,133,10,.4);color:var(--gold2);">اختر هنا</button>
+      </div>
+      <div id="res-mujmal" style="min-height:36px;background:rgba(181,133,10,.05);border:1px dashed rgba(181,133,10,.2);border-radius:8px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;direction:rtl;"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <span style="font-size:.84rem;color:var(--rose);font-weight:700;min-width:160px;text-align:right;">تشبيه بليغ</span>
+        <button class="match-cat" data-cat="balegh" onclick="assignMatchCat('balegh')" style="border-color:rgba(139,32,32,.4);color:var(--rose);">اختر هنا</button>
+      </div>
+      <div id="res-balegh" style="min-height:36px;background:rgba(139,32,32,.05);border:1px dashed rgba(139,32,32,.2);border-radius:8px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;direction:rtl;"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <span style="font-size:.84rem;color:var(--teal);font-weight:700;min-width:160px;text-align:right;">استعارة تصريحية</span>
+        <button class="match-cat" data-cat="tasrihiya" onclick="assignMatchCat('tasrihiya')" style="border-color:rgba(14,102,85,.4);color:var(--teal);">اختر هنا</button>
+      </div>
+      <div id="res-tasrihiya" style="min-height:36px;background:rgba(14,102,85,.05);border:1px dashed rgba(14,102,85,.2);border-radius:8px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;direction:rtl;"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <span style="font-size:.84rem;color:var(--green);font-weight:700;min-width:160px;text-align:right;">استعارة مكنية</span>
+        <button class="match-cat" data-cat="makniya" onclick="assignMatchCat('makniya')" style="border-color:rgba(26,106,42,.4);color:var(--green);">اختر هنا</button>
+      </div>
+      <div id="res-makniya" style="min-height:36px;background:rgba(26,106,42,.05);border:1px dashed rgba(26,106,42,.2);border-radius:8px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;direction:rtl;"></div>
+    </div>
+    <div style="margin-top:14px;">
+      <button class="btn btn-gold" onclick="checkMatch()">✓ تحقق من التصنيف</button>
+    </div>
+    <div class="fb" id="q4fb" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- Q5 OPEN AI -->
+  <div class="ai-box">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-direction:row-reverse;">
+      <div class="ai-pulse"></div>
+      <span style="font-weight:700;font-size:.95rem;">تدريب ٥ · سؤال مفتوح · المعلمة الذكية</span>
+    </div>
+    <div class="q-text" style="margin-bottom:14px;direction:rtl;">
+      اقرأ هذه الجملة:<br>
+      <span style="font-family:var(--fa);font-size:1.3rem;display:block;margin:10px 0;padding:14px;background:var(--bg2);border-radius:8px;border-right:3px solid var(--gold);">قلبُ ذلك الرجلِ كالحجارةِ قسوةً وصلابةً</span>
+      <em style="color:var(--muted);font-size:.88rem;">حدِّد نوع الصورة البيانية، استخرج أركانها الأربعة، وبيِّن وظيفتها في التعبير عن المعنى.</em>
+    </div>
+    <textarea id="openAnswer" placeholder="اكتب إجابتك هنا...&#10;مثال: هذه الجملة تشبيه تام لأن... المشبَّه هو... المشبَّه به هو... الأداة هي... وجه الشبه هو..." style="font-family:var(--fn);font-size:1rem;min-height:120px;"></textarea>
+    <button class="btn btn-rose" style="margin-top:10px;" onclick="getAIFeedback()">احصل على تقييم المعلمة الذكية 🌙</button>
+    <div class="ai-resp" id="aiResp"></div>
+  </div>
+</section>
+
+<!-- ═══ E5: التقييم ═══ -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · التقييم</div>
+  <h2 class="sec-title">أرسل إجاباتك</h2>
+  <p class="sec-desc">أدخل اسمك وصفَّك ثم أرسل — ستصل إجاباتك مباشرة إلى المعلمة عبير.</p>
+  <div class="g2" style="align-items:start;max-width:820px;">
+    <div class="card">
+      <div class="name-row">
+        <div style="flex:2;"><label style="font-size:.75rem;color:var(--muted2);display:block;margin-bottom:6px;text-align:right;">الاسم الكامل *</label><input type="text" id="stuName" placeholder="اسمك الكامل..."></div>
+        <div style="flex:1;"><label style="font-size:.75rem;color:var(--muted2);display:block;margin-bottom:6px;text-align:right;">الصف *</label><input type="text" id="stuClass" placeholder="مثال: ٩أ"></div>
+      </div>
+      <hr>
+      <div id="ansReview" style="font-size:.85rem;line-height:2.2;color:var(--muted2);direction:rtl;font-family:var(--fn);"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.78rem;color:var(--muted);margin-bottom:14px;text-align:right;">٠ / ٤ تدريبات مكتملة</p>
+      <button class="btn btn-green" style="width:100%;" onclick="submitWork()">📊 إرسال إلى المعلمة عبير</button>
+    </div>
+    <div class="submit-card">
+      <div style="font-size:2rem;margin-bottom:8px;">🌙</div>
+      <div style="font-family:var(--fn);font-size:3rem;font-weight:700;color:var(--gold);line-height:1;" id="scoreDisp">—</div>
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-top:4px;">درجتك</div>
+      <hr>
+      <p style="font-size:.85rem;color:var(--muted2);line-height:1.8;direction:rtl;">المعلمة عبير ستراجع إجاباتك المفتوحة وتعطيك تغذية راجعة في الحصة القادمة.</p>
+      <div id="submitOk" style="display:none;margin-top:12px;padding:12px;background:rgba(26,106,42,.08);border:1px solid rgba(26,106,42,.25);border-radius:8px;font-size:.88rem;color:var(--green2);">✓ تم الإرسال! أحسنتَ.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div style="font-size:1.1rem;font-weight:900;color:var(--text);">مختبر <span style="color:var(--gold);">البيان</span></div>
+    <div style="font-size:.72rem;color:var(--muted);line-height:1.8;">عبير · اللغة العربية · الصف التاسع · لبنان</div>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <button class="ft-link" onclick="shareModule()">📤 مشاركة</button>
+    <a class="ft-link" href="https://aghozlan.github.io" target="_blank">↗ كل المختبرات</a>
+  </div>
+</footer>
+</main>
+</div>
+
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  let cur='hero';
+  document.querySelectorAll('[id]').forEach(s=>{if(s.id&&window.scrollY>=s.offsetTop-200)cur=s.id;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+});
+
+// ── EXPLORE ──
+const exploreSentences=[
+  {text:'الصبرُ مفتاحُ الفرج',type:'bayan',answer:'مجازي',explain:'تشبيه بليغ — الصبر=مفتاح، حُذفت الأداة والوجه'},
+  {text:'جلس الطالبُ على الكرسيِّ',type:'haqiqi',answer:'حقيقي',explain:'جملة حقيقية — لا صورة بيانية'},
+  {text:'رأيتُ أسداً يُلقي خطاباً',type:'bayan',answer:'مجازي',explain:'استعارة تصريحية — المتكلم يقصد رجلاً شجاعاً لا أسداً حقيقياً'},
+  {text:'شَرَّقَ القمرُ وغَرَّبَ',type:'haqiqi',answer:'حقيقي',explain:'جملة حقيقية — وصف حركة القمر'},
+  {text:'تكلَّمَ الليلُ بأسرارِه',type:'bayan',answer:'مجازي',explain:'استعارة مكنية — شُبِّه الليل بإنسان يتكلم'},
+  {text:'الوقتُ كالسيفِ إن لم تقطعه قطعك',type:'bayan',answer:'مجازي',explain:'تشبيه مجمل — الوقت=السيف، ذُكرت الأداة وحُذف وجه الشبه'},
+];
+var exploreAnswers={};
+const expCont=document.getElementById('exploreContainer');
+exploreSentences.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.className='explore-sent';
+  d.innerHTML=`<div class="arabic">${s.text}</div>
+    <div class="exp-btns">
+      <button class="exp-btn" data-idx="${i}" data-val="مجازي" onclick="setExplore(${i},'مجازي',this)"
+        style="border-color:rgba(181,133,10,.4);color:var(--gold2);background:transparent;">مجازي 🎭</button>
+      <button class="exp-btn" data-idx="${i}" data-val="حقيقي" onclick="setExplore(${i},'حقيقي',this)"
+        style="border-color:rgba(26,74,122,.4);color:var(--blue);background:transparent;">حقيقي ✓</button>
+    </div>
+    <div id="expFb${i}" style="font-size:.74rem;margin-top:6px;display:none;font-family:var(--fn);direction:rtl;"></div>`;
+  expCont.appendChild(d);
+});
+function setExplore(idx,val,btn){
+  exploreAnswers[idx]=val;
+  document.querySelectorAll(`.exp-btn[data-idx="${idx}"]`).forEach(b=>{b.style.opacity='.5';b.style.transform='';});
+  btn.style.opacity='1';btn.style.transform='scale(1.06)';
+}
+function checkExplore(){
+  let correct=0;
+  exploreSentences.forEach((s,i)=>{
+    const fb=document.getElementById('expFb'+i);
+    const ans=exploreAnswers[i];
+    if(!ans){fb.style.display='block';fb.style.color='var(--muted)';fb.textContent='لم تجب';return;}
+    fb.style.display='block';
+    if(ans===s.answer){correct++;fb.style.color='var(--green2)';fb.textContent='✓ صحيح — '+s.explain;}
+    else{fb.style.color='var(--red)';fb.textContent='✗ الإجابة: '+s.answer+' — '+s.explain;}
+  });
+  const fb=document.getElementById('exploreFb');fb.style.display='block';
+  const pct=Math.round(correct/exploreSentences.length*100);
+  fb.className=pct>=80?'fb ok':pct>=50?'fb info':'fb bad';
+  fb.textContent=correct+'/'+exploreSentences.length+' صحيح. '+(pct===100?'ممتاز! أنت تفهم الفرق بين الحقيقي والمجازي.':'راجع الجمل المُشار إليها ثم انتقل إلى قسم الشرح.');
+}
+function revealExplore(){
+  exploreSentences.forEach((s,i)=>{
+    const fb=document.getElementById('expFb'+i);
+    fb.style.display='block';fb.style.color='var(--gold2)';
+    fb.textContent='الإجابة: '+s.answer+' — '+s.explain;
+  });
+}
+
+// ── MCQ ──
+var mcqSel={};
+var correct={q1:false,q2:false,q3:false,q4:false};
+const mcqAns={
+  1:{c:'B',h:'✓ تشبيه تام: جميع الأركان مذكورة. المشبَّه: العلم | المشبَّه به: السيف | الأداة: الكاف | وجه الشبه: قطع الجهل.'},
+  2:{c:'B',h:'✓ في الاستعارة التصريحية يُحذف المشبَّه (الصديق) ويُصرَّح بالمشبَّه به (الكنز). "وجدتُ كنزاً وفياً في حياتي" هي الأصح.'},
+  3:{c:'B',h:'✓ هي استعارة مكنية: شُبِّه الليل بإنسان ينثر — المشبَّه به (الإنسان) محذوف، وبقيت لازمته (النثر). في التصريحية يُحذف المشبَّه نفسه.'},
+};
+function selMCQ(q,l){
+  mcqSel[q]=l;
+  document.querySelectorAll('#q'+q+'opts .mcq-opt').forEach((o,i)=>{o.classList.toggle('selected',['A','B','C','D'][i]===l);});
+}
+function chkMCQ(q,ca){
+  const fb=document.getElementById('q'+q+'fb'),sel=mcqSel[q];
+  fb.style.display='block';
+  if(!sel){fb.className='fb info';fb.textContent='اختر إجابة أولاً.';return;}
+  const opts=document.querySelectorAll('#q'+q+'opts .mcq-opt');
+  ['A','B','C','D'].forEach((l,i)=>{if(i>=opts.length)return;opts[i].classList.remove('selected');if(l===ca)opts[i].classList.add('correct');else if(l===sel)opts[i].classList.add('wrong');});
+  if(sel===ca){fb.className='fb ok';fb.textContent=mcqAns[q].h;correct['q'+q]=true;}
+  else{fb.className='fb bad';fb.textContent='✗ راجع التعريفات. '+mcqAns[q].h;correct['q'+q]=false;}
+  updateProg();
+}
+
+// ── TAP MATCH ──
+var selectedVerb=null;
+var matchAssignments={};
+function selectVerb(btn){
+  document.querySelectorAll('.match-verb').forEach(b=>b.classList.remove('selected'));
+  selectedVerb=btn;btn.classList.add('selected');
+}
+function assignMatchCat(cat){
+  if(!selectedVerb){showToast('اضغط على جملة أولاً!');return;}
+  const text=selectedVerb.textContent;
+  const type=selectedVerb.dataset.type;
+  matchAssignments[text]={cat,correctCat:type,btn:selectedVerb};
+  const area=document.getElementById('res-'+cat);
+  const tag=document.createElement('span');
+  tag.className='result-tag';tag.textContent=text;tag.dataset.text=text;
+  area.appendChild(tag);
+  selectedVerb.classList.remove('selected');selectedVerb.classList.add('placed');
+  selectedVerb=null;
+}
+function checkMatch(){
+  const total=document.querySelectorAll('.match-verb').length;
+  const placed=Object.keys(matchAssignments).length;
+  const fb=document.getElementById('q4fb');
+  if(placed<total){fb.style.display='block';fb.className='fb info';fb.textContent='صنِّف جميع الجمل أولاً — '+(total-placed)+' جمل متبقية.';return;}
+  let correct_count=0;
+  Object.entries(matchAssignments).forEach(([text,data])=>{
+    document.querySelectorAll('.result-tag').forEach(t=>{
+      if(t.dataset.text===text){
+        const ok=data.cat===data.correctCat;
+        t.classList.add(ok?'correct':'wrong');
+        if(ok)correct_count++;
+      }
+    });
+  });
+  fb.style.display='block';
+  if(correct_count===total){fb.className='fb ok';fb.textContent='✓ ممتاز! جميع الجمل مُصنَّفة بشكل صحيح.';correct.q4=true;}
+  else{fb.className='fb bad';fb.textContent='✗ '+(total-correct_count)+' جمل في المجموعة الخاطئة — الصحيح مُشار إليه بالأخضر والخطأ بالأحمر.';}
+  updateProg();
+}
+
+// ── PROGRESS ──
+function updateProg(){
+  const done=Object.values(correct).filter(Boolean).length;
+  const pct=Math.round(done/4*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=done+' / ٤ تدريبات مكتملة';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  document.getElementById('ansReview').innerHTML=[
+    'تدريب ١ (أركان التشبيه): '+(mcqSel[1]||'—')+(correct.q1?' ✓':''),
+    'تدريب ٢ (التحويل): '+(mcqSel[2]||'—')+(correct.q2?' ✓':''),
+    'تدريب ٣ (الفخ): '+(mcqSel[3]||'—')+(correct.q3?' ✓':''),
+    'تدريب ٤ (التصنيف): '+(correct.q4?'صحيح ✓':'—'),
+  ].map(l=>'<div>'+l+'</div>').join('');
+}
+
+// ── AI TUTOR (Arabic Literary) ──
+function getAIFeedback(){
+  const answer=document.getElementById('openAnswer').value.trim();
+  const resp=document.getElementById('aiResp');
+  if(!answer){showToast('اكتب إجابتك أولاً!');return;}
+  resp.style.display='block';
+  resp.innerHTML='<div style="display:flex;gap:5px;padding:8px 0;justify-content:flex-end;"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
+  setTimeout(()=>{resp.textContent=buildLitFeedback(answer);},1300);
+}
+function buildLitFeedback(a){
+  const hasTam      = /تشبيه تام|تام/i.test(a);
+  const hasMushabbah= /مشبَّه[^ب]|المشبَّه[^ب]|مشبه[^ب]/i.test(a);
+  const hasMushabbahBeh= /مشبَّه به|مشبه به/i.test(a);
+  const hasAdah     = /أداة|الكاف|كاف/i.test(a);
+  const hasWajh     = /وجه الشبه|قسوة|صلابة|وجه/i.test(a);
+  const hasQalb     = /قلب|القلب/i.test(a);
+  const hasHajar    = /حجارة|الحجارة/i.test(a);
+  const hasWazifa   = /وظيف|يوضح|يبين|يُعبِّر|يُصوِّر|تأثير|يُقرِّب|إيضاح/i.test(a);
+  const score=[hasTam,hasMushabbah,hasMushabbahBeh,hasAdah,hasWajh,hasWazifa].filter(Boolean).length;
+  const goods=[];
+  if(hasTam)goods.push('تعرَّفتَ على نوع التشبيه (تشبيه تام)');
+  if(hasMushabbah&&hasQalb)goods.push('استخرجتَ المشبَّه (القلب) بشكل صحيح');
+  if(hasMushabbahBeh&&hasHajar)goods.push('استخرجتَ المشبَّه به (الحجارة) بشكل صحيح');
+  if(hasAdah)goods.push('حدَّدتَ أداة التشبيه (الكاف)');
+  if(hasWajh)goods.push('ذكرتَ وجه الشبه (القسوة والصلابة)');
+  if(hasWazifa)goods.push('بيَّنتَ وظيفة الصورة البيانية');
+  let p1=goods.length===0?'بداية جيدة — حاول استخراج الأركان الأربعة واحداً واحداً.'
+    :'أحسنتَ في أنك '+goods.join(' و')+'.';
+  const fixes=[];
+  if(!hasTam)fixes.push('هذه الجملة تشبيه تام: ذُكرت فيه جميع الأركان الأربعة');
+  if(!hasMushabbah)fixes.push('المشبَّه هو (القلب) — الشيء المراد تشبيهه');
+  if(!hasMushabbahBeh)fixes.push('المشبَّه به هو (الحجارة) — الشيء الذي شُبِّه به القلب');
+  if(!hasAdah)fixes.push('أداة التشبيه هي (الكاف) في كلمة (كالحجارة)');
+  if(!hasWajh)fixes.push('وجه الشبه هو (القسوة والصلابة) — الصفة المشتركة بين القلب والحجارة');
+  let p2=fixes.length===0?'إجابتك شاملة وتغطي جميع الأركان — ممتاز!'
+    :'لتكمِل إجابتك: '+fixes[0]+'.';
+  const p3s=[
+    'التشبيه التام هو الأساس الذي تُبنى عليه الاستعارة — لو حذفنا الكاف ووجه الشبه من هذه الجملة لأصبحت: (قلبه حجارة) — وهذا تشبيه بليغ أشد تأثيراً!',
+    'لاحظ قوة الصورة: الحجارة صلبة لا تتأثر ولا تُحِسّ — هذا ما أراد الكاتب أن يقوله عن ذلك الرجل. الصورة البيانية قالت ما يعجز عنه الكلام المباشر.',
+  ];
+  return p1+' '+p2+' '+p3s[score%p3s.length];
+}
+
+// ── SUBMIT ──
+async function submitWork(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!name||!cls){showToast('أدخل اسمك وصفَّك أولاً!');return;}
+  const btn=document.querySelector('[onclick="submitWork()"]');
+  btn.disabled=true;btn.textContent='جاري الإرسال...';
+  const done=Object.values(correct).filter(Boolean).length;
+  const payload={
+    sheet:'Bayan_G9',name,class:cls,
+    q1:mcqSel[1]?'ت١:'+(mcqSel[1])+(correct.q1?' ✓':' ✗'):'—',
+    q2:mcqSel[2]?'ت٢:'+(mcqSel[2])+(correct.q2?' ✓':' ✗'):'—',
+    q3:mcqSel[3]?'ت٣:'+(mcqSel[3])+(correct.q3?' ✓':' ✗'):'—',
+    q4:'ت٤:'+(correct.q4?'صحيح ✓':'غير مكتمل'),
+    bonus:document.getElementById('openAnswer').value||'—',
+    score:Math.round(done/4*100)+'%'
+  };
+  try{
+    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    btn.textContent='✓ تم الإرسال!';btn.style.background='var(--green2)';
+    showToast('✓ وصلت إجاباتك إلى المعلمة عبير!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 إرسال إلى المعلمة عبير';
+    showToast('⚠ تحقق من اتصالك بالإنترنت.');
+  }
+}
+function shareModule(){
+  const ci=document.getElementById('copyInput');ci.value=window.location.href;ci.select();ci.setSelectionRange(0,9999);
+  try{document.execCommand('copy');}catch(e){}
+  showToast('✓ تم نسخ الرابط!');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
