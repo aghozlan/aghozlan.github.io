@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ElectricityLab — Grade 7 | Ahmad Ghozlan</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080f;--bg2:#090c16;--bg3:#0d1220;
+  --panel:#0f1628;--panel2:#131c30;--panel3:#192038;
+  --border:rgba(60,140,255,.1);--border2:rgba(60,140,255,.22);
+  --text:#c8d8f8;--muted:#3a5080;--muted2:#5a78b0;
+  --yellow:#fbbf24;--yellow2:#f59e0b;
+  --orange:#f97316;--red:#ef4444;
+  --green:#22c55e;--green2:#16a34a;
+  --blue:#3b82f6;--blue2:#2563eb;
+  --cyan:#06b6d4;--teal:#14b8a6;
+  --purple:#a855f7;
+  --electric:#60a5fa;--glow:rgba(96,165,250,.35);
+  --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;--fb:'Outfit',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.65;}
+/* Ambient background grid */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(60,140,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(60,140,255,.025) 1px,transparent 1px);
+  background-size:40px 40px;}
+
+/* SIDEBAR */
+.app{display:flex;min-height:100vh;}
+aside{width:248px;background:var(--bg2);border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  flex-shrink:0;z-index:100;}
+main{flex:1;min-width:0;position:relative;z-index:1;}
+@media(max-width:860px){aside{display:none;}section{padding:40px 18px!important;}}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-family:var(--fh);font-size:1.3rem;font-weight:900;color:var(--electric);letter-spacing:-0.5px;}
+.sb-logo h1 span{color:var(--yellow);}
+.sb-logo p{font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:9px;padding:9px 20px;font-size:.8rem;
+  font-weight:600;color:var(--muted2);border-left:3px solid transparent;
+  transition:all .2s;cursor:pointer;background:none;border-right:none;
+  border-top:none;border-bottom:none;width:100%;font-family:var(--fb);text-align:left;}
+.sn:hover,.sn.active{color:var(--electric);background:rgba(96,165,250,.06);border-left-color:var(--electric);}
+.sn .badge{font-size:.52rem;font-family:var(--fm);background:var(--panel2);
+  padding:2px 7px;border-radius:3px;color:var(--yellow);margin-left:auto;}
+.sb-foot{padding:14px 20px;border-top:1px solid var(--border);background:var(--bg3);}
+.sb-foot .name{font-family:var(--fh);font-weight:700;font-size:.9rem;color:#fff;}
+.sb-foot .role{font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-top:2px;font-family:var(--fm);}
+
+/* SECTIONS */
+section{padding:72px 56px;border-bottom:1px solid var(--border);position:relative;}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);
+  font-size:.6rem;text-transform:uppercase;letter-spacing:2px;
+  padding:4px 12px;border-radius:3px;margin-bottom:20px;}
+.e-tag.engage{background:rgba(251,191,36,.08);color:var(--yellow);border:1px solid rgba(251,191,36,.2);}
+.e-tag.explore{background:rgba(34,197,94,.08);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.e-tag.explain{background:rgba(96,165,250,.08);color:var(--electric);border:1px solid rgba(96,165,250,.2);}
+.e-tag.elaborate{background:rgba(168,85,247,.08);color:var(--purple);border:1px solid rgba(168,85,247,.2);}
+.e-tag.evaluate{background:rgba(249,115,22,.08);color:var(--orange);border:1px solid rgba(249,115,22,.2);}
+.sec-title{font-family:var(--fh);font-size:2rem;font-weight:900;letter-spacing:-1px;color:#fff;margin-bottom:10px;}
+.sec-desc{color:var(--muted2);font-size:.92rem;max-width:620px;line-height:1.75;margin-bottom:28px;}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:15px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* GLOWING ELECTRIC STYLES */
+.glow-text{color:var(--electric);text-shadow:0 0 20px var(--glow);}
+.elec-badge{display:inline-block;background:rgba(96,165,250,.1);
+  border:1px solid rgba(96,165,250,.3);color:var(--electric);
+  font-family:var(--fm);font-size:.62rem;padding:3px 10px;border-radius:12px;
+  text-transform:uppercase;letter-spacing:1px;}
+
+/* COMPONENT SYMBOL CARDS */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin:20px 0;}
+.comp-card{background:var(--panel2);border:1px solid var(--border2);border-radius:12px;
+  padding:18px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.comp-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(96,165,250,.08),transparent 70%);opacity:0;transition:opacity .3s;}
+.comp-card:hover::before,.comp-card.active::before{opacity:1;}
+.comp-card:hover,.comp-card.active{border-color:var(--electric);transform:translateY(-3px);
+  box-shadow:0 8px 30px rgba(96,165,250,.15);}
+.comp-card.active{border-color:var(--yellow);box-shadow:0 8px 30px rgba(251,191,36,.15);}
+.comp-symbol{margin:0 auto 12px;}
+.comp-name{font-family:var(--fh);font-size:.88rem;font-weight:700;color:#fff;margin-bottom:4px;}
+.comp-role{font-size:.72rem;color:var(--muted2);line-height:1.5;}
+.comp-detail{background:var(--panel);border:1px solid var(--border2);border-radius:10px;
+  padding:18px;margin-top:14px;display:none;animation:fadeIn .3s ease;}
+.comp-detail.show{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* SVG SYMBOLS */
+svg.sym{overflow:visible;}
+
+/* CONDUCTOR / INSULATOR SORTER */
+.sort-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.sort-chip{padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:600;
+  cursor:pointer;border:2px solid var(--border2);background:var(--panel2);
+  color:var(--text);transition:all .2s;user-select:none;min-height:40px;
+  display:flex;align-items:center;}
+.sort-chip:hover{border-color:var(--electric);}
+.sort-chip.active-chip{border-color:var(--yellow);background:rgba(251,191,36,.1);color:var(--yellow);}
+.sort-chip.placed{opacity:.25;pointer-events:none;}
+.sort-zone{min-height:52px;border-radius:10px;border:2px dashed var(--border2);
+  padding:8px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;
+  transition:all .2s;background:var(--panel2);}
+.sort-zone.over{border-color:var(--electric);background:rgba(96,165,250,.05);}
+.sort-zone.filled{border-style:solid;}
+.sort-zone.cond{border-color:rgba(34,197,94,.4);}
+.sort-zone.ins{border-color:rgba(239,68,68,.4);}
+.zone-label{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;font-weight:700;}
+
+/* INTERACTIVE CIRCUIT BUILDER */
+.circuit-builder{background:var(--panel);border:1px solid var(--border2);border-radius:14px;overflow:hidden;}
+.cb-toolbar{padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.cb-btn{padding:7px 16px;border-radius:7px;font-size:.76rem;font-weight:700;
+  border:2px solid;cursor:pointer;transition:all .2s;font-family:var(--fb);min-height:38px;}
+.cb-btn.selected{box-shadow:0 0 12px var(--glow);}
+.cb-canvas-wrap{position:relative;background:#020408;}
+.cb-canvas-wrap canvas{display:block;width:100%;cursor:crosshair;}
+.cb-status{padding:10px 18px;background:var(--panel2);font-family:var(--fm);
+  font-size:.7rem;color:var(--muted2);border-top:1px solid var(--border);}
+.cb-status .status-ok{color:var(--green);}
+.cb-status .status-warn{color:var(--yellow);}
+.cb-status .status-bad{color:var(--red);}
+
+/* CELL INTERACTIVE */
+.cells-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.cell-toggle{padding:8px 18px;border-radius:20px;font-size:.78rem;font-weight:700;
+  border:2px solid var(--border2);background:var(--panel2);color:var(--text);
+  cursor:pointer;transition:all .2s;min-height:38px;}
+.cell-toggle:hover{border-color:var(--yellow);}
+.cell-toggle.active{background:rgba(251,191,36,.12);border-color:var(--yellow);color:var(--yellow);}
+.receiver-display{background:var(--panel);border:1.5px solid var(--border2);
+  border-radius:12px;padding:20px;text-align:center;transition:all .5s;}
+.recv-status{font-family:var(--fh);font-size:1.1rem;font-weight:900;margin-top:10px;}
+.recv-note{font-size:.76rem;color:var(--muted2);margin-top:4px;line-height:1.6;}
+
+/* MCQ */
+.mcq-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:center;gap:10px;padding:11px 16px;
+  background:var(--panel2);border:2px solid var(--border);border-radius:9px;
+  cursor:pointer;transition:all .2s;font-size:.88rem;user-select:none;min-height:48px;}
+.mcq-opt:hover{border-color:var(--electric);}
+.mcq-opt.selected{border-color:var(--electric);background:rgba(96,165,250,.07);}
+.mcq-opt.correct{border-color:var(--green);background:rgba(34,197,94,.07);color:var(--green);}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.06);color:var(--red);}
+.ml{min-width:28px;height:28px;border-radius:50%;background:var(--electric);color:#000;
+  font-size:.68rem;font-weight:900;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-family:var(--fm);}
+.mcq-opt.correct .ml{background:var(--green);}
+.mcq-opt.wrong .ml{background:var(--red);}
+
+/* FEEDBACK */
+.fb{margin-top:10px;padding:12px 16px;border-radius:9px;font-size:.88rem;
+  display:none;line-height:1.75;}
+.fb.ok{background:rgba(34,197,94,.07);border:1.5px solid rgba(34,197,94,.25);color:var(--green);}
+.fb.bad{background:rgba(239,68,68,.06);border:1.5px solid rgba(239,68,68,.22);color:var(--red);}
+.fb.hint{background:rgba(251,191,36,.07);border:1.5px solid rgba(251,191,36,.22);color:var(--yellow);}
+.fb.info{background:rgba(96,165,250,.07);border:1.5px solid rgba(96,165,250,.2);color:var(--electric);}
+
+/* BUTTONS */
+.btn{padding:11px 24px;border-radius:8px;font-family:var(--fh);font-weight:700;
+  font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-electric{background:var(--electric);color:#000;box-shadow:0 3px 16px rgba(96,165,250,.3);}
+.btn-electric:hover{background:var(--blue);color:#fff;box-shadow:0 4px 22px rgba(96,165,250,.4);}
+.btn-yellow{background:var(--yellow);color:#000;}
+.btn-yellow:hover{background:var(--yellow2);}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--electric);color:var(--electric);}
+.check-btn{padding:9px 20px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:7px;color:var(--text);font-family:var(--fb);font-weight:700;
+  font-size:.82rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.check-btn:hover{border-color:var(--electric);color:var(--electric);}
+
+/* Q BLOCKS */
+.q-block{margin-bottom:18px;padding:20px;background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;position:relative;overflow:hidden;}
+.q-block::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  background:linear-gradient(180deg,var(--electric),var(--cyan));}
+.q-num{font-family:var(--fm);font-size:.56rem;color:var(--electric);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.9rem;color:var(--text);margin-bottom:12px;line-height:1.75;}
+.q-text strong{color:#fff;}
+
+/* AI TUTOR */
+.ai-box{background:rgba(96,165,250,.04);border:1.5px solid rgba(96,165,250,.18);border-radius:12px;padding:20px;}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ai-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-resp{background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:14px;font-size:.88rem;line-height:1.75;margin-top:12px;display:none;}
+textarea{width:100%;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--fb);
+  font-size:.9rem;outline:none;resize:vertical;min-height:90px;transition:border-color .2s;}
+textarea:focus{border-color:var(--electric);}
+input[type=text]{background:var(--panel2);border:1.5px solid var(--border2);border-radius:8px;
+  padding:10px 14px;color:var(--text);font-family:var(--fb);font-size:.9rem;
+  outline:none;transition:border-color .2s;width:100%;min-height:44px;}
+input[type=text]:focus{border-color:var(--electric);}
+select{background:var(--panel2);border:1.5px solid var(--border2);border-radius:8px;
+  padding:10px 14px;color:var(--text);font-family:var(--fb);font-size:.88rem;
+  outline:none;cursor:pointer;min-height:44px;width:100%;}
+select:focus{border-color:var(--electric);}
+
+/* PHET */
+.phet-launcher{background:var(--panel2);border:1px solid rgba(6,182,212,.25);
+  border-radius:10px;padding:18px 20px;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.phet-info h3{font-family:var(--fh);font-weight:700;font-size:.95rem;color:#fff;margin-bottom:4px;}
+.phet-info p{font-size:.78rem;color:var(--muted2);line-height:1.6;max-width:480px;}
+.phet-window{position:fixed;top:60px;right:20px;width:660px;height:440px;
+  background:var(--panel2);border:2px solid var(--cyan);border-radius:10px;
+  z-index:300;display:none;flex-direction:column;
+  box-shadow:0 8px 40px rgba(0,0,0,.8);resize:both;overflow:hidden;
+  min-width:320px;min-height:250px;}
+.phet-window.visible{display:flex;}
+.phet-titlebar{background:var(--panel);padding:8px 12px;display:flex;align-items:center;
+  justify-content:space-between;cursor:move;user-select:none;flex-shrink:0;}
+.phet-titlebar span{font-family:var(--fm);font-size:.68rem;color:var(--cyan);}
+.phet-ctrl-btn{width:18px;height:18px;border-radius:50%;border:none;cursor:pointer;
+  font-size:.58rem;display:flex;align-items:center;justify-content:center;}
+.phet-ctrl-btn.close{background:var(--red);color:#fff;}
+.phet-window iframe{flex:1;border:none;width:100%;display:block;}
+
+/* SUBMIT */
+.submit-card{background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;}
+.prog-bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:10px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--electric),var(--cyan));
+  border-radius:3px;transition:width .4s;}
+.score-big{font-family:var(--fm);font-size:3.2rem;font-weight:700;
+  color:var(--electric);text-align:center;line-height:1;
+  text-shadow:0 0 30px var(--glow);}
+
+/* HERO */
+#hero{min-height:88vh;display:flex;align-items:center;
+  background:radial-gradient(ellipse at 20% 60%,rgba(96,165,250,.08),transparent 55%),
+    radial-gradient(ellipse at 80% 30%,rgba(6,182,212,.06),transparent 50%),var(--bg);}
+.hero-inner{max-width:680px;padding:60px 56px;}
+.hero-tag{font-family:var(--fm);font-size:.6rem;color:var(--electric);text-transform:uppercase;
+  letter-spacing:3px;border:1px solid rgba(96,165,250,.25);padding:4px 14px;
+  border-radius:3px;display:inline-block;margin-bottom:18px;}
+.hero-title{font-family:var(--fh);font-size:clamp(2.4rem,5vw,4rem);font-weight:900;
+  color:#fff;line-height:1.05;letter-spacing:-1.5px;margin-bottom:14px;}
+.hero-title span{color:var(--electric);text-shadow:0 0 30px var(--glow);}
+.hero-sub{color:var(--muted2);font-size:.96rem;line-height:1.8;margin-bottom:24px;max-width:520px;}
+.hero-spark{display:inline-block;animation:spark 2s ease-in-out infinite;font-size:1.8rem;}
+@keyframes spark{0%,100%{transform:scale(1);filter:brightness(1);}50%{transform:scale(1.2);filter:brightness(1.5);}}
+
+/* SWITCH ANIMATION */
+.switch-demo{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin:20px 0;}
+.switch-box{text-align:center;cursor:pointer;}
+.switch-box canvas{display:block;margin:0 auto 8px;border-radius:8px;background:var(--panel2);border:1px solid var(--border2);}
+.switch-label{font-family:var(--fm);font-size:.68rem;text-transform:uppercase;letter-spacing:2px;}
+
+/* SCORE TABLE */
+.score-row{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;border-radius:7px;background:var(--panel2);
+  margin-bottom:6px;font-size:.82rem;}
+.score-key{color:var(--muted2);font-family:var(--fm);font-size:.64rem;}
+.score-val{font-weight:700;color:var(--green);}
+.score-val.partial{color:var(--yellow);}
+.score-val.zero{color:var(--red);}
+
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  background:var(--panel);border:1px solid var(--electric);color:var(--electric);
+  padding:10px 24px;border-radius:8px;font-family:var(--fm);font-size:.74rem;
+  z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;
+  white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;}
+footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- PHET FLOATING WINDOW -->
+<div class="phet-window" id="phetWin">
+  <div class="phet-titlebar">
+    <span>⚡ PhET — Circuit Construction Kit</span>
+    <div style="display:flex;gap:5px;">
+      <button class="phet-ctrl-btn close" onclick="closePhet()">✕</button>
+    </div>
+  </div>
+  <iframe id="phetFrame" src="" allowfullscreen></iframe>
+</div>
+
+<div class="app">
+<aside>
+  <div class="sb-logo">
+    <h1>Electric<span>ity</span>Lab</h1>
+    <p>Grade 7 · Science · Ahmad Ghozlan</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">⚡ Engage <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('components')">🔌 Components <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('symbols')">📐 Symbols <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('conductors')">🪢 Conductors <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('switch')">🔄 Switch <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('cells')">🔋 Cells & Receivers <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('circuit')">🔧 Build a Circuit <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('phet')">🌐 PhET Sim <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('practice')">✏️ Practice <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 Submit <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="role">Science · Grade 7 · Lebanon</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- E1 HERO / ENGAGE -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Grade 7 · Science · Unit: Electricity</div>
+    <h1 class="hero-title">How does a<br><span>circuit</span> work?</h1>
+    <p class="hero-sub">Electricity powers everything around us — from the lamp on your desk to the screen you're reading right now. In this lab you'll discover the components, build real circuits, and understand what makes electricity flow.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <button class="btn btn-electric" onclick="goTo('components')">Start Exploring →</button>
+      <button class="btn btn-ghost" onclick="openPhet()">🌐 Open PhET Sim</button>
+    </div>
+    <div style="margin-top:32px;display:flex;gap:24px;flex-wrap:wrap;">
+      <div><div class="hero-spark">⚡</div><div style="font-size:.72rem;color:var(--muted2);margin-top:4px;font-family:var(--fm);">Generators</div></div>
+      <div><div class="hero-spark" style="animation-delay:.4s">💡</div><div style="font-size:.72rem;color:var(--muted2);margin-top:4px;font-family:var(--fm);">Receivers</div></div>
+      <div><div class="hero-spark" style="animation-delay:.8s">🔗</div><div style="font-size:.72rem;color:var(--muted2);margin-top:4px;font-family:var(--fm);">Conductors</div></div>
+      <div><div class="hero-spark" style="animation-delay:1.2s">🔄</div><div style="font-size:.72rem;color:var(--muted2);margin-top:4px;font-family:var(--fm);">Switches</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- E2 COMPONENTS -->
+<section id="components">
+  <div class="e-tag explore">E2 · Components</div>
+  <h2 class="sec-title">Circuit Components</h2>
+  <p class="sec-desc">Every electric circuit needs specific components to work. Tap each card to learn about its role, real-world examples, and conventional symbol.</p>
+
+  <div class="comp-grid" id="compGrid">
+    <!-- Built by JS -->
+  </div>
+  <div class="comp-detail" id="compDetail"></div>
+
+  <div class="q-block" style="margin-top:20px;">
+    <div class="q-num">Quick Check · Components</div>
+    <div class="q-text">Which component in a circuit <strong>converts electrical energy into light and heat</strong>?</div>
+    <div class="mcq-opts" id="qcomp">
+      <div class="mcq-opt" onclick="selMCQ('qcomp','A',this)"><span class="ml">A</span>Connecting wire</div>
+      <div class="mcq-opt" onclick="selMCQ('qcomp','B',this)"><span class="ml">B</span>Switch</div>
+      <div class="mcq-opt" onclick="selMCQ('qcomp','C',this)"><span class="ml">C</span>Lamp (light bulb)</div>
+      <div class="mcq-opt" onclick="selMCQ('qcomp','D',this)"><span class="ml">D</span>Dry cell (battery)</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('qcomp','C','✓ Correct! A lamp is a receiver — it converts electrical energy into light energy (and some heat). The dry cell is the generator (source of energy).','✗ A lamp converts electrical energy into light and heat — it is the receiver in the circuit.')">✓ Check</button>
+    <div class="fb" id="fbqcomp"></div>
+  </div>
+</section>
+
+<!-- E2 SYMBOLS -->
+<section id="symbols" style="background:var(--bg2);">
+  <div class="e-tag explore">E2 · Symbols</div>
+  <h2 class="sec-title">Conventional Circuit Symbols</h2>
+  <p class="sec-desc">Engineers worldwide use the same symbols to draw electric circuits. These are the symbols you need to know for Grade 7.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:24px;" id="symbolGrid">
+    <!-- Built by JS -->
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Symbol Recognition</div>
+    <div class="q-text">The symbol below shows a circle with an <strong>X inside</strong>. What component does it represent?</div>
+    <div style="display:flex;justify-content:center;margin:14px 0;">
+      <svg width="70" height="70" viewBox="0 0 70 70">
+        <circle cx="35" cy="35" r="26" stroke="#60a5fa" stroke-width="2.5" fill="none"/>
+        <line x1="16" y1="16" x2="54" y2="54" stroke="#60a5fa" stroke-width="2.5"/>
+        <line x1="54" y1="16" x2="16" y2="54" stroke="#60a5fa" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="mcq-opts" id="qsym">
+      <div class="mcq-opt" onclick="selMCQ('qsym','A',this)"><span class="ml">A</span>Motor</div>
+      <div class="mcq-opt" onclick="selMCQ('qsym','B',this)"><span class="ml">B</span>Battery (dry cell)</div>
+      <div class="mcq-opt" onclick="selMCQ('qsym','C',this)"><span class="ml">C</span>Lamp (light bulb)</div>
+      <div class="mcq-opt" onclick="selMCQ('qsym','D',this)"><span class="ml">D</span>Switch</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('qsym','C','✓ Correct! A lamp is drawn as a circle with an X inscribed inside it — the X represents the filament that glows when current passes through it.','✗ The circle with X inscribed inside represents a lamp. The X symbolises the filament inside the bulb.')">✓ Check</button>
+    <div class="fb" id="fbqsym"></div>
+  </div>
+</section>
+
+<!-- E2 CONDUCTORS & INSULATORS -->
+<section id="conductors">
+  <div class="e-tag explore">E2 · Materials</div>
+  <h2 class="sec-title">Conductors & Insulators</h2>
+  <p class="sec-desc">Not all materials allow electricity to pass through them. Understanding the difference is key to safe circuit design.</p>
+
+  <div class="g2" style="margin-bottom:22px;">
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div style="font-family:var(--fh);font-size:.9rem;font-weight:800;color:var(--green);margin-bottom:10px;">⚡ CONDUCTOR</div>
+      <div style="font-size:.86rem;color:var(--muted2);line-height:1.8;">
+        A material that allows electric current to flow through it easily.<br>
+        <strong style="color:#fff;">Why?</strong> It has free electrons that can move.<br>
+        <strong style="color:var(--green);">Examples:</strong> Copper, aluminium, iron, silver, water (impure)
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div style="font-family:var(--fh);font-size:.9rem;font-weight:800;color:var(--red);margin-bottom:10px;">🚫 INSULATOR</div>
+      <div style="font-size:.86rem;color:var(--muted2);line-height:1.8;">
+        A material that does NOT allow electric current to flow through it.<br>
+        <strong style="color:#fff;">Why?</strong> Its electrons are tightly bound — cannot move freely.<br>
+        <strong style="color:var(--red);">Examples:</strong> Rubber, plastic, glass, wood, ceramic, dry air
+      </div>
+    </div>
+  </div>
+
+  <div style="font-family:var(--fm);font-size:.64rem;color:var(--electric);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">🎯 Sorting Game — Tap a material then tap the correct zone</div>
+  <div class="sort-bank" id="sortBank"></div>
+  <div class="g2">
+    <div>
+      <div class="zone-label" style="color:var(--green);">⚡ Conductors</div>
+      <div class="sort-zone cond" id="zoneCond"><span style="color:var(--muted);font-size:.8rem;">Tap a chip then tap here</span></div>
+    </div>
+    <div>
+      <div class="zone-label" style="color:var(--red);">🚫 Insulators</div>
+      <div class="sort-zone ins" id="zoneIns"><span style="color:var(--muted);font-size:.8rem;">Tap a chip then tap here</span></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:10px;">
+    <button class="check-btn" onclick="checkSort()">✓ Check Sorting</button>
+    <button class="check-btn" onclick="resetSort()" style="color:var(--red);">↺ Reset</button>
+  </div>
+  <div class="fb" id="fbSort"></div>
+</section>
+
+<!-- E3 SWITCH -->
+<section id="switch" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Switch</div>
+  <h2 class="sec-title">The Switch — Open & Closed</h2>
+  <p class="sec-desc">A switch controls the flow of current by either completing or breaking the circuit. Tap the switches to see what happens.</p>
+
+  <div class="switch-demo" id="switchDemo">
+    <!-- Built by JS -->
+  </div>
+
+  <div class="g2" style="margin-top:10px;">
+    <div class="card2" style="border-left:3px solid var(--red);">
+      <div style="font-weight:800;color:var(--red);margin-bottom:8px;">🔓 Open Switch</div>
+      <div style="font-size:.84rem;color:var(--muted2);line-height:1.8;">
+        The circuit is <strong style="color:var(--red);">broken</strong>. No current can flow.<br>
+        The lamp goes off. Energy cannot travel around the loop.
+      </div>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--green);">
+      <div style="font-weight:800;color:var(--green);margin-bottom:8px;">🔒 Closed Switch</div>
+      <div style="font-size:.84rem;color:var(--muted2);line-height:1.8;">
+        The circuit is <strong style="color:var(--green);">complete</strong>. Current flows freely.<br>
+        The lamp lights up. Energy travels from generator → receiver.
+      </div>
+    </div>
+  </div>
+
+  <div class="q-block" style="margin-top:18px;">
+    <div class="q-num">True or False</div>
+    <div class="q-text">When a switch is <strong>open</strong>, current still flows but very weakly.</div>
+    <div class="mcq-opts" id="qswitch">
+      <div class="mcq-opt" onclick="selMCQ('qswitch','A',this)"><span class="ml">A</span>TRUE — the current is just reduced</div>
+      <div class="mcq-opt" onclick="selMCQ('qswitch','B',this)"><span class="ml">B</span>FALSE — an open switch completely stops current flow</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('qswitch','B','✓ FALSE is correct! An open switch creates a gap — the circuit is broken and NO current flows at all. Current is not reduced — it is zero.','✗ An open switch creates a complete break in the circuit — zero current flows, not just a small amount.')">✓ Check</button>
+    <div class="fb" id="fbqswitch"></div>
+  </div>
+</section>
+
+<!-- E3 CELLS & RECEIVERS -->
+<section id="cells">
+  <div class="e-tag explain">E3 · Cells & Receivers</div>
+  <h2 class="sec-title">Cells & Receiver Behaviour</h2>
+  <p class="sec-desc">The number of cells (dry cells) connected determines how much voltage the circuit has — and directly affects how strongly a receiver works. Experiment below!</p>
+
+  <div class="card" style="margin-bottom:18px;">
+    <div style="font-family:var(--fm);font-size:.62rem;color:var(--electric);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;">⚡ Interactive — Choose number of cells and receiver</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
+      <div style="flex:1;min-width:160px;">
+        <label style="font-size:.72rem;color:var(--muted2);display:block;margin-bottom:6px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Number of Cells</label>
+        <div class="cells-row" id="cellBtns">
+          <button class="cell-toggle active" onclick="setCells(0,this)">0 cells</button>
+          <button class="cell-toggle" onclick="setCells(1,this)">1 cell</button>
+          <button class="cell-toggle" onclick="setCells(2,this)">2 cells</button>
+          <button class="cell-toggle" onclick="setCells(3,this)">3 cells</button>
+          <button class="cell-toggle" onclick="setCells(4,this)">⚠ 4 cells</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:160px;">
+        <label style="font-size:.72rem;color:var(--muted2);display:block;margin-bottom:6px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Receiver Type</label>
+        <select id="receiverType" onchange="updateReceiver()">
+          <option value="lamp">💡 Lamp</option>
+          <option value="motor">⚙️ Motor</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2">
+      <div>
+        <canvas id="cvCells" width="320" height="200" style="width:100%;border-radius:8px;background:#020408;border:1px solid var(--border);display:block;"></canvas>
+      </div>
+      <div class="receiver-display" id="recvDisplay">
+        <canvas id="cvRecv" width="160" height="160" style="width:120px;height:120px;margin:0 auto;display:block;"></canvas>
+        <div class="recv-status" id="recvStatus">—</div>
+        <div class="recv-note" id="recvNote">Select cells above</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key insight cards -->
+  <div class="g3">
+    <div class="card2" style="border-left:3px solid var(--muted);">
+      <div style="font-size:.76rem;font-weight:800;color:var(--muted2);margin-bottom:6px;">0 CELLS</div>
+      <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;">No source of energy. Switch can be anything — nothing works.</div>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--yellow);">
+      <div style="font-size:.76rem;font-weight:800;color:var(--yellow);margin-bottom:6px;">1–2 CELLS (rated)</div>
+      <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;">Normal operation. Receiver works as designed — rated power.</div>
+    </div>
+    <div class="card2" style="border-left:3px solid var(--red);">
+      <div style="font-size:.76rem;font-weight:800;color:var(--red);margin-bottom:6px;">TOO MANY CELLS</div>
+      <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;">Overvoltage! The receiver overheats and may burn out permanently.</div>
+    </div>
+  </div>
+</section>
+
+<!-- E3 CIRCUIT BUILDER -->
+<section id="circuit" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Build</div>
+  <h2 class="sec-title">Build a Simple Circuit</h2>
+  <p class="sec-desc">Use the toolbar to place components on the canvas. Connect them to form a complete circuit — then close the switch to see if the lamp lights up!</p>
+
+  <div class="circuit-builder">
+    <div class="cb-toolbar">
+      <button class="cb-btn" id="toolCell" style="color:var(--yellow);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.06);" onclick="setTool('cell')">🔋 Cell</button>
+      <button class="cb-btn" id="toolLamp" style="color:var(--electric);border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06);" onclick="setTool('lamp')">💡 Lamp</button>
+      <button class="cb-btn" id="toolMotor" style="color:var(--teal);border-color:rgba(20,184,166,.3);background:rgba(20,184,166,.06);" onclick="setTool('motor')">⚙️ Motor</button>
+      <button class="cb-btn" id="toolSwitch" style="color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06);" onclick="setTool('switch')">🔄 Switch</button>
+      <button class="cb-btn" id="toolWire" style="color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.06);" onclick="setTool('wire')">🪢 Wire</button>
+      <div style="flex:1;"></div>
+      <button class="cb-btn" style="color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06);" onclick="clearCircuit()">🗑 Clear</button>
+      <button class="cb-btn" style="color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06);" onclick="checkCircuit()">⚡ Test Circuit</button>
+    </div>
+    <div class="cb-canvas-wrap">
+      <canvas id="cvCircuit" width="800" height="420"></canvas>
+    </div>
+    <div class="cb-status" id="cbStatus">
+      Select a component from the toolbar, then click on the canvas to place it. Use Wire to connect components.
+    </div>
+  </div>
+
+  <div class="card2" style="margin-top:14px;">
+    <div style="font-size:.8rem;color:var(--muted2);line-height:1.9;">
+      💡 <strong style="color:#fff;">How to build:</strong> 1. Click a tool (Cell, Lamp, Switch). 2. Click the canvas to place it. 3. Select Wire, then click two components to connect them. 4. Click "Test Circuit" to see if current flows.
+    </div>
+  </div>
+</section>
+
+<!-- E3 PHET -->
+<section id="phet">
+  <div class="e-tag explain">E3 · Simulation</div>
+  <h2 class="sec-title">PhET Circuit Simulation</h2>
+  <p class="sec-desc">Build and test real circuits in the PhET simulator. Try connecting different components and observe how changing cells affects the brightness of the lamp.</p>
+
+  <div class="phet-launcher">
+    <div class="phet-info">
+      <h3>⚡ Circuit Construction Kit: DC</h3>
+      <p>Build virtual circuits with batteries, wires, light bulbs, resistors and switches. This simulation was developed by the University of Colorado Boulder.</p>
+    </div>
+    <button class="btn btn-electric" onclick="openPhet()">🌐 Launch Simulation</button>
+  </div>
+
+  <div class="card2">
+    <div style="font-family:var(--fm);font-size:.62rem;color:var(--electric);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Try these in the simulation:</div>
+    <div style="font-size:.84rem;color:var(--muted2);line-height:2;">
+      1. Connect one battery → one lamp → one switch. Close the switch — does the lamp light?<br>
+      2. Add a second battery. What happens to the lamp brightness?<br>
+      3. Add a third battery. What do you observe? Can you explain why?<br>
+      4. Try connecting two lamps. What happens to each lamp's brightness?
+    </div>
+  </div>
+</section>
+
+<!-- E4 PRACTICE -->
+<section id="practice" style="background:var(--bg2);">
+  <div class="e-tag elaborate">E4 · Practice</div>
+  <h2 class="sec-title">Apply What You Know</h2>
+  <p class="sec-desc">Six questions covering all topics from this lab. No hints — think it through!</p>
+
+  <!-- Q1 -->
+  <div class="q-block">
+    <div class="q-num">Question 1 · Generator vs Receiver</div>
+    <div class="q-text">In an electric circuit, a <strong>motor</strong> is classified as a:</div>
+    <div class="mcq-opts" id="q1opts">
+      <div class="mcq-opt" onclick="selMCQ('q1','A',this)"><span class="ml">A</span>Generator — it produces electrical energy</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','B',this)"><span class="ml">B</span>Receiver — it converts electrical energy into mechanical energy</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','C',this)"><span class="ml">C</span>Insulator — it prevents current from flowing</div>
+      <div class="mcq-opt" onclick="selMCQ('q1','D',this)"><span class="ml">D</span>Switch — it controls the circuit</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('q1','B','✓ Correct! A motor is a receiver — it takes electrical energy from the circuit and converts it into mechanical (movement) energy. The dry cell is the generator.','✗ A motor is a receiver. It uses electrical energy and converts it into mechanical motion. Generators produce electrical energy — like a dry cell.')">✓ Check</button>
+    <div class="fb" id="fbq1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block">
+    <div class="q-num">Question 2 · Conductors</div>
+    <div class="q-text">Which of the following is the <strong>best conductor</strong> of electricity?</div>
+    <div class="mcq-opts" id="q2opts">
+      <div class="mcq-opt" onclick="selMCQ('q2','A',this)"><span class="ml">A</span>Dry wood</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','B',this)"><span class="ml">B</span>Rubber glove</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','C',this)"><span class="ml">C</span>Copper wire</div>
+      <div class="mcq-opt" onclick="selMCQ('q2','D',this)"><span class="ml">D</span>Glass rod</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('q2','C','✓ Correct! Copper is one of the best conductors — that is why electric wires are made of copper. It has many free electrons that move easily when a voltage is applied.','✗ Copper wire is the best conductor here. Wood, rubber, and glass are all insulators that resist the flow of electric current.')">✓ Check</button>
+    <div class="fb" id="fbq2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block">
+    <div class="q-num">Question 3 · Switch State</div>
+    <div class="q-text">A lamp in a circuit does NOT light up even though the battery is working. The most likely reason is:</div>
+    <div class="mcq-opts" id="q3opts">
+      <div class="mcq-opt" onclick="selMCQ('q3','A',this)"><span class="ml">A</span>The lamp is too bright</div>
+      <div class="mcq-opt" onclick="selMCQ('q3','B',this)"><span class="ml">B</span>The switch is open (circuit is broken)</div>
+      <div class="mcq-opt" onclick="selMCQ('q3','C',this)"><span class="ml">C</span>There are too many cells</div>
+      <div class="mcq-opt" onclick="selMCQ('q3','D',this)"><span class="ml">D</span>The lamp has too many filaments</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('q3','B','✓ Correct! An open switch breaks the circuit, preventing current from flowing to the lamp — even if the battery works perfectly.','✗ If a lamp does not light despite a working battery, the circuit is likely broken. The most common cause is an open switch creating a gap in the circuit.')">✓ Check</button>
+    <div class="fb" id="fbq3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-block">
+    <div class="q-num">Question 4 · Too Many Cells</div>
+    <div class="q-text">A student connects <strong>4 dry cells</strong> to a lamp designed for 1 cell. What most likely happens?</div>
+    <div class="mcq-opts" id="q4opts">
+      <div class="mcq-opt" onclick="selMCQ('q4','A',this)"><span class="ml">A</span>The lamp glows at normal brightness</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','B',this)"><span class="ml">B</span>The lamp glows weakly because of too much resistance</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','C',this)"><span class="ml">C</span>The lamp burns out due to excessive voltage</div>
+      <div class="mcq-opt" onclick="selMCQ('q4','D',this)"><span class="ml">D</span>Nothing happens — the extra cells have no effect</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('q4','C','✓ Correct! Too many cells create excessive voltage — far more than the lamp is rated for. The filament overheats and burns out permanently. This is why it is important to use the correct number of cells.','✗ Too many cells means too much voltage. The lamp receives far more energy than it can handle, causing the filament to overheat and burn out.')">✓ Check</button>
+    <div class="fb" id="fbq4"></div>
+  </div>
+
+  <!-- Q5 symbol -->
+  <div class="q-block">
+    <div class="q-num">Question 5 · Circuit Symbol</div>
+    <div class="q-text">In a circuit diagram, two parallel lines — one longer and one shorter — represent:</div>
+    <div class="mcq-opts" id="q5opts">
+      <div class="mcq-opt" onclick="selMCQ('q5','A',this)"><span class="ml">A</span>A switch (open)</div>
+      <div class="mcq-opt" onclick="selMCQ('q5','B',this)"><span class="ml">B</span>A lamp</div>
+      <div class="mcq-opt" onclick="selMCQ('q5','C',this)"><span class="ml">C</span>A connecting wire</div>
+      <div class="mcq-opt" onclick="selMCQ('q5','D',this)"><span class="ml">D</span>One cell (dry cell / battery)</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('q5','D','✓ Correct! A single cell is drawn as one long line (positive terminal +) and one short line (negative terminal −). Multiple cells stacked together form a battery symbol.','✗ Two parallel lines — one long (+) and one short (−) — is the symbol for a single dry cell (battery). The longer line is the positive terminal.')">✓ Check</button>
+    <div class="fb" id="fbq5"></div>
+  </div>
+
+  <!-- Q6 OPEN -->
+  <div class="ai-box">
+    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:700;font-size:.9rem;">Question 6 · Open Question · AI Tutor 🤖</span></div>
+    <div class="q-text" style="margin-bottom:10px;">
+      Explain in your own words: <strong>Why does a connecting wire need to be a conductor, and why is it coated with an insulator (like rubber)?</strong><br>
+      <em style="font-size:.8rem;color:var(--muted2);">Think about both the inside and outside of a wire.</em>
+    </div>
+    <textarea id="openAnswer" placeholder="Write your answer here...&#10;Inside the wire: ...&#10;Outside the coating: ..."></textarea>
+    <button class="btn btn-electric" style="margin-top:10px;width:100%;" onclick="getAI()">Get AI Feedback 🤖</button>
+    <div class="ai-resp" id="aiResp"></div>
+  </div>
+</section>
+
+<!-- E5 EVALUATE / SUBMIT -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · Submit</div>
+  <h2 class="sec-title">Submit Your Work</h2>
+  <p class="sec-desc">Enter your name and class, then submit your answers to Ahmad's grade sheet.</p>
+
+  <div class="g2" style="align-items:start;max-width:860px;">
+    <div class="submit-card">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="flex:2;"><label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Full Name *</label><input type="text" id="stuName" placeholder="Your full name…"></div>
+        <div style="flex:1;"><label style="font-size:.68rem;color:var(--muted2);display:block;margin-bottom:5px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Class *</label><input type="text" id="stuClass" placeholder="e.g. 7A"></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <div id="scoreBreakdown" style="margin-bottom:12px;"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.7rem;color:var(--muted2);margin-bottom:14px;">0 / 9 activities completed</p>
+      <button class="btn btn-electric" style="width:100%;font-size:.95rem;" onclick="submitWork()">📊 Submit to Ahmad's Grade Sheet</button>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:22px;text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">⚡</div>
+      <div class="score-big" id="scoreDisp">—</div>
+      <div style="font-size:.58rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-top:4px;font-family:var(--fm);">Your Score</div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+      <p style="font-size:.76rem;color:var(--muted2);line-height:1.7;">Ahmad reviews your open answer in the next class session.</p>
+      <div id="submitOk" style="display:none;margin-top:10px;padding:10px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:8px;font-size:.82rem;color:var(--green);font-weight:700;">✓ Submitted! Ahmad has your answers.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div style="font-family:var(--fh);font-size:1rem;font-weight:900;color:#fff;">Electricity<span style="color:var(--electric);">Lab</span></div>
+    <div style="font-size:.65rem;color:var(--muted2);margin-top:3px;font-family:var(--fm);">Ahmad Ghozlan · Science · Grade 7 · Lebanon</div>
+  </div>
+  <a href="https://aghozlan.github.io" style="font-size:.72rem;color:var(--electric);text-decoration:none;border:1px solid var(--border2);padding:6px 16px;border-radius:20px;">↗ All Labs</a>
+</footer>
+</main>
+</div>
+
+<script>
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ── NAVIGATION ──────────────────────────────────────────
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});}
+const sideNavBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const ids=['hero','components','symbols','conductors','switch','cells','circuit','phet','practice','evaluate'];
+  let cur='hero';
+  ids.forEach(s=>{const el=document.getElementById(s);if(el&&window.scrollY>=el.offsetTop-200)cur=s;});
+  sideNavBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+},{ passive:true });
+
+// ── MCQ ─────────────────────────────────────────────────
+const answers={},correct={};
+function selMCQ(key,val,btn){
+  answers[key]=val;
+  btn.parentElement.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function chkMCQ(key,ca,okMsg,badMsg){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=answers[key];
+  if(!sel){fb.className='fb info';fb.textContent='Select an answer first!';return;}
+  let opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
+  if(!opts.length)opts=document.querySelectorAll('#'+key+' .mcq-opt');
+  const L=['A','B','C','D'];
+  opts.forEach((o,i)=>{o.classList.remove('selected');if(L[i]===ca)o.classList.add('correct');else if(L[i]===sel)o.classList.add('wrong');});
+  if(sel===ca){fb.className='fb ok';fb.textContent=okMsg;correct[key]=true;}
+  else{fb.className='fb bad';fb.textContent=badMsg;}
+  updateProg();
+}
+
+// ── COMPONENT CARDS ─────────────────────────────────────
+const COMPS=[
+  {id:'cell',icon:'🔋',name:'Dry Cell (Battery)',role:'Generator — Source of energy',
+   color:'rgba(251,191,36,.25)',bColor:'rgba(251,191,36,.5)',
+   detail:`<strong style="color:var(--yellow);">Role:</strong> A generator converts chemical energy into electrical energy and pushes current around the circuit.<br><br>
+   <strong style="color:#fff;">Real examples:</strong> AA batteries, phone batteries, car batteries<br><br>
+   <strong style="color:var(--yellow);">Key fact:</strong> The longer line in its symbol = positive (+) terminal. The shorter line = negative (−) terminal. Current flows from + to −.`,
+   drawSym:(ctx,cx,cy)=>{
+     ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+     [-8,0,8].forEach(ox=>{
+       ctx.beginPath();ctx.moveTo(cx+ox-6,cy-14);ctx.lineTo(cx+ox-6,cy+14);
+       ctx.lineWidth=ox===0?4:2;ctx.stroke();
+       if(ox!==8){ctx.beginPath();ctx.moveTo(cx+ox+2,cy-9);ctx.lineTo(cx+ox+2,cy+9);ctx.lineWidth=1.5;ctx.stroke();}
+     });
+     ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+     ctx.fillText('+',cx-12,cy+20);ctx.fillText('−',cx+14,cy+20);
+   }},
+  {id:'lamp',icon:'💡',name:'Lamp (Light Bulb)',role:'Receiver — Converts electricity to light',
+   color:'rgba(96,165,250,.2)',bColor:'rgba(96,165,250,.45)',
+   detail:`<strong style="color:var(--electric);">Role:</strong> A receiver converts electrical energy into another form. A lamp produces light (and heat).<br><br>
+   <strong style="color:#fff;">Symbol:</strong> A circle with an X inscribed inside — the X represents the filament wire inside the bulb.<br><br>
+   <strong style="color:var(--electric);">Key fact:</strong> Each lamp has a rated voltage. Too little → dim. Correct → normal. Too much → burns out permanently.`,
+   drawSym:(ctx,cx,cy)=>{
+     ctx.strokeStyle='#60a5fa';ctx.lineWidth=2.5;
+     ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.stroke();
+     ctx.beginPath();ctx.moveTo(cx-12,cy-12);ctx.lineTo(cx+12,cy+12);ctx.stroke();
+     ctx.beginPath();ctx.moveTo(cx+12,cy-12);ctx.lineTo(cx-12,cy+12);ctx.stroke();
+   }},
+  {id:'motor',icon:'⚙️',name:'Motor',role:'Receiver — Converts electricity to motion',
+   color:'rgba(20,184,166,.2)',bColor:'rgba(20,184,166,.45)',
+   detail:`<strong style="color:var(--teal);">Role:</strong> A motor is a receiver that converts electrical energy into mechanical (movement) energy.<br><br>
+   <strong style="color:#fff;">Symbol:</strong> A circle with the letter M inside.<br><br>
+   <strong style="color:var(--teal);">Real examples:</strong> Electric fans, washing machines, electric cars, drills<br><br>
+   <strong style="color:var(--teal);">Key fact:</strong> Like lamps, motors have a rated voltage — too many cells = overheating.`,
+   drawSym:(ctx,cx,cy)=>{
+     ctx.strokeStyle='#14b8a6';ctx.lineWidth=2.5;
+     ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.stroke();
+     ctx.fillStyle='#14b8a6';ctx.font='bold 16px Syne';ctx.textAlign='center';ctx.textBaseline='middle';
+     ctx.fillText('M',cx,cy+1);
+   }},
+  {id:'switch',icon:'🔄',name:'Switch',role:'Controls the circuit (open / closed)',
+   color:'rgba(34,197,94,.2)',bColor:'rgba(34,197,94,.45)',
+   detail:`<strong style="color:var(--green);">Role:</strong> A switch controls whether current flows in the circuit by opening or closing a gap.<br><br>
+   <strong style="color:#fff;">Open switch:</strong> Circuit broken → NO current → lamp off.<br>
+   <strong style="color:#fff;">Closed switch:</strong> Circuit complete → current flows → lamp on.<br><br>
+   <strong style="color:var(--green);">Symbol:</strong> A line with a gap (open) or a diagonal lever closing the gap.`,
+   drawSym:(ctx,cx,cy,closed=false)=>{
+     ctx.strokeStyle='#22c55e';ctx.lineWidth=2.5;
+     ctx.beginPath();ctx.moveTo(cx-20,cy);ctx.lineTo(cx-6,cy);ctx.stroke();
+     ctx.beginPath();ctx.arc(cx-6,cy,3,0,Math.PI*2);ctx.fillStyle='#22c55e';ctx.fill();
+     if(closed){ctx.beginPath();ctx.moveTo(cx-6,cy);ctx.lineTo(cx+14,cy);ctx.stroke();}
+     else{ctx.beginPath();ctx.moveTo(cx-6,cy);ctx.lineTo(cx+10,cy-12);ctx.stroke();}
+     ctx.beginPath();ctx.arc(cx+14,cy,3,0,Math.PI*2);ctx.fill();
+     ctx.beginPath();ctx.moveTo(cx+14,cy);ctx.lineTo(cx+20,cy);ctx.stroke();
+   }},
+  {id:'wire',icon:'🪢',name:'Connecting Wire',role:'Carries current between components',
+   color:'rgba(168,85,247,.2)',bColor:'rgba(168,85,247,.45)',
+   detail:`<strong style="color:var(--purple);">Role:</strong> Wires carry electric current from one component to another, completing the circuit path.<br><br>
+   <strong style="color:#fff;">Construction:</strong> A conductor (usually copper) inside + an insulator coating (rubber/plastic) outside.<br><br>
+   <strong style="color:var(--purple);">Why insulated?</strong> The copper carries current safely. The rubber coating prevents short circuits and protects people from electric shock.<br><br>
+   <strong style="color:var(--purple);">Symbol:</strong> A simple straight line.`,
+   drawSym:(ctx,cx,cy)=>{
+     ctx.strokeStyle='#a855f7';ctx.lineWidth=3;
+     ctx.beginPath();ctx.moveTo(cx-22,cy);ctx.lineTo(cx+22,cy);ctx.stroke();
+   }},
+];
+
+function buildCompCards(){
+  const grid=document.getElementById('compGrid');
+  COMPS.forEach(comp=>{
+    const c=document.createElement('div');c.className='comp-card';c.id='cc_'+comp.id;
+    const cv=document.createElement('canvas');cv.width=80;cv.height=60;cv.className='comp-symbol';
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle='transparent';ctx.clearRect(0,0,80,60);
+    comp.drawSym(ctx,40,30);
+    c.appendChild(cv);
+    const nm=document.createElement('div');nm.className='comp-name';nm.textContent=comp.name;
+    const rl=document.createElement('div');rl.className='comp-role';rl.textContent=comp.role;
+    c.appendChild(nm);c.appendChild(rl);
+    c.onclick=()=>showComp(comp.id);
+    grid.appendChild(c);
+  });
+}
+
+function showComp(id){
+  document.querySelectorAll('.comp-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('cc_'+id).classList.add('active');
+  const comp=COMPS.find(c=>c.id===id);
+  const det=document.getElementById('compDetail');
+  det.className='comp-detail show';
+  det.innerHTML=`<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+    <div style="text-align:center;flex-shrink:0;">
+      <div style="font-size:2.5rem;margin-bottom:8px;">${comp.icon}</div>
+      <div style="font-family:var(--fh);font-weight:800;font-size:1rem;color:#fff;">${comp.name}</div>
+      <div style="font-size:.72rem;color:var(--muted2);margin-top:4px;">${comp.role}</div>
+    </div>
+    <div style="flex:1;min-width:220px;font-size:.86rem;color:var(--muted2);line-height:1.85;">${comp.detail}</div>
+  </div>`;
+}
+
+// ── SYMBOL GRID ─────────────────────────────────────────
+const SYMBOLS=[
+  {name:'Dry Cell',desc:'Long line = + terminal, short line = − terminal',
+   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#fbbf24';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cx-16,cy-18);ctx.lineTo(cx-16,cy+18);ctx.stroke();ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx,cy-12);ctx.lineTo(cx,cy+12);ctx.stroke();ctx.fillStyle='#fbbf24';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.fillText('+',cx-22,cy+22);ctx.fillText('−',cx+6,cy+22);}},
+  {name:'Lamp',desc:'Circle with X inside — X = filament',
+   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#60a5fa';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-12,cy-12);ctx.lineTo(cx+12,cy+12);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+12,cy-12);ctx.lineTo(cx-12,cy+12);ctx.stroke();}},
+  {name:'Motor',desc:'Circle with M inside',
+   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#14b8a6';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#14b8a6';ctx.font='bold 16px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('M',cx,cy+1);}},
+  {name:'Open Switch',desc:'A break in the line — circuit incomplete',
+   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#f97316';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cx-22,cy);ctx.lineTo(cx-8,cy);ctx.stroke();ctx.beginPath();ctx.arc(cx-8,cy,3,0,Math.PI*2);ctx.fillStyle='#f97316';ctx.fill();ctx.beginPath();ctx.moveTo(cx-8,cy);ctx.lineTo(cx+8,cy-14);ctx.stroke();ctx.beginPath();ctx.arc(cx+16,cy,3,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(cx+16,cy);ctx.lineTo(cx+22,cy);ctx.stroke();}},
+  {name:'Closed Switch',desc:'Line connects fully — circuit complete',
+   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#22c55e';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cx-22,cy);ctx.lineTo(cx+22,cy);ctx.stroke();ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(cx-8,cy,3,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(cx+8,cy,3,0,Math.PI*2);ctx.fill();}},
+  {name:'Connecting Wire',desc:'Simple straight line',
+   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#a855f7';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cx-22,cy);ctx.lineTo(cx+22,cy);ctx.stroke();}},
+];
+
+function buildSymbolGrid(){
+  const grid=document.getElementById('symbolGrid');
+  SYMBOLS.forEach(sym=>{
+    const card=document.createElement('div');
+    card.className='card';card.style.cssText='text-align:center;padding:18px;';
+    const cv=document.createElement('canvas');cv.width=100;cv.height=70;
+    cv.style.cssText='display:block;margin:0 auto 12px;';
+    const ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,100,70);
+    sym.draw(ctx,50,35);
+    card.appendChild(cv);
+    const nm=document.createElement('div');nm.style.cssText='font-family:var(--fh);font-weight:800;font-size:.88rem;color:#fff;margin-bottom:4px;';nm.textContent=sym.name;
+    const desc=document.createElement('div');desc.style.cssText='font-size:.72rem;color:var(--muted2);line-height:1.5;';desc.textContent=sym.desc;
+    card.appendChild(nm);card.appendChild(desc);
+    grid.appendChild(card);
+  });
+}
+
+// ── CONDUCTOR SORT ───────────────────────────────────────
+const SORT_ITEMS=[
+  {name:'Copper wire',type:'cond'},{name:'Rubber band',type:'ins'},
+  {name:'Iron nail',type:'cond'},{name:'Plastic spoon',type:'ins'},
+  {name:'Aluminium foil',type:'cond'},{name:'Glass window',type:'ins'},
+  {name:'Silver coin',type:'cond'},{name:'Dry wood',type:'ins'},
+  {name:'Salt water',type:'cond'},{name:'Ceramic mug',type:'ins'},
+];
+let sortSel=null,sortPlaced={};
+
+function buildSort(){
+  const bank=document.getElementById('sortBank');
+  [...SORT_ITEMS].sort(()=>Math.random()-.5).forEach(item=>{
+    const chip=document.createElement('div');chip.className='sort-chip';chip.id='schip_'+item.name.replace(/ /g,'_');
+    chip.textContent=item.name;
+    chip.onclick=()=>{
+      document.querySelectorAll('.sort-chip').forEach(c=>c.classList.remove('active-chip'));
+      chip.classList.add('active-chip');sortSel=item;
+    };
+    bank.appendChild(chip);
+  });
+  ['zoneCond','zoneIns'].forEach(zid=>{
+    document.getElementById(zid).onclick=()=>{
+      if(!sortSel)return;
+      const zone=document.getElementById(zid);
+      const isRight=(zid==='zoneCond'&&sortSel.type==='cond')||(zid==='zoneIns'&&sortSel.type==='ins');
+      const placed=document.createElement('span');
+      placed.style.cssText=`padding:5px 12px;border-radius:14px;font-size:.8rem;font-weight:600;background:${isRight?'rgba(34,197,94,.12)':'rgba(239,68,68,.1)'};color:${isRight?'var(--green)':'var(--red)'};border:1px solid ${isRight?'rgba(34,197,94,.3)':'rgba(239,68,68,.25)'};cursor:pointer;`;
+      placed.textContent=sortSel.name;
+      placed.onclick=()=>{zone.removeChild(placed);const ch=document.getElementById('schip_'+sortSel.name.replace(/ /g,'_'));if(ch){ch.classList.remove('placed','active-chip');}delete sortPlaced[sortSel.name];};
+      // Remove empty hint
+      if(zone.querySelector('span[style*="color:var(--muted)"]'))zone.innerHTML='';
+      zone.appendChild(placed);
+      const chip=document.getElementById('schip_'+sortSel.name.replace(/ /g,'_'));
+      if(chip)chip.classList.add('placed');
+      sortPlaced[sortSel.name]={zone:zid,correct:isRight};
+      document.querySelectorAll('.sort-chip').forEach(c=>c.classList.remove('active-chip'));
+      sortSel=null;updateProg();
+    };
+  });
+}
+
+function checkSort(){
+  const fb=document.getElementById('fbSort');fb.style.display='block';
+  const placed=Object.values(sortPlaced);
+  if(placed.length<SORT_ITEMS.length){fb.className='fb hint';fb.textContent='Place all '+SORT_ITEMS.length+' items before checking!';return;}
+  const correct_count=placed.filter(p=>p.correct).length;
+  if(correct_count===SORT_ITEMS.length){fb.className='fb ok';fb.textContent='✓ Perfect! All '+SORT_ITEMS.length+' materials correctly sorted. Conductors allow electrons to flow freely — insulators trap them.';correct.sort=true;}
+  else{fb.className='fb bad';fb.textContent='✗ '+correct_count+'/'+SORT_ITEMS.length+' correct. Conductors: metals like copper, iron, aluminium. Insulators: rubber, plastic, glass, dry wood.';}
+  updateProg();
+}
+function resetSort(){
+  document.getElementById('sortBank').querySelectorAll('.sort-chip').forEach(c=>{c.classList.remove('placed','active-chip');});
+  ['zoneCond','zoneIns'].forEach(id=>{document.getElementById(id).innerHTML='<span style="color:var(--muted);font-size:.8rem;">Tap a chip then tap here</span>';});
+  sortPlaced={};sortSel=null;
+  document.getElementById('fbSort').style.display='none';
+  updateProg();
+}
+
+// ── SWITCH DEMO ──────────────────────────────────────────
+function buildSwitchDemo(){
+  const demo=document.getElementById('switchDemo');
+  ['Open','Closed'].forEach(state=>{
+    const box=document.createElement('div');box.className='switch-box';
+    const cv=document.createElement('canvas');cv.width=220;cv.height=160;
+    box.appendChild(cv);
+    const lbl=document.createElement('div');lbl.className='switch-label';
+    lbl.textContent=state+' Switch';
+    lbl.style.color=state==='Open'?'var(--red)':'var(--green)';
+    box.appendChild(lbl);
+    box.onclick=()=>drawSwitchCircuit(cv.getContext('2d'),state==='Closed');
+    demo.appendChild(box);
+    drawSwitchCircuit(cv.getContext('2d'),state==='Closed');
+  });
+}
+
+function drawSwitchCircuit(ctx,closed){
+  const W=220,H=160;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
+  // Determine glow based on state
+  const wireColor=closed?'#60a5fa':'#3a5080';
+  const glowBlur=closed?10:0;
+  ctx.shadowBlur=glowBlur;ctx.shadowColor='#60a5fa';
+  ctx.strokeStyle=wireColor;ctx.lineWidth=2.5;
+  // Draw circuit rectangle
+  ctx.beginPath();ctx.moveTo(30,30);ctx.lineTo(190,30);ctx.lineTo(190,130);ctx.lineTo(30,130);ctx.lineTo(30,30);ctx.stroke();
+  ctx.shadowBlur=0;
+  // Cell on left
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(30,60);ctx.lineTo(30,80);ctx.stroke();
+  ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(30,70);ctx.lineTo(30,90);ctx.stroke();
+  ctx.fillStyle='#fbbf24';ctx.font='8px DM Mono';ctx.textAlign='left';ctx.fillText('+',10,62);ctx.fillText('−',10,86);
+  // Lamp on top right
+  const lx=155,ly=30;
+  ctx.strokeStyle=closed?'#fbbf24':'#3a5080';ctx.lineWidth=2;
+  if(closed){ctx.shadowBlur=14;ctx.shadowColor='#fbbf24';}
+  ctx.beginPath();ctx.arc(lx,ly,12,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lx-8,ly-8);ctx.lineTo(lx+8,ly+8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lx+8,ly-8);ctx.lineTo(lx-8,ly+8);ctx.stroke();
+  ctx.shadowBlur=0;
+  // Switch on bottom
+  ctx.strokeStyle='#22c55e';ctx.lineWidth=2;
+  const sx=100,sy=130;
+  ctx.beginPath();ctx.moveTo(sx-18,sy);ctx.lineTo(sx-5,sy);ctx.stroke();
+  ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(sx-5,sy,3,0,Math.PI*2);ctx.fill();
+  if(closed){ctx.beginPath();ctx.moveTo(sx-5,sy);ctx.lineTo(sx+14,sy);ctx.stroke();}
+  else{ctx.beginPath();ctx.moveTo(sx-5,sy);ctx.lineTo(sx+8,sy-12);ctx.stroke();}
+  ctx.beginPath();ctx.arc(sx+14,sy,3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.moveTo(sx+14,sy);ctx.lineTo(sx+20,sy);ctx.stroke();
+  // Status label
+  ctx.fillStyle=closed?'#22c55e':'#ef4444';
+  ctx.font='bold 11px Syne';ctx.textAlign='center';
+  ctx.fillText(closed?'🔒 CLOSED — Current flows':'🔓 OPEN — No current',W/2,H-8);
+}
+
+// ── CELLS & RECEIVERS ────────────────────────────────────
+let cellCount=0;
+function setCells(n,btn){
+  cellCount=n;
+  document.querySelectorAll('.cell-toggle').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateReceiver();correct.cells=n>0;updateProg();
+}
+
+function updateReceiver(){
+  const type=document.getElementById('receiverType').value;
+  const cv=document.getElementById('cvCells');
+  const ctx=cv.getContext('2d');
+  drawCellsCanvas(ctx,cv.width,cv.height,cellCount);
+  drawReceiver(cellCount,type);
+}
+
+function drawCellsCanvas(ctx,W,H,n){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(96,165,250,.15)';ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const spacing=n>0?Math.min(36,220/n):0;
+  const startX=W/2-(n-1)*spacing/2;
+  ctx.fillStyle='rgba(60,140,255,.05)';ctx.fillRect(10,10,W-20,H-20);
+  ctx.strokeStyle='rgba(60,140,255,.2)';ctx.lineWidth=1;ctx.strokeRect(10,10,W-20,H-20);
+  ctx.fillStyle='var(--muted2)';ctx.font='11px Outfit';ctx.textAlign='center';
+  ctx.fillText(n===0?'No cells connected':n+' cell'+(n>1?'s':'')+' connected',W/2,22);
+  for(let i=0;i<n;i++){
+    const x=n===1?W/2:startX+i*spacing;
+    const y=H/2;
+    const col=n>=4?'#ef4444':'#fbbf24';
+    ctx.strokeStyle=col;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(x-4,y-18);ctx.lineTo(x-4,y+18);ctx.stroke();
+    ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+4,y-12);ctx.lineTo(x+4,y+12);ctx.stroke();
+    if(n>=4){ctx.shadowBlur=8;ctx.shadowColor='#ef4444';}
+    ctx.strokeStyle=col;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x-4,y-18);ctx.lineTo(x-40,y-18);ctx.lineTo(x-40,y+18);ctx.lineTo(x-4,y+18);ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+  if(n>=4){
+    ctx.fillStyle='#ef4444';ctx.font='bold 11px Outfit';ctx.textAlign='center';
+    ctx.fillText('⚠ OVERVOLTAGE RISK!',W/2,H-12);
+  }
+}
+
+const RECV_STATES=[
+  {n:0,label:'No power',note:'No cells — no current flows. Receiver does not function.',color:'#3a5080',lampGlow:0,motorSpeed:0},
+  {n:1,label:'🔅 Weak',note:'1 cell provides some voltage but below rated value — receiver works weakly.',color:'var(--yellow)',lampGlow:0.3,motorSpeed:0.4},
+  {n:2,label:'✓ Normal',note:'2 cells = rated voltage. Receiver works at normal designed power.',color:'var(--green)',lampGlow:0.85,motorSpeed:1},
+  {n:3,label:'🔆 Very Bright / Fast',note:'3 cells = above rated. Works very strongly but risks overheating.',color:'var(--orange)',lampGlow:1.15,motorSpeed:1.6},
+  {n:4,label:'🔥 BURNT OUT',note:'4 cells = severe overvoltage. Receiver is permanently damaged — burnt out!',color:'var(--red)',lampGlow:0,motorSpeed:0},
+];
+let motorAngle=0,motorAnim=null;
+
+function drawReceiver(n,type){
+  const st=RECV_STATES[Math.min(n,4)];
+  const cv=document.getElementById('cvRecv');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
+  if(motorAnim){cancelAnimationFrame(motorAnim);motorAnim=null;}
+  if(type==='lamp'){drawLamp(ctx,cx,cy,st);} else {drawMotor(ctx,cx,cy,st);}
+  document.getElementById('recvStatus').textContent=st.label;
+  document.getElementById('recvStatus').style.color=st.color;
+  document.getElementById('recvNote').textContent=st.note;
+  document.getElementById('recvDisplay').style.borderColor=n>=4?'var(--red)':n===3?'var(--orange)':n>0?'var(--green)':'var(--border2)';
+}
+
+function drawLamp(ctx,cx,cy,st){
+  const W=ctx.canvas.width,H=ctx.canvas.height;
+  if(st.lampGlow>0&&st.n<4){
+    const grd=ctx.createRadialGradient(cx,cy,5,cx,cy,60);
+    const alpha=Math.min(1,st.lampGlow*0.6);
+    grd.addColorStop(0,`rgba(251,191,36,${alpha})`);grd.addColorStop(1,'transparent');
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,65,0,Math.PI*2);ctx.fill();
+  }
+  const col=st.n>=4?'#ef4444':st.lampGlow>0?'#fbbf24':'#3a5080';
+  ctx.strokeStyle=col;ctx.lineWidth=3;
+  if(st.lampGlow>0.8&&st.n<4){ctx.shadowBlur=18;ctx.shadowColor='#fbbf24';}
+  ctx.beginPath();ctx.arc(cx,cy,34,0,Math.PI*2);ctx.stroke();
+  if(st.n>=4){
+    ctx.strokeStyle='#ef4444';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx-20,cy);ctx.lineTo(cx+20,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,cy-20);ctx.lineTo(cx,cy+20);ctx.stroke();
+  } else {
+    ctx.beginPath();ctx.moveTo(cx-22,cy-22);ctx.lineTo(cx+22,cy+22);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx+22,cy-22);ctx.lineTo(cx-22,cy+22);ctx.stroke();
+  }
+  ctx.shadowBlur=0;
+  ctx.beginPath();ctx.moveTo(cx,cy+34);ctx.lineTo(cx,cy+50);
+  ctx.moveTo(cx-10,cy+50);ctx.lineTo(cx+10,cy+50);ctx.stroke();
+}
+
+function drawMotor(ctx,cx,cy,st){
+  if(st.motorSpeed<=0){
+    ctx.strokeStyle='#3a5080';ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(cx,cy,34,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#3a5080';ctx.font='bold 18px Syne';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('M',cx,cy);
+    if(st.n>=4){ctx.fillStyle='var(--red)';ctx.font='11px Outfit';ctx.fillText('BURNT',cx,cy+52);}
+    return;
+  }
+  function animMotor(){
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    ctx.fillStyle='#020408';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    motorAngle+=st.motorSpeed*0.06;
+    const col=st.n>=3?'var(--orange)':'#14b8a6';
+    if(st.n>=3){ctx.shadowBlur=10;ctx.shadowColor='var(--orange)';}
+    ctx.strokeStyle=col;ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(cx,cy,34,0,Math.PI*2);ctx.stroke();
+    ctx.shadowBlur=0;
+    // Spinning blades
+    for(let i=0;i<4;i++){
+      const a=motorAngle+i*Math.PI/2;
+      ctx.strokeStyle=col;ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*24,cy+Math.sin(a)*24);ctx.stroke();
+    }
+    ctx.fillStyle=col;ctx.font='bold 14px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('M',cx,cy);
+    motorAnim=requestAnimationFrame(animMotor);
+  }
+  animMotor();
+}
+
+// ── CIRCUIT BUILDER ──────────────────────────────────────
+const cv=document.getElementById('cvCircuit');
+const ctx=cv.getContext('2d');
+let tool='cell',placed=[],wires=[],wireStart=null;
+const CB_COMPS_INFO={
+  cell:{color:'#fbbf24',label:'Cell',w:50,h:30},
+  lamp:{color:'#60a5fa',label:'Lamp',w:44,h:44},
+  motor:{color:'#14b8a6',label:'Motor',w:44,h:44},
+  switch:{color:'#22c55e',label:'Switch',w:60,h:30},
+  wire:{color:'#a855f7',label:'Wire'},
+};
+
+function setTool(t){
+  tool=t;
+  document.querySelectorAll('.cb-btn').forEach(b=>b.classList.remove('selected'));
+  const map={cell:'toolCell',lamp:'toolLamp',motor:'toolMotor',switch:'toolSwitch',wire:'toolWire'};
+  document.getElementById(map[t])?.classList.add('selected');
+  document.getElementById('cbStatus').textContent=t==='wire'?'Wire mode: click a component to start wire, click another to connect':'Click on canvas to place a '+t;
+}
+
+cv.addEventListener('click',e=>{
+  const rect=cv.getBoundingClientRect();
+  const scaleX=cv.width/rect.width,scaleY=cv.height/rect.height;
+  const mx=(e.clientX-rect.left)*scaleX,my=(e.clientY-rect.top)*scaleY;
+  if(tool==='wire'){
+    const comp=placed.find(p=>Math.hypot(p.x-mx,p.y-my)<34);
+    if(!comp)return;
+    if(!wireStart){wireStart=comp;document.getElementById('cbStatus').textContent='Wire started from '+comp.type+'. Click another component to connect.';}
+    else if(wireStart!==comp){
+      wires.push({from:wireStart,to:comp});wireStart=null;
+      document.getElementById('cbStatus').textContent='Wire connected! Continue or select another tool.';
+      correct.circuit=wires.length>=2&&placed.some(p=>p.type==='cell')&&placed.some(p=>p.type==='lamp'||p.type==='motor');
+      updateProg();
+    }
+  } else {
+    placed.push({type:tool,x:mx,y:my,id:Date.now()});
+    document.getElementById('cbStatus').textContent=tool+' placed. Add more or switch to Wire to connect.';
+  }
+  drawCB();
+});
+
+function drawCB(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle='#020408';ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.strokeStyle='rgba(60,140,255,.04)';ctx.lineWidth=0.5;
+  for(let x=0;x<cv.width;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+  for(let y=0;y<cv.height;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
+  // Wires
+  wires.forEach(w=>{
+    const active=hasCell()&&hasReceiver();
+    ctx.shadowBlur=active?10:0;ctx.shadowColor='#60a5fa';
+    ctx.strokeStyle=active?'#60a5fa':'#3a5080';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(w.from.x,w.from.y);ctx.lineTo(w.to.x,w.to.y);ctx.stroke();
+    ctx.shadowBlur=0;
+  });
+  // Components
+  placed.forEach(p=>{
+    const info=CB_COMPS_INFO[p.type];
+    const highlight=wireStart===p;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    if(highlight){ctx.shadowBlur=16;ctx.shadowColor=info.color;}
+    drawCBComp(ctx,p.type,info.color);
+    ctx.restore();
+  });
+}
+
+function drawCBComp(ctx,type,col){
+  ctx.strokeStyle=col;ctx.lineWidth=2.5;
+  if(type==='cell'){
+    ctx.beginPath();ctx.moveTo(-8,-18);ctx.lineTo(-8,18);ctx.stroke();ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(4,-12);ctx.lineTo(4,12);ctx.stroke();
+    ctx.lineWidth=1;ctx.strokeStyle=col+'88';ctx.beginPath();ctx.moveTo(-18,-18);ctx.lineTo(-18,18);ctx.moveTo(-8,0);ctx.lineTo(16,0);ctx.stroke();
+  } else if(type==='lamp'){
+    ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-12,-12);ctx.lineTo(12,12);ctx.moveTo(12,-12);ctx.lineTo(-12,12);ctx.stroke();
+  } else if(type==='motor'){
+    ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle=col;ctx.font='bold 14px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('M',0,1);
+  } else if(type==='switch'){
+    ctx.beginPath();ctx.moveTo(-22,0);ctx.lineTo(-6,0);ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(-6,0,3,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(8,-12);ctx.stroke();
+    ctx.beginPath();ctx.arc(16,0,3,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(22,0);ctx.stroke();
+  }
+  ctx.fillStyle=col;ctx.font='9px Outfit';ctx.textAlign='center';ctx.fillText(CB_COMPS_INFO[type].label,0,28);
+  ctx.shadowBlur=0;
+}
+
+function hasCell(){return placed.some(p=>p.type==='cell');}
+function hasReceiver(){return placed.some(p=>p.type==='lamp'||p.type==='motor');}
+function hasSwitch(){return placed.some(p=>p.type==='switch');}
+
+function clearCircuit(){placed=[];wires=[];wireStart=null;drawCB();document.getElementById('cbStatus').textContent='Canvas cleared. Select a tool to start building.';correct.circuit=false;updateProg();}
+
+function checkCircuit(){
+  const st=document.getElementById('cbStatus');
+  const hasC=hasCell(),hasR=hasReceiver(),hasW=wires.length>=2;
+  if(!hasC){st.innerHTML='<span class="status-bad">✗ No cell! Add a dry cell as your power source.</span>';return;}
+  if(!hasR){st.innerHTML='<span class="status-bad">✗ No receiver! Add a lamp or motor.</span>';return;}
+  if(!hasW){st.innerHTML='<span class="status-warn">⚠ Components not connected. Use the Wire tool to connect them.</span>';return;}
+  const connected=wires.some(w=>(w.from.type==='cell'||w.to.type==='cell')&&(w.from.type==='lamp'||w.to.type==='lamp'||w.from.type==='motor'||w.to.type==='motor'));
+  if(!connected){st.innerHTML='<span class="status-warn">⚠ Cell and receiver not connected. Draw a wire between them.</span>';return;}
+  st.innerHTML='<span class="status-ok">✓ Circuit looks good! '+(hasSwitch()?'Close the switch to let current flow.':'Tip: add a switch to control your circuit.')+' Current flows: Cell → Wires → Receiver → back to Cell.</span>';
+  correct.circuit=true;updateProg();
+}
+
+// ── PHET ─────────────────────────────────────────────────
+const PHET_URL='https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html';
+function openPhet(){
+  document.getElementById('phetFrame').src=PHET_URL;
+  document.getElementById('phetWin').classList.add('visible');
+  makeDraggable(document.getElementById('phetWin'),document.querySelector('.phet-titlebar'));
+}
+function closePhet(){document.getElementById('phetWin').classList.remove('visible');document.getElementById('phetFrame').src='';}
+
+function makeDraggable(el,handle){
+  let ox=0,oy=0,dragging=false;
+  handle.addEventListener('mousedown',e=>{dragging=true;ox=e.clientX-el.offsetLeft;oy=e.clientY-el.offsetTop;e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(dragging){el.style.left=(e.clientX-ox)+'px';el.style.top=(e.clientY-oy)+'px';el.style.right='auto';}});
+  document.addEventListener('mouseup',()=>dragging=false);
+}
+
+// ── AI TUTOR ─────────────────────────────────────────────
+function getAI(){
+  const ans=document.getElementById('openAnswer').value.trim();
+  const resp=document.getElementById('aiResp');
+  if(!ans){toast('Write your answer first!');return;}
+  resp.style.display='block';resp.innerHTML='<span style="color:var(--electric);">🤖 Thinking...</span>';
+  setTimeout(()=>{resp.innerHTML=buildFeedback(ans);},1200);
+}
+function buildFeedback(a){
+  const hasCu=/copper|conduct|current|electron|free/i.test(a);
+  const hasRub=/rubber|insul|protect|shock|coat/i.test(a);
+  const score=[hasCu,hasRub].filter(Boolean).length;
+  let p1=hasCu&&hasRub?'✓ Excellent! You identified both parts correctly.':hasCu?'Good — you explained the conductor part well.':hasRub?'Good — you explained the insulator coating well.':'Let\'s think about this together.';
+  const fix=!hasCu?'The inside (copper) is a conductor — it has free electrons that carry current easily. ':'';
+  const fix2=!hasRub?'The outside coating (rubber/plastic) is an insulator — it prevents short circuits and protects people from electric shock. ':'';
+  const tip='💡 The clever design of a wire uses BOTH materials for their opposite properties: conductor inside, insulator outside.';
+  return `<span style="color:var(--green);">${p1}</span> ${fix}${fix2}<span style="color:var(--muted2);font-size:.84rem;">${tip}</span>`;
+}
+
+// ── PROGRESS ─────────────────────────────────────────────
+function updateProg(){
+  const keys=['qcomp','qsym','sort','qswitch','cells','circuit','q1','q2','q3','q4','q5'];
+  const done=keys.filter(k=>correct[k]).length;
+  const pct=Math.round(done/keys.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=done+' / '+keys.length+' activities completed';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  // Score breakdown
+  document.getElementById('scoreBreakdown').innerHTML=keys.map(k=>{
+    const labels={qcomp:'Component Q',qsym:'Symbol Q',sort:'Material Sort',
+      qswitch:'Switch Q',cells:'Cell Experiment',circuit:'Circuit Built',
+      q1:'Q1 Generator',q2:'Q2 Conductor',q3:'Q3 Switch',q4:'Q4 Overvoltage',q5:'Q5 Symbol'};
+    return `<div class="score-row"><span class="score-key">${labels[k]||k}</span><span class="score-val ${correct[k]?'':'zero'}">${correct[k]?'✓':'—'}</span></div>`;
+  }).join('');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+async function submitWork(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!name||!cls){toast('Enter your name and class first!');return;}
+  const btn=document.querySelector('[onclick="submitWork()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+  const keys=['qcomp','qsym','sort','qswitch','cells','circuit','q1','q2','q3','q4','q5'];
+  const done=keys.filter(k=>correct[k]).length;
+  const payload={
+    sheet:'Electricity_G7',name,class:cls,
+    engage:'components:'+( correct.qcomp?'✓':'✗')+' symbol:'+(correct.qsym?'✓':'✗'),
+    conductors:'sort:'+(correct.sort?'✓':'✗'),
+    switch_q:correct.qswitch?'✓':'✗',
+    cells_exp:correct.cells?'✓':'✗',
+    circuit:correct.circuit?'✓':'✗',
+    practice:['q1','q2','q3','q4','q5'].map(k=>k+':'+(correct[k]?'✓':'✗')).join(' | '),
+    open_q:document.getElementById('openAnswer').value||'—',
+    score:Math.round(done/keys.length*100)+'%'
+  };
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    btn.textContent='✓ Submitted!';btn.style.background='var(--green)';btn.style.color='#000';
+    toast('✓ Submitted to Ahmad\'s grade sheet!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 Submit to Ahmad\'s Grade Sheet';
+    toast('⚠ Check your internet connection.');
+  }
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// ── INIT ─────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  buildCompCards();
+  buildSymbolGrid();
+  buildSort();
+  buildSwitchDemo();
+  drawCB();
+  setTool('cell');
+  updateReceiver();
+  updateProg();
+});
+</script>
+</body>
+</html>
