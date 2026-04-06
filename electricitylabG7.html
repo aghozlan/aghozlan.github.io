@@ -309,6 +309,7 @@ footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2
     <button class="sn" onclick="goTo('cells')">🔋 Cells & Receivers <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('circuit')">🔧 Build a Circuit <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('phet')">🌐 PhET Sim <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('voltage')">💡 Voltage &amp; Current <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('practice')">✏️ Practice <span class="badge">E4</span></button>
     <button class="sn" onclick="goTo('evaluate')">📊 Submit <span class="badge">E5</span></button>
   </nav>
@@ -418,6 +419,15 @@ footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2
         <strong style="color:var(--red);">Examples:</strong> Rubber, plastic, glass, wood, ceramic, dry air
       </div>
     </div>
+  </div>
+
+  <!-- LIVE CURRENT TESTER -->
+  <div class="card" style="margin-bottom:22px;border:1.5px solid rgba(96,165,250,.3);">
+    <div style="font-family:var(--fm);font-size:.62rem;color:var(--electric);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">⚡ Live Experiment — Insert a material into the circuit gap</div>
+    <div style="font-size:.84rem;color:var(--muted2);margin-bottom:14px;line-height:1.75;">Tap a material below to insert it between the terminals. Watch what happens to the current and the lamp!</div>
+    <canvas id="cvConductor" width="700" height="180" style="width:100%;border-radius:10px;background:#020408;border:1px solid var(--border);display:block;"></canvas>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;" id="materialBtns"></div>
+    <div style="margin-top:10px;padding:10px 14px;background:var(--panel2);border-radius:8px;font-family:var(--fm);font-size:.74rem;" id="conductorResult"><span style="color:var(--muted2);">Select a material above to test it</span></div>
   </div>
 
   <div style="font-family:var(--fm);font-size:.64rem;color:var(--electric);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">🎯 Sorting Game — Tap a material then tap the correct zone</div>
@@ -591,6 +601,87 @@ footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2
   </div>
 </section>
 
+<!-- E3b VOLTAGE AND CURRENT -->
+<section id="voltage" style="background:var(--bg3);">
+  <div class="e-tag explain">E3 · Key Concepts</div>
+  <h2 class="sec-title">⚡ Voltage &amp; Current</h2>
+  <p class="sec-desc">The two most important — and most confusing — ideas in electricity. Let's crack them with animations.</p>
+
+  <div class="g2" style="margin-bottom:20px;">
+    <div class="card" style="border-top:3px solid var(--electric);">
+      <div style="font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--electric);margin-bottom:10px;">⚡ Electric Current (I)</div>
+      <div style="font-size:.86rem;color:var(--muted2);line-height:1.85;">
+        <strong style="color:#fff;">Definition:</strong> The flow of electrons through a conductor.<br><br>
+        <strong style="color:var(--cyan);">Water pipe analogy:</strong> Current = the <em>flow rate</em> of water (litres/second).<br><br>
+        <strong style="color:#fff;">Unit:</strong> <span style="font-family:var(--fm);color:var(--electric);">Ampere (A)</span><br><br>
+        <strong style="color:#fff;">Effect:</strong> More current → brighter lamp / faster motor.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--yellow);">
+      <div style="font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--yellow);margin-bottom:10px;">🔋 Voltage (V)</div>
+      <div style="font-size:.86rem;color:var(--muted2);line-height:1.85;">
+        <strong style="color:#fff;">Definition:</strong> The electrical "pressure" that pushes electrons around the circuit. Provided by the dry cell.<br><br>
+        <strong style="color:var(--cyan);">Water pipe analogy:</strong> Voltage = the <em>pump pressure</em>.<br><br>
+        <strong style="color:#fff;">Unit:</strong> <span style="font-family:var(--fm);color:var(--yellow);">Volt (V)</span><br><br>
+        <strong style="color:#fff;">Effect:</strong> More cells → higher voltage → more current → brighter lamp.
+      </div>
+    </div>
+  </div>
+
+  <!-- WATER ANALOGY ANIMATION -->
+  <div class="card" style="margin-bottom:20px;border:1.5px solid rgba(6,182,212,.2);">
+    <div style="font-family:var(--fm);font-size:.62rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">🌊 Interactive Water-Pipe Analogy</div>
+    <canvas id="cvWater" width="700" height="200" style="width:100%;border-radius:10px;background:#020408;border:1px solid var(--border);display:block;"></canvas>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <button class="cb-btn" id="vcBtn0" style="color:var(--electric);border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.08);" onclick="setVC(0)">1 Cell — Low</button>
+      <button class="cb-btn" id="vcBtn1" style="color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06);" onclick="setVC(1)">2 Cells — Normal</button>
+      <button class="cb-btn" id="vcBtn2" style="color:var(--orange);border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.06);" onclick="setVC(2)">3 Cells — High</button>
+      <button class="cb-btn" id="vcBtn3" style="color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06);" onclick="setVC(3)">4 Cells — Danger!</button>
+    </div>
+    <div style="margin-top:10px;padding:12px 16px;background:var(--panel2);border-radius:8px;font-size:.86rem;line-height:1.8;" id="vcExplain">
+      <span style="color:var(--muted2);">Tap a mode to see voltage and current compared.</span>
+    </div>
+  </div>
+
+  <!-- ELECTRON FLOW ANIMATION -->
+  <div class="card" style="margin-bottom:20px;">
+    <div style="font-family:var(--fm);font-size:.62rem;color:var(--electric);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">🔵 Watch Electrons Flow — Toggle the switch</div>
+    <canvas id="cvElectron" width="700" height="220" style="width:100%;border-radius:10px;background:#020408;border:1px solid var(--border);display:block;"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+      <button class="check-btn" id="switchToggle" onclick="toggleElectronSwitch()">🔓 Switch Open — Tap to Close</button>
+      <span style="font-size:.78rem;color:var(--muted2);" id="electronStatus">Switch open — electrons don't move</span>
+    </div>
+  </div>
+
+  <!-- MISCONCEPTIONS -->
+  <div class="card" style="border:1.5px solid rgba(239,68,68,.22);margin-bottom:20px;">
+    <div style="font-family:var(--fh);font-weight:800;color:var(--red);margin-bottom:12px;">⚠ Common Mistakes — Don't fall for these!</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="card2" style="border-left:3px solid var(--red);">
+        <div style="font-size:.84rem;"><strong style="color:var(--red);">✗</strong> <span style="color:var(--muted2);">"The battery <em>creates</em> electrons."</span></div>
+        <div style="font-size:.84rem;margin-top:4px;"><strong style="color:var(--green);">✓</strong> <span style="color:var(--muted2);">The battery gives energy to electrons already in the wire. Electrons exist in all conductors — the cell just pushes them.</span></div>
+      </div>
+      <div class="card2" style="border-left:3px solid var(--red);">
+        <div style="font-size:.84rem;"><strong style="color:var(--red);">✗</strong> <span style="color:var(--muted2);">"The lamp <em>uses up</em> the current."</span></div>
+        <div style="font-size:.84rem;margin-top:4px;"><strong style="color:var(--green);">✓</strong> <span style="color:var(--muted2);">Current flows in a complete loop — same current in and out of the lamp. The lamp converts <em>energy</em> (voltage), not current.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Concept Check</div>
+    <div class="q-text">A student adds a second dry cell. The lamp becomes brighter. The best explanation is:</div>
+    <div class="mcq-opts" id="qvc">
+      <div class="mcq-opt" onclick="selMCQ('qvc','A',this)"><span class="ml">A</span>The current decreased, giving the lamp more energy</div>
+      <div class="mcq-opt" onclick="selMCQ('qvc','B',this)"><span class="ml">B</span>Higher voltage pushes more current → lamp gets more energy per second</div>
+      <div class="mcq-opt" onclick="selMCQ('qvc','C',this)"><span class="ml">C</span>The lamp created more electrons from the extra cell</div>
+      <div class="mcq-opt" onclick="selMCQ('qvc','D',this)"><span class="ml">D</span>The resistance of the lamp decreased automatically</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('qvc','B','✓ Correct! More cells → higher voltage → more electrical pressure → more current → lamp receives more energy per second → brighter!','✗ More cells = higher voltage (more pressure). This pushes more current through the lamp, delivering more energy — making it brighter.')">✓ Check</button>
+    <div class="fb" id="fbqvc"></div>
+  </div>
+</section>
+
 <!-- E4 PRACTICE -->
 <section id="practice" style="background:var(--bg2);">
   <div class="e-tag elaborate">E4 · Practice</div>
@@ -726,7 +817,7 @@ const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaO
 function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});}
 const sideNavBtns=document.querySelectorAll('.sn');
 window.addEventListener('scroll',()=>{
-  const ids=['hero','components','symbols','conductors','switch','cells','circuit','phet','practice','evaluate'];
+  const ids=['hero','components','symbols','conductors','switch','cells','circuit','phet','voltage','practice','evaluate'];
   let cur='hero';
   ids.forEach(s=>{const el=document.getElementById(s);if(el&&window.scrollY>=el.offsetTop-200)cur=s;});
   sideNavBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
@@ -760,14 +851,19 @@ const COMPS=[
    <strong style="color:#fff;">Real examples:</strong> AA batteries, phone batteries, car batteries<br><br>
    <strong style="color:var(--yellow);">Key fact:</strong> The longer line in its symbol = positive (+) terminal. The shorter line = negative (−) terminal. Current flows from + to −.`,
    drawSym:(ctx,cx,cy)=>{
-     ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
-     [-8,0,8].forEach(ox=>{
-       ctx.beginPath();ctx.moveTo(cx+ox-6,cy-14);ctx.lineTo(cx+ox-6,cy+14);
-       ctx.lineWidth=ox===0?4:2;ctx.stroke();
-       if(ox!==8){ctx.beginPath();ctx.moveTo(cx+ox+2,cy-9);ctx.lineTo(cx+ox+2,cy+9);ctx.lineWidth=1.5;ctx.stroke();}
-     });
+     // Standard cell symbol: lead—longLine(+)—gap—shortLine(−)—lead
+     ctx.strokeStyle='#fbbf24';
+     // Left lead wire
+     ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-28,cy);ctx.lineTo(cx-8,cy);ctx.stroke();
+     // Long line = positive terminal (tall, thick)
+     ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(cx-8,cy-15);ctx.lineTo(cx-8,cy+15);ctx.stroke();
+     // Short line = negative terminal (short, thin)
+     ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(cx+8,cy-9);ctx.lineTo(cx+8,cy+9);ctx.stroke();
+     // Right lead wire
+     ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx+8,cy);ctx.lineTo(cx+28,cy);ctx.stroke();
+     // Labels
      ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
-     ctx.fillText('+',cx-12,cy+20);ctx.fillText('−',cx+14,cy+20);
+     ctx.fillText('+',cx-8,cy-19);ctx.fillText('−',cx+8,cy-13);
    }},
   {id:'lamp',icon:'💡',name:'Lamp (Light Bulb)',role:'Receiver — Converts electricity to light',
    color:'rgba(96,165,250,.2)',bColor:'rgba(96,165,250,.45)',
@@ -854,8 +950,16 @@ function showComp(id){
 
 // ── SYMBOL GRID ─────────────────────────────────────────
 const SYMBOLS=[
-  {name:'Dry Cell',desc:'Long line = + terminal, short line = − terminal',
-   draw:(ctx,cx,cy)=>{ctx.strokeStyle='#fbbf24';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cx-16,cy-18);ctx.lineTo(cx-16,cy+18);ctx.stroke();ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx,cy-12);ctx.lineTo(cx,cy+12);ctx.stroke();ctx.fillStyle='#fbbf24';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.fillText('+',cx-22,cy+22);ctx.fillText('−',cx+6,cy+22);}},
+  {name:'Dry Cell',desc:'Long thick line = + (positive)  ·  Short thin line = − (negative)',
+   draw:(ctx,cx,cy)=>{
+     ctx.strokeStyle='#fbbf24';
+     ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-26,cy);ctx.lineTo(cx-7,cy);ctx.stroke();
+     ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(cx-7,cy-16);ctx.lineTo(cx-7,cy+16);ctx.stroke();
+     ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(cx+7,cy-9);ctx.lineTo(cx+7,cy+9);ctx.stroke();
+     ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx+7,cy);ctx.lineTo(cx+26,cy);ctx.stroke();
+     ctx.fillStyle='#fbbf24';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+     ctx.fillText('+',cx-7,cy-20);ctx.fillText('−',cx+7,cy-13);
+   }},
   {name:'Lamp',desc:'Circle with X inside — X = filament',
    draw:(ctx,cx,cy)=>{ctx.strokeStyle='#60a5fa';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-12,cy-12);ctx.lineTo(cx+12,cy+12);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+12,cy-12);ctx.lineTo(cx-12,cy+12);ctx.stroke();}},
   {name:'Motor',desc:'Circle with M inside',
@@ -1034,12 +1138,11 @@ function drawCellsCanvas(ctx,W,H,n){
     const x=n===1?W/2:startX+i*spacing;
     const y=H/2;
     const col=n>=4?'#ef4444':'#fbbf24';
-    ctx.strokeStyle=col;ctx.lineWidth=3;
-    ctx.beginPath();ctx.moveTo(x-4,y-18);ctx.lineTo(x-4,y+18);ctx.stroke();
-    ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+4,y-12);ctx.lineTo(x+4,y+12);ctx.stroke();
+    // Draw standard cell symbol: long line (+), gap, short line (-)
+    ctx.strokeStyle=col;
+    ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(x-4,y-18);ctx.lineTo(x-4,y+18);ctx.stroke();
+    ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(x+6,y-11);ctx.lineTo(x+6,y+11);ctx.stroke();
     if(n>=4){ctx.shadowBlur=8;ctx.shadowColor='#ef4444';}
-    ctx.strokeStyle=col;ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(x-4,y-18);ctx.lineTo(x-40,y-18);ctx.lineTo(x-40,y+18);ctx.lineTo(x-4,y+18);ctx.stroke();
     ctx.shadowBlur=0;
   }
   if(n>=4){
@@ -1196,8 +1299,13 @@ function drawCB(){
 function drawCBComp(ctx,type,col){
   ctx.strokeStyle=col;ctx.lineWidth=2.5;
   if(type==='cell'){
-    ctx.beginPath();ctx.moveTo(-8,-18);ctx.lineTo(-8,18);ctx.stroke();ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(4,-12);ctx.lineTo(4,12);ctx.stroke();
-    ctx.lineWidth=1;ctx.strokeStyle=col+'88';ctx.beginPath();ctx.moveTo(-18,-18);ctx.lineTo(-18,18);ctx.moveTo(-8,0);ctx.lineTo(16,0);ctx.stroke();
+    // Standard: lead—longLine(+)—gap—shortLine(−)—lead
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(-8,0);ctx.stroke();
+    ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(-8,-16);ctx.lineTo(-8,16);ctx.stroke();
+    ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(8,-10);ctx.lineTo(8,10);ctx.stroke();
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(26,0);ctx.stroke();
+    ctx.fillStyle=col;ctx.font='9px DM Mono';ctx.textAlign='center';
+    ctx.fillText('+',cx-8,cy-22);ctx.fillText('-',cx+8,cy-14);
   } else if(type==='lamp'){
     ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
     ctx.beginPath();ctx.moveTo(-12,-12);ctx.lineTo(12,12);ctx.moveTo(12,-12);ctx.lineTo(-12,12);ctx.stroke();
@@ -1270,7 +1378,7 @@ function buildFeedback(a){
 
 // ── PROGRESS ─────────────────────────────────────────────
 function updateProg(){
-  const keys=['qcomp','qsym','sort','qswitch','cells','circuit','q1','q2','q3','q4','q5'];
+  const keys=['qcomp','qsym','sort','qswitch','cells','circuit','qvc','q1','q2','q3','q4','q5'];
   const done=keys.filter(k=>correct[k]).length;
   const pct=Math.round(done/keys.length*100);
   document.getElementById('progFill').style.width=pct+'%';
@@ -1292,7 +1400,7 @@ async function submitWork(){
   if(!name||!cls){toast('Enter your name and class first!');return;}
   const btn=document.querySelector('[onclick="submitWork()"]');
   btn.disabled=true;btn.textContent='⏳ Submitting…';
-  const keys=['qcomp','qsym','sort','qswitch','cells','circuit','q1','q2','q3','q4','q5'];
+  const keys=['qcomp','qsym','sort','qswitch','cells','circuit','qvc','q1','q2','q3','q4','q5'];
   const done=keys.filter(k=>correct[k]).length;
   const payload={
     sheet:'Electricity_G7',name,class:cls,
@@ -1301,6 +1409,7 @@ async function submitWork(){
     switch_q:correct.qswitch?'✓':'✗',
     cells_exp:correct.cells?'✓':'✗',
     circuit:correct.circuit?'✓':'✗',
+    vc_q:correct.qvc?'✓':'✗',
     practice:['q1','q2','q3','q4','q5'].map(k=>k+':'+(correct[k]?'✓':'✗')).join(' | '),
     open_q:document.getElementById('openAnswer').value||'—',
     score:Math.round(done/keys.length*100)+'%'
@@ -1318,15 +1427,372 @@ async function submitWork(){
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 
+
+// ── CONDUCTOR LIVE TESTER ─────────────────────────────────
+const MATERIALS=[
+  {name:'Copper wire',cond:true,color:'#fbbf24'},
+  {name:'Iron nail',cond:true,color:'#94a3b8'},
+  {name:'Aluminium foil',cond:true,color:'#cbd5e1'},
+  {name:'Salt water',cond:true,color:'#38bdf8'},
+  {name:'Rubber band',cond:false,color:'#f97316'},
+  {name:'Plastic ruler',cond:false,color:'#a855f7'},
+  {name:'Glass rod',cond:false,color:'#06b6d4'},
+  {name:'Dry wood',cond:false,color:'#92400e'},
+];
+let condMat=null,condT=0,condAnim=null;
+
+function buildMaterialBtns(){
+  const el=document.getElementById('materialBtns');
+  if(!el)return;
+  MATERIALS.forEach(m=>{
+    const b=document.createElement('button');
+    b.className='check-btn';b.textContent=m.name;
+    b.style.cssText=`color:${m.color};border-color:${m.color}55;background:${m.color}11;font-size:.78rem;padding:7px 14px;`;
+    b.onclick=()=>testMaterial(m,b);
+    el.appendChild(b);
+  });
+}
+
+function testMaterial(mat,btn){
+  condMat=mat;condT=0;
+  document.querySelectorAll('#materialBtns .check-btn').forEach(b=>b.style.fontWeight='600');
+  btn.style.fontWeight='900';
+  if(condAnim)cancelAnimationFrame(condAnim);
+  animConductor();
+  const res=document.getElementById('conductorResult');
+  if(mat.cond){
+    res.innerHTML=`<span style="color:var(--green);">✓ CONDUCTOR — ${mat.name} allows current to flow! Electrons pass freely through it. The lamp lights up.</span>`;
+    correct.sort=true;
+  } else {
+    res.innerHTML=`<span style="color:var(--red);">✗ INSULATOR — ${mat.name} blocks current. No electrons can pass through it. The lamp stays off.</span>`;
+  }
+  updateProg();
+}
+
+function animConductor(){
+  const cv=document.getElementById('cvConductor');if(!cv)return;
+  const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
+  condT+=0.04;
+  ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(60,140,255,.04)';ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=25){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=25){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const isOn=condMat&&condMat.cond;
+  const wireY=H/2;
+  const cellX=60,matX1=280,matX2=420,lampX=570;
+  const wireCol=isOn?'#60a5fa':'#334155';
+  const glow=isOn?8:0;
+
+  // Wire segments
+  ctx.shadowBlur=glow;ctx.shadowColor='#60a5fa';ctx.strokeStyle=wireCol;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(cellX+22,wireY);ctx.lineTo(matX1,wireY);ctx.stroke();
+  if(isOn){ctx.beginPath();ctx.moveTo(matX2,wireY);ctx.lineTo(lampX-22,wireY);ctx.stroke();}
+  ctx.shadowBlur=0;
+  // Return wire (bottom)
+  ctx.strokeStyle=wireCol;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(cellX,wireY+40);ctx.lineTo(lampX,wireY+40);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cellX,wireY-2);ctx.lineTo(cellX,wireY+40);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lampX,wireY-2);ctx.lineTo(lampX,wireY+40);ctx.stroke();
+
+  // CELL
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=3.5;
+  ctx.beginPath();ctx.moveTo(cellX-8,wireY-18);ctx.lineTo(cellX-8,wireY+18);ctx.stroke();
+  ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(cellX+8,wireY-11);ctx.lineTo(cellX+8,wireY+11);ctx.stroke();
+  ctx.fillStyle='#fbbf24';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('+',cellX-8,wireY-22);ctx.fillText('−',cellX+8,wireY-15);
+  ctx.fillText('Cell',cellX,wireY+52);
+
+  // MATERIAL GAP
+  if(condMat){
+    const mc=condMat.color;
+    ctx.fillStyle=mc+'22';ctx.fillRect(matX1,wireY-24,matX2-matX1,48);
+    ctx.strokeStyle=mc;ctx.lineWidth=2;ctx.strokeRect(matX1,wireY-24,matX2-matX1,48);
+    ctx.fillStyle=mc;ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+    ctx.fillText(condMat.name,matX1+(matX2-matX1)/2,wireY+4);
+    ctx.font='9px DM Mono';
+    ctx.fillText(condMat.cond?'CONDUCTOR ✓':'INSULATOR ✗',matX1+(matX2-matX1)/2,wireY+18);
+    if(isOn){
+      ctx.strokeStyle=mc;ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(matX1,wireY);ctx.lineTo(matX2,wireY);ctx.stroke();
+    } else {
+      ctx.strokeStyle=mc;ctx.lineWidth=2;ctx.setLineDash([5,5]);
+      ctx.beginPath();ctx.moveTo(matX1,wireY);ctx.lineTo(matX2,wireY);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  } else {
+    ctx.strokeStyle='#334155';ctx.lineWidth=2;ctx.setLineDash([6,6]);
+    ctx.beginPath();ctx.moveTo(matX1,wireY);ctx.lineTo(matX2,wireY);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#334155';ctx.font='11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('← GAP →',matX1+(matX2-matX1)/2,wireY+4);
+  }
+
+  // LAMP
+  const lampOn=isOn;
+  if(lampOn){ctx.shadowBlur=16;ctx.shadowColor='#fbbf24';}
+  ctx.strokeStyle=lampOn?'#fbbf24':'#334155';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(lampX,wireY,18,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lampX-12,wireY-12);ctx.lineTo(lampX+12,wireY+12);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lampX+12,wireY-12);ctx.lineTo(lampX-12,wireY+12);ctx.stroke();
+  if(lampOn){
+    const gr=ctx.createRadialGradient(lampX,wireY,4,lampX,wireY,38);
+    gr.addColorStop(0,'rgba(251,191,36,.5)');gr.addColorStop(1,'transparent');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(lampX,wireY,40,0,Math.PI*2);ctx.fill();
+  }
+  ctx.shadowBlur=0;
+  ctx.fillStyle=lampOn?'#fbbf24':'#334155';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+  ctx.fillText(lampOn?'ON':'OFF',lampX,wireY+32);
+
+  // ELECTRONS flowing
+  if(isOn&&condMat){
+    const segments=[[cellX+22,matX1],[matX2,lampX-22],[lampX,cellX,true]];
+    for(let i=0;i<8;i++){
+      const t=(condT*0.4+i/8)%1;
+      // Top left segment
+      const seg0len=matX1-(cellX+22);
+      const ex=cellX+22+t*seg0len;
+      if(ex<matX1){
+        ctx.fillStyle='#60a5fa';ctx.shadowBlur=6;ctx.shadowColor='#60a5fa';
+        ctx.beginPath();ctx.arc(ex,wireY,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+      }
+      // Top right segment
+      const t2=(condT*0.4+i/8+0.4)%1;
+      const seg1len=lampX-22-matX2;
+      const ex2=matX2+t2*seg1len;
+      if(ex2<lampX-22){
+        ctx.fillStyle='#60a5fa';ctx.shadowBlur=6;ctx.shadowColor='#60a5fa';
+        ctx.beginPath();ctx.arc(ex2,wireY,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+      }
+      // Return wire bottom
+      const t3=(condT*0.4+i/8+0.7)%1;
+      const ex3=lampX-(t3*(lampX-cellX));
+      ctx.fillStyle='#3b82f6';ctx.beginPath();ctx.arc(ex3,wireY+40,3.5,0,Math.PI*2);ctx.fill();
+    }
+    // Arrows showing direction
+    ctx.fillStyle='rgba(96,165,250,.4)';ctx.font='14px DM Mono';ctx.textAlign='center';
+    ctx.fillText('→',matX1-40,wireY-10);
+    ctx.fillText('←',lampX-40,wireY+32);
+    ctx.fillStyle='rgba(96,165,250,.5)';ctx.font='9px DM Mono';
+    ctx.fillText('conventional current (+→−)',W/2,wireY-32);
+  }
+
+  condAnim=requestAnimationFrame(animConductor);
+}
+
+// ── WATER ANALOGY ANIMATION ───────────────────────────────
+let vcMode=0,vcT=0,vcAnim=null;
+const VC_DATA=[
+  {label:'1 Cell — Low Voltage',cells:1,speed:0.4,lampGlow:0.3,col:'#60a5fa',
+   explain:'<strong style="color:var(--electric);">1 cell = ~1.5 V</strong> — Low voltage means low pressure. Electrons move slowly. Current is small. The lamp glows dimly.'},
+  {label:'2 Cells — Normal Voltage',cells:2,speed:0.85,lampGlow:0.9,col:'#22c55e',
+   explain:'<strong style="color:var(--green);">2 cells = ~3 V</strong> — Normal voltage = rated pressure. Good current flow. The lamp glows at normal brightness. ✓ Ideal!'},
+  {label:'3 Cells — High Voltage',cells:3,speed:1.4,lampGlow:1.3,col:'#f97316',
+   explain:'<strong style="color:var(--orange);">3 cells = ~4.5 V</strong> — High voltage = too much pressure. Very fast electrons. Lamp is very bright but <em>at risk</em> — filament overheating!'},
+  {label:'4 Cells — DANGER!',cells:4,speed:0,lampGlow:0,col:'#ef4444',
+   explain:'<strong style="color:var(--red);">4 cells = ~6 V — BURNED OUT!</strong> Extreme overvoltage. The filament melted. Lamp is permanently destroyed. <strong>Always use the rated voltage.</strong>'},
+];
+
+function setVC(mode){
+  vcMode=mode;vcT=0;
+  document.querySelectorAll('[id^=vcBtn]').forEach((b,i)=>b.style.fontWeight=i===mode?'900':'600');
+  document.getElementById('vcExplain').innerHTML=VC_DATA[mode].explain;
+  if(vcAnim)cancelAnimationFrame(vcAnim);
+  animWater();
+}
+
+function animWater(){
+  const cv=document.getElementById('cvWater');if(!cv)return;
+  const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
+  const vd=VC_DATA[vcMode];
+  vcT+=vd.speed*0.025;
+  ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
+
+  // Pipe
+  const py=H/2,pR=22;
+  ctx.strokeStyle=vd.col+'66';ctx.lineWidth=1;
+  ctx.strokeRect(40,py-pR,W-80,pR*2);
+
+  // Fill pipe background
+  ctx.fillStyle='#0a1628';ctx.fillRect(40,py-pR+1,W-81,pR*2-1);
+
+  // Pump (left) = battery
+  ctx.fillStyle=vd.col+'22';ctx.fillRect(40,py-pR,60,pR*2);
+  ctx.strokeStyle=vd.col;ctx.lineWidth=2;ctx.strokeRect(40,py-pR,60,pR*2);
+  ctx.fillStyle=vd.col;ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+  ctx.fillText(vd.cells+' cell'+(vd.cells>1?'s':''),70,py-pR-8);
+  ctx.fillText('PUMP',70,py+3);ctx.fillText(vd.cells*1.5+'V',70,py+14);
+
+  // Lamp (right)
+  const lx=W-80,lampOn=vcMode<3&&vd.lampGlow>0;
+  if(lampOn){
+    const gr=ctx.createRadialGradient(lx,py,5,lx,py,pR*vd.lampGlow);
+    gr.addColorStop(0,'rgba(251,191,36,.7)');gr.addColorStop(1,'transparent');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(lx,py,pR*2,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=20;ctx.shadowColor='#fbbf24';
+  }
+  ctx.strokeStyle=lampOn?'#fbbf24':vcMode===3?'#ef4444':'#334155';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(lx,py,18,0,Math.PI*2);ctx.stroke();
+  if(vcMode===3){
+    // Burnt — broken X
+    ctx.strokeStyle='#ef4444';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(lx-10,py-10);ctx.lineTo(lx+10,py+10);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(lx+10,py-10);ctx.lineTo(lx-10,py+10);ctx.stroke();
+  } else {
+    ctx.beginPath();ctx.moveTo(lx-11,py-11);ctx.lineTo(lx+11,py+11);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(lx+11,py-11);ctx.lineTo(lx-11,py+11);ctx.stroke();
+  }
+  ctx.shadowBlur=0;
+  ctx.fillStyle=lampOn?'#fbbf24':vcMode===3?'#ef4444':'#334155';
+  ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+  ctx.fillText(vcMode===3?'BURNT':lampOn?'ON':'OFF',lx,py+30);
+
+  // Water/electron particles
+  if(vd.speed>0){
+    const pipeLeft=100,pipeRight=W-100;
+    const pipeLen=pipeRight-pipeLeft;
+    const count=Math.round(vd.speed*6+3);
+    for(let i=0;i<count;i++){
+      const t=((vcT*vd.speed+i/count))%1;
+      const px=pipeLeft+t*pipeLen;
+      const py2=py+(Math.random()-.5)*10;
+      const r=3+vd.speed*1.2;
+      ctx.fillStyle=vd.col;ctx.shadowBlur=vd.speed>1?8:4;ctx.shadowColor=vd.col;
+      ctx.beginPath();ctx.arc(px,py2,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    }
+    // Speed label
+    ctx.fillStyle=vd.col;ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+    ctx.fillText('→ electron speed: '+(vd.speed>1.2?'very fast':vd.speed>0.7?'normal':'slow'),W/2,py-pR-10);
+  } else if(vcMode===3){
+    ctx.fillStyle='#ef4444';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('🔥 CIRCUIT DESTROYED — pipe (filament) melted!',W/2,py);
+  }
+
+  // Voltage label
+  ctx.fillStyle=vd.col;ctx.font='bold 12px DM Mono';ctx.textAlign='right';
+  ctx.fillText('Voltage = '+vd.cells*1.5+' V',W-30,H-10);
+
+  vcAnim=requestAnimationFrame(animWater);
+}
+
+// ── ELECTRON FLOW ANIMATION ───────────────────────────────
+let eSwitch=false,eT=0,eAnim=null;
+const eParticles=Array.from({length:14},(_,i)=>({t:i/14,lane:Math.random()>.5?0:1}));
+
+function toggleElectronSwitch(){
+  eSwitch=!eSwitch;
+  const btn=document.getElementById('switchToggle');
+  const st=document.getElementById('electronStatus');
+  btn.textContent=eSwitch?'🔒 Switch Closed — Tap to Open':'🔓 Switch Open — Tap to Close';
+  st.textContent=eSwitch?'Current flows! Electrons move from − to + inside cell, and + to − in the external circuit.':'Switch open — no electrons flow. Circuit is broken.';
+  st.style.color=eSwitch?'var(--green)':'var(--muted2)';
+  if(!eAnim)animElectron();
+}
+
+function animElectron(){
+  const cv=document.getElementById('cvElectron');if(!cv)return;
+  const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
+  if(eSwitch)eT+=0.012;
+  ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(60,140,255,.04)';ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=25){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=25){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const wCol=eSwitch?'#60a5fa':'#1e3a5f';
+  const glow=eSwitch?10:0;
+  // Circuit path: rectangle
+  const L=80,R=W-80,T=50,B=H-50;
+  ctx.shadowBlur=glow;ctx.shadowColor='#60a5fa';
+  ctx.strokeStyle=wCol;ctx.lineWidth=3;
+  ctx.strokeRect(L,T,R-L,B-T);
+  ctx.shadowBlur=0;
+
+  // Cell (left side, vertical)
+  const cxC=(L+L)/2,cyC=(T+B)/2;
+  // Draw cell on left wire
+  ctx.strokeStyle='#fbbf24';
+  ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(L,cyC-20);ctx.lineTo(L,cyC+20);ctx.stroke();
+  ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(L+16,cyC-12);ctx.lineTo(L+16,cyC+12);ctx.stroke();
+  ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='left';
+  ctx.fillText('+',L+2,cyC-24);ctx.fillText('−',L+18,cyC-16);
+  ctx.fillText('Cell',L+2,cyC+32);
+
+  // Switch (bottom wire, middle)
+  const sw_x=(L+R)/2,sw_y=B;
+  ctx.strokeStyle='#22c55e';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(sw_x-24,sw_y);ctx.lineTo(sw_x-6,sw_y);ctx.stroke();
+  ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(sw_x-6,sw_y,3,0,Math.PI*2);ctx.fill();
+  if(eSwitch){
+    ctx.beginPath();ctx.moveTo(sw_x-6,sw_y);ctx.lineTo(sw_x+18,sw_y);ctx.stroke();
+  } else {
+    ctx.beginPath();ctx.moveTo(sw_x-6,sw_y);ctx.lineTo(sw_x+10,sw_y-16);ctx.stroke();
+  }
+  ctx.beginPath();ctx.arc(sw_x+18,sw_y,3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.moveTo(sw_x+18,sw_y);ctx.lineTo(sw_x+24,sw_y);ctx.stroke();
+  ctx.fillStyle='#22c55e';ctx.font='9px DM Mono';ctx.textAlign='center';
+  ctx.fillText(eSwitch?'CLOSED':'OPEN',sw_x,sw_y+18);
+
+  // Lamp (right wire middle)
+  const lxE=R,lyE=(T+B)/2;
+  const lampOn=eSwitch;
+  if(lampOn){ctx.shadowBlur=20;ctx.shadowColor='#fbbf24';
+    const gr=ctx.createRadialGradient(lxE,lyE,4,lxE,lyE,38);
+    gr.addColorStop(0,'rgba(251,191,36,.6)');gr.addColorStop(1,'transparent');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(lxE,lyE,42,0,Math.PI*2);ctx.fill();}
+  ctx.strokeStyle=lampOn?'#fbbf24':'#334155';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(lxE,lyE,18,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lxE-12,lyE-12);ctx.lineTo(lxE+12,lyE+12);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lxE+12,lyE-12);ctx.lineTo(lxE-12,lyE+12);ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.fillStyle=lampOn?'#fbbf24':'#334155';ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+  ctx.fillText(lampOn?'LAMP ON':'LAMP OFF',lxE,lyE+32);
+
+  // Electrons moving around circuit
+  if(eSwitch){
+    // Circuit path: top-left→top-right→right-down→bottom-right→bottom-left→left-up→top
+    const path=[
+      {x:(p)=>L+p*(R-L),y:()=>T},               // top: left→right
+      {x:()=>R,y:(p)=>T+p*(B-T)},               // right: top→bottom
+      {x:(p)=>R-p*(R-L),y:()=>B},               // bottom: right→left
+      {x:()=>L,y:(p)=>B-p*(B-T)},               // left: bottom→top
+    ];
+    eParticles.forEach(pt=>{
+      pt.t=(pt.t+0.004)%1;
+      const segT=pt.t*4;const seg=Math.floor(segT)%4;const t=segT%1;
+      const px=typeof path[seg].x==='function'?path[seg].x(t):path[seg].x();
+      const py=typeof path[seg].y==='function'?path[seg].y(t):path[seg].y();
+      // Jitter slightly
+      const jx=(Math.sin(pt.t*73+pt.lane*5))*3;
+      const jy=(Math.cos(pt.t*59+pt.lane*3))*3;
+      ctx.fillStyle='#60a5fa';ctx.shadowBlur=8;ctx.shadowColor='#60a5fa';
+      ctx.beginPath();ctx.arc(px+jx,py+jy,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    });
+    // Direction arrows
+    ctx.fillStyle='rgba(96,165,250,.4)';ctx.font='12px DM Mono';ctx.textAlign='center';
+    ctx.fillText('→',(L+R)/2,T-12);
+    ctx.fillText('↓',R+20,(T+B)/2);
+    ctx.fillText('←',(L+R)/2,B+16);
+    ctx.fillText('↑',L-20,(T+B)/2);
+    ctx.fillStyle='rgba(96,165,250,.35)';ctx.font='9px DM Mono';
+    ctx.fillText('Conventional current: + → −',  (L+R)/2,T-24);
+  }
+
+  eAnim=requestAnimationFrame(animElectron);
+}
 // ── INIT ─────────────────────────────────────────────────
 window.addEventListener('load',()=>{
   buildCompCards();
   buildSymbolGrid();
   buildSort();
+  buildMaterialBtns();
+  animConductor();
   buildSwitchDemo();
   drawCB();
   setTool('cell');
   updateReceiver();
+  setVC(1);
+  animElectron();
   updateProg();
 });
 </script>
