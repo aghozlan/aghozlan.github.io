@@ -307,7 +307,6 @@ footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2
     <button class="sn" onclick="goTo('conductors')">🪢 Conductors <span class="badge">E2</span></button>
     <button class="sn" onclick="goTo('switch')">🔄 Switch <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('cells')">🔋 Cells & Receivers <span class="badge">E3</span></button>
-    <button class="sn" onclick="goTo('circuit')">🔧 Build a Circuit <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('phet')">🌐 PhET Sim <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('voltage')">💡 Voltage &amp; Current <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('practice')">✏️ Practice <span class="badge">E4</span></button>
@@ -545,36 +544,7 @@ footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2
 </section>
 
 <!-- E3 CIRCUIT BUILDER -->
-<section id="circuit" style="background:var(--bg2);">
-  <div class="e-tag explain">E3 · Build</div>
-  <h2 class="sec-title">Build a Simple Circuit</h2>
-  <p class="sec-desc">Use the toolbar to place components on the canvas. Connect them to form a complete circuit — then close the switch to see if the lamp lights up!</p>
 
-  <div class="circuit-builder">
-    <div class="cb-toolbar">
-      <button class="cb-btn" id="toolCell" style="color:var(--yellow);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.06);" onclick="setTool('cell')">🔋 Cell</button>
-      <button class="cb-btn" id="toolLamp" style="color:var(--electric);border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06);" onclick="setTool('lamp')">💡 Lamp</button>
-      <button class="cb-btn" id="toolMotor" style="color:var(--teal);border-color:rgba(20,184,166,.3);background:rgba(20,184,166,.06);" onclick="setTool('motor')">⚙️ Motor</button>
-      <button class="cb-btn" id="toolSwitch" style="color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06);" onclick="setTool('switch')">🔄 Switch</button>
-      <button class="cb-btn" id="toolWire" style="color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.06);" onclick="setTool('wire')">🪢 Wire</button>
-      <div style="flex:1;"></div>
-      <button class="cb-btn" style="color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06);" onclick="clearCircuit()">🗑 Clear</button>
-      <button class="cb-btn" style="color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06);" onclick="checkCircuit()">⚡ Test Circuit</button>
-    </div>
-    <div class="cb-canvas-wrap">
-      <canvas id="cvCircuit" width="800" height="420"></canvas>
-    </div>
-    <div class="cb-status" id="cbStatus">
-      Select a component from the toolbar, then click on the canvas to place it. Use Wire to connect components.
-    </div>
-  </div>
-
-  <div class="card2" style="margin-top:14px;">
-    <div style="font-size:.8rem;color:var(--muted2);line-height:1.9;">
-      💡 <strong style="color:#fff;">How to build:</strong> 1. Click a tool (Cell, Lamp, Switch). 2. Click the canvas to place it. 3. Select Wire, then click two components to connect them. 4. Click "Test Circuit" to see if current flows.
-    </div>
-  </div>
-</section>
 
 <!-- E3 PHET -->
 <section id="phet">
@@ -1067,53 +1037,84 @@ function buildSwitchDemo(){
 }
 
 function drawSwitchCircuit(ctx,closed){
-  const W=220,H=160;
+  const W=220,H=170;
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
-  // Determine glow based on state
-  const wireColor=closed?'#60a5fa':'#3a5080';
-  const glowBlur=closed?10:0;
-  ctx.shadowBlur=glowBlur;ctx.shadowColor='#60a5fa';
-  ctx.strokeStyle=wireColor;ctx.lineWidth=2.5;
-  // Draw circuit rectangle
-  ctx.beginPath();ctx.moveTo(30,30);ctx.lineTo(190,30);ctx.lineTo(190,130);ctx.lineTo(30,130);ctx.lineTo(30,30);ctx.stroke();
+  const wireCol=closed?'#60a5fa':'#3a5080';
+  const glow=closed?8:0;
+
+  // Circuit rectangle nodes
+  const TLx=25,TLy=28, TRx=195,TRy=28, BRx=195,BRy=132, BLx=25,BLy=132;
+  const midY=(TLy+BLy)/2;  // y=80
+
+  // ── WIRES (gaps for components) ───────────────────────────
+  ctx.shadowBlur=glow;ctx.shadowColor='#60a5fa';
+  ctx.strokeStyle=wireCol;ctx.lineWidth=2.5;
+  // Top wire: TL→TR (full, no component here)
+  ctx.beginPath();ctx.moveTo(TLx,TLy);ctx.lineTo(TRx,TLy);ctx.stroke();
+  // Right wire: TR → lamp top node, lamp bottom node → BR
+  ctx.beginPath();ctx.moveTo(TRx,TRy);ctx.lineTo(TRx,midY-15);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TRx,midY+15);ctx.lineTo(BRx,BRy);ctx.stroke();
+  // Bottom wire: BR → switch left node, switch right node → BL
+  const sw_mid_x=(BLx+BRx)/2;
+  ctx.beginPath();ctx.moveTo(BRx,BRy);ctx.lineTo(sw_mid_x+16,BRy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sw_mid_x-16,BLy);ctx.lineTo(BLx,BLy);ctx.stroke();
+  // Left wire: BL → cell bottom node, cell top node → TL
+  ctx.beginPath();ctx.moveTo(BLx,BLy);ctx.lineTo(TLx,midY+13);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TLx,midY-13);ctx.lineTo(TLx,TLy);ctx.stroke();
   ctx.shadowBlur=0;
-  // Cell on left vertical wire — rotated 90°: horizontal lines on vertical wire
-  // long horizontal line = + (top), short horizontal line = - (below), leads connect vertically
-  const cy_cell=80;  // centre of cell on left wire x=30
+
+  // ── CORNER NODES ──────────────────────────────────────────
+  [[TLx,TLy],[TRx,TRy],[BRx,BRy],[BLx,BLy]].forEach(([x,y])=>{
+    ctx.fillStyle=wireCol;
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();
+  });
+
+  // ── CELL on LEFT wire (rotated: horizontal lines) ─────────
+  // Long horizontal = + (upper), short horizontal = - (lower)
   ctx.strokeStyle='#fbbf24';
-  ctx.lineWidth=2;   // top lead (wire above cell)
-  ctx.beginPath();ctx.moveTo(30,30);ctx.lineTo(30,cy_cell-11);ctx.stroke();
-  ctx.lineWidth=3.5; // long horizontal line = + terminal
-  ctx.beginPath();ctx.moveTo(30-14,cy_cell-11);ctx.lineTo(30+14,cy_cell-11);ctx.stroke();
-  ctx.lineWidth=1.8; // short horizontal line = - terminal
-  ctx.beginPath();ctx.moveTo(30-8,cy_cell+5);ctx.lineTo(30+8,cy_cell+5);ctx.stroke();
-  ctx.lineWidth=2;   // bottom lead (wire below cell)
-  ctx.beginPath();ctx.moveTo(30,cy_cell+5);ctx.lineTo(30,130);ctx.stroke();
+  ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(TLx-13,midY-13);ctx.lineTo(TLx+13,midY-13);ctx.stroke();
+  ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(TLx-8,midY+13);ctx.lineTo(TLx+8,midY+13);ctx.stroke();
   ctx.fillStyle='#fbbf24';ctx.font='bold 8px DM Mono';ctx.textAlign='right';
-  ctx.fillText('+',30-17,cy_cell-7);   // left of long line
-  ctx.fillText('-',30-11,cy_cell+10); // left of short line
-  // Lamp on top right
-  const lx=155,ly=30;
+  ctx.fillText('+',TLx-16,midY-9);
+  ctx.fillText('-',TLx-11,midY+17);
+
+  // ── LAMP on RIGHT wire ─────────────────────────────────────
+  if(closed){ctx.shadowBlur=12;ctx.shadowColor='#fbbf24';}
   ctx.strokeStyle=closed?'#fbbf24':'#3a5080';ctx.lineWidth=2;
-  if(closed){ctx.shadowBlur=14;ctx.shadowColor='#fbbf24';}
-  ctx.beginPath();ctx.arc(lx,ly,12,0,Math.PI*2);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(lx-8,ly-8);ctx.lineTo(lx+8,ly+8);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(lx+8,ly-8);ctx.lineTo(lx-8,ly+8);ctx.stroke();
+  ctx.beginPath();ctx.arc(TRx,midY,14,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TRx-9,midY-9);ctx.lineTo(TRx+9,midY+9);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TRx+9,midY-9);ctx.lineTo(TRx-9,midY+9);ctx.stroke();
+  if(closed){
+    const gr=ctx.createRadialGradient(TRx,midY,3,TRx,midY,28);
+    gr.addColorStop(0,'rgba(251,191,36,.5)');gr.addColorStop(1,'transparent');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(TRx,midY,30,0,Math.PI*2);ctx.fill();
+  }
   ctx.shadowBlur=0;
-  // Switch on bottom
+
+  // ── SWITCH on BOTTOM wire ─────────────────────────────────
+  // Nodes at sw_mid_x±16, switch lever between them
   ctx.strokeStyle='#22c55e';ctx.lineWidth=2;
-  const sx=100,sy=130;
-  ctx.beginPath();ctx.moveTo(sx-18,sy);ctx.lineTo(sx-5,sy);ctx.stroke();
-  ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(sx-5,sy,3,0,Math.PI*2);ctx.fill();
-  if(closed){ctx.beginPath();ctx.moveTo(sx-5,sy);ctx.lineTo(sx+14,sy);ctx.stroke();}
-  else{ctx.beginPath();ctx.moveTo(sx-5,sy);ctx.lineTo(sx+8,sy-12);ctx.stroke();}
-  ctx.beginPath();ctx.arc(sx+14,sy,3,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.moveTo(sx+14,sy);ctx.lineTo(sx+20,sy);ctx.stroke();
-  // Status label
+  ctx.fillStyle='#22c55e';
+  ctx.beginPath();ctx.arc(sw_mid_x-16,BRy,3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(sw_mid_x+16,BRy,3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.moveTo(sw_mid_x-16,BRy);
+  if(closed){ctx.lineTo(sw_mid_x+16,BRy);}
+  else{ctx.lineTo(sw_mid_x+8,BRy-14);}
+  ctx.stroke();
+
+  // ── LABELS ────────────────────────────────────────────────
+  ctx.fillStyle='#fbbf24';ctx.font='7px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Cell',TLx,midY+26);
+  ctx.fillStyle=closed?'#fbbf24':'#3a5080';
+  ctx.fillText(closed?'Lamp ON':'Lamp OFF',TRx,midY+30);
+  ctx.fillStyle='#22c55e';
+  ctx.fillText(closed?'CLOSED':'OPEN',sw_mid_x,BRy+14);
+
+  // ── STATUS ────────────────────────────────────────────────
   ctx.fillStyle=closed?'#22c55e':'#ef4444';
-  ctx.font='bold 11px Syne';ctx.textAlign='center';
-  ctx.fillText(closed?'🔒 CLOSED — Current flows':'🔓 OPEN — No current',W/2,H-8);
+  ctx.font='bold 10px Syne';ctx.textAlign='center';
+  ctx.fillText(closed?'CLOSED — Current flows':'OPEN — No current',W/2,H-5);
 }
 
 // ── CELLS & RECEIVERS ────────────────────────────────────
@@ -1237,130 +1238,6 @@ function drawMotor(ctx,cx,cy,st){
     motorAnim=requestAnimationFrame(animMotor);
   }
   animMotor();
-}
-
-// ── CIRCUIT BUILDER ──────────────────────────────────────
-const cv=document.getElementById('cvCircuit');
-const ctx=cv.getContext('2d');
-let tool='cell',placed=[],wires=[],wireStart=null;
-const CB_COMPS_INFO={
-  cell:{color:'#fbbf24',label:'Cell',w:50,h:30},
-  lamp:{color:'#60a5fa',label:'Lamp',w:44,h:44},
-  motor:{color:'#14b8a6',label:'Motor',w:44,h:44},
-  switch:{color:'#22c55e',label:'Switch',w:60,h:30},
-  wire:{color:'#a855f7',label:'Wire'},
-};
-
-function setTool(t){
-  tool=t;
-  document.querySelectorAll('.cb-btn').forEach(b=>b.classList.remove('selected'));
-  const map={cell:'toolCell',lamp:'toolLamp',motor:'toolMotor',switch:'toolSwitch',wire:'toolWire'};
-  document.getElementById(map[t])?.classList.add('selected');
-  document.getElementById('cbStatus').textContent=t==='wire'?'Wire mode: click a component to start wire, click another to connect':'Click on canvas to place a '+t;
-}
-
-cv.addEventListener('click',e=>{
-  const rect=cv.getBoundingClientRect();
-  const scaleX=cv.width/rect.width,scaleY=cv.height/rect.height;
-  const mx=(e.clientX-rect.left)*scaleX,my=(e.clientY-rect.top)*scaleY;
-  if(tool==='wire'){
-    const comp=placed.find(p=>Math.hypot(p.x-mx,p.y-my)<34);
-    if(!comp)return;
-    if(!wireStart){wireStart=comp;document.getElementById('cbStatus').textContent='Wire started from '+comp.type+'. Click another component to connect.';}
-    else if(wireStart!==comp){
-      wires.push({from:wireStart,to:comp});wireStart=null;
-      document.getElementById('cbStatus').textContent='Wire connected! Continue or select another tool.';
-      correct.circuit=wires.length>=2&&placed.some(p=>p.type==='cell')&&placed.some(p=>p.type==='lamp'||p.type==='motor');
-      updateProg();
-    }
-  } else {
-    placed.push({type:tool,x:mx,y:my,id:Date.now()});
-    document.getElementById('cbStatus').textContent=tool+' placed. Add more or switch to Wire to connect.';
-  }
-  drawCB();
-});
-
-function drawCB(){
-  ctx.clearRect(0,0,cv.width,cv.height);
-  ctx.fillStyle='#020408';ctx.fillRect(0,0,cv.width,cv.height);
-  ctx.strokeStyle='rgba(60,140,255,.04)';ctx.lineWidth=0.5;
-  for(let x=0;x<cv.width;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
-  for(let y=0;y<cv.height;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
-  // Wires
-  wires.forEach(w=>{
-    const active=hasCell()&&hasReceiver();
-    ctx.shadowBlur=active?10:0;ctx.shadowColor='#60a5fa';
-    ctx.strokeStyle=active?'#60a5fa':'#3a5080';ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(w.from.x,w.from.y);ctx.lineTo(w.to.x,w.to.y);ctx.stroke();
-    ctx.shadowBlur=0;
-  });
-  // Components
-  placed.forEach(p=>{
-    const info=CB_COMPS_INFO[p.type];
-    const highlight=wireStart===p;
-    ctx.save();
-    ctx.translate(p.x,p.y);
-    if(highlight){ctx.shadowBlur=16;ctx.shadowColor=info.color;}
-    drawCBComp(ctx,p.type,info.color);
-    ctx.restore();
-  });
-}
-
-function drawCBComp(ctx,type,col){
-  // All coordinates relative to (0,0) — caller does ctx.translate(p.x,p.y)
-  ctx.strokeStyle=col;ctx.lineWidth=2.5;
-  if(type==='cell'){
-    // Horizontal cell: lead→longLine(+)→gap→shortLine(-)→lead
-    ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(-9,0);ctx.stroke();   // left lead
-    ctx.lineWidth=3.5;
-    ctx.beginPath();ctx.moveTo(-9,-16);ctx.lineTo(-9,16);ctx.stroke(); // long line = +
-    ctx.lineWidth=1.8;
-    ctx.beginPath();ctx.moveTo(9,-10);ctx.lineTo(9,10);ctx.stroke();   // short line = -
-    ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(26,0);ctx.stroke();     // right lead
-    ctx.fillStyle=col;ctx.font='bold 9px DM Mono';ctx.textAlign='center';
-    ctx.fillText('+',-9,-20);    // above long line
-    ctx.fillText('-',9,-14);     // above short line
-  } else if(type==='lamp'){
-    ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(-12,-12);ctx.lineTo(12,12);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(12,-12);ctx.lineTo(-12,12);ctx.stroke();
-  } else if(type==='motor'){
-    ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle=col;ctx.font='bold 14px Syne';ctx.textAlign='center';
-    ctx.textBaseline='middle';ctx.fillText('M',0,1);ctx.textBaseline='alphabetic';
-  } else if(type==='switch'){
-    ctx.beginPath();ctx.moveTo(-22,0);ctx.lineTo(-6,0);ctx.stroke();
-    ctx.fillStyle=col;
-    ctx.beginPath();ctx.arc(-6,0,3,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle=col;
-    ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(8,-13);ctx.stroke();   // open lever
-    ctx.beginPath();ctx.arc(16,0,3,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(22,0);ctx.stroke();
-  }
-  ctx.fillStyle=col;ctx.font='9px Outfit';ctx.textAlign='center';
-  ctx.textBaseline='alphabetic';
-  ctx.fillText(CB_COMPS_INFO[type].label,0,34);
-  ctx.shadowBlur=0;
-}
-
-function hasCell(){return placed.some(p=>p.type==='cell');}
-function hasReceiver(){return placed.some(p=>p.type==='lamp'||p.type==='motor');}
-function hasSwitch(){return placed.some(p=>p.type==='switch');}
-
-function clearCircuit(){placed=[];wires=[];wireStart=null;drawCB();document.getElementById('cbStatus').textContent='Canvas cleared. Select a tool to start building.';correct.circuit=false;updateProg();}
-
-function checkCircuit(){
-  const st=document.getElementById('cbStatus');
-  const hasC=hasCell(),hasR=hasReceiver(),hasW=wires.length>=2;
-  if(!hasC){st.innerHTML='<span class="status-bad">✗ No cell! Add a dry cell as your power source.</span>';return;}
-  if(!hasR){st.innerHTML='<span class="status-bad">✗ No receiver! Add a lamp or motor.</span>';return;}
-  if(!hasW){st.innerHTML='<span class="status-warn">⚠ Components not connected. Use the Wire tool to connect them.</span>';return;}
-  const connected=wires.some(w=>(w.from.type==='cell'||w.to.type==='cell')&&(w.from.type==='lamp'||w.to.type==='lamp'||w.from.type==='motor'||w.to.type==='motor'));
-  if(!connected){st.innerHTML='<span class="status-warn">⚠ Cell and receiver not connected. Draw a wire between them.</span>';return;}
-  st.innerHTML='<span class="status-ok">✓ Circuit looks good! '+(hasSwitch()?'Close the switch to let current flow.':'Tip: add a switch to control your circuit.')+' Current flows: Cell → Wires → Receiver → back to Cell.</span>';
-  correct.circuit=true;updateProg();
 }
 
 // ── PHET ─────────────────────────────────────────────────
@@ -1494,115 +1371,131 @@ function testMaterial(mat,btn){
 function animConductor(){
   const cv=document.getElementById('cvConductor');if(!cv)return;
   const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
-  condT+=0.04;
+  condT+=0.035;
   ctx.fillStyle='#020408';ctx.fillRect(0,0,W,H);
-  // Grid
   ctx.strokeStyle='rgba(60,140,255,.04)';ctx.lineWidth=0.5;
   for(let x=0;x<W;x+=25){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=25){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 
   const isOn=condMat&&condMat.cond;
-  const wireY=H/2;
-  const cellX=60,matX1=280,matX2=420,lampX=570;
   const wireCol=isOn?'#60a5fa':'#334155';
-  const glow=isOn?8:0;
+  const glow=isOn?7:0;
 
-  // Wire segments
-  ctx.shadowBlur=glow;ctx.shadowColor='#60a5fa';ctx.strokeStyle=wireCol;ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(cellX+22,wireY);ctx.lineTo(matX1,wireY);ctx.stroke();
-  if(isOn){ctx.beginPath();ctx.moveTo(matX2,wireY);ctx.lineTo(lampX-22,wireY);ctx.stroke();}
-  ctx.shadowBlur=0;
-  // Return wire (bottom)
+  // ── CIRCUIT GEOMETRY ──────────────────────────────────────
+  // Rectangle nodes (corners + component midpoints)
+  // TL=top-left, TR=top-right, BR=bottom-right, BL=bottom-left
+  const TLx=80, TLy=40, TRx=580, TRy=40, BRx=580, BRy=140, BLx=80, BLy=140;
+  // Cell: on LEFT vertical wire, centred at midY between TL and BL
+  const cellMY=(TLy+BLy)/2;  // y=90
+  // Lamp: on RIGHT vertical wire
+  const lampMY=(TRy+BRy)/2;  // y=90
+  // Material gap: on TOP horizontal wire between cell+ (exits top-left going RIGHT) and lamp
+  const matX1=220, matX2=380;  // gap on top wire
+
+  // ── DRAW WIRES (with gaps for components) ─────────────────
+  ctx.shadowBlur=glow;ctx.shadowColor='#60a5fa';
   ctx.strokeStyle=wireCol;ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(cellX,wireY+40);ctx.lineTo(lampX,wireY+40);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cellX,wireY-2);ctx.lineTo(cellX,wireY+40);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(lampX,wireY-2);ctx.lineTo(lampX,wireY+40);ctx.stroke();
 
-  // CELL
-  ctx.strokeStyle='#fbbf24';ctx.lineWidth=3.5;
-  ctx.beginPath();ctx.moveTo(cellX-8,wireY-18);ctx.lineTo(cellX-8,wireY+18);ctx.stroke();
-  ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(cellX+8,wireY-11);ctx.lineTo(cellX+8,wireY+11);ctx.stroke();
-  ctx.fillStyle='#fbbf24';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
-  ctx.fillText('+',cellX-8,wireY-22);ctx.fillText('-',cellX+8,wireY-15);
-  ctx.fillText('Cell',cellX,wireY+52);
-
-  // MATERIAL GAP
-  if(condMat){
-    const mc=condMat.color;
-    ctx.fillStyle=mc+'22';ctx.fillRect(matX1,wireY-24,matX2-matX1,48);
-    ctx.strokeStyle=mc;ctx.lineWidth=2;ctx.strokeRect(matX1,wireY-24,matX2-matX1,48);
-    ctx.fillStyle=mc;ctx.font='bold 11px DM Mono';ctx.textAlign='center';
-    ctx.fillText(condMat.name,matX1+(matX2-matX1)/2,wireY+4);
-    ctx.font='9px DM Mono';
-    ctx.fillText(condMat.cond?'CONDUCTOR ✓':'INSULATOR ✗',matX1+(matX2-matX1)/2,wireY+18);
-    if(isOn){
-      ctx.strokeStyle=mc;ctx.lineWidth=3;
-      ctx.beginPath();ctx.moveTo(matX1,wireY);ctx.lineTo(matX2,wireY);ctx.stroke();
-    } else {
-      ctx.strokeStyle=mc;ctx.lineWidth=2;ctx.setLineDash([5,5]);
-      ctx.beginPath();ctx.moveTo(matX1,wireY);ctx.lineTo(matX2,wireY);ctx.stroke();
-      ctx.setLineDash([]);
-    }
-  } else {
-    ctx.strokeStyle='#334155';ctx.lineWidth=2;ctx.setLineDash([6,6]);
-    ctx.beginPath();ctx.moveTo(matX1,wireY);ctx.lineTo(matX2,wireY);ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle='#334155';ctx.font='11px DM Mono';ctx.textAlign='center';
-    ctx.fillText('← GAP →',matX1+(matX2-matX1)/2,wireY+4);
-  }
-
-  // LAMP
-  const lampOn=isOn;
-  if(lampOn){ctx.shadowBlur=16;ctx.shadowColor='#fbbf24';}
-  ctx.strokeStyle=lampOn?'#fbbf24':'#334155';ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.arc(lampX,wireY,18,0,Math.PI*2);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(lampX-12,wireY-12);ctx.lineTo(lampX+12,wireY+12);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(lampX+12,wireY-12);ctx.lineTo(lampX-12,wireY+12);ctx.stroke();
-  if(lampOn){
-    const gr=ctx.createRadialGradient(lampX,wireY,4,lampX,wireY,38);
-    gr.addColorStop(0,'rgba(251,191,36,.5)');gr.addColorStop(1,'transparent');
-    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(lampX,wireY,40,0,Math.PI*2);ctx.fill();
-  }
+  // TOP wire: TL → mat gap start, gap end → TR (conventional current goes LEFT→RIGHT = clockwise)
+  ctx.beginPath();ctx.moveTo(TLx,TLy);ctx.lineTo(matX1,TLy);ctx.stroke();
+  if(isOn){ctx.beginPath();ctx.moveTo(matX2,TLy);ctx.lineTo(TRx,TLy);ctx.stroke();}
+  // RIGHT wire: TR → lamp top node, lamp bottom node → BR
+  ctx.beginPath();ctx.moveTo(TRx,TRy);ctx.lineTo(TRx,lampMY-20);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TRx,lampMY+20);ctx.lineTo(BRx,BRy);ctx.stroke();
+  // BOTTOM wire: BR → BL (current goes RIGHT→LEFT)
+  ctx.beginPath();ctx.moveTo(BRx,BRy);ctx.lineTo(BLx,BLy);ctx.stroke();
+  // LEFT wire: BL → cell bottom node, cell top node → TL
+  ctx.beginPath();ctx.moveTo(BLx,BLy);ctx.lineTo(TLx,cellMY+13);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TLx,cellMY-13);ctx.lineTo(TLx,TLy);ctx.stroke();
   ctx.shadowBlur=0;
-  ctx.fillStyle=lampOn?'#fbbf24':'#334155';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
-  ctx.fillText(lampOn?'ON':'OFF',lampX,wireY+32);
 
-  // ELECTRONS flowing
-  if(isOn&&condMat){
-    const segments=[[cellX+22,matX1],[matX2,lampX-22],[lampX,cellX,true]];
-    for(let i=0;i<8;i++){
-      const t=(condT*0.4+i/8)%1;
-      // Top left segment
-      const seg0len=matX1-(cellX+22);
-      const ex=cellX+22+t*seg0len;
-      if(ex<matX1){
-        ctx.fillStyle='#60a5fa';ctx.shadowBlur=6;ctx.shadowColor='#60a5fa';
-        ctx.beginPath();ctx.arc(ex,wireY,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-      }
-      // Top right segment
-      const t2=(condT*0.4+i/8+0.4)%1;
-      const seg1len=lampX-22-matX2;
-      const ex2=matX2+t2*seg1len;
-      if(ex2<lampX-22){
-        ctx.fillStyle='#60a5fa';ctx.shadowBlur=6;ctx.shadowColor='#60a5fa';
-        ctx.beginPath();ctx.arc(ex2,wireY,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-      }
-      // Return wire bottom — conventional current flows from lamp (right) back to cell (left)
-      const t3=(condT*0.4+i/8+0.55)%1;
-      const ex3=lampX-t3*(lampX-cellX);  // right to left = lampX towards cellX ✓
-      ctx.fillStyle='#3b82f6';ctx.shadowBlur=4;ctx.shadowColor='#3b82f6';
-      ctx.beginPath();ctx.arc(ex3,wireY+40,3.5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+  // ── NODES at corners (filled circles) ─────────────────────
+  const nodeCol=isOn?'#60a5fa':'#334155';
+  [[TLx,TLy],[TRx,TRy],[BRx,BRy],[BLx,BLy]].forEach(([x,y])=>{
+    ctx.fillStyle=nodeCol;ctx.shadowBlur=isOn?4:0;ctx.shadowColor='#60a5fa';
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
+  });
+
+  // ── CELL on LEFT wire (rotated 90°: horizontal lines) ─────
+  // + terminal = top (long horizontal line), - terminal = bottom (short)
+  ctx.strokeStyle='#fbbf24';
+  ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(TLx-14,cellMY-13);ctx.lineTo(TLx+14,cellMY-13);ctx.stroke();
+  ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(TLx-9,cellMY+13);ctx.lineTo(TLx+9,cellMY+13);ctx.stroke();
+  ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='right';
+  ctx.fillText('+',TLx-17,cellMY-9);   // left of long (+) line
+  ctx.fillText('-',TLx-12,cellMY+17);  // left of short (-) line
+  ctx.textAlign='center';ctx.font='9px DM Mono';ctx.fillText('Cell',TLx,cellMY+32);
+
+  // ── MATERIAL GAP on TOP wire ───────────────────────────────
+  const mc=condMat?condMat.color:'#334155';
+  if(condMat){
+    ctx.fillStyle=mc+'22';ctx.fillRect(matX1,TLy-22,matX2-matX1,44);
+    ctx.strokeStyle=mc;ctx.lineWidth=1.5;ctx.strokeRect(matX1,TLy-22,matX2-matX1,44);
+    ctx.fillStyle=mc;ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(condMat.name,matX1+(matX2-matX1)/2,TLy+3);
+    ctx.font='8px DM Mono';ctx.fillText(condMat.cond?'CONDUCTOR ✓':'INSULATOR ✗',matX1+(matX2-matX1)/2,TLy+14);
+    if(isOn){ctx.strokeStyle=mc;ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(matX1,TLy);ctx.lineTo(matX2,TLy);ctx.stroke();}
+    else{ctx.strokeStyle=mc;ctx.lineWidth=2;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(matX1,TLy);ctx.lineTo(matX2,TLy);ctx.stroke();ctx.setLineDash([]);}
+  } else {
+    ctx.strokeStyle='#334155';ctx.lineWidth=2;ctx.setLineDash([6,5]);
+    ctx.beginPath();ctx.moveTo(matX1,TLy);ctx.lineTo(matX2,TLy);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#334155';ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText('← INSERT MATERIAL HERE →',(matX1+matX2)/2,TLy+14);
+  }
+
+  // ── LAMP on RIGHT wire ─────────────────────────────────────
+  if(lampOn=isOn){ctx.shadowBlur=14;ctx.shadowColor='#fbbf24';}
+  ctx.strokeStyle=lampOn?'#fbbf24':'#334155';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(TRx,lampMY,18,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TRx-12,lampMY-12);ctx.lineTo(TRx+12,lampMY+12);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(TRx+12,lampMY-12);ctx.lineTo(TRx-12,lampMY+12);ctx.stroke();
+  if(lampOn){const gr=ctx.createRadialGradient(TRx,lampMY,4,TRx,lampMY,36);
+    gr.addColorStop(0,'rgba(251,191,36,.55)');gr.addColorStop(1,'transparent');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(TRx,lampMY,38,0,Math.PI*2);ctx.fill();}
+  ctx.shadowBlur=0;
+  ctx.fillStyle=lampOn?'#fbbf24':'#334155';ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+  ctx.fillText(lampOn?'LAMP ON':'LAMP OFF',TRx+28,lampMY);
+
+  // ── CONVENTIONAL CURRENT ARROWS (clockwise) ───────────────
+  if(isOn){
+    ctx.fillStyle='rgba(96,165,250,.55)';ctx.font='13px DM Mono';ctx.textAlign='center';
+    ctx.fillText('→',(matX2+TRx)/2,TLy-10);   // top wire: left→right ✓
+    ctx.fillText('↓',TRx+22,(TRy+BRy)/2);       // right wire: top→bottom ✓
+    ctx.fillText('←',(BLx+BRx)/2,BRy+16);      // bottom wire: right→left ✓
+    ctx.fillText('↑',TLx-22,(TLy+BLy)/2);       // left wire: bottom→top ✓
+    ctx.fillStyle='rgba(96,165,250,.4)';ctx.font='8px DM Mono';
+    ctx.fillText('Conventional current (clockwise: exits + terminal)',(TLx+TRx)/2,H-6);
+
+    // ── CURRENT PARTICLES flowing clockwise around 4 segments ─
+    // Segments: top-right portion (matX2→TRx), right (TR→BR), bottom (BR→BL), left (BL→TL), top-left (TL→matX1)
+    // Full loop length proportional to path
+    const SEG=[
+      {x:(t)=>matX2+t*(TRx-matX2), y:()=>TLy},           // top-right: matX2→TRx
+      {x:()=>TRx, y:(t)=>TRy+t*(BRy-TRy)},               // right: top→bottom
+      {x:(t)=>BRx-t*(BRx-BLx), y:()=>BRy},               // bottom: right→left
+      {x:()=>BLx, y:(t)=>BLy-t*(BLy-TLy)},               // left: bottom→top
+      {x:(t)=>TLx+t*(matX1-TLx), y:()=>TLy},             // top-left: TL→matX1
+    ];
+    for(let i=0;i<10;i++){
+      const tt=(condT*0.3+i/10)%1;
+      const total=5;
+      const sIdx=Math.floor(tt*total);
+      const sT=(tt*total)%1;
+      const seg=SEG[sIdx];
+      const px=typeof seg.x==='function'?seg.x(sT):seg.x();
+      const py=typeof seg.y==='function'?seg.y(sT):seg.y();
+      ctx.fillStyle='#60a5fa';ctx.shadowBlur=6;ctx.shadowColor='#60a5fa';
+      ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
     }
-    // Arrows — conventional current direction: + terminal → through circuit → - terminal
-    ctx.fillStyle='rgba(96,165,250,.5)';ctx.font='13px DM Mono';ctx.textAlign='center';
-    ctx.fillText('→',matX1-50,wireY-8);        // top wire: left to right (away from +)
-    ctx.fillText('←',lampX-55,wireY+55);       // bottom wire: right to left (back to -)
-    ctx.fillStyle='rgba(96,165,250,.45)';ctx.font='9px DM Mono';
-    ctx.fillText('Conventional current: exits + terminal → through circuit → enters - terminal',W/2,wireY-34);
   }
 
   condAnim=requestAnimationFrame(animConductor);
 }
+
+let lampOn=false;// declare at module scope to avoid let-in-block issue
 
 // ── WATER ANALOGY ANIMATION ───────────────────────────────
 let vcMode=0,vcT=0,vcAnim=null;
@@ -1731,28 +1624,42 @@ function animElectron(){
   ctx.strokeRect(L,T,R-L,B-T);
   ctx.shadowBlur=0;
 
-  // Cell (left side, vertical)
-  const cxC=(L+L)/2,cyC=(T+B)/2;
-  // Draw cell on left wire
-  ctx.strokeStyle='#fbbf24';
-  ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(L,cyC-20);ctx.lineTo(L,cyC+20);ctx.stroke();
-  ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(L+16,cyC-12);ctx.lineTo(L+16,cyC+12);ctx.stroke();
-  ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='left';
-  ctx.fillText('+',L+2,cyC-24);ctx.fillText('-',L+18,cyC-16);
-  ctx.fillText('Cell',L+2,cyC+32);
+  // Cell (left side, vertical wire) — rotated 90°: horizontal lines
+  const cyC=(T+B)/2;  // centre y of left wire
+  // Leave wire gap for cell, then draw horizontal lines crossing the vertical wire
+  // Redraw left wire with gap: T → cyC-16 then cyC+16 → B (already drawn via strokeRect — override gaps)
+  ctx.fillStyle='#020408';ctx.fillRect(L-4,cyC-18,8,36);// erase wire in cell region
+  // Long horizontal line = + terminal (top)
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=3.5;
+  ctx.beginPath();ctx.moveTo(L-15,cyC-16);ctx.lineTo(L+15,cyC-16);ctx.stroke();
+  // Short horizontal line = - terminal (below)
+  ctx.lineWidth=1.8;
+  ctx.beginPath();ctx.moveTo(L-9,cyC+16);ctx.lineTo(L+9,cyC+16);ctx.stroke();
+  // Reconnect wire segments
+  ctx.strokeStyle=wCol;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,cyC-16);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(L,cyC+16);ctx.lineTo(L,B);ctx.stroke();
+  // Labels
+  ctx.fillStyle='#fbbf24';ctx.font='bold 10px DM Mono';ctx.textAlign='right';
+  ctx.fillText('+',L-18,cyC-12);
+  ctx.fillText('-',L-12,cyC+20);
+  ctx.textAlign='center';ctx.font='9px DM Mono';ctx.fillText('Cell',L,cyC+34);
 
-  // Switch (bottom wire, middle)
+  // Switch (bottom wire, middle) — with proper nodes, no wire through open gap
   const sw_x=(L+R)/2,sw_y=B;
-  ctx.strokeStyle='#22c55e';ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.moveTo(sw_x-24,sw_y);ctx.lineTo(sw_x-6,sw_y);ctx.stroke();
-  ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(sw_x-6,sw_y,3,0,Math.PI*2);ctx.fill();
-  if(eSwitch){
-    ctx.beginPath();ctx.moveTo(sw_x-6,sw_y);ctx.lineTo(sw_x+18,sw_y);ctx.stroke();
-  } else {
-    ctx.beginPath();ctx.moveTo(sw_x-6,sw_y);ctx.lineTo(sw_x+10,sw_y-16);ctx.stroke();
-  }
-  ctx.beginPath();ctx.arc(sw_x+18,sw_y,3,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.moveTo(sw_x+18,sw_y);ctx.lineTo(sw_x+24,sw_y);ctx.stroke();
+  // Draw bottom wire in two halves with gap for switch
+  ctx.strokeStyle=wCol;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(L,B);ctx.lineTo(sw_x-18,B);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sw_x+18,B);ctx.lineTo(R,B);ctx.stroke();
+  // Switch nodes
+  ctx.strokeStyle='#22c55e';ctx.lineWidth=2.5;ctx.fillStyle='#22c55e';
+  ctx.beginPath();ctx.arc(sw_x-18,sw_y,3.5,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(sw_x+18,sw_y,3.5,0,Math.PI*2);ctx.fill();
+  // Lever
+  ctx.beginPath();ctx.moveTo(sw_x-18,sw_y);
+  if(eSwitch){ctx.lineTo(sw_x+18,sw_y);}
+  else{ctx.lineTo(sw_x+8,sw_y-18);}
+  ctx.stroke();
   ctx.fillStyle='#22c55e';ctx.font='9px DM Mono';ctx.textAlign='center';
   ctx.fillText(eSwitch?'CLOSED':'OPEN',sw_x,sw_y+18);
 
@@ -1811,8 +1718,6 @@ window.addEventListener('load',()=>{
   buildMaterialBtns();
   animConductor();
   buildSwitchDemo();
-  drawCB();
-  setTool('cell');
   updateReceiver();
   setVC(1);
   animElectron();
