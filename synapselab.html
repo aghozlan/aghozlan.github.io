@@ -875,11 +875,13 @@ Your job:
   const messages=history.map(h=>({role:h.role,content:h.content}));
 
   try{
-    // Direct Gemini API call — free tier, no billing needed
-    // Get your free key at: aistudio.google.com → Get API key (2 min, no credit card)
-    // Route through Apps Script → Groq (free, 14400 req/day)
-    const payload=encodeURIComponent(JSON.stringify({system:systemPrompt,messages:messages}));
-    const resp=await fetch(APPS_SCRIPT_URL+'?action=ai&payload='+payload);
+    // POST with text/plain avoids CORS preflight — Apps Script reads it fine
+    const body=JSON.stringify({action:'ai',system:systemPrompt,messages:messages});
+    const resp=await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:body
+    });
     const data=await resp.json();
     const aiText=data.text||data.error||'Could not get a response. Please try again.';
     chatHistories[key].push({role:'assistant',content:aiText});
@@ -887,7 +889,7 @@ Your job:
     appendMsg(chatEl,'ai',aiText);
   }catch(e){
     chatEl.removeChild(typing);
-    appendMsg(chatEl,'ai','⚠ Could not connect to AI tutor. Check internet connection and try again.');
+    appendMsg(chatEl,'ai','⚠ Error: '+e.message+' — Check that Apps Script is redeployed as new version.');
   }
 
   btn.disabled=false;
