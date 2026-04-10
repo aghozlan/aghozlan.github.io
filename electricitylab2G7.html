@@ -796,46 +796,73 @@ async function uploadImage(){
   const name=document.getElementById('stuName').value.trim()||'Student';
   const btn=document.getElementById('uploadBtn');
   btn.disabled=true;btn.textContent='⏳ Uploading…';
-  showUploadStatus('uploading','⏳ Saving to Ahmad\'s Drive…');
+  showUploadStatus('uploading','⏳ Compressing and saving…');
 
-  const reader=new FileReader();
-  reader.onload=async ev=>{
-    const base64=ev.target.result.split(',')[1];
-    try{
-      // Route through Apps Script → Google Drive (same working proxy as Groq)
-      const resp=await fetch(APPS,{
-        method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body:JSON.stringify({
-          action:'uploadImage',
-          filename:name.replace(/\s+/g,'_')+'_circuit.png',
-          mimeType:selectedFile.type||'image/png',
-          data:base64
-        })
-      });
-      const data=await resp.json();
-      if(data.url){
-        uploadedUrl=data.url;
-        showUploadStatus('ok','✓ Saved to Ahmad\'s Drive!');
-        document.getElementById('uploadedLink').style.display='block';
-        document.getElementById('driveLink').href=uploadedUrl;
-        document.getElementById('driveLink').textContent='View your circuit →';
-        document.getElementById('ssStatus').innerHTML=
-          '✓ <a href="'+uploadedUrl+'" target="_blank" style="color:var(--cyan);">View uploaded circuit →</a>';
-        btn.textContent='✓ Uploaded!';
-        btn.style.background='var(--green)';btn.style.color='#000';
-        correct.screenshot=true;updateProg();
-        toast('✓ Circuit saved to Ahmad\'s Drive!');
-      } else {
-        showUploadStatus('error','✗ '+(data.error||'Upload failed — redeploy Apps Script and try again.'));
+  // Compress image first (fixes large file issues on mobile)
+  const canvas=document.createElement('canvas');
+  const img=new Image();
+  img.onload=()=>{
+    const MAX=1200;
+    let w=img.width,h=img.height;
+    if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    const compressed=canvas.toDataURL('image/jpeg',0.82);
+    const base64=compressed.split(',')[1];
+
+    // Use XMLHttpRequest — works on Safari/iPhone where fetch() is blocked
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST',APPS,true);
+    xhr.setRequestHeader('Content-Type','text/plain;charset=utf-8');
+    xhr.timeout=30000;
+
+    xhr.onload=()=>{
+      try{
+        const data=JSON.parse(xhr.responseText);
+        if(data.url){
+          uploadedUrl=data.url;
+          showUploadStatus('ok','✓ Saved to Ahmad\'s Drive!');
+          document.getElementById('uploadedLink').style.display='block';
+          document.getElementById('driveLink').href=uploadedUrl;
+          document.getElementById('driveLink').textContent='View your circuit →';
+          document.getElementById('ssStatus').innerHTML=
+            '✓ <a href="'+uploadedUrl+'" target="_blank" style="color:var(--cyan);">View uploaded circuit →</a>';
+          btn.textContent='✓ Uploaded!';
+          btn.style.background='var(--green)';btn.style.color='#000';
+          correct.screenshot=true;updateProg();
+          toast('✓ Circuit saved to Ahmad\'s Drive!');
+        } else {
+          showUploadStatus('error','✗ '+(data.error||'Upload failed — try again.'));
+          btn.disabled=false;btn.textContent='⬆ Try Again';
+        }
+      }catch(e){
+        showUploadStatus('error','✗ Could not read response: '+e.message);
         btn.disabled=false;btn.textContent='⬆ Try Again';
       }
-    }catch(e){
-      showUploadStatus('error','✗ '+e.message);
-      btn.disabled=false;btn.textContent='⬆ Try Again';
-    }
+    };
+    xhr.onerror=()=>{
+      // XHR failed too — fall back: mark as submitted without Drive link
+      showUploadStatus('hint','⚠ Could not upload image automatically. Your circuit description is saved in the sheet. You can also email the screenshot to Ahmad directly.');
+      uploadedUrl='Manual submission — see circuit description';
+      btn.textContent='✓ Continue without upload';
+      btn.style.background='var(--yellow)';btn.style.color='#000';
+      correct.screenshot=true;updateProg();
+    };
+    xhr.ontimeout=()=>{
+      showUploadStatus('hint','⚠ Upload timed out. Your text answers will still be submitted. Email screenshot to Ahmad if needed.');
+      uploadedUrl='Timeout — manual submission';
+      btn.textContent='✓ Continue';
+      btn.style.background='var(--yellow)';btn.style.color='#000';
+      correct.screenshot=true;updateProg();
+    };
+    xhr.send(JSON.stringify({
+      action:'uploadImage',
+      filename:name.replace(/\s+/g,'_')+'_circuit.jpg',
+      mimeType:'image/jpeg',
+      data:base64
+    }));
   };
-  reader.readAsDataURL(selectedFile);
+  img.src=URL.createObjectURL(selectedFile);
 }
 
 function showUploadStatus(type,msg){
