@@ -379,7 +379,7 @@ footer{padding:26px 52px;border-top:1px solid var(--border);background:var(--bg2
     <div style="font-size:2.5rem;margin-bottom:10px;">📸</div>
     <div style="font-family:var(--fh);font-weight:700;color:#fff;margin-bottom:6px;">Tap to upload your PhET screenshot</div>
     <div style="font-size:.78rem;color:var(--muted2);">Accepted: PNG, JPG, JPEG · Max size: 5MB</div>
-    <div style="font-size:.72rem;color:var(--muted);margin-top:8px;font-family:var(--fm);">Your image goes directly to Ahmad's Drive folder · never shared publicly</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:8px;font-family:var(--fm);">Your image is uploaded securely · a link is saved in Ahmad's grade sheet</div>
   </div>
 
   <div class="upload-preview" id="uploadPreview">
@@ -399,7 +399,7 @@ footer{padding:26px 52px;border-top:1px solid var(--border);background:var(--bg2
   </div>
 
   <div id="uploadedLink" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(34,197,94,.07);border:1.5px solid rgba(34,197,94,.25);border-radius:9px;font-size:.84rem;color:var(--green);">
-    ✓ Circuit uploaded! <a id="driveLink" href="#" target="_blank" style="color:var(--cyan);margin-left:8px;">View in Drive →</a>
+    ✓ Circuit uploaded! <a id="driveLink" href="#" target="_blank" style="color:var(--cyan);margin-left:8px;">View your circuit →</a>
   </div>
 </section>
 
@@ -793,40 +793,45 @@ function handleFile(e){
 
 async function uploadImage(){
   if(!selectedFile){toast('Select a file first!');return;}
+  const name=document.getElementById('stuName').value.trim()||'Student';
   const btn=document.getElementById('uploadBtn');
   btn.disabled=true;btn.textContent='⏳ Uploading…';
-  showUploadStatus('uploading','⏳ Uploading to Ahmad\'s Drive…');
+  showUploadStatus('uploading','⏳ Saving to Ahmad\'s Drive…');
 
   const reader=new FileReader();
   reader.onload=async ev=>{
     const base64=ev.target.result.split(',')[1];
     try{
+      // Route through Apps Script → Google Drive (same working proxy as Groq)
       const resp=await fetch(APPS,{
         method:'POST',
         headers:{'Content-Type':'text/plain;charset=utf-8'},
         body:JSON.stringify({
           action:'uploadImage',
-          filename:document.getElementById('stuName').value.trim()||'student',
-          mimeType:selectedFile.type,
+          filename:name.replace(/\s+/g,'_')+'_circuit.png',
+          mimeType:selectedFile.type||'image/png',
           data:base64
         })
       });
       const data=await resp.json();
       if(data.url){
         uploadedUrl=data.url;
-        showUploadStatus('ok','✓ Uploaded successfully!');
+        showUploadStatus('ok','✓ Saved to Ahmad\'s Drive!');
         document.getElementById('uploadedLink').style.display='block';
-        document.getElementById('driveLink').href=data.url;
-        document.getElementById('ssStatus').innerHTML='✓ <a href="'+data.url+'" target="_blank" style="color:var(--cyan);">View uploaded circuit →</a>';
-        btn.textContent='✓ Uploaded!';btn.style.background='var(--green)';btn.style.color='#000';
+        document.getElementById('driveLink').href=uploadedUrl;
+        document.getElementById('driveLink').textContent='View your circuit →';
+        document.getElementById('ssStatus').innerHTML=
+          '✓ <a href="'+uploadedUrl+'" target="_blank" style="color:var(--cyan);">View uploaded circuit →</a>';
+        btn.textContent='✓ Uploaded!';
+        btn.style.background='var(--green)';btn.style.color='#000';
         correct.screenshot=true;updateProg();
-        toast('✓ Circuit uploaded to Ahmad\'s Drive!');
+        toast('✓ Circuit saved to Ahmad\'s Drive!');
       } else {
-        showUploadStatus('error','✗ Upload failed: '+(data.error||'Unknown error'));
+        showUploadStatus('error','✗ '+(data.error||'Upload failed — redeploy Apps Script and try again.'));
         btn.disabled=false;btn.textContent='⬆ Try Again';
       }
     }catch(e){
-      showUploadStatus('error','✗ Network error — check connection');
+      showUploadStatus('error','✗ '+e.message);
       btn.disabled=false;btn.textContent='⬆ Try Again';
     }
   };
