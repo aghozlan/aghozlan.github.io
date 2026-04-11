@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spectrum Command — EM Waves | Ahmad Ghozlan | Grade 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03040a;--bg2:#060810;--bg3:#080b14;
+  --panel:#0c1020;--panel2:#101526;--panel3:#141a2e;
+  --border:rgba(80,180,255,.08);--border2:rgba(80,180,255,.18);
+  --text:#c0d4f0;--muted:#2a4060;--muted2:#4a6880;
+  --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;--fb:'Outfit',sans-serif;
+  /* Wave band colours */
+  --radio:#4488ff;--micro:#00ccff;--ir:#ff6600;
+  --vis:#ffffff;--uv:#cc44ff;--xray:#00ff88;--gamma:#ff2244;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.65;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 20% 20%,rgba(68,136,255,.04),transparent 50%),
+  radial-gradient(ellipse at 80% 80%,rgba(204,68,255,.03),transparent 50%),
+  radial-gradient(ellipse at 50% 50%,rgba(0,255,136,.02),transparent 60%);}
+
+.app{display:flex;min-height:100vh;}
+aside{width:252px;background:rgba(6,8,16,.97);border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0;z-index:100;
+  backdrop-filter:blur(20px);}
+main{flex:1;min-width:0;position:relative;z-index:1;}
+@media(max-width:900px){aside{display:none;}section{padding:36px 16px!important;}}
+
+.sb-logo{padding:22px 20px 16px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-family:var(--fh);font-size:1.1rem;font-weight:900;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,#4488ff,#cc44ff,#ff2244);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo p{font-size:.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2.5px;margin-top:3px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:8px;padding:9px 20px;font-size:.78rem;font-weight:600;
+  color:var(--muted2);border-left:3px solid transparent;transition:all .2s;cursor:pointer;
+  background:none;border-right:none;border-top:none;border-bottom:none;width:100%;font-family:var(--fb);text-align:left;}
+.sn:hover,.sn.active{color:#fff;background:rgba(80,180,255,.06);border-left-color:#4488ff;}
+.sn .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sn .badge{font-size:.5rem;font-family:var(--fm);background:var(--panel2);padding:2px 6px;border-radius:3px;color:var(--muted2);margin-left:auto;}
+.sb-foot{padding:14px 20px;border-top:1px solid var(--border);}
+.sb-foot .name{font-family:var(--fh);font-weight:700;font-size:.88rem;color:#fff;}
+.sb-foot .role{font-size:.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:2px;font-family:var(--fm);}
+
+section{padding:72px 56px;border-bottom:1px solid var(--border);position:relative;}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.58rem;
+  text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:3px;margin-bottom:18px;}
+.e-tag.engage{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.e-tag.explore{background:rgba(0,255,136,.06);color:#00ff88;border:1px solid rgba(0,255,136,.18);}
+.e-tag.explain{background:rgba(80,180,255,.08);color:#4488ff;border:1px solid rgba(80,180,255,.2);}
+.e-tag.elaborate{background:rgba(204,68,255,.07);color:#cc44ff;border:1px solid rgba(204,68,255,.2);}
+.e-tag.evaluate{background:rgba(255,34,68,.07);color:#ff2244;border:1px solid rgba(255,34,68,.2);}
+.sec-title{font-family:var(--fh);font-size:1.9rem;font-weight:900;letter-spacing:-1px;color:#fff;margin-bottom:10px;}
+.sec-desc{color:var(--muted2);font-size:.9rem;max-width:620px;line-height:1.8;margin-bottom:28px;}
+
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* HERO */
+#hero{min-height:92vh;display:flex;align-items:center;position:relative;overflow:hidden;}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.hero-inner{position:relative;z-index:2;max-width:680px;padding:72px 56px;}
+.hero-tag{font-family:var(--fm);font-size:.58rem;color:#4488ff;text-transform:uppercase;
+  letter-spacing:3px;border:1px solid rgba(68,136,255,.3);padding:4px 14px;
+  border-radius:2px;display:inline-block;margin-bottom:18px;}
+.hero-title{font-family:var(--fh);font-size:clamp(2.4rem,5vw,4.2rem);font-weight:900;
+  color:#fff;line-height:1.0;letter-spacing:-2px;margin-bottom:16px;}
+.hero-title .grad{background:linear-gradient(135deg,#4488ff 0%,#cc44ff 40%,#ff6600 70%,#ff2244 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-q{background:rgba(68,136,255,.05);border:1px solid rgba(68,136,255,.2);
+  border-left:4px solid #4488ff;border-radius:0 10px 10px 0;padding:18px 22px;margin-bottom:28px;}
+.hero-q p{font-size:.92rem;color:var(--muted2);line-height:1.85;}
+.hero-q strong{color:#fff;}
+
+/* SPECTRUM EXPLORER */
+.spectrum-wrap{position:relative;background:#020408;border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;margin-bottom:20px;}
+#spectrumCanvas{display:block;width:100%;cursor:crosshair;}
+.spec-info{background:var(--panel);border-top:1px solid var(--border);padding:18px 22px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+.spec-stat{text-align:center;}
+.spec-stat-label{font-family:var(--fm);font-size:.55rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
+.spec-stat-val{font-family:var(--fm);font-size:1rem;font-weight:700;color:#fff;}
+.spec-stat-unit{font-size:.6rem;color:var(--muted2);margin-left:3px;}
+
+/* WAVE BAND CARDS */
+.band-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:28px;}
+.band-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;cursor:pointer;transition:all .3s;position:relative;}
+.band-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.band-card.active{box-shadow:0 0 0 2px var(--band-col,#4488ff);}
+.band-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;}
+.band-icon{font-size:1.6rem;flex-shrink:0;}
+.band-name{font-family:var(--fh);font-size:1rem;font-weight:800;color:#fff;}
+.band-range{font-family:var(--fm);font-size:.62rem;color:var(--muted2);margin-top:2px;}
+.band-body{padding:16px 20px;}
+.band-prop{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem;}
+.band-prop:last-child{border:none;}
+.band-prop-key{color:var(--muted2);}
+.band-prop-val{color:#fff;font-weight:600;font-family:var(--fm);font-size:.72rem;}
+.band-apps{margin-top:12px;}
+.band-app-title{font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:8px;}
+.app-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:14px;
+  font-size:.7rem;font-weight:600;margin:3px;border:1px solid;}
+.band-ai{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.78rem;line-height:1.7;}
+.band-career{margin-top:8px;font-size:.72rem;color:var(--muted2);padding-top:8px;border-top:1px solid var(--border);}
+.band-career strong{color:#fff;}
+
+/* BAND DETAIL PANEL */
+.band-detail{background:var(--panel2);border:1px solid var(--border2);border-radius:14px;
+  padding:24px;margin-top:14px;display:none;animation:fadeIn .3s ease;}
+.band-detail.show{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* 3D VIZ */
+#vizCanvas{display:block;width:100%;border-radius:12px;background:#010205;
+  border:1px solid var(--border);cursor:grab;}
+#vizCanvas:active{cursor:grabbing;}
+.viz-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;}
+.viz-slider{-webkit-appearance:none;height:4px;border-radius:2px;outline:none;
+  background:var(--panel2);flex:1;min-width:200px;}
+.viz-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;cursor:pointer;transition:transform .2s;}
+.viz-btn{padding:8px 18px;border-radius:7px;font-family:var(--fh);font-size:.78rem;
+  font-weight:700;cursor:pointer;border:1px solid;transition:all .2s;min-height:38px;}
+
+/* MISSION CARDS */
+.mission-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:22px;margin-bottom:14px;position:relative;overflow:hidden;}
+.mission-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;
+  background:linear-gradient(180deg,#4488ff,#cc44ff);}
+.mission-num{font-family:var(--fm);font-size:.58rem;color:#4488ff;text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:8px;}
+.mission-text{font-size:.9rem;color:var(--text);line-height:1.8;margin-bottom:14px;}
+.mission-text strong{color:#fff;}
+
+/* MCQ */
+.mcq-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:var(--panel2);
+  border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;
+  font-size:.86rem;user-select:none;min-height:46px;}
+.mcq-opt:hover{border-color:#4488ff;}
+.mcq-opt.selected{border-color:#4488ff;background:rgba(68,136,255,.07);}
+.mcq-opt.correct{border-color:#00ff88;background:rgba(0,255,136,.06);color:#00ff88;}
+.mcq-opt.wrong{border-color:#ff2244;background:rgba(255,34,68,.06);color:#ff2244;}
+.ml{min-width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#4488ff,#cc44ff);
+  color:#fff;font-size:.66rem;font-weight:900;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-family:var(--fm);margin-top:1px;}
+.mcq-opt.correct .ml{background:#00ff88;color:#000;}
+.mcq-opt.wrong .ml{background:#ff2244;}
+.fb{margin-top:10px;padding:12px 16px;border-radius:9px;font-size:.86rem;display:none;line-height:1.8;}
+.fb.ok{background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.22);color:#00ff88;}
+.fb.bad{background:rgba(255,34,68,.05);border:1.5px solid rgba(255,34,68,.2);color:#ff2244;}
+.fb.info{background:rgba(68,136,255,.06);border:1.5px solid rgba(68,136,255,.2);color:#4488ff;}
+
+/* BUTTONS */
+.btn{padding:11px 24px;border-radius:8px;font-family:var(--fh);font-weight:700;font-size:.88rem;
+  cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-primary{background:linear-gradient(135deg,#4488ff,#cc44ff);color:#fff;
+  box-shadow:0 4px 20px rgba(68,136,255,.3);}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:#4488ff;color:#4488ff;}
+.check-btn{padding:9px 20px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:7px;color:#4488ff;font-family:var(--fb);font-weight:700;
+  font-size:.8rem;cursor:pointer;transition:all .2s;min-height:42px;}
+.check-btn:hover{border-color:#4488ff;}
+
+/* AI TUTOR */
+.ai-box{background:rgba(68,136,255,.04);border:1.5px solid rgba(68,136,255,.15);border-radius:12px;padding:20px;}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ai-pulse{width:7px;height:7px;border-radius:50%;background:#00ff88;animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.ai-resp{background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:14px;font-size:.86rem;line-height:1.8;margin-top:12px;display:none;}
+textarea,input[type=text]{background:var(--panel2);border:1.5px solid var(--border2);border-radius:8px;
+  padding:10px 14px;color:var(--text);font-family:var(--fb);font-size:.88rem;
+  outline:none;transition:border-color .2s;width:100%;min-height:44px;}
+textarea{resize:vertical;min-height:88px;}
+textarea:focus,input[type=text]:focus{border-color:#4488ff;}
+
+/* PROGRESS */
+.prog-bar{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:10px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,#4488ff,#cc44ff,#ff2244);border-radius:3px;transition:width .4s;}
+.score-display{font-family:var(--fm);font-size:3rem;font-weight:700;
+  background:linear-gradient(135deg,#4488ff,#cc44ff);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;line-height:1;text-align:center;}
+
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  background:var(--panel);border:1px solid #4488ff;color:#4488ff;
+  padding:10px 24px;border-radius:8px;font-family:var(--fm);font-size:.72rem;
+  z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;
+  white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;}
+footer{padding:28px 56px;border-top:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div class="app">
+<aside>
+  <div class="sb-logo">
+    <h1>Spectrum Command</h1>
+    <p>EM Waves · Grade 8 · Ahmad Ghozlan</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')"><span class="dot" style="background:#fbbf24;"></span>Signal Detected <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('explore')"><span class="dot" style="background:#00ff88;"></span>Spectrum Explorer <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('radio')"><span class="dot" style="background:var(--radio);"></span>Radio Waves <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('micro')"><span class="dot" style="background:var(--micro);"></span>Microwaves <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('ir')"><span class="dot" style="background:var(--ir);"></span>Infrared <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('visible')"><span class="dot" style="background:#fff;"></span>Visible Light <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('uv')"><span class="dot" style="background:var(--uv);"></span>Ultraviolet <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('xray')"><span class="dot" style="background:var(--xray);"></span>X-Rays <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('gamma')"><span class="dot" style="background:var(--gamma);"></span>Gamma Rays <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('viz3d')"><span class="dot" style="background:#cc44ff;"></span>3D Wave Lab <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('missions')"><span class="dot" style="background:#ff6600;"></span>Missions <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')"><span class="dot" style="background:#ff2244;"></span>Submit <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="role">Physics · Grade 8 · Lebanon</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- ═══ E1: ENGAGE ═══ -->
+<section id="hero" style="padding:0;">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-inner">
+    <div class="hero-tag">⚡ Spectrum Command · Grade 8 Physics</div>
+    <h1 class="hero-title">The invisible<br><span class="grad">universe of waves</span><br>around you.</h1>
+    <div class="hero-q">
+      <p>Right now, <strong>radio waves</strong> from satellites pass through your skull. <strong>Infrared</strong> radiates from your skin. <strong>Microwaves</strong> bounce inside your kitchen. <strong>UV</strong> hits your eyes from the sun — invisible, but real. Every technology in the AI era runs on waves you cannot see. Your mission: understand them all.</p>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="goTo('explore')">Begin Mission →</button>
+      <button class="btn btn-ghost" onclick="goTo('viz3d')">🌐 Open 3D Wave Lab</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E2: SPECTRUM EXPLORER ═══ -->
+<section id="explore" style="background:var(--bg2);">
+  <div class="e-tag explore">E2 · Explore</div>
+  <h2 class="sec-title">The Electromagnetic Spectrum</h2>
+  <p class="sec-desc">Drag the detector across the spectrum. Watch the wave animate, the properties update in real time. Explore before reading — what patterns do you notice?</p>
+
+  <div class="spectrum-wrap">
+    <canvas id="spectrumCanvas" height="200"></canvas>
+    <div class="spec-info" id="specInfo">
+      <div class="spec-stat"><div class="spec-stat-label">Wave Type</div><div class="spec-stat-val" id="siType" style="color:#4488ff;">Radio</div></div>
+      <div class="spec-stat"><div class="spec-stat-label">Wavelength</div><div class="spec-stat-val" id="siWave">100 m<span class="spec-stat-unit"></span></div></div>
+      <div class="spec-stat"><div class="spec-stat-label">Frequency</div><div class="spec-stat-val" id="siFreq">3 MHz<span class="spec-stat-unit"></span></div></div>
+      <div class="spec-stat"><div class="spec-stat-label">Energy Level</div><div class="spec-stat-val" id="siEnergy">Very Low</div></div>
+      <div class="spec-stat"><div class="spec-stat-label">Speed</div><div class="spec-stat-val">3×10⁸<span class="spec-stat-unit">m/s</span></div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card2" style="border-left:3px solid #00ff88;">
+      <div style="font-weight:800;color:#00ff88;margin-bottom:8px;font-size:.84rem;">🔍 Discovery Questions</div>
+      <div style="font-size:.82rem;color:var(--muted2);line-height:1.9;">
+        A. As you drag right (toward gamma rays) — what happens to wavelength?<br>
+        B. What happens to frequency as wavelength decreases?<br>
+        C. Which waves carry the most energy? The least?<br>
+        D. All EM waves share one thing — what is it?
+      </div>
+    </div>
+    <div class="card2" style="border-left:3px solid #4488ff;">
+      <div style="font-weight:800;color:#4488ff;margin-bottom:8px;font-size:.84rem;">⚡ Key Relationships</div>
+      <div style="font-size:.82rem;color:var(--muted2);line-height:1.9;">
+        <strong style="color:#fff;">Speed = constant</strong> — all EM waves travel at c = 3×10⁸ m/s in vacuum<br><br>
+        <strong style="color:#fff;">c = f × λ</strong> — speed = frequency × wavelength<br><br>
+        <strong style="color:#fff;">Energy ∝ frequency</strong> — higher frequency = higher energy
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E3: WAVE BANDS ═══ -->
+<!-- RADIO -->
+<section id="radio">
+  <div class="e-tag explain">E3 · Radio Waves</div>
+  <h2 class="sec-title" style="color:var(--radio);">📻 Radio Waves</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid var(--radio);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--radio);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">1 mm → 100 km</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">3 Hz → 300 GHz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Energy</span><span class="band-prop-val">Lowest of all EM</span></div>
+          <div class="band-prop"><span class="band-prop-key">Penetration</span><span class="band-prop-val">Passes through walls, skin</span></div>
+          <div class="band-prop"><span class="band-prop-key">Source</span><span class="band-prop-val">Antennas, lightning, stars</span></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid var(--radio);">
+        <div style="font-size:.62rem;color:var(--radio);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;">AI-powered radio telescopes like the <strong style="color:#fff;">Square Kilometre Array (SKA)</strong> use machine learning to process petabytes of radio wave data from deep space — detecting patterns humans could never find manually. Radio waves also power <strong style="color:#fff;">5G networks</strong> where AI optimises signal routing in real time for billions of devices.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid var(--radio);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--radio);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;">
+            <div style="font-size:1.4rem;margin-bottom:5px;">📻</div>
+            <div style="font-size:.74rem;font-weight:700;color:#fff;">AM/FM Radio</div>
+            <div style="font-size:.66rem;color:var(--muted2);">Broadcasting music & news</div>
+          </div>
+          <div class="card2" style="text-align:center;padding:12px 8px;">
+            <div style="font-size:1.4rem;margin-bottom:5px;">📡</div>
+            <div style="font-size:.74rem;font-weight:700;color:#fff;">Satellite TV</div>
+            <div style="font-size:.66rem;color:var(--muted2);">Signals from space to dish</div>
+          </div>
+          <div class="card2" style="text-align:center;padding:12px 8px;">
+            <div style="font-size:1.4rem;margin-bottom:5px;">📱</div>
+            <div style="font-size:.74rem;font-weight:700;color:#fff;">Mobile Networks</div>
+            <div style="font-size:.66rem;color:var(--muted2);">4G, 5G, WiFi calls</div>
+          </div>
+          <div class="card2" style="text-align:center;padding:12px 8px;">
+            <div style="font-size:1.4rem;margin-bottom:5px;">🔭</div>
+            <div style="font-size:.74rem;font-weight:700;color:#fff;">Radio Astronomy</div>
+            <div style="font-size:.66rem;color:var(--muted2);">Mapping galaxies</div>
+          </div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;">
+        <div style="font-size:.62rem;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">💼 Career Path</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;"><strong style="color:#fff;">Telecommunications Engineer</strong> — designs and optimises wireless networks. Average salary: $85,000/year. Requires physics + computer science. Companies: Nokia, Ericsson, Huawei, Apple.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;border-left:4px solid var(--radio);">
+    <div style="font-size:.6rem;color:var(--radio);font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Did You Know?</div>
+    <div style="font-size:.86rem;color:var(--muted2);line-height:1.85;">The first image ever of a <strong style="color:#fff;">black hole</strong> (M87*, 2019) was captured using radio waves — not visible light. The Event Horizon Telescope linked radio telescopes across 8 countries to create a virtual telescope the size of Earth. The data was so large it had to be physically flown on hard drives to processing centres because the internet was too slow.</div>
+  </div>
+</section>
+
+<!-- MICROWAVE -->
+<section id="micro" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Microwaves</div>
+  <h2 class="sec-title" style="color:var(--micro);">📡 Microwaves</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid var(--micro);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--micro);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">1 mm → 1 m</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">300 MHz → 300 GHz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Energy</span><span class="band-prop-val">Low — heats water molecules</span></div>
+          <div class="band-prop"><span class="band-prop-key">Penetration</span><span class="band-prop-val">Penetrates food, clouds, rain</span></div>
+          <div class="band-prop"><span class="band-prop-key">Source</span><span class="band-prop-val">Magnetron tubes, satellites</span></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid var(--micro);">
+        <div style="font-size:.62rem;color:var(--micro);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;"><strong style="color:#fff;">Autonomous vehicles</strong> use microwave radar (RADAR = Radio Detection And Ranging) to detect objects in fog, rain, and darkness where cameras fail. Tesla, Waymo and other self-driving AI systems fuse radar data with camera data to make split-second decisions. Also: <strong style="color:#fff;">weather prediction AI</strong> uses microwave satellite data to model global weather patterns.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid var(--micro);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--micro);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🍕</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Microwave Oven</div><div style="font-size:.66rem;color:var(--muted2);">Vibrates water molecules → heat</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🛰️</div><div style="font-size:.74rem;font-weight:700;color:#fff;">GPS Satellites</div><div style="font-size:.66rem;color:var(--muted2);">Location accuracy to 1 meter</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🌦️</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Weather Radar</div><div style="font-size:.66rem;color:var(--muted2);">Tracking storms, rainfall</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🚗</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Speed Cameras</div><div style="font-size:.66rem;color:var(--muted2);">Doppler radar detects speed</div></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;">
+        <div style="font-size:.62rem;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">💼 Career Path</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;"><strong style="color:#fff;">Radar Systems Engineer</strong> — designs radar for aviation, weather, defence. Companies: Raytheon, Thales, Airbus Defence. Lebanon connection: radar stations monitor all aircraft entering Lebanese airspace.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INFRARED -->
+<section id="ir">
+  <div class="e-tag explain">E3 · Infrared</div>
+  <h2 class="sec-title" style="color:var(--ir);">🌡️ Infrared Radiation</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid var(--ir);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--ir);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">700 nm → 1 mm</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">300 GHz → 430 THz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Energy</span><span class="band-prop-val">Felt as heat by skin</span></div>
+          <div class="band-prop"><span class="band-prop-key">Penetration</span><span class="band-prop-val">Blocked by glass, absorbed by skin</span></div>
+          <div class="band-prop"><span class="band-prop-key">Source</span><span class="band-prop-val">All warm objects emit IR</span></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid var(--ir);">
+        <div style="font-size:.62rem;color:var(--ir);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;"><strong style="color:#fff;">Face ID</strong> on your iPhone uses an infrared dot projector — 30,000 invisible IR dots map your face in 3D. An AI neural network then matches the pattern to unlock. Also: <strong style="color:#fff;">medical AI</strong> analyses infrared thermal images to detect cancer tumours (which are warmer than surrounding tissue) and COVID fever screening used IR cameras at airports.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid var(--ir);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--ir);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🔓</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Face ID</div><div style="font-size:.66rem;color:var(--muted2);">IR maps 3D facial structure</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🌡️</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Thermal Cameras</div><div style="font-size:.66rem;color:var(--muted2);">Night vision, fever detection</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">📺</div><div style="font-size:.74rem;font-weight:700;color:#fff;">TV Remote</div><div style="font-size:.66rem;color:var(--muted2);">IR pulses carry commands</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🌿</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Agriculture</div><div style="font-size:.66rem;color:var(--muted2);">Satellite IR detects crop stress</div></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;">
+        <div style="font-size:.62rem;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">💼 Career Path</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;"><strong style="color:#fff;">Biomedical Imaging Engineer</strong> — develops thermal imaging devices for medical diagnosis. Growing field due to AI-assisted diagnostics. Demand growing 15% annually in the Middle East healthcare sector.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISIBLE LIGHT -->
+<section id="visible" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Visible Light</div>
+  <h2 class="sec-title" style="background:linear-gradient(90deg,#ff2244,#ff8800,#ffee00,#00ff88,#4488ff,#cc44ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🌈 Visible Light</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid #fff;">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">380 nm → 700 nm</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">430 THz → 790 THz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Colours</span><span class="band-prop-val">Violet → Red (ROYGBIV)</span></div>
+          <div class="band-prop"><span class="band-prop-key">Detected by</span><span class="band-prop-val">Human eye (only EM we see)</span></div>
+          <div class="band-prop"><span class="band-prop-key">Source</span><span class="band-prop-val">Sun, LEDs, fire, screens</span></div>
+        </div>
+      </div>
+      <!-- Colour spectrum canvas -->
+      <canvas id="cvRainbow" height="48" style="width:100%;border-radius:8px;margin-top:12px;display:block;"></canvas>
+      <div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-top:4px;padding:0 4px;">
+        <span>700nm RED</span><span>580nm YELLOW</span><span>500nm GREEN</span><span>450nm BLUE</span><span>380nm VIOLET</span>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid #fff;">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">📷</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Photography & AI Vision</div><div style="font-size:.66rem;color:var(--muted2);">AI sees through cameras</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">⚡</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Solar Panels</div><div style="font-size:.66rem;color:var(--muted2);">Convert light to electricity</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">💻</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Fibre Optics</div><div style="font-size:.66rem;color:var(--muted2);">Internet data as light pulses</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🔬</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Microscopy</div><div style="font-size:.66rem;color:var(--muted2);">Seeing cells and bacteria</div></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid #cc44ff;">
+        <div style="font-size:.62rem;color:#cc44ff;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;"><strong style="color:#fff;">Computer vision AI</strong> — every AI that "sees" (ChatGPT Vision, Google Lens, medical diagnosis AI) processes visible light captured by cameras. The entire field of AI image recognition is built on how cameras capture visible light and how neural networks interpret those patterns.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UV -->
+<section id="uv">
+  <div class="e-tag explain">E3 · Ultraviolet</div>
+  <h2 class="sec-title" style="color:var(--uv);">☀️ Ultraviolet (UV)</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid var(--uv);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--uv);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">10 nm → 380 nm</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">790 THz → 30 PHz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Energy</span><span class="band-prop-val">High — can damage DNA</span></div>
+          <div class="band-prop"><span class="band-prop-key">Protection</span><span class="band-prop-val">Ozone layer absorbs most UV</span></div>
+          <div class="band-prop"><span class="band-prop-key">Types</span><span class="band-prop-val">UVA · UVB · UVC</span></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid var(--uv);">
+        <div style="font-size:.62rem;color:var(--uv);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;"><strong style="color:#fff;">AI skin cancer detection</strong> — dermatology AI (like DermAI) uses UV-enhanced images to detect melanoma earlier than human doctors, achieving 95%+ accuracy. <strong style="color:#fff;">Banknote authentication</strong> — UV reveals hidden security features; AI systems at banks verify currency in milliseconds using UV scanners.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid var(--uv);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--uv);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🦠</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Sterilisation</div><div style="font-size:.66rem;color:var(--muted2);">UVC kills bacteria & viruses</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">💵</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Counterfeit Detection</div><div style="font-size:.66rem;color:var(--muted2);">UV reveals hidden security marks</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🌿</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Vitamin D Production</div><div style="font-size:.66rem;color:var(--muted2);">UVB triggers synthesis in skin</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🔬</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Forensic Science</div><div style="font-size:.66rem;color:var(--muted2);">UV reveals blood, fibres, ink</div></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;">
+        <div style="font-size:.62rem;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">💼 Career Path</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;"><strong style="color:#fff;">Forensic Scientist</strong> — uses UV, IR and X-ray to solve crimes. Growing demand in Lebanon's security sector. Combines chemistry, physics, and increasingly AI pattern recognition.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- X-RAY -->
+<section id="xray" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · X-Rays</div>
+  <h2 class="sec-title" style="color:var(--xray);">🩻 X-Rays</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid var(--xray);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--xray);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">0.01 nm → 10 nm</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">30 PHz → 30 EHz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Energy</span><span class="band-prop-val">Very high — ionising radiation</span></div>
+          <div class="band-prop"><span class="band-prop-key">Penetration</span><span class="band-prop-val">Passes through soft tissue, blocked by bone/metal</span></div>
+          <div class="band-prop"><span class="band-prop-key">Danger</span><span class="band-prop-val">Can damage DNA — limited exposure</span></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid var(--xray);">
+        <div style="font-size:.62rem;color:var(--xray);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;"><strong style="color:#fff;">AI radiology</strong> — Google's DeepMind AI detects lung cancer in chest X-rays with greater accuracy than radiologists. Deployed in NHS hospitals. <strong style="color:#fff;">Airport security AI</strong> — CT scanners (advanced X-ray) with AI can identify weapons and explosives in luggage automatically, screening 1,500+ bags/hour. <strong style="color:#fff;">AI CT scans</strong> at American University of Beirut Medical Center now assist diagnosis.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid var(--xray);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--xray);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🏥</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Medical Imaging</div><div style="font-size:.66rem;color:var(--muted2);">Bones, CT scans, chest X-rays</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">✈️</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Airport Security</div><div style="font-size:.66rem;color:var(--muted2);">Scanning luggage for threats</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🏛️</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Art Authentication</div><div style="font-size:.66rem;color:var(--muted2);">X-ray reveals hidden paintings</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🔩</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Industrial Inspection</div><div style="font-size:.66rem;color:var(--muted2);">Finding cracks in metal/welds</div></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;">
+        <div style="font-size:.62rem;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">💼 Career Path</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;"><strong style="color:#fff;">Radiologist / AI Diagnostic Specialist</strong> — one of the highest-demand medical careers globally. AI is not replacing radiologists but amplifying them — hybrid AI+human diagnosis is becoming standard. AUBMC and Saint George Hospital in Lebanon actively hiring.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAMMA -->
+<section id="gamma">
+  <div class="e-tag explain">E3 · Gamma Rays</div>
+  <h2 class="sec-title" style="color:var(--gamma);">☢️ Gamma Rays</h2>
+  <div class="g2">
+    <div>
+      <div class="card" style="border-top:3px solid var(--gamma);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--gamma);margin-bottom:12px;">Physics Properties</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;">
+          <div class="band-prop"><span class="band-prop-key">Wavelength</span><span class="band-prop-val">Less than 0.01 nm</span></div>
+          <div class="band-prop"><span class="band-prop-key">Frequency</span><span class="band-prop-val">Above 30 EHz</span></div>
+          <div class="band-prop"><span class="band-prop-key">Energy</span><span class="band-prop-val">Highest of all EM — extremely ionising</span></div>
+          <div class="band-prop"><span class="band-prop-key">Penetration</span><span class="band-prop-val">Penetrates everything — only thick lead/concrete blocks</span></div>
+          <div class="band-prop"><span class="band-prop-key">Source</span><span class="band-prop-val">Radioactive decay, nuclear reactions, neutron stars</span></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;border-left:3px solid var(--gamma);">
+        <div style="font-size:.62rem;color:var(--gamma);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">🤖 AI Era Use</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.8;"><strong style="color:#fff;">Gamma-ray astronomy AI</strong> — NASA's Fermi telescope detects gamma-ray bursts (the most energetic explosions in the universe). AI automatically classifies and alerts scientists within seconds. <strong style="color:#fff;">Cancer treatment AI</strong> — Gamma Knife radiosurgery uses AI to precisely aim 192 gamma beams at brain tumours with sub-millimetre accuracy, sparing healthy tissue.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-top:3px solid var(--gamma);">
+        <div style="font-size:.58rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:2px;color:var(--gamma);margin-bottom:12px;">Real-World Applications</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🧠</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Gamma Knife Surgery</div><div style="font-size:.66rem;color:var(--muted2);">Targeted brain tumour treatment</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🔬</div><div style="font-size:.74rem;font-weight:700;color:#fff;">PET Scans</div><div style="font-size:.66rem;color:var(--muted2);">Detecting cancer spread</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🥩</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Food Sterilisation</div><div style="font-size:.66rem;color:var(--muted2);">Kills bacteria in packaged food</div></div>
+          <div class="card2" style="text-align:center;padding:12px 8px;"><div style="font-size:1.4rem;margin-bottom:5px;">🌌</div><div style="font-size:.74rem;font-weight:700;color:#fff;">Astronomy</div><div style="font-size:.66rem;color:var(--muted2);">Detecting black holes, supernovae</div></div>
+        </div>
+      </div>
+      <div class="card2" style="margin-top:12px;">
+        <div style="font-size:.62rem;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">💼 Career Path</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:1.7;"><strong style="color:#fff;">Medical Physicist / Nuclear Medicine Specialist</strong> — designs and operates radiation therapy equipment. One of the best-paid STEM careers in Lebanon and the Arab world. Requires physics + medical training.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ E3: 3D WAVE LAB ═══ -->
+<section id="viz3d" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · 3D Wave Laboratory</div>
+  <h2 class="sec-title">Interactive 3D Wave Lab</h2>
+  <p class="sec-desc">Drag the slider to tune through the entire electromagnetic spectrum. Watch the wave transform in real time — wavelength, frequency, energy and colour all change together. Drag to orbit.</p>
+
+  <canvas id="vizCanvas" height="400"></canvas>
+
+  <div class="viz-controls">
+    <span style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;">📻 Radio</span>
+    <input type="range" class="viz-slider" id="specSlider" min="0" max="100" value="0" oninput="updateViz(this.value)">
+    <span style="font-family:var(--fm);font-size:.6rem;color:#ff2244;text-transform:uppercase;letter-spacing:2px;white-space:nowrap;">Gamma ☢️</span>
+  </div>
+  <div style="text-align:center;margin-top:10px;padding:10px;background:var(--panel);border-radius:8px;font-family:var(--fm);font-size:.74rem;" id="vizLabel">
+    <span id="vizType" style="color:#4488ff;font-weight:700;">Radio Wave</span>
+    <span style="color:var(--muted2);margin:0 12px;">·</span>
+    <span style="color:var(--muted2);">λ = </span><span id="vizWave" style="color:#fff;">100 m</span>
+    <span style="color:var(--muted2);margin:0 12px;">·</span>
+    <span style="color:var(--muted2);">f = </span><span id="vizFreq" style="color:#fff;">3 MHz</span>
+    <span style="color:var(--muted2);margin:0 12px;">·</span>
+    <span style="color:var(--muted2);">Energy: </span><span id="vizEnergy" style="color:#fff;">Very Low</span>
+  </div>
+
+  <!-- Orbit instructions -->
+  <div style="text-align:center;margin-top:8px;font-size:.68rem;color:var(--muted);font-family:var(--fm);">
+    Drag to orbit · Scroll to zoom · Slide to change wave type
+  </div>
+</section>
+
+<!-- ═══ E4: MISSIONS ═══ -->
+<section id="missions" style="background:var(--bg3);">
+  <div class="e-tag elaborate">E4 · Signal Missions</div>
+  <h2 class="sec-title">🎯 Mission Briefings</h2>
+  <p class="sec-desc">You are a Signal Analyst. Five real-world scenarios. Select the correct EM wave for each mission and explain your reasoning.</p>
+
+  <!-- Mission 1 -->
+  <div class="mission-card">
+    <div class="mission-num">Mission 01 · Medical</div>
+    <div class="mission-text">A patient arrives at hospital with a suspected broken arm. The doctor needs to see inside the arm <strong>without surgery</strong> to confirm the fracture. Which EM wave should the medical team use, and why?</div>
+    <div class="mcq-opts" id="m1opts">
+      <div class="mcq-opt" onclick="selMCQ('m1','A',this)"><span class="ml">A</span>Radio waves — they pass through everything</div>
+      <div class="mcq-opt" onclick="selMCQ('m1','B',this)"><span class="ml">B</span>X-rays — they pass through soft tissue but are blocked by bone, creating an image</div>
+      <div class="mcq-opt" onclick="selMCQ('m1','C',this)"><span class="ml">C</span>Infrared — body heat reveals the injury</div>
+      <div class="mcq-opt" onclick="selMCQ('m1','D',this)"><span class="ml">D</span>Gamma rays — highest energy means best image</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('m1','B','✓ Mission success! X-rays are ideal — they pass through skin and muscle but are absorbed by dense bone. The contrast creates the classic bone image. Gamma rays would give too much radiation for routine use.','✗ Mission failed. X-rays are the standard tool — dense bone absorbs them while soft tissue lets them through, creating contrast on the detector.')">✓ Deploy</button>
+    <div class="fb" id="fbm1"></div>
+  </div>
+
+  <!-- Mission 2 -->
+  <div class="mission-card">
+    <div class="mission-num">Mission 02 · Communication</div>
+    <div class="mission-text">A submarine needs to receive communication signals while <strong>submerged deep underwater</strong>. Most EM waves cannot penetrate seawater. Which part of the spectrum has the longest wavelength and can penetrate deepest?</div>
+    <div class="mcq-opts" id="m2opts">
+      <div class="mcq-opt" onclick="selMCQ('m2','A',this)"><span class="ml">A</span>Gamma rays — highest energy penetrates anything</div>
+      <div class="mcq-opt" onclick="selMCQ('m2','B',this)"><span class="ml">B</span>Visible light — submarines have windows</div>
+      <div class="mcq-opt" onclick="selMCQ('m2','C',this)"><span class="ml">C</span>Very Low Frequency (VLF) radio waves — extremely long wavelengths can penetrate seawater to limited depth</div>
+      <div class="mcq-opt" onclick="selMCQ('m2','D',this)"><span class="ml">D</span>Microwaves — they penetrate food so they penetrate water</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('m2','C','✓ Mission success! VLF radio waves (3–30 kHz, wavelengths up to 100km) can penetrate seawater to ~200 metres. The US Navy and Russian Navy use exactly this system. The trade-off: data rate is only a few characters per minute.','✗ Mission failed. VLF (Very Low Frequency) radio waves are the answer — their enormous wavelengths allow limited penetration of seawater. Higher-energy waves are actually absorbed faster by water.')">✓ Deploy</button>
+    <div class="fb" id="fbm2"></div>
+  </div>
+
+  <!-- Mission 3 -->
+  <div class="mission-card">
+    <div class="mission-num">Mission 03 · Security</div>
+    <div class="mission-text">Airport security needs to identify a <strong>suspicious package</strong> inside a sealed suitcase without opening it. The system must distinguish between clothes, electronics, and potentially dangerous metal objects.</div>
+    <div class="mcq-opts" id="m3opts">
+      <div class="mcq-opt" onclick="selMCQ('m3','A',this)"><span class="ml">A</span>UV rays — they reveal hidden markings</div>
+      <div class="mcq-opt" onclick="selMCQ('m3','B',this)"><span class="ml">B</span>X-ray CT scanning — penetrates luggage, metals appear dense, software creates 3D image</div>
+      <div class="mcq-opt" onclick="selMCQ('m3','C',this)"><span class="ml">C</span>Infrared — heat from electronics is detectable</div>
+      <div class="mcq-opt" onclick="selMCQ('m3','D',this)"><span class="ml">D</span>Visible light — open the suitcase and look</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('m3','B','✓ Mission success! Modern airport CT scanners use X-rays from multiple angles to build a full 3D image of luggage contents. AI then automatically flags suspicious shapes — all in under 2 seconds per bag.','✗ Mission failed. X-ray CT scanners are standard at airports — they penetrate the bag and create detailed images that AI analyses for threats.')">✓ Deploy</button>
+    <div class="fb" id="fbm3"></div>
+  </div>
+
+  <!-- Mission 4 -->
+  <div class="mission-card">
+    <div class="mission-num">Mission 04 · Agriculture</div>
+    <div class="mission-text">Farmers in the Bekaa Valley need to monitor <strong>crop health across thousands of hectares</strong> without visiting every field. They want to detect water stress and disease before crops visually show symptoms.</div>
+    <div class="mcq-opts" id="m4opts">
+      <div class="mcq-opt" onclick="selMCQ('m4','A',this)"><span class="ml">A</span>Gamma rays — most penetrating so best for soil analysis</div>
+      <div class="mcq-opt" onclick="selMCQ('m4','B',this)"><span class="ml">B</span>Satellite infrared imaging — stressed plants emit different IR signatures, AI maps crop health</div>
+      <div class="mcq-opt" onclick="selMCQ('m4','C',this)"><span class="ml">C</span>Radio waves — broadcast weather forecasts to farmers</div>
+      <div class="mcq-opt" onclick="selMCQ('m4','D',this)"><span class="ml">D</span>Visible light photography — take pictures from a drone</div>
+    </div>
+    <button class="check-btn" onclick="chkMCQ('m4','B','✓ Mission success! Near-infrared satellite imagery is how modern precision agriculture works. Healthy plants reflect IR differently than stressed plants. AI analyses these signatures to create crop health maps — used today in Lebanon\'s agricultural regions.','✗ Mission failed. Infrared satellite imaging is the key — stressed or diseased crops have different IR reflectance signatures that are invisible to normal cameras but clearly visible in IR. AI then maps which areas need attention.')">✓ Deploy</button>
+    <div class="fb" id="fbm4"></div>
+  </div>
+
+  <!-- Mission 5 — AI open question -->
+  <div class="ai-box" style="margin-top:6px;">
+    <div class="ai-hdr"><div class="ai-pulse"></div><span style="font-weight:700;font-size:.9rem;">Mission 05 · Design Challenge · AI Tutor 🤖</span></div>
+    <div class="mission-text" style="margin-bottom:12px;">
+      You are designing a <strong>smart hospital room of the future</strong> for a Lebanese hospital. The room must continuously monitor patient health without wires or contact. Choose <strong>at least three different types of EM waves</strong>, explain what each monitors, and describe how AI uses the data.
+    </div>
+    <textarea id="mission5" placeholder="Design your smart hospital room...&#10;&#10;Wave 1: I would use ___ to monitor ___ because...&#10;Wave 2: I would use ___ to measure ___ which...&#10;Wave 3: ___ could detect ___ by...&#10;&#10;The AI system would then..."></textarea>
+    <button class="btn btn-primary" style="margin-top:10px;width:100%;" onclick="getMission5AI()">🤖 Get Mission Evaluation</button>
+    <div class="ai-resp" id="aiM5"></div>
+  </div>
+</section>
+
+<!-- ═══ E5: EVALUATE ═══ -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · Mission Complete</div>
+  <h2 class="sec-title">Submit Your Mission Report</h2>
+  <p class="sec-desc">Enter your details and submit your complete mission log to Ahmad's grade sheet.</p>
+
+  <div class="g2" style="align-items:start;max-width:860px;">
+    <div class="card">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="flex:2;"><label style="font-size:.66rem;color:var(--muted2);display:block;margin-bottom:5px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Full Name *</label><input type="text" id="stuName" placeholder="Your full name…"></div>
+        <div style="flex:1;"><label style="font-size:.66rem;color:var(--muted2);display:block;margin-bottom:5px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Class *</label><input type="text" id="stuClass" placeholder="e.g. 8A"></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <div id="scoreBreakdown" style="margin-bottom:10px;"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <p id="progText" style="font-size:.7rem;color:var(--muted2);margin-bottom:14px;font-family:var(--fm);">0 / 5 missions completed</p>
+      <button class="btn btn-primary" style="width:100%;font-size:.92rem;" onclick="submitWork()">📊 Submit Mission Report</button>
+    </div>
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:22px;text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">📡</div>
+      <div class="score-display" id="scoreDisp">—</div>
+      <div style="font-size:.56rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-top:4px;font-family:var(--fm);">Mission Score</div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <p style="font-size:.76rem;color:var(--muted2);line-height:1.7;">Ahmad reviews your Mission 05 design challenge in class.</p>
+      <div id="submitOk" style="display:none;margin-top:10px;padding:10px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:8px;font-size:.82rem;color:#00ff88;font-weight:700;">✓ Mission report transmitted!</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div style="font-family:var(--fh);font-size:.95rem;font-weight:900;background:linear-gradient(135deg,#4488ff,#cc44ff,#ff2244);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Spectrum Command</div>
+    <div style="font-size:.62rem;color:var(--muted2);font-family:var(--fm);margin-top:2px;">Ahmad Ghozlan · Physics · Grade 8 · Lebanon</div>
+  </div>
+  <a href="https://aghozlan.github.io" style="font-size:.7rem;color:#4488ff;text-decoration:none;border:1px solid var(--border2);padding:5px 14px;border-radius:16px;">↗ All Labs</a>
+</footer>
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const ids=['hero','explore','radio','micro','ir','visible','uv','xray','gamma','viz3d','missions','evaluate'];
+  let cur='hero';
+  ids.forEach(s=>{const el=document.getElementById(s);if(el&&window.scrollY>=el.offsetTop-200)cur=s;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+},{passive:true});
+
+// ── HERO CANVAS — flowing wave background ────────────────────────
+const hc=document.getElementById('heroCanvas');
+let hT=0;
+function drawHero(){
+  hc.width=hc.offsetWidth;hc.height=hc.offsetHeight;
+  const ctx=hc.getContext('2d');const W=hc.width,H=hc.height;
+  ctx.clearRect(0,0,W,H);hT+=0.012;
+  const bands=[
+    {col:'#4488ff',y:H*.2,amp:30,freq:0.008,phase:0,alpha:0.15},
+    {col:'#00ccff',y:H*.35,amp:20,freq:0.015,phase:1,alpha:0.12},
+    {col:'#ff6600',y:H*.5,amp:25,freq:0.025,phase:2,alpha:0.1},
+    {col:'#ffffff',y:H*.6,amp:15,freq:0.04,phase:0.5,alpha:0.08},
+    {col:'#cc44ff',y:H*.72,amp:18,freq:0.065,phase:3,alpha:0.12},
+    {col:'#00ff88',y:H*.82,amp:12,freq:0.1,phase:1.5,alpha:0.1},
+    {col:'#ff2244',y:H*.9,amp:8,freq:0.18,phase:4,alpha:0.14},
+  ];
+  bands.forEach(b=>{
+    ctx.beginPath();
+    for(let x=0;x<=W;x+=2){
+      const y=b.y+Math.sin((x*b.freq)+hT+b.phase)*b.amp;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=b.col;ctx.lineWidth=1.5;ctx.globalAlpha=b.alpha;ctx.stroke();
+    ctx.globalAlpha=1;
+  });
+  // Stars
+  ctx.fillStyle='rgba(255,255,255,0.3)';
+  for(let i=0;i<40;i++){
+    const sx=(Math.sin(i*137.5)*W+W)/2;
+    const sy=(Math.cos(i*97.3)*H+H)/2;
+    const sr=0.4+Math.sin(hT*2+i)*0.3;
+    ctx.beginPath();ctx.arc(sx,sy,sr,0,Math.PI*2);ctx.fill();
+  }
+  requestAnimationFrame(drawHero);
+}
+drawHero();
+
+// ── SPECTRUM EXPLORER ────────────────────────────────────────────
+const BANDS=[
+  {name:'Radio',col:'#4488ff',wl:'100 m',freq:'3 MHz',energy:'Extremely Low',x:0},
+  {name:'Microwave',col:'#00ccff',wl:'1 cm',freq:'30 GHz',energy:'Very Low',x:14},
+  {name:'Infrared',col:'#ff6600',wl:'10 μm',freq:'30 THz',energy:'Low',x:28},
+  {name:'Visible',col:'#ffffff',wl:'550 nm',freq:'550 THz',energy:'Medium',x:42},
+  {name:'Ultraviolet',col:'#cc44ff',wl:'100 nm',freq:'3 PHz',energy:'High',x:56},
+  {name:'X-Ray',col:'#00ff88',wl:'0.1 nm',freq:'3 EHz',energy:'Very High',x:70},
+  {name:'Gamma',col:'#ff2244',wl:'0.001 nm',freq:'300 EHz',energy:'Extreme',x:85},
+];
+
+const sc=document.getElementById('spectrumCanvas');
+let specPos=0,specT=0,isDragging=false;
+
+function drawSpectrum(){
+  sc.width=sc.offsetWidth||800;sc.height=200;
+  const ctx=sc.getContext('2d');const W=sc.width,H=200;
+  specT+=0.04;
+  ctx.fillStyle='#010208';ctx.fillRect(0,0,W,H);
+
+  // Gradient spectrum bar
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#4488ff');
+  grad.addColorStop(0.14,'#00ccff');
+  grad.addColorStop(0.28,'#ff6600');
+  grad.addColorStop(0.42,'#ff4400');
+  grad.addColorStop(0.5,'#ffee00');
+  grad.addColorStop(0.56,'#00ff88');
+  grad.addColorStop(0.64,'#4488ff');
+  grad.addColorStop(0.72,'#cc44ff');
+  grad.addColorStop(0.85,'#00ff88');
+  grad.addColorStop(1,'#ff2244');
+  ctx.fillStyle=grad;ctx.fillRect(0,H-28,W,20);
+
+  // Band labels on bar
+  BANDS.forEach(b=>{
+    const bx=b.x/100*W;
+    ctx.fillStyle='rgba(0,0,0,0.4)';
+    ctx.fillRect(bx,H-28,2,20);
+    ctx.fillStyle=b.col;ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+    ctx.fillText(b.name,bx+W*0.07,H-6);
+  });
+
+  // Animated wave at detector position
+  const curBandIdx=BANDS.findIndex((b,i)=>specPos/100*W<(BANDS[i+1]?BANDS[i+1].x/100*W:W));
+  const band=BANDS[Math.max(0,curBandIdx)];
+  const waveFreq=0.01+specPos/100*0.25;
+  const waveAmp=40-specPos*0.3;
+  ctx.shadowBlur=12;ctx.shadowColor=band.col;
+  ctx.strokeStyle=band.col;ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let x=0;x<W;x+=2){
+    const y=H/2-14+Math.sin(x*waveFreq+specT)*Math.max(4,waveAmp);
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+
+  // Detector line
+  const dx=specPos/100*W;
+  ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(dx,0);ctx.lineTo(dx,H-30);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(dx,20,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#000';ctx.font='bold 7px DM Mono';ctx.textAlign='center';ctx.fillText('⊕',dx,23);
+
+  // Update info
+  document.getElementById('siType').textContent=band.name;
+  document.getElementById('siType').style.color=band.col;
+  document.getElementById('siWave').textContent=band.wl;
+  document.getElementById('siFreq').textContent=band.freq;
+  document.getElementById('siEnergy').textContent=band.energy;
+  document.getElementById('siEnergy').style.color=band.col;
+
+  requestAnimationFrame(drawSpectrum);
+}
+sc.addEventListener('mousedown',e=>{isDragging=true;updateSpecPos(e);});
+sc.addEventListener('touchstart',e=>{isDragging=true;updateSpecPos(e.touches[0]);},{passive:true});
+document.addEventListener('mousemove',e=>{if(isDragging)updateSpecPos(e);});
+document.addEventListener('touchmove',e=>{if(isDragging)updateSpecPos(e.touches[0]);},{passive:true});
+document.addEventListener('mouseup',()=>isDragging=false);
+document.addEventListener('touchend',()=>isDragging=false);
+function updateSpecPos(e){
+  const r=sc.getBoundingClientRect();
+  specPos=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));
+}
+drawSpectrum();
+
+// ── RAINBOW CANVAS ───────────────────────────────────────────────
+function drawRainbow(){
+  const cv=document.getElementById('cvRainbow');if(!cv)return;
+  cv.width=cv.offsetWidth||600;
+  const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
+  const grad=ctx.createLinearGradient(W,0,0,0);
+  grad.addColorStop(0,'#8b00ff');
+  grad.addColorStop(0.14,'#4400ff');
+  grad.addColorStop(0.28,'#0044ff');
+  grad.addColorStop(0.42,'#00ff44');
+  grad.addColorStop(0.57,'#ffee00');
+  grad.addColorStop(0.71,'#ff7700');
+  grad.addColorStop(1,'#ff0000');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+}
+drawRainbow();
+
+// ── 3D WAVE LAB (Three.js) ───────────────────────────────────────
+const VIZ_DATA=[
+  {name:'Radio Wave',wl:'100 m',freq:'3 MHz',energy:'Very Low',col:0x4488ff,speed:0.3,amplitude:1.8,wavelength:2.0},
+  {name:'Microwave',wl:'1 cm',freq:'30 GHz',energy:'Low',col:0x00ccff,speed:0.5,amplitude:1.4,wavelength:1.4},
+  {name:'Infrared',wl:'10 μm',freq:'30 THz',energy:'Medium-Low',col:0xff6600,speed:0.8,amplitude:1.1,wavelength:1.0},
+  {name:'Visible Light',wl:'550 nm',freq:'550 THz',energy:'Medium',col:0xffffff,speed:1.0,amplitude:0.85,wavelength:0.7},
+  {name:'Ultraviolet',wl:'100 nm',freq:'3 PHz',energy:'High',col:0xcc44ff,speed:1.3,amplitude:0.65,wavelength:0.5},
+  {name:'X-Ray',wl:'0.1 nm',freq:'3 EHz',energy:'Very High',col:0x00ff88,speed:1.7,amplitude:0.45,wavelength:0.35},
+  {name:'Gamma Ray',wl:'0.001 nm',freq:'300 EHz',energy:'Extreme',col:0xff2244,speed:2.2,amplitude:0.28,wavelength:0.22},
+];
+
+let vizScene,vizCam,vizRenderer,vizWave,vizT=0,vizMode=0;
+let vizTheta=0.4,vizPhi=1.2,vizRadius=18,vizDrag=false,vizLX=0,vizLY=0;
+
+function initViz(){
+  const cv=document.getElementById('vizCanvas');
+  vizRenderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+  vizRenderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  vizRenderer.setSize(cv.offsetWidth,cv.offsetHeight||400);
+  vizRenderer.setClearColor(0x010205,1);
+
+  vizScene=new THREE.Scene();
+  vizCam=new THREE.PerspectiveCamera(60,cv.offsetWidth/(cv.offsetHeight||400),0.1,200);
+
+  // Ambient + key light
+  vizScene.add(new THREE.AmbientLight(0x223366,3));
+  const kl=new THREE.PointLight(0x4488ff,8,60);kl.position.set(0,10,10);vizScene.add(kl);
+
+  // Grid
+  const grid=new THREE.GridHelper(40,40,0x0a1428,0x0a1428);
+  grid.position.y=-4;vizScene.add(grid);
+
+  // Axis arrow
+  const axMat=new THREE.LineBasicMaterial({color:0x1a3a5f});
+  const axGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-16,0,0),new THREE.Vector3(16,0,0)]);
+  vizScene.add(new THREE.Line(axGeo,axMat));
+
+  buildWave();
+
+  // Orbit
+  cv.addEventListener('mousedown',e=>{vizDrag=true;vizLX=e.clientX;vizLY=e.clientY;});
+  document.addEventListener('mousemove',e=>{if(!vizDrag)return;vizTheta-=(e.clientX-vizLX)*0.005;vizPhi=Math.max(0.2,Math.min(Math.PI-.2,vizPhi+(e.clientY-vizLY)*0.005));vizLX=e.clientX;vizLY=e.clientY;});
+  document.addEventListener('mouseup',()=>vizDrag=false);
+  cv.addEventListener('touchstart',e=>{vizDrag=true;vizLX=e.touches[0].clientX;vizLY=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchmove',e=>{if(!vizDrag)return;vizTheta-=(e.touches[0].clientX-vizLX)*0.005;vizPhi=Math.max(0.2,Math.min(Math.PI-.2,vizPhi+(e.touches[0].clientY-vizLY)*0.005));vizLX=e.touches[0].clientX;vizLY=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',()=>vizDrag=false);
+  cv.addEventListener('wheel',e=>{vizRadius=Math.max(5,Math.min(40,vizRadius+e.deltaY*0.02));},{passive:true});
+
+  animViz();
+}
+
+function buildWave(){
+  if(vizWave)vizScene.remove(vizWave);
+  const vd=VIZ_DATA[vizMode];
+  const pts=[];const N=200;
+  for(let i=0;i<N;i++){
+    const x=-14+i/N*28;
+    pts.push(new THREE.Vector3(x,0,0));
+  }
+  const geo=new THREE.BufferGeometry().setFromPoints(pts);
+  const mat=new THREE.LineBasicMaterial({color:vd.col,linewidth:2});
+  vizWave=new THREE.Line(geo,mat);
+  vizScene.add(vizWave);
+
+  // E field (vertical) and B field (horizontal) planes — transverse wave
+  if(vizScene.eField){vizScene.remove(vizScene.eField);vizScene.remove(vizScene.bField);}
+  const makePlane=(axis)=>{
+    const pPts=[];const N2=80;
+    for(let i=0;i<N2;i++){
+      const x=-14+i/N2*28;
+      const v=vd.amplitude*Math.sin(x/vd.wavelength*Math.PI*2);
+      if(axis==='E')pPts.push(new THREE.Vector3(x,v,0));
+      else pPts.push(new THREE.Vector3(x,0,v));
+    }
+    const geo2=new THREE.BufferGeometry().setFromPoints(pPts);
+    const col=axis==='E'?vd.col:0x334455;
+    return new THREE.Line(geo2,new THREE.LineBasicMaterial({color:col,linewidth:axis==='E'?2:1}));
+  };
+  vizScene.eField=makePlane('E');vizScene.bField=makePlane('B');
+  vizScene.add(vizScene.eField);vizScene.add(vizScene.bField);
+
+  // Particles along wave
+  if(vizScene.particles){vizScene.particles.forEach(p=>vizScene.remove(p));}
+  vizScene.particles=[];
+  const pMat=new THREE.MeshStandardMaterial({color:vd.col,emissive:vd.col,emissiveIntensity:1.2,roughness:0.1});
+  for(let i=0;i<12;i++){
+    const p=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8),pMat.clone());
+    p.userData={phase:i/12,vd};
+    vizScene.add(p);vizScene.particles.push(p);
+  }
+}
+
+function updateViz(val){
+  const pct=parseInt(val)/100;
+  const idx=Math.min(6,Math.floor(pct*7));
+  if(idx!==vizMode){vizMode=idx;buildWave();}
+  const vd=VIZ_DATA[vizMode];
+  document.getElementById('vizType').textContent=vd.name;
+  document.getElementById('vizType').style.color='#'+vd.col.toString(16).padStart(6,'0');
+  document.getElementById('vizWave').textContent=vd.wl;
+  document.getElementById('vizFreq').textContent=vd.freq;
+  document.getElementById('vizEnergy').textContent=vd.energy;
+  // Update slider thumb colour
+  document.getElementById('specSlider').style.accentColor='#'+vd.col.toString(16).padStart(6,'0');
+}
+
+function animViz(){
+  requestAnimationFrame(animViz);
+  vizT+=0.03;
+  const vd=VIZ_DATA[vizMode];
+
+  // Update E & B fields
+  [vizScene.eField,vizScene.bField].forEach((line,axis)=>{
+    if(!line)return;
+    const pos=line.geometry.attributes.position;
+    const N=pos.count;
+    for(let i=0;i<N;i++){
+      const x=pos.getX(i);
+      const v=vd.amplitude*Math.sin(x/vd.wavelength*Math.PI*2-vizT*vd.speed);
+      if(axis===0)pos.setY(i,v);else pos.setZ(i,v);
+    }
+    pos.needsUpdate=true;
+  });
+
+  // Update particles
+  if(vizScene.particles){
+    vizScene.particles.forEach((p,i)=>{
+      const x=-14+(i/12*28+vizT*vd.speed*2)%28;
+      const xPos=x>14?x-28:x;
+      const y=vd.amplitude*Math.sin(xPos/vd.wavelength*Math.PI*2);
+      p.position.set(xPos,y,0);
+      p.material.emissiveIntensity=0.8+Math.sin(vizT*3+i)*0.4;
+    });
+  }
+
+  // Camera orbit
+  const cx=vizRadius*Math.sin(vizPhi)*Math.sin(vizTheta);
+  const cy=vizRadius*Math.cos(vizPhi);
+  const cz=vizRadius*Math.sin(vizPhi)*Math.cos(vizTheta);
+  vizCam.position.lerp(new THREE.Vector3(cx,cy,cz),0.06);
+  vizCam.lookAt(0,0,0);
+
+  vizRenderer.render(vizScene,vizCam);
+}
+
+window.addEventListener('resize',()=>{
+  const cv=document.getElementById('vizCanvas');
+  if(vizRenderer&&cv){
+    vizRenderer.setSize(cv.offsetWidth,cv.offsetHeight||400);
+    vizCam.aspect=cv.offsetWidth/(cv.offsetHeight||400);
+    vizCam.updateProjectionMatrix();
+  }
+});
+
+// ── MCQ ─────────────────────────────────────────────────────────
+const answers={},correct={};
+function selMCQ(key,val,btn){
+  answers[key]=val;
+  btn.parentElement.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function chkMCQ(key,ca,okMsg,badMsg){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=answers[key];
+  if(!sel){fb.className='fb info';fb.textContent='Select an answer first!';return;}
+  const opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
+  const L=['A','B','C','D'];
+  opts.forEach((o,i)=>{o.classList.remove('selected');
+    if(L[i]===ca)o.classList.add('correct');
+    else if(L[i]===sel)o.classList.add('wrong');});
+  if(sel===ca){fb.className='fb ok';fb.textContent=okMsg;correct[key]=true;}
+  else{fb.className='fb bad';fb.textContent=badMsg;}
+  updateProg();
+}
+
+// ── AI TUTOR — Mission 5 ─────────────────────────────────────────
+async function getMission5AI(){
+  const ans=document.getElementById('mission5').value.trim();
+  const resp=document.getElementById('aiM5');
+  if(!ans){toast('Write your design first!');return;}
+  resp.style.display='block';
+  resp.innerHTML='<span style="color:#4488ff;">🤖 Evaluating your hospital design…</span>';
+  const body=JSON.stringify({
+    action:'ai',
+    system:`You are an expert physics teacher and futurist evaluating a Grade 8 student's design for a smart hospital room using electromagnetic waves. 
+Be enthusiastic, specific, and scientifically accurate.
+1. Identify which wave types the student chose and whether their uses are scientifically correct
+2. Praise what's creative or accurate
+3. Point out ONE scientific improvement or addition they could make
+4. End with a real-world connection (e.g. this already exists at X hospital/company)
+Keep response to 4-5 sentences max. Use specific technical terms.`,
+    messages:[{role:'user',content:'My smart hospital room design:\n'+ans}]
+  });
+  try{
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST',APPS,true);
+    xhr.setRequestHeader('Content-Type','text/plain;charset=utf-8');
+    xhr.timeout=20000;
+    xhr.onload=()=>{
+      try{
+        const data=JSON.parse(xhr.responseText);
+        resp.textContent=data.text||data.error||'Could not evaluate. Try again.';
+        correct.mission5=ans.length>50;updateProg();
+      }catch(e){resp.textContent='⚠ Could not parse response.';}
+    };
+    xhr.onerror=()=>{resp.textContent=buildLocalFeedback(ans);correct.mission5=true;updateProg();};
+    xhr.ontimeout=()=>{resp.textContent=buildLocalFeedback(ans);correct.mission5=true;updateProg();};
+    xhr.send(body);
+  }catch(e){resp.textContent=buildLocalFeedback(ans);correct.mission5=true;updateProg();}
+}
+
+function buildLocalFeedback(a){
+  const hasIR=/infrared|thermal|temperature|heat/i.test(a);
+  const hasRadio=/radio|microwave|wifi|bluetooth|wireless/i.test(a);
+  const hasX=/x.ray|xray|x ray/i.test(a);
+  const hasUV=/uv|ultraviolet/i.test(a);
+  const count=[hasIR,hasRadio,hasX,hasUV].filter(Boolean).length;
+  if(count>=2)return '✓ Strong design! You correctly identified multiple wave types for monitoring. Consider adding UV sterilisation lamps (UVC kills bacteria on surfaces — already used in Lebanon at AUH) and microwave-based non-contact heartbeat monitoring which is an active research field.';
+  return 'Good start! For a complete smart room: infrared thermal cameras monitor body temperature, radio waves (microwave radar) can track breathing and heartbeat without contact, X-ray is available for emergency imaging, and UV sterilises the room between patients. This technology exists today at Mayo Clinic and AUBMC.';
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────────
+function updateProg(){
+  const keys=['m1','m2','m3','m4','mission5'];
+  const done=keys.filter(k=>correct[k]).length;
+  const pct=Math.round(done/keys.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progText').textContent=done+' / '+keys.length+' missions completed';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  const labels={m1:'Mission 01 — Medical',m2:'Mission 02 — Communication',
+    m3:'Mission 03 — Security',m4:'Mission 04 — Agriculture',mission5:'Mission 05 — Design'};
+  document.getElementById('scoreBreakdown').innerHTML=keys.map(k=>
+    `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:.7rem;font-family:var(--fm);">
+      <span style="color:var(--muted2);">${labels[k]}</span>
+      <span style="color:${correct[k]?'#00ff88':'var(--muted)'};">${correct[k]?'✓ COMPLETE':'— PENDING'}</span>
+    </div>`).join('');
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────
+async function submitWork(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!name||!cls){toast('Enter your name and class first!');return;}
+  const btn=document.querySelector('[onclick="submitWork()"]');
+  btn.disabled=true;btn.textContent='⏳ Transmitting…';
+  const keys=['m1','m2','m3','m4'];
+  const done=keys.filter(k=>correct[k]).length;
+  const payload={
+    sheet:'EMWaves_G8',name,class:cls,
+    m1:answers['m1']||'—',m2:answers['m2']||'—',
+    m3:answers['m3']||'—',m4:answers['m4']||'—',
+    mission5:document.getElementById('mission5').value||'—',
+    score:Math.round(done/4*100)+'%'
+  };
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    btn.textContent='✓ Transmitted!';btn.style.background='linear-gradient(135deg,#4488ff,#00ff88)';btn.style.color='#000';
+    toast('✓ Mission report transmitted!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📊 Submit Mission Report';
+    toast('⚠ Check connection.');
+  }
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// ── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  initViz();
+  updateViz(0);
+  updateProg();
+});
+</script>
+</body>
+</html>
