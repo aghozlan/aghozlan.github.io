@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 <title>Force Verdict Lab — Equilibrium vs Interaction | Ahmad Ghozlan | Grade 9</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f7f4ee;--bg2:#eeebe3;--bg3:#e4e0d6;
@@ -12,259 +12,255 @@
   --border:#d4cfc4;--border2:#c4bdb0;
   --text:#1a1714;--muted:#7a7268;--muted2:#5a5048;
   --ink:#1a1714;
-  --eq:#1a5c8f;--eq2:#0d3d62;--eqL:rgba(26,92,143,.1);
-  --int:#8f1a3a;--int2:#62001e;--intL:rgba(143,26,58,.1);
-  --green:#1a6b3c;--greenL:rgba(26,107,60,.1);
-  --red:#9b1a1a;--redL:rgba(155,26,26,.1);
+  --eq:#1a5c8f;--eq2:#0d3d62;--eqL:rgba(26,92,143,.1);--eqB:rgba(26,92,143,.25);
+  --int:#8f1a3a;--int2:#62001e;--intL:rgba(143,26,58,.1);--intB:rgba(143,26,58,.25);
+  --green:#1a6b3c;--greenL:rgba(26,107,60,.08);--greenB:rgba(26,107,60,.4);
+  --red:#9b1a1a;--redL:rgba(155,26,26,.07);--redB:rgba(155,26,26,.35);
   --gold:#8f6b1a;--goldL:rgba(143,107,26,.1);
-  --fh:'Playfair Display',serif;--fm:'JetBrains Mono',monospace;--fb:'Space Grotesk',sans-serif;
+  --fh:'Playfair Display',serif;
+  --fb:'Space Grotesk',sans-serif;
+  --fm:'JetBrains Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.65;}
 
-/* GRAIN TEXTURE */
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-
-/* LAYOUT */
 .app{display:flex;min-height:100vh;}
 aside{width:260px;background:var(--ink);position:sticky;top:0;height:100vh;
   display:flex;flex-direction:column;flex-shrink:0;z-index:100;}
-main{flex:1;min-width:0;position:relative;z-index:1;}
+main{flex:1;min-width:0;}
 @media(max-width:900px){aside{display:none;}section{padding:36px 16px!important;}}
 
-/* SIDEBAR */
-.sb-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
-.sb-logo h1{font-family:var(--fh);font-size:1.2rem;color:#fff;font-weight:900;letter-spacing:-0.5px;line-height:1.2;}
+.sb-logo{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-logo h1{font-family:var(--fh);font-size:1.15rem;color:#fff;font-weight:900;line-height:1.2;}
 .sb-logo h1 em{color:#c8a96a;font-style:normal;}
-.sb-logo p{font-size:.54rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:3px;margin-top:5px;font-family:var(--fm);}
-.sb-nav{flex:1;padding:10px 0;overflow-y:auto;}
-.sn{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:.78rem;font-weight:500;
-  color:rgba(255,255,255,.38);border-left:3px solid transparent;transition:all .25s;cursor:pointer;
-  background:none;border-right:none;border-top:none;border-bottom:none;width:100%;font-family:var(--fb);text-align:left;}
+.sb-logo p{font-size:.52rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:3px;margin-top:5px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:10px;padding:10px 22px;font-size:.78rem;font-weight:500;
+  color:rgba(255,255,255,.35);border-left:3px solid transparent;transition:all .2s;
+  cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;
+  width:100%;font-family:var(--fb);text-align:left;}
 .sn:hover,.sn.active{color:#fff;background:rgba(255,255,255,.06);border-left-color:#c8a96a;}
-.sn .pill{font-size:.46rem;font-family:var(--fm);background:rgba(255,255,255,.1);padding:2px 7px;border-radius:2px;color:rgba(255,255,255,.4);margin-left:auto;text-transform:uppercase;letter-spacing:1px;}
-.sn .ico{width:20px;text-align:center;flex-shrink:0;}
-.sb-foot{padding:18px 24px;border-top:1px solid rgba(255,255,255,.08);}
+.sn .pill{font-size:.44rem;font-family:var(--fm);background:rgba(255,255,255,.08);
+  padding:2px 7px;border-radius:2px;color:rgba(255,255,255,.35);margin-left:auto;text-transform:uppercase;}
+.sb-foot{padding:16px 22px;border-top:1px solid rgba(255,255,255,.08);}
 .sb-foot .name{font-weight:700;font-size:.88rem;color:#fff;}
-.sb-foot .sub{font-size:.54rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
+.sb-foot .sub{font-size:.52rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
 
-/* SECTIONS */
-section{padding:72px 56px;border-bottom:2px solid var(--border);}
-.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.58rem;
+section{padding:64px 52px;border-bottom:2px solid var(--border);}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.56rem;
   text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:2px;margin-bottom:16px;}
 .e-tag.engage{background:var(--goldL);color:var(--gold);border:1px solid rgba(143,107,26,.3);}
-.e-tag.explore{background:var(--greenL);color:var(--green);border:1px solid rgba(26,107,60,.25);}
-.e-tag.explain{background:var(--eqL);color:var(--eq);border:1px solid rgba(26,92,143,.25);}
-.e-tag.elaborate{background:var(--intL);color:var(--int);border:1px solid rgba(143,26,58,.25);}
+.e-tag.explore{background:var(--greenL);color:var(--green);border:1px solid var(--greenB);}
+.e-tag.explain{background:var(--eqL);color:var(--eq);border:1px solid var(--eqB);}
+.e-tag.elaborate{background:var(--intL);color:var(--int);border:1px solid var(--intB);}
 .e-tag.evaluate{background:var(--goldL);color:var(--gold);border:1px solid rgba(143,107,26,.3);}
-.sec-title{font-family:var(--fh);font-size:2.2rem;font-weight:900;color:var(--ink);letter-spacing:-1px;line-height:1.05;margin-bottom:10px;}
-.sec-desc{color:var(--muted);font-size:.9rem;max-width:620px;line-height:1.8;margin-bottom:28px;}
+.sec-title{font-family:var(--fh);font-size:2.1rem;font-weight:900;color:var(--ink);letter-spacing:-1px;line-height:1.05;margin-bottom:10px;}
+.sec-desc{color:var(--muted);font-size:.9rem;max-width:620px;line-height:1.8;margin-bottom:26px;}
 
-/* CARDS */
-.card{background:var(--panel);border:1.5px solid var(--border);border-radius:4px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+/* VECTOR NOTATION — arrow over letter using CSS */
+.vec{display:inline-block;position:relative;font-style:italic;font-weight:700;font-family:var(--fm);}
+.vec::before{content:'→';position:absolute;top:-0.7em;left:50%;transform:translateX(-50%);
+  font-size:.65em;font-style:normal;font-weight:400;line-height:1;}
+
+/* force labels in text */
+.fv{display:inline;font-style:italic;font-weight:700;font-family:var(--fm);}
+
+.card{background:var(--panel);border:1.5px solid var(--border);border-radius:4px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
 .card2{background:var(--panel2);border:1.5px solid var(--border);border-radius:4px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:680px){.g2{grid-template-columns:1fr;}}
 
-/* FORMULA BOX */
-.formula{background:var(--ink);color:#fff;border-radius:4px;padding:18px 24px;margin-bottom:20px;font-family:var(--fm);}
-.formula-main{font-size:1.4rem;font-weight:700;letter-spacing:1px;margin-bottom:4px;}
-.formula-sub{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;}
-.eq-col{color:#7ec8ff;}
-.int-col{color:#ffb3c6;}
+/* COMPARE TABLE */
+.ctbl{width:100%;border-collapse:collapse;font-size:.82rem;border:2px solid var(--border);}
+.ctbl th{background:var(--ink);color:#fff;padding:11px 14px;text-align:left;font-family:var(--fm);font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;}
+.ctbl th.eq-h{background:var(--eq);}
+.ctbl th.int-h{background:var(--int);}
+.ctbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.7;}
+.ctbl tr:last-child td{border:none;}
+.ctbl tr:nth-child(even) td{background:var(--panel2);}
+.ctbl .key{font-weight:700;color:var(--muted2);font-size:.76rem;font-family:var(--fm);}
+.ctbl .eq-v{color:var(--eq2);font-weight:600;}
+.ctbl .int-v{color:var(--int2);font-weight:600;}
+
+/* MCQ */
+.q-block{margin-bottom:16px;padding:18px;background:var(--panel);border:1.5px solid var(--border);
+  border-radius:4px;border-left:4px solid var(--ink);}
+.q-num{font-family:var(--fm);font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.9rem;color:var(--ink);margin-bottom:13px;line-height:1.8;}
+.opts{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:var(--panel2);
+  border:2px solid var(--border);border-radius:3px;cursor:pointer;transition:all .2s;
+  font-size:.85rem;user-select:none;min-height:44px;-webkit-user-select:none;}
+.opt:hover{border-color:var(--ink);}
+.opt.sel{border-color:var(--ink);background:rgba(26,23,20,.05);}
+.opt.ok{border-color:var(--green)!important;background:var(--greenL)!important;color:var(--green)!important;}
+.opt.err{border-color:var(--red)!important;background:var(--redL)!important;color:var(--red)!important;}
+.ml{min-width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;
+  font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-family:var(--fm);margin-top:1px;}
+.opt.ok .ml{background:var(--green);}
+.opt.err .ml{background:var(--red);}
+.fb{margin-top:10px;padding:11px 14px;border-radius:3px;font-size:.84rem;display:none;line-height:1.8;border-left:4px solid;}
+.fb.ok{background:var(--greenL);border-color:var(--green);color:var(--green);}
+.fb.err{background:var(--redL);border-color:var(--red);color:var(--red);}
+.fb.inf{background:var(--eqL);border-color:var(--eq);color:var(--eq);}
 
 /* BUTTONS */
-.btn{padding:12px 26px;border-radius:3px;font-family:var(--fb);font-weight:700;font-size:.88rem;
-  cursor:pointer;border:none;transition:all .2s;min-height:46px;letter-spacing:.3px;}
+.btn{padding:11px 24px;border-radius:3px;font-family:var(--fb);font-weight:700;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
 .btn-ink{background:var(--ink);color:#fff;}
 .btn-ink:hover{background:#333;}
 .btn-eq{background:var(--eq);color:#fff;}
-.btn-eq:hover{background:var(--eq2);}
 .btn-int{background:var(--int);color:#fff;}
-.btn-int:hover{background:var(--int2);}
 .btn-ghost{background:transparent;border:2px solid var(--border2);color:var(--text);}
 .btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
-.check-btn{padding:10px 22px;background:var(--panel);border:2px solid var(--border2);border-radius:3px;
-  color:var(--text);font-family:var(--fb);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;min-height:44px;}
-.check-btn:hover{border-color:var(--ink);color:var(--ink);}
+.chk{padding:9px 20px;background:var(--panel);border:2px solid var(--border2);border-radius:3px;
+  color:var(--ink);font-family:var(--fb);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.chk:hover{border-color:var(--ink);}
+.chk:active{background:var(--ink);color:#fff;}
 
-/* MCQ */
-.mcq-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-.mcq-opt{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:var(--panel2);
-  border:2px solid var(--border);border-radius:3px;cursor:pointer;transition:all .2s;
-  font-size:.86rem;user-select:none;min-height:46px;}
-.mcq-opt:hover{border-color:var(--ink);}
-.mcq-opt.selected{border-color:var(--ink);background:rgba(26,23,20,.05);}
-.mcq-opt.correct{border-color:var(--green);background:var(--greenL);}
-.mcq-opt.wrong{border-color:var(--red);background:var(--redL);}
-.ml{min-width:26px;height:26px;border-radius:50%;background:var(--ink);
-  color:#fff;font-size:.66rem;font-weight:700;display:flex;align-items:center;
-  justify-content:center;flex-shrink:0;font-family:var(--fm);margin-top:2px;}
-.mcq-opt.correct .ml{background:var(--green);}
-.mcq-opt.wrong .ml{background:var(--red);}
-.fb{margin-top:10px;padding:12px 16px;border-radius:3px;font-size:.86rem;display:none;line-height:1.8;border-left:4px solid;}
-.fb.ok{background:var(--greenL);border-color:var(--green);color:var(--green);}
-.fb.bad{background:var(--redL);border-color:var(--red);color:var(--red);}
-.fb.info{background:var(--eqL);border-color:var(--eq);color:var(--eq);}
+/* ── PAINTER ── */
+.painter-wrap{background:var(--panel);border:2px solid var(--border);border-radius:4px;overflow:hidden;}
+.ptoolbar{background:var(--ink);padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ptool{padding:7px 14px;border-radius:2px;font-family:var(--fm);font-size:.62rem;font-weight:700;
+  cursor:pointer;border:1.5px solid rgba(255,255,255,.18);color:rgba(255,255,255,.5);
+  text-transform:uppercase;letter-spacing:1px;transition:all .2s;background:transparent;user-select:none;}
+.ptool.on-eq{border-color:rgba(126,200,255,.5);color:#7ec8ff;}
+.ptool.on-eq.active{background:#7ec8ff;color:var(--ink);}
+.ptool.on-int{border-color:rgba(255,179,198,.5);color:#ffb3c6;}
+.ptool.on-int.active{background:#ffb3c6;color:var(--ink);}
+.ptool.on-clr{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.6);}
+.ptool.on-clr:hover{background:rgba(255,255,255,.1);}
+#cvPainter{display:block;width:100%;cursor:crosshair;touch-action:none;background:#faf7f1;}
+.pstatus{padding:10px 14px;background:var(--panel2);border-top:1px solid var(--border);
+  font-family:var(--fm);font-size:.68rem;color:var(--muted2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.presult{padding:12px 14px;border-top:2px solid var(--border);display:none;}
 
-/* COMPARISON TABLE */
-.compare-table{width:100%;border-collapse:collapse;font-size:.84rem;border:2px solid var(--border);}
-.compare-table th{background:var(--ink);color:#fff;padding:12px 16px;text-align:left;font-family:var(--fm);font-size:.68rem;text-transform:uppercase;letter-spacing:2px;}
-.compare-table th.eq-h{background:var(--eq);}
-.compare-table th.int-h{background:var(--int);}
-.compare-table td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.7;}
-.compare-table tr:last-child td{border:none;}
-.compare-table tr:nth-child(even) td{background:var(--panel2);}
-.compare-table .key{font-weight:700;color:var(--muted2);font-size:.78rem;font-family:var(--fm);}
-.compare-table .eq-val{color:var(--eq2);}
-.compare-table .int-val{color:var(--int2);}
+/* ── ARENA ── */
+.arena-deck{display:flex;flex-wrap:wrap;gap:9px;padding:12px;background:var(--panel2);
+  border:2px dashed var(--border2);border-radius:4px;min-height:60px;margin-bottom:16px;}
+.deck-lbl{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:6px;width:100%;}
+.zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+@media(max-width:600px){.zones{grid-template-columns:1fr;}}
+.zone{min-height:130px;border-radius:4px;padding:12px;border:2.5px dashed;transition:all .2s;}
+.zone.zeq{border-color:var(--eq);background:var(--eqL);}
+.zone.zint{border-color:var(--int);background:var(--intL);}
+.zone.hover{transform:scale(1.02);}
+.zone-lbl{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:6px;}
+.zeq .zone-lbl{color:var(--eq);}
+.zint .zone-lbl{color:var(--int);}
+.zone-formula{font-family:var(--fm);font-size:.7rem;color:var(--muted);margin-bottom:8px;}
+.zone-cards{display:flex;flex-wrap:wrap;gap:7px;min-height:50px;}
+.sc-card{background:var(--panel);border:2px solid var(--border);border-radius:3px;
+  padding:9px 13px;cursor:grab;user-select:none;-webkit-user-select:none;
+  transition:all .2s;font-size:.76rem;font-weight:600;color:var(--ink);
+  line-height:1.45;box-shadow:0 2px 6px rgba(0,0,0,.07);touch-action:none;max-width:190px;}
+.sc-card:active{cursor:grabbing;box-shadow:0 6px 18px rgba(0,0,0,.15);}
+.sc-card.in-eq{border-color:var(--eq);background:var(--eqL);}
+.sc-card.in-int{border-color:var(--int);background:var(--intL);}
+.sc-card.got-ok{border-color:var(--green)!important;background:var(--greenL)!important;}
+.sc-card.got-err{border-color:var(--red)!important;background:var(--redL)!important;animation:shk .4s ease;}
+@keyframes shk{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.arena-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;}
 
-/* ═══════════════════════════════════════════════
-   ACTIVITY 1 — FORCE VECTOR PAINTER
-   ═══════════════════════════════════════════════ */
-.painter-wrap{background:var(--panel);border:2px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);}
-.painter-toolbar{background:var(--ink);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.ptool{padding:6px 14px;border-radius:2px;font-family:var(--fm);font-size:.65rem;font-weight:700;
-  cursor:pointer;border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);
-  text-transform:uppercase;letter-spacing:1px;transition:all .2s;background:transparent;}
-.ptool:hover{border-color:rgba(255,255,255,.5);color:#fff;}
-.ptool.active{background:#fff;color:var(--ink);border-color:#fff;}
-.ptool.eq-tool{border-color:rgba(126,200,255,.4);color:#7ec8ff;}
-.ptool.eq-tool.active{background:#7ec8ff;color:var(--ink);}
-.ptool.int-tool{border-color:rgba(255,179,198,.4);color:#ffb3c6;}
-.ptool.int-tool.active{background:#ffb3c6;color:var(--ink);}
-#painterCanvas{display:block;width:100%;cursor:crosshair;touch-action:none;}
-.painter-status{padding:10px 16px;background:var(--panel2);border-top:1px solid var(--border);
-  font-family:var(--fm);font-size:.7rem;color:var(--muted2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.painter-result{padding:12px 16px;border-top:2px solid var(--border);display:none;}
-
-/* ═══════════════════════════════════════════════
-   ACTIVITY 2 — SORTING ARENA (DRAG/TAP)
-   ═══════════════════════════════════════════════ */
-.arena-wrap{position:relative;}
-.arena-deck{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;min-height:60px;padding:14px;
-  background:var(--panel2);border:2px dashed var(--border2);border-radius:4px;
-  align-content:flex-start;}
-.arena-deck-label{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;width:100%;}
-.arena-zones{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-@media(max-width:600px){.arena-zones{grid-template-columns:1fr;}}
-.arena-zone{min-height:140px;border-radius:4px;padding:14px;border:2.5px dashed;
-  transition:all .2s;position:relative;}
-.arena-zone.eq-zone{border-color:var(--eq);background:var(--eqL);}
-.arena-zone.int-zone{border-color:var(--int);background:var(--intL);}
-.arena-zone.drag-over{transform:scale(1.02);box-shadow:0 0 0 3px rgba(26,92,143,.3);}
-.arena-zone.int-zone.drag-over{box-shadow:0 0 0 3px rgba(143,26,58,.3);}
-.zone-label{font-family:var(--fm);font-size:.62rem;text-transform:uppercase;letter-spacing:2px;
-  font-weight:700;margin-bottom:10px;}
-.eq-zone .zone-label{color:var(--eq);}
-.int-zone .zone-label{color:var(--int);}
-.zone-formula{font-family:var(--fm);font-size:.78rem;color:var(--muted);margin-bottom:10px;}
-.zone-cards{display:flex;flex-wrap:wrap;gap:8px;min-height:60px;}
-
-.scenario-card{background:var(--panel);border:2px solid var(--border);border-radius:3px;
-  padding:10px 14px;cursor:grab;user-select:none;transition:all .25s;
-  font-size:.78rem;font-weight:600;color:var(--ink);line-height:1.5;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);touch-action:none;max-width:200px;}
-.scenario-card:active{cursor:grabbing;transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.15);}
-.scenario-card.placed-eq{border-color:var(--eq);background:var(--eqL);cursor:pointer;}
-.scenario-card.placed-int{border-color:var(--int);background:var(--intL);cursor:pointer;}
-.scenario-card.correct{border-color:var(--green)!important;background:var(--greenL)!important;}
-.scenario-card.wrong-card{border-color:var(--red)!important;background:var(--redL)!important;animation:shake .4s ease;}
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
-.arena-check-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;}
-.arena-score{font-family:var(--fm);font-size:.78rem;color:var(--muted2);}
-
-/* ═══════════════════════════════════════════════
-   ACTIVITY 3 — BODY SEPARATOR (SLIDER)
-   ═══════════════════════════════════════════════ */
-.separator-wrap{background:var(--panel);border:2px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.06);}
-#separatorCanvas{display:block;width:100%;touch-action:none;}
-.sep-controls{padding:14px 18px;background:var(--panel2);border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-.sep-slider{-webkit-appearance:none;height:4px;border-radius:2px;outline:none;
+/* ── SEPARATOR ── */
+.sep-wrap{background:var(--panel);border:2px solid var(--border);border-radius:4px;overflow:hidden;}
+#cvSep{display:block;width:100%;background:#faf7f1;touch-action:none;}
+.sep-ctrl{padding:12px 16px;background:var(--panel2);border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.sep-slider{-webkit-appearance:none;height:5px;border-radius:3px;outline:none;
   background:linear-gradient(90deg,var(--eq),var(--bg3));flex:1;min-width:180px;cursor:pointer;}
-.sep-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+.sep-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;
   background:var(--ink);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);}
-.sep-label{font-family:var(--fm);font-size:.72rem;color:var(--muted2);white-space:nowrap;}
+.sep-lbl{font-family:var(--fm);font-size:.7rem;color:var(--muted2);white-space:nowrap;}
+.sep-info{padding:12px 16px;border-top:1px solid var(--border);font-size:.82rem;
+  color:var(--muted2);line-height:1.85;min-height:60px;}
 
-/* ═══════════════════════════════════════════════
-   ACTIVITY 4 — THE VERDICT CHAMBER (COMPOUND)
-   ═══════════════════════════════════════════════ */
-.verdict-wrap{background:var(--panel);border:2px solid var(--border);border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,.08);}
-.verdict-header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;}
-.verdict-stage{display:flex;align-items:center;justify-content:center;width:28px;height:28px;
-  border-radius:50%;font-family:var(--fm);font-size:.72rem;font-weight:700;flex-shrink:0;}
-.verdict-stage.done{background:var(--green);}
-.verdict-stage.active{background:#c8a96a;color:var(--ink);}
-.verdict-stage.pending{background:rgba(255,255,255,.15);color:rgba(255,255,255,.4);}
-.verdict-stage-label{font-size:.72rem;font-family:var(--fm);opacity:.5;}
-.verdict-stage-label.active-l{opacity:1;color:#c8a96a;}
-.verdict-stage-label.done-l{opacity:.6;text-decoration:line-through;}
-.verdict-body{padding:22px;}
-.verdict-panel{display:none;animation:slideIn .3s ease;}
-.verdict-panel.show{display:block;}
-@keyframes slideIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
-.verdict-scene{background:var(--bg);border:1.5px solid var(--border);border-radius:3px;padding:16px;margin-bottom:16px;}
-.force-tap-target{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+/* ── VERDICT CHAMBER ── */
+.verdict-wrap{background:var(--panel);border:2px solid var(--border);border-radius:4px;overflow:hidden;}
+.verdict-hdr{background:var(--ink);padding:14px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.vstep{width:28px;height:28px;border-radius:50%;font-family:var(--fm);font-size:.7rem;
+  font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
+.vstep.done{background:var(--green);color:#fff;}
+.vstep.cur{background:#c8a96a;color:var(--ink);}
+.vstep.pend{background:rgba(255,255,255,.15);color:rgba(255,255,255,.3);}
+.vlabel{font-size:.7rem;font-family:var(--fm);color:rgba(255,255,255,.4);transition:all .3s;}
+.vlabel.cur{color:#c8a96a;}
+.vlabel.done{color:rgba(255,255,255,.3);text-decoration:line-through;}
+.verdict-body{padding:20px;}
+.vpanel{display:none;animation:fadeUp .3s ease;}
+.vpanel.show{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.vscene{background:var(--panel2);border:1.5px solid var(--border);border-radius:3px;padding:14px;margin-bottom:14px;}
+.ftgt{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
   border:2px dashed var(--border2);border-radius:3px;cursor:pointer;
-  font-family:var(--fm);font-size:.72rem;transition:all .2s;margin:4px;
-  background:var(--panel2);}
-.force-tap-target:hover{border-color:var(--ink);}
-.force-tap-target.identified{border-style:solid;}
-.force-tap-target.identified.eq-f{border-color:var(--eq);background:var(--eqL);color:var(--eq);}
-.force-tap-target.identified.int-f{border-color:var(--int);background:var(--intL);color:var(--int);}
-.verdict-writer{width:100%;background:var(--panel2);border:2px solid var(--border);border-radius:3px;
-  padding:12px 16px;font-family:var(--fb);font-size:.86rem;color:var(--text);
+  font-family:var(--fm);font-size:.7rem;transition:all .2s;margin:3px;background:var(--panel);}
+.ftgt:hover{border-color:var(--ink);border-style:solid;}
+.ftgt.on-eq{border-style:solid;border-color:var(--eq);background:var(--eqL);color:var(--eq);}
+.ftgt.on-int{border-style:solid;border-color:var(--int);background:var(--intL);color:var(--int);}
+.pair-item{padding:9px 13px;background:var(--panel2);border:2px solid var(--border);
+  border-radius:3px;cursor:pointer;font-size:.78rem;font-family:var(--fm);
+  transition:all .2s;margin-bottom:7px;line-height:1.5;}
+.pair-item:hover{border-color:var(--ink);}
+.pair-item.sel-pair{border-color:var(--ink);background:rgba(26,23,20,.05);}
+.pair-item.cls-eq{border-color:var(--eq);background:var(--eqL);}
+.pair-item.cls-int{border-color:var(--int);background:var(--intL);}
+.vwriter{width:100%;background:var(--panel);border:2px solid var(--border);border-radius:3px;
+  padding:11px 14px;font-family:var(--fb);font-size:.86rem;color:var(--text);
   resize:none;min-height:80px;outline:none;transition:border-color .2s;}
-.verdict-writer:focus{border-color:var(--ink);}
-.verdict-submit-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
-.verdict-pts{font-family:var(--fm);font-size:.72rem;color:var(--muted2);}
+.vwriter:focus{border-color:var(--ink);}
 
 /* PROGRESS RING */
-.progress-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
-.progress-ring{transform:rotate(-90deg);}
-.progress-ring-bg{fill:none;stroke:var(--border2);stroke-width:6;}
-.progress-ring-fill{fill:none;stroke:var(--ink);stroke-width:6;stroke-linecap:round;
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.pring{transform:rotate(-90deg);}
+.pring-bg{fill:none;stroke:var(--border2);stroke-width:7;}
+.pring-fill{fill:none;stroke:var(--ink);stroke-width:7;stroke-linecap:round;
   stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset .6s ease;}
-.ring-text{font-family:var(--fh);font-size:1.8rem;font-weight:900;color:var(--ink);}
-.ring-sub{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
+.ring-pct{font-family:var(--fh);font-size:1.9rem;font-weight:900;color:var(--ink);}
+.ring-sub{font-family:var(--fm);font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
 
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+/* STUDENT PICKER */
+.section-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.sb-btn{padding:9px 22px;border-radius:3px;font-family:var(--fb);font-weight:700;font-size:.9rem;
+  cursor:pointer;border:2px solid var(--border2);background:var(--panel2);color:var(--muted2);
+  transition:all .2s;min-height:44px;min-width:52px;}
+.sb-btn:hover{border-color:var(--ink);color:var(--ink);}
+.sb-btn.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+input[type=text],select,textarea{background:var(--panel2);border:2px solid var(--border);border-radius:3px;
+  padding:10px 14px;color:var(--text);font-family:var(--fb);font-size:.88rem;
+  outline:none;transition:border-color .2s;width:100%;min-height:44px;}
+select{cursor:pointer;}
+textarea{resize:vertical;min-height:80px;}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--ink);}
+
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
   background:var(--ink);color:#fff;padding:10px 22px;border-radius:3px;
   font-family:var(--fm);font-size:.72rem;z-index:999;opacity:0;
   transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;}
 #toast.show{opacity:1;}
-
-input[type=text],textarea{background:var(--panel2);border:2px solid var(--border);border-radius:3px;
-  padding:10px 14px;color:var(--text);font-family:var(--fb);font-size:.88rem;
-  outline:none;transition:border-color .2s;width:100%;min-height:44px;}
-input[type=text]:focus,textarea:focus{border-color:var(--ink);}
-textarea{resize:vertical;min-height:80px;}
-
-footer{padding:24px 56px;border-top:2px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
-  background:var(--ink);color:rgba(255,255,255,.4);}
-footer .ft-name{font-family:var(--fh);font-size:.9rem;color:#fff;}
+footer{padding:22px 52px;border-top:2px solid var(--border);background:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 </style>
 </head>
 <body>
 <div id="toast"></div>
 <div class="app">
 
-<!-- SIDEBAR -->
 <aside>
   <div class="sb-logo">
     <h1>Force<em>Verdict</em> Lab</h1>
     <p>Equilibrium · Part 2 · Grade 9</p>
   </div>
   <nav class="sb-nav">
-    <button class="sn" onclick="goTo('hero')"><span class="ico">⚡</span>The Distinction <span class="pill">E1</span></button>
-    <button class="sn" onclick="goTo('compare')"><span class="ico">⚖</span>Side by Side <span class="pill">E2</span></button>
-    <button class="sn" onclick="goTo('painter')"><span class="ico">✏</span>Force Painter <span class="pill">E3</span></button>
-    <button class="sn" onclick="goTo('arena')"><span class="ico">🎯</span>Sorting Arena <span class="pill">E3</span></button>
-    <button class="sn" onclick="goTo('separator')"><span class="ico">↔</span>Body Separator <span class="pill">E3</span></button>
-    <button class="sn" onclick="goTo('verdict')"><span class="ico">⚖</span>Verdict Chamber <span class="pill">E4</span></button>
-    <button class="sn" onclick="goTo('mcqs')"><span class="ico">✏</span>Evaluation <span class="pill">E4</span></button>
-    <button class="sn" onclick="goTo('evaluate')"><span class="ico">📊</span>Submit Report <span class="pill">E5</span></button>
+    <button class="sn" onclick="goTo('hero')">⚡ The Distinction <span class="pill">E1</span></button>
+    <button class="sn" onclick="goTo('compare')">⚖ Side by Side <span class="pill">E2</span></button>
+    <button class="sn" onclick="goTo('painter')">✏ Force Painter <span class="pill">E3</span></button>
+    <button class="sn" onclick="goTo('arena')">🎯 Sorting Arena <span class="pill">E3</span></button>
+    <button class="sn" onclick="goTo('separator')">↔ Body Separator <span class="pill">E3</span></button>
+    <button class="sn" onclick="goTo('verdict')">⚖ Verdict Chamber <span class="pill">E4</span></button>
+    <button class="sn" onclick="goTo('mcqs')">✏ Evaluation <span class="pill">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 Submit <span class="pill">E5</span></button>
   </nav>
   <div class="sb-foot">
     <div class="name">Ahmad Ghozlan</div>
@@ -274,239 +270,231 @@ footer .ft-name{font-family:var(--fh);font-size:.9rem;color:#fff;}
 
 <main>
 
-<!-- ═══ E1: ENGAGE ═══ -->
-<section id="hero" style="background:var(--ink);color:#fff;border-bottom:2px solid #333;">
-  <div style="max-width:700px;">
-    <div style="font-family:var(--fm);font-size:.58rem;color:#c8a96a;text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(200,169,106,.3);padding:4px 14px;border-radius:2px;display:inline-block;margin-bottom:20px;">Part 2 · The Critical Distinction</div>
-    <h1 style="font-family:var(--fh);font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1.0;margin-bottom:16px;">Same equation.<br><span style="color:#c8a96a;">Different universe.</span></h1>
-    <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-left:4px solid #c8a96a;padding:18px 22px;margin-bottom:28px;border-radius:0 3px 3px 0;">
-      <p style="font-size:.92rem;color:rgba(255,255,255,.7);line-height:1.85;">
-        Equilibrium says <strong style="color:#7ec8ff;">F₁ = −F₂</strong> — two forces on <strong style="color:#fff;">one body</strong>, balancing each other.<br>
-        Interaction says <strong style="color:#ffb3c6;">F_AB = −F_BA</strong> — two forces on <strong style="color:#fff;">two different bodies</strong>, always paired.<br><br>
-        The math is identical. The physics is completely different. Your mission in Part 2: master this distinction so completely that no trick question can fool you.
+<!-- E1 ENGAGE -->
+<section id="hero" style="background:var(--ink);color:#fff;border-color:#333;">
+  <div style="max-width:680px;">
+    <div style="font-family:var(--fm);font-size:.56rem;color:#c8a96a;text-transform:uppercase;letter-spacing:3px;border:1px solid rgba(200,169,106,.3);padding:4px 14px;border-radius:2px;display:inline-block;margin-bottom:18px;">Part 2 · The Critical Distinction</div>
+    <h1 style="font-family:var(--fh);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1.0;margin-bottom:14px;">Same equation.<br><span style="color:#c8a96a;">Different physics.</span></h1>
+    <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-left:4px solid #c8a96a;padding:16px 20px;margin-bottom:24px;border-radius:0 3px 3px 0;">
+      <p style="font-size:.9rem;color:rgba(255,255,255,.65);line-height:1.9;">
+        Equilibrium: &nbsp;<strong style="color:#7ec8ff;font-family:var(--fm);">F⃗₁ = −F⃗₂</strong> &nbsp;— two forces on <strong style="color:#fff;">one body</strong>, result: rest.<br>
+        Interaction: &nbsp;<strong style="color:#ffb3c6;font-family:var(--fm);">F⃗<sub>AB</sub> = −F⃗<sub>BA</sub></strong> &nbsp;— forces on <strong style="color:#fff;">two different bodies</strong>, always paired.<br><br>
+        The algebra is identical. The physics context is completely different.<br>Your mission: master this distinction so no question can fool you.
       </p>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;">
-      <button class="btn" style="background:#c8a96a;color:var(--ink);" onclick="goTo('compare')">Begin the Distinction →</button>
-      <a href="equilibriumlab.html" style="text-decoration:none;"><button class="btn btn-ghost" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6);">← Back to Part 1</button></a>
+      <button class="btn btn-ink" style="background:#c8a96a;color:var(--ink);" onclick="goTo('compare')">Begin →</button>
+      <a href="equilibriumlab.html" style="text-decoration:none;"><button class="btn btn-ghost" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5);">← Part 1</button></a>
     </div>
   </div>
 </section>
 
-<!-- ═══ E2: COMPARISON ═══ -->
+<!-- E2 COMPARE -->
 <section id="compare">
   <div class="e-tag explain">E2 · The Core Distinction</div>
   <h2 class="sec-title">Equilibrium vs Interaction</h2>
-  <p class="sec-desc">Both relationships use the same vector equation. The critical difference lies in which bodies the forces act upon.</p>
+  <p class="sec-desc">Both use the same vector equation. The critical difference: which bodies do the forces act on?</p>
 
-  <table class="compare-table" style="margin-bottom:22px;">
+  <table class="ctbl" style="margin-bottom:20px;">
     <thead>
       <tr>
-        <th style="width:22%;">Criterion</th>
+        <th style="width:20%;">Criterion</th>
         <th class="eq-h">⚖ Equilibrium Condition</th>
         <th class="int-h">🔄 Principle of Interaction</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td class="key">Equation</td><td class="eq-val">F₁ = −F₂</td><td class="int-val">F_AB = −F_BA</td></tr>
-      <tr><td class="key">Bodies involved</td><td class="eq-val"><strong>ONE body</strong> — both forces act on the same object</td><td class="int-val"><strong>TWO bodies</strong> — each force acts on a different object</td></tr>
-      <tr><td class="key">What they produce</td><td class="eq-val">Zero net force → body stays at rest or constant velocity</td><td class="int-val">Always exist in pairs — you cannot have one without the other</td></tr>
-      <tr><td class="key">Same object?</td><td class="eq-val">✓ Yes — both forces on same body</td><td class="int-val">✗ No — forces on DIFFERENT bodies</td></tr>
-      <tr><td class="key">Can they cancel?</td><td class="eq-val">✓ Yes — they cancel → equilibrium</td><td class="int-val">✗ No — they act on different bodies so they CANNOT cancel each other</td></tr>
-      <tr><td class="key">Classic example</td><td class="eq-val">Book on table: Weight ↓ and Normal ↑ both act on the <em>book</em></td><td class="int-val">Book on table: Force(table→book) ↑ acts on <em>book</em> · Force(book→table) ↓ acts on <em>table</em></td></tr>
-      <tr><td class="key">Key test question</td><td class="eq-val">Are both forces on the same object?</td><td class="int-val">Do the forces act on different objects and form a pair?</td></tr>
+      <tr>
+        <td class="key">Equation</td>
+        <td class="eq-v"><span style="font-family:var(--fm);">F⃗₁ = −F⃗₂</span></td>
+        <td class="int-v"><span style="font-family:var(--fm);">F⃗<sub>AB</sub> = −F⃗<sub>BA</sub></span></td>
+      </tr>
+      <tr><td class="key">Bodies</td><td class="eq-v"><strong>ONE body</strong> — both forces on the same object</td><td class="int-v"><strong>TWO bodies</strong> — each force on a different object</td></tr>
+      <tr><td class="key">Effect</td><td class="eq-v">Zero net force → object at rest or constant velocity</td><td class="int-v">Always exist in pairs — one cannot exist without the other</td></tr>
+      <tr><td class="key">Can cancel?</td><td class="eq-v">✓ Yes — they cancel → equilibrium</td><td class="int-v">✗ No — different bodies → cannot cancel each other</td></tr>
+      <tr><td class="key">Classic trap</td><td colspan="2" style="color:var(--red);font-weight:600;">W⃗ and N⃗ on a book are an EQUILIBRIUM pair (both on book) — NOT an interaction pair. The interaction partner of N⃗ is the force the book exerts on the table, which acts on the TABLE.</td></tr>
     </tbody>
   </table>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+  <div class="g2">
     <div class="card" style="border-left:4px solid var(--eq);">
-      <div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--eq);margin-bottom:12px;">⚠ Common Misconception</div>
-      <div style="font-size:.84rem;color:var(--muted2);line-height:1.85;">
-        Many students look at a book on a table and say: "<em>Normal force N and Weight W are an interaction pair because they are equal and opposite.</em>"<br><br>
-        <strong style="color:var(--red);">This is WRONG.</strong> N and W are <strong>both on the book</strong> — so they form an <strong style="color:var(--eq);">equilibrium pair</strong>.<br><br>
-        The true interaction pair is: <strong>F(table→book) ↑</strong> [acts on book] and <strong>F(book→table) ↓</strong> [acts on table].
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--eq);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">✓ The Two-Question Test</div>
+      <div style="font-size:.84rem;color:var(--muted2);line-height:1.9;">
+        <strong style="color:var(--ink);">Q1:</strong> Are both forces on the <em>same body</em>?<br>
+        → YES → could be an <strong style="color:var(--eq);">equilibrium pair</strong><br><br>
+        <strong style="color:var(--ink);">Q2:</strong> Do the forces act on <em>different bodies</em> and always coexist?<br>
+        → YES → it is an <strong style="color:var(--int);">interaction pair</strong>
       </div>
     </div>
     <div class="card" style="border-left:4px solid var(--int);">
-      <div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--int);margin-bottom:12px;">✓ The Two-Question Test</div>
-      <div style="font-size:.84rem;color:var(--muted2);line-height:1.85;">
-        Given any two forces, ask:<br><br>
-        <strong style="color:var(--ink);">Question 1:</strong> Are both forces acting on the <em>same body</em>?<br>
-        → If YES → could be an <strong style="color:var(--eq);">equilibrium pair</strong><br><br>
-        <strong style="color:var(--ink);">Question 2:</strong> Do the forces act on <em>different bodies</em> and always exist together?<br>
-        → If YES → it is an <strong style="color:var(--int);">interaction pair</strong>
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--int);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">⚠ Most Common Misconception</div>
+      <div style="font-size:.84rem;color:var(--muted2);line-height:1.9;">
+        Student says: <em>"N⃗ and W⃗ on a book are an interaction pair because N⃗ = −W⃗."</em><br><br>
+        <strong style="color:var(--red);">WRONG.</strong> Both N⃗ and W⃗ act on the <strong>book</strong> → equilibrium pair.<br><br>
+        The true interaction pair: <strong style="color:var(--int);">F⃗(table→book) ↑</strong> on book &nbsp;↔&nbsp; <strong style="color:var(--int);">F⃗(book→table) ↓</strong> on table.
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ E3a: FORCE VECTOR PAINTER ═══ -->
+<!-- E3a PAINTER -->
 <section id="painter" style="background:var(--bg2);">
-  <div class="e-tag explain">E3 · Activity 1 of 3</div>
-  <h2 class="sec-title">Force Vector Painter</h2>
-  <p class="sec-desc">A book rests on a table. Using the toolbar below, draw the correct force arrows directly on the diagram. Draw each force from its exact point of origin — the system will judge your placement, direction, and which body you drew on.</p>
+  <div class="e-tag explain">E3 · Activity 1 — Force Painter</div>
+  <h2 class="sec-title">Draw the Forces</h2>
+  <p class="sec-desc">A book rests on a table. Select a force tool, then tap the correct origin point on the diagram to place each arrow. The system checks your placement.</p>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;font-size:.8rem;">
+  <div class="g2" style="margin-bottom:12px;">
     <div class="card2" style="border-left:3px solid var(--eq);">
-      <strong style="color:var(--eq);">Equilibrium forces (on one body):</strong><br>
-      <span style="color:var(--muted2);">Draw W ↓ from centre of book · Draw N ↑ from bottom of book</span>
+      <strong style="color:var(--eq);">Equilibrium forces (on book):</strong><br>
+      <span style="color:var(--muted2);font-size:.82rem;">W⃗ ↓ from centre G · N⃗ ↑ from bottom contact</span>
     </div>
     <div class="card2" style="border-left:3px solid var(--int);">
-      <strong style="color:var(--int);">Interaction forces (on different bodies):</strong><br>
-      <span style="color:var(--muted2);">Draw F(book→table) ↓ from table top surface</span>
+      <strong style="color:var(--int);">Interaction force (on table):</strong><br>
+      <span style="color:var(--muted2);font-size:.82rem;">F⃗(book→table) ↓ from top surface of table</span>
     </div>
   </div>
 
   <div class="painter-wrap">
-    <div class="painter-toolbar">
-      <span style="font-family:var(--fm);font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;">Tool:</span>
-      <button class="ptool eq-tool active" id="ptoolW" onclick="setPTool('W')">W (Weight ↓)</button>
-      <button class="ptool eq-tool" id="ptoolN" onclick="setPTool('N')">N (Normal ↑)</button>
-      <button class="ptool int-tool" id="ptoolFbt" onclick="setPTool('Fbt')">F(book→table) ↓</button>
-      <button class="ptool" style="margin-left:auto;" onclick="clearPainter()">✕ Clear</button>
+    <div class="ptoolbar">
+      <span style="font-family:var(--fm);font-size:.58rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2px;">Tool:</span>
+      <button class="ptool on-eq active" id="toolW" onclick="setTool('W')">W⃗ Weight ↓</button>
+      <button class="ptool on-eq" id="toolN" onclick="setTool('N')">N⃗ Normal ↑</button>
+      <button class="ptool on-int" id="toolFbt" onclick="setTool('Fbt')">F⃗(book→table) ↓</button>
+      <button class="ptool on-clr" style="margin-left:auto;" onclick="clearPainter()">✕ Clear</button>
     </div>
-    <canvas id="painterCanvas" height="320"></canvas>
-    <div class="painter-status">
-      <span id="painterMsg">Select a tool and tap the diagram to place the force at the correct origin</span>
-      <button class="check-btn" onclick="checkPainter()">⚖ Judge My Forces</button>
+    <canvas id="cvPainter" height="300"></canvas>
+    <div class="pstatus">
+      <span id="pMsg">Select a tool then tap the diagram at the correct origin point</span>
+      <button class="chk" onclick="checkPainter()">⚖ Judge My Forces</button>
     </div>
-    <div class="painter-result" id="painterResult"></div>
+    <div class="presult" id="pResult"></div>
   </div>
 </section>
 
-<!-- ═══ E3b: SORTING ARENA ═══ -->
+<!-- E3b ARENA -->
 <section id="arena">
-  <div class="e-tag elaborate">E3 · Activity 2 of 3</div>
-  <h2 class="sec-title">The Sorting Arena</h2>
-  <p class="sec-desc">Eight scenarios are shuffled below. Drag each card into the correct zone — or tap a card then tap a zone on mobile. When all are placed, hit Deliver Verdict. The physics engine will judge each placement.</p>
+  <div class="e-tag elaborate">E3 · Activity 2 — Sorting Arena</div>
+  <h2 class="sec-title">Sorting Arena</h2>
+  <p class="sec-desc">Eight force pairs are shuffled below. <strong>Drag</strong> each card into the correct zone. On mobile: <strong>tap a card to select it</strong> (it highlights), then <strong>tap a zone</strong> to place it. Tap a placed card to return it.</p>
 
-  <div class="arena-wrap">
-    <div class="arena-deck" id="arenaDeck">
-      <div class="arena-deck-label">Scenarios — drag each to the correct zone ↓</div>
-    </div>
-
-    <div class="arena-zones">
-      <div class="arena-zone eq-zone" id="eqZone" ondrop="dropCard(event,'eq')" ondragover="e=>e.preventDefault()">
-        <div class="zone-label">⚖ Equilibrium Pair</div>
-        <div class="zone-formula" style="font-family:var(--fm);font-size:.7rem;">F₁ = −F₂ · Same body · Can cancel</div>
-        <div class="zone-cards" id="eqCards"></div>
-      </div>
-      <div class="arena-zone int-zone" id="intZone" ondrop="dropCard(event,'int')" ondragover="e=>e.preventDefault()">
-        <div class="zone-label">🔄 Interaction Pair</div>
-        <div class="zone-formula" style="font-family:var(--fm);font-size:.7rem;">F_AB = −F_BA · Two bodies · Cannot cancel</div>
-        <div class="zone-cards" id="intCards"></div>
-      </div>
-    </div>
-
-    <div class="arena-check-row">
-      <button class="btn btn-ink" onclick="checkArena()">⚖ Deliver Verdict</button>
-      <button class="btn btn-ghost" onclick="resetArena()">↺ Reshuffle</button>
-      <span class="arena-score" id="arenaScore"></span>
-    </div>
-    <div class="fb" id="fbArena" style="margin-top:10px;"></div>
+  <div class="arena-deck" id="deck">
+    <div class="deck-lbl">Force pair cards — drag or tap to sort ↓</div>
   </div>
+  <div class="zones">
+    <div class="zone zeq" id="zEq" onclick="tapZone('eq')">
+      <div class="zone-lbl">⚖ Equilibrium Pair</div>
+      <div class="zone-formula" style="font-family:var(--fm);">F⃗₁ = −F⃗₂ &nbsp;·&nbsp; Same body</div>
+      <div class="zone-cards" id="cEq"></div>
+    </div>
+    <div class="zone zint" id="zInt" onclick="tapZone('int')">
+      <div class="zone-lbl">🔄 Interaction Pair</div>
+      <div class="zone-formula" style="font-family:var(--fm);">F⃗<sub>AB</sub> = −F⃗<sub>BA</sub> &nbsp;·&nbsp; Two bodies</div>
+      <div class="zone-cards" id="cInt"></div>
+    </div>
+  </div>
+  <div class="arena-row">
+    <button class="btn btn-ink" onclick="checkArena()">⚖ Deliver Verdict</button>
+    <button class="btn btn-ghost" onclick="buildArena()">↺ Reshuffle</button>
+    <span id="arenaScore" style="font-family:var(--fm);font-size:.78rem;color:var(--muted2);"></span>
+  </div>
+  <div class="fb" id="fbArena" style="margin-top:10px;"></div>
 </section>
 
-<!-- ═══ E3c: BODY SEPARATOR ═══ -->
+<!-- E3c SEPARATOR -->
 <section id="separator" style="background:var(--bg2);">
-  <div class="e-tag explain">E3 · Activity 3 of 3</div>
+  <div class="e-tag explain">E3 · Activity 3 — Body Separator</div>
   <h2 class="sec-title">Body Separator</h2>
-  <p class="sec-desc">A ball rests on a table. Drag the slider to separate the two bodies. Watch how the forces split between them — and identify which pair is equilibrium and which is interaction.</p>
+  <p class="sec-desc">A ball rests on a table. Drag the slider to physically separate the two bodies. Watch exactly which forces stay with each body — and identify the pairs.</p>
 
-  <div class="separator-wrap">
-    <canvas id="separatorCanvas" height="320"></canvas>
-    <div class="sep-controls">
-      <span class="sep-label">Together</span>
-      <input type="range" class="sep-slider" id="sepSlider" min="0" max="100" value="0" oninput="updateSeparator(this.value)">
-      <span class="sep-label">Separated</span>
+  <div class="sep-wrap">
+    <canvas id="cvSep" height="280"></canvas>
+    <div class="sep-ctrl">
+      <span class="sep-lbl">Together</span>
+      <input type="range" class="sep-slider" id="sepSlider" min="0" max="100" value="0" oninput="moveSep(this.value)">
+      <span class="sep-lbl">Separated</span>
     </div>
-    <div style="padding:12px 18px;background:var(--panel2);border-top:1px solid var(--border);">
-      <div id="sepInfo" style="font-size:.82rem;color:var(--muted2);line-height:1.85;font-family:var(--fb);">Drag the slider right to separate the bodies and reveal the forces on each.</div>
-    </div>
+    <div class="sep-info" id="sepInfo">Drag the slider right to begin separating the two bodies.</div>
   </div>
 
-  <div class="card" style="margin-top:14px;">
-    <div style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;">Quick Check — After Separating</div>
-    <div style="font-size:.86rem;color:var(--muted2);margin-bottom:12px;line-height:1.75;">When you separate the bodies, which forces remain on the ball?</div>
-    <div class="mcq-opts" id="qsep">
-      <div class="mcq-opt" onclick="selMCQ('qsep','A',this)"><span class="ml">A</span>Weight W ↓ and F(table→ball) ↑ — both on ball → equilibrium pair</div>
-      <div class="mcq-opt" onclick="selMCQ('qsep','B',this)"><span class="ml">B</span>Weight W ↓ and F(ball→table) ↓ — reaction pair on two bodies</div>
-      <div class="mcq-opt" onclick="selMCQ('qsep','C',this)"><span class="ml">C</span>Only Weight W ↓ — nothing else acts on the ball</div>
+  <div class="q-block" style="margin-top:14px;border-left-color:var(--eq);">
+    <div class="q-num">Quick Check · After Separating</div>
+    <div class="q-text">When the ball is fully isolated, which two forces act ON THE BALL?</div>
+    <div class="opts" id="qsepOpts">
+      <div class="opt" onclick="pick('qsep','A',this)"><span class="ml">A</span>W⃗ ↓ and F⃗(table→ball) ↑ — both on ball → equilibrium pair</div>
+      <div class="opt" onclick="pick('qsep','B',this)"><span class="ml">B</span>W⃗ ↓ and F⃗(ball→table) ↓ — both downward, reaction pair</div>
+      <div class="opt" onclick="pick('qsep','C',this)"><span class="ml">C</span>Only W⃗ ↓ — nothing else acts on the ball</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('qsep','A','✓ Correct! When you isolate the ball: Weight W ↓ (from Earth on ball) and Normal force F(table→ball) ↑ both act ON THE BALL — they form the equilibrium pair. The reaction force F(ball→table) ↓ acts on the TABLE, not the ball.','✗ Isolate the ball completely. Two forces act on it: Weight ↓ and Normal ↑. Both are ON the ball → equilibrium pair. F(ball→table) acts on the table, not the ball.')">✓ Check</button>
+    <button class="chk" onclick="chk('qsep','A','✓ Correct! Isolating the ball: W⃗ ↓ (Earth pulls ball) and F⃗(table→ball) ↑ (table pushes ball) — both ON the ball → equilibrium pair. F⃗(ball→table) ↓ acts on the TABLE, not the ball.','✗ Isolate the ball. Two forces act on it: W⃗ ↓ from Earth and F⃗(table→ball) ↑ from table. Both on ball → equilibrium pair. F⃗(ball→table) acts on the table.')">✓ Check</button>
     <div class="fb" id="fbqsep"></div>
   </div>
 </section>
 
-<!-- ═══ E4a: VERDICT CHAMBER ═══ -->
+<!-- E4a VERDICT CHAMBER -->
 <section id="verdict">
   <div class="e-tag elaborate">E4 · Compound Challenge</div>
   <h2 class="sec-title">The Verdict Chamber</h2>
-  <p class="sec-desc">A three-stage compound challenge. Complete each stage to unlock the next. Every stage is graded. This is the highest-level activity in Part 2.</p>
+  <p class="sec-desc">A three-stage compound challenge. Complete each stage to unlock the next. All stages are graded.</p>
 
   <div class="verdict-wrap">
-    <!-- Header with stage indicators -->
-    <div class="verdict-header">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap;">
-        <div class="verdict-stage active" id="vstage1">1</div>
-        <span class="verdict-stage-label active-l" id="vstageL1">Identify Forces</span>
-        <span style="color:rgba(255,255,255,.2);margin:0 4px;">→</span>
-        <div class="verdict-stage pending" id="vstage2">2</div>
-        <span class="verdict-stage-label" id="vstageL2">Classify Pairs</span>
-        <span style="color:rgba(255,255,255,.2);margin:0 4px;">→</span>
-        <div class="verdict-stage pending" id="vstage3">3</div>
-        <span class="verdict-stage-label" id="vstageL3">Write the Verdict</span>
+    <div class="verdict-hdr">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap;">
+        <div class="vstep cur" id="vs1">1</div>
+        <span class="vlabel cur" id="vl1">Identify Forces</span>
+        <span style="color:rgba(255,255,255,.2);margin:0 3px;">→</span>
+        <div class="vstep pend" id="vs2">2</div>
+        <span class="vlabel" id="vl2">Classify Pairs</span>
+        <span style="color:rgba(255,255,255,.2);margin:0 3px;">→</span>
+        <div class="vstep pend" id="vs3">3</div>
+        <span class="vlabel" id="vl3">Write Verdict</span>
       </div>
-      <div style="font-family:var(--fm);font-size:.68rem;color:rgba(255,255,255,.4);" id="verdictPts">0 / 15 pts</div>
+      <span style="font-family:var(--fm);font-size:.66rem;color:rgba(255,255,255,.35);" id="vPtsDisp">0 / 15 pts</span>
     </div>
 
     <div class="verdict-body">
-      <!-- STAGE 1: Identify Forces -->
-      <div class="verdict-panel show" id="vpanel1">
-        <div class="verdict-scene">
-          <div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">Scenario</div>
-          <div style="font-size:.88rem;color:var(--ink);line-height:1.85;margin-bottom:14px;">
-            A <strong>magnet</strong> hangs from a string attached to the ceiling. Below it, a <strong>steel ball</strong> rests on the floor — the magnet pulls the ball upward magnetically but not enough to lift it. The ball stays on the floor.
+      <!-- Stage 1 -->
+      <div class="vpanel show" id="vp1">
+        <div class="vscene">
+          <div style="font-family:var(--fm);font-size:.56rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Scenario</div>
+          <p style="font-size:.88rem;color:var(--ink);line-height:1.85;margin-bottom:12px;">A <strong>magnet</strong> hangs from a ceiling by a string. A <strong>steel ball</strong> rests on the floor below — the magnet pulls the ball magnetically but not enough to lift it. The ball stays on the floor.</p>
+          <canvas id="cvVerdict" height="170" style="width:100%;border-radius:3px;background:var(--bg);border:1px solid var(--border);display:block;margin-bottom:12px;"></canvas>
+          <p style="font-size:.82rem;color:var(--muted2);margin-bottom:10px;">Tap each force label to <strong>identify which body it acts on</strong>:</p>
+          <div id="ftgts" style="display:flex;flex-wrap:wrap;gap:5px;">
+            <div class="ftgt" id="ft1" onclick="idForce(1)">W⃗(magnet) ↓</div>
+            <div class="ftgt" id="ft2" onclick="idForce(2)">T⃗(string→magnet) ↑</div>
+            <div class="ftgt" id="ft3" onclick="idForce(3)">F⃗<sub>mag</sub>(magnet→ball) ↑</div>
+            <div class="ftgt" id="ft4" onclick="idForce(4)">W⃗(ball) ↓</div>
+            <div class="ftgt" id="ft5" onclick="idForce(5)">N⃗(floor→ball) ↑</div>
           </div>
-          <canvas id="verdictCanvas" height="180" style="width:100%;border-radius:3px;background:var(--bg);border:1px solid var(--border);display:block;margin-bottom:14px;"></canvas>
-          <div style="font-size:.84rem;color:var(--muted2);margin-bottom:12px;">Tap each force to <strong>identify</strong> it as acting on the magnet or the ball:</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;" id="forceTargets">
-            <div class="force-tap-target" id="ft1" onclick="identifyForce('ft1','Weight of magnet ↓','eq-f','Acts on: Magnet')">⬜ Weight of magnet ↓</div>
-            <div class="force-tap-target" id="ft2" onclick="identifyForce('ft2','Tension in string ↑','eq-f','Acts on: Magnet')">⬜ Tension in string ↑</div>
-            <div class="force-tap-target" id="ft3" onclick="identifyForce('ft3','Magnetic pull on ball ↑','int-f','Acts on: Ball')">⬜ Magnetic pull on ball ↑</div>
-            <div class="force-tap-target" id="ft4" onclick="identifyForce('ft4','Weight of ball ↓','eq-f','Acts on: Ball')">⬜ Weight of ball ↓</div>
-            <div class="force-tap-target" id="ft5" onclick="identifyForce('ft5','Normal from floor on ball ↑','eq-f','Acts on: Ball')">⬜ Normal from floor on ball ↑</div>
-          </div>
-          <div style="margin-top:10px;font-family:var(--fm);font-size:.68rem;color:var(--muted2);" id="s1Progress">0 / 5 forces identified</div>
+          <div style="margin-top:8px;font-family:var(--fm);font-size:.66rem;color:var(--muted2);" id="s1prog">0 / 5 identified</div>
         </div>
-        <button class="btn btn-ink" onclick="completeStage1()" id="s1Btn" disabled>Proceed to Stage 2 →</button>
+        <button class="btn btn-ink" id="s1btn" onclick="stage1Done()" disabled>Proceed to Stage 2 →</button>
       </div>
 
-      <!-- STAGE 2: Classify Pairs -->
-      <div class="verdict-panel" id="vpanel2">
-        <div class="verdict-scene">
-          <div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">Stage 2 — Classify the Pairs</div>
-          <div style="font-size:.84rem;color:var(--muted2);margin-bottom:14px;line-height:1.7;">From the forces you identified, classify each pair. Tap a pair to select it, then tap a classification:</div>
-          <div style="display:flex;flex-direction:column;gap:10px;" id="pairsList"></div>
+      <!-- Stage 2 -->
+      <div class="vpanel" id="vp2">
+        <div class="vscene">
+          <p style="font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">Stage 2 — Classify the Pairs</p>
+          <p style="font-size:.82rem;color:var(--muted2);margin-bottom:12px;line-height:1.7;">Tap a pair to select it, then tap a classification button:</p>
+          <div id="pairsDiv"></div>
         </div>
-        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-          <button class="btn btn-eq" onclick="classifySelected('eq')" id="classEqBtn" disabled>⚖ Mark as Equilibrium Pair</button>
-          <button class="btn btn-int" onclick="classifySelected('int')" id="classIntBtn" disabled>🔄 Mark as Interaction Pair</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <button class="btn btn-eq" onclick="classifyPair('eq')" id="clsEqBtn" disabled>⚖ Equilibrium Pair</button>
+          <button class="btn btn-int" onclick="classifyPair('int')" id="clsIntBtn" disabled>🔄 Interaction Pair</button>
         </div>
-        <button class="btn btn-ink" onclick="completeStage2()" id="s2Btn" disabled style="margin-top:12px;">Proceed to Stage 3 →</button>
+        <button class="btn btn-ink" id="s2btn" onclick="stage2Done()" disabled>Proceed to Stage 3 →</button>
         <div class="fb" id="fbs2" style="margin-top:10px;"></div>
       </div>
 
-      <!-- STAGE 3: Write the Verdict -->
-      <div class="verdict-panel" id="vpanel3">
-        <div class="verdict-scene">
-          <div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;">Stage 3 — Write the Verdict</div>
-          <div style="font-size:.84rem;color:var(--muted2);margin-bottom:14px;line-height:1.7;">In <strong>one precise sentence</strong>, explain why the Normal force from the floor on the ball and the Weight of the ball form an <em>equilibrium pair</em> — not an interaction pair.</div>
-          <textarea class="verdict-writer" id="verdictText" placeholder="The Normal force and Weight form an equilibrium pair because..."></textarea>
+      <!-- Stage 3 -->
+      <div class="vpanel" id="vp3">
+        <div class="vscene">
+          <p style="font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Stage 3 — Write the Verdict</p>
+          <p style="font-size:.84rem;color:var(--muted2);margin-bottom:12px;line-height:1.7;">In one precise sentence, explain why N⃗(floor→ball) ↑ and W⃗(ball) ↓ form an <em>equilibrium pair</em> — not an interaction pair.</p>
+          <textarea class="vwriter" id="vText" placeholder="They form an equilibrium pair because…"></textarea>
         </div>
-        <div class="verdict-submit-row">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px;">
           <button class="btn btn-ink" onclick="submitVerdict()">⚖ Deliver Final Verdict</button>
-          <span class="verdict-pts" id="verdictPtsDisplay"></span>
+          <span style="font-family:var(--fm);font-size:.7rem;color:var(--muted2);" id="vPtsLine"></span>
         </div>
         <div class="fb" id="fbs3" style="margin-top:10px;"></div>
       </div>
@@ -514,140 +502,132 @@ footer .ft-name{font-family:var(--fh);font-size:.9rem;color:#fff;}
   </div>
 </section>
 
-<!-- ═══ E4b: EVALUATION MCQs ═══ -->
+<!-- E4b MCQ EVALUATION -->
 <section id="mcqs" style="background:var(--bg2);">
   <div class="e-tag elaborate">E4 · Evaluation Questions</div>
   <h2 class="sec-title">Evaluation</h2>
-  <p class="sec-desc">Six targeted questions — each designed to test a specific aspect of the distinction. No tricks, but every question requires careful thinking.</p>
+  <p class="sec-desc">Six questions testing specific aspects of the distinction. Read carefully — each is designed to expose a common error.</p>
 
   <!-- Q1 -->
-  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--ink);">
-    <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Question 1 · Identification</div>
-    <div style="font-size:.9rem;color:var(--ink);margin-bottom:14px;line-height:1.8;">A man pushes a wall with force F. The wall pushes back on the man with force F' = −F. These two forces <strong>cannot cancel each other</strong> because:</div>
-    <div class="mcq-opts" id="q1opts">
-      <div class="mcq-opt" onclick="selMCQ('q1','A',this)"><span class="ml">A</span>They are not equal in magnitude</div>
-      <div class="mcq-opt" onclick="selMCQ('q1','B',this)"><span class="ml">B</span>They act on different bodies — one on man, one on wall</div>
-      <div class="mcq-opt" onclick="selMCQ('q1','C',this)"><span class="ml">C</span>They act in the same direction</div>
-      <div class="mcq-opt" onclick="selMCQ('q1','D',this)"><span class="ml">D</span>One is a contact force and one is a distance force</div>
+  <div class="q-block" style="border-left-color:var(--ink);">
+    <div class="q-num">Question 1 · Interaction pairs</div>
+    <div class="q-text">A man pushes a wall with force F⃗. The wall pushes back on the man with F⃗′ = −F⃗. These two forces <strong>cannot cancel each other</strong> because:</div>
+    <div class="opts" id="q1Opts">
+      <div class="opt" onclick="pick('q1','A',this)"><span class="ml">A</span>They are not equal in magnitude</div>
+      <div class="opt" onclick="pick('q1','B',this)"><span class="ml">B</span>They act on different bodies — F⃗ on the wall, F⃗′ on the man</div>
+      <div class="opt" onclick="pick('q1','C',this)"><span class="ml">C</span>They act in the same direction</div>
+      <div class="opt" onclick="pick('q1','D',this)"><span class="ml">D</span>One is contact, one is distance force</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('q1','B','✓ Correct! Interaction pairs act on different bodies — so they can never cancel each other. Cancellation requires two forces on the SAME body. Since F acts on the wall and F\' acts on the man, they are on separate bodies and cannot produce equilibrium of either body alone.','✗ The key reason is that these forces act on DIFFERENT bodies. To cancel, forces must act on the same object. F acts on the wall, F\' acts on the man — different objects, so no cancellation is possible.')">✓ Check</button>
+    <button class="chk" onclick="chk('q1','B','✓ Correct! Interaction pairs act on DIFFERENT bodies — so they can never cancel. Cancellation requires two forces on the SAME body. F⃗ acts on the wall, F⃗′ acts on the man → different objects → no cancellation possible.','✗ The key: these forces act on DIFFERENT bodies. Cancellation requires both forces on the same object. F⃗ is on the wall, F⃗′ is on the man — different bodies.')">✓ Check</button>
     <div class="fb" id="fbq1"></div>
   </div>
 
   <!-- Q2 -->
-  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--eq);">
-    <div style="font-family:var(--fm);font-size:.58rem;color:var(--eq);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Question 2 · Application</div>
-    <div style="font-size:.9rem;color:var(--ink);margin-bottom:14px;line-height:1.8;">A lamp hangs from a ceiling by a wire. The tension T in the wire acts upward on the lamp. The weight W acts downward on the lamp. These form:</div>
-    <div class="mcq-opts" id="q2opts">
-      <div class="mcq-opt" onclick="selMCQ('q2','A',this)"><span class="ml">A</span>An interaction pair — T is the reaction to W</div>
-      <div class="mcq-opt" onclick="selMCQ('q2','B',this)"><span class="ml">B</span>An equilibrium pair — both act on the lamp, making it stationary</div>
-      <div class="mcq-opt" onclick="selMCQ('q2','C',this)"><span class="ml">C</span>Neither — they are not related</div>
-      <div class="mcq-opt" onclick="selMCQ('q2','D',this)"><span class="ml">D</span>An interaction pair — equal and opposite forces always form interaction pairs</div>
+  <div class="q-block" style="border-left-color:var(--eq);">
+    <div class="q-num">Question 2 · Equilibrium pair identification</div>
+    <div class="q-text">A lamp hangs from a ceiling by a wire. Tension T⃗ acts upward on the lamp. Weight W⃗ acts downward on the lamp. These form:</div>
+    <div class="opts" id="q2Opts">
+      <div class="opt" onclick="pick('q2','A',this)"><span class="ml">A</span>An interaction pair — T⃗ is the reaction to W⃗</div>
+      <div class="opt" onclick="pick('q2','B',this)"><span class="ml">B</span>An equilibrium pair — both act on the lamp, making it stationary</div>
+      <div class="opt" onclick="pick('q2','C',this)"><span class="ml">C</span>Neither — they are not related to each other</div>
+      <div class="opt" onclick="pick('q2','D',this)"><span class="ml">D</span>An interaction pair — any equal and opposite forces form an interaction pair</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('q2','B','✓ Correct! Both T ↑ and W ↓ act on the SAME body (the lamp). Since they act on the same body, are equal and opposite, they form an equilibrium pair — not an interaction pair. The interaction partner of T would be the force the lamp exerts on the wire (downward), which acts on the wire.','✗ Check which body the forces act on. T ↑ acts on lamp. W ↓ acts on lamp. Same body → equilibrium pair. Interaction pairs always act on DIFFERENT bodies.')">✓ Check</button>
+    <button class="chk" onclick="chk('q2','B','✓ Correct! Both T⃗ ↑ and W⃗ ↓ act on the SAME body (the lamp) → equilibrium pair. The interaction partner of T⃗ is the force the lamp exerts on the wire (downward), which acts on the wire — not the lamp.','✗ Both T⃗ and W⃗ act on the SAME body (the lamp) → equilibrium pair. Interaction pairs always act on DIFFERENT bodies.')">✓ Check</button>
     <div class="fb" id="fbq2"></div>
   </div>
 
   <!-- Q3 -->
-  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--int);">
-    <div style="font-family:var(--fm);font-size:.58rem;color:var(--int);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Question 3 · The Classic Trap</div>
-    <div style="font-size:.9rem;color:var(--ink);margin-bottom:14px;line-height:1.8;">A student says: <em>"The weight W of a book and the normal force N of the table on the book are an interaction pair because N = −W."</em><br>What is wrong with this statement?</div>
-    <div class="mcq-opts" id="q3opts">
-      <div class="mcq-opt" onclick="selMCQ('q3','A',this)"><span class="ml">A</span>N ≠ W in magnitude so they cannot be paired</div>
-      <div class="mcq-opt" onclick="selMCQ('q3','B',this)"><span class="ml">B</span>Both N and W act on the book — they are an equilibrium pair. The true interaction partner of N is F(book→table) which acts on the TABLE</div>
-      <div class="mcq-opt" onclick="selMCQ('q3','C',this)"><span class="ml">C</span>Interaction pairs must involve only contact forces</div>
-      <div class="mcq-opt" onclick="selMCQ('q3','D',this)"><span class="ml">D</span>N and W are not equal and opposite</div>
+  <div class="q-block" style="border-left-color:var(--int);">
+    <div class="q-num">Question 3 · The Classic Trap</div>
+    <div class="q-text">A student says: <em>"W⃗ and N⃗ on a book are an interaction pair because N⃗ = −W⃗."</em> What is wrong?</div>
+    <div class="opts" id="q3Opts">
+      <div class="opt" onclick="pick('q3','A',this)"><span class="ml">A</span>|N⃗| ≠ |W⃗| so they cannot be paired</div>
+      <div class="opt" onclick="pick('q3','B',this)"><span class="ml">B</span>Both N⃗ and W⃗ act on the book → equilibrium pair. The true interaction partner of N⃗ is F⃗(book→table) which acts on the TABLE</div>
+      <div class="opt" onclick="pick('q3','C',this)"><span class="ml">C</span>Interaction pairs must involve only contact forces</div>
+      <div class="opt" onclick="pick('q3','D',this)"><span class="ml">D</span>N⃗ and W⃗ are not truly equal and opposite</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('q3','B','✓ Perfect! This is the most common misconception. N and W are BOTH on the book → equilibrium pair. The interaction partner of N(table→book) ↑ is N\\'(book→table) ↓ which acts on the TABLE — not on the book. The student confused equilibrium pairs with interaction pairs.','✗ The error is that both N and W act on the SAME body (the book). Interaction pairs must act on DIFFERENT bodies. N acts on book, W acts on book → equilibrium pair. The interaction partner of N is the force the book exerts on the table, which acts on the TABLE.')">✓ Check</button>
+    <button class="chk" onclick="chk('q3','B','✓ Perfect! N⃗ and W⃗ are BOTH on the book → equilibrium pair. The interaction partner of N⃗(table→book) ↑ is F⃗(book→table) ↓ which acts on the TABLE. These are the true interaction pair — on different bodies.','✗ The error: both N⃗ and W⃗ act on the SAME body (the book). Interaction pairs must act on DIFFERENT bodies. The true interaction partner of N⃗ is the force the book exerts on the table, acting on the table.')">✓ Check</button>
     <div class="fb" id="fbq3"></div>
   </div>
 
   <!-- Q4 -->
-  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--gold);">
-    <div style="font-family:var(--fm);font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Question 4 · Deduction</div>
-    <div style="font-size:.9rem;color:var(--ink);margin-bottom:14px;line-height:1.8;">A ball of weight W = 8 N floats on water. The buoyancy force F_b acts upward. Using the equilibrium condition, deduce the magnitude and direction of F_b, and name the interaction partner of F_b.</div>
-    <div class="mcq-opts" id="q4opts">
-      <div class="mcq-opt" onclick="selMCQ('q4','A',this)"><span class="ml">A</span>F_b = 8 N downward · interaction partner = W</div>
-      <div class="mcq-opt" onclick="selMCQ('q4','B',this)"><span class="ml">B</span>F_b = 8 N upward · interaction partner = force ball exerts on water downward (8 N)</div>
-      <div class="mcq-opt" onclick="selMCQ('q4','C',this)"><span class="ml">C</span>F_b = 4 N upward · it balances half of W</div>
-      <div class="mcq-opt" onclick="selMCQ('q4','D',this)"><span class="ml">D</span>F_b = 8 N upward · interaction partner = W (weight of ball)</div>
+  <div class="q-block" style="border-left-color:var(--gold);">
+    <div class="q-num">Question 4 · Deduction</div>
+    <div class="q-text">A ball of weight W⃗ = 8 N (downward) floats on water. Using the equilibrium condition, deduce F⃗<sub>b</sub> (buoyancy). Then identify the interaction partner of F⃗<sub>b</sub>.</div>
+    <div class="opts" id="q4Opts">
+      <div class="opt" onclick="pick('q4','A',this)"><span class="ml">A</span>F⃗<sub>b</sub> = 8 N downward · interaction partner = W⃗</div>
+      <div class="opt" onclick="pick('q4','B',this)"><span class="ml">B</span>F⃗<sub>b</sub> = 8 N upward · interaction partner = force ball exerts on water downward (8 N)</div>
+      <div class="opt" onclick="pick('q4','C',this)"><span class="ml">C</span>F⃗<sub>b</sub> = 4 N upward · balances half of W⃗</div>
+      <div class="opt" onclick="pick('q4','D',this)"><span class="ml">D</span>F⃗<sub>b</sub> = 8 N upward · interaction partner = W⃗ (weight of ball)</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('q4','B','✓ Excellent deduction! Equilibrium condition on ball: F_b = −W → F_b = 8 N upward. Now for the interaction partner: by the principle of interaction, the force that water exerts on the ball (F_b ↑) has an equal and opposite partner — the force the ball exerts on the water (8 N ↓), acting on the water, not the ball.','✗ Two steps: (1) Equilibrium gives F_b = 8 N upward (equal and opposite to W to keep ball stationary). (2) The interaction partner of F_b is NOT W — it is the force the ball exerts on the water downward, which acts on the WATER. W is the gravitational force from Earth on the ball.')">✓ Check</button>
+    <button class="chk" onclick="chk('q4','B','✓ Excellent! Equilibrium on ball: F⃗ₓ = −W⃗ → F⃗ᵦ = 8 N upward. Interaction partner: the force water exerts on ball (F⃗ᵦ ↑) has a partner — the force ball exerts on water (8 N ↓) acting on the WATER, not the ball.','✗ Two steps: (1) Equilibrium gives F⃗ᵦ = 8 N upward. (2) The interaction partner of F⃗ᵦ is NOT W⃗ — it is the force the ball exerts on the water (8 N ↓) which acts on the WATER. W⃗ is from Earth on ball.')">✓ Check</button>
     <div class="fb" id="fbq4"></div>
   </div>
 
   <!-- Q5 -->
-  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--ink);">
-    <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Question 5 · True or False</div>
-    <div style="font-size:.9rem;color:var(--ink);margin-bottom:14px;line-height:1.8;">"An interaction pair can produce equilibrium of a single body if one force is removed."</div>
-    <div class="mcq-opts" id="q5opts">
-      <div class="mcq-opt" onclick="selMCQ('q5','A',this)"><span class="ml">A</span>True — removing one force leaves the other to balance</div>
-      <div class="mcq-opt" onclick="selMCQ('q5','B',this)"><span class="ml">B</span>False — interaction pairs act on different bodies so they can never produce equilibrium of one body. Each body needs its OWN forces to balance.</div>
+  <div class="q-block" style="border-left-color:var(--ink);">
+    <div class="q-num">Question 5 · True or False</div>
+    <div class="q-text">"An interaction pair can produce equilibrium of a single body."</div>
+    <div class="opts" id="q5Opts">
+      <div class="opt" onclick="pick('q5','A',this)"><span class="ml">A</span>True — the forces are equal and opposite so they cancel</div>
+      <div class="opt" onclick="pick('q5','B',this)"><span class="ml">B</span>False — interaction pairs act on different bodies so they can NEVER cancel each other or produce equilibrium of one body</div>
     </div>
-    <button class="check-btn" onclick="chkMCQ('q5','B','✓ Correct! Interaction pairs NEVER produce equilibrium of a single body — by definition they act on different bodies. The equilibrium of each body requires its own set of forces to balance. The wall is in equilibrium due to forces ON the wall. The man is in equilibrium due to forces ON the man. They are independent.','✗ This is FALSE. Interaction pairs act on different bodies. They can never cancel each other or produce equilibrium of a single body. Each body has its own forces that must balance independently.')">✓ Check</button>
+    <button class="chk" onclick="chk('q5','B','✓ Correct! Interaction pairs act on DIFFERENT bodies — they can never produce equilibrium of a single body. Each body needs its own forces to balance independently.','✗ FALSE. Interaction pairs act on different bodies. They can never cancel each other. Each body achieves equilibrium through its own separate set of forces.')">✓ Check</button>
     <div class="fb" id="fbq5"></div>
   </div>
 
-  <!-- Q6 — Open -->
-  <div class="card" style="border-left:4px solid var(--int);">
-    <div style="font-family:var(--fm);font-size:.58rem;color:var(--int);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Question 6 · Synthesis</div>
-    <div style="font-size:.9rem;color:var(--ink);margin-bottom:14px;line-height:1.8;">A body of weight W = 15 N hangs from a spring. State all forces acting on the body, apply the equilibrium condition to find the spring force, and identify the interaction partner of the spring force (with the body it acts on).</div>
-    <textarea id="q6text" placeholder="Forces on body:&#10;Equilibrium condition:&#10;Spring force F_s = ...&#10;Interaction partner of F_s: ... acts on ..."></textarea>
-    <div style="margin-top:6px;font-size:.74rem;color:var(--muted2);">Your written answer is saved when you submit.</div>
+  <!-- Q6 open -->
+  <div class="q-block" style="border-left-color:var(--int);">
+    <div class="q-num">Question 6 · Synthesis (Written)</div>
+    <div class="q-text">A body of weight W⃗ = 15 N hangs from a spring. (a) State all forces on the body. (b) Apply the equilibrium condition to find the spring force F⃗<sub>s</sub>. (c) Identify the interaction partner of F⃗<sub>s</sub> and state which body it acts on.</div>
+    <textarea id="q6txt" placeholder="(a) Forces on body:&#10;(b) Equilibrium condition:  F⃗ₛ = ...&#10;(c) Interaction partner of F⃗ₛ: ... acts on ..."></textarea>
+    <div style="margin-top:5px;font-size:.72rem;color:var(--muted2);">Written answer saved with your submission.</div>
   </div>
 </section>
 
-<!-- ═══ E5: EVALUATE ═══ -->
+<!-- E5 EVALUATE -->
 <section id="evaluate">
   <div class="e-tag evaluate">E5 · Submit Report</div>
   <h2 class="sec-title">Submit Your Report</h2>
-  <p class="sec-desc">Enter your details and submit your complete work — all activities, MCQs, painter results, arena score, and written answers go to Ahmad's grade sheet.</p>
+  <p class="sec-desc">Choose your section, select your name, then submit everything to Ahmad's grade sheet.</p>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;max-width:860px;">
+  <div class="g2" style="align-items:start;max-width:860px;">
     <div class="card">
-      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:120px;">
-            <label style="font-size:.68rem;color:var(--muted2,#666);display:block;margin-bottom:5px;font-family:var(--fm,'monospace');text-transform:uppercase;letter-spacing:1px;">Section *</label>
-            <select id="stuSection" onchange="updateNameList()" style="background:var(--panel2,#f5f5f5);border:1.5px solid var(--border2,#ccc);border-radius:6px;padding:10px 14px;color:var(--text,#111);font-family:var(--fb,'sans-serif');font-size:.88rem;outline:none;width:100%;min-height:44px;cursor:pointer;">
-              <option value="">— Choose Section —</option>
-              <option value="9A">9A</option>
-              <option value="9B">9B</option>
-              <option value="9C">9C</option>
-              <option value="9D">9D</option>
-            </select>
-          </div>
-          <div style="flex:2;min-width:200px;">
-            <label style="font-size:.68rem;color:var(--muted2,#666);display:block;margin-bottom:5px;font-family:var(--fm,'monospace');text-transform:uppercase;letter-spacing:1px;">Full Name *</label>
-            <select id="stuName" style="background:var(--panel2,#f5f5f5);border:1.5px solid var(--border2,#ccc);border-radius:6px;padding:10px 14px;color:var(--text,#111);font-family:var(--fb,'sans-serif');font-size:.88rem;outline:none;width:100%;min-height:44px;cursor:pointer;" disabled>
-              <option value="">— Choose section first —</option>
-            </select>
-          </div>
-        </div>
+      <!-- Section buttons -->
+      <label style="font-size:.66rem;color:var(--muted);display:block;margin-bottom:8px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Section *</label>
+      <div class="section-btns">
+        <button class="sb-btn" onclick="setSection('9A')">9A</button>
+        <button class="sb-btn" onclick="setSection('9B')">9B</button>
+        <button class="sb-btn" onclick="setSection('9C')">9C</button>
+        <button class="sb-btn" onclick="setSection('9D')">9D</button>
       </div>
-      </div>
+      <!-- Name dropdown -->
+      <label style="font-size:.66rem;color:var(--muted);display:block;margin-bottom:6px;font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;">Your Name *</label>
+      <select id="stuName" disabled style="direction:rtl;margin-bottom:16px;">
+        <option value="">— Choose your section first —</option>
+      </select>
+      <input type="hidden" id="stuClass" value="">
       <hr style="border:none;border-top:2px solid var(--border);margin:14px 0;">
-      <div id="scoreBreakdown" style="margin-bottom:12px;font-size:.76rem;font-family:var(--fm);"></div>
-      <div style="height:5px;background:var(--panel2);border-radius:2px;overflow:hidden;margin-bottom:8px;border:1px solid var(--border);">
+      <div id="scoreBreakdown" style="margin-bottom:10px;font-size:.74rem;font-family:var(--fm);"></div>
+      <div style="height:5px;background:var(--panel2);border-radius:2px;overflow:hidden;margin-bottom:7px;border:1px solid var(--border);">
         <div id="progFill" style="height:100%;background:var(--ink);border-radius:2px;transition:width .4s;width:0%;"></div>
       </div>
-      <p id="progText" style="font-size:.68rem;color:var(--muted);margin-bottom:16px;font-family:var(--fm);">0 / 10 activities completed</p>
-      <button class="btn btn-ink" style="width:100%;font-size:.92rem;" onclick="submitWork()">📊 Submit to Ahmad's Grade Sheet</button>
+      <p id="progTxt" style="font-size:.68rem;color:var(--muted);margin-bottom:14px;font-family:var(--fm);">0 / 9 activities completed</p>
+      <button class="btn btn-ink" style="width:100%;font-size:.92rem;" onclick="doSubmit()">📊 Submit to Ahmad's Grade Sheet</button>
     </div>
 
     <div>
-      <div class="progress-ring-wrap" style="margin-bottom:16px;">
-        <svg class="progress-ring" width="100" height="100" viewBox="0 0 80 80">
-          <circle class="progress-ring-bg" cx="40" cy="40" r="36"/>
-          <circle class="progress-ring-fill" id="ringFill" cx="40" cy="40" r="36"/>
+      <div class="ring-wrap" style="margin-bottom:14px;">
+        <svg class="pring" width="100" height="100" viewBox="0 0 80 80">
+          <circle class="pring-bg" cx="40" cy="40" r="36"/>
+          <circle class="pring-fill" id="ringFill" cx="40" cy="40" r="36"/>
         </svg>
-        <div class="ring-text" id="ringText">—</div>
-        <div class="ring-sub">Total Score</div>
+        <div class="ring-pct" id="ringPct">—</div>
+        <div class="ring-sub">Score</div>
       </div>
       <div class="card2" style="text-align:center;">
-        <div style="font-size:.78rem;color:var(--muted2);line-height:1.8;">Ahmad reviews your written answers and Verdict Chamber responses in class.</div>
-        <div id="submitOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenL);border:2px solid var(--green);border-radius:3px;font-size:.82rem;color:var(--green);font-weight:700;font-family:var(--fm);">✓ Report submitted successfully.</div>
+        <p style="font-size:.78rem;color:var(--muted2);line-height:1.8;">Ahmad reviews your written answers and Verdict Chamber in class.</p>
+        <div id="subOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenL);border:2px solid var(--green);border-radius:3px;font-size:.82rem;color:var(--green);font-weight:700;font-family:var(--fm);">✓ Report submitted successfully.</div>
       </div>
     </div>
   </div>
@@ -655,8 +635,8 @@ footer .ft-name{font-family:var(--fh);font-size:.9rem;color:#fff;}
 
 <footer>
   <div>
-    <div class="ft-name">Force<em style="color:#c8a96a;font-style:normal;">Verdict</em> Lab</div>
-    <div style="font-size:.58rem;text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fm);">Ahmad Ghozlan · Physics · Grade 9 · Lebanon</div>
+    <div style="font-family:var(--fh);font-size:.95rem;font-weight:900;color:#fff;">Force<em style="color:#c8a96a;font-style:normal;">Verdict</em> Lab</div>
+    <div style="font-size:.56rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.3);font-family:var(--fm);margin-top:3px;">Ahmad Ghozlan · Physics · Grade 9 · Lebanon</div>
   </div>
   <a href="https://aghozlan.github.io" style="font-size:.7rem;color:rgba(255,255,255,.3);text-decoration:none;border:1px solid rgba(255,255,255,.1);padding:5px 14px;border-radius:2px;">↗ All Labs</a>
 </footer>
@@ -664,721 +644,605 @@ footer .ft-name{font-family:var(--fh);font-size:.9rem;color:#fff;}
 </div>
 
 <script>
+'use strict';
 const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
 
-// ── NAV ─────────────────────────────────────────────────────────
+// ── STUDENT LISTS ────────────────────────────────────────────
+const STUDENTS={
+  '9A':['إبراهيم فادي احمد مطر','أروى خالد محمود العريض','ابتسام محمد علي الجعجع','احمد عمر احمد الصالح','اماني بلال حامد ابو الهدى','امجد علي نايف حميد','براءة خالد محمود نوفل','تولين ايمن محمد قدسيه','جواد محمود غازي حسن','جود وسام جابر الصالح','حسن حسام علي العلي','حمزة هشام محمد نصر','خلود خالد اسماعيل قاسم','دانيال محمد عادل جواد','ريان ساري علي زيداني','ريان عفيف علي السيد','ريماس ايمن وليد الاشوح','سارة موسى محمد حمود','سامر احمد علي عبدالله','سلفانا ابراهيم عبد السلام قصقص','سلمان خالد ناصر عيشه','سيلين اسامة عبد الفتاح توسكا','سيلين عادل اسماعيل ابراهيم','عبد الرحمن الياس محمد الحسين','عزيزه مروان حسن حسن','علي محمود ديب حمّاد','كرم نادر احمد غيث','لارا خضر علي شراب','ليا محمد ابراهيم الحلو','ليمار خضر عبدالله بلاوني','لين محمود احمد احمد','مالك احمد علي الحاج علي','محمد ايمن وليد الاشوح','محمود محمد مصطفى ابو مايهه','ملك طارق محمود الاشقر','ملك محمد حسن ابو حمد','ميرا اياد وحيد حسن','نغم محمد جمعة بلال','نور ماهر مفيد العلي','هادي باسم عبد الرؤوف الحاج داود','ياسمين محمد شحادة ديب'],
+  '9B':['إسراء خالد محمود مطر','أية احمد محمد مكية','ادم احمد غازي الجمل','ادم فادي كامل عبدالله','اميره محمد احمد الهندي','بلال زياد محمود عيسى','جاد سمير ابراهيم العلي','جمانه علي محي الدين دمشقي','حلا محمد اكرم عجاوي','حنان محمد جمال عبد اللطيف','حنين غسان محمد ابو ليل','دانيه حسين محمد حسين','رؤى رضوان اسعد ديب','رفيف محمد احمد ندوه','رهف محمود محمد دراج','رهف يوسف جمعة جمعة','روان احمد شحادة ديب','زهرة ابراهيم عارف ظاهر','ساره بهاء ابراهيم العيسى','سناء جهاد فؤاد الفقير','عبد الرحمن وليد احمد نفاع','عبد الهادي رضوان عيسى','عصام مصطفى منير توسكا','علاء علي غالب الساري','عمار احمد عصام كروم','عمر احمد جمال الاشبه','عمر حسان عمر كروم','غزل بلال محمد خضر عمر','ليا محمد خالد محمد','لينا احمد علي علي','محمد احمد قاسم الصباهي','محمد زياد محمد عبود','محمد نور الدين علي قطف','محمود احمد محمود قدورة','محمود محمد علي محمد خليل','مريم محمد عبد الرحمن عبد الهادي','مطر علي احمد مطر','ملاك بسام احمد حشاش','ملك يوسف شحادة ديب','نادين سليمان صلاح نجم','نور محمد وليد الصالح','وسام هشام امين الطه','يوسف نضال يوسف العيساوي'],
+  '9C':['إسراء مصطفى ممدوح سعد الدين','إسلام وليد عبد المطلب بلاوني','أسينات طلال زياد العباسي','آيه هاني سعود الميناوي','اروى محمد علي علي','امينة جميل علي الغرابلي','تالا احمد ابراهيم عطور','جميل احمد جميل الطاهره','حسين علاء احمد صيداوي','حمزة ابراهيم محمود ابو جبل','حمزه خليل محمد عثمان','خالد احمد صبحي رمضان','خليل ابراهيم حسين بلاوني','راما احمد محمد خزعل','راما حسان محمد تيسير منصور','رماس ايمن كايد خضره','رهف بسام محمد بلاوني','زياد طارق زياد الهبطه','سيرين عماد احمد عبد الحليم','ضحى محمد حسن حسن','عائشه خالد عزات يحيى','عبد الرحمن احمد موسى محمد','عبد الرحمن اسماعيل سميح حمو','عبدالرحمن جهاد عبد ابراهيم','علي محمد عبد بشر','عمر احمد محمد اسماعيل','عمر عبدالله عطا ابو شليح','فرح علي محمد ملحم','فيروز احسان عبدالله شاهين','قمر ابراهيم فوزي الميعاري','لميس سعيد محمد الخطيب','مجد فراس حسن سعيد','محمد رامي نزيه رمضان','محمد عبد المجيد محمد سالم','ملاك احمد محمد احمد','منى احسان عبدالله شاهين','مورة عدنان محمود فوراني','ميرا محمد خالد عبد الغني','نبيل محمود نبيل درويش','نورا خليل محمود المتولي','يوسف منتصر احمد جمعة'],
+  '9D':['أشرف محمد حكمت غيث','احمد حسن محي الدين قاسم','احمد حسين محمد شعيب','ادم زياد علي وهبه','بلال احمد عيسى أبو الشباب','حسن عبد الوهاب حسن ابو شقير','حسن محمد حسن الفاعور','حلا حسن حسين الحسين','خالد وليد محمود العريض','رنا محمود محمد يعقوب','رهف اسماعيل علي لوباني','رهف سمير لطفي فهد','روان علي عبدالله بلاوني','رين سامر سعدو الحاج','سحر بسام احمد القط','سدره المنتهى احمد مختار الخالد','سعيد محمد سعيد سعيد','شيماء علي احمد محمد','عائشه وسام عبد الرحمن حمو','عمر احمد محمد عزيمه','عمر مالك جمعة بلال','غنى خضر فؤاد احمد','قمر محمد خالد ابو سعد','لمار محمد محمود حسين','ليا شادي ابراهيم عبد الهادي','ليال سعيد جهاد عكيله','ليان حسن احمد ابو عرب','ليان محمد خير احمد','لين زياد عاطف ابو الشباب','لين هاني احمد العيسى','ماجد بلال ماجد الخطيب','محمد امير فتان فضه','محمد سعيد محمود جربوع','محمد مصطفى ابراهيم الفقير','محمد وليد مصطفى خطاب','مرام جمال محمد ناصر','مريم يوسف فوزي الحاج','ملك ربيع علي عبد الرحمن','نور علي محمد زيد راجح','هبة فؤاد علي منصور','وليد محمد سرحان العلي','يارا يوسف محمد حسن']
+};
+
+function setSection(cls){
+  document.getElementById('stuClass').value=cls;
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— اختر اسمك / Choose your name —</option>';
+  sel.disabled=false;
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+}
+
+// ── NAV ─────────────────────────────────────────────────────
 function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
 const snBtns=document.querySelectorAll('.sn');
 window.addEventListener('scroll',()=>{
   const ids=['hero','compare','painter','arena','separator','verdict','mcqs','evaluate'];
   let cur='hero';
-  ids.forEach(s=>{const el=document.getElementById(s);if(el&&window.scrollY>=el.offsetTop-200)cur=s;});
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)cur=id;});
   snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
 },{passive:true});
 
-// ── MCQ ENGINE ───────────────────────────────────────────────────
-const answers={},correct={};
-function selMCQ(key,val,btn){
-  answers[key]=val;
-  btn.parentElement.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('selected'));
-  btn.classList.add('selected');
+// ── MCQ ENGINE ───────────────────────────────────────────────
+const picked={};
+const correct={};
+
+function pick(key,val,btn){
+  picked[key]=val;
+  btn.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
 }
-function chkMCQ(key,ca,okMsg,badMsg){
-  const fb=document.getElementById('fb'+key);fb.style.display='block';
-  const sel=answers[key];
-  if(!sel){fb.className='fb info';fb.textContent='Select an answer first!';return;}
-  const opts=document.querySelectorAll('#'+key+'opts .mcq-opt');
-  const L=['A','B','C','D'];
-  opts.forEach((o,i)=>{o.classList.remove('selected');
-    if(L[i]===ca)o.classList.add('correct');
-    else if(L[i]===sel)o.classList.add('wrong');});
-  if(sel===ca){fb.className='fb ok';fb.textContent=okMsg;correct[key]=true;}
-  else{fb.className='fb bad';fb.textContent=badMsg;}
+
+function chk(key,correct_ans,okMsg,badMsg){
+  const fb=document.getElementById('fb'+key);
+  fb.style.display='block';
+  const sel=picked[key];
+  if(!sel){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  const opts=document.getElementById(key+'Opts')?.querySelectorAll('.opt')
+           ||document.getElementById(key.replace('q','q')+'Opts')?.querySelectorAll('.opt');
+  // find opts container
+  const container=fb.previousElementSibling?.previousElementSibling;
+  if(container&&container.classList.contains('opts')){
+    const letters=['A','B','C','D'];
+    container.querySelectorAll('.opt').forEach((o,i)=>{
+      o.classList.remove('sel');
+      if(letters[i]===correct_ans)o.classList.add('ok');
+      else if(letters[i]===sel)o.classList.add('err');
+    });
+  }
+  if(sel===correct_ans){fb.className='fb ok';fb.innerHTML=okMsg;correct[key]=true;}
+  else{fb.className='fb err';fb.innerHTML=badMsg;}
   updateProg();
 }
 
-// ══════════════════════════════════════════════════════════════
-// ACTIVITY 1 — FORCE VECTOR PAINTER
-// ══════════════════════════════════════════════════════════════
-let currentTool='W';
-const placedForces=[];
+// ── PAINTER ─────────────────────────────────────────────────
+let tool='W';
+const forces=[];
+let BK={x:0,y:0,w:0,h:0};
+let TBL={x:0,y:0,w:0,h:0};
 
-// Book geometry (set after canvas drawn)
-let BOOK={x:0,y:0,w:0,h:0};
-let TABLE={x:0,y:0,w:0,h:0};
-
-function setPTool(t){
-  currentTool=t;
+function setTool(t){
+  tool=t;
   document.querySelectorAll('.ptool').forEach(b=>b.classList.remove('active'));
-  document.getElementById('ptool'+t).classList.add('active');
+  document.getElementById('tool'+t).classList.add('active');
 }
 
 function clearPainter(){
-  placedForces.length=0;
-  document.getElementById('painterResult').style.display='none';
-  drawPainter();
-  document.getElementById('painterMsg').textContent='Select a tool and tap the diagram';
-  correct.painter=false;updateProg();
+  forces.length=0;
+  document.getElementById('pResult').style.display='none';
+  document.getElementById('pMsg').textContent='Select a tool then tap the diagram at the correct origin point';
+  correct.painter=false;
+  updateProg();
+  renderPainter();
 }
 
-function drawPainter(){
-  const cv=document.getElementById('painterCanvas');
-  cv.width=cv.offsetWidth||700;const W=cv.width,H=320;
-  const ctx=cv.getContext('2d');
-  ctx.fillStyle='#f7f4ee';ctx.fillRect(0,0,W,H);
+function getXY(cv,e){
+  const r=cv.getBoundingClientRect();
+  const s=cv.width/r.width;
+  const src=e.touches?e.touches[0]:e;
+  return{x:(src.clientX-r.left)*s,y:(src.clientY-r.top)*s};
+}
 
-  // Grid dots
-  ctx.fillStyle='rgba(0,0,0,.08)';
+function painterTap(e){
+  e.preventDefault();
+  const cv=document.getElementById('cvPainter');
+  const {x,y}=getXY(cv,e);
+  const snap=45;
+
+  const Gx=BK.x+BK.w/2, Gy=BK.y+BK.h/2;
+  const Cx=BK.x+BK.w/2, Cy=BK.y+BK.h;
+  const Tx=TBL.x+TBL.w/2, Ty=TBL.y;
+
+  let placed=false;
+  let hint='';
+
+  if(tool==='W'){
+    if(Math.hypot(x-Gx,y-Gy)<snap){
+      forces[0]={t:'W',x:Gx,y:Gy,valid:true};placed=true;
+    } else hint='W⃗ must originate from G — the gold dot at the centre of the book.';
+  } else if(tool==='N'){
+    if(Math.hypot(x-Cx,y-Cy)<snap){
+      forces[1]={t:'N',x:Cx,y:Cy,valid:true};placed=true;
+    } else hint='N⃗ must originate from the contact surface — the bottom edge of the book.';
+  } else if(tool==='Fbt'){
+    if(Math.hypot(x-Tx,y-Ty)<snap){
+      forces[2]={t:'Fbt',x:Tx,y:Ty,valid:true};placed=true;
+    } else hint='F⃗(book→table) acts ON the table — tap near the top surface of the table.';
+  }
+
+  document.getElementById('pMsg').textContent = placed
+    ? '✓ Placed! Choose next force or click Judge.'
+    : (hint||'Tap the correct origin point.');
+  renderPainter();
+}
+
+function renderPainter(){
+  const cv=document.getElementById('cvPainter');
+  cv.width=cv.offsetWidth||700; const W=cv.width,H=300;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#faf7f1';ctx.fillRect(0,0,W,H);
+
+  // dot grid
+  ctx.fillStyle='rgba(0,0,0,.07)';
   for(let x=20;x<W;x+=30)for(let y=20;y<H;y+=30){ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fill();}
 
   // Table
-  const tx=W/2-120,ty=H-80,tw=240,th=30;
+  const tx=W/2-130,ty=H-75,tw=260,th=28;
   ctx.fillStyle='#8b7355';ctx.fillRect(tx,ty,tw,th);
-  ctx.fillStyle='#6b5335';ctx.fillRect(tx,ty+th,tw,12);
-  ctx.fillStyle='rgba(0,0,0,.15)';
-  ctx.fillText='';
-  TABLE={x:tx,y:ty,w:tw,h:th};
-
-  // Table label
-  ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 11px JetBrains Mono';ctx.textAlign='center';
+  ctx.fillStyle='#6b5335';ctx.fillRect(tx,ty+th,tw,10);
+  ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='bold 11px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('TABLE',tx+tw/2,ty+th/2+4);
+  TBL={x:tx,y:ty,w:tw,h:th};
 
   // Book
-  const bx=W/2-45,by=ty-70,bw=90,bh=60;
+  const bx=W/2-50,by=ty-72,bw=100,bh=62;
   ctx.fillStyle='#2d5a8e';ctx.fillRect(bx,by,bw,bh);
-  ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=1;ctx.strokeRect(bx,by,bw,bh);
-  // Book spine lines
-  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=0.5;
-  for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(bx+i*bw/4,by);ctx.lineTo(bx+i*bw/4,by+bh);ctx.stroke();}
-  ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';
+  ctx.strokeStyle='rgba(0,0,0,.15)';ctx.lineWidth=1;ctx.strokeRect(bx,by,bw,bh);
+  ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('BOOK',bx+bw/2,by+bh/2+4);
-  BOOK={x:bx,y:by,w:bw,h:bh};
+  BK={x:bx,y:by,w:bw,h:bh};
 
-  // Centre of gravity dot
-  const gx=bx+bw/2,gy=by+bh/2;
-  ctx.fillStyle='#c8a96a';ctx.beginPath();ctx.arc(gx,gy,5,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#8f6b1a';ctx.font='9px JetBrains Mono';ctx.textAlign='left';
-  ctx.fillText('G',gx+8,gy+4);
+  // G dot
+  const Gx=bx+bw/2,Gy=by+bh/2;
+  ctx.fillStyle='#c8a96a';ctx.beginPath();ctx.arc(Gx,Gy,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#8f6b1a';ctx.font='bold 9px JetBrains Mono';ctx.textAlign='left';ctx.fillText('G',Gx+9,Gy+3);
 
-  // Contact line indicator
-  ctx.setLineDash([4,3]);ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=1;
+  // Contact dashes
+  ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
   ctx.beginPath();ctx.moveTo(bx,by+bh);ctx.lineTo(bx+bw,by+bh);ctx.stroke();
   ctx.setLineDash([]);
 
-  // Draw placed forces
-  placedForces.forEach(f=>drawArrow(ctx,f));
+  // Snap targets
+  [[Gx,Gy,'#c8a96a'],[bx+bw/2,by+bh,'#1a5c8f'],[tx+tw/2,ty,'#8f1a3a']].forEach(([x,y,c])=>{
+    ctx.strokeStyle=c;ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.arc(x,y,22,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  });
+
+  // Draw placed arrows
+  forces.forEach(f=>{if(f&&f.valid)drawArrow(ctx,f);});
 
   // Legend
-  ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='9px JetBrains Mono';ctx.textAlign='left';
-  ctx.fillText('● = Centre of gravity G',14,18);
-  ctx.fillText('─ ─ = Contact surface (bottom of book)',14,32);
+  ctx.fillStyle='rgba(0,0,0,.4)';ctx.font='9px JetBrains Mono';ctx.textAlign='left';
+  ctx.fillText('● = G (centre of gravity)',14,16);
+  ctx.fillText('- - = contact surface',14,28);
+  ctx.fillText('○ = tap targets',14,40);
 }
 
 function drawArrow(ctx,f){
-  const col={W:'#8f1a3a',N:'#1a5c8f',Fbt:'#8f6b1a'}[f.tool]||'#333';
-  const dir={W:90,N:-90,Fbt:90}[f.tool];// degrees: 90=down, -90=up
-  const len=55;
-  const rad=dir*Math.PI/180;
-  const ex=f.x+Math.sin(rad)*len;
-  const ey=f.y+Math.cos(rad)*len;
+  const col={W:'#8f1a3a',N:'#1a5c8f',Fbt:'#8f6b1a'}[f.t];
+  const dy={W:1,N:-1,Fbt:1}[f.t];// 1=down, -1=up
+  const len=58;
+  const x1=f.x,y1=f.y,x2=f.x,y2=f.y+dy*len;
   ctx.strokeStyle=col;ctx.lineWidth=3;ctx.fillStyle=col;
-  ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(ex,ey);ctx.stroke();
-  // Arrowhead
-  const ah=12,aw=7;
-  const ang=Math.atan2(ey-f.y,ex-f.x);
-  ctx.beginPath();
-  ctx.moveTo(ex,ey);
-  ctx.lineTo(ex-ah*Math.cos(ang-0.4),ey-ah*Math.sin(ang-0.4));
-  ctx.lineTo(ex-ah*Math.cos(ang+0.4),ey-ah*Math.sin(ang+0.4));
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  const ah=13;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-ah*Math.cos(ang-0.4),y2-ah*Math.sin(ang-0.4));
+  ctx.lineTo(x2-ah*Math.cos(ang+0.4),y2-ah*Math.sin(ang+0.4));
   ctx.closePath();ctx.fill();
-  // Label
+  const lbl={W:'W⃗',N:'N⃗',Fbt:'F⃗(b→t)'}[f.t];
   ctx.font='bold 11px JetBrains Mono';ctx.textAlign='center';
-  ctx.fillText({W:'W',N:'N',Fbt:'F(b→t)'}[f.tool],ex+14*Math.cos(ang+Math.PI/2),ey+14*Math.sin(ang+Math.PI/2));
+  const mx=x2+16*Math.cos(ang+Math.PI/2);
+  const my=y2+16*Math.sin(ang+Math.PI/2);
+  ctx.fillText(lbl,mx,my);
 }
-
-function getCanvasPoint(cv,e){
-  const r=cv.getBoundingClientRect();
-  const ratio=cv.width/r.width;
-  if(e.touches){return{x:(e.touches[0].clientX-r.left)*ratio,y:(e.touches[0].clientY-r.top)*ratio};}
-  return{x:(e.clientX-r.left)*ratio,y:(e.clientY-r.top)*ratio};
-}
-
-const pc=document.getElementById('painterCanvas');
-function painterTap(e){
-  e.preventDefault();
-  const pt=getCanvasPoint(pc,e);
-  const {x,y}=pt;
-  // Tool W: must originate near centre of book (G)
-  const gx=BOOK.x+BOOK.w/2,gy=BOOK.y+BOOK.h/2;
-  // Tool N: must originate near bottom of book
-  const bContactY=BOOK.y+BOOK.h;
-  // Tool Fbt: must originate near top of table
-  const tableTopY=TABLE.y;
-
-  const snapDist=40;
-  let placed={tool:currentTool,x,y,valid:false,hint:''};
-
-  if(currentTool==='W'){
-    const dist=Math.sqrt((x-gx)**2+(y-gy)**2);
-    if(dist<snapDist){placed.x=gx;placed.y=gy;placed.valid=true;}
-    else placed.hint='W must originate from G (centre of book). Tap the gold dot.';
-  } else if(currentTool==='N'){
-    const dx=Math.abs(x-(BOOK.x+BOOK.w/2));
-    const dy=Math.abs(y-bContactY);
-    if(dx<BOOK.w/2+10&&dy<snapDist){placed.x=BOOK.x+BOOK.w/2;placed.y=bContactY;placed.valid=true;}
-    else placed.hint='N must originate from the contact surface (bottom edge of book). Tap the dashed line.';
-  } else if(currentTool==='Fbt'){
-    const dx=Math.abs(x-(TABLE.x+TABLE.w/2));
-    const dy=Math.abs(y-tableTopY);
-    if(dx<TABLE.w/2+10&&dy<snapDist){placed.x=TABLE.x+TABLE.w/2;placed.y=tableTopY;placed.valid=true;}
-    else placed.hint='F(book→table) acts ON the table. Tap near the top surface of the table.';
-  }
-
-  // Remove previous of same tool
-  const idx=placedForces.findIndex(f=>f.tool===currentTool);
-  if(idx>=0)placedForces.splice(idx,1);
-
-  if(placed.valid){
-    placedForces.push(placed);
-    document.getElementById('painterMsg').textContent=`✓ ${currentTool} placed correctly — place the next force`;
-  } else {
-    document.getElementById('painterMsg').textContent=`⚠ ${placed.hint}`;
-  }
-  drawPainter();
-}
-pc.addEventListener('click',painterTap);
-pc.addEventListener('touchend',painterTap,{passive:false});
 
 function checkPainter(){
-  const has=t=>placedForces.some(f=>f.tool===t&&f.valid);
-  const all=has('W')&&has('N')&&has('Fbt');
-  const res=document.getElementById('painterResult');res.style.display='block';
-  if(all){
-    res.innerHTML=`<div style="background:var(--greenL);border-left:4px solid var(--green);color:var(--green);padding:12px 16px;border-radius:3px;font-size:.86rem;line-height:1.8;">
-      <strong>✓ All forces correctly placed!</strong><br>
-      • W ↓ from G (centre of book) — gravity, acts on book → part of equilibrium pair on book<br>
-      • N ↑ from bottom contact — normal, acts on book → equilibrium pair with W<br>
-      • F(book→table) ↓ from table top — acts on TABLE → interaction partner of N
-    </div>`;
+  const ok=forces.filter(f=>f&&f.valid).length;
+  const res=document.getElementById('pResult');res.style.display='block';
+  if(ok===3){
+    res.innerHTML='<div class="fb ok" style="display:block;">✓ All three forces correctly placed!<br>• W⃗ ↓ from G — weight on book (equilibrium pair with N⃗)<br>• N⃗ ↑ from contact — normal on book (equilibrium pair with W⃗)<br>• F⃗(book→table) ↓ from table top — acts on TABLE (interaction partner of N⃗)</div>';
     correct.painter=true;
   } else {
     const missing=[];
-    if(!has('W'))missing.push('W (from centre of book G)');
-    if(!has('N'))missing.push('N (from bottom contact surface)');
-    if(!has('Fbt'))missing.push('F(book→table) on table surface');
-    res.innerHTML=`<div style="background:var(--redL);border-left:4px solid var(--red);color:var(--red);padding:12px 16px;border-radius:3px;font-size:.86rem;">
-      Missing or incorrectly placed: <strong>${missing.join(' · ')}</strong><br>Tap the correct origin points. Hints appear below the canvas.
-    </div>`;
+    if(!forces[0]?.valid)missing.push('W⃗ from centre G');
+    if(!forces[1]?.valid)missing.push('N⃗ from bottom contact');
+    if(!forces[2]?.valid)missing.push('F⃗(book→table) on table');
+    res.innerHTML=`<div class="fb err" style="display:block;">Missing: <strong>${missing.join(' · ')}</strong><br>Tap the dashed circles at the correct origin points.</div>`;
   }
   updateProg();
 }
-drawPainter();
 
-// ══════════════════════════════════════════════════════════════
-// ACTIVITY 2 — SORTING ARENA
-// ══════════════════════════════════════════════════════════════
+const cvP=document.getElementById('cvPainter');
+cvP.addEventListener('click',painterTap);
+cvP.addEventListener('touchend',e=>{painterTap(e);},{passive:false});
+
+// ── ARENA ────────────────────────────────────────────────────
 const SCENARIOS=[
-  {id:'s1',text:'Weight W ↓ and Normal N ↑ both on the book',correct:'eq',short:'W & N on book'},
-  {id:'s2',text:'F(Earth→ball) ↓ and F(ball→Earth) ↑ on two different bodies',correct:'int',short:'Earth-ball gravity pair'},
-  {id:'s3',text:'Tension T ↑ and Weight W ↓ both on a hanging lamp',correct:'eq',short:'T & W on lamp'},
-  {id:'s4',text:'F(man→wall) → and F(wall→man) ← on man and wall respectively',correct:'int',short:'Man pushing wall'},
-  {id:'s5',text:'Buoyancy F_b ↑ and Weight W ↓ both on a floating ball',correct:'eq',short:'F_b & W on ball'},
-  {id:'s6',text:'F(table→book) ↑ acting on book · F(book→table) ↓ acting on table',correct:'int',short:'Book-table contact pair'},
-  {id:'s7',text:'Spring force T ↑ and Weight W ↓ both on suspended body',correct:'eq',short:'Spring T & W on body'},
-  {id:'s8',text:'F(magnet→nail) ↑ acting on nail · F(nail→magnet) ↓ acting on magnet',correct:'int',short:'Magnet-nail interaction'},
+  {id:'s1',text:'W⃗ ↓ and N⃗ ↑ both act on the book',correct:'eq'},
+  {id:'s2',text:'F⃗(Earth→ball) ↓ and F⃗(ball→Earth) ↑ on different bodies',correct:'int'},
+  {id:'s3',text:'T⃗ ↑ and W⃗ ↓ both act on a hanging lamp',correct:'eq'},
+  {id:'s4',text:'F⃗(man→wall) and F⃗(wall→man) on man & wall',correct:'int'},
+  {id:'s5',text:'F⃗ᵦ ↑ and W⃗ ↓ both act on a floating ball',correct:'eq'},
+  {id:'s6',text:'F⃗(table→book) ↑ on book ↔ F⃗(book→table) ↓ on table',correct:'int'},
+  {id:'s7',text:'F⃗ₛ ↑ and W⃗ ↓ both act on suspended body',correct:'eq'},
+  {id:'s8',text:'F⃗(magnet→nail) ↑ on nail ↔ F⃗(nail→magnet) ↓ on magnet',correct:'int'},
 ];
-
-let arenaPlaced={};
-let mobileSel=null;
+let placed={};
+let mSel=null;// mobile selected card id
 
 function buildArena(){
-  const deck=document.getElementById('arenaDeck');
-  deck.innerHTML='<div class="arena-deck-label">Scenarios — drag each to the correct zone ↓</div>';
-  arenaPlaced={};
-  document.getElementById('eqCards').innerHTML='';
-  document.getElementById('intCards').innerHTML='';
+  placed={};mSel=null;
+  document.getElementById('deck').innerHTML='<div class="deck-lbl">Tap a card then tap a zone to sort</div>';
+  document.getElementById('cEq').innerHTML='';
+  document.getElementById('cInt').innerHTML='';
   document.getElementById('arenaScore').textContent='';
   document.getElementById('fbArena').style.display='none';
   correct.arena=false;updateProg();
-
-  [...SCENARIOS].sort(()=>Math.random()-.5).forEach(sc=>{
-    const card=makeCard(sc);
-    deck.appendChild(card);
-  });
+  [...SCENARIOS].sort(()=>Math.random()-.5).forEach(sc=>document.getElementById('deck').appendChild(makeCard(sc)));
 }
 
 function makeCard(sc){
-  const card=document.createElement('div');
-  card.className='scenario-card';
-  card.id='card_'+sc.id;
-  card.setAttribute('draggable',true);
-  card.textContent=sc.text;
-  card.dataset.id=sc.id;
-  card.dataset.correct=sc.correct;
-
-  // Desktop drag
-  card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',sc.id);card.style.opacity='0.5';});
-  card.addEventListener('dragend',()=>card.style.opacity='1');
-
-  // Mobile tap-to-select then tap zone
-  card.addEventListener('click',()=>{
-    if(card.classList.contains('placed-eq')||card.classList.contains('placed-int')){
-      // return to deck
-      returnToDeck(sc.id);return;
-    }
-    document.querySelectorAll('.scenario-card').forEach(c=>c.style.outline='none');
-    mobileSel=sc.id;
-    card.style.outline='3px solid var(--ink)';
-    toast('Now tap a zone to place this card');
-  });
-  return card;
+  const d=document.createElement('div');
+  d.className='sc-card';d.id='c_'+sc.id;d.dataset.id=sc.id;
+  d.innerHTML=sc.text;
+  d.setAttribute('draggable','true');
+  d.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',sc.id);d.style.opacity='.45';});
+  d.addEventListener('dragend',()=>{d.style.opacity='1';});
+  d.addEventListener('click',e=>{e.stopPropagation();tapCard(sc.id);});
+  d.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();tapCard(sc.id);},{passive:false});
+  return d;
 }
 
-function dropCard(e,zone){
-  e.preventDefault();
-  const id=e.dataTransfer.getData('text');
-  if(id)placeCard(id,zone);
+function tapCard(id){
+  // If already placed → return to deck
+  const card=document.getElementById('c_'+id);
+  if(!card)return;
+  if(placed[id]){
+    returnToDeck(id);return;
+  }
+  // Select / deselect
+  if(mSel===id){
+    mSel=null;
+    document.querySelectorAll('.sc-card').forEach(c=>c.style.outline='none');
+    document.getElementById('pMsg')&&(document.getElementById('pMsg').textContent='');
+    toast('Card deselected');
+    return;
+  }
+  mSel=id;
+  document.querySelectorAll('.sc-card').forEach(c=>c.style.outline='none');
+  card.style.outline='3px solid var(--ink)';
+  toast('Now tap a zone below ↓');
 }
 
-function returnToDeck(id){
-  const sc=SCENARIOS.find(s=>s.id===id);
-  const old=document.getElementById('card_'+id);
-  if(old)old.remove();
-  delete arenaPlaced[id];
-  const card=makeCard(sc);
-  document.getElementById('arenaDeck').appendChild(card);
+function tapZone(zone){
+  if(!mSel)return;
+  placeCard(mSel,zone);
+  mSel=null;
+  document.querySelectorAll('.sc-card').forEach(c=>c.style.outline='none');
 }
 
 function placeCard(id,zone){
   const sc=SCENARIOS.find(s=>s.id===id);
-  if(!sc)return;
-  // Remove from wherever it is
-  const old=document.getElementById('card_'+id);if(old)old.remove();
-  arenaPlaced[id]=zone;
+  const old=document.getElementById('c_'+id);if(old)old.remove();
+  placed[id]=zone;
   const card=makeCard(sc);
-  card.classList.add(zone==='eq'?'placed-eq':'placed-int');
-  card.textContent=sc.short;// shorter text when placed
-  document.getElementById(zone==='eq'?'eqCards':'intCards').appendChild(card);
-  mobileSel=null;
-  document.querySelectorAll('.scenario-card').forEach(c=>c.style.outline='none');
+  card.textContent=sc.text.length>50?sc.text.slice(0,48)+'…':sc.text;
+  card.classList.add(zone==='eq'?'in-eq':'in-int');
+  document.getElementById(zone==='eq'?'cEq':'cInt').appendChild(card);
 }
 
-// Tap zones for mobile
-['eqZone','intZone'].forEach(zid=>{
-  const zone=zid.startsWith('eq')?'eq':'int';
-  document.getElementById(zid).addEventListener('click',e=>{
-    if(mobileSel&&e.target===document.getElementById(zid)||e.target.classList.contains('zone-cards')||e.target.classList.contains('zone-label')||e.target.classList.contains('zone-formula')){
-      if(mobileSel){placeCard(mobileSel,zone);}
-    }
+function returnToDeck(id){
+  const sc=SCENARIOS.find(s=>s.id===id);
+  const old=document.getElementById('c_'+id);if(old)old.remove();
+  delete placed[id];
+  document.getElementById('deck').appendChild(makeCard(sc));
+}
+
+// Desktop drag-drop
+['zEq','zInt'].forEach(zid=>{
+  const el=document.getElementById(zid);
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('hover');});
+  el.addEventListener('dragleave',()=>el.classList.remove('hover'));
+  el.addEventListener('drop',e=>{
+    e.preventDefault();el.classList.remove('hover');
+    const id=e.dataTransfer.getData('text');
+    if(id)placeCard(id,zid==='zEq'?'eq':'int');
   });
 });
 
-// Drop events for desktop
-document.getElementById('eqZone').addEventListener('dragover',e=>{e.preventDefault();document.getElementById('eqZone').classList.add('drag-over');});
-document.getElementById('intZone').addEventListener('dragover',e=>{e.preventDefault();document.getElementById('intZone').classList.add('drag-over');});
-document.getElementById('eqZone').addEventListener('dragleave',()=>document.getElementById('eqZone').classList.remove('drag-over'));
-document.getElementById('intZone').addEventListener('dragleave',()=>document.getElementById('intZone').classList.remove('drag-over'));
-document.getElementById('eqZone').addEventListener('drop',e=>{document.getElementById('eqZone').classList.remove('drag-over');dropCard(e,'eq');});
-document.getElementById('intZone').addEventListener('drop',e=>{document.getElementById('intZone').classList.remove('drag-over');dropCard(e,'int');});
-
 function checkArena(){
   const total=SCENARIOS.length;
-  const placed=Object.keys(arenaPlaced).length;
-  const fb=document.getElementById('fbArena');
-  if(placed<total){fb.className='fb info';fb.style.display='block';fb.textContent=`Place all ${total} cards first — ${total-placed} remaining in the deck.`;return;}
-
-  let score=0;const errors=[];
-  SCENARIOS.forEach(sc=>{
-    const card=document.getElementById('card_'+sc.id);
-    if(arenaPlaced[sc.id]===sc.correct){score++;card?.classList.add('correct');}
-    else{card?.classList.add('wrong-card');errors.push(sc.short);}
-  });
-
-  document.getElementById('arenaScore').textContent=`Score: ${score} / ${total}`;
-  if(score===total){
-    fb.className='fb ok';fb.textContent='✓ Perfect sort! You correctly distinguished all equilibrium and interaction pairs. The key: equilibrium pairs → same body. Interaction pairs → different bodies, always coexist.';
-    correct.arena=true;
-  } else {
-    fb.className='fb bad';fb.textContent=`${score}/${total} correct. Incorrectly sorted: ${errors.join(' · ')}. Remember: if both forces act on ONE body → equilibrium. If forces act on DIFFERENT bodies → interaction.`;
+  if(Object.keys(placed).length<total){
+    showFb('fbArena','inf','Place all '+total+' cards first — '+(total-Object.keys(placed).length)+' remaining.');return;
   }
-  fb.style.display='block';
+  let score=0;
+  SCENARIOS.forEach(sc=>{
+    const card=document.getElementById('c_'+sc.id);
+    if(placed[sc.id]===sc.correct){score++;card?.classList.add('got-ok');}
+    else{card?.classList.add('got-err');}
+  });
+  document.getElementById('arenaScore').textContent='Score: '+score+' / '+total;
+  if(score===total){showFb('fbArena','ok','✓ Perfect! All 8 pairs correctly sorted. Equilibrium = same body. Interaction = different bodies, always together.');correct.arena=true;}
+  else showFb('fbArena','err',score+'/'+total+' correct. Remember: same body → equilibrium. Different bodies → interaction.');
   updateProg();
 }
 
-function resetArena(){buildArena();}
-buildArena();
+// ── BODY SEPARATOR ──────────────────────────────────────────
+let sepV=0;
 
-// ══════════════════════════════════════════════════════════════
-// ACTIVITY 3 — BODY SEPARATOR
-// ══════════════════════════════════════════════════════════════
-let sepVal=0;
-
-function updateSeparator(v){
-  sepVal=parseInt(v);
-  drawSeparator();
+function moveSep(v){
+  sepV=parseInt(v);
+  drawSep();
   const info=document.getElementById('sepInfo');
-  if(sepVal<15)info.innerHTML='Drag the slider right to begin separating the two bodies.';
-  else if(sepVal<50)info.innerHTML='<span style="color:var(--eq);font-weight:700;">Separating...</span> The bodies are pulling apart. Watch where each force stays.';
-  else if(sepVal<85)info.innerHTML=`
-    <strong style="color:var(--eq);">On the BALL:</strong> Weight W ↓ (from Earth) and F(table→ball) ↑ (from table) — both on ball → <strong>Equilibrium pair</strong><br>
-    <strong style="color:var(--int);">Interaction pair:</strong> F(table→ball) ↑ [on ball] ↔ F(ball→table) ↓ [on table]`;
+  if(sepV<15) info.textContent='Drag the slider right to separate the two bodies.';
+  else if(sepV<50) info.innerHTML='Separating… Watch where each force stays on each body.';
+  else if(sepV<80) info.innerHTML=`
+    <strong style="color:var(--eq);">On the BALL:</strong> W⃗ ↓ (Earth on ball) and F⃗(table→ball) ↑ (table on ball) — both on ball → <strong>equilibrium pair</strong><br>
+    <strong style="color:var(--int);">Interaction:</strong> F⃗(table→ball) ↑ [on ball] ↔ F⃗(ball→table) ↓ [on table] — different bodies → <strong>interaction pair</strong>`;
   else info.innerHTML=`
-    Bodies fully separated. Each body's force diagram is now clear:<br>
-    <strong style="color:var(--eq);">Ball:</strong> W ↓ and F(table→ball) ↑ → equilibrium pair (both on ball) → ball stays at rest<br>
-    <strong style="color:var(--int);">Interaction partners:</strong> F(table→ball) ↑ ↔ F(ball→table) ↓ — on different bodies → interaction pair<br>
-    <strong style="color:var(--int);">Table:</strong> F(ball→table) ↓ and support forces from floor maintain table equilibrium separately`;
-  correct.separator=sepVal>70;updateProg();
+    Fully separated. Each body has its own free-body diagram:<br>
+    <strong style="color:var(--eq);">Ball:</strong> W⃗ ↓ + F⃗(table→ball) ↑ → equilibrium pair → ball at rest<br>
+    <strong style="color:var(--int);">Interaction pair:</strong> F⃗(table→ball) ↑ ↔ F⃗(ball→table) ↓ — on different bodies<br>
+    <strong style="color:var(--eq);">Table:</strong> has its own equilibrium (weight + floor support) — separate system`;
+  correct.separator=sepV>72;
+  updateProg();
 }
 
-function drawSeparator(){
-  const cv=document.getElementById('separatorCanvas');
-  cv.width=cv.offsetWidth||700;const W=cv.width,H=320;
+function drawSep(){
+  const cv=document.getElementById('cvSep');
+  cv.width=cv.offsetWidth||700;const W=cv.width,H=280;
   const ctx=cv.getContext('2d');
-  ctx.fillStyle='#f7f4ee';ctx.fillRect(0,0,W,H);
-
-  // Dot grid
+  ctx.fillStyle='#faf7f1';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='rgba(0,0,0,.06)';
   for(let x=20;x<W;x+=30)for(let y=20;y<H;y+=30){ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fill();}
 
-  const sep=sepVal/100;// 0=together, 1=separated
+  const sep=sepV/100;
   const cx=W/2;
+  const tableX=cx-100+sep*70,tableY=H-68,tableW=200,tableH=24;
+  const ballR=34,ballX=cx-sep*70,ballY=tableY-ballR-(sep*65);
 
-  // Table position — moves right as separated
-  const tableX=cx-100+sep*80;
-  const tableY=H-70;
-  const tableW=200,tableH=25;
-
-  // Ball position — moves left and up as separated
-  const ballR=34;
-  const ballX=cx-sep*80;
-  const ballY=tableY-ballR-(sep*70);
-
-  // Draw table
+  // table
   ctx.fillStyle='#8b7355';ctx.fillRect(tableX-tableW/2,tableY,tableW,tableH);
-  ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='bold 11px JetBrains Mono';ctx.textAlign='center';
+  ctx.fillStyle='#6b5335';ctx.fillRect(tableX-tableW/2,tableY+tableH,tableW,9);
+  ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('TABLE',tableX,tableY+tableH/2+4);
 
-  // Draw ball
-  ctx.fillStyle='#2d5a8e';ctx.beginPath();ctx.arc(ballX,ballY,ballR,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';
+  // ball
+  ctx.fillStyle='#3a6090';ctx.beginPath();ctx.arc(ballX,ballY,ballR,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='bold 9px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('BALL',ballX,ballY+4);
 
-  // Contact line (fades as separated)
-  if(sep<0.3){
-    ctx.strokeStyle=`rgba(0,0,0,${0.3-sep})`;ctx.lineWidth=1;ctx.setLineDash([3,3]);
-    ctx.beginPath();ctx.moveTo(ballX-ballR,ballY+ballR);ctx.lineTo(ballX+ballR,ballY+ballR);ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  // ── FORCES ──────────────────────────────────────────────────
-  const arrowLen=60;
-
-  // Weight W on ball — always present
-  const wAlpha=1;
-  drawSepArrow(ctx,ballX,ballY,ballX,ballY+arrowLen,'#8f1a3a',wAlpha,'W ↓',1);
-
-  // F(table→ball) on ball — present but fades slightly when very separated
-  const nAlpha=sep>0.3?1:1;
-  const nX=ballX,nY=ballY-ballR;
-  drawSepArrow(ctx,nX,nY+arrowLen*0.3,nX,nY-arrowLen*0.7,'#1a5c8f',nAlpha,'F(table→ball) ↑',1);
-
-  // F(ball→table) on table — appears as separated
-  if(sep>0.1){
-    const fbtAlpha=Math.min(1,(sep-0.1)/0.4);
-    const fbtX=tableX,fbtY=tableY;
-    drawSepArrow(ctx,fbtX,fbtY-arrowLen*0.5,fbtX,fbtY+arrowLen*0.5,'#8f6b1a',fbtAlpha,'F(ball→table) ↓',1);
-  }
-
-  // Separation line between bodies
-  if(sep>0.2){
-    const lineX=(ballX+tableX)/2;
-    ctx.strokeStyle=`rgba(0,0,0,${Math.min(0.3,sep*0.4)})`;ctx.lineWidth=1;ctx.setLineDash([5,4]);
-    ctx.beginPath();ctx.moveTo(lineX,20);ctx.lineTo(lineX,H-20);ctx.stroke();ctx.setLineDash([]);
-
-    // Labels for separated zones
+  // separator line
+  if(sep>0.18){
+    const lx=(ballX+tableX)/2;
+    ctx.strokeStyle=`rgba(0,0,0,${Math.min(0.25,sep*0.35)})`;ctx.lineWidth=1;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(lx,18);ctx.lineTo(lx,H-18);ctx.stroke();ctx.setLineDash([]);
     if(sep>0.5){
-      ctx.fillStyle='rgba(26,92,143,.6)';ctx.font='9px JetBrains Mono';ctx.textAlign='center';
-      ctx.fillText('BALL SYSTEM',ballX,H-8);
-      ctx.fillStyle='rgba(143,107,26,.6)';
-      ctx.fillText('TABLE SYSTEM',tableX,H-8);
+      ctx.font='8px JetBrains Mono';ctx.fillStyle='rgba(26,92,143,.5)';ctx.textAlign='center';
+      ctx.fillText('BALL SYSTEM',ballX,H-6);
+      ctx.fillStyle='rgba(143,107,26,.5)';
+      ctx.fillText('TABLE SYSTEM',tableX,H-6);
     }
+  }
+
+  // Forces
+  const arLen=55;
+  // W on ball (always)
+  sepArrow(ctx,ballX,ballY+5,ballX,ballY+5+arLen,'#8f1a3a',1,'W⃗ ↓');
+  // N on ball (always)
+  sepArrow(ctx,ballX,ballY-ballR+5,ballX,ballY-ballR-arLen+5,'#1a5c8f',1,'N⃗ ↑');
+  // F(ball→table) on TABLE — appears when separated
+  if(sep>0.12){
+    const alpha=Math.min(1,(sep-0.12)/0.3);
+    sepArrow(ctx,tableX,tableY+2,tableX,tableY+2+arLen*0.8,'#8f1a3a',alpha,'F⃗(b→t) ↓');
   }
 }
 
-function drawSepArrow(ctx,x1,y1,x2,y2,col,alpha,label,lw){
+function sepArrow(ctx,x1,y1,x2,y2,col,alpha,lbl){
   ctx.globalAlpha=alpha;
-  ctx.strokeStyle=col;ctx.lineWidth=lw+1.5;ctx.fillStyle=col;
+  ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.fillStyle=col;
   ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-  const ang=Math.atan2(y2-y1,x2-x1);
-  const ah=11,aw=6;
+  const ang=Math.atan2(y2-y1,x2-x1),ah=11;
   ctx.beginPath();ctx.moveTo(x2,y2);
   ctx.lineTo(x2-ah*Math.cos(ang-0.4),y2-ah*Math.sin(ang-0.4));
   ctx.lineTo(x2-ah*Math.cos(ang+0.4),y2-ah*Math.sin(ang+0.4));
   ctx.closePath();ctx.fill();
   ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';
-  ctx.fillText(label,x2+18*Math.cos(ang+Math.PI/2),y2+18*Math.sin(ang+Math.PI/2));
+  ctx.fillText(lbl,x2+18*Math.cos(ang+Math.PI/2),y2+18*Math.sin(ang+Math.PI/2));
   ctx.globalAlpha=1;
 }
-drawSeparator();
-window.addEventListener('resize',()=>{drawPainter();drawSeparator();drawVerdictCanvas();});
 
-// ══════════════════════════════════════════════════════════════
-// ACTIVITY 4 — VERDICT CHAMBER
-// ══════════════════════════════════════════════════════════════
-let verdictStage=1;
-let verdictPoints=0;
-let identifiedForces={};
-const FORCE_LABELS={
-  ft1:{label:'Weight of magnet ↓',body:'magnet'},
-  ft2:{label:'Tension in string ↑',body:'magnet'},
-  ft3:{label:'Magnetic pull on ball ↑',body:'ball'},
-  ft4:{label:'Weight of ball ↓',body:'ball'},
-  ft5:{label:'Normal from floor ↑',body:'ball'},
+// ── VERDICT CHAMBER ─────────────────────────────────────────
+let vStage=1,vPts=0;
+const ftState={};// 1-5 → true=identified
+
+const FORCE_INFO={
+  1:{label:'W⃗(magnet) ↓',body:'magnet',cls:'on-eq'},
+  2:{label:'T⃗(string→magnet) ↑',body:'magnet',cls:'on-eq'},
+  3:{label:'F⃗ₘₐg(magnet→ball) ↑',body:'ball',cls:'on-int'},
+  4:{label:'W⃗(ball) ↓',body:'ball',cls:'on-eq'},
+  5:{label:'N⃗(floor→ball) ↑',body:'ball',cls:'on-eq'},
 };
 
 const PAIRS=[
-  {id:'p1',a:'Weight of magnet ↓',b:'Tension in string ↑',correct:'eq',explanation:'Both act on the MAGNET → equilibrium pair'},
-  {id:'p2',a:'Weight of ball ↓',b:'Normal from floor ↑',correct:'eq',explanation:'Both act on the BALL → equilibrium pair'},
-  {id:'p3',a:'Tension in string ↑ on magnet',b:'Force magnet pulls string ↓',correct:'int',explanation:'String tension on magnet ↔ magnet pull on string — different bodies → interaction pair'},
-  {id:'p4',a:'Magnetic pull on ball ↑',b:'Ball pull on magnet ↓',correct:'int',explanation:'Magnetic force on ball ↔ magnetic force on magnet — different bodies → interaction pair'},
+  {id:'p1',a:'W⃗(magnet) ↓',b:'T⃗(string→magnet) ↑',correct:'eq',note:'Both on magnet → equilibrium'},
+  {id:'p2',a:'W⃗(ball) ↓',b:'N⃗(floor→ball) ↑',correct:'eq',note:'Both on ball → equilibrium'},
+  {id:'p3',a:'T⃗ on magnet ↑',b:'F⃗(magnet pulls string) ↓ on string',correct:'int',note:'Magnet & string → interaction'},
+  {id:'p4',a:'F⃗ₘₐg on ball ↑',b:'F⃗(ball→magnet) ↓ on magnet',correct:'int',note:'Ball & magnet → interaction'},
 ];
-let pairSelections={};
-let selectedPair=null;
+const pairSel={};
+let selPair=null;
 
-function identifyForce(id,label,type,bodyNote){
-  const el=document.getElementById(id);
-  if(el.classList.contains('identified')){
-    el.classList.remove('identified','eq-f','int-f');
-    el.textContent='⬜ '+label;
-    delete identifiedForces[id];
+function idForce(n){
+  const el=document.getElementById('ft'+n);
+  const info=FORCE_INFO[n];
+  if(ftState[n]){
+    delete ftState[n];
+    el.classList.remove('on-eq','on-int');
+    el.textContent=info.label;
   } else {
-    el.classList.add('identified',type);
-    el.textContent='✓ '+label+' — '+bodyNote;
-    identifiedForces[id]=true;
+    ftState[n]=true;
+    el.classList.add(info.cls);
+    el.textContent='✓ '+info.label+' — on '+info.body;
   }
-  const count=Object.keys(identifiedForces).length;
-  document.getElementById('s1Progress').textContent=count+' / 5 forces identified';
-  document.getElementById('s1Btn').disabled=count<5;
+  const cnt=Object.keys(ftState).length;
+  document.getElementById('s1prog').textContent=cnt+' / 5 identified';
+  document.getElementById('s1btn').disabled=cnt<5;
   drawVerdictCanvas();
 }
 
 function drawVerdictCanvas(){
-  const cv=document.getElementById('verdictCanvas');if(!cv)return;
-  cv.width=cv.offsetWidth||600;const W=cv.width,H=180;
+  const cv=document.getElementById('cvVerdict');if(!cv)return;
+  cv.width=cv.offsetWidth||600;const W=cv.width,H=170;
   const ctx=cv.getContext('2d');
   ctx.fillStyle='#f7f4ee';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='rgba(0,0,0,.06)';
-  for(let x=20;x<W;x+=28)for(let y=15;y<H;y+=28){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();}
-
-  // Ceiling
-  ctx.fillStyle='#8b7355';ctx.fillRect(0,0,W,18);
-  ctx.fillStyle='#6b5335';ctx.fillRect(0,16,W,4);
-
-  // String
-  const strX=W/3,strY1=20,strY2=70;
-  ctx.strokeStyle='#555';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(strX,strY1);ctx.lineTo(strX,strY2);ctx.stroke();
-
-  // Magnet
-  ctx.fillStyle='#8f1a3a';ctx.fillRect(strX-25,strY2,50,35);
-  ctx.fillStyle='#c8a96a';ctx.fillRect(strX-25,strY2,22,35);
-  ctx.fillStyle='#fff';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='center';
-  ctx.fillText('MAGNET',strX,strY2+21);
-
-  // Magnetic field lines
-  ctx.strokeStyle='rgba(143,26,58,.25)';ctx.lineWidth=1;ctx.setLineDash([2,3]);
-  for(let i=-2;i<=2;i++){
-    ctx.beginPath();ctx.moveTo(strX+i*10,strY2+35);ctx.lineTo(strX+i*8,H-35);ctx.stroke();
-  }
+  ctx.fillStyle='rgba(0,0,0,.05)';
+  for(let x=18;x<W;x+=26)for(let y=14;y<H;y+=26){ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();}
+  // ceiling
+  ctx.fillStyle='#8b7355';ctx.fillRect(0,0,W,16);
+  // string
+  const sx=W/3,sy1=16,sy2=64;
+  ctx.strokeStyle='#555';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx,sy1);ctx.lineTo(sx,sy2);ctx.stroke();
+  // magnet
+  ctx.fillStyle='#8f1a3a';ctx.fillRect(sx-26,sy2,52,34);
+  ctx.fillStyle='#c8a96a';ctx.fillRect(sx-26,sy2,22,34);
+  ctx.fillStyle='#fff';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='center';ctx.fillText('MAGNET',sx,sy2+21);
+  // mag field lines
+  ctx.strokeStyle='rgba(143,26,58,.2)';ctx.lineWidth=1;ctx.setLineDash([2,3]);
+  for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(sx+i*10,sy2+34);ctx.lineTo(sx+i*8,H-34);ctx.stroke();}
   ctx.setLineDash([]);
-
-  // Floor
-  ctx.fillStyle='#8b7355';ctx.fillRect(0,H-18,W,18);
-
-  // Steel ball
-  const bx=strX,by=H-18-22;
+  // floor
+  ctx.fillStyle='#8b7355';ctx.fillRect(0,H-16,W,16);
+  // ball
+  const bx=sx,by=H-16-22;
   ctx.fillStyle='#5a7080';ctx.beginPath();ctx.arc(bx,by,22,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='center';
-  ctx.fillText('STEEL BALL',bx,by+3);
-
-  // Force indicators if identified
-  const ident=Object.keys(identifiedForces);
-  if(ident.includes('ft1')){
-    drawSepArrow(ctx,strX,strY2+17,strX,strY2+17+40,'#8f1a3a',1,'W_mag',1);
-  }
-  if(ident.includes('ft2')){
-    drawSepArrow(ctx,strX,strY2,strX,strY2-35,'#1a5c8f',1,'T',1);
-  }
-  if(ident.includes('ft3')){
-    drawSepArrow(ctx,bx,by-5,bx,by-50,'#8f6b1a',1,'F_mag↑',1);
-  }
-  if(ident.includes('ft4')){
-    drawSepArrow(ctx,bx,by+10,bx,by+10+40,'#8f1a3a',1,'W_ball',1);
-  }
-  if(ident.includes('ft5')){
-    drawSepArrow(ctx,bx,by+22,bx,by+22-35,'#1a5c8f',1,'N',1);
-  }
-
-  // Labels
-  ctx.fillStyle='rgba(0,0,0,.4)';ctx.font='9px JetBrains Mono';ctx.textAlign='right';
-  ctx.fillText('Tap forces below to identify →',W-10,H/2);
+  ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='bold 8px JetBrains Mono';ctx.textAlign='center';ctx.fillText('BALL',bx,by+3);
+  // identified forces
+  if(ftState[1])sepArrow(ctx,sx,sy2+17,sx,sy2+17+38,'#8f1a3a',1,'W⃗');
+  if(ftState[2])sepArrow(ctx,sx,sy2,sx,sy2-34,'#1a5c8f',1,'T⃗');
+  if(ftState[3])sepArrow(ctx,bx,by-5,bx,by-46,'#8f6b1a',1,'F⃗ₘ↑');
+  if(ftState[4])sepArrow(ctx,bx,by+8,bx,by+8+38,'#8f1a3a',1,'W⃗');
+  if(ftState[5])sepArrow(ctx,bx,by+22,bx,by+22-36,'#1a5c8f',1,'N⃗');
 }
-drawVerdictCanvas();
 
-function completeStage1(){
-  verdictPoints+=5;// 1pt per force identified
-  setStage(2);
-  // Build pairs list
-  const pl=document.getElementById('pairsList');pl.innerHTML='';
+function stage1Done(){
+  vPts+=5;updVPts();setStage(2);
+  const div=document.getElementById('pairsDiv');div.innerHTML='';
   PAIRS.forEach(p=>{
-    const div=document.createElement('div');
-    div.style.cssText='padding:10px 14px;background:var(--panel2);border:2px solid var(--border);border-radius:3px;cursor:pointer;font-size:.8rem;font-family:var(--fm);transition:all .2s;';
-    div.id='pair_'+p.id;
-    div.textContent=`${p.a}  ↔  ${p.b}`;
-    div.onclick=()=>{
-      document.querySelectorAll('[id^=pair_]').forEach(d=>d.style.borderColor='var(--border)');
-      div.style.borderColor='var(--ink)';
-      selectedPair=p.id;
-      document.getElementById('classEqBtn').disabled=false;
-      document.getElementById('classIntBtn').disabled=false;
+    const d=document.createElement('div');d.className='pair-item';d.id='pi_'+p.id;
+    d.innerHTML=p.a+' &nbsp;↔&nbsp; '+p.b;
+    d.onclick=()=>{
+      document.querySelectorAll('.pair-item').forEach(x=>x.classList.remove('sel-pair'));
+      d.classList.add('sel-pair');selPair=p.id;
+      document.getElementById('clsEqBtn').disabled=false;
+      document.getElementById('clsIntBtn').disabled=false;
     };
-    pl.appendChild(div);
+    div.appendChild(d);
   });
 }
 
-function classifySelected(type){
-  if(!selectedPair)return;
-  pairSelections[selectedPair]=type;
-  const div=document.getElementById('pair_'+selectedPair);
-  const p=PAIRS.find(x=>x.id===selectedPair);
-  div.style.borderColor=type==='eq'?'var(--eq)':'var(--int)';
-  div.style.background=type==='eq'?'var(--eqL)':'var(--intL)';
-  div.textContent=`[${type==='eq'?'⚖ EQ':'🔄 INT'}] ${p.a}  ↔  ${p.b}`;
-  const done=Object.keys(pairSelections).length;
-  document.getElementById('s2Btn').disabled=done<PAIRS.length;
+function classifyPair(type){
+  if(!selPair)return;
+  pairSel[selPair]=type;
+  const d=document.getElementById('pi_'+selPair);
+  d.classList.remove('sel-pair','cls-eq','cls-int');
+  d.classList.add(type==='eq'?'cls-eq':'cls-int');
+  const lbl=type==='eq'?'[⚖ EQ] ':'[🔄 INT] ';
+  const p=PAIRS.find(x=>x.id===selPair);
+  d.textContent=lbl+p.a+' ↔ '+p.b;
+  document.getElementById('s2btn').disabled=Object.keys(pairSel).length<PAIRS.length;
 }
 
-function completeStage2(){
-  let s2Score=0;const errors=[];
-  PAIRS.forEach(p=>{
-    if(pairSelections[p.id]===p.correct)s2Score++;
-    else errors.push(p.explanation);
-  });
-  verdictPoints+=s2Score*2;
+function stage2Done(){
+  let sc=0;const errs=[];
+  PAIRS.forEach(p=>{if(pairSel[p.id]===p.correct)sc++;else errs.push(p.note);});
+  vPts+=sc*2;updVPts();
   const fb=document.getElementById('fbs2');fb.style.display='block';
-  if(s2Score===PAIRS.length){
-    fb.className='fb ok';fb.textContent='✓ All pairs correctly classified! Proceeding to final stage.';
-    setTimeout(()=>setStage(3),800);
-  } else {
-    fb.className='fb bad';
-    fb.innerHTML='<strong>Errors:</strong><br>'+errors.map(e=>'• '+e).join('<br>');
-    fb.textContent+=' — correct these before proceeding.';
-    // Still allow proceeding
-    setTimeout(()=>setStage(3),2000);
-  }
-  updateVerdictPts();
+  if(sc===PAIRS.length){fb.className='fb ok';fb.innerHTML='✓ All pairs classified correctly!';}
+  else{fb.className='fb err';fb.innerHTML='Errors:<br>'+errs.map(e=>'• '+e).join('<br>');}
+  setTimeout(()=>setStage(3),sc===PAIRS.length?600:2200);
 }
 
 function setStage(n){
-  verdictStage=n;
+  vStage=n;
   [1,2,3].forEach(i=>{
-    const s=document.getElementById('vstage'+i);
-    const l=document.getElementById('vstageL'+i);
-    if(i<n){s.className='verdict-stage done';l.className='verdict-stage-label done-l';}
-    else if(i===n){s.className='verdict-stage active';l.className='verdict-stage-label active-l';}
-    else{s.className='verdict-stage pending';l.className='verdict-stage-label';}
-    document.getElementById('vpanel'+i).className='verdict-panel'+(i===n?' show':'');
+    const s=document.getElementById('vs'+i),l=document.getElementById('vl'+i);
+    if(i<n){s.className='vstep done';l.className='vlabel done';}
+    else if(i===n){s.className='vstep cur';l.className='vlabel cur';}
+    else{s.className='vstep pend';l.className='vlabel';}
+    document.getElementById('vp'+i).className='vpanel'+(i===n?' show':'');
   });
 }
 
-function updateVerdictPts(){
-  document.getElementById('verdictPts').textContent=verdictPoints+' / 15 pts';
-  document.getElementById('verdictPtsDisplay').textContent=verdictPoints+' / 15 pts earned';
-}
+function updVPts(){document.getElementById('vPtsDisp').textContent=vPts+' / 15 pts';document.getElementById('vPtsLine').textContent=vPts+' / 15 pts earned';}
 
 function submitVerdict(){
-  const txt=document.getElementById('verdictText').value.trim();
+  const txt=document.getElementById('vText').value.trim();
   const fb=document.getElementById('fbs3');fb.style.display='block';
-  const hasEq=/same body|same object|one body|acts on the ball|both.*ball|ball.*both/i.test(txt);
-  const hasNot=/not.*different|not.*interaction|cannot.*interaction|different.*bodies.*incorrect/i.test(txt);
-  const hasDiff=/different/i.test(txt);
-  if(txt.length<20){fb.className='fb info';fb.textContent='Write a complete sentence explaining the distinction.';return;}
-  if(hasEq){
-    verdictPoints+=3;fb.className='fb ok';
-    fb.textContent='✓ Excellent verdict! Correct — both forces act on the SAME body (the ball), making this an equilibrium pair. An interaction pair requires forces on DIFFERENT bodies.';
-    correct.verdict=true;
-  } else if(hasDiff){
-    verdictPoints+=1;fb.className='fb bad';
-    fb.textContent='Partially correct. The key phrase: both N and W act on the SAME body (the ball). Since they are on the same body and balance each other, they form an equilibrium pair — not an interaction pair.';
-    correct.verdict=true;
-  } else {
-    fb.className='fb bad';
-    fb.textContent='Incomplete. Answer must state: both forces act on the SAME body (the ball) → equilibrium pair. Interaction pair requires forces on DIFFERENT bodies.';
-  }
-  updateVerdictPts();updateProg();
+  if(txt.length<15){fb.className='fb inf';fb.textContent='Write a complete sentence.';return;}
+  const hasSameBody=/same body|same object|both.*ball|ball.*both|act.*on.*ball|one body/i.test(txt);
+  if(hasSameBody){vPts+=3;fb.className='fb ok';fb.innerHTML='✓ Correct verdict! Both forces act on the SAME body (the ball) → equilibrium pair. Interaction pairs require forces on DIFFERENT bodies.';correct.verdict=true;}
+  else{vPts+=1;fb.className='fb err';fb.innerHTML='Key phrase missing: both N⃗ and W⃗ act on the SAME body (ball) → equilibrium pair. Interaction pairs require DIFFERENT bodies.';}
+  updVPts();correct.verdict=txt.length>20;updateProg();
 }
 
-// ── PROGRESS ─────────────────────────────────────────────────────
+// ── PROGRESS ─────────────────────────────────────────────────
 function updateProg(){
-  const keys={
-    painter:'Force Painter',arena:'Sorting Arena',separator:'Body Separator',
-    verdict:'Verdict Chamber',qsep:'Separator Q',
-    q1:'Q1',q2:'Q2',q3:'Q3',q4:'Q4',q5:'Q5'
-  };
+  const keys={painter:'Force Painter',arena:'Sorting Arena',separator:'Body Separator',
+    verdict:'Verdict Chamber',qsep:'Separator Q',q1:'Q1',q2:'Q2',q3:'Q3',q4:'Q4',q5:'Q5'};
   const done=Object.keys(keys).filter(k=>correct[k]).length;
   const total=Object.keys(keys).length;
   const pct=Math.round(done/total*100);
   document.getElementById('progFill').style.width=pct+'%';
-  document.getElementById('progText').textContent=done+' / '+total+' activities completed';
-  document.getElementById('ringText').textContent=pct+'%';
-  // Update ring
-  const r=document.getElementById('ringFill');
-  const circ=226;r.style.strokeDashoffset=(circ-(circ*pct/100));
+  document.getElementById('progTxt').textContent=done+' / '+total+' activities completed';
+  document.getElementById('ringPct').textContent=pct+'%';
+  const circ=226;
+  document.getElementById('ringFill').style.strokeDashoffset=circ-(circ*pct/100);
   document.getElementById('scoreBreakdown').innerHTML=
-    Object.entries(keys).map(([k,label])=>
+    Object.entries(keys).map(([k,lbl])=>
       `<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--muted);">${label}</span>
+        <span style="color:var(--muted);">${lbl}</span>
         <span style="color:${correct[k]?'var(--green)':'var(--muted)'};">${correct[k]?'✓':'—'}</span>
       </div>`).join('');
 }
 
-// ── SUBMIT ────────────────────────────────────────────────────────
-const STUDENTS={"9A": ["أروى خالد محمود العريض", "إبراهيم فادي احمد مطر", "ابتسام محمد علي الجعجع", "احمد عمر احمد الصالح", "اماني بلال حامد ابو الهدى", "امجد علي نايف حميد", "براءة خالد محمود نوفل", "تولين ايمن محمد قدسيه", "جواد محمود غازي حسن", "جود وسام جابر الصالح", "حسن حسام علي العلي", "حمزة هشام محمد نصر", "خلود خالد اسماعيل قاسم", "دانيال محمد عادل جواد", "ريان ساري علي زيداني", "ريان عفيف علي السيد", "ريماس ايمن وليد الاشوح", "سارة موسى محمد حمود", "سامر احمد علي عبدالله", "سلفانا ابراهيم عبد السلام قصقص", "سلمان خالد ناصر عيشه", "سيلين اسامة عبد الفتاح توسكا", "سيلين عادل اسماعيل ابراهيم", "عبد الرحمن الياس محمد الحسين", "عزيزه مروان حسن حسن", "علي محمود ديب حمّاد", "كرم نادر احمد غيث", "لارا خضر علي شراب", "ليا محمد ابراهيم الحلو", "ليمار خضر عبدالله بلاوني", "لين محمود احمد احمد", "مالك احمد علي الحاج علي", "محمد ايمن وليد الاشوح", "محمود محمد مصطفى ابو مايهه", "ملك طارق محمود الاشقر", "ملك محمد حسن ابو حمد", "ميرا اياد وحيد حسن", "نغم محمد جمعة بلال", "نور ماهر مفيد العلي", "هادي باسم عبد الرؤوف الحاج داود", "ياسمين محمد شحادة ديب"], "9B": ["أية احمد محمد مكية", "إسراء خالد محمود مطر", "ادم احمد غازي الجمل", "ادم فادي كامل عبدالله", "اميره محمد احمد الهندي", "بلال زياد محمود عيسى", "جاد سمير ابراهيم العلي", "حلا محمد اكرم عجاوي", "حنان محمد جمال عبد اللطيف", "حنين غسان محمد ابو ليل", "دانيه حسين محمد حسين", "رؤى رضوان اسعد ديب", "رفيف محمد احمد ندوه", "رهف محمود محمد دراج", "رهف يوسف جمعة جمعة", "روان احمد شحادة ديب", "زهرة ابراهيم عارف ظاهر", "ساره بهاء ابراهيم العيسى", "سناء جهاد فؤاد الفقير", "عبد الرحمن وليد احمد نفاع", "عبد الهادي رضوان عيسى", "عصام مصطفى منير توسكا", "علاء علي غالب الساري", "عمار احمد عصام كروم", "عمر احمد جمال الاشبه", "عمر حسان عمر كروم", "ليا محمد خالد محمد", "لينا احمد علي علي", "محمد زياد محمد عبود", "محمود احمد محمود قدورة", "مريم محمد عبد الرحمن عبد الهادي", "مطر علي احمد مطر", "ملاك بسام احمد حشاش", "ملك يوسف شحادة ديب", "نادين سليمان صلاح نجم", "نور محمد وليد الصالح", "وسام هشام امين الطه", "يوسف نضال يوسف العيساوي"], "9C": ["آيه هاني سعود الميناوي", "أسينات طلال زياد العباسي", "إسراء مصطفى ممدوح سعد الدين", "إسلام وليد عبد المطلب بلاوني", "اروى محمد علي علي", "امينة جميل علي الغرابلي", "تالا احمد ابراهيم عطور", "جميل احمد جميل الطاهره", "حسين علاء احمد صيداوي", "حمزة ابراهيم محمود ابو جبل", "حمزه خليل محمد عثمان", "خالد احمد صبحي رمضان", "خليل ابراهيم حسين بلاوني", "راما احمد محمد خزعل", "رماس ايمن كايد خضره", "رهف بسام محمد بلاوني", "زياد طارق زياد الهبطه", "سيرين عماد احمد عبد الحليم", "ضحى محمد حسن حسن", "عائشه خالد عزات يحيى", "عبد الرحمن احمد موسى محمد", "عبد الرحمن اسماعيل سميح حمو", "عبدالرحمن جهاد عبد ابراهيم", "علي محمد عبد بشر", "عمر احمد محمد اسماعيل", "عمر عبدالله عطا ابو شليح", "فرح علي محمد ملحم", "فيروز احسان عبدالله شاهين", "قمر ابراهيم فوزي الميعاري", "لميس سعيد محمد الخطيب", "مجد فراس حسن سعيد", "محمد رامي نزيه رمضان", "محمد عبد المجيد محمد سالم", "ملاك احمد محمد احمد", "منى احسان عبدالله شاهين", "مورة عدنان محمود فوراني", "ميرا محمد خالد عبد الغني", "نبيل محمود نبيل درويش", "نورا خليل محمود المتولي", "يوسف منتصر احمد جمعة"], "9D": ["أشرف محمد حكمت غيث", "احمد حسين محمد شعيب", "ادم زياد علي وهبه", "بلال احمد عيسى أبو الشباب", "حسن عبد الوهاب حسن ابو شقير", "حسن محمد حسن الفاعور", "حلا حسن حسين الحسين", "خالد وليد محمود العريض", "رنا محمود محمد يعقوب", "رهف اسماعيل علي لوباني", "رهف سمير لطفي فهد", "روان علي عبدالله بلاوني", "رين سامر سعدو الحاج", "سحر بسام احمد القط", "سدره المنتهى احمد مختار الخالد", "سعيد محمد سعيد سعيد", "شيماء علي احمد محمد", "عائشه وسام عبد الرحمن حمو", "عمر احمد محمد عزيمه", "عمر مالك جمعة بلال", "غنى خضر فؤاد احمد", "قمر محمد خالد ابو سعد", "لمار محمد محمود حسين", "ليا شادي ابراهيم عبد الهادي", "ليال سعيد جهاد عكيله", "ليان حسن احمد ابو عرب", "لين زياد عاطف ابو الشباب", "لين هاني احمد العيسى", "ماجد بلال ماجد الخطيب", "محمد امير فتان فضه", "محمد سعيد محمود جربوع", "محمد مصطفى ابراهيم الفقير", "محمد وليد مصطفى خطاب", "مرام جمال محمد ناصر", "مريم يوسف فوزي الحاج", "ملك ربيع علي عبد الرحمن", "نور علي راجح", "هبة فؤاد علي منصور", "وليد محمد سرحان العلي", "يارا يوسف محمد حسن"]};
-function updateNameList(){
-  const cls=document.getElementById('stuSection')?document.getElementById('stuSection').value:document.getElementById('stuClass').value;
-  const sel=document.getElementById('stuName');
-  sel.innerHTML='<option value="">— اختر اسمك — Choose name —</option>';
-  if(!cls||!STUDENTS[cls]){sel.disabled=true;return;}
-  STUDENTS[cls].forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;sel.appendChild(o);});
-  sel.disabled=false;
+function showFb(id,type,msg){
+  const el=document.getElementById(id);
+  el.style.display='block';el.className='fb '+type;el.innerHTML=msg;
 }
 
-
-async function submitWork(){
+// ── SUBMIT ───────────────────────────────────────────────────
+async function doSubmit(){
   const name=document.getElementById('stuName').value.trim();
-  const cls=document.getElementById('stuSection').value.trim();
-  if(!name||!cls||name.startsWith('—')||cls.startsWith('—')){toast('اختر الشعبة واسمك — Choose section and name first!');return;}
-  const btn=document.querySelector('[onclick="submitWork()"]');
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!cls){toast('Choose your section first (9A / 9B / 9C / 9D)');return;}
+  if(!name||name.startsWith('—')){toast('Select your name from the list');return;}
+  const btn=document.querySelector('[onclick="doSubmit()"]');
   btn.disabled=true;btn.textContent='⏳ Submitting…';
   const keys=['painter','arena','separator','verdict','qsep','q1','q2','q3','q4','q5'];
   const done=keys.filter(k=>correct[k]).length;
   const payload={
     sheet:'Equilibrium_G9_P2',name,class:cls,
-    painter:correct.painter?'✓ Placed correctly':'✗ Not completed',
-    arena:correct.arena?'✓ All correct':'✗ Errors in sorting',
-    separator:correct.separator?'✓ Fully separated':'—',
-    verdict_pts:verdictPoints+'/15',
-    verdict_text:document.getElementById('verdictText').value||'—',
-    q1:answers['q1']||'—',q2:answers['q2']||'—',
-    q3:answers['q3']||'—',q4:answers['q4']||'—',q5:answers['q5']||'—',
-    q6:document.getElementById('q6text').value||'—',
+    painter:correct.painter?'✓':'✗',
+    arena:correct.arena?'✓':'✗',
+    separator:correct.separator?'✓':'✗',
+    verdict_pts:vPts+'/15',
+    verdict_text:document.getElementById('vText').value||'—',
+    q1:picked.q1||'—',q2:picked.q2||'—',q3:picked.q3||'—',
+    q4:picked.q4||'—',q5:picked.q5||'—',
+    q6:document.getElementById('q6txt').value||'—',
     score:Math.round(done/keys.length*100)+'%'
   };
   try{
     await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    document.getElementById('submitOk').style.display='block';
+    document.getElementById('subOk').style.display='block';
     btn.textContent='✓ Submitted';btn.style.background='var(--green)';btn.style.color='#fff';
-    toast('✓ Report submitted to Ahmad\'s grade sheet');
+    toast('✓ Submitted to Ahmad\'s grade sheet');
   }catch(e){
     btn.disabled=false;btn.textContent='📊 Submit to Ahmad\'s Grade Sheet';
     toast('⚠ Check connection');
@@ -1387,33 +1251,13 @@ async function submitWork(){
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
 
-window.addEventListener('load',()=>{updateProg();drawVerdictCanvas();});
-
-// ── STUDENT NAME DROPDOWN ─────────────────────────────────────
-const G9_STUDENTS={
-  "9A":["إبراهيم فادي احمد مطر", "أروى خالد محمود العريض", "ابتسام محمد علي الجعجع", "احمد عمر احمد الصالح", "اماني بلال حامد ابو الهدى", "امجد علي نايف حميد", "براءة خالد محمود نوفل", "تولين ايمن محمد قدسيه", "جواد محمود غازي حسن", "جود وسام جابر الصالح", "حسن حسام علي العلي", "حمزة هشام محمد نصر", "خلود خالد اسماعيل قاسم", "دانيال محمد عادل جواد", "ريان ساري علي زيداني", "ريان عفيف علي السيد", "ريماس ايمن وليد الاشوح", "سارة موسى محمد حمود", "سامر احمد علي عبدالله", "سلفانا ابراهيم عبد السلام قصقص", "سلمان خالد ناصر عيشه", "سيلين اسامة عبد الفتاح توسكا", "سيلين عادل اسماعيل ابراهيم", "عبد الرحمن الياس محمد الحسين", "عزيزه مروان حسن حسن", "علي محمود ديب حمّاد", "كرم نادر احمد غيث", "لارا خضر علي شراب", "ليا محمد ابراهيم الحلو", "ليمار خضر عبدالله بلاوني", "لين محمود احمد احمد", "مالك احمد علي الحاج علي", "محمد ايمن وليد الاشوح", "محمود محمد مصطفى ابو مايهه", "ملك طارق محمود الاشقر", "ملك محمد حسن ابو حمد", "ميرا اياد وحيد حسن", "نغم محمد جمعة بلال", "نور ماهر مفيد العلي", "هادي باسم عبد الرؤوف الحاج داود", "ياسمين محمد شحادة ديب"],
-  "9B":["إسراء خالد محمود مطر", "أية احمد محمد مكية", "ادم احمد غازي الجمل", "ادم فادي كامل عبدالله", "اميره محمد احمد الهندي", "بلال زياد محمود عيسى", "جاد سمير ابراهيم العلي", "جمانه علي "محي الدين" دمشقي", "حلا محمد اكرم عجاوي", "حنان محمد جمال عبد اللطيف", "حنين غسان محمد ابو ليل", "دانيه حسين محمد حسين", "رؤى رضوان اسعد ديب", "رفيف محمد احمد ندوه", "رهف محمود محمد دراج", "رهف يوسف جمعة جمعة", "روان احمد شحادة ديب", "زهرة ابراهيم عارف ظاهر", "ساره بهاء ابراهيم العيسى", "سناء جهاد فؤاد الفقير", "عبد الرحمن وليد احمد نفاع", "عبد الهادي رضوان عيسى", "عصام مصطفى منير توسكا", "علاء علي غالب الساري", "عمار احمد عصام كروم", "عمر احمد جمال الاشبه", "عمر حسان عمر كروم", "غزل بلال "محمد خضر" عمر", "ليا محمد خالد محمد", "لينا احمد علي علي", "محمد "أحمد قاسم" الصباهي", "محمد زياد محمد عبود", "محمد "نور الدين" علي قطف", "محمود احمد محمود قدورة", "محمود "محمد علي" محمد خليل", "مريم محمد عبد الرحمن عبد الهادي", "مطر علي احمد مطر", "ملاك بسام احمد حشاش", "ملك يوسف شحادة ديب", "نادين سليمان صلاح نجم", "نور محمد وليد الصالح", "وسام هشام امين الطه", "يوسف نضال يوسف العيساوي"],
-  "9C":["إسراء مصطفى ممدوح سعد الدين", "إسلام وليد عبد المطلب بلاوني", "أسينات طلال زياد العباسي", "آيه هاني سعود الميناوي", "اروى محمد علي علي", "امينة جميل علي الغرابلي", "تالا احمد ابراهيم عطور", "جميل احمد جميل الطاهره", "حسين علاء احمد صيداوي", "حمزة ابراهيم محمود ابو جبل", "حمزه خليل محمد عثمان", "خالد احمد صبحي رمضان", "خليل ابراهيم حسين بلاوني", "راما احمد محمد خزعل", "راما حسان "محمد تيسير" منصور", "رماس ايمن كايد خضره", "رهف بسام محمد بلاوني", "زياد طارق زياد الهبطه", "سيرين عماد احمد عبد الحليم", "ضحى محمد حسن حسن", "عائشه خالد عزات يحيى", "عبد الرحمن احمد موسى محمد", "عبد الرحمن اسماعيل سميح حمو", "عبدالرحمن جهاد عبد ابراهيم", "علي محمد عبد بشر", "عمر احمد محمد اسماعيل", "عمر عبدالله عطا ابو شليح", "فرح علي محمد ملحم", "فيروز احسان عبدالله شاهين", "قمر ابراهيم فوزي الميعاري", "لميس سعيد محمد الخطيب", "مجد فراس حسن سعيد", "محمد رامي نزيه رمضان", "محمد عبد المجيد محمد سالم", "ملاك احمد محمد احمد", "منى احسان عبدالله شاهين", "مورة عدنان محمود فوراني", "ميرا محمد خالد عبد الغني", "نبيل محمود نبيل درويش", "نورا خليل محمود المتولي", "يوسف منتصر احمد جمعة"],
-  "9D":["أشرف محمد حكمت غيث", "احمد حسن "محي الدين" قاسم", "احمد حسين محمد شعيب", "ادم زياد علي وهبه", "بلال احمد عيسى أبو الشباب", "حسن عبد الوهاب حسن ابو شقير", "حسن محمد حسن الفاعور", "حلا حسن حسين الحسين", "خالد وليد محمود العريض", "رنا محمود محمد يعقوب", "رهف اسماعيل علي لوباني", "رهف سمير لطفي فهد", "روان علي عبدالله بلاوني", "رين سامر سعدو الحاج", "سحر بسام احمد القط", "سدره المنتهى احمد مختار الخالد", "سعيد محمد سعيد سعيد", "شيماء علي احمد محمد", "عائشه وسام عبد الرحمن حمو", "عمر احمد محمد عزيمه", "عمر مالك جمعة بلال", "غنى خضر فؤاد احمد", "قمر محمد خالد ابو سعد", "لمار محمد محمود حسين", "ليا شادي ابراهيم عبد الهادي", "ليال سعيد جهاد عكيله", "ليان حسن احمد ابو عرب", "ليان "محمد خير" احمد", "لين زياد عاطف ابو الشباب", "لين هاني احمد العيسى", "ماجد بلال ماجد الخطيب", "محمد امير فتان فضه", "محمد سعيد محمود جربوع", "محمد مصطفى ابراهيم الفقير", "محمد وليد مصطفى خطاب", "مرام جمال محمد ناصر", "مريم يوسف فوزي الحاج", "ملك ربيع علي عبد الرحمن", "نور علي "محمد زيد" راجح", "هبة فؤاد علي منصور", "وليد محمد سرحان العلي", "يارا يوسف محمد حسن"]
-};
-
-function onSectionChange(){
-  const sec=document.getElementById('stuSection').value;
-  const nameEl=document.getElementById('stuName');
-  nameEl.innerHTML='<option value="">— Choose your name —</option>';
-  if(sec&&G9_STUDENTS[sec]){
-    G9_STUDENTS[sec].forEach(n=>{
-      const opt=document.createElement('option');
-      opt.value=n;opt.textContent=n;
-      nameEl.appendChild(opt);
-    });
-    nameEl.disabled=false;
-  } else {
-    nameEl.innerHTML='<option value="">— Choose section first —</option>';
-    nameEl.disabled=true;
-  }
-}
-
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('resize',()=>{renderPainter();drawSep();drawVerdictCanvas();});
+renderPainter();
+buildArena();
+drawSep();
+drawVerdictCanvas();
+updateProg();
 </script>
 </body>
 </html>
