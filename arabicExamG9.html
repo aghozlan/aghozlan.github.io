@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>امتحان اللغة العربية — الصف التاسع | عبير | ٢٠٢٥–٢٠٢٦</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdfbf6;--bg2:#f5f1e8;--bg3:#ede8dc;
+  --panel:#fff;--panel2:#f9f6f0;
+  --border:#d8d0c0;--border2:#c8bda8;
+  --ink:#1a1208;--muted:#7a6e5a;--muted2:#5a5048;
+  --gold:#8b6914;--gold2:#c8a030;--goldL:rgba(139,105,20,.1);
+  --red:#8b1a1a;--redL:rgba(139,26,26,.08);
+  --green:#1a6b3c;--greenL:rgba(26,107,60,.08);
+  --blue:#1a3d8b;--blueL:rgba(26,61,139,.08);
+  --fa:'Amiri',serif;--fc:'Cairo',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--fc);line-height:1.75;direction:rtl;}
+
+/* ── HEADER ── */
+.exam-header{background:linear-gradient(135deg,#1a1208,#2d2010);color:#fff;
+  padding:24px 32px;position:relative;border-bottom:4px solid var(--gold2);}
+.school-name{font-family:var(--fa);font-size:1.1rem;color:var(--gold2);
+  text-align:center;margin-bottom:6px;letter-spacing:1px;}
+.exam-title{font-family:var(--fa);font-size:1.6rem;font-weight:700;
+  text-align:center;color:#fff;margin-bottom:4px;}
+.exam-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15);}
+.meta-item{font-size:.78rem;color:rgba(255,255,255,.7);font-family:var(--fc);}
+.meta-item strong{color:var(--gold2);}
+.version-badge{position:absolute;top:16px;left:16px;background:var(--gold2);color:#1a1208;
+  font-weight:900;font-size:.8rem;padding:4px 12px;border-radius:2px;font-family:var(--fc);}
+.timer-badge{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);
+  color:#fff;border:1px solid rgba(255,255,255,.3);font-weight:700;font-size:.9rem;
+  padding:6px 16px;border-radius:3px;font-family:var(--fc);min-width:80px;text-align:center;}
+.timer-badge.warn{background:rgba(139,26,26,.4);border-color:rgba(255,80,80,.5);color:#ffaaaa;}
+.timer-badge.urgent{background:rgba(139,26,26,.8);border-color:#ff4444;color:#fff;animation:pulse .8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+
+/* ── STUDENT SELECTOR ── */
+.selector-section{background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  padding:28px 32px;border-bottom:2px solid var(--border);}
+.selector-title{font-family:var(--fa);font-size:1.1rem;color:var(--ink);
+  margin-bottom:18px;text-align:center;}
+.section-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.sec-btn{padding:10px 28px;border-radius:3px;border:2px solid var(--border2);
+  background:var(--panel);color:var(--muted);font-family:var(--fc);font-weight:700;
+  font-size:1rem;cursor:pointer;transition:all .2s;min-height:46px;min-width:70px;}
+.sec-btn:hover{border-color:var(--gold);color:var(--gold);}
+.sec-btn.on{background:var(--ink);color:var(--gold2);border-color:var(--ink);}
+.name-select-wrap{max-width:500px;margin:0 auto;}
+.name-label{font-size:.82rem;color:var(--muted2);margin-bottom:6px;font-family:var(--fc);display:block;}
+select{background:var(--panel);border:2px solid var(--border2);border-radius:3px;
+  padding:12px 16px;color:var(--ink);font-family:var(--fc);font-size:.95rem;
+  outline:none;width:100%;cursor:pointer;direction:rtl;min-height:48px;}
+select:focus{border-color:var(--gold);}
+.start-btn{display:block;width:100%;max-width:500px;margin:16px auto 0;
+  padding:14px;background:var(--ink);color:var(--gold2);border:none;border-radius:3px;
+  font-family:var(--fa);font-size:1.15rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.start-btn:hover{background:#2d2010;}
+.start-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── EXAM BODY ── */
+.exam-body{display:none;max-width:860px;margin:0 auto;padding:28px 24px;}
+
+/* Question blocks */
+.q-section{background:var(--panel);border:1.5px solid var(--border);border-radius:4px;
+  margin-bottom:20px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.q-header{background:var(--ink);color:#fff;padding:12px 20px;display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.q-num{font-family:var(--fa);font-size:1rem;font-weight:700;color:var(--gold2);}
+.q-marks{font-family:var(--fc);font-size:.72rem;color:rgba(255,255,255,.6);
+  background:rgba(255,255,255,.08);padding:2px 10px;border-radius:12px;}
+.q-instruction{background:var(--goldL);border-bottom:1px solid var(--border);
+  padding:12px 20px;font-family:var(--fa);font-size:.95rem;color:var(--gold);
+  font-weight:700;border-right:4px solid var(--gold2);}
+.q-body{padding:18px 20px;}
+
+/* sentences with inputs */
+.sent-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;
+  padding:10px 14px;background:var(--panel2);border-radius:3px;border-right:3px solid var(--border2);}
+.sent-num{min-width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--gold2);
+  font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;font-family:var(--fc);}
+.sent-content{flex:1;}
+.sent-text{font-family:var(--fa);font-size:1.05rem;color:var(--ink);
+  line-height:1.9;margin-bottom:8px;direction:rtl;}
+.sent-text strong{color:var(--red);}
+.ans-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.ans-group{display:flex;flex-direction:column;gap:3px;min-width:120px;flex:1;}
+.ans-label{font-size:.62rem;color:var(--muted);font-family:var(--fc);text-transform:uppercase;
+  letter-spacing:1px;}
+.ans-input{border:1.5px solid var(--border2);border-radius:3px;padding:7px 12px;
+  font-family:var(--fa);font-size:.92rem;color:var(--ink);background:var(--panel);
+  outline:none;transition:border-color .2s;direction:rtl;width:100%;min-height:40px;}
+.ans-input:focus{border-color:var(--gold);}
+.ans-textarea{border:1.5px solid var(--border2);border-radius:3px;padding:9px 12px;
+  font-family:var(--fa);font-size:.92rem;color:var(--ink);background:var(--panel);
+  outline:none;transition:border-color .2s;direction:rtl;width:100%;
+  resize:vertical;min-height:70px;}
+.ans-textarea:focus{border-color:var(--gold);}
+
+/* إعراب table */
+.iraab-table{width:100%;border-collapse:collapse;font-size:.88rem;direction:rtl;margin-top:8px;}
+.iraab-table th{background:var(--ink);color:var(--gold2);padding:9px 12px;
+  font-family:var(--fa);font-size:.82rem;border:1px solid rgba(255,255,255,.1);text-align:center;}
+.iraab-table td{padding:9px 12px;border:1px solid var(--border);text-align:center;vertical-align:middle;}
+.iraab-table td:first-child{font-family:var(--fa);font-size:1rem;font-weight:700;
+  background:var(--panel2);color:var(--red);}
+.iraab-table input{border:none;background:transparent;text-align:center;
+  font-family:var(--fa);font-size:.88rem;color:var(--ink);width:100%;outline:none;
+  border-bottom:1.5px solid var(--border2);min-height:32px;direction:rtl;}
+.iraab-table input:focus{border-bottom-color:var(--gold);}
+
+/* تأليف جمل */
+.compose-row{background:var(--panel2);border-radius:3px;padding:12px 16px;
+  margin-bottom:10px;border-right:3px solid var(--blue);}
+.compose-cond{font-family:var(--fa);font-size:.88rem;color:var(--blue);
+  margin-bottom:6px;font-weight:700;}
+.compose-input{border:1.5px solid var(--border2);border-radius:3px;padding:9px 12px;
+  font-family:var(--fa);font-size:1rem;color:var(--ink);background:var(--panel);
+  outline:none;transition:border-color .2s;direction:rtl;width:100%;min-height:44px;}
+.compose-input:focus{border-color:var(--gold);}
+
+/* تحويل مفرد مثنى جمع */
+.tahwil-row{background:var(--panel2);border-radius:3px;padding:10px 14px;
+  margin-bottom:10px;display:grid;grid-template-columns:auto 1fr 1fr 1fr;
+  gap:10px;align-items:center;}
+@media(max-width:600px){.tahwil-row{grid-template-columns:auto 1fr;}}
+.tahwil-original{font-family:var(--fa);font-size:1rem;color:var(--red);font-weight:700;}
+.tahwil-lbl{font-size:.62rem;color:var(--muted);font-family:var(--fc);text-align:center;margin-bottom:3px;}
+
+/* Submit */
+.submit-section{background:var(--panel);border:1.5px solid var(--border);border-radius:4px;
+  padding:22px;margin-bottom:24px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.student-info-display{background:var(--goldL);border:1px solid rgba(139,105,20,.3);
+  border-radius:3px;padding:12px 16px;margin-bottom:14px;
+  font-family:var(--fa);font-size:.95rem;color:var(--gold);text-align:center;}
+.submit-btn{display:block;width:100%;padding:14px;background:var(--green);color:#fff;
+  border:none;border-radius:3px;font-family:var(--fa);font-size:1.2rem;font-weight:700;
+  cursor:pointer;transition:all .2s;}
+.submit-btn:hover{background:#145530;}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+.submit-ok{display:none;background:var(--greenL);border:2px solid var(--green);
+  border-radius:3px;padding:14px;margin-top:12px;font-family:var(--fa);font-size:.95rem;
+  color:var(--green);text-align:center;font-weight:700;}
+
+/* SCORE display */
+.score-display{display:none;background:linear-gradient(135deg,var(--ink),#2d2010);
+  color:#fff;padding:28px;text-align:center;border-radius:4px;margin-bottom:20px;}
+.score-num{font-family:var(--fa);font-size:3.5rem;font-weight:700;color:var(--gold2);line-height:1;}
+.score-total{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:4px;}
+.score-msg{font-family:var(--fa);font-size:1rem;color:rgba(255,255,255,.8);margin-top:10px;}
+
+/* Absentee */
+.absent-notice{display:none;background:linear-gradient(135deg,#1a1208,#2d1008);
+  color:#fff;padding:40px;text-align:center;min-height:60vh;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.absent-notice h2{font-family:var(--fa);font-size:1.8rem;color:var(--gold2);}
+.absent-notice p{font-family:var(--fc);font-size:.9rem;color:rgba(255,255,255,.7);max-width:400px;}
+.absent-code{font-family:'Courier New',monospace;font-size:.8rem;color:var(--gold2);
+  background:rgba(255,255,255,.08);padding:10px 20px;border-radius:3px;margin-top:8px;}
+
+#toast{position:fixed;bottom:16px;right:50%;transform:translateX(50%);
+  background:var(--ink);color:var(--gold2);padding:10px 22px;border-radius:3px;
+  font-family:var(--fc);font-size:.78rem;z-index:999;opacity:0;
+  transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ABSENTEE NOTICE -->
+<div class="absent-notice" id="absentNotice">
+  <h2>نسخة الغائب — النسخة الإضافية (و)</h2>
+  <p>هذه النسخة مخصصة للطلاب الغائبين عن الامتحان الأصلي.</p>
+  <p style="color:rgba(255,255,255,.5);font-size:.8rem;">للمعلم: أرسل هذا الرابط للطالب الغائب فقط.</p>
+  <div class="absent-code">الرابط: arabicexam_g9.html?v=F</div>
+  <button onclick="loadAbsentExam()" style="margin-top:16px;padding:12px 32px;
+    background:var(--gold2);color:var(--ink);border:none;border-radius:3px;
+    font-family:var(--fa);font-size:1rem;font-weight:700;cursor:pointer;">
+    ابدأ امتحان الغائب
+  </button>
+</div>
+
+<!-- EXAM HEADER -->
+<div class="exam-header" id="examHeader" style="display:none;">
+  <div class="school-name">ثانوية بيت جالا — قسم اللغة العربية</div>
+  <div class="exam-title">امتحان اللغة العربية — النحو</div>
+  <div class="exam-meta">
+    <span class="meta-item">الصف: <strong>التاسع</strong></span>
+    <span class="meta-item">العام الدراسي: <strong>٢٠٢٥–٢٠٢٦</strong></span>
+    <span class="meta-item">الزمن: <strong>٤٠ دقيقة</strong></span>
+    <span class="meta-item">العلامة الكاملة: <strong>٢٣ علامة</strong></span>
+  </div>
+  <span class="version-badge" id="versionBadge">النسخة أ</span>
+  <span class="timer-badge" id="timerDisplay">٤٠:٠٠</span>
+</div>
+
+<!-- STUDENT SELECTOR -->
+<div class="selector-section" id="selectorSection">
+  <div class="selector-title">اختر شعبتك ثم اسمك للبدء بالامتحان</div>
+  <div class="section-btns">
+    <button class="sec-btn" onclick="setSection('9A')">9A</button>
+    <button class="sec-btn" onclick="setSection('9B')">9B</button>
+    <button class="sec-btn" onclick="setSection('9C')">9C</button>
+    <button class="sec-btn" onclick="setSection('9D')">9D</button>
+  </div>
+  <div class="name-select-wrap">
+    <label class="name-label">الاسم الكامل:</label>
+    <select id="stuName" disabled>
+      <option value="">— اختر شعبتك أولاً —</option>
+    </select>
+    <button class="start-btn" id="startBtn" disabled onclick="startExam()">
+      ابدأ الامتحان ←
+    </button>
+  </div>
+</div>
+
+<!-- EXAM BODY (injected by JS) -->
+<div class="exam-body" id="examBody"></div>
+
+<script>
+'use strict';
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ── STUDENT LISTS ────────────────────────────────────────────
+const STUDENTS={
+  '9A':['إبراهيم فادي احمد مطر','أروى خالد محمود العريض','ابتسام محمد علي الجعجع','احمد عمر احمد الصالح','اماني بلال حامد ابو الهدى','امجد علي نايف حميد','براءة خالد محمود نوفل','تولين ايمن محمد قدسيه','جواد محمود غازي حسن','جود وسام جابر الصالح','حسن حسام علي العلي','حمزة هشام محمد نصر','خلود خالد اسماعيل قاسم','دانيال محمد عادل جواد','ريان ساري علي زيداني','ريان عفيف علي السيد','ريماس ايمن وليد الاشوح','سارة موسى محمد حمود','سامر احمد علي عبدالله','سلفانا ابراهيم عبد السلام قصقص','سلمان خالد ناصر عيشه','سيلين اسامة عبد الفتاح توسكا','سيلين عادل اسماعيل ابراهيم','عبد الرحمن الياس محمد الحسين','عزيزه مروان حسن حسن','علي محمود ديب حمّاد','كرم نادر احمد غيث','لارا خضر علي شراب','ليا محمد ابراهيم الحلو','ليمار خضر عبدالله بلاوني','لين محمود احمد احمد','مالك احمد علي الحاج علي','محمد ايمن وليد الاشوح','محمود محمد مصطفى ابو مايهه','ملك طارق محمود الاشقر','ملك محمد حسن ابو حمد','ميرا اياد وحيد حسن','نغم محمد جمعة بلال','نور ماهر مفيد العلي','هادي باسم عبد الرؤوف الحاج داود','ياسمين محمد شحادة ديب'],
+  '9B':['إسراء خالد محمود مطر','أية احمد محمد مكية','ادم احمد غازي الجمل','ادم فادي كامل عبدالله','اميره محمد احمد الهندي','بلال زياد محمود عيسى','جاد سمير ابراهيم العلي','جمانه علي محي الدين دمشقي','حلا محمد اكرم عجاوي','حنان محمد جمال عبد اللطيف','حنين غسان محمد ابو ليل','دانيه حسين محمد حسين','رؤى رضوان اسعد ديب','رفيف محمد احمد ندوه','رهف محمود محمد دراج','رهف يوسف جمعة جمعة','روان احمد شحادة ديب','زهرة ابراهيم عارف ظاهر','ساره بهاء ابراهيم العيسى','سناء جهاد فؤاد الفقير','عبد الرحمن وليد احمد نفاع','عبد الهادي رضوان عيسى','عصام مصطفى منير توسكا','علاء علي غالب الساري','عمار احمد عصام كروم','عمر احمد جمال الاشبه','عمر حسان عمر كروم','غزل بلال محمد خضر عمر','ليا محمد خالد محمد','لينا احمد علي علي','محمد احمد قاسم الصباهي','محمد زياد محمد عبود','محمد نور الدين علي قطف','محمود احمد محمود قدورة','محمود محمد علي محمد خليل','مريم محمد عبد الرحمن عبد الهادي','مطر علي احمد مطر','ملاك بسام احمد حشاش','ملك يوسف شحادة ديب','نادين سليمان صلاح نجم','نور محمد وليد الصالح','وسام هشام امين الطه','يوسف نضال يوسف العيساوي'],
+  '9C':['إسراء مصطفى ممدوح سعد الدين','إسلام وليد عبد المطلب بلاوني','أسينات طلال زياد العباسي','آيه هاني سعود الميناوي','اروى محمد علي علي','امينة جميل علي الغرابلي','تالا احمد ابراهيم عطور','جميل احمد جميل الطاهره','حسين علاء احمد صيداوي','حمزة ابراهيم محمود ابو جبل','حمزه خليل محمد عثمان','خالد احمد صبحي رمضان','خليل ابراهيم حسين بلاوني','راما احمد محمد خزعل','راما حسان محمد تيسير منصور','رماس ايمن كايد خضره','رهف بسام محمد بلاوني','زياد طارق زياد الهبطه','سيرين عماد احمد عبد الحليم','ضحى محمد حسن حسن','عائشه خالد عزات يحيى','عبد الرحمن احمد موسى محمد','عبد الرحمن اسماعيل سميح حمو','عبدالرحمن جهاد عبد ابراهيم','علي محمد عبد بشر','عمر احمد محمد اسماعيل','عمر عبدالله عطا ابو شليح','فرح علي محمد ملحم','فيروز احسان عبدالله شاهين','قمر ابراهيم فوزي الميعاري','لميس سعيد محمد الخطيب','مجد فراس حسن سعيد','محمد رامي نزيه رمضان','محمد عبد المجيد محمد سالم','ملاك احمد محمد احمد','منى احسان عبدالله شاهين','مورة عدنان محمود فوراني','ميرا محمد خالد عبد الغني','نبيل محمود نبيل درويش','نورا خليل محمود المتولي','يوسف منتصر احمد جمعة'],
+  '9D':['أشرف محمد حكمت غيث','احمد حسن محي الدين قاسم','احمد حسين محمد شعيب','ادم زياد علي وهبه','بلال احمد عيسى أبو الشباب','حسن عبد الوهاب حسن ابو شقير','حسن محمد حسن الفاعور','حلا حسن حسين الحسين','خالد وليد محمود العريض','رنا محمود محمد يعقوب','رهف اسماعيل علي لوباني','رهف سمير لطفي فهد','روان علي عبدالله بلاوني','رين سامر سعدو الحاج','سحر بسام احمد القط','سدره المنتهى احمد مختار الخالد','سعيد محمد سعيد سعيد','شيماء علي احمد محمد','عائشه وسام عبد الرحمن حمو','عمر احمد محمد عزيمه','عمر مالك جمعة بلال','غنى خضر فؤاد احمد','قمر محمد خالد ابو سعد','لمار محمد محمود حسين','ليا شادي ابراهيم عبد الهادي','ليال سعيد جهاد عكيله','ليان حسن احمد ابو عرب','ليان محمد خير احمد','لين زياد عاطف ابو الشباب','لين هاني احمد العيسى','ماجد بلال ماجد الخطيب','محمد امير فتان فضه','محمد سعيد محمود جربوع','محمد مصطفى ابراهيم الفقير','محمد وليد مصطفى خطاب','مرام جمال محمد ناصر','مريم يوسف فوزي الحاج','ملك ربيع علي عبد الرحمن','نور علي محمد زيد راجح','هبة فؤاد علي منصور','وليد محمد سرحان العلي','يارا يوسف محمد حسن']
+};
+
+// ── EXAM VERSIONS ────────────────────────────────────────────
+// 5 versions (A-E) + 1 absentee (F)
+// Each version has completely different sentences — same objectives, same marks, same difficulty
+// Anti-cheat: different topics, different word order traps, different proper nouns
+
+const VERSIONS = {
+
+// ════════════════════════════ نسخة أ — موضوع: العلم والتعلم ════════════════════════════
+'A': {
+  label:'النسخة أ',
+  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
+  q1:[
+    {text:'شرحَ الأستاذُ الدرسَ شرحاً وافياً.'},
+    {text:'يحفظُ الطلابُ القصيدةَ كلَّ يوم.'},
+    {text:'فتحَ مديرُ المدرسةِ بابَ القاعةِ صباحاً.'}
+  ],
+  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q2:[
+    {text:'أكرمَ المعلمُ الطالبَ المجتهدَ أمامَ زملائه.'},
+    {text:'نجحَ الحارسانِ في حماية المدرسة.'},
+    {text:'يكتبُ الطلابُ المقالاتِ بأسلوب رائع.'}
+  ],
+  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q3:[
+    {text:'مُنِحَ الطالبُ المتميزُ شهادةَ تقدير.'},
+    {text:'فُتِحَت المدارسُ أبوابُها في الصباح الباكر.'},
+    {text:'يُعلَّقُ لوحُ الإعلاناتِ في مدخل المدرسة.'}
+  ],
+  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
+  q4:[
+    {text:'قرأَ الطالبُ الكتابَ المقرَّرَ في أسبوع.'},
+    {text:'زارَ المديرُ الفصلَينِ المتميزَين.'},
+    {text:'احترمَ الأبناءُ والداتِهم في كل وقت.'}
+  ],
+  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
+  q5:[
+    {text:'كتبَ الطالبُ الرسالةَ.', type:'معلوم'},
+    {text:'كُتِبَت الرسالةُ.', type:'مجهول'}
+  ],
+  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
+  q6:[
+    {cond:'فاعل جمع مذكر سالم'},
+    {cond:'فاعل من الأسماء الخمسة (أبو / أخو / حمو / فو / ذو)'}
+  ],
+  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
+  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
+  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
+  q8:[
+    {mufrad:'جاءَ الطالبُ إلى المدرسة.'},
+    {mufrad:'تكتبُ الطالبةُ الدرسَ بعناية.'},
+    {mufrad:'أكلَ الولدُ طعامَه كاملاً.'}
+  ]
+},
+
+// ════════════════════════════ نسخة ب — موضوع: الطبيعة والبيئة ════════════════════════════
+'B': {
+  label:'النسخة ب',
+  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
+  q1:[
+    {text:'زرعَ الفلاحُ الأشجارَ في الحديقةِ.'},
+    {text:'يرويِ المزارعُ الحقولَ كلَّ صباح.'},
+    {text:'قطعَ العمالُ الأعشابَ الضارةَ بعناية.'}
+  ],
+  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q2:[
+    {text:'أطلقَ الصيادانِ الطيورَ في الغابة.'},
+    {text:'تنمو الأشجارُ الكثيفةُ في الجبال الخضراء.'},
+    {text:'حافظَ المزارعون على التربة الخصبة طويلاً.'}
+  ],
+  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q3:[
+    {text:'قُطِعَت الأشجارُ القديمةُ من الغابة.'},
+    {text:'يُروَى الحقلُ الجديدُ في فصل الصيف.'},
+    {text:'زُرِعَت الوردتانِ في حديقة المدرسة.'}
+  ],
+  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
+  q4:[
+    {text:'رعى الراعي غنمَهُ في السهول الواسعة.'},
+    {text:'يحمي الغيومُ الأرضَينِ من حرارة الشمس.'},
+    {text:'يُحبُّ الناسُ أوطانَهم حبَّاً عميقاً.'}
+  ],
+  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
+  q5:[
+    {text:'زرعَ الفلاحُ الشجرةَ.', type:'معلوم'},
+    {text:'زُرِعَت الشجرةُ.', type:'مجهول'}
+  ],
+  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
+  q6:[
+    {cond:'فاعل جمع مذكر سالم'},
+    {cond:'فاعل من الأسماء الخمسة'}
+  ],
+  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
+  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
+  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
+  q8:[
+    {mufrad:'قطفَ الطفلُ وردةً من الحديقة.'},
+    {mufrad:'تشربُ البقرةُ الماءَ في المساء.'},
+    {mufrad:'رسمَ الرسامُ الجبلَ بألوان جميلة.'}
+  ]
+},
+
+// ════════════════════════════ نسخة ج — موضوع: الرياضة والصحة ════════════════════════════
+'C': {
+  label:'النسخة ج',
+  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
+  q1:[
+    {text:'فازَ اللاعبُ بالجائزةِ الأولى.'},
+    {text:'يُدرِّبُ المدربُ اللاعبينَ يومياً.'},
+    {text:'بنى المهندسون ملعبَ كرةِ القدمِ في المدينة.'}
+  ],
+  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q2:[
+    {text:'سجَّلَ المهاجمانِ هدفَينِ في الشوط الأول.'},
+    {text:'يتدرَّبُ الرياضيون المحترفون ساعاتٍ طويلة.'},
+    {text:'حقَّقَ فريقُ المدرسةِ فوزاً باهراً.'}
+  ],
+  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q3:[
+    {text:'مُنِحَ الفائزُ كأسَ البطولةِ بحفلٍ رائع.'},
+    {text:'يُفتَحُ الملعبُ الجديدُ أمام الجمهور.'},
+    {text:'أُقيمَت المباراتانِ في الملعب الوطني.'}
+  ],
+  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
+  q4:[
+    {text:'مارسَ الشابُّ الرياضةَ للحفاظ على صحته.'},
+    {text:'يلعبُ الصديقانِ التنسَ كلَّ عطلة.'},
+    {text:'تحبُّ البنتُ والدَها وأخاها بالتساوي.'}
+  ],
+  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
+  q5:[
+    {text:'سجَّلَ اللاعبُ الهدفَ.', type:'معلوم'},
+    {text:'سُجِّلَ الهدفُ.', type:'مجهول'}
+  ],
+  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
+  q6:[
+    {cond:'فاعل جمع مذكر سالم'},
+    {cond:'فاعل من الأسماء الخمسة'}
+  ],
+  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
+  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
+  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
+  q8:[
+    {mufrad:'حضرَ اللاعبُ إلى الملعب مبكراً.'},
+    {mufrad:'يركضُ الرياضيُّ كيلومتراً كل صباح.'},
+    {mufrad:'فازَت البطلةُ بالميدالية الذهبية.'}
+  ]
+},
+
+// ════════════════════════════ نسخة د — موضوع: التكنولوجيا والعلوم ════════════════════════════
+'D': {
+  label:'النسخة د',
+  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
+  q1:[
+    {text:'اخترعَ العلماءُ أجهزةً حديثةً للتواصل.'},
+    {text:'يبرمجُ المهندسُ التطبيقَ الجديدَ بدقة.'},
+    {text:'نشرَ الباحثانِ نتائجَ تجربتِهِما العلمية.'}
+  ],
+  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q2:[
+    {text:'اكتشفَ العالِمانِ طريقةً للعلاج السريع.'},
+    {text:'يطوِّرُ المبرمجون التقنياتِ الذكيةَ باستمرار.'},
+    {text:'أجرى مديرُ المختبرِ تجاربَ علميةً دقيقة.'}
+  ],
+  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q3:[
+    {text:'اُستُخدِمَ الذكاءُ الاصطناعيُّ في التعليم.'},
+    {text:'يُطوَّرُ الجهازُ الجديدُ في المختبر الدولي.'},
+    {text:'أُجريَت التجربتانِ بنجاح في المختبر.'}
+  ],
+  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
+  q4:[
+    {text:'طوَّرَ المهندسُ البرنامجَ الحاسوبيَّ بجهد.'},
+    {text:'يختبرُ العلماءُ الاكتشافَينِ الجديدَين.'},
+    {text:'يُحبُّ الأبناءُ أبناءَهم وبناتِهم سواء.'}
+  ],
+  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
+  q5:[
+    {text:'طوَّرَ المهندسُ البرنامجَ.', type:'معلوم'},
+    {text:'طُوِّرَ البرنامجُ.', type:'مجهول'}
+  ],
+  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
+  q6:[
+    {cond:'فاعل جمع مذكر سالم'},
+    {cond:'فاعل من الأسماء الخمسة'}
+  ],
+  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
+  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
+  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
+  q8:[
+    {mufrad:'أرسلَ العالِمُ رسالةً إلكترونيةً.'},
+    {mufrad:'تصمِّمُ المهندسةُ تطبيقاً جديداً.'},
+    {mufrad:'حلَّ الطالبُ المسألةَ الرياضية بسرعة.'}
+  ]
+},
+
+// ════════════════════════════ نسخة هـ — موضوع: المجتمع والأسرة ════════════════════════════
+'E': {
+  label:'النسخة هـ',
+  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
+  q1:[
+    {text:'بنى العمالُ بيتاً جميلاً للأسرةِ.'},
+    {text:'يحضِّرُ الطباخُ الطعامَ لأفراد الأسرة.'},
+    {text:'أهدى الأبُ ابنَهُ كتاباً في عيد ميلاده.'}
+  ],
+  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q2:[
+    {text:'ساعدَ الأخوانِ والدَهما في المنزل.'},
+    {text:'يزورُ الأقاربون الأسرةَ في الأعياد.'},
+    {text:'أحبَّ أبو المحسنين ابنَه حُبَّاً كبيراً.'}
+  ],
+  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q3:[
+    {text:'بُنِيَ البيتُ الجميلُ على تلة مرتفعة.'},
+    {text:'يُعَدُّ الطعامُ اللذيذُ في مطبخ المنزل.'},
+    {text:'أُهديَت الهديتانِ للطفلَين في عيدهما.'}
+  ],
+  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
+  q4:[
+    {text:'احترمَ الابنُ أباهُ وأمَّه طوال حياته.'},
+    {text:'يُحِبُّ الأخوانِ الكبيرانِ أختَهما الصغيرة.'},
+    {text:'أكرمَ الجيرانُ جارَيهم في الأفراح.'}
+  ],
+  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
+  q5:[
+    {text:'زارَ الأبُ المريضَ.', type:'معلوم'},
+    {text:'زُيِرَ المريضُ.', type:'مجهول'}
+  ],
+  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
+  q6:[
+    {cond:'فاعل جمع مذكر سالم'},
+    {cond:'فاعل من الأسماء الخمسة'}
+  ],
+  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
+  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
+  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
+  q8:[
+    {mufrad:'أعدَّت الأمُّ وجبةً لذيذةً للأسرة.'},
+    {mufrad:'يساعدُ الولدُ أباهُ في المنزل.'},
+    {mufrad:'لعبَت البنتُ مع أصدقائها في الحديقة.'}
+  ]
+},
+
+// ════════════════════════════ نسخة و — الغائب (مختلفة تماماً) ════════════════════════════
+'F': {
+  label:'نسخة الغائب (و)',
+  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
+  q1:[
+    {text:'كتبَ الشاعرُ قصيدةً في مدح الوطن.'},
+    {text:'يؤدِّي الفنانُ عرضَهُ أمام الجمهور.'},
+    {text:'طبعَ الناشرانِ الروايةَ الجديدةَ بألف نسخة.'}
+  ],
+  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q2:[
+    {text:'ألَّفَ الكاتبانِ معاً روايةً تاريخية.'},
+    {text:'يُبدعُ الفنانون في رسم لوحاتهم الجميلة.'},
+    {text:'أنشدَ ذو الشجاعةِ قصيدةً أمام الملك.'}
+  ],
+  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
+  q3:[
+    {text:'طُبِعَت الروايةُ المشهورةُ في دار الكتب.'},
+    {text:'يُعرَضُ المسرحُ الجديدُ على خشبة المسرح.'},
+    {text:'أُنشِدَت القصيدتانِ بصوت شجي.'}
+  ],
+  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
+  q4:[
+    {text:'قرأَ الأديبُ روايتَه أمام الجمهور الكبير.'},
+    {text:'رسمَ الفنانُ اللوحتَينِ في يوم واحد.'},
+    {text:'يُحبُّ القرَّاءُ كتبَهم وروياتِهم المفضلة.'}
+  ],
+  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
+  q5:[
+    {text:'نشرَ الكاتبُ الروايةَ.', type:'معلوم'},
+    {text:'نُشِرَت الروايةُ.', type:'مجهول'}
+  ],
+  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
+  q6:[
+    {cond:'فاعل جمع مذكر سالم'},
+    {cond:'فاعل من الأسماء الخمسة'}
+  ],
+  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
+  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
+  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
+  q8:[
+    {mufrad:'كتبَ الشاعرُ قصيدةً جميلةً.'},
+    {mufrad:'يقرأُ الطفلُ كتابَهُ كل مساء.'},
+    {mufrad:'رسمَت الفنانةُ لوحةً في المعرض.'}
+  ]
+}
+
+}; // end VERSIONS
+
+// ── STATE ────────────────────────────────────────────────────
+let currentSection='';
+let currentName='';
+let currentVersion='';
+let timerInterval=null;
+let secondsLeft=40*60;
+let examStarted=false;
+
+// ── CHECK URL PARAMS ─────────────────────────────────────────
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('v')==='F'){
+    // Absentee mode
+    document.getElementById('absentNotice').style.display='flex';
+    document.getElementById('examHeader').style.display='none';
+    document.getElementById('selectorSection').style.display='none';
+  } else {
+    document.getElementById('absentNotice').style.display='none';
+    document.getElementById('examHeader').style.display='block';
+  }
+});
+
+function loadAbsentExam(){
+  document.getElementById('absentNotice').style.display='none';
+  document.getElementById('examHeader').style.display='block';
+  document.getElementById('selectorSection').style.display='block';
+  currentVersion='F';
+}
+
+// ── SECTION & NAME ───────────────────────────────────────────
+function setSection(cls){
+  currentSection=cls;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— اختر اسمك —</option>';
+  sel.disabled=false;
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+  sel.addEventListener('change',()=>{
+    currentName=sel.value;
+    document.getElementById('startBtn').disabled=!currentName;
+  });
+}
+
+// ── VERSION ASSIGNMENT ───────────────────────────────────────
+// Anti-cheat: version assigned deterministically by student name hash
+// so same student always gets same version, but neighbors get different versions
+function assignVersion(name,section){
+  if(currentVersion==='F')return'F';
+  // Hash name + section to 0-4 → map to A-E
+  let h=0;
+  for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))>>>0;
+  // Also use section to vary — students in same row (similar name hash) get different versions
+  const sOff={'9A':0,'9B':1,'9C':2,'9D':3}[section]||0;
+  const idx=(h+sOff*7)%5;
+  return ['A','B','C','D','E'][idx];
+}
+
+const VERSION_LABELS={'A':'النسخة أ','B':'النسخة ب','C':'النسخة ج','D':'النسخة د','E':'النسخة هـ','F':'نسخة الغائب (و)'};
+
+// ── START EXAM ───────────────────────────────────────────────
+function startExam(){
+  if(!currentName||!currentSection)return;
+  if(!currentVersion) currentVersion=assignVersion(currentName,currentSection);
+
+  document.getElementById('selectorSection').style.display='none';
+  document.getElementById('examHeader').style.display='block';
+  document.getElementById('versionBadge').textContent=VERSION_LABELS[currentVersion];
+
+  buildExam(VERSIONS[currentVersion]);
+  document.getElementById('examBody').style.display='block';
+  startTimer();
+  examStarted=true;
+}
+
+// ── TIMER ────────────────────────────────────────────────────
+function startTimer(){
+  updateTimerDisplay();
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    updateTimerDisplay();
+    if(secondsLeft<=0){clearInterval(timerInterval);autoSubmit();}
+  },1000);
+}
+
+function toArabicNum(n){
+  return n.toString().replace(/\d/g,d=>['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'][d]);
+}
+
+function updateTimerDisplay(){
+  const m=Math.floor(secondsLeft/60);
+  const s=secondsLeft%60;
+  const txt=toArabicNum(m)+':'+(s<10?'٠':'')+toArabicNum(s);
+  const el=document.getElementById('timerDisplay');
+  el.textContent=txt;
+  if(secondsLeft<=300) el.className='timer-badge warn';
+  if(secondsLeft<=60)  el.className='timer-badge urgent';
+}
+
+function autoSubmit(){
+  toast('انتهى الوقت! يُرسَل الامتحان تلقائياً...');
+  setTimeout(()=>submitExam(true),1500);
+}
+
+// ── BUILD EXAM HTML ───────────────────────────────────────────
+function buildExam(V){
+  const body=document.getElementById('examBody');
+  body.innerHTML='';
+
+  // Student info bar
+  const info=document.createElement('div');
+  info.style.cssText='background:var(--goldL);border:1px solid rgba(139,105,20,.3);border-radius:4px;padding:12px 20px;margin-bottom:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--fa);font-size:.95rem;direction:rtl;';
+  info.innerHTML=`<span>الاسم: <strong>${currentName}</strong></span><span>الشعبة: <strong>${currentSection}</strong></span><span>النسخة: <strong>${VERSION_LABELS[currentVersion]}</strong></span>`;
+  body.appendChild(info);
+
+  // ── Q1: تحويل ────────────────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال الأول','٣ علامات',V.q1_title,buildQ1Rows(V.q1)));
+
+  // ── Q2: استخراج الفاعل ───────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال الثاني','٣ علامات',V.q2_title,buildExtractRows(V.q2,'q2',['الفاعل','نوعه','علامة رفعه'])));
+
+  // ── Q3: نائب الفاعل ──────────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال الثالث','٣ علامات',V.q3_title,buildExtractRows(V.q3,'q3',['نائب الفاعل','نوعه','علامة رفعه'])));
+
+  // ── Q4: المفعول به ────────────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال الرابع','٣ علامات',V.q4_title,buildExtractRows(V.q4,'q4',['المفعول به','نوعه','علامة نصبه'])));
+
+  // ── Q5: الإعراب ──────────────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال الخامس','٤ علامات',V.q5_title,buildIraabBlock(V.q5)));
+
+  // ── Q6: تأليف جمل فاعل ──────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال السادس','٢ علامة',V.q6_title,buildComposeRows(V.q6,'q6')));
+
+  // ── Q7: تأليف مفعول مثنى ─────────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال السابع','٢ علامة',V.q7_title,buildComposeRows(V.q7,'q7')));
+
+  // ── Q8: تحويل مفرد مثنى جمع ─────────────────────────────
+  body.appendChild(buildSectionBlock('السؤال الثامن','٣ علامات',V.q8_title,buildTahwilBlock(V.q8)));
+
+  // Submit
+  body.appendChild(buildSubmitSection());
+}
+
+function buildSectionBlock(qNum,marks,instruction,innerHTML){
+  const div=document.createElement('div');
+  div.className='q-section';
+  div.innerHTML=`
+    <div class="q-header">
+      <span class="q-num">${qNum}</span>
+      <span class="q-marks">${marks}</span>
+    </div>
+    <div class="q-instruction">${instruction}</div>
+    <div class="q-body">${innerHTML}</div>`;
+  return div;
+}
+
+function buildQ1Rows(sentences){
+  return sentences.map((s,i)=>`
+    <div class="sent-row">
+      <div class="sent-num">${toArabicNum(i+1)}</div>
+      <div class="sent-content">
+        <div class="sent-text">${s.text}</div>
+        <input class="ans-input" id="q1_${i}" placeholder="الجملة بعد التحويل إلى المجهول..." dir="rtl">
+      </div>
+    </div>`).join('');
+}
+
+function buildExtractRows(sentences,prefix,cols){
+  return sentences.map((s,i)=>`
+    <div class="sent-row">
+      <div class="sent-num">${toArabicNum(i+1)}</div>
+      <div class="sent-content">
+        <div class="sent-text">${s.text}</div>
+        <div class="ans-row">
+          ${cols.map((c,j)=>`
+            <div class="ans-group">
+              <span class="ans-label">${c}</span>
+              <input class="ans-input" id="${prefix}_${i}_${j}" placeholder="${c}..." dir="rtl">
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function buildIraabBlock(sentences){
+  // For each sentence, a table with rows: الكلمة | الإعراب التفصيلي
+  return sentences.map((s,i)=>{
+    // Tokenize the sentence into words (skip punctuation)
+    const words=s.text.replace(/[.،؟!]/g,'').trim().split(/\s+/);
+    const rows=words.map((w,j)=>`
+      <tr>
+        <td>${w}</td>
+        <td><input id="ir_${i}_${j}" placeholder="الإعراب التفصيلي..." dir="rtl"></td>
+      </tr>`).join('');
+    return `
+      <div style="margin-bottom:18px;">
+        <div style="font-family:var(--fa);font-size:1rem;color:var(--red);font-weight:700;margin-bottom:8px;padding-right:8px;border-right:3px solid var(--gold2);">
+          ${toArabicNum(i+1)}. ${s.text} <span style="font-size:.72rem;color:var(--muted);font-weight:400;">(جملة ${s.type})</span>
+        </div>
+        <table class="iraab-table">
+          <thead><tr><th>الكلمة</th><th>الإعراب</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }).join('');
+}
+
+function buildComposeRows(items,prefix){
+  return items.map((item,i)=>`
+    <div class="compose-row">
+      <div class="compose-cond">الشرط: ${item.cond}</div>
+      <input class="compose-input" id="${prefix}_${i}" placeholder="اكتب جملتك هنا..." dir="rtl">
+    </div>`).join('');
+}
+
+function buildTahwilBlock(sentences){
+  return sentences.map((s,i)=>`
+    <div style="margin-bottom:12px;">
+      <div style="font-family:var(--fa);font-size:.9rem;color:var(--muted2);margin-bottom:6px;padding-right:8px;border-right:3px solid var(--gold2);">
+        ${toArabicNum(i+1)}. الجملة الأصلية: <strong style="color:var(--red);">${s.mufrad}</strong>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <div class="tahwil-lbl">المثنى</div>
+          <input class="ans-input" id="q8_${i}_1" placeholder="حوِّل إلى المثنى..." dir="rtl">
+        </div>
+        <div>
+          <div class="tahwil-lbl">الجمع</div>
+          <input class="ans-input" id="q8_${i}_2" placeholder="حوِّل إلى الجمع..." dir="rtl">
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function buildSubmitSection(){
+  const div=document.createElement('div');
+  div.className='submit-section';
+  div.innerHTML=`
+    <div class="student-info-display">
+      الطالب/ة: <strong>${currentName}</strong> — الشعبة: <strong>${currentSection}</strong> — النسخة: <strong>${VERSION_LABELS[currentVersion]}</strong>
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="submitExam(false)">
+      📤 تسليم الامتحان
+    </button>
+    <div class="submit-ok" id="submitOk">
+      ✓ تم تسليم الامتحان بنجاح — أحسنت!
+    </div>`;
+  return div;
+}
+
+// ── COLLECT ANSWERS ───────────────────────────────────────────
+function collectAllAnswers(){
+  const V=VERSIONS[currentVersion];
+  const ans={};
+
+  // Q1
+  V.q1.forEach((_,i)=>{
+    ans[`q1_${i+1}`]=val(`q1_${i}`);
+  });
+  // Q2
+  V.q2.forEach((_,i)=>{
+    ans[`q2_${i+1}_faail`]=val(`q2_${i}_0`);
+    ans[`q2_${i+1}_naw3`]=val(`q2_${i}_1`);
+    ans[`q2_${i+1}_3alama`]=val(`q2_${i}_2`);
+  });
+  // Q3
+  V.q3.forEach((_,i)=>{
+    ans[`q3_${i+1}_naib`]=val(`q3_${i}_0`);
+    ans[`q3_${i+1}_naw3`]=val(`q3_${i}_1`);
+    ans[`q3_${i+1}_3alama`]=val(`q3_${i}_2`);
+  });
+  // Q4
+  V.q4.forEach((_,i)=>{
+    ans[`q4_${i+1}_maf3ool`]=val(`q4_${i}_0`);
+    ans[`q4_${i+1}_naw3`]=val(`q4_${i}_1`);
+    ans[`q4_${i+1}_3alama`]=val(`q4_${i}_2`);
+  });
+  // Q5 iraab
+  V.q5.forEach((s,i)=>{
+    const words=s.text.replace(/[.،؟!]/g,'').trim().split(/\s+/);
+    words.forEach((w,j)=>{
+      ans[`q5_sent${i+1}_${w}`]=val(`ir_${i}_${j}`);
+    });
+  });
+  // Q6
+  V.q6.forEach((_,i)=>{ ans[`q6_${i+1}`]=val(`q6_${i}`); });
+  // Q7
+  V.q7.forEach((_,i)=>{ ans[`q7_${i+1}`]=val(`q7_${i}`); });
+  // Q8
+  V.q8.forEach((_,i)=>{
+    ans[`q8_${i+1}_muthanna`]=val(`q8_${i}_1`);
+    ans[`q8_${i+1}_jam3`]=val(`q8_${i}_2`);
+  });
+  return ans;
+}
+
+function val(id){
+  const el=document.getElementById(id);
+  return el?el.value.trim():'—';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+async function submitExam(auto=false){
+  clearInterval(timerInterval);
+  const btn=document.getElementById('submitBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ جارٍ الإرسال...';}
+  const answers=collectAllAnswers();
+  const timeUsed=toArabicNum(40-Math.floor(secondsLeft/60))+' دقيقة';
+  const payload={
+    sheet:'Arabic_Exam_G9',
+    name:currentName,
+    class:currentSection,
+    version:currentVersion,
+    time_used:timeUsed,
+    auto_submit:auto?'نعم':'لا',
+    ...answers
+  };
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const ok=document.getElementById('submitOk');
+    if(ok){ok.style.display='block';}
+    if(btn){btn.textContent='✓ تم التسليم';}
+    // Show answer review panel
+    showAnswerReview(answers);
+    toast('✓ تم تسليم الامتحان بنجاح!');
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='📤 تسليم الامتحان';}
+    toast('⚠ خطأ في الاتصال — أعد المحاولة');
+  }
+}
+
+function showAnswerReview(answers){
+  const V=VERSIONS[currentVersion];
+  const body=document.getElementById('examBody');
+  const review=document.createElement('div');
+  review.style.cssText='background:var(--ink);color:#fff;padding:24px;margin-top:20px;border-radius:4px;direction:rtl;';
+  
+  // Build readable review
+  const rows=Object.entries(answers).map(([k,v])=>{
+    const cleanKey=k.replace(/_/g,' ').replace('q1','س١').replace('q2','س٢')
+      .replace('q3','س٣').replace('q4','س٤').replace('q5','س٥')
+      .replace('q6','س٦').replace('q7','س٧').replace('q8','س٨')
+      .replace('faail','الفاعل').replace('naib','نائب الفاعل')
+      .replace('maf3ool','المفعول به').replace('naw3','النوع')
+      .replace('3alama','العلامة').replace('muthanna','المثنى').replace('jam3','الجمع');
+    return `<div style="display:flex;gap:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.8rem;">
+      <span style="color:var(--gold2);min-width:160px;font-family:var(--fc);">${cleanKey}</span>
+      <span style="color:rgba(255,255,255,.85);font-family:var(--fa);">${v||'—'}</span>
+    </div>`;
+  }).join('');
+  
+  review.innerHTML=`
+    <div style="font-family:var(--fa);font-size:1.1rem;color:var(--gold2);margin-bottom:16px;border-bottom:2px solid rgba(200,160,48,.3);padding-bottom:10px;">
+      📋 ملخص إجابات: ${currentName} — ${currentSection} — ${VERSION_LABELS[currentVersion]}
+    </div>
+    <div style="font-family:var(--fc);font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:12px;">
+      تسجّل هذه الإجابات في جدول المعلمة عبير تلقائياً · للمراجعة فقط
+    </div>
+    ${rows}`;
+  body.appendChild(review);
+  review.scrollIntoView({behavior:'smooth'});
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>
