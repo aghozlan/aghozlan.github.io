@@ -708,15 +708,25 @@ async function submitWork(){
   const btn=document.querySelector('[onclick="submitWork()"]');
   btn.disabled=true;btn.textContent='⏳ Submitting…';
   const done=Object.values(correct).filter(Boolean).length;
+  // ── Collect all chat logs ─────────────────────────────────
+  // Format: "CT_1 | User: ... | AI: ... || CT_2 | User: ..."
+  const chatLog=Object.entries(chatHistories).map(([key,msgs])=>{
+    if(!msgs||msgs.length===0)return null;
+    const turns=msgs.map(m=>(m.role==='user'?'Student':'Tutor')+': '+m.content).join(' → ');
+    return '['+key+'] '+turns;
+  }).filter(Boolean).join(' || ');
+
   const payload={
     sheet:'Synapse_Biology',
     name,class:cls,
+    time_spent:getTimeSpent(),
     q1:mcqSel[1]?'Q1:'+(mcqSel[1])+(correct.q1?' ✓':' ✗'):'—',
     q2:mcqSel[2]?'Q2:'+(mcqSel[2])+(correct.q2?' ✓':' ✗'):'—',
     q3:mcqSel[3]?'Q3:'+(mcqSel[3])+(correct.q3?' ✓':' ✗'):'—',
     q4:mcqSel[4]?'Q4:'+(mcqSel[4])+(correct.q4?' ✓':' ✗'):'—',
     open1:document.getElementById('open1').value||'—',
     open2:document.getElementById('open2').value||'—',
+    chat_log:chatLog||'No AI conversations recorded',
     score:Math.round(done/4*100)+'%'
   };
   try{
@@ -776,6 +786,15 @@ const CR_QUESTIONS=[
 
 // Chat history per question: { CT_1: [{role,text},...], CR_3: [...] }
 const chatHistories={};
+
+// ── SESSION TIMER ──────────────────────────────────────────
+const sessionStart=Date.now();
+function getTimeSpent(){
+  const ms=Date.now()-sessionStart;
+  const min=Math.floor(ms/60000);
+  const sec=Math.floor((ms%60000)/1000);
+  return min+'m '+sec+'s';
+}
 
 function getHistKey(cat,n){return cat+'_'+n;}
 
@@ -882,8 +901,11 @@ Your job:
       headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:body
     });
-    const data=await resp.json();
-    const aiText=data.text||data.error||'Could not get a response. Please try again.';
+    const raw=await resp.text();
+    console.log('Apps Script raw response:',raw);
+    const data=JSON.parse(raw);
+    console.log('Parsed data:',JSON.stringify(data));
+    const aiText=data.text||data.error||('No response. Raw: '+raw.slice(0,200));
     chatHistories[key].push({role:'assistant',content:aiText});
     chatEl.removeChild(typing);
     appendMsg(chatEl,'ai',aiText);
