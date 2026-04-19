@@ -581,6 +581,19 @@ footer{padding:40px 56px;display:flex;align-items:center;justify-content:space-b
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
 
+// ── SESSION TIMER ──────────────────────────────────────────
+const sessionStart=Date.now();
+function getTimeSpent(){
+  const ms=Date.now()-sessionStart;
+  const min=Math.floor(ms/60000);
+  const sec=Math.floor((ms%60000)/1000);
+  return min+'m '+sec+'s';
+}
+
+// Chat history per question: { CT_1: [{role,text},...], CR_3: [...] }
+const chatHistories={};
+
+
 // ── NAV ──
 function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
 const snBtns=document.querySelectorAll('.sn');
@@ -724,8 +737,7 @@ async function submitWork(){
   let totalTurns=0;
   for(const [key,msgs] of Object.entries(chatHistories)){
     if(!msgs||msgs.length===0){chatFields['chat_'+key]='—';continue;}
-    const turns=msgs.map(m=>(m.role==='user'?'Student':'Tutor')+': '+m.content).join('
-');
+    const turns=msgs.map(m=>(m.role==='user'?'Student':'Tutor')+': '+m.content).join('\n');
     chatFields['chat_'+key]=turns;
     totalTurns+=msgs.length;
   }
@@ -736,9 +748,7 @@ async function submitWork(){
     .map(([key,msgs])=>{
       const turns=msgs.map(m=>(m.role==='user'?'S':'T')+': '+m.content).join(' | ');
       return '['+key+'] '+turns;
-    }).join('
----
-')||'No conversations';
+    }).join('\n---\n')||'No conversations';
 
   const payload={
     sheet:'Synapse_Biology',
@@ -818,17 +828,7 @@ const CR_QUESTIONS=[
   {n:10,type:'Experiment',q:'Some synapses strengthen with repeated learning (synaptic plasticity). Design an experiment that could demonstrate how repeated stimulation affects synaptic strength.',hint:'What would you measure? What would you stimulate repeatedly? What would you control?',model:'Repeatedly stimulate a presynaptic neuron at set intervals and measure the postsynaptic response amplitude. If the response grows stronger over trials, the synapse has strengthened.'},
 ];
 
-// Chat history per question: { CT_1: [{role,text},...], CR_3: [...] }
-const chatHistories={};
 
-// ── SESSION TIMER ──────────────────────────────────────────
-const sessionStart=Date.now();
-function getTimeSpent(){
-  const ms=Date.now()-sessionStart;
-  const min=Math.floor(ms/60000);
-  const sec=Math.floor((ms%60000)/1000);
-  return min+'m '+sec+'s';
-}
 
 function getHistKey(cat,n){return cat+'_'+n;}
 
