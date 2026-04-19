@@ -700,7 +700,11 @@ function buildBioFeedback(qn,a){
   }
 }
 
-// ── SUBMIT ──
+// ── SUBMIT ──────────────────────────────────────────────────
+// NOTE: Groq API key is stored in Apps Script → Script Properties
+// as 'GROQ_API_KEY'. It is NOT in any HTML file. It survives all
+// redeployments of the same project. Never paste it in code.
+// ─────────────────────────────────────────────────────────────
 async function submitWork(){
   const name=document.getElementById('stuName').value.trim();
   const cls=document.getElementById('stuClass').value.trim();
@@ -708,13 +712,33 @@ async function submitWork(){
   const btn=document.querySelector('[onclick="submitWork()"]');
   btn.disabled=true;btn.textContent='⏳ Submitting…';
   const done=Object.values(correct).filter(Boolean).length;
-  // ── Collect all chat logs ─────────────────────────────────
-  // Format: "CT_1 | User: ... | AI: ... || CT_2 | User: ..."
-  const chatLog=Object.entries(chatHistories).map(([key,msgs])=>{
-    if(!msgs||msgs.length===0)return null;
-    const turns=msgs.map(m=>(m.role==='user'?'Student':'Tutor')+': '+m.content).join(' → ');
-    return '['+key+'] '+turns;
-  }).filter(Boolean).join(' || ');
+
+  // ── Collect every word typed in open text fields ──────────
+  const open1val=document.getElementById('open1')?.value||'—';
+  const open2val=document.getElementById('open2')?.value||'—';
+
+  // ── Collect every chat turn per question ──────────────────
+  // Each question gets its own field so Ahmad can read them clearly
+  // CT = Critical Thinking (12 Qs), CR = Creativity (10 Qs)
+  const chatFields={};
+  let totalTurns=0;
+  for(const [key,msgs] of Object.entries(chatHistories)){
+    if(!msgs||msgs.length===0){chatFields['chat_'+key]='—';continue;}
+    const turns=msgs.map(m=>(m.role==='user'?'Student':'Tutor')+': '+m.content).join('
+');
+    chatFields['chat_'+key]=turns;
+    totalTurns+=msgs.length;
+  }
+
+  // ── Full combined log (backup single column) ──────────────
+  const fullLog=Object.entries(chatHistories)
+    .filter(([,msgs])=>msgs&&msgs.length>0)
+    .map(([key,msgs])=>{
+      const turns=msgs.map(m=>(m.role==='user'?'S':'T')+': '+m.content).join(' | ');
+      return '['+key+'] '+turns;
+    }).join('
+---
+')||'No conversations';
 
   const payload={
     sheet:'Synapse_Biology',
@@ -724,13 +748,23 @@ async function submitWork(){
     q2:mcqSel[2]?'Q2:'+(mcqSel[2])+(correct.q2?' ✓':' ✗'):'—',
     q3:mcqSel[3]?'Q3:'+(mcqSel[3])+(correct.q3?' ✓':' ✗'):'—',
     q4:mcqSel[4]?'Q4:'+(mcqSel[4])+(correct.q4?' ✓':' ✗'):'—',
-    open1:document.getElementById('open1').value||'—',
-    open2:document.getElementById('open2').value||'—',
-    chat_log:chatLog||'No AI conversations recorded',
-    score:Math.round(done/4*100)+'%'
+    open1:open1val,
+    open2:open2val,
+    chat_turns_total:totalTurns,
+    chat_full_log:fullLog,
+    score:Math.round(done/4*100)+'%',
+    ...chatFields  // spreads chat_CT_1, chat_CT_2, ..., chat_CR_10
   };
+
   try{
-    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    // CRITICAL: must use text/plain — application/json triggers CORS preflight
+    // which Apps Script cannot handle. text/plain goes no-cors safely.
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)
+    });
     document.getElementById('submitOk').style.display='block';
     btn.textContent='✓ Submitted!';btn.style.background='var(--green2)';btn.style.color='#000';
     showToast('✓ Submitted to Ahmad\'s grade sheet!');
