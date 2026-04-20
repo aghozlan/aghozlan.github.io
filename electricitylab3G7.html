@@ -288,7 +288,7 @@ textarea:focus{border-color:var(--electric);}
 <section id="q_symbols" style="background:var(--bg2);">
   <div class="e-tag explore">Question 2 · Symbol Match</div>
   <h2 class="sec-title">Match the Symbol</h2>
-  <p class="sec-desc">Four circuit symbols are drawn on the canvas. Drag the correct component name from the bank onto each symbol box. On mobile: tap a chip then tap a box.</p>
+  <p class="sec-desc">Four circuit symbols are drawn on the canvas. Study each symbol carefully — you learned these in Lab 1! Then drag the correct component name onto the matching box below. On mobile: tap a chip to select it, then tap the box beneath the correct symbol.</p>
 
   <canvas id="cvSymbols" width="560" height="200" style="border-radius:8px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;margin-bottom:16px;"></canvas>
 
@@ -302,16 +302,16 @@ textarea:focus{border-color:var(--electric);}
 
   <!-- Drop zones beneath each symbol -->
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
-    <div class="drag-zone" id="dz1" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz1')" onclick="mobilePlace('dz1')">
+    <div class="drag-zone" id="dz1" ondragover="event.preventDefault()" ondrop="drop(event,'dz1')" onclick="mobilePlace('dz1')">
       <span style="font-family:var(--fm);font-size:.62rem;">Symbol 1</span>
     </div>
-    <div class="drag-zone" id="dz2" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz2')" onclick="mobilePlace('dz2')">
+    <div class="drag-zone" id="dz2" ondragover="event.preventDefault()" ondrop="drop(event,'dz2')" onclick="mobilePlace('dz2')">
       <span style="font-family:var(--fm);font-size:.62rem;">Symbol 2</span>
     </div>
-    <div class="drag-zone" id="dz3" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz3')" onclick="mobilePlace('dz3')">
+    <div class="drag-zone" id="dz3" ondragover="event.preventDefault()" ondrop="drop(event,'dz3')" onclick="mobilePlace('dz3')">
       <span style="font-family:var(--fm);font-size:.62rem;">Symbol 3</span>
     </div>
-    <div class="drag-zone" id="dz4" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz4')" onclick="mobilePlace('dz4')">
+    <div class="drag-zone" id="dz4" ondragover="event.preventDefault()" ondrop="drop(event,'dz4')" onclick="mobilePlace('dz4')">
       <span style="font-family:var(--fm);font-size:.62rem;">Symbol 4</span>
     </div>
   </div>
@@ -664,8 +664,14 @@ function renderCircuit(){
 
   // ── SPOT A: LAMP at top centre ──
   drawLamp(ctx,cx,my,14);
-  // ── SPOT B: wire junction top right ──
-  ctx.fillStyle='rgba(96,165,250,.6)';ctx.beginPath();ctx.arc(rx-10,my+10,5,0,Math.PI*2);ctx.fill();
+  // ── SPOT B: wire segment on right side — clear straight line with arrow indicator
+  ctx.strokeStyle='rgba(96,165,250,.8)';ctx.lineWidth=4;ctx.lineCap='round';
+  // Highlight a segment of the right wire to make it obvious
+  ctx.beginPath();ctx.moveTo(rx,my+20);ctx.lineTo(rx,my+60);ctx.stroke();
+  // Small arrow pointing to it
+  ctx.strokeStyle='rgba(96,165,250,.5)';ctx.lineWidth=1.5;ctx.setLineDash([3,2]);
+  ctx.beginPath();ctx.moveTo(rx-20,my+40);ctx.lineTo(rx-6,my+40);ctx.stroke();
+  ctx.setLineDash([]);
   // ── SPOT C: SWITCH at bottom centre ──
   drawSwitch(ctx,cx,ry,false);
   // ── SPOT D: BATTERY on left ──
@@ -714,16 +720,25 @@ function drawSwitch(ctx,x,y,closed){
 }
 
 function drawBattery(ctx,x,y){
-  const lines=[[0,20],[4,12],[0,20],[4,12]];
-  ctx.strokeStyle='#34d399';ctx.lineWidth=2.5;
-  lines.forEach(([w,h],i)=>{
-    const lx=x+(i%2===0?-w/2:-w/2);
-    const ly=y-30+i*14;
-    ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+w,ly);ctx.stroke();
+  // Standard battery symbol: alternating long and short HORIZONTAL lines, stacked vertically
+  // Long line (wide) = positive, Short line (narrow) = negative
+  ctx.strokeStyle='#34d399';ctx.lineWidth=2.5;ctx.lineCap='square';
+  const pairs=[
+    {w:20,yOff:-18},  // long  (positive)
+    {w:10,yOff:-6},   // short (negative)
+    {w:20,yOff:6},    // long
+    {w:10,yOff:18},   // short
+  ];
+  pairs.forEach(({w,yOff})=>{
+    ctx.beginPath();
+    ctx.moveTo(x-w/2, y+yOff);
+    ctx.lineTo(x+w/2, y+yOff);
+    ctx.stroke();
   });
-  // + / - labels
+  // + and - labels
   ctx.fillStyle='#34d399';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
-  ctx.fillText('+',x,y-38);ctx.fillText('−',x,y+14);
+  ctx.fillText('+',x+16,y-17);
+  ctx.fillText('−',x+16,y-5);
 }
 
 function line(ctx,x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
@@ -791,19 +806,32 @@ function renderSymbols(){
   const gap=W/4;
   const labels=['Symbol 1','Symbol 2','Symbol 3','Symbol 4'];
   labels.forEach((l,i)=>{
-    const cx=(i+0.5)*gap,cy=H/2;
-    ctx.fillStyle='rgba(255,255,255,.15)';ctx.font='8px DM Mono';ctx.textAlign='center';
-    ctx.fillText(l,cx,H-12);
+    const cx=(i+0.5)*gap;
+    // Number at top
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(l,cx,16);
+    // Divider line between symbols
+    if(i>0){
+      ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(i*gap,0);ctx.lineTo(i*gap,H);ctx.stroke();
+    }
+    // "Match me!" label at bottom
+    ctx.fillStyle='rgba(255,255,255,.25)';ctx.font='7px DM Mono';ctx.textAlign='center';
+    ctx.fillText('↓ match below',cx,H-6);
   });
-  // 1: battery
+  // 1: battery — long line (positive) alternating with short line (negative)
   const c0=(0.5)*gap;
-  ctx.strokeStyle='#34d399';ctx.lineWidth=2;
-  [[0,18],[4,10],[0,18],[4,10]].forEach(([w,h],i)=>{
-    const lx=c0-w/2,ly=75-24+i*14;
-    ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+w,ly);ctx.stroke();
+  ctx.strokeStyle='#34d399';ctx.lineWidth=2.5;ctx.lineCap='square';
+  const batPairs=[{w:24,yOff:-20},{w:12,yOff:-8},{w:24,yOff:4},{w:12,yOff:16}];
+  batPairs.forEach(({w,yOff})=>{
+    ctx.beginPath();
+    ctx.moveTo(c0-w/2, H/2+yOff);
+    ctx.lineTo(c0+w/2, H/2+yOff);
+    ctx.stroke();
   });
   ctx.fillStyle='#34d399';ctx.font='bold 9px DM Mono';ctx.textAlign='center';
-  ctx.fillText('+',c0,50);ctx.fillText('−',c0,H/2+30);
+  ctx.fillText('+',c0+18,H/2-19);
+  ctx.fillText('−',c0+18,H/2-7);
   // 2: lamp
   drawLamp(ctx,(1.5)*gap,H/2,18);
   // 3: switch
