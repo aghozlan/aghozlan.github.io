@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Electricity Pretest | Ahmad Ghozlan | Grade 7D</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06090f;--bg2:#090d17;--bg3:#0c1120;
+  --panel:rgba(255,255,255,.04);--panel2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.13);
+  --text:#dde6f5;--muted:rgba(221,230,245,.45);--muted2:rgba(221,230,245,.27);
+  --electric:#60a5fa;--electricD:rgba(96,165,250,.1);--electricG:rgba(96,165,250,.2);
+  --yellow:#fbbf24;--yellowD:rgba(251,191,36,.1);
+  --green:#34d399;--greenD:rgba(52,211,153,.1);
+  --red:#f87171;--redD:rgba(248,113,113,.1);
+  --orange:#fb923c;--orangeD:rgba(251,146,60,.1);
+  --purple:#a78bfa;--purpleD:rgba(167,139,250,.1);
+  --fh:'Syne',sans-serif;--fb:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.65;}
+
+.app{display:flex;min-height:100vh;}
+aside{width:256px;background:var(--bg2);position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;flex-shrink:0;z-index:100;
+  border-right:1px solid var(--border);}
+main{flex:1;min-width:0;}
+@media(max-width:900px){aside{display:none;}section{padding:40px 18px!important;}}
+
+.sb-logo{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-family:var(--fh);font-size:.95rem;color:var(--electric);font-weight:800;letter-spacing:1px;line-height:1.3;}
+.sb-logo p{font-size:.5rem;color:var(--muted2);text-transform:uppercase;letter-spacing:3px;margin-top:5px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:.76rem;font-weight:600;
+  color:var(--muted2);border-left:2px solid transparent;transition:all .2s;cursor:pointer;
+  background:none;border-right:none;border-top:none;border-bottom:none;width:100%;
+  font-family:var(--fb);text-align:left;}
+.sn:hover,.sn.active{color:var(--electric);background:var(--electricD);border-left-color:var(--electric);}
+.sn .badge{font-size:.44rem;font-family:var(--fm);background:rgba(96,165,250,.12);
+  padding:2px 7px;border-radius:2px;color:var(--electric);margin-left:auto;text-transform:uppercase;}
+.sb-foot{padding:14px 20px;border-top:1px solid var(--border);}
+.sb-foot .name{font-weight:700;font-size:.84rem;color:var(--text);}
+.sb-foot .sub{font-size:.5rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
+
+section{padding:64px 52px;border-bottom:1px solid var(--border);}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.56rem;
+  text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:2px;margin-bottom:16px;}
+.e-tag.engage{background:var(--yellowD);color:var(--yellow);border:1px solid rgba(251,191,36,.2);}
+.e-tag.explore{background:var(--greenD);color:var(--green);border:1px solid rgba(52,211,153,.2);}
+.e-tag.explain{background:var(--electricD);color:var(--electric);border:1px solid rgba(96,165,250,.2);}
+.e-tag.elaborate{background:var(--purpleD);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
+.e-tag.evaluate{background:var(--orangeD);color:var(--orange);border:1px solid rgba(251,146,60,.2);}
+.sec-title{font-family:var(--fh);font-size:clamp(1.6rem,3vw,2.3rem);font-weight:800;
+  color:#fff;letter-spacing:-0.5px;line-height:1.05;margin-bottom:10px;}
+.sec-desc{color:var(--muted);font-size:.9rem;max-width:620px;line-height:1.8;margin-bottom:26px;}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:18px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:580px){.g2{grid-template-columns:1fr;}}
+
+/* MCQ */
+.q-block{background:var(--panel);border:1px solid var(--border2);border-radius:8px;
+  padding:20px;margin-bottom:16px;}
+.q-num{font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:8px;}
+.q-text{font-size:.92rem;color:var(--text);margin-bottom:13px;line-height:1.8;}
+.q-text strong{color:#fff;}
+.mcq-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.mcq-opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;
+  background:var(--panel2);border:1.5px solid var(--border);border-radius:6px;
+  cursor:pointer;transition:all .2s;font-size:.86rem;user-select:none;
+  -webkit-user-select:none;min-height:44px;}
+.mcq-opt:hover{border-color:var(--electric);}
+.mcq-opt.sel{border-color:var(--electric);background:var(--electricD);}
+.mcq-opt.ok{border-color:var(--green)!important;background:var(--greenD)!important;color:var(--green)!important;}
+.mcq-opt.err{border-color:var(--red)!important;background:var(--redD)!important;color:var(--red)!important;}
+.ml{min-width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);
+  color:var(--muted2);font-size:.66rem;font-weight:700;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-family:var(--fm);margin-top:1px;}
+.mcq-opt.ok .ml{background:var(--green);color:#000;}
+.mcq-opt.err .ml{background:var(--red);color:#fff;}
+.fb{margin-top:10px;padding:11px 14px;border-radius:6px;font-size:.85rem;
+  display:none;line-height:1.8;border-left:3px solid;}
+.fb.ok{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.fb.err{background:var(--redD);border-color:var(--red);color:var(--red);}
+.fb.inf{background:var(--electricD);border-color:var(--electric);color:var(--electric);}
+.chk{padding:9px 20px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:6px;color:var(--text);font-family:var(--fb);font-weight:700;font-size:.82rem;
+  cursor:pointer;transition:all .2s;min-height:44px;}
+.chk:hover{border-color:var(--electric);color:var(--electric);}
+
+/* BUTTONS */
+.btn{padding:11px 22px;border-radius:6px;font-family:var(--fb);font-weight:700;
+  font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-e{background:var(--electric);color:#000;}
+.btn-e:hover{filter:brightness(1.15);}
+.btn-g{background:var(--green);color:#000;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--electric);color:var(--electric);}
+
+/* CANVAS */
+canvas{display:block;touch-action:none;}
+
+/* SECTION BUTTONS — student picker */
+.sec-btn{padding:9px 22px;border-radius:6px;font-family:var(--fb);font-weight:700;
+  font-size:.9rem;cursor:pointer;border:1.5px solid var(--border2);background:var(--panel);
+  color:var(--muted2);transition:all .2s;min-height:44px;min-width:56px;}
+.sec-btn:hover{border-color:var(--electric);color:var(--electric);}
+.sec-btn.on{background:var(--electric);color:#000;border-color:var(--electric);}
+
+select{background:var(--panel2);border:1.5px solid var(--border2);border-radius:6px;
+  padding:11px 14px;color:var(--text);font-family:var(--fb);font-size:.9rem;
+  outline:none;width:100%;cursor:pointer;min-height:48px;}
+select:focus{border-color:var(--electric);}
+textarea{background:var(--panel2);border:1.5px solid var(--border2);border-radius:6px;
+  padding:11px 14px;color:var(--text);font-family:var(--fb);font-size:.9rem;
+  outline:none;width:100%;resize:vertical;min-height:90px;}
+textarea:focus{border-color:var(--electric);}
+
+/* DRAG TARGET */
+.drag-zone{min-height:60px;border:2px dashed var(--border2);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;padding:10px;
+  transition:all .2s;font-size:.8rem;color:var(--muted2);font-family:var(--fm);}
+.drag-zone.hover{border-color:var(--electric);background:var(--electricD);}
+.drag-zone.filled{border-style:solid;border-color:var(--electric);}
+.drag-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+  background:var(--panel2);border:1.5px solid var(--border2);border-radius:4px;
+  cursor:grab;font-size:.8rem;font-weight:600;user-select:none;-webkit-user-select:none;
+  touch-action:none;transition:all .2s;}
+.drag-chip:active{cursor:grabbing;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.drag-chip.placed{opacity:.4;cursor:not-allowed;}
+
+/* CIRCUIT LABEL TASK */
+.circuit-label-wrap{position:relative;display:inline-block;}
+.label-spot{position:absolute;width:28px;height:28px;border-radius:50%;
+  background:var(--yellow);color:#000;font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:var(--fm);transition:all .2s;border:2px solid rgba(255,255,255,.2);}
+.label-spot:hover{transform:scale(1.15);}
+.label-spot.answered{background:var(--green);}
+.label-spot.wrong-spot{background:var(--red);}
+
+/* PROGRESS BAR */
+.prog-bar{height:4px;background:var(--panel2);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--electric),var(--green));
+  border-radius:2px;transition:width .5s ease;}
+
+/* SCORE */
+.score-big{font-family:var(--fm);font-size:3rem;font-weight:700;color:var(--electric);}
+.score-row{display:flex;align-items:center;justify-content:space-between;
+  padding:5px 0;border-bottom:1px solid var(--border);}
+.score-key{color:var(--muted2);font-family:var(--fm);font-size:.64rem;text-transform:uppercase;}
+.score-val{font-weight:700;font-family:var(--fm);font-size:.82rem;}
+.score-val.ok{color:var(--green);}
+.score-val.no{color:var(--muted2);}
+
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  background:#1e2940;color:var(--electric);padding:10px 22px;border-radius:6px;
+  font-family:var(--fm);font-size:.72rem;z-index:999;opacity:0;
+  transition:opacity .3s;pointer-events:none;border:1px solid var(--border2);}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="app">
+
+<aside>
+  <div class="sb-logo">
+    <h1>⚡ Electricity<br>Pre-Test</h1>
+    <p>Grade 7D · Labs 1 & 2 Review</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">🚀 Mission Brief <span class="badge">Intro</span></button>
+    <button class="sn" onclick="goTo('q_circuit')">🔌 Circuit Reading <span class="badge">Q1</span></button>
+    <button class="sn" onclick="goTo('q_symbols')">📐 Symbols Match <span class="badge">Q2</span></button>
+    <button class="sn" onclick="goTo('q_classify')">🗂 Sort It Out <span class="badge">Q3</span></button>
+    <button class="sn" onclick="goTo('q_switch')">🔄 Switch Logic <span class="badge">Q4</span></button>
+    <button class="sn" onclick="goTo('q_openclosed')">⭕ Open or Closed? <span class="badge">Q5</span></button>
+    <button class="sn" onclick="goTo('q_scenarios')">⚡ Scenario Bank <span class="badge">Q6–8</span></button>
+    <button class="sn" onclick="goTo('q_build')">🏗 Circuit Builder <span class="badge">Q9</span></button>
+    <button class="sn" onclick="goTo('q_written')">✍ Written <span class="badge">Q10</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 Submit <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="sub">Physics · Grade 7D · Lebanon</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- HERO -->
+<section id="hero" style="min-height:70vh;display:flex;align-items:center;background:var(--bg2);">
+  <div style="max-width:680px;">
+    <div style="font-family:var(--fm);font-size:.56rem;color:var(--yellow);text-transform:uppercase;
+      letter-spacing:3px;border:1px solid rgba(251,191,36,.25);padding:4px 14px;border-radius:2px;
+      display:inline-block;margin-bottom:20px;">Labs 1 & 2 · Evaluation</div>
+    <h1 style="font-family:var(--fh);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;
+      color:#fff;letter-spacing:-2px;line-height:1.0;margin-bottom:16px;">
+      How well do<br>you know<br><span style="color:var(--electric);">electricity?</span>
+    </h1>
+    <p style="font-size:.96rem;color:var(--muted);line-height:1.9;margin-bottom:28px;max-width:520px;">
+      10 challenges — circuits to read, components to sort, switches to analyse,
+      and a live interactive circuit to complete.<br>
+      <strong style="color:var(--text);">No searching. Just thinking.</strong>
+    </p>
+    <!-- Student picker -->
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:20px;max-width:480px;margin-bottom:20px;">
+      <div style="font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:12px;">Choose Your Name</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button class="sec-btn on" id="sbtn7D" onclick="setSection('7D')">7D</button>
+      </div>
+      <select id="stuName" style="margin-bottom:12px;">
+        <option value="">— Select your name —</option>
+      </select>
+      <button class="btn btn-e" style="width:100%;" onclick="goTo('q_circuit')">
+        Start the Pre-Test →
+      </button>
+    </div>
+    <a href="electricitylab2.html" style="text-decoration:none;"><button class="btn btn-ghost">← Back to Lab 2</button></a>
+  </div>
+</section>
+
+<!-- Q1: CIRCUIT READING (Canvas-based diagram) -->
+<section id="q_circuit">
+  <div class="e-tag engage">Question 1 · Circuit Reading</div>
+  <h2 class="sec-title">Read the Circuit</h2>
+  <p class="sec-desc">The diagram below shows an electric circuit. Four components are marked with coloured spots. Tap each spot to identify the component.</p>
+
+  <div style="position:relative;margin-bottom:20px;display:inline-block;max-width:100%;">
+    <canvas id="cvCircuit" width="520" height="300" style="border-radius:8px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;"></canvas>
+    <!-- Label spots positioned by JS -->
+    <div id="spotA" class="label-spot" style="left:220px;top:30px;" onclick="tapSpot('A')">A</div>
+    <div id="spotB" class="label-spot" style="left:388px;top:130px;" onclick="tapSpot('B')">B</div>
+    <div id="spotC" class="label-spot" style="left:220px;top:230px;" onclick="tapSpot('C')">C</div>
+    <div id="spotD" class="label-spot" style="left:52px;top:130px;" onclick="tapSpot('D')">D</div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px;">
+    <div class="card" id="spotInfoA" style="border-color:var(--yellow);">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--yellow);margin-bottom:8px;">SPOT A</div>
+      <div class="mcq-opts" id="optsA">
+        <div class="mcq-opt" onclick="pickSpot('A','lamp',this)"><span class="ml">→</span>Lamp</div>
+        <div class="mcq-opt" onclick="pickSpot('A','battery',this)"><span class="ml">→</span>Battery (dry cell)</div>
+        <div class="mcq-opt" onclick="pickSpot('A','switch',this)"><span class="ml">→</span>Switch</div>
+        <div class="mcq-opt" onclick="pickSpot('A','wire',this)"><span class="ml">→</span>Connecting wire</div>
+      </div>
+    </div>
+    <div class="card" id="spotInfoB" style="border-color:var(--yellow);">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--yellow);margin-bottom:8px;">SPOT B</div>
+      <div class="mcq-opts" id="optsB">
+        <div class="mcq-opt" onclick="pickSpot('B','lamp',this)"><span class="ml">→</span>Lamp</div>
+        <div class="mcq-opt" onclick="pickSpot('B','battery',this)"><span class="ml">→</span>Battery (dry cell)</div>
+        <div class="mcq-opt" onclick="pickSpot('B','switch',this)"><span class="ml">→</span>Switch</div>
+        <div class="mcq-opt" onclick="pickSpot('B','wire',this)"><span class="ml">→</span>Connecting wire</div>
+      </div>
+    </div>
+    <div class="card" id="spotInfoC" style="border-color:var(--yellow);">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--yellow);margin-bottom:8px;">SPOT C</div>
+      <div class="mcq-opts" id="optsC">
+        <div class="mcq-opt" onclick="pickSpot('C','lamp',this)"><span class="ml">→</span>Lamp</div>
+        <div class="mcq-opt" onclick="pickSpot('C','battery',this)"><span class="ml">→</span>Battery (dry cell)</div>
+        <div class="mcq-opt" onclick="pickSpot('C','switch',this)"><span class="ml">→</span>Switch</div>
+        <div class="mcq-opt" onclick="pickSpot('C','wire',this)"><span class="ml">→</span>Connecting wire</div>
+      </div>
+    </div>
+    <div class="card" id="spotInfoD" style="border-color:var(--yellow);">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--yellow);margin-bottom:8px;">SPOT D</div>
+      <div class="mcq-opts" id="optsD">
+        <div class="mcq-opt" onclick="pickSpot('D','lamp',this)"><span class="ml">→</span>Lamp</div>
+        <div class="mcq-opt" onclick="pickSpot('D','battery',this)"><span class="ml">→</span>Battery (dry cell)</div>
+        <div class="mcq-opt" onclick="pickSpot('D','switch',this)"><span class="ml">→</span>Switch</div>
+        <div class="mcq-opt" onclick="pickSpot('D','wire',this)"><span class="ml">→</span>Connecting wire</div>
+      </div>
+    </div>
+  </div>
+  <button class="chk" onclick="checkCircuit()">⚡ Check Circuit Labels</button>
+  <div class="fb" id="fbCircuit"></div>
+</section>
+
+<!-- Q2: SYMBOLS DRAG MATCH -->
+<section id="q_symbols" style="background:var(--bg2);">
+  <div class="e-tag explore">Question 2 · Symbol Match</div>
+  <h2 class="sec-title">Match the Symbol</h2>
+  <p class="sec-desc">Four circuit symbols are drawn on the canvas. Drag the correct component name from the bank onto each symbol box. On mobile: tap a chip then tap a box.</p>
+
+  <canvas id="cvSymbols" width="560" height="200" style="border-radius:8px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;margin-bottom:16px;"></canvas>
+
+  <!-- Drag chips -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;" id="chipBank">
+    <div class="drag-chip" id="chip_battery" draggable="true" ondragstart="dstart(event,'battery')" ontouchend="mobilePick('battery',this)">🔋 Dry Cell</div>
+    <div class="drag-chip" id="chip_lamp" draggable="true" ondragstart="dstart(event,'lamp')" ontouchend="mobilePick('lamp',this)">💡 Lamp</div>
+    <div class="drag-chip" id="chip_switch" draggable="true" ondragstart="dstart(event,'switch')" ontouchend="mobilePick('switch',this)">🔄 Switch</div>
+    <div class="drag-chip" id="chip_wire" draggable="true" ondragstart="dstart(event,'wire')" ontouchend="mobilePick('wire',this)">〰 Wire</div>
+  </div>
+
+  <!-- Drop zones beneath each symbol -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+    <div class="drag-zone" id="dz1" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz1')" onclick="mobilePlace('dz1')">
+      <span style="font-family:var(--fm);font-size:.62rem;">Symbol 1</span>
+    </div>
+    <div class="drag-zone" id="dz2" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz2')" onclick="mobilePlace('dz2')">
+      <span style="font-family:var(--fm);font-size:.62rem;">Symbol 2</span>
+    </div>
+    <div class="drag-zone" id="dz3" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz3')" onclick="mobilePlace('dz3')">
+      <span style="font-family:var(--fm);font-size:.62rem;">Symbol 3</span>
+    </div>
+    <div class="drag-zone" id="dz4" ondragover="e=>e.preventDefault()" ondrop="drop(event,'dz4')" onclick="mobilePlace('dz4')">
+      <span style="font-family:var(--fm);font-size:.62rem;">Symbol 4</span>
+    </div>
+  </div>
+  <button class="chk" onclick="checkSymbols()">⚡ Check Matches</button>
+  <div class="fb" id="fbSymbols"></div>
+</section>
+
+<!-- Q3: SORT CONDUCTORS vs INSULATORS -->
+<section id="q_classify">
+  <div class="e-tag explain">Question 3 · Sort It Out</div>
+  <h2 class="sec-title">Conductor or Insulator?</h2>
+  <p class="sec-desc">Sort each material into the correct category. Tap a chip to select it, then tap the target box to place it. Placed chips can be tapped to return to the bank.</p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;" id="matBank">
+    <div class="drag-chip" id="mc_copper" onclick="matTap('copper',this)">🔩 Copper wire</div>
+    <div class="drag-chip" id="mc_rubber" onclick="matTap('rubber',this)">🟤 Rubber band</div>
+    <div class="drag-chip" id="mc_iron" onclick="matTap('iron',this)">🪝 Iron nail</div>
+    <div class="drag-chip" id="mc_wood" onclick="matTap('wood',this)">🪵 Dry wood</div>
+    <div class="drag-chip" id="mc_graphite" onclick="matTap('graphite',this)">✏ Graphite pencil</div>
+    <div class="drag-chip" id="mc_glass" onclick="matTap('glass',this)">🪟 Glass</div>
+    <div class="drag-chip" id="mc_steel" onclick="matTap('steel',this)">🔧 Steel bolt</div>
+    <div class="drag-chip" id="mc_plastic" onclick="matTap('plastic',this)">🧴 Plastic bottle</div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px;">
+    <div style="background:rgba(52,211,153,.07);border:2px dashed rgba(52,211,153,.3);border-radius:8px;padding:14px;min-height:120px;" id="condZone" onclick="matPlace('conductor')">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">⚡ Conductor — tap to place</div>
+      <div id="condList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+    <div style="background:rgba(248,113,113,.07);border:2px dashed rgba(248,113,113,.3);border-radius:8px;padding:14px;min-height:120px;" id="insZone" onclick="matPlace('insulator')">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">🚫 Insulator — tap to place</div>
+      <div id="insList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+  </div>
+  <button class="chk" onclick="checkMaterials()">⚡ Check Classification</button>
+  <div class="fb" id="fbMat"></div>
+</section>
+
+<!-- Q4: SWITCH INTERACTIVE -->
+<section id="q_switch" style="background:var(--bg2);">
+  <div class="e-tag explore">Question 4 · Switch Logic</div>
+  <h2 class="sec-title">Control the Circuit</h2>
+  <p class="sec-desc">Tap the switch in the circuit below to open and close it. Watch what happens to the lamp. Then answer the question.</p>
+
+  <div style="text-align:center;margin-bottom:16px;">
+    <canvas id="cvSwitch" width="420" height="240" style="border-radius:8px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;cursor:pointer;" onclick="toggleSwitch()" ontouchend="e=>{e.preventDefault();toggleSwitch();}"></canvas>
+    <div style="font-family:var(--fm);font-size:.68rem;color:var(--muted2);margin-top:8px;" id="switchState">Switch is OPEN — tap to close</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Q4</div>
+    <div class="q-text">You just observed that when the switch is <strong>open</strong>, the lamp:</div>
+    <div class="mcq-opts" id="q4opts">
+      <div class="mcq-opt" onclick="pick('q4','A',this)"><span class="ml">A</span>Glows dimly — some current still passes through</div>
+      <div class="mcq-opt" onclick="pick('q4','B',this)"><span class="ml">B</span>Does not light — the circuit is broken and zero current flows</div>
+      <div class="mcq-opt" onclick="pick('q4','C',this)"><span class="ml">C</span>Stays bright — switches only reduce voltage</div>
+      <div class="mcq-opt" onclick="pick('q4','D',this)"><span class="ml">D</span>Explodes — too much voltage builds up</div>
+    </div>
+    <button class="chk" onclick="chk('q4','B','✓ Correct! An open switch creates a complete break — the circuit path is interrupted and absolutely zero current flows. The lamp cannot light up at all.','✗ Look at the animation — when open, the lamp goes completely dark. An open switch breaks the path entirely. Zero current flows, not reduced current.')">✓ Check</button>
+    <div class="fb" id="fbq4"></div>
+  </div>
+</section>
+
+<!-- Q5: OPEN OR CLOSED? (tap 4 diagrams) -->
+<section id="q_openclosed">
+  <div class="e-tag explain">Question 5 · Open or Closed?</div>
+  <h2 class="sec-title">Which circuits work?</h2>
+  <p class="sec-desc">Four circuits are shown. Tap each one to classify it as <strong>open</strong> (lamp off) or <strong>closed</strong> (lamp on). The switch state is your clue.</p>
+
+  <div class="g2" style="margin-bottom:14px;">
+    <div style="text-align:center;">
+      <canvas id="cvOC1" width="230" height="160" style="border-radius:6px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;"></canvas>
+      <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;">
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(1,'open')">Open</button>
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(1,'closed')">Closed</button>
+      </div>
+      <div class="fb" id="fbOC1" style="margin-top:6px;"></div>
+    </div>
+    <div style="text-align:center;">
+      <canvas id="cvOC2" width="230" height="160" style="border-radius:6px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;"></canvas>
+      <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;">
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(2,'open')">Open</button>
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(2,'closed')">Closed</button>
+      </div>
+      <div class="fb" id="fbOC2" style="margin-top:6px;"></div>
+    </div>
+    <div style="text-align:center;">
+      <canvas id="cvOC3" width="230" height="160" style="border-radius:6px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;"></canvas>
+      <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;">
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(3,'open')">Open</button>
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(3,'closed')">Closed</button>
+      </div>
+      <div class="fb" id="fbOC3" style="margin-top:6px;"></div>
+    </div>
+    <div style="text-align:center;">
+      <canvas id="cvOC4" width="230" height="160" style="border-radius:6px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;"></canvas>
+      <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;">
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(4,'open')">Open</button>
+        <button class="chk" style="font-size:.74rem;padding:6px 14px;" onclick="classifyOC(4,'closed')">Closed</button>
+      </div>
+      <div class="fb" id="fbOC4" style="margin-top:6px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Q6-8: SCENARIO BANK -->
+<section id="q_scenarios" style="background:var(--bg2);">
+  <div class="e-tag elaborate">Questions 6 – 8 · Scenarios</div>
+  <h2 class="sec-title">What Happens Next?</h2>
+  <p class="sec-desc">Three real-world scenarios. Each one requires you to apply what you learned in the labs — not just recall facts.</p>
+
+  <!-- Q6 -->
+  <div class="q-block" style="margin-bottom:14px;">
+    <div class="q-num">Question 6 · Cells & Brightness</div>
+    <div class="q-text">A lamp is connected to <strong>one dry cell</strong> and glows normally. A student then connects a <strong>second dry cell in the same circuit</strong>. What is the most likely result?</div>
+    <div class="mcq-opts" id="q6opts">
+      <div class="mcq-opt" onclick="pick('q6','A',this)"><span class="ml">A</span>The lamp goes out — two cells cancel each other</div>
+      <div class="mcq-opt" onclick="pick('q6','B',this)"><span class="ml">B</span>The lamp glows brighter — more cells provide more voltage and more current</div>
+      <div class="mcq-opt" onclick="pick('q6','C',this)"><span class="ml">C</span>Nothing changes — the number of cells does not affect brightness</div>
+      <div class="mcq-opt" onclick="pick('q6','D',this)"><span class="ml">D</span>The lamp glows dimmer — more cells slow the current down</div>
+    </div>
+    <button class="chk" onclick="chk('q6','B','✓ Correct! More dry cells = more voltage = more electrical pressure = more current flowing = lamp receives more energy per second = brighter glow! This is what you explored in Lab 1.','✗ More cells means more voltage (more electrical push). Greater voltage drives more current through the lamp, delivering more energy and making it brighter.')">✓ Check</button>
+    <div class="fb" id="fbq6"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-block" style="margin-bottom:14px;">
+    <div class="q-num">Question 7 · Conductor or Insulator?</div>
+    <div class="q-text">In Lab 2, you tested materials in a circuit gap. A student places a <strong>pencil (graphite)</strong> across the gap. The lamp lights up. A second student places a <strong>rubber eraser</strong> across the same gap. The lamp stays off. The correct conclusion is:</div>
+    <div class="mcq-opts" id="q7opts">
+      <div class="mcq-opt" onclick="pick('q7','A',this)"><span class="ml">A</span>Graphite is an insulator; rubber is a conductor</div>
+      <div class="mcq-opt" onclick="pick('q7','B',this)"><span class="ml">B</span>Graphite is a conductor; rubber is an insulator</div>
+      <div class="mcq-opt" onclick="pick('q7','C',this)"><span class="ml">C</span>Both are conductors — the second lamp was broken</div>
+      <div class="mcq-opt" onclick="pick('q7','D',this)"><span class="ml">D</span>Both are insulators — the first lamp lit by coincidence</div>
+    </div>
+    <button class="chk" onclick="chk('q7','B','✓ Correct! Graphite (pencil core) is a conductor — it has free electrons that carry current, completing the circuit and lighting the lamp. Rubber is an excellent insulator — it blocks current completely.','✗ If the lamp lit up, current flowed through the material — so graphite is a conductor. If the lamp stayed off, current was blocked — rubber is an insulator.')">✓ Check</button>
+    <div class="fb" id="fbq7"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-block">
+    <div class="q-num">Question 8 · Generator or Receiver?</div>
+    <div class="q-text">A circuit contains a <strong>battery, a motor, and a lamp</strong>. Which statement correctly classifies the components?</div>
+    <div class="mcq-opts" id="q8opts">
+      <div class="mcq-opt" onclick="pick('q8','A',this)"><span class="ml">A</span>Battery = receiver · Motor = generator · Lamp = generator</div>
+      <div class="mcq-opt" onclick="pick('q8','B',this)"><span class="ml">B</span>Battery = generator · Motor = receiver · Lamp = receiver</div>
+      <div class="mcq-opt" onclick="pick('q8','C',this)"><span class="ml">C</span>Battery = generator · Motor = generator · Lamp = receiver</div>
+      <div class="mcq-opt" onclick="pick('q8','D',this)"><span class="ml">D</span>All three are receivers — they all use electricity</div>
+    </div>
+    <button class="chk" onclick="chk('q8','B','✓ Perfect! The battery is the generator — it produces electrical energy from chemical energy. The motor and the lamp are both receivers — they take electrical energy and convert it (motor → motion, lamp → light + heat).','✗ Generator = produces electrical energy (battery). Receiver = uses electrical energy and converts it (motor → motion, lamp → light/heat). The battery is the only generator in the circuit.')">✓ Check</button>
+    <div class="fb" id="fbq8"></div>
+  </div>
+</section>
+
+<!-- Q9: LIVE CIRCUIT BUILDER -->
+<section id="q_build">
+  <div class="e-tag elaborate">Question 9 · Circuit Builder</div>
+  <h2 class="sec-title">Complete the Circuit</h2>
+  <p class="sec-desc">The circuit below is missing one component. Tap the correct missing component from the options below to add it. The circuit will animate when you get it right.</p>
+
+  <div style="text-align:center;margin-bottom:16px;">
+    <canvas id="cvBuild" width="480" height="280" style="border-radius:8px;background:#0a0e1a;border:1px solid var(--border2);max-width:100%;"></canvas>
+  </div>
+
+  <div style="font-style:italic;color:var(--muted);font-size:.84rem;margin-bottom:14px;">The circuit has a battery and two connecting wires. The lamp symbol is drawn but not connected to the top wire. Which component is also missing to make this a complete, working circuit?</div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+    <button class="chk" onclick="buildPick('switch')">🔄 A switch (open)</button>
+    <button class="chk" onclick="buildPick('another_battery')">🔋 Another battery</button>
+    <button class="chk" onclick="buildPick('wire')">〰 A connecting wire (to close the loop)</button>
+    <button class="chk" onclick="buildPick('insulator')">🧱 An insulating barrier</button>
+  </div>
+  <div class="fb" id="fbBuild"></div>
+</section>
+
+<!-- Q10: WRITTEN -->
+<section id="q_written" style="background:var(--bg2);">
+  <div class="e-tag elaborate">Question 10 · Written Response</div>
+  <h2 class="sec-title">Explain in Your Own Words</h2>
+  <p class="sec-desc">This is your chance to show deep understanding. Write clearly — your teacher reads every answer.</p>
+
+  <div class="q-block">
+    <div class="q-num">Q10 — Written (no multiple choice)</div>
+    <div class="q-text" style="margin-bottom:16px;">
+      A student builds a circuit with a battery, a lamp, and connecting wires. The lamp lights up.
+      The student then <strong>removes the lamp</strong> from the circuit but keeps the wires connected where the lamp was.
+      <br><br>
+      <strong>Explain in 2–3 sentences:</strong> What happens to the circuit and <em>why</em>? Use the words: <em>current, path, complete circuit</em>.
+    </div>
+    <textarea id="q10text" placeholder="Write your answer here using: current, path, complete circuit..."></textarea>
+    <div style="margin-top:6px;font-size:.72rem;color:var(--muted2);font-family:var(--fm);">
+      Your written answer is saved and reviewed by Ahmad.
+    </div>
+  </div>
+</section>
+
+<!-- E5 SUBMIT -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · Submit</div>
+  <h2 class="sec-title">Submit Your Pre-Test</h2>
+  <p class="sec-desc">Check that your name is selected, then submit. Your score and all answers go directly to Ahmad's grade sheet.</p>
+
+  <div class="g2" style="max-width:780px;align-items:start;">
+    <div class="card">
+      <div style="font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:12px;">Student</div>
+      <select id="stuName2" style="margin-bottom:14px;">
+        <option value="">— Select your name —</option>
+      </select>
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+      <div id="scoreBreakdown" style="margin-bottom:12px;"></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%;"></div></div>
+      <p style="font-size:.68rem;color:var(--muted2);margin-bottom:14px;font-family:var(--fm);" id="progTxt">0 / 10 answered</p>
+      <button class="btn btn-e" style="width:100%;font-size:.92rem;" onclick="doSubmit()">
+        📡 Submit to Ahmad's Grade Sheet
+      </button>
+    </div>
+
+    <div>
+      <div class="card" style="text-align:center;margin-bottom:12px;">
+        <div class="score-big" id="scoreDisp">—</div>
+        <div style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:4px;">Pre-Test Score</div>
+      </div>
+      <div class="card2">
+        <p style="font-size:.8rem;color:var(--muted);line-height:1.8;">Your written answer (Q10) and circuit interactions are reviewed by Ahmad in class.</p>
+        <div id="subOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenD);border:1px solid var(--green);border-radius:6px;font-size:.82rem;color:var(--green);font-weight:700;font-family:var(--fm);">✓ Submitted successfully!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:20px 52px;border-top:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <div>
+    <div style="font-family:var(--fh);font-size:.9rem;font-weight:800;color:#fff;">Electricity Pre-Test</div>
+    <div style="font-family:var(--fm);font-size:.52rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Ahmad Ghozlan · Grade 7D · Lebanon</div>
+  </div>
+  <a href="https://aghozlan.github.io" style="font-size:.7rem;color:var(--muted2);text-decoration:none;border:1px solid var(--border2);padding:5px 14px;border-radius:4px;">↗ All Labs</a>
+</footer>
+</main>
+</div>
+
+<script>
+'use strict';
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ── STUDENT LIST — Grade 7D ─────────────────────────────────
+const STUDENTS_7D=['أحمد عمر حسين جعجع','أحمد محمد احمد ابو جاموس','ابراهيم سامي مروان حليحل','ابراهيم يونس محمد رحال','احمد علي احمد المحمود','احمد فؤاد احمد جمعة','اسيل احمد فريد العلي','ايلانا محمد ابراهيم الحلو','حلا فادي فايز معتوق','حمزة عفيف علي السيد','داني محمد محمود حسين','رؤى حسن احمد محمد','راما ابراهيم رشيد فارس','راما محمد علي الجعجع','زاهر محمد شحادة ديب','سالي احمد وليد كريديه','سدرة المنتهى احمد حسون','عبد الرحمن درويش محمد سلام','علي ابراهيم حسان الاشوح','علي مروان عدنان شحاده','علي وسيم علي مره','عيسى احمد محمود الحصري','غيداء مالك جمعة بلال','فرح محمود كامل الخطيب','ليمار هاني محمد جمعه','محمد مصطفى كمال الترك','محمد هاشم عادل المنسي','محمد يوسف محمد محمد','مصطفى كمال علي سعد','منى وسام عمر سلام','ندى علي احمد مطر','ولاء احمد فهد السعيد','يوسف علاء الدين كرزون','يوسف علاء جهاد شحادة'];
+
+// ── INIT STUDENT DROPDOWNS ────────────────────────────────────
+function loadStudents(){
+  ['stuName','stuName2'].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    STUDENTS_7D.slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+      const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+    });
+  });
+  // Sync both dropdowns
+  document.getElementById('stuName').addEventListener('change',function(){
+    document.getElementById('stuName2').value=this.value;
+    updateProg();
+  });
+  document.getElementById('stuName2').addEventListener('change',function(){
+    document.getElementById('stuName').value=this.value;
+    updateProg();
+  });
+}
+
+function setSection(cls){ /* only 7D for this pretest */ }
+
+// ── NAV ─────────────────────────────────────────────────────
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const ids=['hero','q_circuit','q_symbols','q_classify','q_switch','q_openclosed','q_scenarios','q_build','q_written','evaluate'];
+  let cur='hero';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)cur=id;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+},{passive:true});
+
+// ── MCQ ENGINE ───────────────────────────────────────────────
+const answers={};
+const correct={};
+
+function pick(key,val,btn){
+  answers[key]=val;
+  btn.closest('.mcq-opts').querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+  updateProg();
+}
+
+function chk(key,ca,okMsg,badMsg){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=answers[key];
+  if(!sel){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  const opts=document.getElementById(key+'opts');
+  if(opts){
+    const letters=['A','B','C','D'];
+    opts.querySelectorAll('.mcq-opt').forEach((o,i)=>{
+      o.classList.remove('sel');
+      if(letters[i]===ca)o.classList.add('ok');
+      else if(letters[i]===sel)o.classList.add('err');
+    });
+  }
+  if(sel===ca){fb.className='fb ok';fb.textContent=okMsg;correct[key]=true;}
+  else{fb.className='fb err';fb.textContent=badMsg;}
+  updateProg();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Q1: CIRCUIT CANVAS
+// ═══════════════════════════════════════════════════════════
+// Circuit layout: rectangular loop
+// Top: wire with lamp (A) at top centre
+// Right: wire
+// Bottom: wire with switch (C) at bottom centre
+// Left: battery (D) on left side
+// Corner B: just wire junction
+
+// Correct: A=lamp, B=wire, C=switch, D=battery
+const SPOT_CORRECT={A:'lamp',B:'wire',C:'switch',D:'battery'};
+const spotAnswers={};
+
+function renderCircuit(){
+  const cv=document.getElementById('cvCircuit');
+  const W=cv.width=cv.offsetParent?.clientWidth||520;
+  cv.width=Math.min(W,520);
+  const w=cv.width,h=300;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,w,h);
+
+  const mx=50,my=40;// margin
+  const rx=w-mx,ry=h-my;
+  const cx=w/2,cy=h/2;
+
+  // Wires
+  ctx.strokeStyle='rgba(96,165,250,.7)';ctx.lineWidth=3;ctx.lineCap='round';
+  // Top wire (left half)
+  line(ctx,mx,my,cx-45,my);
+  // Top wire (right half)
+  line(ctx,cx+45,my,rx,my);
+  // Right wire
+  line(ctx,rx,my,rx,ry);
+  // Bottom wire (left half)
+  line(ctx,mx,ry,cx-40,ry);
+  // Bottom wire (right half)
+  line(ctx,cx+40,ry,rx,ry);
+  // Left wire
+  line(ctx,mx,my,mx,ry);
+
+  // ── SPOT A: LAMP at top centre ──
+  drawLamp(ctx,cx,my,14);
+  // ── SPOT B: wire junction top right ──
+  ctx.fillStyle='rgba(96,165,250,.6)';ctx.beginPath();ctx.arc(rx-10,my+10,5,0,Math.PI*2);ctx.fill();
+  // ── SPOT C: SWITCH at bottom centre ──
+  drawSwitch(ctx,cx,ry,false);
+  // ── SPOT D: BATTERY on left ──
+  drawBattery(ctx,mx,cy);
+
+  // Reposition spots on canvas
+  positionSpot('spotA',cx-14,my-14,w,h);
+  positionSpot('spotB',rx-30,my+2,w,h);
+  positionSpot('spotC',cx-14,ry-14,w,h);
+  positionSpot('spotD',mx-14,cy-14,w,h);
+}
+
+function positionSpot(id,x,y,cw,ch){
+  const cv=document.getElementById('cvCircuit');
+  const rect=cv.getBoundingClientRect();
+  const scaleX=rect.width/cw;
+  const el=document.getElementById(id);
+  el.style.left=(x*scaleX)+'px';
+  el.style.top=y+'px';
+}
+
+function drawLamp(ctx,x,y,r){
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;ctx.fillStyle='rgba(251,191,36,.15)';
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();
+  // X inside
+  ctx.beginPath();ctx.moveTo(x-r*.6,y-r*.6);ctx.lineTo(x+r*.6,y+r*.6);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+r*.6,y-r*.6);ctx.lineTo(x-r*.6,y+r*.6);ctx.stroke();
+}
+
+function drawSwitch(ctx,x,y,closed){
+  const L=36;
+  ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.lineCap='round';
+  // left contact
+  ctx.beginPath();ctx.moveTo(x-L/2,y);ctx.lineTo(x-8,y);ctx.stroke();
+  // right contact
+  ctx.beginPath();ctx.moveTo(x+8,y);ctx.lineTo(x+L/2,y);ctx.stroke();
+  // lever
+  if(closed){
+    ctx.beginPath();ctx.moveTo(x-8,y);ctx.lineTo(x+8,y);ctx.stroke();
+  } else {
+    ctx.beginPath();ctx.moveTo(x-8,y);ctx.lineTo(x+6,y-14);ctx.stroke();
+  }
+  // contact dots
+  ctx.fillStyle='#a78bfa';
+  [[x-8,y],[x+8,y]].forEach(([px,py])=>{ctx.beginPath();ctx.arc(px,py,3.5,0,Math.PI*2);ctx.fill();});
+}
+
+function drawBattery(ctx,x,y){
+  const lines=[[0,20],[4,12],[0,20],[4,12]];
+  ctx.strokeStyle='#34d399';ctx.lineWidth=2.5;
+  lines.forEach(([w,h],i)=>{
+    const lx=x+(i%2===0?-w/2:-w/2);
+    const ly=y-30+i*14;
+    ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+w,ly);ctx.stroke();
+  });
+  // + / - labels
+  ctx.fillStyle='#34d399';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('+',x,y-38);ctx.fillText('−',x,y+14);
+}
+
+function line(ctx,x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+
+function tapSpot(s){
+  // Highlight the corresponding card
+  ['A','B','C','D'].forEach(x=>{
+    document.getElementById('spotInfo'+x).style.borderColor=x===s?'var(--electric)':'var(--border2)';
+  });
+}
+
+function pickSpot(spot,val,btn){
+  spotAnswers[spot]=val;
+  btn.closest('.mcq-opts').querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+  updateProg();
+}
+
+function checkCircuit(){
+  let score=0;const fb=document.getElementById('fbCircuit');
+  const msgs=[];
+  ['A','B','C','D'].forEach(s=>{
+    const ans=spotAnswers[s];
+    const ca=SPOT_CORRECT[s];
+    const opts=document.getElementById('opts'+s);
+    const letters=['lamp','battery','switch','wire'];
+    if(opts){
+      opts.querySelectorAll('.mcq-opt').forEach((o,i)=>{
+        o.classList.remove('sel');
+        if(letters[i]===ca)o.classList.add('ok');
+        else if(ans&&letters[i]===ans&&ans!==ca)o.classList.add('err');
+      });
+    }
+    const spot=document.getElementById('spot'+s);
+    if(ans===ca){score++;spot.classList.add('answered');msgs.push(`Spot ${s}: ✓ ${ca}`);}
+    else{spot.classList.add('wrong-spot');msgs.push(`Spot ${s}: ✗ answer=${ans||'none'}, correct=${ca}`);}
+  });
+  fb.style.display='block';
+  if(score===4){
+    fb.className='fb ok';
+    fb.textContent='✓ Perfect! A=Lamp (circle+X), B=Wire junction, C=Switch (open lever), D=Battery (alternating lines). You can read a circuit diagram!';
+    correct.circuit=true;
+  } else {
+    fb.className='fb err';
+    fb.textContent=`${score}/4 correct. The circuit has: Lamp at top (circle with X), Switch at bottom (lever symbol), Battery on left (alternating long/short lines), Wire junction top-right.`;
+  }
+  updateProg();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Q2: SYMBOL DRAG/DROP MATCH
+// ═══════════════════════════════════════════════════════════
+// Symbols drawn: 1=battery, 2=lamp, 3=switch, 4=wire(resistor)
+const DZ_CORRECT={dz1:'battery',dz2:'lamp',dz3:'switch',dz4:'wire'};
+const dzState={};
+let mobileSelected=null;
+
+function renderSymbols(){
+  const cv=document.getElementById('cvSymbols');
+  cv.width=cv.offsetParent?.clientWidth||560;
+  const W=Math.min(cv.width,560),H=200;
+  cv.width=W;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,W,H);
+  const gap=W/4;
+  const labels=['Symbol 1','Symbol 2','Symbol 3','Symbol 4'];
+  labels.forEach((l,i)=>{
+    const cx=(i+0.5)*gap,cy=H/2;
+    ctx.fillStyle='rgba(255,255,255,.15)';ctx.font='8px DM Mono';ctx.textAlign='center';
+    ctx.fillText(l,cx,H-12);
+  });
+  // 1: battery
+  const c0=(0.5)*gap;
+  ctx.strokeStyle='#34d399';ctx.lineWidth=2;
+  [[0,18],[4,10],[0,18],[4,10]].forEach(([w,h],i)=>{
+    const lx=c0-w/2,ly=75-24+i*14;
+    ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+w,ly);ctx.stroke();
+  });
+  ctx.fillStyle='#34d399';ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+  ctx.fillText('+',c0,50);ctx.fillText('−',c0,H/2+30);
+  // 2: lamp
+  drawLamp(ctx,(1.5)*gap,H/2,18);
+  // 3: switch
+  drawSwitch(ctx,(2.5)*gap,H/2,false);
+  // 4: wire (straight line)
+  ctx.strokeStyle='rgba(96,165,250,.7)';ctx.lineWidth=2;
+  const c3=(3.5)*gap;
+  ctx.beginPath();ctx.moveTo(c3-30,H/2);ctx.lineTo(c3+30,H/2);ctx.stroke();
+  ctx.fillStyle='rgba(96,165,250,.6)';ctx.beginPath();ctx.arc(c3-30,H/2,4,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(c3+30,H/2,4,0,Math.PI*2);ctx.fill();
+}
+
+let dragPayload=null;
+function dstart(e,val){dragPayload=val;e.dataTransfer.setData('text',val);}
+function drop(e,zid){
+  e.preventDefault();
+  const val=e.dataTransfer.getData('text')||dragPayload;
+  if(val)placeInZone(zid,val);
+}
+
+function mobilePick(val,el){
+  if(mobileSelected===val){mobileSelected=null;document.querySelectorAll('.drag-chip').forEach(c=>c.style.outline='none');return;}
+  mobileSelected=val;
+  document.querySelectorAll('.drag-chip').forEach(c=>c.style.outline='none');
+  el.style.outline='2px solid var(--electric)';
+  toast('Now tap a symbol box to place it');
+}
+
+function mobilePlace(zid){
+  if(!mobileSelected)return;
+  placeInZone(zid,mobileSelected);
+  mobileSelected=null;
+  document.querySelectorAll('.drag-chip').forEach(c=>c.style.outline='none');
+}
+
+function placeInZone(zid,val){
+  // Return old val to bank if needed
+  if(dzState[zid]){
+    const oldChip=document.getElementById('chip_'+dzState[zid]);
+    if(oldChip){oldChip.classList.remove('placed');oldChip.style.display='';}
+  }
+  dzState[zid]=val;
+  const chip=document.getElementById('chip_'+val);
+  if(chip){chip.classList.add('placed');chip.style.display='none';}
+  const dz=document.getElementById(zid);
+  dz.className='drag-zone filled';
+  dz.innerHTML=`<span style="font-family:var(--fm);font-size:.76rem;color:var(--electric);">${{battery:'🔋 Dry Cell',lamp:'💡 Lamp',switch:'🔄 Switch',wire:'〰 Wire'}[val]}</span>`;
+  // Re-bind click
+  dz.onclick=()=>mobilePlace(zid);
+  updateProg();
+}
+
+function checkSymbols(){
+  let score=0;
+  const fb=document.getElementById('fbSymbols');
+  ['dz1','dz2','dz3','dz4'].forEach(zid=>{
+    const dz=document.getElementById(zid);
+    if(dzState[zid]===DZ_CORRECT[zid]){score++;dz.style.borderColor='var(--green)';}
+    else{dz.style.borderColor='var(--red)';}
+  });
+  fb.style.display='block';
+  if(score===4){
+    fb.className='fb ok';
+    fb.textContent='✓ All 4 correct! Symbol 1=Battery (alternating lines), Symbol 2=Lamp (circle+X), Symbol 3=Switch (open lever), Symbol 4=Wire (straight line with endpoints).';
+    correct.symbols=true;
+  } else {
+    fb.className='fb err';
+    fb.textContent=`${score}/4 correct. Remember: Battery=alternating long/short lines · Lamp=circle with X · Switch=lever that breaks the line · Wire=straight connecting line.`;
+  }
+  updateProg();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Q3: MATERIALS SORT
+// ═══════════════════════════════════════════════════════════
+const MAT_CORRECT={copper:'conductor',rubber:'insulator',iron:'conductor',
+  wood:'insulator',graphite:'conductor',glass:'insulator',steel:'conductor',plastic:'insulator'};
+const matState={};// material → 'conductor'|'insulator'
+let matSel=null;
+
+function matTap(id,el){
+  if(matState[id]){returnMat(id);return;}
+  if(matSel===id){matSel=null;document.querySelectorAll('.drag-chip').forEach(c=>c.style.outline='none');return;}
+  matSel=id;
+  document.querySelectorAll('#matBank .drag-chip').forEach(c=>c.style.outline='none');
+  el.style.outline='2px solid var(--electric)';
+  toast('Now tap a zone to classify');
+}
+
+function matPlace(zone){
+  if(!matSel)return;
+  placeMat(matSel,zone);
+  matSel=null;
+  document.querySelectorAll('#matBank .drag-chip').forEach(c=>c.style.outline='none');
+}
+
+function placeMat(id,zone){
+  matState[id]=zone;
+  const chip=document.getElementById('mc_'+id);
+  if(chip){chip.style.display='none';}
+  // Add to zone list
+  const listId=zone==='conductor'?'condList':'insList';
+  const list=document.getElementById(listId);
+  const mini=document.createElement('div');
+  mini.id='placed_'+id;
+  mini.style.cssText='background:var(--panel2);border:1px solid var(--border2);border-radius:4px;padding:5px 10px;font-size:.74rem;cursor:pointer;';
+  mini.textContent=chip.textContent;
+  mini.onclick=()=>returnMat(id);
+  list.appendChild(mini);
+  updateProg();
+}
+
+function returnMat(id){
+  const chip=document.getElementById('mc_'+id);
+  if(chip){chip.style.display='';chip.style.outline='none';}
+  const placed=document.getElementById('placed_'+id);
+  if(placed)placed.remove();
+  delete matState[id];
+  updateProg();
+}
+
+function checkMaterials(){
+  const all=Object.keys(MAT_CORRECT);
+  const placed=Object.keys(matState);
+  const fb=document.getElementById('fbMat');fb.style.display='block';
+  if(placed.length<all.length){
+    fb.className='fb inf';
+    fb.textContent=`Place all 8 materials first — ${all.length-placed.length} remaining.`;
+    return;
+  }
+  let score=0;
+  all.forEach(id=>{
+    const placed_el=document.getElementById('placed_'+id);
+    if(matState[id]===MAT_CORRECT[id]){score++;if(placed_el)placed_el.style.borderColor='var(--green)';}
+    else{if(placed_el)placed_el.style.borderColor='var(--red)';}
+  });
+  if(score===8){
+    fb.className='fb ok';
+    fb.textContent='✓ Perfect 8/8! Conductors: copper, iron, graphite, steel. Insulators: rubber, wood, glass, plastic. Graphite (pencil) is special — a non-metal conductor!';
+    correct.materials=true;
+  } else {
+    fb.className='fb err';
+    fb.textContent=`${score}/8 correct. Conductors (free electrons): metals (copper, iron, steel) + graphite. Insulators (no free electrons): rubber, wood, glass, plastic.`;
+  }
+  updateProg();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Q4: SWITCH INTERACTIVE ANIMATION
+// ═══════════════════════════════════════════════════════════
+let switchClosed=false;
+let animElectrons=[];
+let animFrame=null;
+
+function initSwitchAnim(){
+  // Path: rectangle 40,40 → 380,40 → 380,200 → 40,200 → 40,40
+  // Switch at bottom centre (210,200), battery on left (40,120)
+  for(let i=0;i<8;i++){
+    animElectrons.push({t:i/8,speed:0.003});
+  }
+  drawSwitchAnim();
+}
+
+function getPathPoint(t){
+  // Rectangular path perimeter
+  const path=[
+    {x:40,y:40},{x:380,y:40},{x:380,y:200},{x:210,y:200},
+    {x:210,y:200},{x:40,y:200},{x:40,y:40}
+  ];
+  const segs=[[path[0],path[1]],[path[1],path[2]],[path[2],path[3]],[path[4],path[5]],[path[5],path[6]]];
+  const total=segs.reduce((a,s)=>a+Math.hypot(s[1].x-s[0].x,s[1].y-s[0].y),0);
+  let target=((t%1)+1)%1*total,acc=0;
+  for(const s of segs){
+    const len=Math.hypot(s[1].x-s[0].x,s[1].y-s[0].y);
+    if(acc+len>=target){
+      const frac=(target-acc)/len;
+      return{x:s[0].x+(s[1].x-s[0].x)*frac,y:s[0].y+(s[1].y-s[0].y)*frac};
+    }
+    acc+=len;
+  }
+  return path[0];
+}
+
+function drawSwitchAnim(){
+  const cv=document.getElementById('cvSwitch');
+  cv.width=Math.min(cv.offsetParent?.clientWidth||420,420);
+  const W=cv.width,H=240;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,W,H);
+
+  const scaleX=W/420,scaleY=H/240;
+  ctx.save();ctx.scale(scaleX,scaleY);
+
+  // Wires
+  ctx.strokeStyle='rgba(96,165,250,.5)';ctx.lineWidth=3;ctx.lineCap='round';
+  line(ctx,40,40,380,40);
+  line(ctx,380,40,380,200);
+  line(ctx,40,200,170,200);// left of switch
+  line(ctx,250,200,380,200);// right of switch
+  line(ctx,40,40,40,200);
+
+  // Switch
+  drawSwitch(ctx,210,200,switchClosed);
+
+  // Battery (left side)
+  ctx.strokeStyle='#34d399';ctx.lineWidth=2;
+  const bx=40;
+  [[0,20],[6,12],[0,20],[6,12]].forEach(([w,h],i)=>{ctx.beginPath();ctx.moveTo(bx-w/2,80+i*18);ctx.lineTo(bx+w/2,80+i*18);ctx.stroke();});
+  ctx.fillStyle='#34d399';ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+  ctx.fillText('+',bx,70);ctx.fillText('−',bx,160);
+
+  // Lamp (top centre)
+  const lampLit=switchClosed;
+  if(lampLit){
+    // Glow
+    const g=ctx.createRadialGradient(210,40,0,210,40,35);
+    g.addColorStop(0,'rgba(251,191,36,.35)');g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(210,40,35,0,Math.PI*2);ctx.fill();
+  }
+  drawLamp(ctx,210,40,14);
+  if(lampLit){ctx.fillStyle='rgba(251,191,36,.7)';ctx.font='bold 8px DM Mono';ctx.textAlign='center';ctx.fillText('ON!',210,14);}
+
+  // Electrons
+  if(switchClosed){
+    animElectrons.forEach(e=>{
+      const p=getPathPoint(e.t);
+      ctx.fillStyle='var(--electric)';
+      ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(96,165,250,.3)';
+      ctx.beginPath();ctx.arc(p.x,p.y,10,0,Math.PI*2);ctx.fill();
+    });
+  }
+  ctx.restore();
+}
+
+function animateSwitchLoop(){
+  if(!switchClosed){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}return;}
+  animElectrons.forEach(e=>{e.t=(e.t+e.speed)%1;});
+  drawSwitchAnim();
+  animFrame=requestAnimationFrame(animateSwitchLoop);
+}
+
+function toggleSwitch(){
+  switchClosed=!switchClosed;
+  document.getElementById('switchState').textContent=
+    switchClosed?'Switch is CLOSED — current flowing ⚡':'Switch is OPEN — tap to close';
+  document.getElementById('switchState').style.color=switchClosed?'var(--green)':'var(--muted2)';
+  drawSwitchAnim();
+  if(switchClosed)animateSwitchLoop();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Q5: OPEN / CLOSED CIRCUITS
+// ═══════════════════════════════════════════════════════════
+// 4 small circuits: answer = [open, closed, closed, open]
+const OC_CORRECT=['open','closed','closed','open'];
+let ocAnswered=[false,false,false,false];
+
+function drawOCCircuit(n){
+  const cv=document.getElementById('cvOC'+n);
+  const W=cv.offsetParent?.clientWidth||230;
+  cv.width=Math.min(W,230);cv.height=160;
+  const w=cv.width,h=cv.height;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,w,h);
+  const mx=28,my=22;
+  // n=1: open switch (open circuit)
+  // n=2: closed switch (closed circuit)
+  // n=3: closed switch with 2 lamps (closed circuit)
+  // n=4: wire gap — no switch at all but wire broken (open circuit)
+  ctx.strokeStyle='rgba(96,165,250,.6)';ctx.lineWidth=2.5;ctx.lineCap='round';
+  const rx=w-mx,ry=h-my;
+  // Draw battery on left
+  const battY=h/2;
+  [[0,16],[4,10],[0,16],[4,10]].forEach(([bw,bh],i)=>{
+    ctx.strokeStyle='#34d399';
+    ctx.beginPath();ctx.moveTo(mx-bw/2,battY-18+i*11);ctx.lineTo(mx+bw/2,battY-18+i*11);ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(96,165,250,.6)';
+  // Top wire
+  line(ctx,mx,my,rx,my);
+  // Right wire
+  line(ctx,rx,my,rx,ry);
+  // Bottom wire (partial)
+  line(ctx,mx,ry,w/2-25,ry);
+  line(ctx,w/2+25,ry,rx,ry);
+  // Left wire (battery connections)
+  line(ctx,mx,my,mx,battY-22);
+  line(ctx,mx,battY+22,mx,ry);
+
+  // Lamp at top centre
+  drawLamp(ctx,w/2,my,11);
+  if(n===3){drawLamp(ctx,w*0.75,my,11);}// second lamp
+
+  // Switch or gap at bottom
+  if(n===4){
+    // Gap — no component drawn, just gap visible
+    ctx.strokeStyle='rgba(248,113,113,.6)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(w/2-25,ry);ctx.lineTo(w/2+25,ry);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(248,113,113,.6)';ctx.font='bold 8px DM Mono';ctx.textAlign='center';
+    ctx.fillText('GAP',w/2,ry+14);
+  } else {
+    const closed=(n===2||n===3);
+    drawSwitch(ctx,w/2,ry,closed);
+  }
+
+  // Label
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='8px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Circuit '+n,w/2,h-6);
+}
+
+function classifyOC(n,type){
+  const correct=type===OC_CORRECT[n-1];
+  const fb=document.getElementById('fbOC'+n);fb.style.display='block';
+  const msgs={
+    1:{open:'✓ Correct! The switch is open — circuit is broken — no current flows — lamp is off.',closed:'✗ Look at the switch — it is open (lever raised). Open switch = broken path = open circuit = no current.'},
+    2:{closed:'✓ Correct! Switch is closed — complete path — current flows — lamp lights up.',open:'✗ The switch is closed (lever flat). Closed switch = complete path = closed circuit = current flows.'},
+    3:{closed:'✓ Correct! Switch closed — complete path — both lamps receive current and light up.',open:'✗ The switch is closed here. A closed switch creates a complete path for current to flow.'},
+    4:{open:'✓ Correct! There is a gap in the wire — the path is broken — this is an open circuit — lamp is off.',closed:'✗ Look carefully — there is a gap (break) in the bottom wire. A broken wire = open circuit = no current.'},
+  };
+  if(correct){
+    fb.className='fb ok';fb.textContent=msgs[n][type];
+    correct['oc'+n]=true;ocAnswered[n-1]=true;
+  } else {
+    fb.className='fb err';fb.textContent=msgs[n][type];
+  }
+  updateProg();
+}
+
+// ═══════════════════════════════════════════════════════════
+// Q9: CIRCUIT BUILDER
+// ═══════════════════════════════════════════════════════════
+let buildState='incomplete';
+let buildElectrons=[];
+let buildAnim=null;
+
+function renderBuild(complete=false){
+  const cv=document.getElementById('cvBuild');
+  cv.width=Math.min(cv.offsetParent?.clientWidth||480,480);
+  const W=cv.width,H=280;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,W,H);
+
+  // Battery on left
+  const battX=50,battY=H/2;
+  [[0,22],[6,14],[0,22],[6,14]].forEach(([bw,bh],i)=>{
+    ctx.strokeStyle='#34d399';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(battX-bw/2,battY-28+i*18);ctx.lineTo(battX+bw/2,battY-28+i*18);ctx.stroke();
+  });
+  ctx.fillStyle='#34d399';ctx.font='9px DM Mono';ctx.textAlign='center';
+  ctx.fillText('+',battX,battY-42);ctx.fillText('−',battX,battY+30);
+
+  // Wires (existing)
+  ctx.strokeStyle='rgba(96,165,250,.6)';ctx.lineWidth=3;ctx.lineCap='round';
+  line(ctx,battX,60,W-50,60);// top wire
+  line(ctx,battX,60,battX,battY-38);// battery top
+  line(ctx,battX,battY+38,battX,H-60);// battery bottom
+  line(ctx,battX,H-60,W-50,H-60);// bottom wire (if complete)
+
+  // Lamp symbol (top centre, disconnected from bottom right)
+  drawLamp(ctx,W/2,60,16);
+
+  // Gap indicator
+  if(!complete){
+    // Show gap at bottom right
+    ctx.strokeStyle='rgba(248,113,113,.5)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(W-50,60);ctx.lineTo(W-50,H-60);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(248,113,113,.6)';ctx.font='bold 9px DM Mono';ctx.textAlign='center';
+    ctx.fillText('MISSING!',W-50,H/2);
+  } else {
+    // Complete right wire
+    ctx.strokeStyle='rgba(52,211,153,.8)';ctx.lineWidth=3;
+    line(ctx,W-50,60,W-50,H-60);
+    // Electrons
+    buildElectrons.forEach(e=>{
+      const p=buildPathPoint(e.t,W,H,battX);
+      ctx.fillStyle='#60a5fa';ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(96,165,250,.25)';ctx.beginPath();ctx.arc(p.x,p.y,11,0,Math.PI*2);ctx.fill();
+    });
+    // Lamp glow
+    const g=ctx.createRadialGradient(W/2,60,0,W/2,60,40);
+    g.addColorStop(0,'rgba(251,191,36,.4)');g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(W/2,60,40,0,Math.PI*2);ctx.fill();
+    drawLamp(ctx,W/2,60,16);
+    ctx.fillStyle='var(--yellow)';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+    ctx.fillText('💡 LIT!',W/2,30);
+  }
+  if(!complete)renderBuild.timeout=null;
+}
+
+function buildPathPoint(t,W,H,bx){
+  const pts=[{x:bx,y:60},{x:W-50,y:60},{x:W-50,y:H-60},{x:bx,y:H-60},{x:bx,y:60}];
+  const segs=[[0,1],[1,2],[2,3],[3,4]];
+  const total=segs.reduce((a,[i,j])=>a+Math.hypot(pts[j].x-pts[i].x,pts[j].y-pts[i].y),0);
+  let target=((t%1)+1)%1*total,acc=0;
+  for(const [i,j] of segs){
+    const len=Math.hypot(pts[j].x-pts[i].x,pts[j].y-pts[i].y);
+    if(acc+len>=target){const f=(target-acc)/len;return{x:pts[i].x+(pts[j].x-pts[i].x)*f,y:pts[i].y+(pts[j].y-pts[i].y)*f};}
+    acc+=len;
+  }
+  return pts[0];
+}
+
+function buildAnimLoop(W,H,bx){
+  buildElectrons.forEach(e=>{e.t=(e.t+0.003)%1;});
+  renderBuild(true);
+  buildAnim=requestAnimationFrame(()=>buildAnimLoop(W,H,bx));
+}
+
+function buildPick(choice){
+  const fb=document.getElementById('fbBuild');fb.style.display='block';
+  const cv=document.getElementById('cvBuild');
+  const W=cv.width,H=280,bx=50;
+  if(choice==='wire'){
+    fb.className='fb ok';
+    fb.textContent='✓ Correct! The missing component is a connecting wire on the right side to close the loop. Without it, current has no return path. Adding the wire completes the circuit — the lamp lights up!';
+    correct.build=true;
+    buildState='complete';
+    for(let i=0;i<7;i++)buildElectrons.push({t:i/7,speed:0.003});
+    if(buildAnim)cancelAnimationFrame(buildAnim);
+    buildAnimLoop(W,H,bx);
+  } else {
+    const msgs={
+      switch:'✗ A switch would control current, but the circuit is already missing the return path entirely — a switch alone won\'t complete the missing wire connection.',
+      another_battery:'✗ Adding another battery would increase voltage, but it wouldn\'t fix the broken path. The circuit needs a wire to complete the loop.',
+      insulator:'✗ An insulator would block current completely — the opposite of what you need! You need something that allows current to flow through the gap.'
+    };
+    fb.className='fb err';fb.textContent=msgs[choice]||'✗ Not quite.';
+    renderBuild(false);
+  }
+  updateProg();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS & SUBMIT
+// ═══════════════════════════════════════════════════════════
+function updateProg(){
+  const keys={
+    circuit:'Q1 Circuit Labels',symbols:'Q2 Symbol Match',
+    materials:'Q3 Materials Sort',q4:'Q4 Switch Logic',
+    oc1:'Q5a Circuit 1',oc2:'Q5b Circuit 2',oc3:'Q5c Circuit 3',oc4:'Q5d Circuit 4',
+    q6:'Q6 Cells & Brightness',q7:'Q7 Conductor Test',
+    q8:'Q8 Generator/Receiver',build:'Q9 Circuit Builder'
+  };
+  const done=Object.keys(keys).filter(k=>correct[k]).length;
+  const total=Object.keys(keys).length;
+  const pct=Math.round(done/total*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=done+' / '+total+' answered correctly';
+  document.getElementById('scoreDisp').textContent=pct+'%';
+  document.getElementById('scoreBreakdown').innerHTML=
+    Object.entries(keys).map(([k,l])=>
+      `<div class="score-row"><span class="score-key">${l}</span>
+       <span class="score-val ${correct[k]?'ok':'no'}">${correct[k]?'✓':'—'}</span></div>`
+    ).join('');
+}
+
+async function doSubmit(){
+  const name=document.getElementById('stuName2').value||document.getElementById('stuName').value;
+  if(!name){toast('Select your name first!');return;}
+  const btn=document.querySelector('[onclick="doSubmit()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+  const keys={circuit:'Q1 Circuit Labels',symbols:'Q2 Symbol Match',materials:'Q3 Materials Sort',
+    q4:'Q4 Switch Logic',oc1:'Q5a',oc2:'Q5b',oc3:'Q5c',oc4:'Q5d',
+    q6:'Q6',q7:'Q7',q8:'Q8',build:'Q9 Circuit Builder'};
+  const done=Object.keys(keys).filter(k=>correct[k]).length;
+  const payload={
+    sheet:'Electricity_G7_Pretest',
+    name,class:'7D',
+    q1_circuit:correct.circuit?'✓':'✗',
+    q2_symbols:correct.symbols?'✓':'✗',
+    q3_materials:correct.materials?'✓':'✗',
+    q4_switch:answers.q4||'—',q4_ok:correct.q4?'✓':'✗',
+    q5_oc:['oc1','oc2','oc3','oc4'].map(k=>correct[k]?'✓':'✗').join(' | '),
+    q6_cells:answers.q6||'—',q6_ok:correct.q6?'✓':'✗',
+    q7_cond:answers.q7||'—',q7_ok:correct.q7?'✓':'✗',
+    q8_gen:answers.q8||'—',q8_ok:correct.q8?'✓':'✗',
+    q9_build:correct.build?'✓':'✗',
+    q10_written:document.getElementById('q10text').value||'—',
+    score:Math.round(done/12*100)+'%'
+  };
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    document.getElementById('subOk').style.display='block';
+    btn.textContent='✓ Submitted';btn.style.background='var(--green)';btn.style.color='#000';
+    toast('✓ Submitted to Ahmad\'s grade sheet');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📡 Submit to Ahmad\'s Grade Sheet';
+    toast('⚠ Connection error — try again');
+  }
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('load',()=>{
+  loadStudents();
+  renderCircuit();
+  renderSymbols();
+  [1,2,3,4].forEach(drawOCCircuit);
+  initSwitchAnim();
+  renderBuild(false);
+  updateProg();
+});
+window.addEventListener('resize',()=>{
+  renderCircuit();
+  renderSymbols();
+  [1,2,3,4].forEach(drawOCCircuit);
+  drawSwitchAnim();
+  renderBuild(buildState==='complete');
+});
+</script>
+</body>
+</html>
