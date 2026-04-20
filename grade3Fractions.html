@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BE3 Fractions - Space Exploration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Inter:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .worksheet-page {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .school-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-left: 5px solid #059669;
+        }
+
+        .fraction-input {
+            border-bottom: 1px solid #94a3b8;
+            width: 100px;
+            text-align: center;
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .fraction-stack {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+        .fraction-stack .top { border-bottom: 1px solid black; padding: 0 4px; }
+        .fraction-stack .bottom { padding: 0 4px; }
+
+        .icon-set {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            padding: 15px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .clickable-icon {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .clickable-icon:hover { transform: scale(1.1); }
+        .shaded { fill: #059669 !important; stroke: #064e3b !important; }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            .worksheet-page { box-shadow: none; width: 100%; max-width: none; margin: 0; padding: 15mm; }
+            .no-print { display: none !important; }
+            .section { break-inside: avoid; }
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #059669;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Print Worksheet</button>
+
+    <div class="worksheet-page">
+        <!-- School Header -->
+        <div class="school-header">
+            <div class="flex items-center gap-4">
+                <div class="logo-placeholder">RAFIC HARIRI<br>HIGH SCHOOL</div>
+                <div>
+                    <h2 class="text-xl font-bold">Rafic Hariri High School</h2>
+                    <p class="text-sm">Class: BE3 (A, B, C)</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm italic">TD Theme: How the World Works</p>
+                <p class="text-sm italic">Unit: Space Exploration</p>
+                <h1 class="text-xl font-bold text-emerald-700">Fractions Worksheet</h1>
+            </div>
+        </div>
+
+        <div class="flex justify-between mb-8 px-4 border-b pb-4">
+            <span>Name: __________________________</span>
+            <span>Date: ________________</span>
+        </div>
+
+        <!-- Section 1: Shading Sets -->
+        <div class="section">
+            <div class="section-title">1. Shade the part that represents the indicated fraction.</div>
+            <p class="text-xs text-slate-400 mb-4 no-print">(Interactive: Click the icons to shade them!)</p>
+            <div class="grid grid-cols-3 gap-8">
+                <!-- Crosses -->
+                <div class="text-center">
+                    <div class="grid grid-cols-3 gap-2 mb-4 p-2 border rounded">
+                        <script>
+                            for(let i=0; i<6; i++) {
+                                document.write(`
+                                    <svg viewBox="0 0 40 40" class="clickable-icon w-10 h-10" onclick="this.querySelector('path').classList.toggle('shaded')">
+                                        <path d="M 15 5 L 25 5 L 25 15 L 35 15 L 35 25 L 25 25 L 25 35 L 15 35 L 15 25 L 5 25 L 5 15 L 15 15 Z" fill="none" stroke="black" stroke-width="2"/>
+                                    </svg>
+                                `);
+                            }
+                        </script>
+                    </div>
+                    <div class="fraction-stack"><span class="top">4</span><span class="bottom">6</span></div>
+                </div>
+                <!-- Smiley Faces -->
+                <div class="text-center">
+                    <div class="grid grid-cols-2 gap-2 mb-4 p-2 border rounded">
+                        <script>
+                            for(let i=0; i<4; i++) {
+                                document.write(`
+                                    <svg viewBox="0 0 40 40" class="clickable-icon w-10 h-10" onclick="this.querySelector('circle').classList.toggle('shaded')">
+                                        <circle cx="20" cy="20" r="18" fill="none" stroke="black" stroke-width="2"/>
+                                        <circle cx="13" cy="15" r="2" fill="black"/>
+                                        <circle cx="27" cy="15" r="2" fill="black"/>
+                                        <path d="M 12 25 Q 20 32 28 25" fill="none" stroke="black" stroke-width="2"/>
+                                    </svg>
+                                `);
+                            }
+                        </script>
+                    </div>
+                    <div class="fraction-stack"><span class="top">3</span><span class="bottom">4</span></div>
+                </div>
+                <!-- Triangles -->
+                <div class="text-center">
+                    <div class="grid grid-cols-4 gap-2 mb-4 p-2 border rounded">
+                        <script>
+                            for(let i=0; i<8; i++) {
+                                document.write(`
+                                    <svg viewBox="0 0 40 40" class="clickable-icon w-10 h-10" onclick="this.querySelector('path').classList.toggle('shaded')">
+                                        <path d="M 20 5 L 35 35 L 5 35 Z" fill="none" stroke="black" stroke-width="2"/>
+                                    </svg>
+                                `);
+                            }
+                        </script>
+                    </div>
+                    <div class="fraction-stack"><span class="top">7</span><span class="bottom">8</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Word Form -->
+        <div class="section">
+            <div class="section-title">2. Write the following fractions in word form.</div>
+            <div class="grid grid-cols-3 gap-y-4">
+                <div><div class="fraction-stack"><span class="top">5</span><span class="bottom">7</span></div> _________________</div>
+                <div><div class="fraction-stack"><span class="top">2</span><span class="bottom">4</span></div> _________________</div>
+                <div><div class="fraction-stack"><span class="top">6</span><span class="bottom">9</span></div> _________________</div>
+                <div><div class="fraction-stack"><span class="top">3</span><span class="bottom">6</span></div> _________________</div>
+                <div><div class="fraction-stack"><span class="top">1</span><span class="bottom">3</span></div> _________________</div>
+                <div><div class="fraction-stack"><span class="top">7</span><span class="bottom">8</span></div> _________________</div>
+            </div>
+        </div>
+
+        <!-- Section 3: Corresponding Fractions -->
+        <div class="section">
+            <div class="section-title">3. Write the corresponding fractions.</div>
+            <div class="grid grid-cols-3 gap-y-6">
+                <div>Two tenths: ______</div>
+                <div>Seven ninths: ______</div>
+                <div>Three eighths: ______</div>
+                <div>Three fourths: ______</div>
+                <div>Four sevenths: ______</div>
+                <div>One sixth: ______</div>
+            </div>
+        </div>
+
+        <!-- Section 4: Compare -->
+        <div class="section">
+            <div class="section-title">4. Compare using &lt; , &gt; , or =.</div>
+            <div class="comparison-row">
+                <div><sup>1</sup>/<sub>4</sub> [ ] <sup>2</sup>/<sub>4</sub></div>
+                <div><sup>3</sup>/<sub>7</sub> [ ] <sup>5</sup>/<sub>7</sub></div>
+                <div><sup>2</sup>/<sub>5</sub> [ ] <sup>4</sup>/<sub>5</sub></div>
+                <div><sup>1</sup>/<sub>8</sub> [ ] <sup>4</sup>/<sub>8</sub></div>
+            </div>
+            <div class="comparison-row">
+                <div><sup>5</sup>/<sub>6</sub> [ ] <sup>4</sup>/<sub>6</sub></div>
+                <div><sup>7</sup>/<sub>9</sub> [ ] <sup>5</sup>/<sub>9</sub></div>
+                <div><sup>7</sup>/<sub>12</sub> [ ] <sup>9</sup>/<sub>12</sub></div>
+                <div><sup>9</sup>/<sub>15</sub> [ ] <sup>2</sup>/<sub>15</sub></div>
+            </div>
+        </div>
+
+        <!-- Section 5: Ordering -->
+        <div class="section">
+            <div class="section-title">5. Arrange the following fractions.</div>
+            <div class="mb-6">
+                <p class="font-bold mb-2">A) Increasing order:</p>
+                <div class="flex gap-4 items-center bg-slate-50 p-2 rounded mb-2">
+                    <sup>5</sup>/<sub>9</sub> , <sup>8</sup>/<sub>9</sub> , <sup>1</sup>/<sub>9</sub> , <sup>4</sup>/<sub>9</sub> , <sup>3</sup>/<sub>9</sub>
+                </div>
+                <div class="border-b-2 border-dotted h-8 w-full"></div>
+            </div>
+            <div>
+                <p class="font-bold mb-2">B) Decreasing order:</p>
+                <div class="flex gap-4 items-center bg-slate-50 p-2 rounded mb-2">
+                    <sup>6</sup>/<sub>8</sub> , <sup>3</sup>/<sub>8</sub> , <sup>5</sup>/<sub>8</sub> , <sup>1</sup>/<sub>8</sub> , <sup>4</sup>/<sub>8</sub>
+                </div>
+                <div class="border-b-2 border-dotted h-8 w-full"></div>
+            </div>
+        </div>
+
+        <!-- Section 6: Operations -->
+        <div class="section">
+            <div class="section-title">6. Add or subtract the fractions below.</div>
+            <div class="grid grid-cols-2 gap-y-4">
+                <div><sup>3</sup>/<sub>7</sub> + <sup>2</sup>/<sub>7</sub> = __________</div>
+                <div><sup>6</sup>/<sub>12</sub> - <sup>3</sup>/<sub>12</sub> = __________</div>
+                <div><sup>10</sup>/<sub>17</sub> + <sup>4</sup>/<sub>17</sub> = __________</div>
+                <div><sup>8</sup>/<sub>11</sub> - <sup>2</sup>/<sub>11</sub> = __________</div>
+                <div><sup>2</sup>/<sub>10</sub> + <sup>6</sup>/<sub>10</sub> = __________</div>
+                <div><sup>11</sup>/<sub>10</sub> - <sup>8</sup>/<sub>10</sub> = __________</div>
+            </div>
+        </div>
+
+        <!-- Section 7: Word Problems -->
+        <div class="section">
+            <div class="section-title">7. Solve the Space Challenges.</div>
+            <div class="mb-6">
+                <p class="font-bold">Challenge 1: The Mars Pizza</p>
+                <p class="text-sm mb-2">An astronaut's pizza was cut into 8 equal slices. Lina ate 3 slices. Dani ate 2 slices.</p>
+                <div class="pl-4 space-y-2">
+                    <p>• What fraction of the pizza did Lina eat? _________</p>
+                    <p>• What fraction of the pizza did Dani eat? _________</p>
+                    <p>• What fraction of the pizza did they eat together? ____________________</p>
+                </div>
+            </div>
+            <div>
+                <p class="font-bold">Challenge 2: Trumpet Practice</p>
+                <p class="text-sm mb-2">Maya needs to practice the space trumpet for <sup>8</sup>/<sub>12</sub> of an hour. She has already played for <sup>3</sup>/<sub>12</sub> of an hour.</p>
+                <p>• What fraction of an hour does Maya still need to practice? ____________________</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-8 pt-6 border-t">
+            <p class="text-emerald-600 font-bold">IB Learner Profile: Thinkers & Communicators</p>
+        </div>
+    </div>
+
+</body>
+</html>
