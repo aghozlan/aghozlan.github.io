@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Ahmad Ghozlan — Interactive Science Labs · Lebanon</title>
-<meta name="description" content="Open-access interactive science labs for Lebanese students — Physics, Biology, Arabic. Grade 7–9. Built on the 5E model with AI tutoring.">
+<meta name="description" content="Open-access interactive labs for Lebanese students — Physics, Biology, Arabic, Math. Grades 1–12. AI-powered 5E model.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -12,167 +12,172 @@
   --bg:#f8f7f4;--bg2:#f0ede6;--bg3:#e8e4dc;
   --ink:#111008;--muted:#6b6458;--muted2:#9b9080;
   --border:#ddd8cc;--border2:#ccc6b8;
-  --physics:#1a4fd6;--physicsL:rgba(26,79,214,.08);--physicsB:rgba(26,79,214,.2);
-  --biology:#16803a;--biologyL:rgba(22,128,58,.08);--biologyB:rgba(22,128,58,.2);
-  --arabic:#9a1d1d;--arabicL:rgba(154,29,29,.08);--arabicB:rgba(154,29,29,.2);
+  --ph:#1a4fd6;--phL:rgba(26,79,214,.08);--phB:rgba(26,79,214,.22);
+  --bi:#16803a;--biL:rgba(22,128,58,.08);--biB:rgba(22,128,58,.22);
+  --ar:#9a1d1d;--arL:rgba(154,29,29,.08);--arB:rgba(154,29,29,.22);
+  --ma:#6d28d9;--maL:rgba(109,40,217,.08);--maB:rgba(109,40,217,.22);
   --gold:#b5860d;--goldL:rgba(181,134,13,.1);
   --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--ink);font-family:var(--fb);line-height:1.65;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
-/* GRAIN */
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-
-/* ── NAV ── */
-nav{position:sticky;top:0;z-index:100;background:rgba(248,247,244,.92);
-  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(248,247,244,.94);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--border);
   padding:0 5vw;display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:10px;height:58px;}
-.nav-brand{font-family:var(--fh);font-size:1rem;font-weight:800;color:var(--ink);
-  text-decoration:none;letter-spacing:-0.5px;}
-.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
-.nav-pill{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:600;
-  text-decoration:none;border:1.5px solid var(--border);color:var(--muted);
-  transition:all .2s;font-family:var(--fb);}
-.nav-pill:hover{border-color:var(--ink);color:var(--ink);}
-.nav-pill.physics{border-color:var(--physicsB);color:var(--physics);}
-.nav-pill.biology{border-color:var(--biologyB);color:var(--biology);}
-.nav-pill.arabic{border-color:var(--arabicB);color:var(--arabic);}
+  flex-wrap:wrap;gap:8px;min-height:56px;}
+.nav-brand{font-family:var(--fh);font-size:.95rem;font-weight:800;color:var(--ink);
+  text-decoration:none;letter-spacing:-.5px;padding:8px 0;}
+.nav-links{display:flex;gap:5px;flex-wrap:wrap;padding:6px 0;}
+.npill{padding:5px 13px;border-radius:20px;font-size:.76rem;font-weight:600;
+  text-decoration:none;border:1.5px solid;transition:all .18s;font-family:var(--fb);}
+.npill.ph{border-color:var(--phB);color:var(--ph);}
+.npill.bi{border-color:var(--biB);color:var(--bi);}
+.npill.ar{border-color:var(--arB);color:var(--ar);}
+.npill.ma{border-color:var(--maB);color:var(--ma);}
+.npill:hover{filter:brightness(.85);}
 
-/* ── HERO ── */
-.hero{padding:80px 5vw 72px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
-.hero-eyebrow{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;
-  letter-spacing:3px;color:var(--gold);background:var(--goldL);
-  border:1px solid rgba(181,134,13,.25);border-radius:2px;
-  padding:4px 14px;display:inline-block;margin-bottom:22px;}
-.hero h1{font-family:var(--fh);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:800;
-  line-height:.95;letter-spacing:-2px;color:var(--ink);margin-bottom:20px;}
-.hero h1 em{font-style:normal;color:var(--gold);}
-.hero-desc{font-size:1.05rem;color:var(--muted);max-width:520px;line-height:1.8;margin-bottom:30px;}
-.hero-stats{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:32px;}
-.stat{display:flex;flex-direction:column;}
-.stat-n{font-family:var(--fh);font-size:2rem;font-weight:800;color:var(--ink);line-height:1;}
-.stat-l{font-size:.66rem;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px;
+/* HERO */
+.hero{padding:72px 5vw 64px;max-width:1180px;margin:0 auto;position:relative;z-index:1;}
+.eyebrow{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:3px;
+  color:var(--gold);background:var(--goldL);border:1px solid rgba(181,134,13,.25);
+  border-radius:2px;padding:4px 14px;display:inline-block;margin-bottom:20px;}
+h1.hero-h{font-family:var(--fh);font-size:clamp(2.6rem,5.5vw,4.8rem);font-weight:800;
+  line-height:.95;letter-spacing:-2px;color:var(--ink);margin-bottom:18px;}
+h1.hero-h em{font-style:normal;color:var(--gold);}
+.hero-p{font-size:1rem;color:var(--muted);max-width:500px;line-height:1.8;margin-bottom:28px;}
+.stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:30px;}
+.stat-n{font-family:var(--fh);font-size:1.9rem;font-weight:800;color:var(--ink);line-height:1;}
+.stat-l{font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px;
   font-family:var(--fm);margin-top:2px;}
-.hero-cta{display:flex;gap:10px;flex-wrap:wrap;}
-.btn-primary{padding:12px 28px;background:var(--ink);color:#fff;border-radius:4px;
-  font-family:var(--fh);font-size:.9rem;letter-spacing:.5px;
-  text-decoration:none;transition:all .2s;}
-.btn-primary:hover{background:#333;}
-.btn-secondary{padding:12px 28px;background:transparent;color:var(--ink);
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-p{padding:11px 26px;background:var(--ink);color:#fff;border-radius:4px;
+  font-family:var(--fh);font-size:.88rem;letter-spacing:.5px;text-decoration:none;transition:all .2s;}
+.btn-p:hover{background:#333;}
+.btn-s{padding:11px 26px;background:transparent;color:var(--ink);
   border:1.5px solid var(--border2);border-radius:4px;font-family:var(--fh);
-  font-size:.9rem;letter-spacing:.5px;text-decoration:none;transition:all .2s;}
-.btn-secondary:hover{border-color:var(--ink);}
+  font-size:.88rem;letter-spacing:.5px;text-decoration:none;transition:all .2s;}
+.btn-s:hover{border-color:var(--ink);}
 
-/* ── SUBJECT SECTIONS ── */
-.subject-wrap{padding:60px 5vw;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
-.subject-header{display:flex;align-items:flex-end;justify-content:space-between;
-  flex-wrap:wrap;gap:12px;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid;}
-.subject-icon{font-size:2rem;margin-bottom:6px;}
-.subject-name{font-family:var(--fh);font-size:2rem;font-weight:800;
-  letter-spacing:-1px;margin-bottom:4px;}
-.subject-meta{font-size:.78rem;color:var(--muted2);font-family:var(--fm);}
-.subject-count{font-family:var(--fm);font-size:.64rem;text-transform:uppercase;
-  letter-spacing:2px;padding:4px 12px;border-radius:2px;}
-
-/* physics */
-.physics-section .subject-header{border-color:var(--physicsB);}
-.physics-section .subject-name{color:var(--physics);}
-.physics-section .subject-count{background:var(--physicsL);color:var(--physics);}
-
-/* biology */
-.biology-section .subject-header{border-color:var(--biologyB);}
-.biology-section .subject-name{color:var(--biology);}
-.biology-section .subject-count{background:var(--biologyL);color:var(--biology);}
-
-/* arabic */
-.arabic-section .subject-header{border-color:var(--arabicB);}
-.arabic-section .subject-name{color:var(--arabic);}
-.arabic-section .subject-count{background:var(--arabicL);color:var(--arabic);}
+/* SUBJECT SECTION */
+.subj{padding:52px 5vw;max-width:1180px;margin:0 auto;position:relative;z-index:1;}
+.subj.alt-bg{background:var(--bg2);max-width:none;padding-left:5vw;padding-right:5vw;}
+.subj.alt-bg .inner{max-width:1180px;margin:0 auto;}
+.subj-hdr{display:flex;align-items:flex-end;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;margin-bottom:26px;padding-bottom:14px;border-bottom:2px solid;}
+.ph-s .subj-hdr{border-color:var(--phB);}
+.bi-s .subj-hdr{border-color:var(--biB);}
+.ar-s .subj-hdr{border-color:var(--arB);}
+.ma-s .subj-hdr{border-color:var(--maB);}
+.subj-icon{font-size:1.8rem;margin-bottom:4px;}
+.subj-name{font-family:var(--fh);font-size:1.9rem;font-weight:800;letter-spacing:-1px;margin-bottom:3px;}
+.ph-s .subj-name{color:var(--ph);}
+.bi-s .subj-name{color:var(--bi);}
+.ar-s .subj-name{color:var(--ar);}
+.ma-s .subj-name{color:var(--ma);}
+.subj-meta{font-size:.76rem;color:var(--muted2);font-family:var(--fm);}
+.subj-count{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;
+  padding:4px 11px;border-radius:2px;}
+.ph-s .subj-count{background:var(--phL);color:var(--ph);}
+.bi-s .subj-count{background:var(--biL);color:var(--bi);}
+.ar-s .subj-count{background:var(--arL);color:var(--ar);}
+.ma-s .subj-count{background:var(--maL);color:var(--ma);}
 
 /* GRADE GROUP */
-.grade-group{margin-bottom:28px;}
-.grade-label{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;
-  letter-spacing:2px;color:var(--muted2);background:var(--bg3);
-  border:1px solid var(--border);border-radius:2px;padding:3px 10px;
-  display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;}
-.grade-label::before{content:'';width:6px;height:6px;border-radius:50%;}
-.physics-section .grade-label::before{background:var(--physics);}
-.biology-section .grade-label::before{background:var(--biology);}
-.arabic-section .grade-label::before{background:var(--arabic);}
+.gg{margin-bottom:26px;}
+.gg-label{font-family:var(--fm);font-size:.56rem;text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted2);background:var(--bg3);border:1px solid var(--border);
+  border-radius:2px;padding:3px 10px;display:inline-flex;align-items:center;gap:6px;margin-bottom:11px;}
+.gg-label::before{content:'';width:6px;height:6px;border-radius:50%;}
+.ph-s .gg-label::before{background:var(--ph);}
+.bi-s .gg-label::before{background:var(--bi);}
+.ar-s .gg-label::before{background:var(--ar);}
+.ma-s .gg-label::before{background:var(--ma);}
 
-/* LAB CARDS GRID */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:12px;}
 
-.lab-card{background:#fff;border:1.5px solid var(--border);border-radius:8px;
-  padding:20px;text-decoration:none;color:var(--ink);
-  transition:all .22s;display:flex;flex-direction:column;gap:10px;
+/* CARD */
+.card{background:#fff;border:1.5px solid var(--border);border-radius:8px;
+  padding:18px 18px 16px;text-decoration:none;color:var(--ink);
+  transition:all .2s;display:flex;flex-direction:column;gap:9px;
   position:relative;overflow:hidden;}
-.lab-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-.physics-section .lab-card::before{background:var(--physics);}
-.biology-section .lab-card::before{background:var(--biology);}
-.arabic-section .lab-card::before{background:var(--arabic);}
-.lab-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.1);
-  border-color:var(--border2);}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.card-emoji{font-size:1.6rem;flex-shrink:0;}
-.status-dot{display:flex;align-items:center;gap:5px;font-family:var(--fm);
-  font-size:.54rem;text-transform:uppercase;letter-spacing:1.5px;}
-.dot-live{width:6px;height:6px;border-radius:50%;background:var(--biology);
-  animation:pulse 2s infinite;}
-.dot-new{width:6px;height:6px;border-radius:50%;background:var(--gold);}
-.dot-coming{width:6px;height:6px;border-radius:50%;background:var(--muted2);}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(.8);}}
-.card-lesson{font-family:var(--fh);font-size:.98rem;font-weight:700;
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.ph-s .card::before{background:var(--ph);}
+.bi-s .card::before{background:var(--bi);}
+.ar-s .card::before{background:var(--ar);}
+.ma-s .card::before{background:var(--ma);}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.09);border-color:var(--border2);}
+.card.dim{opacity:.55;pointer-events:none;}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
+.emoji{font-size:1.5rem;flex-shrink:0;line-height:1;}
+.status{display:flex;align-items:center;gap:4px;font-family:var(--fm);
+  font-size:.52rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot.live{background:#16803a;animation:pulse 2.2s infinite;}
+.dot.new{background:var(--gold);}
+.dot.exam{background:var(--ar);}
+.dot.soon{background:var(--muted2);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+.card-title{font-family:var(--fh);font-size:.95rem;font-weight:700;
   letter-spacing:-.3px;line-height:1.2;color:var(--ink);}
-.card-part{font-size:.7rem;color:var(--muted);font-family:var(--fm);}
-.card-desc{font-size:.82rem;color:var(--muted);line-height:1.7;}
-.card-tags{display:flex;flex-wrap:wrap;gap:5px;}
-.tag{font-family:var(--fm);font-size:.56rem;text-transform:uppercase;
-  letter-spacing:1px;padding:3px 8px;border-radius:2px;background:var(--bg3);
-  color:var(--muted2);border:1px solid var(--border);}
-.card-action{font-family:var(--fh);font-size:.72rem;letter-spacing:.5px;
-  margin-top:auto;padding-top:10px;border-top:1px solid var(--bg3);}
-.physics-section .card-action{color:var(--physics);}
-.biology-section .card-action{color:var(--biology);}
-.arabic-section .card-action{color:var(--arabic);}
-.lab-card.coming-soon{opacity:.6;pointer-events:none;}
-.lab-card.coming-soon .card-action{color:var(--muted2);}
+.card-sub{font-size:.68rem;color:var(--muted2);font-family:var(--fm);margin-top:-4px;}
+.card-desc{font-size:.8rem;color:var(--muted);line-height:1.7;}
+.tags{display:flex;flex-wrap:wrap;gap:4px;}
+.tag{font-family:var(--fm);font-size:.52rem;text-transform:uppercase;letter-spacing:1px;
+  padding:2px 7px;border-radius:2px;background:var(--bg3);color:var(--muted2);
+  border:1px solid var(--border);}
+.cta{font-family:var(--fh);font-size:.7rem;letter-spacing:.5px;
+  margin-top:auto;padding-top:9px;border-top:1px solid var(--bg3);}
+.ph-s .cta{color:var(--ph);}
+.bi-s .cta{color:var(--bi);}
+.ar-s .cta{color:var(--ar);}
+.ma-s .cta{color:var(--ma);}
+.card.dim .cta{color:var(--muted2);}
 
-/* ── ABOUT ── */
-.about-strip{background:var(--ink);color:#fff;padding:60px 5vw;position:relative;z-index:1;}
-.about-inner{max-width:1200px;margin:0 auto;display:grid;
-  grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
-@media(max-width:680px){.about-inner{grid-template-columns:1fr;}}
-.about-tag{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;
-  letter-spacing:3px;color:var(--gold);margin-bottom:14px;}
-.about-title{font-family:var(--fh);font-size:clamp(1.8rem,3vw,2.6rem);
-  font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.05;margin-bottom:14px;}
-.about-text{font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.85;}
-.about-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
-.about-pill{font-family:var(--fm);font-size:.62rem;text-transform:uppercase;
-  letter-spacing:1px;padding:5px 12px;border-radius:2px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
-  color:rgba(255,255,255,.6);}
+/* ABOUT */
+.about{background:var(--ink);color:#fff;padding:56px 5vw;position:relative;z-index:1;}
+.about-in{max-width:1180px;margin:0 auto;display:grid;
+  grid-template-columns:1.1fr 1fr;gap:44px;align-items:center;}
+@media(max-width:680px){.about-in{grid-template-columns:1fr;}}
+.about-tag{font-family:var(--fm);font-size:.56rem;text-transform:uppercase;
+  letter-spacing:3px;color:var(--gold);margin-bottom:12px;}
+.about-title{font-family:var(--fh);font-size:clamp(1.7rem,2.8vw,2.4rem);
+  font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.05;margin-bottom:12px;}
+.about-text{font-size:.86rem;color:rgba(255,255,255,.58);line-height:1.9;}
+.apills{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.apill{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:1px;
+  padding:5px 11px;border-radius:2px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);}
+.arch-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:22px;}
+.arch-label{font-family:var(--fm);font-size:.54rem;text-transform:uppercase;
+  letter-spacing:2px;color:rgba(255,255,255,.35);margin-bottom:12px;}
+.arch-row{display:flex;gap:10px;align-items:center;margin-bottom:9px;font-size:.82rem;}
+.arch-row:last-child{margin-bottom:0;}
+.arch-e{font-size:1rem;}
+.arch-row strong{color:#fff;}
+.arch-row span{color:rgba(255,255,255,.45);font-size:.74rem;margin-left:4px;}
 
-/* ── FOOTER ── */
+/* FOOTER */
 footer{background:var(--bg2);border-top:1px solid var(--border);
-  padding:28px 5vw;display:flex;align-items:center;justify-content:space-between;
+  padding:24px 5vw;display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:12px;position:relative;z-index:1;}
-.footer-brand{font-family:var(--fh);font-size:.9rem;font-weight:800;color:var(--ink);}
-.footer-note{font-family:var(--fm);font-size:.6rem;color:var(--muted2);
-  text-transform:uppercase;letter-spacing:2px;margin-top:3px;}
-.footer-links{display:flex;gap:14px;}
-.footer-links a{font-size:.78rem;color:var(--muted);text-decoration:none;font-family:var(--fb);}
-.footer-links a:hover{color:var(--ink);}
+.fb{font-family:var(--fh);font-size:.88rem;font-weight:800;color:var(--ink);}
+.fn{font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:2px;margin-top:2px;}
+.flinks{display:flex;gap:14px;flex-wrap:wrap;}
+.flinks a{font-size:.76rem;color:var(--muted);text-decoration:none;}
+.flinks a:hover{color:var(--ink);}
 
 @media(max-width:600px){
-  nav{height:auto;padding:10px 5vw;}
-  .hero{padding:48px 5vw 48px;}
-  .cards-grid{grid-template-columns:1fr;}
+  nav{padding:8px 5vw;}
+  .hero{padding:44px 5vw 40px;}
+  .grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -182,366 +187,378 @@ footer{background:var(--bg2);border-top:1px solid var(--border);
 <nav>
   <a class="nav-brand" href="/">Ahmad Ghozlan</a>
   <div class="nav-links">
-    <a class="nav-pill physics" href="#physics">⚡ Physics</a>
-    <a class="nav-pill biology" href="#biology">🧬 Biology</a>
-    <a class="nav-pill arabic" href="#arabic">📖 Arabic</a>
+    <a class="npill ph" href="#physics">⚡ Physics</a>
+    <a class="npill bi" href="#biology">🧬 Biology</a>
+    <a class="npill ar" href="#arabic">📖 Arabic</a>
+    <a class="npill ma" href="#math">🔢 Math</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Open-Access · Lebanon · AI-Powered</div>
-  <h1>Interactive<br>Science <em>Labs</em></h1>
-  <p class="hero-desc">
-    Fully interactive 5E lessons for Lebanese students in Grades 7–9.
-    No download, no login — one link opens a complete lab on any phone or computer.
-  </p>
-  <div class="hero-stats">
-    <div class="stat"><span class="stat-n">14</span><span class="stat-l">Labs Live</span></div>
-    <div class="stat"><span class="stat-n">3</span><span class="stat-l">Subjects</span></div>
-    <div class="stat"><span class="stat-n">7–9</span><span class="stat-l">Grades</span></div>
-    <div class="stat"><span class="stat-n">5E</span><span class="stat-l">Model</span></div>
-    <div class="stat"><span class="stat-n">AI</span><span class="stat-l">Tutoring</span></div>
+  <div class="eyebrow">Open Access · Lebanon · AI-Powered · 2025–2026</div>
+  <h1 class="hero-h">Interactive<br>Science <em>Labs</em></h1>
+  <p class="hero-p">Fully interactive 5E lessons for Lebanese students. No download, no login — one link opens a complete lab on any phone or computer.</p>
+  <div class="stats">
+    <div><div class="stat-n">20+</div><div class="stat-l">Labs Live</div></div>
+    <div><div class="stat-n">4</div><div class="stat-l">Subjects</div></div>
+    <div><div class="stat-n">1–12</div><div class="stat-l">Grades</div></div>
+    <div><div class="stat-n">5E</div><div class="stat-l">Model</div></div>
+    <div><div class="stat-n">AI</div><div class="stat-l">Tutoring</div></div>
   </div>
-  <div class="hero-cta">
-    <a class="btn-primary" href="#physics">Browse Labs →</a>
-    <a class="btn-secondary" href="https://www.linkedin.com/in/ahmad-ghozlan" target="_blank">LinkedIn ↗</a>
+  <div class="hero-btns">
+    <a class="btn-p" href="#physics">Browse Labs →</a>
+    <a class="btn-s" href="https://www.linkedin.com/in/ahmad-ghozlan" target="_blank">LinkedIn ↗</a>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- PHYSICS -->
-<!-- ═══════════════════════════════════════════ -->
-<div id="physics" class="subject-wrap physics-section">
-  <div class="subject-header">
-    <div>
-      <div class="subject-icon">⚡</div>
-      <div class="subject-name">Physics</div>
-      <div class="subject-meta">Grade 7 · Grade 8 · Grade 9 &nbsp;·&nbsp; Heat · Waves · Forces · Electricity · Optics</div>
+<!-- ══════════════════════════════════════════════
+     PHYSICS
+══════════════════════════════════════════════ -->
+<div id="physics" class="subj ph-s">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">⚡</div>
+      <div class="subj-name">Physics</div>
+      <div class="subj-meta">Grade 7 · Grade 8 · Grade 9 &nbsp;·&nbsp; Heat · Waves · Forces · Electricity · EM Waves · Springs</div>
     </div>
-    <span class="subject-count">10 Labs</span>
+    <span class="subj-count">17 Files</span>
   </div>
 
-  <!-- Grade 7 -->
-  <div class="grade-group">
-    <div class="grade-label">Grade 7</div>
-    <div class="cards-grid">
+  <!-- G7 -->
+  <div class="gg">
+    <div class="gg-label">Grade 7</div>
+    <div class="grid">
 
-      <a class="lab-card" href="heatlab.html">
-        <div class="card-top">
-          <span class="card-emoji">🔥</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">HeatLab — Heat Transfer</div>
-        <div class="card-part">Part 1 · Conduction & Radiation</div>
-        <div class="card-desc">Heat vs temperature, particle model, conduction through falling pins, radiation glow simulation.</div>
-        <div class="card-tags"><span class="tag">Conduction</span><span class="tag">Radiation</span><span class="tag">5E</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="heatlab.html">
+        <div class="card-top"><span class="emoji">🔥</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">HeatLab — Heat Transfer</div>
+        <div class="card-sub">Part 1 · Conduction & Radiation</div>
+        <div class="card-desc">Particle model animation, falling-pin conduction, radiation glow simulation, heat vs temperature.</div>
+        <div class="tags"><span class="tag">Conduction</span><span class="tag">Radiation</span><span class="tag">5E</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="heatlab2.html">
-        <div class="card-top">
-          <span class="card-emoji">🌊</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">HeatLab — Convection</div>
-        <div class="card-part">Part 2 · Convection Currents</div>
-        <div class="card-desc">Animated particle convection, hot/cold fluid density, real-world applications including sea breeze.</div>
-        <div class="card-tags"><span class="tag">Convection</span><span class="tag">Particles</span><span class="tag">Animation</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="heatlab2.html">
+        <div class="card-top"><span class="emoji">🌊</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">HeatLab — Convection</div>
+        <div class="card-sub">Part 2 · Convection Currents</div>
+        <div class="card-desc">Animated convection loops, hot/cold fluid density, sea breeze, real-world applications.</div>
+        <div class="tags"><span class="tag">Convection</span><span class="tag">Particles</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="heatlab3.html">
-        <div class="card-top">
-          <span class="card-emoji">🌡️</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">HeatLab — Thermometers</div>
-        <div class="card-part">Part 3 · Measurement & Scales</div>
-        <div class="card-desc">Liquid expansion, Celsius vs Kelvin, reading thermometers, interactive scale conversion.</div>
-        <div class="card-tags"><span class="tag">Temperature</span><span class="tag">Scales</span><span class="tag">Measurement</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="electricitylabG7.html">
+        <div class="card-top"><span class="emoji">🔌</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">ElectricityLab — Components</div>
+        <div class="card-sub">Part 1 · Symbols & Generators</div>
+        <div class="card-desc">Circuit components, standard symbols, cells as generators vs receivers, voltage and current introduction.</div>
+        <div class="tags"><span class="tag">Circuits</span><span class="tag">Symbols</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="electricitylab.html">
-        <div class="card-top">
-          <span class="card-emoji">🔌</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">ElectricityLab — Circuits</div>
-        <div class="card-part">Part 1 · Components & Symbols</div>
-        <div class="card-desc">Circuit components, symbols, cells as generators vs receivers, voltage and current intro.</div>
-        <div class="card-tags"><span class="tag">Circuits</span><span class="tag">Symbols</span><span class="tag">Components</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="electricitylab2G7.html">
+        <div class="card-top"><span class="emoji">💡</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">ElectricityLab — Open & Closed</div>
+        <div class="card-sub">Part 2 · Circuit States & Conductors</div>
+        <div class="card-desc">Open vs closed circuits (animated electrons), conductor/insulator test, PhET integration, screenshot upload.</div>
+        <div class="tags"><span class="tag">Open Circuit</span><span class="tag">Conductors</span><span class="tag">PhET</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="electricitylab2.html">
-        <div class="card-top">
-          <span class="card-emoji">💡</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">ElectricityLab — Open & Closed</div>
-        <div class="card-part">Part 2 · Circuit States & Conductors</div>
-        <div class="card-desc">Open vs closed circuits (animated), conductor test, PhET integration, screenshot upload.</div>
-        <div class="card-tags"><span class="tag">Open Circuit</span><span class="tag">Conductors</span><span class="tag">PhET</span></div>
-        <div class="card-action">Open Lab →</div>
-      </a>
-
-      <a class="lab-card" href="electricitylab3.html">
-        <div class="card-top">
-          <span class="card-emoji">🧪</span>
-          <span class="status-dot"><span class="dot-new"></span>New</span>
-        </div>
-        <div class="card-lesson">ElectricityLab — Pre-Test</div>
-        <div class="card-part">Part 3 · Grade 7D Evaluation</div>
-        <div class="card-desc">Circuit reading canvas, symbol drag-match, conductor sorting, switch animation, circuit builder. Grade 7D only.</div>
-        <div class="card-tags"><span class="tag">Pre-Test</span><span class="tag">Interactive</span><span class="tag">Canvas</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="electricitylab3G7.html">
+        <div class="card-top"><span class="emoji">🧪</span><span class="status"><span class="dot exam"></span>Pre-Test</span></div>
+        <div class="card-title">ElectricityLab — Pre-Test</div>
+        <div class="card-sub">Part 3 · Grade 7D Evaluation</div>
+        <div class="card-desc">Circuit reading canvas, symbol drag-match, conductor sorting, animated switch, circuit builder. Grade 7D.</div>
+        <div class="tags"><span class="tag">Pre-Test</span><span class="tag">Canvas</span><span class="tag">Interactive</span></div>
+        <div class="cta">Open Pre-Test →</div>
       </a>
 
     </div>
   </div>
 
-  <!-- Grade 8 -->
-  <div class="grade-group">
-    <div class="grade-label">Grade 8</div>
-    <div class="cards-grid">
+  <!-- G8 -->
+  <div class="gg">
+    <div class="gg-label">Grade 8</div>
+    <div class="grid">
 
-      <a class="lab-card" href="wavelab.html">
-        <div class="card-top">
-          <span class="card-emoji">〜</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">WaveLab — Mechanical Waves</div>
-        <div class="card-part">Part 1 · Wave Properties</div>
-        <div class="card-desc">Wave speed, frequency, wavelength, period. Transverse vs longitudinal. The lightning mystery. v = f·λ lab.</div>
-        <div class="card-tags"><span class="tag">Waves</span><span class="tag">v=fλ</span><span class="tag">Animation</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="wavelab.html">
+        <div class="card-top"><span class="emoji">〜</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">WaveLab — Mechanical Waves</div>
+        <div class="card-sub">Part 1 · Wave Properties</div>
+        <div class="card-desc">Wave speed, frequency, wavelength, period. Transverse vs longitudinal waves. Lightning mystery. v = f·λ.</div>
+        <div class="tags"><span class="tag">Waves</span><span class="tag">v=fλ</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="emwavesG8.html">
-        <div class="card-top">
-          <span class="card-emoji">📡</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">EMWaves — Spectrum Command</div>
-        <div class="card-part">Part 1 · The EM Spectrum</div>
-        <div class="card-desc">Draggable spectrum explorer, 7 wave band deep-dives, Three.js 3D wave lab, 4 MCQ missions + AI evaluator.</div>
-        <div class="card-tags"><span class="tag">EM Spectrum</span><span class="tag">3D Waves</span><span class="tag">AI Tutor</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="wavelab2.html">
+        <div class="card-top"><span class="emoji">📊</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">WaveLab — Wave Behaviour</div>
+        <div class="card-sub">Part 2 · Reflection & Superposition</div>
+        <div class="card-desc">Wave reflection, refraction principles, superposition animations, standing waves.</div>
+        <div class="tags"><span class="tag">Reflection</span><span class="tag">Superposition</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="emwaves2G8.html">
-        <div class="card-top">
-          <span class="card-emoji">🎯</span>
-          <span class="status-dot"><span class="dot-new"></span>New</span>
-        </div>
-        <div class="card-lesson">EMWaves — Frequency Festival</div>
-        <div class="card-part">Part 2 · Application Games</div>
-        <div class="card-desc">Spectrum Survivor drag game, Wave Detective, Wave Impostor, v=fλ calculator, Home Hunt video challenge, AI Examiner.</div>
-        <div class="card-tags"><span class="tag">Games</span><span class="tag">Applications</span><span class="tag">Video Challenge</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="wavelab3.html">
+        <div class="card-top"><span class="emoji">🎵</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">WaveLab — Sound Waves</div>
+        <div class="card-sub">Part 3 · Sound & Hearing</div>
+        <div class="card-desc">Longitudinal pressure waves, sound speed in media, frequency and pitch, resonance.</div>
+        <div class="tags"><span class="tag">Sound</span><span class="tag">Longitudinal</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="wave3d.html">
+        <div class="card-top"><span class="emoji">🌐</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">Wave 3D Visualisation</div>
+        <div class="card-sub">Three.js Interactive 3D Model</div>
+        <div class="card-desc">Three.js 3D wave explorer — tune wavelength, frequency, amplitude. E-field and B-field animation.</div>
+        <div class="tags"><span class="tag">Three.js</span><span class="tag">3D</span></div>
+        <div class="cta">Open Visualisation →</div>
+      </a>
+
+      <a class="card" href="waveassessment.html">
+        <div class="card-top"><span class="emoji">📋</span><span class="status"><span class="dot exam"></span>Assessment</span></div>
+        <div class="card-title">Wave Assessment</div>
+        <div class="card-sub">Grade 8 · Waves Unit</div>
+        <div class="card-desc">Graded wave unit assessment — MCQs, diagram reading, calculations. Submits to grade sheet.</div>
+        <div class="tags"><span class="tag">Assessment</span><span class="tag">MCQ</span></div>
+        <div class="cta">Open Assessment →</div>
+      </a>
+
+      <a class="card" href="waveexamG8.html">
+        <div class="card-top"><span class="emoji">📝</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title">Wave Exam — Grade 8</div>
+        <div class="card-sub">Formal Exam · 5 Versions</div>
+        <div class="card-desc">Multi-version exam with absentee version. Anti-cheat version assignment. Timer. Auto-submit.</div>
+        <div class="tags"><span class="tag">Exam</span><span class="tag">5 Versions</span><span class="tag">Anti-Cheat</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
+
+      <a class="card" href="emwavesG8.html">
+        <div class="card-top"><span class="emoji">📡</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">EMWaves — Spectrum Command</div>
+        <div class="card-sub">EM Waves Part 1 · The Spectrum</div>
+        <div class="card-desc">Draggable spectrum explorer, 7 band deep-dives, Three.js 3D wave lab, 4 missions + AI evaluator.</div>
+        <div class="tags"><span class="tag">EM Spectrum</span><span class="tag">3D</span><span class="tag">AI Tutor</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="emwaves2G8.html">
+        <div class="card-top"><span class="emoji">🎯</span><span class="status"><span class="dot new"></span>New</span></div>
+        <div class="card-title">EMWaves — Frequency Festival</div>
+        <div class="card-sub">EM Waves Part 2 · Application Games</div>
+        <div class="card-desc">Spectrum Survivor, Wave Detective, Wave Impostor, v=fλ calculator, Home Hunt video challenge, AI Examiner.</div>
+        <div class="tags"><span class="tag">Games</span><span class="tag">Applications</span><span class="tag">Video</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
     </div>
   </div>
 
-  <!-- Grade 9 -->
-  <div class="grade-group">
-    <div class="grade-label">Grade 9</div>
-    <div class="cards-grid">
+  <!-- G9 -->
+  <div class="gg">
+    <div class="gg-label">Grade 9</div>
+    <div class="grid">
 
-      <a class="lab-card" href="equilibriumlab.html">
-        <div class="card-top">
-          <span class="card-emoji">⚖</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">EquilibriumLab — Forces</div>
-        <div class="card-part">Part 1 · Equilibrium Condition</div>
+      <a class="card" href="forceslab.html">
+        <div class="card-top"><span class="emoji">💪</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">ForcesLab — Forces on Objects</div>
+        <div class="card-sub">Contact vs Distance Forces</div>
+        <div class="card-desc">Contact vs distance forces, interactive free body diagram arrow tool, 6 real-world scenarios.</div>
+        <div class="tags"><span class="tag">Forces</span><span class="tag">Free Body</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="equilibriumlab.html">
+        <div class="card-top"><span class="emoji">⚖</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">EquilibriumLab — Forces</div>
+        <div class="card-sub">Part 1 · Equilibrium Condition</div>
         <div class="card-desc">Force Painter (draw vectors on diagrams), free body diagrams, equilibrium condition, 4 interactive activities.</div>
-        <div class="card-tags"><span class="tag">Forces</span><span class="tag">Vectors</span><span class="tag">Equilibrium</span></div>
-        <div class="card-action">Open Lab →</div>
+        <div class="tags"><span class="tag">Equilibrium</span><span class="tag">Vectors</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="equilibriumlab2.html">
-        <div class="card-top">
-          <span class="card-emoji">🔄</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">EquilibriumLab — Interaction</div>
-        <div class="card-part">Part 2 · Force Verdict Lab</div>
-        <div class="card-desc">Equilibrium vs interaction pairs. Sorting Arena, Body Separator slider, Verdict Chamber (3-stage compound challenge).</div>
-        <div class="card-tags"><span class="tag">Newton 3rd</span><span class="tag">Interaction</span><span class="tag">Compound</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="equilibriumlab2.html">
+        <div class="card-top"><span class="emoji">🔄</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">EquilibriumLab — Interaction</div>
+        <div class="card-sub">Part 2 · Force Verdict Lab</div>
+        <div class="card-desc">Equilibrium vs interaction pairs. Sorting Arena drag game, Body Separator slider, 3-stage Verdict Chamber.</div>
+        <div class="tags"><span class="tag">Newton 3rd</span><span class="tag">Interaction</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <a class="lab-card" href="hookslaw.html">
-        <div class="card-top">
-          <span class="card-emoji">🔩</span>
-          <span class="status-dot"><span class="dot-new"></span>New</span>
-        </div>
-        <div class="card-lesson">Hooke's Law Lab</div>
-        <div class="card-part">Part 3 · Springs & Elasticity</div>
-        <div class="card-desc">Three spring experiments (k=20/80/200), live T vs Δx graph, derive T=k·Δx, elastic limit, 6 real-world applications.</div>
-        <div class="card-tags"><span class="tag">Hooke's Law</span><span class="tag">T=kΔx</span><span class="tag">Elongation</span></div>
-        <div class="card-action">Open Lab →</div>
+      <a class="card" href="hookslawG9.html">
+        <div class="card-top"><span class="emoji">🔩</span><span class="status"><span class="dot new"></span>New</span></div>
+        <div class="card-title">Hooke's Law Lab</div>
+        <div class="card-sub">Part 3 · Springs & Elasticity</div>
+        <div class="card-desc">3 spring experiments (k=20/80/200 N/m), live T vs Δx graph, derive T = k·Δx, elastic limit, 6 real-world applications.</div>
+        <div class="tags"><span class="tag">Hooke's Law</span><span class="tag">T=kΔx</span><span class="tag">Elongation</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- BIOLOGY -->
-<!-- ═══════════════════════════════════════════ -->
-<div id="biology" class="subject-wrap biology-section" style="background:var(--bg2);">
-  <div class="subject-header">
-    <div>
-      <div class="subject-icon">🧬</div>
-      <div class="subject-name">Biology</div>
-      <div class="subject-meta">Grade 9 · Nervous System · Synaptic Transmission</div>
+<!-- ══════════════════════════════════════════════
+     BIOLOGY
+══════════════════════════════════════════════ -->
+<div id="biology" style="background:var(--bg2);">
+<div class="subj bi-s" style="background:transparent;">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">🧬</div>
+      <div class="subj-name">Biology</div>
+      <div class="subj-meta">Grade 9 · Grade 12 · Nervous System · Genetics</div>
     </div>
-    <span class="subject-count">1 Lab</span>
+    <span class="subj-count">2 Files</span>
   </div>
 
-  <div class="grade-group">
-    <div class="grade-label">Grade 9</div>
-    <div class="cards-grid">
+  <div class="gg">
+    <div class="gg-label">Grade 9</div>
+    <div class="grid">
+      <a class="card" href="synapselab.html">
+        <div class="card-top"><span class="emoji">🧠</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">SynapseLab — Nerve Transmission</div>
+        <div class="card-sub">5E Biology · Synaptic Junction</div>
+        <div class="card-desc">3D synapse model, 12 critical thinking + 10 creativity questions, Groq AI Socratic tutor, session timer, full chat log submitted to grade sheet.</div>
+        <div class="tags"><span class="tag">Synapse</span><span class="tag">AI Tutor</span><span class="tag">Bloom's</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+    </div>
+  </div>
 
-      <a class="lab-card" href="synapselab.html">
-        <div class="card-top">
-          <span class="card-emoji">🧠</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson">SynapseLab — Nerve Transmission</div>
-        <div class="card-part">5E Biology · Synaptic Junction</div>
-        <div class="card-desc">3D synapse model, 12 critical thinking + 10 creativity questions, Groq AI Socratic tutor, session timer, full chat log.</div>
-        <div class="card-tags"><span class="tag">Synapse</span><span class="tag">Neurotransmitters</span><span class="tag">AI Tutor</span><span class="tag">Bloom's</span></div>
-        <div class="card-action">Open Lab →</div>
+  <div class="gg">
+    <div class="gg-label">Grade 12</div>
+    <div class="grid">
+      <a class="card" href="biologyExamG12.html">
+        <div class="card-top"><span class="emoji">🔬</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title">Biology Exam — Grade 12</div>
+        <div class="card-sub">Formal Exam</div>
+        <div class="card-desc">Grade 12 Biology formal examination. Submits answers to grade sheet.</div>
+        <div class="tags"><span class="tag">Exam</span><span class="tag">Grade 12</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ARABIC
+══════════════════════════════════════════════ -->
+<div id="arabic" class="subj ar-s">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">📖</div>
+      <div class="subj-name">Arabic Language</div>
+      <div class="subj-meta" dir="rtl" style="text-align:right;">الصف السابع · الصف التاسع · النحو · البيان · الأعداد</div>
+    </div>
+    <span class="subj-count">3 Files</span>
+  </div>
+
+  <div class="gg">
+    <div class="gg-label">Grade 7</div>
+    <div class="grid">
+      <a class="card" href="arabicExamG7.html">
+        <div class="card-top"><span class="emoji">✍️</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title" dir="rtl">امتحان اللغة العربية — الصف السابع</div>
+        <div class="card-sub">عبير · 7C & 7D · نحو</div>
+        <div class="card-desc" dir="rtl">الفاعل ونائبه والمفعول به والإعراب والتحويل من المعلوم إلى المجهول. ٥ نسخ مضادة للغش + نسخة غائب. ٢٣ علامة · ٤٠ دقيقة.</div>
+        <div class="tags"><span class="tag">Grammar</span><span class="tag">5 Versions</span><span class="tag">Anti-Cheat</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="gg">
+    <div class="gg-label">Grade 9</div>
+    <div class="grid">
+      <a class="card" href="bayanlab.html">
+        <div class="card-top"><span class="emoji">🌸</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title" dir="rtl">بيانLab — علم البيان</div>
+        <div class="card-sub" dir="rtl">الصف التاسع · التشبيه والاستعارة</div>
+        <div class="card-desc" dir="rtl">التشبيه التام والمجمل والاستعارة التصريحية — أمثلة تفاعلية من القرآن الكريم والنصوص الأدبية.</div>
+        <div class="tags"><span class="tag">البيان</span><span class="tag">التشبيه</span><span class="tag">Interactive</span></div>
+        <div class="cta">Open Lab →</div>
       </a>
 
-      <div class="lab-card coming-soon">
-        <div class="card-top">
-          <span class="card-emoji">🫀</span>
-          <span class="status-dot"><span class="dot-coming"></span>Soon</span>
-        </div>
-        <div class="card-lesson">CardioLab — Heart & Circulation</div>
-        <div class="card-part">Coming · Grade 9</div>
-        <div class="card-desc">Circulatory system, blood pressure, heart chambers — interactive 3D model.</div>
-        <div class="card-tags"><span class="tag">Heart</span><span class="tag">Circulation</span></div>
-        <div class="card-action">In Development</div>
-      </div>
-
+      <a class="card" href="NumbersArabicG9.html">
+        <div class="card-top"><span class="emoji">🔢</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title" dir="rtl">امتحان الأعداد — الصف التاسع</div>
+        <div class="card-sub" dir="rtl">عبير · 9A–9D · الأعداد بالعربية</div>
+        <div class="card-desc" dir="rtl">الأعداد والمعدود بالعربية للصف التاسع — نسخ متعددة لجميع الشعب.</div>
+        <div class="tags"><span class="tag">الأعداد</span><span class="tag">Grade 9</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- ARABIC -->
-<!-- ═══════════════════════════════════════════ -->
-<div id="arabic" class="subject-wrap arabic-section">
-  <div class="subject-header">
-    <div>
-      <div class="subject-icon">📖</div>
-      <div class="subject-name">Arabic Language</div>
-      <div class="subject-meta" dir="rtl" style="text-align:right;">الصف السابع · الصف التاسع · النحو والإعراب</div>
+<!-- ══════════════════════════════════════════════
+     MATH
+══════════════════════════════════════════════ -->
+<div id="math" style="background:var(--bg2);">
+<div class="subj ma-s" style="background:transparent;">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">🔢</div>
+      <div class="subj-name">Mathematics</div>
+      <div class="subj-meta">Grade 1 · Grade 3 · Fractions</div>
     </div>
-    <span class="subject-count">2 Exams</span>
+    <span class="subj-count">2 Files</span>
   </div>
 
-  <div class="grade-group">
-    <div class="grade-label">Grade 7</div>
-    <div class="cards-grid">
-
-      <a class="lab-card" href="arabic_exam_g7.html">
-        <div class="card-top">
-          <span class="card-emoji">✍️</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson" dir="rtl">امتحان اللغة العربية — الصف السابع</div>
-        <div class="card-part">عبير · 7C & 7D · النحو</div>
-        <div class="card-desc" dir="rtl">الفاعل، نائب الفاعل، المفعول به، الإعراب، التحويل من المعلوم إلى المجهول. ٥ نسخ + نسخة غائب. ٢٣ علامة · ٤٠ دقيقة.</div>
-        <div class="card-tags"><span class="tag">Grammar</span><span class="tag">5 Versions</span><span class="tag">Anti-Cheat</span></div>
-        <div class="card-action">Open Exam →</div>
+  <div class="gg">
+    <div class="gg-label">Grade 1</div>
+    <div class="grid">
+      <a class="card" href="grade1Fractions.html">
+        <div class="card-top"><span class="emoji">🍕</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">Fractions — Grade 1</div>
+        <div class="card-sub">Introduction to Fractions</div>
+        <div class="card-desc">Visual fraction introduction for young learners — halves, thirds, quarters with interactive shapes.</div>
+        <div class="tags"><span class="tag">Fractions</span><span class="tag">Visual</span><span class="tag">Grade 1</span></div>
+        <div class="cta">Open Worksheet →</div>
       </a>
-
     </div>
   </div>
 
-  <div class="grade-group">
-    <div class="grade-label">Grade 9</div>
-    <div class="cards-grid">
-
-      <a class="lab-card" href="arabic_exam_g9.html">
-        <div class="card-top">
-          <span class="card-emoji">📝</span>
-          <span class="status-dot"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="card-lesson" dir="rtl">امتحان اللغة العربية — الصف التاسع</div>
-        <div class="card-part">عبير · 9A–9D · النحو</div>
-        <div class="card-desc" dir="rtl">الفاعل، نائب الفاعل، المفعول به، الإعراب التام، التحويل. ٥ نسخ مختلفة مضادة للغش. ٢٣ علامة · ٤٠ دقيقة.</div>
-        <div class="card-tags"><span class="tag">Grammar</span><span class="tag">167 Students</span><span class="tag">5 Versions</span></div>
-        <div class="card-action">Open Exam →</div>
+  <div class="gg">
+    <div class="gg-label">Grade 3</div>
+    <div class="grid">
+      <a class="card" href="grade3Fractions.html">
+        <div class="card-top"><span class="emoji">📐</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">Fractions — Grade 3</div>
+        <div class="card-sub">Equivalent Fractions & Comparison</div>
+        <div class="card-desc">Equivalent fractions, comparing and ordering, fraction of a set — interactive exercises.</div>
+        <div class="tags"><span class="tag">Fractions</span><span class="tag">Equivalent</span><span class="tag">Grade 3</span></div>
+        <div class="cta">Open Worksheet →</div>
       </a>
-
     </div>
   </div>
+</div>
 </div>
 
 <!-- ABOUT -->
-<div class="about-strip">
-  <div class="about-inner">
+<div class="about">
+  <div class="about-in">
     <div>
       <div class="about-tag">About This Library</div>
       <div class="about-title">Built for Lebanese Classrooms</div>
-      <p class="about-text">
-        Every lab here is designed around the 5E inquiry model — Engage, Explore, Explain, Elaborate, Evaluate.
-        Students interact with live canvas simulations, receive Socratic AI feedback via Groq, and submit results
-        directly to Ahmad's Google Sheets grade book through Apps Script.
-        <br><br>
-        No app to install. No account to create. One link, any device, any network condition.
-      </p>
-      <div class="about-pills">
-        <span class="about-pill">5E Pedagogy</span>
-        <span class="about-pill">Canvas Simulations</span>
-        <span class="about-pill">Groq AI Tutor</span>
-        <span class="about-pill">Google Sheets Integration</span>
-        <span class="about-pill">Mobile-First</span>
-        <span class="about-pill">Open Access</span>
+      <p class="about-text">Every lab is designed around the 5E inquiry model. Students interact with live canvas simulations, receive Socratic AI feedback via Groq, and submit results directly to Ahmad's Google Sheets grade book through Apps Script.<br><br>No app to install. No account to create. One link, any device.</p>
+      <div class="apills">
+        <span class="apill">5E Pedagogy</span><span class="apill">Canvas Simulations</span>
+        <span class="apill">Groq AI Tutor</span><span class="apill">Google Sheets</span>
+        <span class="apill">Mobile-First</span><span class="apill">Open Access</span>
       </div>
     </div>
     <div>
-      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-        border-radius:8px;padding:24px;">
-        <div style="font-family:var(--fm);font-size:.56rem;text-transform:uppercase;
-          letter-spacing:2px;color:rgba(255,255,255,.4);margin-bottom:14px;">Lab Architecture</div>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:.84rem;">
-          <div style="display:flex;gap:12px;align-items:center;">
-            <span style="font-size:1.1rem;">🎯</span>
-            <div><strong style="color:#fff;">Engage</strong><br>
-              <span style="color:rgba(255,255,255,.5);font-size:.78rem;">Hook — real-world phenomenon</span></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;">
-            <span style="font-size:1.1rem;">🔬</span>
-            <div><strong style="color:#fff;">Explore</strong><br>
-              <span style="color:rgba(255,255,255,.5);font-size:.78rem;">Interactive canvas simulation</span></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;">
-            <span style="font-size:1.1rem;">📐</span>
-            <div><strong style="color:#fff;">Explain</strong><br>
-              <span style="color:rgba(255,255,255,.5);font-size:.78rem;">Guided derivation & theory</span></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;">
-            <span style="font-size:1.1rem;">🌍</span>
-            <div><strong style="color:#fff;">Elaborate</strong><br>
-              <span style="color:rgba(255,255,255,.5);font-size:.78rem;">Real-world applications</span></div>
-          </div>
-          <div style="display:flex;gap:12px;align-items:center;">
-            <span style="font-size:1.1rem;">📊</span>
-            <div><strong style="color:#fff;">Evaluate</strong><br>
-              <span style="color:rgba(255,255,255,.5);font-size:.78rem;">MCQ + written → grade sheet</span></div>
-          </div>
-        </div>
+      <div class="arch-box">
+        <div class="arch-label">5E Lab Architecture</div>
+        <div class="arch-row"><span class="arch-e">🎯</span><div><strong>Engage</strong><span>— Real-world hook</span></div></div>
+        <div class="arch-row"><span class="arch-e">🔬</span><div><strong>Explore</strong><span>— Interactive canvas simulation</span></div></div>
+        <div class="arch-row"><span class="arch-e">📐</span><div><strong>Explain</strong><span>— Guided derivation & theory</span></div></div>
+        <div class="arch-row"><span class="arch-e">🌍</span><div><strong>Elaborate</strong><span>— Real-world applications</span></div></div>
+        <div class="arch-row"><span class="arch-e">📊</span><div><strong>Evaluate</strong><span>— MCQ + written → grade sheet</span></div></div>
       </div>
     </div>
   </div>
@@ -549,14 +566,13 @@ footer{background:var(--bg2);border-top:1px solid var(--border);
 
 <footer>
   <div>
-    <div class="footer-brand">Ahmad Ghozlan</div>
-    <div class="footer-note">Physics & Science · AI in Education · Lebanon · 2025–2026</div>
+    <div class="fb">Ahmad Ghozlan</div>
+    <div class="fn">Physics & Science · AI in Education · Lebanon · 2025–2026</div>
   </div>
-  <div class="footer-links">
+  <div class="flinks">
     <a href="https://www.linkedin.com/in/ahmad-ghozlan" target="_blank">LinkedIn ↗</a>
-    <a href="#physics">Physics</a>
-    <a href="#biology">Biology</a>
-    <a href="#arabic">Arabic</a>
+    <a href="#physics">Physics</a><a href="#biology">Biology</a>
+    <a href="#arabic">Arabic</a><a href="#math">Math</a>
   </div>
 </footer>
 
