@@ -1,898 +1,586 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>امتحان اللغة العربية — الصف السابع | عبير | ٢٠٢٥–٢٠٢٦</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ahmad Ghozlan — Interactive Science Labs · Lebanon</title>
+<meta name="description" content="Open-access interactive labs for Lebanese students — Physics, Biology, Arabic, Math. Grades 1–12. AI-powered 5E model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#fdfbf6;--bg2:#f5f1e8;--bg3:#ede8dc;
-  --panel:#fff;--panel2:#f9f6f0;
-  --border:#d8d0c0;--border2:#c8bda8;
-  --ink:#1a1208;--muted:#7a6e5a;--muted2:#5a5048;
-  --gold:#8b6914;--gold2:#c8a030;--goldL:rgba(139,105,20,.1);
-  --red:#8b1a1a;--redL:rgba(139,26,26,.08);
-  --green:#1a6b3c;--greenL:rgba(26,107,60,.08);
-  --blue:#1a3d8b;--blueL:rgba(26,61,139,.08);
-  --fa:'Amiri',serif;--fc:'Cairo',sans-serif;
+  --bg:#f8f7f4;--bg2:#f0ede6;--bg3:#e8e4dc;
+  --ink:#111008;--muted:#6b6458;--muted2:#9b9080;
+  --border:#ddd8cc;--border2:#ccc6b8;
+  --ph:#1a4fd6;--phL:rgba(26,79,214,.08);--phB:rgba(26,79,214,.22);
+  --bi:#16803a;--biL:rgba(22,128,58,.08);--biB:rgba(22,128,58,.22);
+  --ar:#9a1d1d;--arL:rgba(154,29,29,.08);--arB:rgba(154,29,29,.22);
+  --ma:#6d28d9;--maL:rgba(109,40,217,.08);--maB:rgba(109,40,217,.22);
+  --gold:#b5860d;--goldL:rgba(181,134,13,.1);
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--ink);font-family:var(--fc);line-height:1.75;direction:rtl;}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);line-height:1.65;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
-/* ── HEADER ── */
-.exam-header{background:linear-gradient(135deg,#1a1208,#2d2010);color:#fff;
-  padding:24px 32px;position:relative;border-bottom:4px solid var(--gold2);}
-.school-name{font-family:var(--fa);font-size:1.1rem;color:var(--gold2);
-  text-align:center;margin-bottom:6px;letter-spacing:1px;}
-.exam-title{font-family:var(--fa);font-size:1.6rem;font-weight:700;
-  text-align:center;color:#fff;margin-bottom:4px;}
-.exam-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
-  margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15);}
-.meta-item{font-size:.78rem;color:rgba(255,255,255,.7);font-family:var(--fc);}
-.meta-item strong{color:var(--gold2);}
-.version-badge{position:absolute;top:16px;left:16px;background:var(--gold2);color:#1a1208;
-  font-weight:900;font-size:.8rem;padding:4px 12px;border-radius:2px;font-family:var(--fc);}
-.timer-badge{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);
-  color:#fff;border:1px solid rgba(255,255,255,.3);font-weight:700;font-size:.9rem;
-  padding:6px 16px;border-radius:3px;font-family:var(--fc);min-width:80px;text-align:center;}
-.timer-badge.warn{background:rgba(139,26,26,.4);border-color:rgba(255,80,80,.5);color:#ffaaaa;}
-.timer-badge.urgent{background:rgba(139,26,26,.8);border-color:#ff4444;color:#fff;animation:pulse .8s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(248,247,244,.94);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--border);
+  padding:0 5vw;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;min-height:56px;}
+.nav-brand{font-family:var(--fh);font-size:.95rem;font-weight:800;color:var(--ink);
+  text-decoration:none;letter-spacing:-.5px;padding:8px 0;}
+.nav-links{display:flex;gap:5px;flex-wrap:wrap;padding:6px 0;}
+.npill{padding:5px 13px;border-radius:20px;font-size:.76rem;font-weight:600;
+  text-decoration:none;border:1.5px solid;transition:all .18s;font-family:var(--fb);}
+.npill.ph{border-color:var(--phB);color:var(--ph);}
+.npill.bi{border-color:var(--biB);color:var(--bi);}
+.npill.ar{border-color:var(--arB);color:var(--ar);}
+.npill.ma{border-color:var(--maB);color:var(--ma);}
+.npill:hover{filter:brightness(.85);}
 
-/* ── STUDENT SELECTOR ── */
-.selector-section{background:linear-gradient(135deg,var(--bg2),var(--bg3));
-  padding:28px 32px;border-bottom:2px solid var(--border);}
-.selector-title{font-family:var(--fa);font-size:1.1rem;color:var(--ink);
-  margin-bottom:18px;text-align:center;}
-.section-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
-.sec-btn{padding:10px 28px;border-radius:3px;border:2px solid var(--border2);
-  background:var(--panel);color:var(--muted);font-family:var(--fc);font-weight:700;
-  font-size:1rem;cursor:pointer;transition:all .2s;min-height:46px;min-width:70px;}
-.sec-btn:hover{border-color:var(--gold);color:var(--gold);}
-.sec-btn.on{background:var(--ink);color:var(--gold2);border-color:var(--ink);}
-.name-select-wrap{max-width:500px;margin:0 auto;}
-.name-label{font-size:.82rem;color:var(--muted2);margin-bottom:6px;font-family:var(--fc);display:block;}
-select{background:var(--panel);border:2px solid var(--border2);border-radius:3px;
-  padding:12px 16px;color:var(--ink);font-family:var(--fc);font-size:.95rem;
-  outline:none;width:100%;cursor:pointer;direction:rtl;min-height:48px;}
-select:focus{border-color:var(--gold);}
-.start-btn{display:block;width:100%;max-width:500px;margin:16px auto 0;
-  padding:14px;background:var(--ink);color:var(--gold2);border:none;border-radius:3px;
-  font-family:var(--fa);font-size:1.15rem;font-weight:700;cursor:pointer;transition:all .2s;}
-.start-btn:hover{background:#2d2010;}
-.start-btn:disabled{opacity:.4;cursor:not-allowed;}
+/* HERO */
+.hero{padding:72px 5vw 64px;max-width:1180px;margin:0 auto;position:relative;z-index:1;}
+.eyebrow{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:3px;
+  color:var(--gold);background:var(--goldL);border:1px solid rgba(181,134,13,.25);
+  border-radius:2px;padding:4px 14px;display:inline-block;margin-bottom:20px;}
+h1.hero-h{font-family:var(--fh);font-size:clamp(2.6rem,5.5vw,4.8rem);font-weight:800;
+  line-height:.95;letter-spacing:-2px;color:var(--ink);margin-bottom:18px;}
+h1.hero-h em{font-style:normal;color:var(--gold);}
+.hero-p{font-size:1rem;color:var(--muted);max-width:500px;line-height:1.8;margin-bottom:28px;}
+.stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:30px;}
+.stat-n{font-family:var(--fh);font-size:1.9rem;font-weight:800;color:var(--ink);line-height:1;}
+.stat-l{font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px;
+  font-family:var(--fm);margin-top:2px;}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-p{padding:11px 26px;background:var(--ink);color:#fff;border-radius:4px;
+  font-family:var(--fh);font-size:.88rem;letter-spacing:.5px;text-decoration:none;transition:all .2s;}
+.btn-p:hover{background:#333;}
+.btn-s{padding:11px 26px;background:transparent;color:var(--ink);
+  border:1.5px solid var(--border2);border-radius:4px;font-family:var(--fh);
+  font-size:.88rem;letter-spacing:.5px;text-decoration:none;transition:all .2s;}
+.btn-s:hover{border-color:var(--ink);}
 
-/* ── EXAM BODY ── */
-.exam-body{display:none;max-width:860px;margin:0 auto;padding:28px 24px;}
+/* SUBJECT SECTION */
+.subj{padding:52px 5vw;max-width:1180px;margin:0 auto;position:relative;z-index:1;}
+.subj.alt-bg{background:var(--bg2);max-width:none;padding-left:5vw;padding-right:5vw;}
+.subj.alt-bg .inner{max-width:1180px;margin:0 auto;}
+.subj-hdr{display:flex;align-items:flex-end;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;margin-bottom:26px;padding-bottom:14px;border-bottom:2px solid;}
+.ph-s .subj-hdr{border-color:var(--phB);}
+.bi-s .subj-hdr{border-color:var(--biB);}
+.ar-s .subj-hdr{border-color:var(--arB);}
+.ma-s .subj-hdr{border-color:var(--maB);}
+.subj-icon{font-size:1.8rem;margin-bottom:4px;}
+.subj-name{font-family:var(--fh);font-size:1.9rem;font-weight:800;letter-spacing:-1px;margin-bottom:3px;}
+.ph-s .subj-name{color:var(--ph);}
+.bi-s .subj-name{color:var(--bi);}
+.ar-s .subj-name{color:var(--ar);}
+.ma-s .subj-name{color:var(--ma);}
+.subj-meta{font-size:.76rem;color:var(--muted2);font-family:var(--fm);}
+.subj-count{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;
+  padding:4px 11px;border-radius:2px;}
+.ph-s .subj-count{background:var(--phL);color:var(--ph);}
+.bi-s .subj-count{background:var(--biL);color:var(--bi);}
+.ar-s .subj-count{background:var(--arL);color:var(--ar);}
+.ma-s .subj-count{background:var(--maL);color:var(--ma);}
 
-/* Question blocks */
-.q-section{background:var(--panel);border:1.5px solid var(--border);border-radius:4px;
-  margin-bottom:20px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-.q-header{background:var(--ink);color:#fff;padding:12px 20px;display:flex;
-  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.q-num{font-family:var(--fa);font-size:1rem;font-weight:700;color:var(--gold2);}
-.q-marks{font-family:var(--fc);font-size:.72rem;color:rgba(255,255,255,.6);
-  background:rgba(255,255,255,.08);padding:2px 10px;border-radius:12px;}
-.q-instruction{background:var(--goldL);border-bottom:1px solid var(--border);
-  padding:12px 20px;font-family:var(--fa);font-size:.95rem;color:var(--gold);
-  font-weight:700;border-right:4px solid var(--gold2);}
-.q-body{padding:18px 20px;}
+/* GRADE GROUP */
+.gg{margin-bottom:26px;}
+.gg-label{font-family:var(--fm);font-size:.56rem;text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted2);background:var(--bg3);border:1px solid var(--border);
+  border-radius:2px;padding:3px 10px;display:inline-flex;align-items:center;gap:6px;margin-bottom:11px;}
+.gg-label::before{content:'';width:6px;height:6px;border-radius:50%;}
+.ph-s .gg-label::before{background:var(--ph);}
+.bi-s .gg-label::before{background:var(--bi);}
+.ar-s .gg-label::before{background:var(--ar);}
+.ma-s .gg-label::before{background:var(--ma);}
 
-/* sentences with inputs */
-.sent-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;
-  padding:10px 14px;background:var(--panel2);border-radius:3px;border-right:3px solid var(--border2);}
-.sent-num{min-width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--gold2);
-  font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;margin-top:2px;font-family:var(--fc);}
-.sent-content{flex:1;}
-.sent-text{font-family:var(--fa);font-size:1.05rem;color:var(--ink);
-  line-height:1.9;margin-bottom:8px;direction:rtl;}
-.sent-text strong{color:var(--red);}
-.ans-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
-.ans-group{display:flex;flex-direction:column;gap:3px;min-width:120px;flex:1;}
-.ans-label{font-size:.62rem;color:var(--muted);font-family:var(--fc);text-transform:uppercase;
-  letter-spacing:1px;}
-.ans-input{border:1.5px solid var(--border2);border-radius:3px;padding:7px 12px;
-  font-family:var(--fa);font-size:.92rem;color:var(--ink);background:var(--panel);
-  outline:none;transition:border-color .2s;direction:rtl;width:100%;min-height:40px;}
-.ans-input:focus{border-color:var(--gold);}
-.ans-textarea{border:1.5px solid var(--border2);border-radius:3px;padding:9px 12px;
-  font-family:var(--fa);font-size:.92rem;color:var(--ink);background:var(--panel);
-  outline:none;transition:border-color .2s;direction:rtl;width:100%;
-  resize:vertical;min-height:70px;}
-.ans-textarea:focus{border-color:var(--gold);}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:12px;}
 
-/* إعراب table */
-.iraab-table{width:100%;border-collapse:collapse;font-size:.88rem;direction:rtl;margin-top:8px;}
-.iraab-table th{background:var(--ink);color:var(--gold2);padding:9px 12px;
-  font-family:var(--fa);font-size:.82rem;border:1px solid rgba(255,255,255,.1);text-align:center;}
-.iraab-table td{padding:9px 12px;border:1px solid var(--border);text-align:center;vertical-align:middle;}
-.iraab-table td:first-child{font-family:var(--fa);font-size:1rem;font-weight:700;
-  background:var(--panel2);color:var(--red);}
-.iraab-table input{border:none;background:transparent;text-align:center;
-  font-family:var(--fa);font-size:.88rem;color:var(--ink);width:100%;outline:none;
-  border-bottom:1.5px solid var(--border2);min-height:32px;direction:rtl;}
-.iraab-table input:focus{border-bottom-color:var(--gold);}
+/* CARD */
+.card{background:#fff;border:1.5px solid var(--border);border-radius:8px;
+  padding:18px 18px 16px;text-decoration:none;color:var(--ink);
+  transition:all .2s;display:flex;flex-direction:column;gap:9px;
+  position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.ph-s .card::before{background:var(--ph);}
+.bi-s .card::before{background:var(--bi);}
+.ar-s .card::before{background:var(--ar);}
+.ma-s .card::before{background:var(--ma);}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.09);border-color:var(--border2);}
+.card.dim{opacity:.55;pointer-events:none;}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;}
+.emoji{font-size:1.5rem;flex-shrink:0;line-height:1;}
+.status{display:flex;align-items:center;gap:4px;font-family:var(--fm);
+  font-size:.52rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot.live{background:#16803a;animation:pulse 2.2s infinite;}
+.dot.new{background:var(--gold);}
+.dot.exam{background:var(--ar);}
+.dot.soon{background:var(--muted2);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+.card-title{font-family:var(--fh);font-size:.95rem;font-weight:700;
+  letter-spacing:-.3px;line-height:1.2;color:var(--ink);}
+.card-sub{font-size:.68rem;color:var(--muted2);font-family:var(--fm);margin-top:-4px;}
+.card-desc{font-size:.8rem;color:var(--muted);line-height:1.7;}
+.tags{display:flex;flex-wrap:wrap;gap:4px;}
+.tag{font-family:var(--fm);font-size:.52rem;text-transform:uppercase;letter-spacing:1px;
+  padding:2px 7px;border-radius:2px;background:var(--bg3);color:var(--muted2);
+  border:1px solid var(--border);}
+.cta{font-family:var(--fh);font-size:.7rem;letter-spacing:.5px;
+  margin-top:auto;padding-top:9px;border-top:1px solid var(--bg3);}
+.ph-s .cta{color:var(--ph);}
+.bi-s .cta{color:var(--bi);}
+.ar-s .cta{color:var(--ar);}
+.ma-s .cta{color:var(--ma);}
+.card.dim .cta{color:var(--muted2);}
 
-/* تأليف جمل */
-.compose-row{background:var(--panel2);border-radius:3px;padding:12px 16px;
-  margin-bottom:10px;border-right:3px solid var(--blue);}
-.compose-cond{font-family:var(--fa);font-size:.88rem;color:var(--blue);
-  margin-bottom:6px;font-weight:700;}
-.compose-input{border:1.5px solid var(--border2);border-radius:3px;padding:9px 12px;
-  font-family:var(--fa);font-size:1rem;color:var(--ink);background:var(--panel);
-  outline:none;transition:border-color .2s;direction:rtl;width:100%;min-height:44px;}
-.compose-input:focus{border-color:var(--gold);}
+/* ABOUT */
+.about{background:var(--ink);color:#fff;padding:56px 5vw;position:relative;z-index:1;}
+.about-in{max-width:1180px;margin:0 auto;display:grid;
+  grid-template-columns:1.1fr 1fr;gap:44px;align-items:center;}
+@media(max-width:680px){.about-in{grid-template-columns:1fr;}}
+.about-tag{font-family:var(--fm);font-size:.56rem;text-transform:uppercase;
+  letter-spacing:3px;color:var(--gold);margin-bottom:12px;}
+.about-title{font-family:var(--fh);font-size:clamp(1.7rem,2.8vw,2.4rem);
+  font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.05;margin-bottom:12px;}
+.about-text{font-size:.86rem;color:rgba(255,255,255,.58);line-height:1.9;}
+.apills{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.apill{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:1px;
+  padding:5px 11px;border-radius:2px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);}
+.arch-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:22px;}
+.arch-label{font-family:var(--fm);font-size:.54rem;text-transform:uppercase;
+  letter-spacing:2px;color:rgba(255,255,255,.35);margin-bottom:12px;}
+.arch-row{display:flex;gap:10px;align-items:center;margin-bottom:9px;font-size:.82rem;}
+.arch-row:last-child{margin-bottom:0;}
+.arch-e{font-size:1rem;}
+.arch-row strong{color:#fff;}
+.arch-row span{color:rgba(255,255,255,.45);font-size:.74rem;margin-left:4px;}
 
-/* تحويل مفرد مثنى جمع */
-.tahwil-row{background:var(--panel2);border-radius:3px;padding:10px 14px;
-  margin-bottom:10px;display:grid;grid-template-columns:auto 1fr 1fr 1fr;
-  gap:10px;align-items:center;}
-@media(max-width:600px){.tahwil-row{grid-template-columns:auto 1fr;}}
-.tahwil-original{font-family:var(--fa);font-size:1rem;color:var(--red);font-weight:700;}
-.tahwil-lbl{font-size:.62rem;color:var(--muted);font-family:var(--fc);text-align:center;margin-bottom:3px;}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);
+  padding:24px 5vw;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;position:relative;z-index:1;}
+.fb{font-family:var(--fh);font-size:.88rem;font-weight:800;color:var(--ink);}
+.fn{font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:2px;margin-top:2px;}
+.flinks{display:flex;gap:14px;flex-wrap:wrap;}
+.flinks a{font-size:.76rem;color:var(--muted);text-decoration:none;}
+.flinks a:hover{color:var(--ink);}
 
-/* Submit */
-.submit-section{background:var(--panel);border:1.5px solid var(--border);border-radius:4px;
-  padding:22px;margin-bottom:24px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-.student-info-display{background:var(--goldL);border:1px solid rgba(139,105,20,.3);
-  border-radius:3px;padding:12px 16px;margin-bottom:14px;
-  font-family:var(--fa);font-size:.95rem;color:var(--gold);text-align:center;}
-.submit-btn{display:block;width:100%;padding:14px;background:var(--green);color:#fff;
-  border:none;border-radius:3px;font-family:var(--fa);font-size:1.2rem;font-weight:700;
-  cursor:pointer;transition:all .2s;}
-.submit-btn:hover{background:#145530;}
-.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
-.submit-ok{display:none;background:var(--greenL);border:2px solid var(--green);
-  border-radius:3px;padding:14px;margin-top:12px;font-family:var(--fa);font-size:.95rem;
-  color:var(--green);text-align:center;font-weight:700;}
-
-/* SCORE display */
-.score-display{display:none;background:linear-gradient(135deg,var(--ink),#2d2010);
-  color:#fff;padding:28px;text-align:center;border-radius:4px;margin-bottom:20px;}
-.score-num{font-family:var(--fa);font-size:3.5rem;font-weight:700;color:var(--gold2);line-height:1;}
-.score-total{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:4px;}
-.score-msg{font-family:var(--fa);font-size:1rem;color:rgba(255,255,255,.8);margin-top:10px;}
-
-/* Absentee */
-.absent-notice{display:none;background:linear-gradient(135deg,#1a1208,#2d1008);
-  color:#fff;padding:40px;text-align:center;min-height:60vh;
-  flex-direction:column;align-items:center;justify-content:center;gap:16px;}
-.absent-notice h2{font-family:var(--fa);font-size:1.8rem;color:var(--gold2);}
-.absent-notice p{font-family:var(--fc);font-size:.9rem;color:rgba(255,255,255,.7);max-width:400px;}
-.absent-code{font-family:'Courier New',monospace;font-size:.8rem;color:var(--gold2);
-  background:rgba(255,255,255,.08);padding:10px 20px;border-radius:3px;margin-top:8px;}
-
-#toast{position:fixed;bottom:16px;right:50%;transform:translateX(50%);
-  background:var(--ink);color:var(--gold2);padding:10px 22px;border-radius:3px;
-  font-family:var(--fc);font-size:.78rem;z-index:999;opacity:0;
-  transition:opacity .3s;pointer-events:none;white-space:nowrap;}
-#toast.show{opacity:1;}
+@media(max-width:600px){
+  nav{padding:8px 5vw;}
+  .hero{padding:44px 5vw 40px;}
+  .grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
-<div id="toast"></div>
 
-<!-- ABSENTEE NOTICE -->
-<div class="absent-notice" id="absentNotice">
-  <h2>نسخة الغائب — النسخة الإضافية (و)</h2>
-  <p>هذه النسخة مخصصة للطلاب الغائبين عن الامتحان الأصلي.</p>
-  <p style="color:rgba(255,255,255,.5);font-size:.8rem;">للمعلم: أرسل هذا الرابط للطالب الغائب فقط.</p>
-  <div class="absent-code">الرابط: arabicexam_g9.html?v=F</div>
-  <button onclick="loadAbsentExam()" style="margin-top:16px;padding:12px 32px;
-    background:var(--gold2);color:var(--ink);border:none;border-radius:3px;
-    font-family:var(--fa);font-size:1rem;font-weight:700;cursor:pointer;">
-    ابدأ امتحان الغائب
-  </button>
-</div>
-
-<!-- EXAM HEADER -->
-<div class="exam-header" id="examHeader" style="display:none;">
-  <div class="school-name">ثانوية بيت جالا — قسم اللغة العربية</div>
-  <div class="exam-title">امتحان اللغة العربية — النحو</div>
-  <div class="exam-meta">
-    <span class="meta-item">الصف: <strong>السابع</strong></span>
-    <span class="meta-item">العام الدراسي: <strong>٢٠٢٥–٢٠٢٦</strong></span>
-    <span class="meta-item">الزمن: <strong>٤٠ دقيقة</strong></span>
-    <span class="meta-item">العلامة الكاملة: <strong>٢٣ علامة</strong></span>
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="/">Ahmad Ghozlan</a>
+  <div class="nav-links">
+    <a class="npill ph" href="#physics">⚡ Physics</a>
+    <a class="npill bi" href="#biology">🧬 Biology</a>
+    <a class="npill ar" href="#arabic">📖 Arabic</a>
+    <a class="npill ma" href="#math">🔢 Math</a>
   </div>
-  <span class="version-badge" id="versionBadge">النسخة أ</span>
-  <span class="timer-badge" id="timerDisplay">٤٠:٠٠</span>
-</div>
+</nav>
 
-<!-- STUDENT SELECTOR -->
-<div class="selector-section" id="selectorSection">
-  <div class="selector-title">اختر شعبتك ثم اسمك للبدء بالامتحان</div>
-  <div class="section-btns">
-    <button class="sec-btn" onclick="setSection('7C')">7C</button>
-        <button class="sec-btn" onclick="setSection('7D')">7D</button>
-    </div>
-  <div class="name-select-wrap">
-    <label class="name-label">الاسم الكامل:</label>
-    <select id="stuName" disabled>
-      <option value="">— اختر شعبتك أولاً —</option>
-    </select>
-    <button class="start-btn" id="startBtn" disabled onclick="startExam()">
-      ابدأ الامتحان ←
-    </button>
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">Open Access · Lebanon · AI-Powered · 2025–2026</div>
+  <h1 class="hero-h">Interactive<br>Science <em>Labs</em></h1>
+  <p class="hero-p">Fully interactive 5E lessons for Lebanese students. No download, no login — one link opens a complete lab on any phone or computer.</p>
+  <div class="stats">
+    <div><div class="stat-n">20+</div><div class="stat-l">Labs Live</div></div>
+    <div><div class="stat-n">4</div><div class="stat-l">Subjects</div></div>
+    <div><div class="stat-n">1–12</div><div class="stat-l">Grades</div></div>
+    <div><div class="stat-n">5E</div><div class="stat-l">Model</div></div>
+    <div><div class="stat-n">AI</div><div class="stat-l">Tutoring</div></div>
+  </div>
+  <div class="hero-btns">
+    <a class="btn-p" href="#physics">Browse Labs →</a>
+    <a class="btn-s" href="https://www.linkedin.com/in/ahmad-ghozlan" target="_blank">LinkedIn ↗</a>
   </div>
 </div>
 
-<!-- EXAM BODY (injected by JS) -->
-<div class="exam-body" id="examBody"></div>
-
-<script>
-'use strict';
-const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
-
-// ── STUDENT LISTS ────────────────────────────────────────────
-const STUDENTS={
-  '7C':['احمد محمد فيصل شحادة','تالين وسيم شحادة شحادة','تسنيم وليد علي حسين وهبه','جاد اسامة عبدالله العبدالله','حمزه محمد عبد العزيز عبد العزيز','دانه محمود احمد احمد','دانية رياض مصطفى معطي','ربيع احمد ابراهيم عطور','رزان محمد ايمن الزعبوطي','ريان علي غالب الساري','ريم احمد صبحي رمضان','زين العابدين فيصل العوضي','سجود عباس محمد عمر','سعيد كاسر سعيد الغوش','صبا فادي كامل كايد','عبد الرحمن محمود عمر صفية','عبدالله ابراهيم محمود ابو جبل','علي محمد وليد شيخه','لارين سامر احمد الغضبان','لانا فادي محمد منير الحاج شحادة','محمد انس محمد تميم','محمد حسين احمد المحمود','محمد خالد محمد غنوم','محمد عمر احمد خضر بشر','محمد فؤاد محمد جمعة','محمد وسام علي يوسف','محمود خالد احمد الجبيلي','مريم احمد طه المصري','مصطفى رياض احمد المحمود','مصطفى فؤاد محمد جمعة','موسى محمود موسى العبد الله','نور الهدى كميل لطفي مليجي','يوسف احمد سمير قدورة','يوسف ايمن محمد بشر','يوسف ربيع يوسف العوضي'],
-  '7D':['أحمد عمر حسين جعجع','أحمد محمد احمد ابو جاموس','ابراهيم سامي مروان حليحل','ابراهيم يونس محمد رحال','احمد علي احمد المحمود','احمد فؤاد احمد جمعة','اسيل احمد فريد العلي','ايلانا محمد ابراهيم الحلو','حلا فادي فايز معتوق','حمزة عفيف علي السيد','داني محمد محمود حسين','رؤى حسن احمد محمد','راما ابراهيم رشيد فارس','راما محمد علي الجعجع','زاهر محمد شحادة ديب','سالي احمد وليد كريديه','سدرة المنتهى احمد حسون','عبد الرحمن درويش محمد سلام','علي ابراهيم حسان الاشوح','علي مروان عدنان شحاده','علي وسيم علي مره','عيسى احمد محمود الحصري','غيداء مالك جمعة بلال','فرح محمود كامل الخطيب','ليمار هاني محمد جمعه','محمد مصطفى كمال الترك','محمد هاشم عادل المنسي','محمد يوسف محمد محمد','مصطفى كمال علي سعد','منى وسام عمر سلام','ندى علي احمد مطر','ولاء احمد فهد السعيد','يوسف علاء الدين كرزون','يوسف علاء جهاد شحادة']
-}
-
-// ── EXAM VERSIONS ────────────────────────────────────────────
-// 5 versions (A-E) + 1 absentee (F)
-// Each version has completely different sentences — same objectives, same marks, same difficulty
-// Anti-cheat: different topics, different word order traps, different proper nouns
-
-const VERSIONS = {
-
-// ════════════════════════════ نسخة أ — موضوع: العلم والتعلم ════════════════════════════
-'A': {
-  label:'النسخة أ',
-  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
-  q1:[
-    {text:'شرحَ الأستاذُ الدرسَ شرحاً وافياً.'},
-    {text:'إكتشف العالم نظرية جديدة.'},
-    {text:'فتحَ مديرُ المدرسةِ بابَ القاعةِ صباحاً.'}
-  ],
-  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q2:[
-    {text:'أكرمَ المعلمُ الطالبَ المجتهدَ أمامَ زملائه.'},
-    {text:'نجحَ الحارسانِ في حماية المدرسة.'},
-    {text:'يكتبُ الطلابُ المقالاتِ بأسلوب رائع.'}
-  ],
-  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q3:[
-    {text:'مُنِحَ الطالبُ المتميزُ شهادةَ تقدير.'},
-    {text:'فُتِحَت المدارسُ في الصباح الباكر.'},
-    {text:'يُعلَّقُ لوحُ الإعلاناتِ في مدخل المدرسة.'}
-  ],
-  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
-  q4:[
-    {text:'قرأَ الطالبُ الكتابَ المقرَّرَ في أسبوع.'},
-    {text:'زارَ المديرُ الفصلَينِ المتميزَين.'},
-    {text:'احترمَ الأبناءُ والداتِهم في كل وقت.'}
-  ],
-  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
-  q5:[
-    {text:'كتبَ الطالبُ الرسالةَ.', type:'معلوم'},
-    {text:'كُتِبَت الرسالةُ.', type:'مجهول'}
-  ],
-  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
-  q6:[
-    {cond:'فاعل جمع مذكر سالم'},
-    {cond:'فاعل من الأسماء الخمسة (أبو / أخو / حمو / فو / ذو)'}
-  ],
-  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
-  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
-  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
-  q8:[
-    {mufrad:'جاءَ الطالبُ إلى المدرسة.'},
-    {mufrad:'تكتبُ الطالبةُ الدرسَ بعناية.'},
-    {mufrad:'أكلَ الولدُ طعامَه .'}
-  ]
-},
-
-// ════════════════════════════ نسخة ب — موضوع: الطبيعة والبيئة ════════════════════════════
-'B': {
-  label:'النسخة ب',
-  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
-  q1:[
-    {text:'زرعَ الفلاحُ الأشجارَ في الحديقةِ.'},
-    {text:'يرويِ المزارعُ الحقولَ كلَّ صباح.'},
-    {text:'قطعَ العمالُ الأعشابَ الضارةَ بعناية.'}
-  ],
-  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q2:[
-    {text:'أطلقَ الصيادانِ الطيورَ في الغابة.'},
-    {text:'تنمو الأشجارُ الكثيفةُ في الجبال الخضراء.'},
-    {text:'حافظَ المزارعون على التربة الخصبة طويلاً.'}
-  ],
-  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q3:[
-    {text:'قُطِعَت الأشجارُ القديمةُ من الغابة.'},
-    {text:'يُروَى الحقلُ الجديدُ في فصل الصيف.'},
-    {text:'زُرِعَت الوردتانِ في حديقة المدرسة.'}
-  ],
-  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
-  q4:[
-    {text:'رعى الراعي غنمَهُ في السهول الواسعة.'},
-    {text:'تحمي الغيومُ المزارعين من حرارة الشمس.'},
-    {text:'يُحبُّ الناسُ أوطانَهم حبَّاً عميقاً.'}
-  ],
-  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
-  q5:[
-    {text:'يحترم الولد أباه.', type:'معلوم'},
-    {text:'زُرِعَت الشجرةُ.', type:'مجهول'}
-  ],
-  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
-  q6:[
-    {cond:'فاعل جمع مذكر سالم'},
-    {cond:'فاعل من الأسماء الخمسة'}
-  ],
-  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
-  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
-  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
-  q8:[
-    {mufrad:'قطفَ الطفلُ وردةً من الحديقة.'},
-    {mufrad:'تشربُ البقرةُ الماءَ في المساء.'},
-    {mufrad:'رسمَ الرسامُ الجبلَ بألوان جميلة.'}
-  ]
-},
-
-// ════════════════════════════ نسخة ج — موضوع: الرياضة والصحة ════════════════════════════
-'C': {
-  label:'النسخة ج',
-  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
-  q1:[
-    {text:'حصلَ اللاعبُ على الجائزةِ الأولى.'},
-    {text:'يُدرِّبُ المدربُ اللاعبينَ يومياً.'},
-    {text:'بنى المهندسون ملعبَ كرةِ القدمِ في المدينة.'}
-  ],
-  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q2:[
-    {text:'سجَّلَ المهاجمانِ هدفَينِ في الشوط الأول.'},
-    {text:'يتدرَّبُ الرياضيون المحترفون ساعاتٍ طويلة.'},
-    {text:'حقَّقَ فريقُ المدرسةِ فوزاً باهراً.'}
-  ],
-  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q3:[
-    {text:'مُنِحَ الفائزُ كأسَ البطولةِ بحفلٍ رائع.'},
-    {text:'يُفتَحُ الملعبُ الجديدُ أمام الجمهور.'},
-    {text:'أُقيمَت المباراتانِ في الملعب الوطني.'}
-  ],
-  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
-  q4:[
-    {text:'مارسَ الشابُّ الرياضةَ للحفاظ على صحته.'},
-    {text:'يلعبُ الصديقانِ التنسَ كلَّ عطلة.'},
-    {text:'تحبُّ البنتُ والدَها وأخاها بالتساوي.'}
-  ],
-  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
-  q5:[
-    {text:'سجَّلَ اللاعبُ الهدفَ.', type:'معلوم'},
-    {text:'سُجِّلَ الهدفُ.', type:'مجهول'}
-  ],
-  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
-  q6:[
-    {cond:'فاعل جمع مذكر سالم'},
-    {cond:'فاعل من الأسماء الخمسة'}
-  ],
-  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
-  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
-  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
-  q8:[
-    {mufrad:'حضرَ اللاعبُ إلى الملعب مبكراً.'},
-    {mufrad:'يركضُ الرياضيُّ كيلومتراً كل صباح.'},
-    {mufrad:'فازَت البطلةُ بالميدالية الذهبية.'}
-  ]
-},
-
-// ════════════════════════════ نسخة د — موضوع: التكنولوجيا والعلوم ════════════════════════════
-'D': {
-  label:'النسخة د',
-  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
-  q1:[
-    {text:'اخترعَ العلماءُ أجهزةً حديثةً للتواصل.'},
-    {text:'يبرمجُ المهندسُ التطبيقَ الجديدَ بدقة.'},
-    {text:'نشرَ الباحثانِ نتائجَ تجربتِهِما العلمية.'}
-  ],
-  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q2:[
-    {text:'اكتشفَ العالِمانِ طريقةً للعلاج السريع.'},
-    {text:'يطوِّرُ المبرمجون التقنياتِ الذكيةَ باستمرار.'},
-    {text:'أجرى مديرُ المختبرِ تجاربَ علميةً دقيقة.'}
-  ],
-  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q3:[
-    {text:'اُستُخدِمَ الذكاءُ الاصطناعيُّ في التعليم.'},
-    {text:'يُطوَّرُ الجهازُ الجديدُ في المختبر الدولي.'},
-    {text:'نُشِرَت النتائجُ مِن قِبَلِ الباحِثَيْن.'}
-  ],
-  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
-  q4:[
-    {text:'طوَّرَ المهندسُ البرنامجَ الحاسوبيَّ بجهد.'},
-    {text:'يختبرُ العلماءُ الاكتشافَينِ الجديدَين.'},
-    {text:'يُحبُّ الأبناءُ آباءَهم وبناتِهم سواء.'}
-  ],
-  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
-  q5:[
-    {text:'شاهد أخوك المياراة.', type:'معلوم'},
-    {text:'طُوِّرَ البرنامجُ.', type:'مجهول'}
-  ],
-  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
-  q6:[
-    {cond:'فاعل جمع مذكر سالم'},
-    {cond:'فاعل من الأسماء الخمسة'}
-  ],
-  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
-  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
-  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
-  q8:[
-    {mufrad:'أرسلَ العالِمُ رسالةً إلكترونيةً.'},
-    {mufrad:'تصمِّمُ المهندسةُ تطبيقاً جديداً.'},
-    {mufrad:'حلَّ الطالبُ المسألةَ الرياضية بسرعة.'}
-  ]
-},
-
-// ════════════════════════════ نسخة هـ — موضوع: المجتمع والأسرة ════════════════════════════
-'E': {
-  label:'النسخة هـ',
-  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
-  q1:[
-    {text:'بنى العمالُ بيتاً جميلاً للأسرةِ.'},
-    {text:'يحضِّرُ الطباخُ الطعامَ لأفراد الأسرة.'},
-    {text:'أهدى الأبُ ابنَهُ كتاباً في عيد ميلاده.'}
-  ],
-  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q2:[
-    {text:'ساعدَ الأخوانِ والدَهما في المنزل.'},
-    {text:'يزورُ الأقارب الأسرةَ في الأعياد.'},
-    {text:'أحبَّ أبو المحسنين ابنَه حُبَّاً كبيراً.'}
-  ],
-  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q3:[
-    {text:'بُنِيَ البيتُ الجميلُ على تلة مرتفعة.'},
-    {text:'يُعَدُّ الطعامُ اللذيذُ في مطبخ المنزل.'},
-    {text:'أُهديَت الهديتانِ للطفلَين في عيدهما.'}
-  ],
-  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
-  q4:[
-    {text:'احترمَ الابنُ أباهُ وأمَّه طوال حياته.'},
-    {text:'يُحِبُّ الأخوانِ الكبيرانِ أختَهما الصغيرة.'},
-    {text:'يكرم الجيران الزائرين في المناسبات .'}
-  ],
-  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
-  q5:[
-    {text:'زارَ الأبُ المريضَ.', type:'معلوم'},
-    {text:'زُيِرَ المريضُ.', type:'مجهول'}
-  ],
-  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
-  q6:[
-    {cond:'فاعل جمع مذكر سالم'},
-    {cond:'فاعل من الأسماء الخمسة'}
-  ],
-  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
-  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
-  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
-  q8:[
-    {mufrad:'أعدَّت الأمُّ وجبةً لذيذةً للأسرة.'},
-    {mufrad:'يساعدُ الولدُ أباهُ في المنزل.'},
-    {mufrad:'لعبَت البنتُ مع أصدقائها في الحديقة.'}
-  ]
-},
-
-// ════════════════════════════ نسخة و — الغائب (مختلفة تماماً) ════════════════════════════
-'F': {
-  label:'نسخة الغائب (و)',
-  q1_title:'حوِّل الجمل الآتية من المعلوم إلى المجهول مع إجراء التغيير اللازم:',
-  q1:[
-    {text:'كتبَ الشاعرُ قصيدةً في مدح الوطن.'},
-    {text:'يؤدِّي الفنانُ عرضَهُ أمام الجمهور.'},
-    {text:'طبعَ الناشرانِ الروايةَ الجديدةَ بألف نسخة.'}
-  ],
-  q2_title:'استخرج الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q2:[
-    {text:'ألَّفَ الكاتبانِ معاً روايةً تاريخية.'},
-    {text:'يُبدعُ الفنانون في رسم لوحاتهم الجميلة.'},
-    {text:'أنشدَ ذو الشجاعةِ قصيدةً أمام الملك.'}
-  ],
-  q3_title:'استخرج نائب الفاعل من كل جملة وحدِّد نوعه وعلامة رفعه:',
-  q3:[
-    {text:'طُبِعَت الروايةُ المشهورةُ في دار الكتب.'},
-    {text:'يُعرَضُ المسرحُ الجديدُ على خشبة المسرح.'},
-    {text:'أُنشِدَت القصيدتانِ بصوت شجي.'}
-  ],
-  q4_title:'استخرج المفعول به من كل جملة وحدِّد نوعه وعلامة نصبه:',
-  q4:[
-    {text:'قرأَ الأديبُ روايتَه أمام الجمهور الكبير.'},
-    {text:'رسمَ الفنانُ اللوحتَينِ في يوم واحد.'},
-    {text:'يُحبُّ القرَّاءُ كتبَهم وروياتِهم المفضلة.'}
-  ],
-  q5_title:'أعرِب الجملتين الآتيتين إعراباً تاماً:',
-  q5:[
-    {text:'نشرَ الكاتبُ الروايةَ.', type:'معلوم'},
-    {text:'نُشِرَت الروايةُ.', type:'مجهول'}
-  ],
-  q6_title:'أَلِّف جملتين فعليتين — الأولى فاعلها جمع مذكر سالم، والثانية فاعلها من الأسماء الخمسة:',
-  q6:[
-    {cond:'فاعل جمع مذكر سالم'},
-    {cond:'فاعل من الأسماء الخمسة'}
-  ],
-  q7_title:'أَلِّف جملتين فعليتين يكون المفعول به في كل منهما مثنى:',
-  q7:[{cond:'مفعول به مثنى مذكر'},{cond:'مفعول به مثنى مؤنث'}],
-  q8_title:'حوِّل الجمل الآتية من المفرد إلى المثنى ثم إلى الجمع:',
-  q8:[
-    {mufrad:'كتبَ الشاعرُ قصيدةً جميلةً.'},
-    {mufrad:'يقرأُ الطفلُ كتابَهُ كل مساء.'},
-    {mufrad:'رسمَت الفنانةُ لوحةً في المعرض.'}
-  ]
-}
-
-}; // end VERSIONS
-
-// ── STATE ────────────────────────────────────────────────────
-let currentSection='';
-let currentName='';
-let currentVersion='';
-let timerInterval=null;
-let secondsLeft=40*60;
-let examStarted=false;
-
-// ── CHECK URL PARAMS ─────────────────────────────────────────
-window.addEventListener('load',()=>{
-  const params=new URLSearchParams(window.location.search);
-  if(params.get('v')==='F'){
-    // Absentee mode
-    document.getElementById('absentNotice').style.display='flex';
-    document.getElementById('examHeader').style.display='none';
-    document.getElementById('selectorSection').style.display='none';
-  } else {
-    document.getElementById('absentNotice').style.display='none';
-    document.getElementById('examHeader').style.display='block';
-  }
-});
-
-function loadAbsentExam(){
-  document.getElementById('absentNotice').style.display='none';
-  document.getElementById('examHeader').style.display='block';
-  document.getElementById('selectorSection').style.display='block';
-  currentVersion='F';
-}
-
-// ── SECTION & NAME ───────────────────────────────────────────
-function setSection(cls){
-  currentSection=cls;
-  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
-  const sel=document.getElementById('stuName');
-  sel.innerHTML='<option value="">— اختر اسمك —</option>';
-  sel.disabled=false;
-  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
-    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
-  });
-  sel.addEventListener('change',()=>{
-    currentName=sel.value;
-    document.getElementById('startBtn').disabled=!currentName;
-  });
-}
-
-// ── VERSION ASSIGNMENT ───────────────────────────────────────
-// Anti-cheat: version assigned deterministically by student name hash
-// so same student always gets same version, but neighbors get different versions
-function assignVersion(name,section){
-  if(currentVersion==='F')return'F';
-  // Hash name + section to 0-4 → map to A-E
-  let h=0;
-  for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))>>>0;
-  // Also use section to vary — students in same row (similar name hash) get different versions
-  const sOff={'7C':0,'7D':1}[section]||0;
-  const idx=(h+sOff*7)%5;
-  return ['A','B','C','D','E'][idx];
-}
-
-const VERSION_LABELS={'A':'النسخة أ','B':'النسخة ب','C':'النسخة ج','D':'النسخة د','E':'النسخة هـ','F':'نسخة الغائب (و)'};
-
-// ── START EXAM ───────────────────────────────────────────────
-function startExam(){
-  if(!currentName||!currentSection)return;
-  if(!currentVersion) currentVersion=assignVersion(currentName,currentSection);
-
-  document.getElementById('selectorSection').style.display='none';
-  document.getElementById('examHeader').style.display='block';
-  document.getElementById('versionBadge').textContent=VERSION_LABELS[currentVersion];
-
-  buildExam(VERSIONS[currentVersion]);
-  document.getElementById('examBody').style.display='block';
-  startTimer();
-  examStarted=true;
-}
-
-// ── TIMER ────────────────────────────────────────────────────
-function startTimer(){
-  updateTimerDisplay();
-  timerInterval=setInterval(()=>{
-    secondsLeft--;
-    updateTimerDisplay();
-    if(secondsLeft<=0){clearInterval(timerInterval);autoSubmit();}
-  },1000);
-}
-
-function toArabicNum(n){
-  return n.toString().replace(/\d/g,d=>['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'][d]);
-}
-
-function updateTimerDisplay(){
-  const m=Math.floor(secondsLeft/60);
-  const s=secondsLeft%60;
-  const txt=toArabicNum(m)+':'+(s<10?'٠':'')+toArabicNum(s);
-  const el=document.getElementById('timerDisplay');
-  el.textContent=txt;
-  if(secondsLeft<=300) el.className='timer-badge warn';
-  if(secondsLeft<=60)  el.className='timer-badge urgent';
-}
-
-function autoSubmit(){
-  toast('انتهى الوقت! يُرسَل الامتحان تلقائياً...');
-  setTimeout(()=>submitExam(true),1500);
-}
-
-// ── BUILD EXAM HTML ───────────────────────────────────────────
-function buildExam(V){
-  const body=document.getElementById('examBody');
-  body.innerHTML='';
-
-  // Student info bar
-  const info=document.createElement('div');
-  info.style.cssText='background:var(--goldL);border:1px solid rgba(139,105,20,.3);border-radius:4px;padding:12px 20px;margin-bottom:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--fa);font-size:.95rem;direction:rtl;';
-  info.innerHTML=`<span>الاسم: <strong>${currentName}</strong></span><span>الشعبة: <strong>${currentSection}</strong></span><span>النسخة: <strong>${VERSION_LABELS[currentVersion]}</strong></span>`;
-  body.appendChild(info);
-
-  // ── Q1: تحويل ────────────────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال الأول','٣ علامات',V.q1_title,buildQ1Rows(V.q1)));
-
-  // ── Q2: استخراج الفاعل ───────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال الثاني','٣ علامات',V.q2_title,buildExtractRows(V.q2,'q2',['الفاعل','نوعه','علامة رفعه'])));
-
-  // ── Q3: نائب الفاعل ──────────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال الثالث','٣ علامات',V.q3_title,buildExtractRows(V.q3,'q3',['نائب الفاعل','نوعه','علامة رفعه'])));
-
-  // ── Q4: المفعول به ────────────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال الرابع','٣ علامات',V.q4_title,buildExtractRows(V.q4,'q4',['المفعول به','نوعه','علامة نصبه'])));
-
-  // ── Q5: الإعراب ──────────────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال الخامس','٤ علامات',V.q5_title,buildIraabBlock(V.q5)));
-
-  // ── Q6: تأليف جمل فاعل ──────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال السادس','٢ علامة',V.q6_title,buildComposeRows(V.q6,'q6')));
-
-  // ── Q7: تأليف مفعول مثنى ─────────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال السابع','٢ علامة',V.q7_title,buildComposeRows(V.q7,'q7')));
-
-  // ── Q8: تحويل مفرد مثنى جمع ─────────────────────────────
-  body.appendChild(buildSectionBlock('السؤال الثامن','٣ علامات',V.q8_title,buildTahwilBlock(V.q8)));
-
-  // Submit
-  body.appendChild(buildSubmitSection());
-}
-
-function buildSectionBlock(qNum,marks,instruction,innerHTML){
-  const div=document.createElement('div');
-  div.className='q-section';
-  div.innerHTML=`
-    <div class="q-header">
-      <span class="q-num">${qNum}</span>
-      <span class="q-marks">${marks}</span>
+<!-- ══════════════════════════════════════════════
+     PHYSICS
+══════════════════════════════════════════════ -->
+<div id="physics" class="subj ph-s">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">⚡</div>
+      <div class="subj-name">Physics</div>
+      <div class="subj-meta">Grade 7 · Grade 8 · Grade 9 &nbsp;·&nbsp; Heat · Waves · Forces · Electricity · EM Waves · Springs</div>
     </div>
-    <div class="q-instruction">${instruction}</div>
-    <div class="q-body">${innerHTML}</div>`;
-  return div;
-}
+    <span class="subj-count">17 Files</span>
+  </div>
 
-function buildQ1Rows(sentences){
-  return sentences.map((s,i)=>`
-    <div class="sent-row">
-      <div class="sent-num">${toArabicNum(i+1)}</div>
-      <div class="sent-content">
-        <div class="sent-text">${s.text}</div>
-        <input class="ans-input" id="q1_${i}" placeholder="الجملة بعد التحويل إلى المجهول..." dir="rtl">
-      </div>
-    </div>`).join('');
-}
+  <!-- G7 -->
+  <div class="gg">
+    <div class="gg-label">Grade 7</div>
+    <div class="grid">
 
-function buildExtractRows(sentences,prefix,cols){
-  return sentences.map((s,i)=>`
-    <div class="sent-row">
-      <div class="sent-num">${toArabicNum(i+1)}</div>
-      <div class="sent-content">
-        <div class="sent-text">${s.text}</div>
-        <div class="ans-row">
-          ${cols.map((c,j)=>`
-            <div class="ans-group">
-              <span class="ans-label">${c}</span>
-              <input class="ans-input" id="${prefix}_${i}_${j}" placeholder="${c}..." dir="rtl">
-            </div>`).join('')}
-        </div>
-      </div>
-    </div>`).join('');
-}
+      <a class="card" href="heatlab.html">
+        <div class="card-top"><span class="emoji">🔥</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">HeatLab — Heat Transfer</div>
+        <div class="card-sub">Part 1 · Conduction & Radiation</div>
+        <div class="card-desc">Particle model animation, falling-pin conduction, radiation glow simulation, heat vs temperature.</div>
+        <div class="tags"><span class="tag">Conduction</span><span class="tag">Radiation</span><span class="tag">5E</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-function buildIraabBlock(sentences){
-  // For each sentence, a table with rows: الكلمة | الإعراب التفصيلي
-  return sentences.map((s,i)=>{
-    // Tokenize the sentence into words (skip punctuation)
-    const words=s.text.replace(/[.،؟!]/g,'').trim().split(/\s+/);
-    const rows=words.map((w,j)=>`
-      <tr>
-        <td>${w}</td>
-        <td><input id="ir_${i}_${j}" placeholder="الإعراب التفصيلي..." dir="rtl"></td>
-      </tr>`).join('');
-    return `
-      <div style="margin-bottom:18px;">
-        <div style="font-family:var(--fa);font-size:1rem;color:var(--red);font-weight:700;margin-bottom:8px;padding-right:8px;border-right:3px solid var(--gold2);">
-          ${toArabicNum(i+1)}. ${s.text} <span style="font-size:.72rem;color:var(--muted);font-weight:400;">(جملة ${s.type})</span>
-        </div>
-        <table class="iraab-table">
-          <thead><tr><th>الكلمة</th><th>الإعراب</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-  }).join('');
-}
+      <a class="card" href="heatlab2.html">
+        <div class="card-top"><span class="emoji">🌊</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">HeatLab — Convection</div>
+        <div class="card-sub">Part 2 · Convection Currents</div>
+        <div class="card-desc">Animated convection loops, hot/cold fluid density, sea breeze, real-world applications.</div>
+        <div class="tags"><span class="tag">Convection</span><span class="tag">Particles</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-function buildComposeRows(items,prefix){
-  return items.map((item,i)=>`
-    <div class="compose-row">
-      <div class="compose-cond">الشرط: ${item.cond}</div>
-      <input class="compose-input" id="${prefix}_${i}" placeholder="اكتب جملتك هنا..." dir="rtl">
-    </div>`).join('');
-}
+      <a class="card" href="electricitylabG7.html">
+        <div class="card-top"><span class="emoji">🔌</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">ElectricityLab — Components</div>
+        <div class="card-sub">Part 1 · Symbols & Generators</div>
+        <div class="card-desc">Circuit components, standard symbols, cells as generators vs receivers, voltage and current introduction.</div>
+        <div class="tags"><span class="tag">Circuits</span><span class="tag">Symbols</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-function buildTahwilBlock(sentences){
-  return sentences.map((s,i)=>`
-    <div style="margin-bottom:12px;">
-      <div style="font-family:var(--fa);font-size:.9rem;color:var(--muted2);margin-bottom:6px;padding-right:8px;border-right:3px solid var(--gold2);">
-        ${toArabicNum(i+1)}. الجملة الأصلية: <strong style="color:var(--red);">${s.mufrad}</strong>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div>
-          <div class="tahwil-lbl">المثنى</div>
-          <input class="ans-input" id="q8_${i}_1" placeholder="حوِّل إلى المثنى..." dir="rtl">
-        </div>
-        <div>
-          <div class="tahwil-lbl">الجمع</div>
-          <input class="ans-input" id="q8_${i}_2" placeholder="حوِّل إلى الجمع..." dir="rtl">
-        </div>
-      </div>
-    </div>`).join('');
-}
+      <a class="card" href="electricitylab2G7.html">
+        <div class="card-top"><span class="emoji">💡</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">ElectricityLab — Open & Closed</div>
+        <div class="card-sub">Part 2 · Circuit States & Conductors</div>
+        <div class="card-desc">Open vs closed circuits (animated electrons), conductor/insulator test, PhET integration, screenshot upload.</div>
+        <div class="tags"><span class="tag">Open Circuit</span><span class="tag">Conductors</span><span class="tag">PhET</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-function buildSubmitSection(){
-  const div=document.createElement('div');
-  div.className='submit-section';
-  div.innerHTML=`
-    <div class="student-info-display">
-      الطالب/ة: <strong>${currentName}</strong> — الشعبة: <strong>${currentSection}</strong> — النسخة: <strong>${VERSION_LABELS[currentVersion]}</strong>
+      <a class="card" href="electricitylab3G7.html">
+        <div class="card-top"><span class="emoji">🧪</span><span class="status"><span class="dot exam"></span>Pre-Test</span></div>
+        <div class="card-title">ElectricityLab — Pre-Test</div>
+        <div class="card-sub">Part 3 · Grade 7D Evaluation</div>
+        <div class="card-desc">Circuit reading canvas, symbol drag-match, conductor sorting, animated switch, circuit builder. Grade 7D.</div>
+        <div class="tags"><span class="tag">Pre-Test</span><span class="tag">Canvas</span><span class="tag">Interactive</span></div>
+        <div class="cta">Open Pre-Test →</div>
+      </a>
+
     </div>
-    <button class="submit-btn" id="submitBtn" onclick="submitExam(false)">
-      📤 تسليم الامتحان
-    </button>
-    <div class="submit-ok" id="submitOk">
-      ✓ تم تسليم الامتحان بنجاح — أحسنت!
-    </div>`;
-  return div;
-}
+  </div>
 
-// ── COLLECT ANSWERS ───────────────────────────────────────────
-function collectAllAnswers(){
-  const V=VERSIONS[currentVersion];
-  const ans={};
+  <!-- G8 -->
+  <div class="gg">
+    <div class="gg-label">Grade 8</div>
+    <div class="grid">
 
-  // Q1
-  V.q1.forEach((_,i)=>{
-    ans[`q1_${i+1}`]=val(`q1_${i}`);
-  });
-  // Q2
-  V.q2.forEach((_,i)=>{
-    ans[`q2_${i+1}_faail`]=val(`q2_${i}_0`);
-    ans[`q2_${i+1}_naw3`]=val(`q2_${i}_1`);
-    ans[`q2_${i+1}_3alama`]=val(`q2_${i}_2`);
-  });
-  // Q3
-  V.q3.forEach((_,i)=>{
-    ans[`q3_${i+1}_naib`]=val(`q3_${i}_0`);
-    ans[`q3_${i+1}_naw3`]=val(`q3_${i}_1`);
-    ans[`q3_${i+1}_3alama`]=val(`q3_${i}_2`);
-  });
-  // Q4
-  V.q4.forEach((_,i)=>{
-    ans[`q4_${i+1}_maf3ool`]=val(`q4_${i}_0`);
-    ans[`q4_${i+1}_naw3`]=val(`q4_${i}_1`);
-    ans[`q4_${i+1}_3alama`]=val(`q4_${i}_2`);
-  });
-  // Q5 iraab
-  V.q5.forEach((s,i)=>{
-    const words=s.text.replace(/[.،؟!]/g,'').trim().split(/\s+/);
-    words.forEach((w,j)=>{
-      ans[`q5_sent${i+1}_${w}`]=val(`ir_${i}_${j}`);
-    });
-  });
-  // Q6
-  V.q6.forEach((_,i)=>{ ans[`q6_${i+1}`]=val(`q6_${i}`); });
-  // Q7
-  V.q7.forEach((_,i)=>{ ans[`q7_${i+1}`]=val(`q7_${i}`); });
-  // Q8
-  V.q8.forEach((_,i)=>{
-    ans[`q8_${i+1}_muthanna`]=val(`q8_${i}_1`);
-    ans[`q8_${i+1}_jam3`]=val(`q8_${i}_2`);
-  });
-  return ans;
-}
+      <a class="card" href="wavelab.html">
+        <div class="card-top"><span class="emoji">〜</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">WaveLab — Mechanical Waves</div>
+        <div class="card-sub">Part 1 · Wave Properties</div>
+        <div class="card-desc">Wave speed, frequency, wavelength, period. Transverse vs longitudinal waves. Lightning mystery. v = f·λ.</div>
+        <div class="tags"><span class="tag">Waves</span><span class="tag">v=fλ</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-function val(id){
-  const el=document.getElementById(id);
-  return el?el.value.trim():'—';
-}
+      <a class="card" href="wavelab2.html">
+        <div class="card-top"><span class="emoji">📊</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">WaveLab — Wave Behaviour</div>
+        <div class="card-sub">Part 2 · Reflection & Superposition</div>
+        <div class="card-desc">Wave reflection, refraction principles, superposition animations, standing waves.</div>
+        <div class="tags"><span class="tag">Reflection</span><span class="tag">Superposition</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-// ── SUBMIT ────────────────────────────────────────────────────
-async function submitExam(auto=false){
-  clearInterval(timerInterval);
-  const btn=document.getElementById('submitBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ جارٍ الإرسال...';}
-  const answers=collectAllAnswers();
-  const timeUsed=toArabicNum(40-Math.floor(secondsLeft/60))+' دقيقة';
-  const payload={
-    sheet:'Arabic_Exam_G7',
-    name:currentName,
-    class:currentSection,
-    version:currentVersion,
-    time_used:timeUsed,
-    auto_submit:auto?'نعم':'لا',
-    ...answers
-  };
-  try{
-    await fetch(APPS,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const ok=document.getElementById('submitOk');
-    if(ok){ok.style.display='block';}
-    if(btn){btn.textContent='✓ تم التسليم';}
-    // Show answer review panel
-    showAnswerReview(answers);
-    toast('✓ تم تسليم الامتحان بنجاح!');
-  }catch(e){
-    if(btn){btn.disabled=false;btn.textContent='📤 تسليم الامتحان';}
-    toast('⚠ خطأ في الاتصال — أعد المحاولة');
-  }
-}
+      <a class="card" href="wavelab3.html">
+        <div class="card-top"><span class="emoji">🎵</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">WaveLab — Sound Waves</div>
+        <div class="card-sub">Part 3 · Sound & Hearing</div>
+        <div class="card-desc">Longitudinal pressure waves, sound speed in media, frequency and pitch, resonance.</div>
+        <div class="tags"><span class="tag">Sound</span><span class="tag">Longitudinal</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
 
-function showAnswerReview(answers){
-  const V=VERSIONS[currentVersion];
-  const body=document.getElementById('examBody');
-  const review=document.createElement('div');
-  review.style.cssText='background:var(--ink);color:#fff;padding:24px;margin-top:20px;border-radius:4px;direction:rtl;';
-  
-  // Build readable review
-  const rows=Object.entries(answers).map(([k,v])=>{
-    const cleanKey=k.replace(/_/g,' ').replace('q1','س١').replace('q2','س٢')
-      .replace('q3','س٣').replace('q4','س٤').replace('q5','س٥')
-      .replace('q6','س٦').replace('q7','س٧').replace('q8','س٨')
-      .replace('faail','الفاعل').replace('naib','نائب الفاعل')
-      .replace('maf3ool','المفعول به').replace('naw3','النوع')
-      .replace('3alama','العلامة').replace('muthanna','المثنى').replace('jam3','الجمع');
-    return `<div style="display:flex;gap:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.8rem;">
-      <span style="color:var(--gold2);min-width:160px;font-family:var(--fc);">${cleanKey}</span>
-      <span style="color:rgba(255,255,255,.85);font-family:var(--fa);">${v||'—'}</span>
-    </div>`;
-  }).join('');
-  
-  review.innerHTML=`
-    <div style="font-family:var(--fa);font-size:1.1rem;color:var(--gold2);margin-bottom:16px;border-bottom:2px solid rgba(200,160,48,.3);padding-bottom:10px;">
-      📋 ملخص إجابات: ${currentName} — ${currentSection} — ${VERSION_LABELS[currentVersion]}
+      <a class="card" href="wave3d.html">
+        <div class="card-top"><span class="emoji">🌐</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">Wave 3D Visualisation</div>
+        <div class="card-sub">Three.js Interactive 3D Model</div>
+        <div class="card-desc">Three.js 3D wave explorer — tune wavelength, frequency, amplitude. E-field and B-field animation.</div>
+        <div class="tags"><span class="tag">Three.js</span><span class="tag">3D</span></div>
+        <div class="cta">Open Visualisation →</div>
+      </a>
+
+      <a class="card" href="waveassessment.html">
+        <div class="card-top"><span class="emoji">📋</span><span class="status"><span class="dot exam"></span>Assessment</span></div>
+        <div class="card-title">Wave Assessment</div>
+        <div class="card-sub">Grade 8 · Waves Unit</div>
+        <div class="card-desc">Graded wave unit assessment — MCQs, diagram reading, calculations. Submits to grade sheet.</div>
+        <div class="tags"><span class="tag">Assessment</span><span class="tag">MCQ</span></div>
+        <div class="cta">Open Assessment →</div>
+      </a>
+
+      <a class="card" href="waveexamG8.html">
+        <div class="card-top"><span class="emoji">📝</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title">Wave Exam — Grade 8</div>
+        <div class="card-sub">Formal Exam · 5 Versions</div>
+        <div class="card-desc">Multi-version exam with absentee version. Anti-cheat version assignment. Timer. Auto-submit.</div>
+        <div class="tags"><span class="tag">Exam</span><span class="tag">5 Versions</span><span class="tag">Anti-Cheat</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
+
+      <a class="card" href="emwavesG8.html">
+        <div class="card-top"><span class="emoji">📡</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">EMWaves — Spectrum Command</div>
+        <div class="card-sub">EM Waves Part 1 · The Spectrum</div>
+        <div class="card-desc">Draggable spectrum explorer, 7 band deep-dives, Three.js 3D wave lab, 4 missions + AI evaluator.</div>
+        <div class="tags"><span class="tag">EM Spectrum</span><span class="tag">3D</span><span class="tag">AI Tutor</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="emwaves2G8.html">
+        <div class="card-top"><span class="emoji">🎯</span><span class="status"><span class="dot new"></span>New</span></div>
+        <div class="card-title">EMWaves — Frequency Festival</div>
+        <div class="card-sub">EM Waves Part 2 · Application Games</div>
+        <div class="card-desc">Spectrum Survivor, Wave Detective, Wave Impostor, v=fλ calculator, Home Hunt video challenge, AI Examiner.</div>
+        <div class="tags"><span class="tag">Games</span><span class="tag">Applications</span><span class="tag">Video</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
     </div>
-    <div style="font-family:var(--fc);font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:12px;">
-      تسجّل هذه الإجابات في جدول المعلمة عبير تلقائياً · للمراجعة فقط
-    </div>
-    ${rows}`;
-  body.appendChild(review);
-  review.scrollIntoView({behavior:'smooth'});
-}
+  </div>
 
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
-}
-</script>
+  <!-- G9 -->
+  <div class="gg">
+    <div class="gg-label">Grade 9</div>
+    <div class="grid">
+
+      <a class="card" href="forceslab.html">
+        <div class="card-top"><span class="emoji">💪</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">ForcesLab — Forces on Objects</div>
+        <div class="card-sub">Contact vs Distance Forces</div>
+        <div class="card-desc">Contact vs distance forces, interactive free body diagram arrow tool, 6 real-world scenarios.</div>
+        <div class="tags"><span class="tag">Forces</span><span class="tag">Free Body</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="equilibriumlab.html">
+        <div class="card-top"><span class="emoji">⚖</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">EquilibriumLab — Forces</div>
+        <div class="card-sub">Part 1 · Equilibrium Condition</div>
+        <div class="card-desc">Force Painter (draw vectors on diagrams), free body diagrams, equilibrium condition, 4 interactive activities.</div>
+        <div class="tags"><span class="tag">Equilibrium</span><span class="tag">Vectors</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="equilibriumlab2.html">
+        <div class="card-top"><span class="emoji">🔄</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">EquilibriumLab — Interaction</div>
+        <div class="card-sub">Part 2 · Force Verdict Lab</div>
+        <div class="card-desc">Equilibrium vs interaction pairs. Sorting Arena drag game, Body Separator slider, 3-stage Verdict Chamber.</div>
+        <div class="tags"><span class="tag">Newton 3rd</span><span class="tag">Interaction</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+      <a class="card" href="hookslawG9.html">
+        <div class="card-top"><span class="emoji">🔩</span><span class="status"><span class="dot new"></span>New</span></div>
+        <div class="card-title">Hooke's Law Lab</div>
+        <div class="card-sub">Part 3 · Springs & Elasticity</div>
+        <div class="card-desc">3 spring experiments (k=20/80/200 N/m), live T vs Δx graph, derive T = k·Δx, elastic limit, 6 real-world applications.</div>
+        <div class="tags"><span class="tag">Hooke's Law</span><span class="tag">T=kΔx</span><span class="tag">Elongation</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     BIOLOGY
+══════════════════════════════════════════════ -->
+<div id="biology" style="background:var(--bg2);">
+<div class="subj bi-s" style="background:transparent;">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">🧬</div>
+      <div class="subj-name">Biology</div>
+      <div class="subj-meta">Grade 9 · Grade 12 · Nervous System · Genetics</div>
+    </div>
+    <span class="subj-count">2 Files</span>
+  </div>
+
+  <div class="gg">
+    <div class="gg-label">Grade 9</div>
+    <div class="grid">
+      <a class="card" href="synapselab.html">
+        <div class="card-top"><span class="emoji">🧠</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">SynapseLab — Nerve Transmission</div>
+        <div class="card-sub">5E Biology · Synaptic Junction</div>
+        <div class="card-desc">3D synapse model, 12 critical thinking + 10 creativity questions, Groq AI Socratic tutor, session timer, full chat log submitted to grade sheet.</div>
+        <div class="tags"><span class="tag">Synapse</span><span class="tag">AI Tutor</span><span class="tag">Bloom's</span></div>
+        <div class="cta">Open Lab →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="gg">
+    <div class="gg-label">Grade 12</div>
+    <div class="grid">
+      <a class="card" href="biologyExamG12.html">
+        <div class="card-top"><span class="emoji">🔬</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title">Biology Exam — Grade 12</div>
+        <div class="card-sub">Formal Exam</div>
+        <div class="card-desc">Grade 12 Biology formal examination. Submits answers to grade sheet.</div>
+        <div class="tags"><span class="tag">Exam</span><span class="tag">Grade 12</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ARABIC
+══════════════════════════════════════════════ -->
+<div id="arabic" class="subj ar-s">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">📖</div>
+      <div class="subj-name">Arabic Language</div>
+      <div class="subj-meta" dir="rtl" style="text-align:right;">الصف السابع · الصف التاسع · البيان · الأعداد · النحو</div>
+    </div>
+    <span class="subj-count">2 دروس · 1 امتحان</span>
+  </div>
+
+  <!-- ── LESSONS ── -->
+  <div class="gg">
+    <div class="gg-label">Lessons — الدروس</div>
+    <div class="grid">
+
+      <a class="card" href="bayanlab.html">
+        <div class="card-top"><span class="emoji">🌸</span><span class="status"><span class="dot live"></span>Lesson</span></div>
+        <div class="card-title" dir="rtl">بيانLab — علم البيان</div>
+        <div class="card-sub" dir="rtl">الصف التاسع · التشبيه والاستعارة</div>
+        <div class="card-desc" dir="rtl">التشبيه التام والمجمل والاستعارة التصريحية — أمثلة تفاعلية من القرآن الكريم والنصوص الأدبية.</div>
+        <div class="tags"><span class="tag">البيان</span><span class="tag">التشبيه</span><span class="tag">Grade 9</span></div>
+        <div class="cta">Open Lesson →</div>
+      </a>
+
+      <a class="card" href="NumbersArabicG9.html">
+        <div class="card-top"><span class="emoji">🔢</span><span class="status"><span class="dot live"></span>Lesson</span></div>
+        <div class="card-title" dir="rtl">الأعداد بالعربية</div>
+        <div class="card-sub" dir="rtl">الصف التاسع · الأعداد والمعدود</div>
+        <div class="card-desc" dir="rtl">درس تفاعلي في الأعداد والمعدود باللغة العربية — قواعد العدد المذكر والمؤنث وتطبيقات متنوعة.</div>
+        <div class="tags"><span class="tag">الأعداد</span><span class="tag">Interactive</span><span class="tag">Grade 9</span></div>
+        <div class="cta">Open Lesson →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ── EXAMS ── -->
+  <div class="gg">
+    <div class="gg-label">Exams — الامتحانات</div>
+    <div class="grid">
+
+      <a class="card" href="arabicExamG7.html">
+        <div class="card-top"><span class="emoji">✍️</span><span class="status"><span class="dot exam"></span>Exam</span></div>
+        <div class="card-title" dir="rtl">امتحان اللغة العربية — الصف السابع</div>
+        <div class="card-sub" dir="rtl">عبير · 7C & 7D · النحو</div>
+        <div class="card-desc" dir="rtl">الفاعل ونائبه والمفعول به والإعراب والتحويل من المعلوم إلى المجهول. ٥ نسخ مضادة للغش + نسخة غائب. ٢٣ علامة · ٤٠ دقيقة.</div>
+        <div class="tags"><span class="tag">Grammar</span><span class="tag">5 Versions</span><span class="tag">Anti-Cheat</span></div>
+        <div class="cta">Open Exam →</div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MATH
+══════════════════════════════════════════════ -->
+<div id="math" style="background:var(--bg2);">
+<div class="subj ma-s" style="background:transparent;">
+  <div class="subj-hdr">
+    <div><div class="subj-icon">🔢</div>
+      <div class="subj-name">Mathematics</div>
+      <div class="subj-meta">Grade 1 · Grade 3 · Fractions</div>
+    </div>
+    <span class="subj-count">2 Files</span>
+  </div>
+
+  <div class="gg">
+    <div class="gg-label">Grade 1</div>
+    <div class="grid">
+      <a class="card" href="grade1Fractions.html">
+        <div class="card-top"><span class="emoji">🍕</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">Fractions — Grade 1</div>
+        <div class="card-sub">Introduction to Fractions</div>
+        <div class="card-desc">Visual fraction introduction for young learners — halves, thirds, quarters with interactive shapes.</div>
+        <div class="tags"><span class="tag">Fractions</span><span class="tag">Visual</span><span class="tag">Grade 1</span></div>
+        <div class="cta">Open Worksheet →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="gg">
+    <div class="gg-label">Grade 3</div>
+    <div class="grid">
+      <a class="card" href="grade3Fractions.html">
+        <div class="card-top"><span class="emoji">📐</span><span class="status"><span class="dot live"></span>Live</span></div>
+        <div class="card-title">Fractions — Grade 3</div>
+        <div class="card-sub">Equivalent Fractions & Comparison</div>
+        <div class="card-desc">Equivalent fractions, comparing and ordering, fraction of a set — interactive exercises.</div>
+        <div class="tags"><span class="tag">Fractions</span><span class="tag">Equivalent</span><span class="tag">Grade 3</span></div>
+        <div class="cta">Open Worksheet →</div>
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ABOUT -->
+<div class="about">
+  <div class="about-in">
+    <div>
+      <div class="about-tag">About This Library</div>
+      <div class="about-title">Built for Lebanese Classrooms</div>
+      <p class="about-text">Every lab is designed around the 5E inquiry model. Students interact with live canvas simulations, receive Socratic AI feedback via Groq, and submit results directly to Ahmad's Google Sheets grade book through Apps Script.<br><br>No app to install. No account to create. One link, any device.</p>
+      <div class="apills">
+        <span class="apill">5E Pedagogy</span><span class="apill">Canvas Simulations</span>
+        <span class="apill">Groq AI Tutor</span><span class="apill">Google Sheets</span>
+        <span class="apill">Mobile-First</span><span class="apill">Open Access</span>
+      </div>
+    </div>
+    <div>
+      <div class="arch-box">
+        <div class="arch-label">5E Lab Architecture</div>
+        <div class="arch-row"><span class="arch-e">🎯</span><div><strong>Engage</strong><span>— Real-world hook</span></div></div>
+        <div class="arch-row"><span class="arch-e">🔬</span><div><strong>Explore</strong><span>— Interactive canvas simulation</span></div></div>
+        <div class="arch-row"><span class="arch-e">📐</span><div><strong>Explain</strong><span>— Guided derivation & theory</span></div></div>
+        <div class="arch-row"><span class="arch-e">🌍</span><div><strong>Elaborate</strong><span>— Real-world applications</span></div></div>
+        <div class="arch-row"><span class="arch-e">📊</span><div><strong>Evaluate</strong><span>— MCQ + written → grade sheet</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="fb">Ahmad Ghozlan</div>
+    <div class="fn">Physics & Science · AI in Education · Lebanon · 2025–2026</div>
+  </div>
+  <div class="flinks">
+    <a href="https://www.linkedin.com/in/ahmad-ghozlan" target="_blank">LinkedIn ↗</a>
+    <a href="#physics">Physics</a><a href="#biology">Biology</a>
+    <a href="#arabic">Arabic</a><a href="#math">Math</a>
+  </div>
+</footer>
+
 </body>
 </html>
