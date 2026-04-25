@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Electricity Exam | Ahmad Ghozlan | Grade 7D</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f9f8f5;--bg2:#f2f0eb;--bg3:#eae7e0;
+  --panel:#fff;--panel2:#f5f3ee;
+  --border:#ddd9d0;--border2:#ccc8bc;
+  --ink:#141210;--muted:#6a6358;--muted2:#9c9485;
+  --blue:#1d4ed8;--blueL:rgba(29,78,216,.08);--blueB:rgba(29,78,216,.25);
+  --green:#15803d;--greenL:rgba(21,128,61,.08);
+  --red:#b91c1c;--redL:rgba(185,28,28,.08);
+  --amber:#b45309;--amberL:rgba(180,83,9,.1);
+  --fh:'Syne',sans-serif;--fb:'Outfit',sans-serif;--fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);line-height:1.65;overflow-x:hidden;}
+
+/* EXAM HEADER */
+.exam-header{background:var(--ink);color:#fff;padding:0;}
+.header-top{padding:18px 28px 14px;display:flex;align-items:flex-start;
+  justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.school{font-family:var(--fm);font-size:.56rem;color:rgba(255,255,255,.4);
+  text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;}
+.exam-title-h{font-family:var(--fh);font-size:1.5rem;font-weight:800;
+  color:#fff;letter-spacing:.5px;line-height:1.1;}
+.version-badge{background:var(--amber);color:#fff;font-family:var(--fh);
+  font-size:.72rem;letter-spacing:2px;padding:5px 14px;border-radius:3px;
+  white-space:nowrap;align-self:flex-start;}
+.header-meta{display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:8px;padding:10px 28px;
+  border-top:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);}
+.meta-item{font-family:var(--fm);font-size:.6rem;color:rgba(255,255,255,.5);
+  text-transform:uppercase;letter-spacing:1.5px;}
+.meta-item strong{color:rgba(255,255,255,.85);}
+.timer-display{font-family:var(--fh);font-size:1.3rem;color:#fff;
+  letter-spacing:3px;min-width:80px;text-align:center;}
+.timer-display.warn{color:#fbbf24;}
+.timer-display.urgent{color:#f87171;animation:tpulse .7s infinite;}
+@keyframes tpulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* SELECTOR */
+.selector{background:var(--bg2);border-bottom:2px solid var(--border);
+  padding:24px 28px;}
+.sel-title{font-family:var(--fh);font-size:1.1rem;font-weight:800;
+  color:var(--ink);margin-bottom:16px;letter-spacing:-.3px;}
+.name-wrap{max-width:460px;}
+.name-label{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;
+  letter-spacing:2px;color:var(--muted2);display:block;margin-bottom:6px;}
+select{background:var(--panel);border:1.5px solid var(--border2);border-radius:4px;
+  padding:11px 14px;color:var(--ink);font-family:var(--fb);font-size:.92rem;
+  outline:none;width:100%;cursor:pointer;min-height:46px;transition:border-color .2s;}
+select:focus{border-color:var(--blue);}
+.start-btn{margin-top:12px;width:100%;padding:13px;background:var(--blue);color:#fff;
+  border:none;border-radius:4px;font-family:var(--fh);font-size:1rem;
+  letter-spacing:.5px;cursor:pointer;transition:all .2s;}
+.start-btn:hover{background:#1e40af;}
+.start-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* EXAM BODY */
+.exam-body{display:none;max-width:820px;margin:0 auto;padding:28px 20px 40px;}
+
+/* QUESTION BLOCK */
+.q-block{background:var(--panel);border:1.5px solid var(--border);
+  border-radius:6px;padding:20px;margin-bottom:16px;
+  border-left:4px solid var(--blue);}
+.q-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.q-circle{width:30px;height:30px;border-radius:50%;background:var(--blue);
+  color:#fff;font-family:var(--fh);font-size:.78rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.q-meta{font-family:var(--fm);font-size:.56rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:2px;}
+.q-text{font-size:.92rem;color:var(--ink);line-height:1.8;margin-bottom:13px;}
+.q-text strong{color:var(--ink);font-weight:700;}
+.q-text em{font-style:italic;color:var(--muted);}
+
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;
+  background:var(--panel2);border:1.5px solid var(--border);border-radius:4px;
+  cursor:pointer;transition:all .18s;font-size:.88rem;user-select:none;
+  -webkit-user-select:none;min-height:46px;}
+.opt:hover{border-color:var(--blue);}
+.opt.sel{border-color:var(--blue);background:var(--blueL);}
+.opt.ok{border-color:var(--green)!important;background:var(--greenL)!important;
+  color:var(--green)!important;}
+.opt.err{border-color:var(--red)!important;background:var(--redL)!important;
+  color:var(--red)!important;}
+.ol{min-width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.08);
+  color:var(--muted2);font-size:.66rem;font-weight:700;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-family:var(--fm);margin-top:1px;}
+.opt.ok .ol{background:var(--green);color:#fff;}
+.opt.err .ol{background:var(--red);color:#fff;}
+
+/* FEEDBACK */
+.fb{margin-top:10px;padding:11px 14px;border-radius:4px;font-size:.85rem;
+  display:none;line-height:1.75;border-left:3px solid;}
+.fb.ok{background:var(--greenL);border-color:var(--green);color:var(--green);}
+.fb.err{background:var(--redL);border-color:var(--red);color:var(--red);}
+.fb.inf{background:var(--blueL);border-color:var(--blue);color:var(--blue);}
+.chk{padding:9px 20px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:4px;color:var(--ink);font-family:var(--fb);font-weight:600;
+  font-size:.84rem;cursor:pointer;transition:all .18s;min-height:44px;}
+.chk:hover{border-color:var(--blue);color:var(--blue);}
+
+/* CIRCUIT CANVAS QUESTION */
+.canvas-q{background:var(--panel2);border:1.5px solid var(--border);
+  border-radius:4px;overflow:hidden;margin-bottom:12px;}
+.canvas-q canvas{display:block;width:100%;max-width:520px;margin:0 auto;
+  touch-action:none;}
+.label-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+@media(max-width:500px){.label-opts{grid-template-columns:1fr;}}
+.label-pick{padding:9px 14px;background:var(--panel2);border:1.5px solid var(--border);
+  border-radius:4px;cursor:pointer;font-size:.84rem;transition:all .18s;
+  text-align:center;font-family:var(--fb);}
+.label-pick:hover{border-color:var(--blue);}
+.label-pick.picked{border-color:var(--blue);background:var(--blueL);}
+.spot-btn{position:absolute;width:28px;height:28px;border-radius:50%;
+  background:var(--amber);color:#fff;font-family:var(--fh);font-size:.68rem;
+  font-weight:800;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border:2px solid rgba(255,255,255,.4);transition:all .2s;
+  transform:translate(-50%,-50%);}
+.spot-btn.answered{background:var(--green);}
+.spot-btn.wrong-s{background:var(--red);}
+
+/* WRITTEN */
+textarea{background:var(--panel2);border:1.5px solid var(--border);border-radius:4px;
+  padding:11px 14px;color:var(--ink);font-family:var(--fb);font-size:.9rem;
+  outline:none;width:100%;resize:vertical;min-height:90px;transition:border-color .2s;}
+textarea:focus{border-color:var(--blue);}
+
+/* SUBMIT */
+.submit-panel{background:var(--panel);border:1.5px solid var(--border);
+  border-radius:6px;padding:20px;margin-bottom:16px;}
+.score-line{font-family:var(--fh);font-size:2.2rem;font-weight:800;
+  color:var(--blue);text-align:center;margin-bottom:4px;}
+.score-sub{font-family:var(--fm);font-size:.6rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:2px;text-align:center;margin-bottom:14px;}
+.progress-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));
+  border-radius:3px;transition:width .5s;}
+.prog-txt{font-family:var(--fm);font-size:.66rem;color:var(--muted2);margin-bottom:14px;}
+.submit-btn{width:100%;padding:13px;background:var(--green);color:#fff;border:none;
+  border-radius:4px;font-family:var(--fh);font-size:1rem;letter-spacing:.5px;
+  cursor:pointer;transition:all .2s;}
+.submit-btn:hover{background:#166534;}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+.submit-ok{display:none;margin-top:12px;padding:12px;background:var(--greenL);
+  border:1.5px solid var(--green);border-radius:4px;
+  font-family:var(--fh);font-size:.9rem;color:var(--green);text-align:center;}
+.answer-review{background:var(--ink);color:#fff;border-radius:6px;
+  padding:20px;margin-top:16px;display:none;}
+.review-title{font-family:var(--fh);font-size:.9rem;color:#fbbf24;
+  letter-spacing:1px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1);
+  padding-bottom:8px;}
+.review-row{display:flex;justify-content:space-between;align-items:flex-start;
+  gap:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:.78rem;}
+.review-key{color:rgba(255,255,255,.45);font-family:var(--fm);font-size:.6rem;
+  text-transform:uppercase;min-width:80px;}
+.review-val{color:rgba(255,255,255,.85);text-align:right;flex:1;}
+
+/* ABSENT NOTICE */
+.absent-wrap{display:none;min-height:80vh;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:40px 20px;
+  background:var(--ink);color:#fff;}
+.absent-wrap h2{font-family:var(--fh);font-size:1.6rem;color:#fbbf24;margin-bottom:12px;}
+.absent-wrap p{font-size:.88rem;color:rgba(255,255,255,.55);max-width:380px;line-height:1.75;}
+.absent-code{font-family:var(--fm);font-size:.78rem;color:#fbbf24;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+  padding:8px 18px;border-radius:3px;margin-top:10px;display:inline-block;}
+
+#toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fbbf24;padding:9px 20px;border-radius:4px;
+  font-family:var(--fm);font-size:.72rem;z-index:999;opacity:0;
+  transition:opacity .3s;pointer-events:none;border:1px solid rgba(255,255,255,.1);}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- ABSENTEE NOTICE -->
+<div class="absent-wrap" id="absentWrap">
+  <h2>Absentee Version (F)</h2>
+  <p>This version is reserved for students who were absent during the original exam.</p>
+  <p style="margin-top:8px;color:rgba(255,255,255,.35);font-size:.8rem;">
+    Teacher: share only this link with the absent student.</p>
+  <div class="absent-code">electricity_exam_g7.html?v=F</div>
+  <button onclick="startAbsentExam()" style="margin-top:20px;padding:12px 30px;
+    background:#fbbf24;color:var(--ink);border:none;border-radius:4px;
+    font-family:var(--fh);font-size:.95rem;cursor:pointer;letter-spacing:.5px;">
+    Begin Absentee Exam
+  </button>
+</div>
+
+<!-- EXAM HEADER (hidden until started) -->
+<div class="exam-header" id="examHeader" style="display:none;">
+  <div class="header-top">
+    <div>
+      <div class="school">Beit Jala Secondary — Physics · Grade 7</div>
+      <div class="exam-title-h">Electricity Exam</div>
+    </div>
+    <div id="versionBadge" class="version-badge">VERSION A</div>
+  </div>
+  <div class="header-meta">
+    <span class="meta-item">Class: <strong>7D</strong></span>
+    <span class="meta-item">Marks: <strong>15</strong></span>
+    <span class="meta-item">Time: <strong>25 min</strong></span>
+    <div class="timer-display" id="timerDisp">25:00</div>
+  </div>
+</div>
+
+<!-- STUDENT SELECTOR -->
+<div class="selector" id="selectorWrap">
+  <div class="sel-title">Select your name to begin</div>
+  <div class="name-wrap">
+    <label class="name-label">Your full name — Grade 7D</label>
+    <select id="stuName">
+      <option value="">— Choose your name —</option>
+    </select>
+    <button class="start-btn" id="startBtn" disabled onclick="startExam()">
+      Start Exam →
+    </button>
+  </div>
+</div>
+
+<!-- EXAM BODY (injected by JS) -->
+<div class="exam-body" id="examBody"></div>
+
+<script>
+'use strict';
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ── STUDENTS — Grade 7D ──────────────────────────────────────
+const STUDENTS_7D=[
+  'أحمد عمر حسين جعجع','أحمد محمد احمد ابو جاموس','ابراهيم سامي مروان حليحل',
+  'ابراهيم يونس محمد رحال','احمد علي احمد المحمود','احمد فؤاد احمد جمعة',
+  'اسيل احمد فريد العلي','ايلانا محمد ابراهيم الحلو','حلا فادي فايز معتوق',
+  'حمزة عفيف علي السيد','داني محمد محمود حسين','رؤى حسن احمد محمد',
+  'راما ابراهيم رشيد فارس','راما محمد علي الجعجع','زاهر محمد شحادة ديب',
+  'سالي احمد وليد كريديه','سدرة المنتهى احمد حسون','عبد الرحمن درويش محمد سلام',
+  'علي ابراهيم حسان الاشوح','علي مروان عدنان شحاده','علي وسيم علي مره',
+  'عيسى احمد محمود الحصري','غيداء مالك جمعة بلال','فرح محمود كامل الخطيب',
+  'ليمار هاني محمد جمعه','محمد مصطفى كمال الترك','محمد هاشم عادل المنسي',
+  'محمد يوسف محمد محمد','مصطفى كمال علي سعد','منى وسام عمر سلام',
+  'ندى علي احمد مطر','ولاء احمد فهد السعيد','يوسف علاء الدين كرزون',
+  'يوسف علاء جهاد شحادة'
+].sort((a,b)=>a.localeCompare(b,'ar'));
+
+// ── EXAM VERSIONS ────────────────────────────────────────────
+// 5 versions (A-E) + absentee (F)
+// Each version: 10 MCQ + 1 circuit diagram + 1 written = 15 marks
+// Topics rotate per version — same objectives, different content
+
+const VERSIONS={
+
+// ═══ A — Topic: School lab scenario ═══
+A:{label:'VERSION A',
+  q1:{text:'In an electric circuit, which component is the <strong>generator</strong> (source of electrical energy)?',
+    opts:['The lamp','The switch','The dry cell','The connecting wire'],correct:'C',
+    ok:'✓ Correct! The dry cell is the generator — it converts chemical energy into electrical energy and pushes current around the circuit.',
+    bad:'✗ The dry cell (battery) is the generator. It is the source of electrical energy in the circuit. All other components are receivers or connectors.'},
+  q2:{text:'A student draws this circuit symbol: a circle with an X inscribed inside it. Which component does it represent?',
+    opts:['A switch','A motor','A lamp','A dry cell'],correct:'C',
+    ok:'✓ Correct! A lamp is shown as a circle with an X inside. The X represents the filament wire that glows when current passes through it.',
+    bad:'✗ The circle with X inside is the symbol for a lamp. The X represents the glowing filament inside the bulb.'},
+  q3:{text:'Which of the following materials is a <strong>conductor</strong> of electricity?',
+    opts:['Dry wood','Rubber band','Copper wire','Glass'],correct:'C',
+    ok:'✓ Correct! Copper wire is an excellent conductor — it has many free electrons that flow easily when a voltage is applied. This is why electrical wires are made of copper.',
+    bad:'✗ Copper wire is the conductor. Wood, rubber, and glass are all insulators — they do not allow current to flow through them.'},
+  q4:{text:'When a switch in a circuit is <strong>open</strong>, the current flowing through the circuit is:',
+    opts:['Reduced by half','Zero — the circuit is broken','The same as when closed','Doubled'],correct:'B',
+    ok:'✓ Correct! An open switch creates a complete break in the circuit path. Zero current flows — not reduced, not slowed, but exactly zero.',
+    bad:'✗ An open switch breaks the circuit completely. Zero current flows. The circuit needs a closed, unbroken path for any current to flow.'},
+  q5:{text:'A lamp glows at normal brightness with one dry cell. A student adds a <strong>second dry cell</strong> to the same circuit. The lamp will:',
+    opts:['Go out completely','Stay the same brightness','Glow brighter','Glow dimmer'],correct:'C',
+    ok:'✓ Correct! More cells → more voltage → more electrical pressure → more current → more energy delivered to the lamp per second → brighter glow!',
+    bad:'✗ Adding more cells increases the voltage (electrical pressure), which drives more current through the lamp, delivering more energy — making it brighter.'},
+  q6:{text:'A motor, a lamp, and a dry cell are connected in a circuit. Which correctly classifies all three?',
+    opts:['All three are generators','Dry cell = receiver, lamp = generator, motor = receiver','Dry cell = generator, lamp = receiver, motor = receiver','Motor = generator, lamp = receiver, dry cell = receiver'],correct:'C',
+    ok:'✓ Perfect! The dry cell is the only generator (produces electrical energy from chemical energy). The lamp and motor are both receivers — they use the electrical energy to produce light/heat and motion respectively.',
+    bad:'✗ Only the dry cell is a generator (it produces electrical energy). The lamp and motor are receivers — they use electrical energy and convert it into other forms.'},
+  q7:{text:'A graphite pencil is placed in a gap in a circuit. The lamp <strong>lights up</strong>. This tells us that graphite is:',
+    opts:['An insulator because pencils are made of carbon','A conductor — it allows current to flow through it','An insulator — it is not a metal','A generator — it produces electricity'],correct:'B',
+    ok:'✓ Correct! If the lamp lights up when the pencil is placed in the gap, current is flowing through the graphite — so it is a conductor. Graphite is unusual because it is a non-metal that conducts electricity.',
+    bad:'✗ If the lamp lit up, current flowed through the graphite — that is the definition of a conductor. Graphite (pencil core) is a non-metallic conductor.'},
+  q8:{text:'For a lamp in a circuit to light up, the circuit must be:',
+    opts:['Open — so current can escape','Closed — with a complete unbroken path for current to flow','Broken — so electricity has space to spread','Disconnected — the lamp works on its own stored energy'],correct:'B',
+    ok:'✓ Correct! Current can only flow through a complete, unbroken (closed) path. Any gap — an open switch, a broken wire, a missing component — stops all current flow.',
+    bad:'✗ A circuit must be CLOSED — a complete, unbroken loop from one terminal of the cell, through all components, back to the other terminal. Any gap stops current completely.'},
+  q9:{text:'Which of the following is an <strong>insulator</strong>?',
+    opts:['Steel bolt','Iron nail','Graphite pencil','Plastic ruler'],correct:'D',
+    ok:'✓ Correct! Plastic is an insulator — it does not allow current to flow. Steel, iron, and graphite are all conductors.',
+    bad:'✗ Plastic is the insulator here. Steel, iron, and graphite are all conductors that allow current to flow through them.'},
+  q10:{text:'A student builds a circuit with a battery, a lamp, and wires but the lamp does not light. She checks the battery and it works. The most likely cause is:',
+    opts:['The lamp is too far from the battery','There is a gap or open switch breaking the circuit','The wires are too long','The battery is too small for the lamp'],correct:'B',
+    bad:'✗ If the battery works but the lamp is off, the circuit must be broken somewhere — a loose wire, an open switch, or a gap. A working battery with no broken path always lights the lamp.',
+    ok:'✓ Correct! If the battery is working but the lamp is off, the circuit must be broken — a gap, loose wire, or open switch is preventing current from flowing around the complete path.'},
+  circuit:{
+    desc:'The diagram below shows a complete electric circuit. Four components are labelled 1–4. Write the name of each component.',
+    // Canvas draws: battery on left, switch at top, lamp at top-right, wire everywhere
+    correct:{'1':'Battery (dry cell)','2':'Switch','3':'Lamp','4':'Connecting wire'},
+    layout:'A'
+  },
+  written:'A student says: "When I open the switch, some current still trickles through the lamp." Is this correct? Explain using what you know about open and closed circuits, and the role of the switch.'
+},
+
+// ═══ B — Topic: Home appliances scenario ═══
+B:{label:'VERSION B',
+  q1:{text:'Which component converts <strong>electrical energy into motion</strong> (kinetic energy)?',
+    opts:['Dry cell','Lamp','Switch','Motor'],correct:'D',
+    ok:'✓ Correct! A motor is a receiver that converts electrical energy into mechanical (movement) energy. Examples: electric fan, washing machine, electric drill.',
+    bad:'✗ A motor converts electrical energy into motion (kinetic energy). It is a receiver in the circuit.'},
+  q2:{text:'In a circuit diagram, the symbol for a <strong>dry cell</strong> is:',
+    opts:['A circle with an X inside','A lever between two dots','A short dashed line','One long and one short parallel line'],correct:'D',
+    ok:'✓ Correct! A single dry cell is drawn as one long line (positive terminal, +) and one shorter line (negative terminal, –). Multiple cells together form a battery symbol.',
+    bad:'✗ A dry cell is drawn as one long line (+) and one short line (–). The circle with X is the lamp. The lever is the switch.'},
+  q3:{text:'Which of the following is an <strong>insulator</strong>?',
+    opts:['Copper wire','Iron nail','Rubber band','Steel bolt'],correct:'C',
+    ok:'✓ Correct! Rubber is an excellent insulator — it has no free electrons to carry current. This is why the outside of electrical cables is coated in rubber or plastic.',
+    bad:'✗ Rubber is the insulator. Copper, iron, and steel are all conductors that allow current to flow freely.'},
+  q4:{text:'A switch is <strong>closed</strong> in a circuit. This means:',
+    opts:['The circuit is broken and current cannot flow','The circuit is complete and current can flow','The lamp will be dimmer','The battery will stop working'],correct:'B',
+    ok:'✓ Correct! A closed switch completes the circuit — it creates an unbroken path so current can flow from the battery through all components and back again.',
+    bad:'✗ A CLOSED switch completes the path for current flow. It is an OPEN switch that breaks the circuit and stops current.'},
+  q5:{text:'A lamp glows brightly with <strong>three dry cells</strong>. The student removes two cells leaving only one. The lamp will:',
+    opts:['Go out completely — one cell provides no energy','Explode — too little voltage is dangerous','Glow dimmer — less voltage means less current','Stay the same — the lamp adjusts automatically'],correct:'C',
+    ok:'✓ Correct! Fewer cells → lower voltage → less electrical pressure → less current → less energy to the lamp per second → dimmer glow.',
+    bad:'✗ Fewer cells means lower voltage, which means less current flows. Less current means less energy delivered to the lamp — it glows dimmer.'},
+  q6:{text:'A battery is best described as:',
+    opts:['A receiver that stores light energy','A generator that converts chemical energy into electrical energy','A conductor that speeds up current flow','An insulator that controls current'],correct:'B',
+    ok:'✓ Correct! A battery (dry cell) is a generator — it converts stored chemical energy into electrical energy and drives current around the circuit.',
+    bad:'✗ A battery is a generator. It converts chemical energy into electrical energy. It does not store light or control current flow.'},
+  q7:{text:'A piece of dry wood is placed in a circuit gap. The lamp <strong>stays off</strong>. This tells us that dry wood is:',
+    opts:['A conductor — wood carries current slowly','A generator — it is producing energy','An insulator — it blocks the flow of current','A receiver — it uses the current'],correct:'C',
+    ok:'✓ Correct! If the lamp stays off, no current is flowing through the wood — it is blocking the circuit. Wood (when dry) is an insulator.',
+    bad:'✗ If the lamp stays off, the wood is blocking current flow — that makes it an insulator. Conductors allow current through; insulators block it.'},
+  q8:{text:'Why does a circuit need a <strong>complete, unbroken path</strong> for current to flow?',
+    opts:['Because electricity needs space to spread out in both directions','Because current must travel in a continuous loop from one terminal of the cell, through the circuit, and back to the other terminal','Because the lamp only works in circular motion','Because the switch controls the direction of current'],correct:'B',
+    ok:'✓ Correct! Current flows in a continuous loop — from the negative terminal of the cell, through the circuit components, and back to the positive terminal. Any gap breaks this loop and stops all current.',
+    bad:'✗ Current travels in a continuous loop: from the cell terminal, through all components in sequence, and back to the other terminal. Any break in this loop — no matter how small — stops all current flow.'},
+  q9:{text:'Which material would be the <strong>best conductor</strong> for making electrical wiring?',
+    opts:['Glass','Copper','Rubber','Plastic'],correct:'B',
+    ok:'✓ Correct! Copper is used for electrical wiring because it is an excellent conductor — it has many free electrons that move easily, allowing current to flow with very little resistance.',
+    bad:'✗ Copper is the best conductor here and is used in almost all electrical wiring. Glass, rubber, and plastic are insulators.'},
+  q10:{text:'A student connects a lamp to a battery with wires. The lamp lights up. She then places her <strong>rubber eraser</strong> between two wires, breaking the connection. What happens?',
+    opts:['The lamp glows dimmer','The lamp stays the same brightness','The lamp goes out completely','The lamp flashes on and off'],correct:'C',
+    ok:'✓ Correct! Rubber is an insulator — it blocks current completely. Placing rubber in the circuit creates a gap that breaks the path, so zero current flows and the lamp goes out.',
+    bad:'✗ Rubber is an insulator. Placing it in the circuit creates a complete break — the current path is blocked and the lamp goes out entirely (not dimmer — zero current).'},
+  circuit:{
+    desc:'The diagram shows an electric circuit. Four components are marked 1–4. Write the correct name for each component.',
+    correct:{'1':'Lamp','2':'Battery (dry cell)','3':'Connecting wire','4':'Switch'},
+    layout:'B'
+  },
+  written:'Look at this statement: "A motor and a lamp are both receivers in a circuit." Explain what this means. What does each component receive, and what does it produce? Use the words: electrical energy, receiver, generator.'
+},
+
+// ═══ C — Topic: Classroom investigation scenario ═══
+C:{label:'VERSION C',
+  q1:{text:'A lamp, a motor, a switch, and a dry cell are on a table. Which ONE of these is a <strong>generator</strong>?',
+    opts:['Lamp — it produces light','Motor — it produces movement','Switch — it controls the circuit','Dry cell — it produces electrical energy'],correct:'D',
+    ok:'✓ Correct! The dry cell is the only generator — it produces electrical energy from the chemical energy stored inside it.',
+    bad:'✗ Only the dry cell is a generator. Lamps, motors, and switches do not produce electrical energy — they either use it or control it.'},
+  q2:{text:'The switch symbol in a circuit diagram shows:',
+    opts:['A circle with two lines inside','A lever that can open or close a gap between two contacts','Two long parallel lines of different lengths','A zigzag line representing resistance'],correct:'B',
+    ok:'✓ Correct! A switch is drawn as a lever (a line that can be raised or lowered) between two contact points. Open = lever raised (gap); Closed = lever flat (contact made).',
+    bad:'✗ A switch symbol shows a lever between two contact dots. When the lever touches both contacts, the switch is closed; when raised, it is open.'},
+  q3:{text:'A student tests four materials in a circuit gap. The lamp lights up only for <strong>iron nail</strong> and <strong>graphite pencil</strong>. What can we conclude?',
+    opts:['Iron and graphite are insulators','Iron and graphite are conductors','Iron is an insulator but graphite is a conductor','Graphite is an insulator but iron is a conductor'],correct:'B',
+    ok:'✓ Correct! If the lamp lights up, current is flowing through the material — it is a conductor. Both iron and graphite allow current to flow (iron is a metal conductor; graphite is a non-metallic conductor).',
+    bad:'✗ If the lamp lights up, the material is conducting current — it is a CONDUCTOR. Both iron and graphite are conductors. The lamp stays off for insulators (rubber, wood, glass, plastic).'},
+  q4:{text:'In which of these situations does <strong>zero</strong> current flow?',
+    opts:['Switch is closed, circuit is complete','Switch is open, circuit is broken','Two cells are connected, circuit is complete','Lamp is connected to battery with wires'],correct:'B',
+    ok:'✓ Correct! When the switch is open, the circuit is broken — there is no complete path for current to travel, so exactly zero current flows.',
+    bad:'✗ Zero current flows only when the circuit is broken — like when the switch is open. A complete circuit (closed switch, all connected) always allows current to flow.'},
+  q5:{text:'A lamp is rated for 1.5 V (one dry cell). A student connects <strong>4 dry cells</strong>. What will happen to the lamp?',
+    opts:['It will glow the same — lamps adjust to any voltage','It will glow very dimly','It will probably burn out — too much voltage for the lamp','It will not light at all — too many cells confuse the circuit'],correct:'C',
+    ok:'✓ Correct! 4 cells provide about 6 V — four times more than the 1.5 V lamp is designed for. The excess energy causes the filament to overheat and burn out permanently.',
+    bad:'✗ Using 4 cells for a 1.5 V lamp delivers four times too much voltage. The filament overheats and burns out. Always use the correct number of cells for the component.'},
+  q6:{text:'What is the role of <strong>connecting wires</strong> in an electric circuit?',
+    opts:['They generate the electrical energy','They store electrical energy for later use','They control when current flows','They provide a conductor path for current to flow between components'],correct:'D',
+    ok:'✓ Correct! Connecting wires are conductors that carry current from one component to the next, completing the circuit path. They do not generate, store, or control the energy.',
+    bad:'✗ Connecting wires are conductors — they provide the path for current to flow between the battery, switch, lamp, and other components. They do not generate or store energy.'},
+  q7:{text:'A student places a <strong>glass marble</strong> in a circuit gap. The lamp stays off. What does this tell us?',
+    opts:['Glass is a conductor but the marble is the wrong shape','Glass is an insulator — it does not allow current to pass through it','Glass is a generator — it needs electricity to be applied first','Glass is a receiver — it uses the current'],correct:'B',
+    ok:'✓ Correct! Glass is an insulator. It has no free electrons available to carry current. Placing glass in the circuit blocks current completely, keeping the lamp off.',
+    bad:'✗ If the lamp stays off, the glass is blocking current — it is an insulator. Glass has no free electrons and does not allow current to flow.'},
+  q8:{text:'A complete electric circuit must contain at minimum:',
+    opts:['Only a battery and some wires','A battery, at least one receiver, and a complete conducting path','A switch, a motor, and a lamp','Three or more cells to generate enough energy'],correct:'B',
+    ok:'✓ Correct! A basic working circuit needs: a source of energy (battery/cell), at least one receiver (lamp, motor, etc.), and conducting wires forming a complete unbroken loop.',
+    bad:'✗ A working circuit needs a source of energy (battery), at least one receiver (lamp or motor), and a complete conducting path (wires forming a closed loop).'},
+  q9:{text:'Which statement about insulators is <strong>correct</strong>?',
+    opts:['Insulators speed up the flow of current','Insulators have many free electrons available to carry charge','Insulators are used to prevent current from flowing where it should not','Insulators are only found in laboratories'],correct:'C',
+    ok:'✓ Correct! Insulators are used deliberately to prevent current from flowing in unwanted places — like the plastic coating on electrical wires, which prevents shock and short circuits.',
+    bad:'✗ Insulators are materials that resist or block current flow. They are used to protect — like the plastic on wire cables — preventing current from going where it should not.'},
+  q10:{text:'A torch (flashlight) has a battery, a lamp, a switch, and metal contacts. When the switch is pressed (closed), the lamp lights. When released (opened), it goes dark. Why?',
+    opts:['Pressing the switch charges the battery','A closed switch completes the circuit path so current can flow; an open switch breaks the path stopping all current','The lamp heats up when pressed and cools when released','The battery only works when pressure is applied to it'],correct:'B',
+    ok:'✓ Correct! A torch works exactly on this principle — pressing the switch closes the circuit (complete path → current flows → lamp lights). Releasing it opens the circuit (broken path → zero current → dark).',
+    bad:'✗ The switch controls whether the circuit is complete or broken. Closed switch = complete path = current flows = lamp on. Open switch = broken path = zero current = lamp off.'},
+  circuit:{
+    desc:'Study the circuit diagram below. Four components are marked with numbers 1–4. Write the correct name for each one.',
+    correct:{'1':'Switch','2':'Lamp','3':'Battery (dry cell)','4':'Connecting wire'},
+    layout:'C'
+  },
+  written:'Explain the difference between a <strong>conductor</strong> and an <strong>insulator</strong>. Give one example of each from everyday life and explain why each material is used in electrical equipment.'
+},
+
+// ═══ D — Topic: Safety & practical scenarios ═══
+D:{label:'VERSION D',
+  q1:{text:'A dry cell in a circuit is classified as a generator because it:',
+    opts:['Receives electrical energy and converts it to light','Controls the flow of current in the circuit','Converts chemical energy into electrical energy','Stores heat energy from the circuit'],correct:'C',
+    ok:'✓ Correct! A generator produces electrical energy. The dry cell does this by converting stored chemical energy into electrical energy through a chemical reaction inside it.',
+    bad:'✗ A generator produces electrical energy. The dry cell converts chemical energy inside it into electrical energy — that is why it is the generator in the circuit.'},
+  q2:{text:'Which symbol represents a <strong>lamp</strong> in a circuit diagram?',
+    opts:['A long and a short parallel line','A circle with an X inside','A lever between two dots','A straight line between two circles'],correct:'B',
+    ok:'✓ Correct! A lamp is drawn as a circle with an X inscribed inside it. The circle represents the glass bulb and the X represents the filament that glows.',
+    bad:'✗ The lamp symbol is a circle with an X inside. The long and short lines = dry cell. The lever between dots = switch.'},
+  q3:{text:'Electrical cables have a copper core covered by a plastic coating. Why is <strong>plastic</strong> used as the outer cover?',
+    opts:['Plastic is a good conductor that speeds current flow','Plastic is an insulator that prevents dangerous current from escaping','Plastic makes the wire stronger and more flexible only','Plastic stores electrical energy for emergencies'],correct:'B',
+    ok:'✓ Correct! Plastic is an insulator — it prevents current from leaving the copper wire and reaching anything it should not (like your hand). This is a critical safety feature of all electrical cables.',
+    bad:'✗ Plastic is an insulator. It is used to contain the current inside the copper conductor and prevent it from causing electric shock or short circuits. Safety, not conduction.'},
+  q4:{text:'A student opens the switch in a circuit while the lamp is glowing. What happens immediately?',
+    opts:['The lamp glows dimmer for a few seconds then goes out','The lamp stays on — it has stored energy inside','The lamp goes out instantly — zero current flows','The lamp flashes rapidly then dims'],correct:'C',
+    ok:'✓ Correct! The moment the switch opens, the circuit path is broken. Current stops instantly (it does not slow gradually) — the lamp goes out the moment the switch opens.',
+    bad:'✗ When the switch opens, the circuit breaks immediately. Current stops instantly, not gradually. The lamp goes out the moment the circuit is broken.'},
+  q5:{text:'Two identical lamps are in the same circuit, one with 2 cells and one with 4 cells. Which lamp is brighter?',
+    opts:['The lamp with 2 cells — fewer cells means more energy for the lamp','Both the same — cells do not affect brightness','The lamp with 4 cells — more cells provide more voltage and more current','It depends on the colour of the lamp'],correct:'C',
+    ok:'✓ Correct! 4 cells provide double the voltage of 2 cells. More voltage drives more current through the lamp, delivering more energy per second — making it brighter.',
+    bad:'✗ 4 cells provide more voltage (more electrical pressure) which drives more current through the lamp. More current = more energy delivered per second = brighter lamp.'},
+  q6:{text:'A lamp converts electrical energy into:',
+    opts:['Chemical energy and sound','Kinetic energy and magnetism','Light energy and heat energy','Electrical energy and potential energy'],correct:'C',
+    ok:'✓ Correct! A lamp (receiver) converts electrical energy into light energy (the useful output) and heat energy (an unavoidable waste product — that is why bulbs get hot).',
+    bad:'✗ A lamp converts electrical energy into light (useful) and heat (waste). You can feel the heat from a lamp if you hold your hand near it.'},
+  q7:{text:'An iron nail is placed in a circuit gap. The lamp lights up. A rubber eraser then replaces the nail. The lamp goes out. The correct conclusion is:',
+    opts:['Iron is an insulator; rubber is a conductor','Iron is a conductor; rubber is an insulator','Both are conductors — the eraser just did not connect properly','Both are insulators — the nail must have touched the wires by accident'],correct:'B',
+    ok:'✓ Correct! Lamp on with iron = iron is a conductor (current flows). Lamp off with rubber = rubber is an insulator (current blocked). This is exactly the conductor/insulator test.',
+    bad:'✗ The result directly tells us: iron allows current (conductor), rubber blocks current (insulator). The lamp is the indicator — on = conductor, off = insulator.'},
+  q8:{text:'In a circuit, a student accidentally leaves a tiny gap between two wires. The lamp does not light even though the battery and lamp work perfectly. The best explanation is:',
+    opts:['The gap creates extra energy that overwhelms the lamp','Even a tiny gap completely breaks the current path — zero current can flow','Tiny gaps only reduce current slightly','The lamp needs to warm up before current can cross the gap'],correct:'B',
+    ok:'✓ Correct! Even the smallest gap in a circuit breaks the path completely. Current cannot jump across an air gap (air is an insulator) — so zero current flows, even with a perfect battery and lamp.',
+    bad:'✗ Any gap in the circuit — even microscopic — completely blocks current. Air is an insulator. Zero current crosses an air gap, no matter how small. The circuit must be physically complete.'},
+  q9:{text:'Which of the following would NOT light a lamp in a circuit gap?',
+    opts:['A copper coin','A steel spoon','A graphite pencil lead','A wooden toothpick'],correct:'D',
+    ok:'✓ Correct! Dry wood (a toothpick) is an insulator. It does not allow current to flow. Copper, steel, and graphite are all conductors that would complete the circuit and light the lamp.',
+    bad:'✗ A wooden toothpick would NOT light the lamp — dry wood is an insulator. Copper coin, steel spoon, and graphite pencil lead are all conductors.'},
+  q10:{text:'Which statement about the <strong>switch</strong> in a circuit is correct?',
+    opts:['A switch is a generator — it produces the energy to power the circuit','A switch controls whether the circuit is open (broken) or closed (complete)','A switch is a receiver — it converts electrical energy into mechanical motion','A switch stores electrical energy when the circuit is closed'],correct:'B',
+    ok:'✓ Correct! A switch is a control device. It simply determines whether the circuit is complete (closed = current flows) or broken (open = no current). It neither generates nor uses significant electrical energy.',
+    bad:'✗ A switch is a control component. It opens or closes the circuit. It does not generate energy, store energy, or convert it to motion.'},
+  circuit:{
+    desc:'The electric circuit below has four components labelled 1–4. Identify each component.',
+    correct:{'1':'Connecting wire','2':'Battery (dry cell)','3':'Lamp','4':'Switch'},
+    layout:'D'
+  },
+  written:'A student builds a circuit with a battery, a switch, and a lamp. The switch is open. She says "The battery is wasting energy trying to push current." Is she correct? Explain what is really happening using the terms: open circuit, closed circuit, current, path.'
+},
+
+// ═══ E — Topic: Everyday electricity scenario ═══
+E:{label:'VERSION E',
+  q1:{text:'In a simple circuit, which component provides the <strong>voltage</strong> (electrical pressure) that drives current around the circuit?',
+    opts:['The switch','The lamp','The connecting wire','The dry cell'],correct:'D',
+    ok:'✓ Correct! The dry cell (battery) provides voltage — the electrical pressure that pushes current through the circuit. More cells = more voltage = more push.',
+    bad:'✗ The dry cell provides the voltage (electrical push). The lamp, switch, and wires do not provide voltage.'},
+  q2:{text:'Which circuit symbol is drawn as a <strong>lever between two dots</strong>?',
+    opts:['Lamp','Dry cell','Switch','Motor'],correct:'C',
+    ok:'✓ Correct! A switch is drawn as a lever (a line) that can make or break contact between two dots (contact points). When the lever touches both dots — closed. When raised — open.',
+    bad:'✗ A switch is the lever between two dots. Lamp = circle with X. Dry cell = long and short parallel lines.'},
+  q3:{text:'The <strong>plastic coating</strong> on electrical wires and the rubber on plug handles are examples of:',
+    opts:['Conductors used to speed up current','Generators used to boost voltage','Insulators used to prevent dangerous current flow','Receivers used to convert current to heat'],correct:'C',
+    ok:'✓ Correct! Plastic and rubber are both insulators. They are used in electrical equipment to contain current inside the conductor and protect people from electric shock.',
+    bad:'✗ Plastic and rubber are insulators — they prevent current from flowing where it should not. This is critical for electrical safety.'},
+  q4:{text:'What is the effect of opening a switch in a <strong>working</strong> circuit?',
+    opts:['Current flows more slowly through the lamp','Half the current continues to flow','The circuit is broken and current drops to zero immediately','The battery begins recharging'],correct:'C',
+    ok:'✓ Correct! Opening the switch breaks the circuit immediately. Current does not slow or reduce — it stops completely and instantly to zero.',
+    bad:'✗ Opening the switch breaks the circuit immediately. Current drops to exactly zero instantly — not reduced, not slowed. The circuit needs a complete path for any current to flow.'},
+  q5:{text:'A student replaces a single dry cell with three dry cells. The lamp:',
+    opts:['Goes out — more cells create interference','Stays the same — cells only affect speed of current','Glows much brighter — more cells means more voltage and more current','Glows dimmer — the cells share the energy between them'],correct:'C',
+    ok:'✓ Correct! Three cells provide three times the voltage of one cell. More voltage → more current → more energy per second to the lamp → significantly brighter.',
+    bad:'✗ Three cells = three times the voltage. More voltage drives more current, which delivers more energy to the lamp per second. The lamp glows much brighter.'},
+  q6:{text:'A motor receives electrical energy from a battery. The motor is best described as:',
+    opts:['A generator — it produces movement energy from nothing','A receiver — it takes electrical energy and converts it to kinetic (movement) energy','A conductor — it allows current to flow through the circuit','An insulator — it stores the electrical energy'],correct:'B',
+    ok:'✓ Correct! A motor is a receiver. It receives electrical energy from the battery and converts it into kinetic (movement) energy. Examples: electric fan, food blender, electric drill.',
+    bad:'✗ A motor is a receiver — it takes electrical energy and converts it to motion. Only the battery (dry cell) is the generator.'},
+  q7:{text:'In a test, copper wire and plastic tube are each placed in a circuit gap in turn. Results: copper → lamp ON; plastic → lamp OFF. The correct conclusion is:',
+    opts:['Copper is an insulator; plastic is a conductor','Both copper and plastic are conductors','Copper is a conductor; plastic is an insulator','Both are insulators — the lamp was faulty when it lit up'],correct:'C',
+    ok:'✓ Correct! Lamp ON with copper = copper is a conductor. Lamp OFF with plastic = plastic is an insulator. This is a direct conductivity test — the lamp is the indicator.',
+    bad:'✗ The result is straightforward: lamp on = conductor (copper). Lamp off = insulator (plastic). Copper conducts; plastic insulates.'},
+  q8:{text:'A circuit is broken at one point. Which of the following correctly describes what happens to current <strong>everywhere</strong> in the circuit?',
+    opts:['Current continues to flow but takes a longer path','Current flows from the battery up to the break then stops there','No current flows anywhere in the circuit — the whole circuit stops','Current flows backwards from the break'],correct:'C',
+    ok:'✓ Correct! Current is all-or-nothing in a series circuit. A break anywhere stops current everywhere in the circuit — not just at the break. The whole loop must be complete.',
+    bad:'✗ In a simple circuit, current either flows everywhere around the complete loop or nowhere at all. One break stops current throughout the entire circuit, not just at the break point.'},
+  q9:{text:'Which of the following materials is a <strong>conductor</strong>?',
+    opts:['Rubber glove','Glass window','Steel bolt','Dry wood plank'],correct:'C',
+    ok:'✓ Correct! Steel is a metal conductor — it has free electrons that carry current readily. Rubber, glass, and dry wood are all insulators.',
+    bad:'✗ Steel bolt is the conductor (it is a metal with free electrons). Rubber, glass, and dry wood are all insulators that block current flow.'},
+  q10:{text:'Why are electrical appliance handles made of plastic or rubber rather than metal?',
+    opts:['Metal is too heavy and expensive to use for handles','Plastic and rubber are insulators that protect the user from electric shock if current leaks','Metal would make the appliance run faster','Plastic and rubber are conductors that improve the circuit'],correct:'B',
+    ok:'✓ Correct! Plastic and rubber are insulators — they prevent current from reaching the user\'s hand even if something goes wrong inside the appliance. This is an essential safety feature.',
+    bad:'✗ Plastic and rubber are insulators. Using them for handles means that even if current leaks inside the appliance, it cannot reach the user\'s hand. Safety by design.'},
+  circuit:{
+    desc:'Four components in the circuit are numbered 1–4. Write the name of each component.',
+    correct:{'1':'Battery (dry cell)','2':'Connecting wire','3':'Switch','4':'Lamp'},
+    layout:'E'
+  },
+  written:'Explain how you would use a battery, a lamp, connecting wires, and various materials to find out which ones are conductors and which are insulators. Describe exactly what you would do and what result would tell you the material is a conductor.'
+},
+
+// ═══ F — Absentee ═══
+F:{label:'ABSENTEE VERSION F',
+  q1:{text:'A lamp, a battery, a motor, and a switch are on a workbench. Which TWO are <strong>receivers</strong>?',
+    opts:['Battery and switch','Lamp and motor','Battery and motor','Switch and lamp'],correct:'B',
+    ok:'✓ Correct! Both the lamp and motor are receivers — they take electrical energy from the battery and convert it to other forms (lamp → light+heat; motor → motion).',
+    bad:'✗ Receivers use electrical energy. The lamp and motor are both receivers. The battery is the generator. The switch is just a control device.'},
+  q2:{text:'A switch in a circuit diagram is drawn as:',
+    opts:['A zigzag line','A circle with a cross inside','A lever that can make or break contact between two points','Two parallel lines of different lengths'],correct:'C',
+    ok:'✓ Correct! A switch symbol shows a lever between two contact points. Raised lever = open (gap = no current). Flat lever = closed (contact = current flows).',
+    bad:'✗ A switch is a lever between two dots/contacts. Zigzag = resistor. Circle with cross = lamp. Two parallel lines of different length = dry cell.'},
+  q3:{text:'A student places a <strong>steel spoon</strong> across a gap in a circuit. The lamp lights up. What does this show?',
+    opts:['Steel is an insulator','Steel is a generator','Steel is a conductor','Steel is a receiver'],correct:'C',
+    ok:'✓ Correct! Lamp on = current is flowing through the steel = steel is a conductor. Steel is a metal with free electrons that carry current freely.',
+    bad:'✗ If the lamp lights up, current flowed through the steel — it is a conductor. Conductors allow current through; insulators block it.'},
+  q4:{text:'When a switch is <strong>closed</strong> in a circuit, what is the current flow?',
+    opts:['Zero — closed switch blocks current','Reduced — closed switch limits current','Maximum for that circuit — the path is complete','Reversed — closed switch changes direction'],correct:'C',
+    ok:'✓ Correct! A closed switch creates a complete, unbroken path. Current flows at the maximum level determined by the battery voltage and circuit components.',
+    bad:'✗ A closed switch COMPLETES the circuit. Current flows through the complete path. It is an open switch that blocks current.'},
+  q5:{text:'Removing one dry cell from a 3-cell circuit will:',
+    opts:['Make the lamp go out completely','Make the lamp brighter — less resistance','Make the lamp dimmer — lower voltage means less current','Have no effect on the lamp brightness'],correct:'C',
+    ok:'✓ Correct! Fewer cells = lower voltage = less push = less current = less energy to the lamp = dimmer. Voltage and brightness are directly linked.',
+    bad:'✗ Fewer cells means less voltage. Less voltage = less current = less energy delivered to the lamp = dimmer glow.'},
+  q6:{text:'Connecting wires in a circuit are made of copper because copper is:',
+    opts:['A good insulator that slows current to safe levels','A generator that boosts the battery voltage','A conductor with many free electrons that carry current easily','A receiver that converts electricity to movement'],correct:'C',
+    ok:'✓ Correct! Copper is an excellent conductor — its free electrons move easily under the influence of voltage, carrying current with very little resistance. This makes it ideal for wires.',
+    bad:'✗ Copper is used because it is an outstanding conductor. Its free electrons carry current easily. That is why almost all electrical wiring uses copper.'},
+  q7:{text:'Placing a <strong>rubber band</strong> in a circuit gap causes the lamp to stay off. The correct explanation is:',
+    opts:['Rubber is a conductor that has too much resistance','Rubber is an insulator — it has no free electrons to carry current','Rubber is a receiver that uses all the energy itself','Rubber is a generator that pushes current the wrong way'],correct:'B',
+    ok:'✓ Correct! Rubber is a classic insulator. It has no free electrons available to carry charge, so it completely blocks current flow. The lamp stays off because the circuit path is broken.',
+    bad:'✗ Rubber is an insulator — it has no free electrons. Without free electrons, no current can flow through it. The lamp stays off because the rubber creates a gap the current cannot cross.'},
+  q8:{text:'A torch with a working battery and lamp goes dark when dropped. The most likely cause is:',
+    opts:['The battery reversed direction when dropped','A wire came loose, breaking the circuit path','The lamp produced too much heat and shut off','The battery ran out from the impact'],correct:'B',
+    ok:'✓ Correct! Dropping the torch most likely loosened a wire or connection, creating a gap in the circuit. Any break in the path stops all current — hence the lamp goes dark.',
+    bad:'✗ Dropping a torch typically shakes loose a connection — creating a gap (open circuit). Any break in the path stops all current. A loose wire is the most common cause.'},
+  q9:{text:'Which of the following correctly lists <strong>only conductors</strong>?',
+    opts:['Copper, iron, graphite','Wood, glass, rubber','Plastic, rubber, cotton','Glass, copper, wood'],correct:'A',
+    ok:'✓ Correct! Copper (metal), iron (metal), and graphite (non-metal conductor) are all conductors. Wood, glass, rubber, plastic, and cotton are all insulators.',
+    bad:'✗ Conductors: copper, iron, graphite (also steel, aluminium, gold, etc.). Insulators: wood, glass, rubber, plastic, cotton, etc.'},
+  q10:{text:'Which statement about electric current and circuit completeness is correct?',
+    opts:['Current can flow even if a wire is broken — it jumps across the gap','A circuit needs to be complete (closed) for any current to flow','Current always flows, even in open circuits, just more slowly','A circuit only needs a battery — wires are optional'],correct:'B',
+    ok:'✓ Correct! Current requires a complete, unbroken conducting path. Air (in a gap) is an insulator — current cannot jump across. Every part of the circuit must be connected.',
+    bad:'✗ A complete, unbroken path is essential. Current cannot jump across a gap (air is an insulator). Every component and wire must be properly connected for current to flow.'},
+  circuit:{
+    desc:'The circuit diagram shows four labelled components (1–4). Write the correct name for each.',
+    correct:{'1':'Lamp','2':'Switch','3':'Connecting wire','4':'Battery (dry cell)'},
+    layout:'F'
+  },
+  written:'Explain what happens when you open the switch in a circuit where a lamp is glowing. Use the following words in your answer: current, path, open circuit, closed circuit, zero.'
+}
+
+}; // end VERSIONS
+
+// ── STATE ────────────────────────────────────────────────────
+let currentVersion='';
+let currentName='';
+let timerInterval=null;
+let secondsLeft=25*60;
+const answers={};
+const spotAnswers={};// circuit diagram answers
+let examStarted=false;
+
+// ── URL PARAM CHECK ──────────────────────────────────────────
+(function init(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('v')==='F'){
+    document.getElementById('absentWrap').style.display='flex';
+    document.getElementById('selectorWrap').style.display='none';
+  } else {
+    populateNames();
+  }
+})();
+
+function startAbsentExam(){
+  document.getElementById('absentWrap').style.display='none';
+  document.getElementById('selectorWrap').style.display='block';
+  currentVersion='F';
+  populateNames();
+}
+
+function populateNames(){
+  const sel=document.getElementById('stuName');
+  STUDENTS_7D.forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+  sel.addEventListener('change',()=>{
+    currentName=sel.value;
+    document.getElementById('startBtn').disabled=!currentName;
+  });
+}
+
+// ── VERSION ASSIGNMENT (deterministic hash) ──────────────────
+function assignVersion(name){
+  if(currentVersion==='F')return'F';
+  let h=0;
+  for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
+  return['A','B','C','D','E'][h%5];
+}
+
+// ── START EXAM ───────────────────────────────────────────────
+function startExam(){
+  if(!currentName)return;
+  if(!currentVersion)currentVersion=assignVersion(currentName);
+  document.getElementById('selectorWrap').style.display='none';
+  document.getElementById('examHeader').style.display='block';
+  document.getElementById('versionBadge').textContent=VERSIONS[currentVersion].label;
+  buildExam();
+  document.getElementById('examBody').style.display='block';
+  examStarted=true;
+  startTimer();
+}
+
+// ── TIMER ────────────────────────────────────────────────────
+function startTimer(){
+  updateTimer();
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    updateTimer();
+    if(secondsLeft<=0){clearInterval(timerInterval);autoSubmit();}
+  },1000);
+}
+function updateTimer(){
+  const m=Math.floor(secondsLeft/60);
+  const s=secondsLeft%60;
+  const el=document.getElementById('timerDisp');
+  el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  if(secondsLeft<=300)el.className='timer-display warn';
+  if(secondsLeft<=60) el.className='timer-display urgent';
+}
+function autoSubmit(){toast('Time\'s up — auto-submitting…');setTimeout(()=>doSubmit(true),1500);}
+
+// ── BUILD EXAM ───────────────────────────────────────────────
+function buildExam(){
+  const V=VERSIONS[currentVersion];
+  const body=document.getElementById('examBody');
+  body.innerHTML='';
+
+  // Student info bar
+  const bar=document.createElement('div');
+  bar.style.cssText='background:var(--blueL);border:1px solid var(--blueB);border-radius:5px;'+
+    'padding:10px 16px;margin-bottom:18px;display:flex;justify-content:space-between;'+
+    'flex-wrap:wrap;gap:8px;font-family:var(--fm);font-size:.72rem;color:var(--blue);';
+  bar.innerHTML=`<span>Student: <strong>${currentName}</strong></span>
+    <span>Class: <strong>7D</strong></span>
+    <span>Version: <strong>${V.label}</strong></span>
+    <span>Marks: <strong>15</strong></span>`;
+  body.appendChild(bar);
+
+  // Q1–Q10 MCQ
+  const mcqKeys=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'];
+  const topics=['Components & Classification','Circuit Symbols','Conductors & Insulators',
+    'Switch Function','Cells & Brightness','Component Roles',
+    'Conductor Test','Circuit Completeness','Conductors & Insulators','Circuit Analysis'];
+  mcqKeys.forEach((key,i)=>{
+    body.appendChild(buildMCQBlock(i+1,topics[i],V[key],key));
+  });
+
+  // Q11 — Circuit Diagram
+  body.appendChild(buildCircuitBlock(V.circuit,11));
+
+  // Q12 — Written
+  body.appendChild(buildWrittenBlock(V.written,12));
+
+  // Submit panel
+  body.appendChild(buildSubmitPanel());
+}
+
+function buildMCQBlock(n,topic,q,key){
+  const div=document.createElement('div');div.className='q-block';
+  div.innerHTML=`
+    <div class="q-header">
+      <div class="q-circle">${n}</div>
+      <div class="q-meta">Question ${n} · ${topic} · 1 mark</div>
+    </div>
+    <div class="q-text">${q.text}</div>
+    <div class="opts" id="opts_${key}">
+      ${q.opts.map((opt,i)=>`
+        <div class="opt" onclick="pickOpt('${key}','${['A','B','C','D'][i]}',this)">
+          <span class="ol">${['A','B','C','D'][i]}</span>${opt}
+        </div>`).join('')}
+    </div>
+    <button class="chk" onclick="checkQ('${key}','${q.correct}',\`${escQ(q.ok)}\`,\`${escQ(q.bad)}\`)">✓ Check</button>
+    <div class="fb" id="fb_${key}"></div>`;
+  return div;
+}
+
+function escQ(s){return s.replace(/`/g,"'").replace(/\\/g,'\\\\');}
+
+function buildCircuitBlock(circ,n){
+  const div=document.createElement('div');div.className='q-block';
+  div.style.borderLeftColor='var(--amber)';
+  div.innerHTML=`
+    <div class="q-header">
+      <div class="q-circle" style="background:var(--amber);">${n}</div>
+      <div class="q-meta">Question ${n} · Circuit Diagram · 3 marks (1 per component)</div>
+    </div>
+    <div class="q-text">${circ.desc}</div>
+    <div style="position:relative;margin-bottom:14px;">
+      <canvas id="cvCircuit" height="220" style="display:block;width:100%;max-width:520px;
+        margin:0 auto;border-radius:5px;background:#0a0e1a;border:1px solid var(--border2);
+        touch-action:none;"></canvas>
+    </div>
+    <div style="font-family:var(--fm);font-size:.62rem;color:var(--muted2);
+      text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">
+      Write the name of each labelled component:
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+      ${[1,2,3,4].map(n=>`
+        <div>
+          <label style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);
+            display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">
+            Component ${n}:
+          </label>
+          <input type="text" id="circ_${n}" placeholder="Name of component ${n}…"
+            style="background:var(--panel2);border:1.5px solid var(--border2);border-radius:4px;
+              padding:9px 12px;color:var(--ink);font-family:var(--fb);font-size:.88rem;
+              outline:none;width:100%;min-height:42px;"
+            onfocus="this.style.borderColor='var(--amber)'"
+            onblur="this.style.borderColor='var(--border2)'">
+        </div>`).join('')}
+    </div>
+    <button class="chk" style="border-color:var(--amber);" 
+      onclick="checkCircuit()">✓ Check Circuit Labels</button>
+    <div class="fb" id="fb_circuit"></div>`;
+  return div;
+}
+
+function buildWrittenBlock(prompt,n){
+  const div=document.createElement('div');div.className='q-block';
+  div.style.borderLeftColor='var(--green)';
+  div.innerHTML=`
+    <div class="q-header">
+      <div class="q-circle" style="background:var(--green);">${n}</div>
+      <div class="q-meta">Question ${n} · Written Response · 2 marks</div>
+    </div>
+    <div class="q-text">${prompt}</div>
+    <textarea id="writtenAns" placeholder="Write your full answer here…"></textarea>
+    <div style="margin-top:5px;font-size:.72rem;color:var(--muted2);font-family:var(--fm);">
+      This answer is reviewed by Ahmad. Write in complete sentences.
+    </div>`;
+  return div;
+}
+
+function buildSubmitPanel(){
+  const div=document.createElement('div');div.className='submit-panel';
+  div.innerHTML=`
+    <div class="score-line" id="scoreDisp">—</div>
+    <div class="score-sub">Auto-scored MCQ out of 15</div>
+    <div class="progress-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <p class="prog-txt" id="progTxt">0 / 12 answered</p>
+    <button class="submit-btn" onclick="doSubmit(false)">📤 Submit Exam</button>
+    <div class="submit-ok" id="submitOk">✓ Exam submitted successfully!</div>
+    <div class="answer-review" id="answerReview"></div>`;
+  return div;
+}
+
+// ── MCQ ENGINE ───────────────────────────────────────────────
+function pickOpt(key,val,btn){
+  answers[key]=val;
+  btn.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+  updateProg();
+}
+
+function checkQ(key,ca,ok,bad){
+  const fb=document.getElementById('fb_'+key);fb.style.display='block';
+  const sel=answers[key];
+  if(!sel){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  const letters=['A','B','C','D'];
+  document.getElementById('opts_'+key)?.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.remove('sel');
+    if(letters[i]===ca)o.classList.add('ok');
+    else if(letters[i]===sel)o.classList.add('err');
+  });
+  if(sel===ca){fb.className='fb ok';fb.textContent=ok;answers[key+'_ok']=true;}
+  else{fb.className='fb err';fb.textContent=bad;}
+  updateProg();
+}
+
+// ── CIRCUIT DIAGRAM ──────────────────────────────────────────
+// Draw a clear, labelled circuit on canvas after DOM is ready
+// Layout varies by version — components in different positions
+function drawCircuit(){
+  const cv=document.getElementById('cvCircuit');if(!cv)return;
+  cv.width=Math.min(cv.offsetParent?.clientWidth||520,520);
+  const W=cv.width,H=220;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,0,W,H);
+  // Dot grid
+  ctx.fillStyle='rgba(96,160,255,.07)';
+  for(let x=16;x<W;x+=24)for(let y=14;y<H;y+=24){
+    ctx.beginPath();ctx.arc(x,y,1.2,0,Math.PI*2);ctx.fill();}
+
+  const V=VERSIONS[currentVersion];
+  const layout=V.circuit.layout;
+  // All layouts share same rectangular circuit path
+  // What changes: which component is at which position (1=top-centre, 2=right, 3=bottom-centre, 4=left)
+  // Positions: top-centre, right-mid, bottom-centre, left-mid
+  const mx=40,my=24;
+  const rx=W-mx,ry=H-my;
+  const cx=W/2,cy=H/2;
+
+  // Wires (blue)
+  ctx.strokeStyle='rgba(96,165,250,.65)';ctx.lineWidth=2.5;ctx.lineCap='round';
+  // Top wire segments (avoid component at top)
+  line(ctx,mx,my,cx-32,my);
+  line(ctx,cx+32,my,rx,my);
+  // Right wire segments
+  line(ctx,rx,my,rx,cy-24);
+  line(ctx,rx,cy+24,rx,ry);
+  // Bottom wire segments
+  line(ctx,mx,ry,cx-32,ry);
+  line(ctx,cx+32,ry,rx,ry);
+  // Left wire segments
+  line(ctx,mx,my,mx,cy-24);
+  line(ctx,mx,cy+24,mx,ry);
+
+  // Layout determines which component goes where
+  // pos1=top, pos2=right, pos3=bottom, pos4=left
+  const layouts={
+    A:{1:'battery',2:'wire',3:'switch',4:'lamp'},
+    B:{1:'lamp',  2:'wire',3:'battery',4:'switch'},
+    C:{1:'switch',2:'wire',3:'lamp',  4:'battery'},
+    D:{1:'wire',  2:'battery',3:'lamp',4:'switch'},
+    E:{1:'battery',2:'wire',3:'switch',4:'lamp'},
+    F:{1:'lamp',  2:'switch',3:'wire',4:'battery'},
+  };
+  const pos=layouts[layout]||layouts.A;
+  // Positions on canvas
+  const positions={
+    top:{x:cx,y:my},
+    right:{x:rx,y:cy},
+    bottom:{x:cx,y:ry},
+    left:{x:mx,y:cy},
+  };
+  const posMap=['top','right','bottom','left'];
+  // Map pos1→top, pos2→right, pos3→bottom, pos4→left
+  const compAt={};
+  compAt[posMap[0]]=pos[1];
+  compAt[posMap[1]]=pos[2];
+  compAt[posMap[2]]=pos[3];
+  compAt[posMap[3]]=pos[4];
+
+  // Draw each component and its number label
+  Object.entries(compAt).forEach(([posName,comp],idx)=>{
+    const p=positions[posName];
+    const horiz=(posName==='top'||posName==='bottom');
+    drawComponent(ctx,comp,p.x,p.y,horiz);
+    // Number label (yellow circle)
+    const ox=posName==='right'?18:posName==='left'?-18:0;
+    const oy=posName==='top'?-20:posName==='bottom'?20:0;
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath();ctx.arc(p.x+ox,p.y+oy,10,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#000';ctx.font='bold 10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(idx+1,p.x+ox,p.y+oy+4);
+  });
+}
+
+function drawComponent(ctx,type,x,y,horiz){
+  ctx.save();
+  if(!horiz){ctx.translate(x,y);ctx.rotate(Math.PI/2);ctx.translate(-x,-y);}
+  switch(type){
+    case'lamp':
+      ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.fillStyle='rgba(251,191,36,.15)';
+      ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x-9,y-9);ctx.lineTo(x+9,y+9);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+9,y-9);ctx.lineTo(x-9,y+9);ctx.stroke();
+      break;
+    case'battery':
+      ctx.strokeStyle='#34d399';ctx.lineWidth=2.5;ctx.lineCap='square';
+      [{w:22,o:-14},{w:12,o:-5},{w:22,o:4},{w:12,o:13}].forEach(({w,o})=>{
+        ctx.beginPath();ctx.moveTo(x-w/2,y+o);ctx.lineTo(x+w/2,y+o);ctx.stroke();});
+      ctx.fillStyle='#34d399';ctx.font='bold 8px DM Mono';ctx.textAlign='center';
+      ctx.fillText('+',x+16,y-13);ctx.fillText('−',x+16,y-3);
+      break;
+    case'switch':
+      ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(x-18,y);ctx.lineTo(x-6,y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+6,y);ctx.lineTo(x+18,y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x-6,y);ctx.lineTo(x+4,y-13);ctx.stroke();
+      ctx.fillStyle='#a78bfa';
+      [[x-6,y],[x+6,y]].forEach(([px,py])=>{ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);ctx.fill();});
+      break;
+    case'wire':
+      ctx.strokeStyle='rgba(96,165,250,.9)';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(x-20,y);ctx.lineTo(x+20,y);ctx.stroke();
+      ctx.fillStyle='rgba(96,165,250,.7)';
+      [[x-20,y],[x+20,y]].forEach(([px,py])=>{ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill();});
+      break;
+  }
+  ctx.restore();
+}
+
+function line(ctx,x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+
+function checkCircuit(){
+  const V=VERSIONS[currentVersion];
+  const correct=V.circuit.correct;
+  const fb=document.getElementById('fb_circuit');fb.style.display='block';
+  let score=0;const errors=[];
+  [1,2,3,4].forEach(n=>{
+    const inp=document.getElementById('circ_'+n);
+    const val=(inp?.value||'').trim().toLowerCase();
+    const ca=correct[String(n)].toLowerCase();
+    // Accept partial match (e.g. 'lamp' matches 'lamp' in 'Battery (dry cell)')
+    const mainWord=ca.replace(/\(.*\)/,'').trim();
+    const ok=val.includes(mainWord.split(' ')[0])||
+              mainWord.split(' ').some(w=>w.length>2&&val.includes(w));
+    if(ok){score++;inp&&(inp.style.borderColor='var(--green)');}
+    else{inp&&(inp.style.borderColor='var(--red)');errors.push(`${n}: should be "${correct[String(n)]}"`);}
+  });
+  answers.circuit_score=score;
+  if(score===4){
+    fb.className='fb ok';
+    fb.textContent='✓ All 4 correct! You can read a circuit diagram perfectly.';
+    answers.circuit_ok=true;
+  } else {
+    fb.className='fb err';
+    fb.textContent=`${score}/4 correct. ${errors.join(' · ')}`;
+  }
+  updateProg();
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────
+function updateProg(){
+  const mcqKeys=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'];
+  const answered=mcqKeys.filter(k=>answers[k]).length
+    +(answers.circuit_score!==undefined?1:0)
+    +(document.getElementById('writtenAns')?.value.length>5?1:0);
+  const total=12;
+  const mcqScore=mcqKeys.filter(k=>answers[k+'_ok']).length;
+  const circScore=answers.circuit_score||0;
+  const totalScore=mcqScore+circScore; // written = manual
+  const pct=Math.round(answered/total*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=answered+' / '+total+' answered';
+  document.getElementById('scoreDisp').textContent=totalScore+' / '+(mcqKeys.length+4)+' (auto-scored)';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+async function doSubmit(auto=false){
+  clearInterval(timerInterval);
+  const btn=document.querySelector('.submit-btn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Submitting…';}
+  const V=VERSIONS[currentVersion];
+  const mcqKeys=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'];
+  const mcqScore=mcqKeys.filter(k=>answers[k+'_ok']).length;
+  const circScore=answers.circuit_score||0;
+  const timeUsed=Math.floor((25*60-secondsLeft)/60)+'m '+((25*60-secondsLeft)%60)+'s';
+  const circAnswers=[1,2,3,4].map(n=>{
+    const val=document.getElementById('circ_'+n)?.value||'—';
+    const ca=V.circuit.correct[String(n)];
+    return `${n}: "${val}" (correct: "${ca}")`;
+  }).join(' | ');
+  const payload={
+    sheet:'Electricity_Exam_G7',
+    name:currentName,class:'7D',version:currentVersion,
+    time_used:timeUsed,auto_submit:auto?'Yes':'No',
+    q1:answers.q1||'—',q1_ok:answers.q1_ok?'✓':'✗',
+    q2:answers.q2||'—',q2_ok:answers.q2_ok?'✓':'✗',
+    q3:answers.q3||'—',q3_ok:answers.q3_ok?'✓':'✗',
+    q4:answers.q4||'—',q4_ok:answers.q4_ok?'✓':'✗',
+    q5:answers.q5||'—',q5_ok:answers.q5_ok?'✓':'✗',
+    q6:answers.q6||'—',q6_ok:answers.q6_ok?'✓':'✗',
+    q7:answers.q7||'—',q7_ok:answers.q7_ok?'✓':'✗',
+    q8:answers.q8||'—',q8_ok:answers.q8_ok?'✓':'✗',
+    q9:answers.q9||'—',q9_ok:answers.q9_ok?'✓':'✗',
+    q10:answers.q10||'—',q10_ok:answers.q10_ok?'✓':'✗',
+    circuit_answers:circAnswers,circuit_score:circScore+'/4',
+    written:document.getElementById('writtenAns')?.value||'—',
+    mcq_score:mcqScore+'/10',
+    total_auto:( mcqScore+circScore)+'/14'
+  };
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)});
+    document.getElementById('submitOk').style.display='block';
+    if(btn){btn.textContent='✓ Submitted';btn.style.background='var(--green)';}
+    showReview(payload,V);
+    toast('✓ Exam submitted to Ahmad\'s grade sheet');
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='📤 Submit Exam';}
+    toast('⚠ Connection error — try again');
+  }
+}
+
+function showReview(payload,V){
+  const rev=document.getElementById('answerReview');
+  rev.style.display='block';
+  const mcqKeys=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'];
+  const rows=mcqKeys.map(k=>`
+    <div class="review-row">
+      <span class="review-key">${k.toUpperCase()}</span>
+      <span class="review-val">${payload[k]} ${payload[k+'_ok']}</span>
+    </div>`).join('');
+  rev.innerHTML=`
+    <div class="review-title">📋 Your Answers — ${currentName} · ${VERSIONS[currentVersion].label}</div>
+    ${rows}
+    <div class="review-row">
+      <span class="review-key">Circuit</span>
+      <span class="review-val">${payload.circuit_score}</span>
+    </div>
+    <div class="review-row">
+      <span class="review-key">Written</span>
+      <span class="review-val" style="font-size:.72rem;">${(payload.written||'').slice(0,80)}${payload.written?.length>80?'…':''}</span>
+    </div>
+    <div class="review-row" style="margin-top:4px;padding-top:8px;border-top:1px solid rgba(255,255,255,.15);">
+      <span class="review-key">Auto Score</span>
+      <span class="review-val" style="color:#fbbf24;font-size:1rem;">${payload.total_auto}</span>
+    </div>`;
+  rev.scrollIntoView({behavior:'smooth'});
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ── DELAYED INIT (after DOM built by startExam) ───────────────
+// drawCircuit is called after buildExam injects the canvas
+const origStart=startExam;
+// Override startExam to also draw circuit after render
+(function(){
+  const _orig=startExam;
+  window.startExam=function(){
+    _orig();
+    // Canvas is in DOM after buildExam() runs synchronously
+    requestAnimationFrame(()=>{
+      drawCircuit();
+      window.addEventListener('resize',drawCircuit,{passive:true});
+    });
+  };
+})();
+</script>
+</body>
+</html>
