@@ -184,6 +184,33 @@ textarea{resize:vertical;min-height:90px;}
   font-family:var(--fm);font-size:.72rem;z-index:999;opacity:0;
   transition:opacity .3s;pointer-events:none;border:1px solid var(--border2);}
 #toast.show{opacity:1;}
+
+/* ── PHOTON QUEST GAME ───────────────────────────────────────────── */
+.pq-wrap{position:relative;background:#000;border-radius:10px;overflow:hidden;
+  box-shadow:0 0 60px rgba(240,168,48,.15),0 0 120px rgba(0,0,0,.8);}
+.pq-canvas{display:block;width:100%;image-rendering:pixelated;cursor:crosshair;
+  border-radius:10px;}
+.pq-hud{position:absolute;top:0;left:0;right:0;padding:8px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(rgba(0,0,0,.6),transparent);pointer-events:none;}
+.pq-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.pq-btn{padding:9px 18px;border-radius:4px;font-family:var(--fm);font-weight:700;
+  font-size:.78rem;cursor:pointer;border:none;transition:all .2s;min-height:40px;letter-spacing:.5px;}
+.pq-btn-gold{background:var(--gold);color:#111;}
+.pq-btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.pq-btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.pq-science-log{background:var(--panel);border:1px solid var(--border2);border-radius:6px;
+  padding:14px;margin-top:14px;min-height:60px;}
+.pq-science-entry{display:flex;gap:10px;align-items:flex-start;padding:6px 0;
+  border-bottom:1px solid var(--border);font-size:.8rem;color:var(--muted);line-height:1.6;}
+.pq-science-entry:last-child{border-bottom:none;}
+.pq-sci-icon{font-size:1rem;flex-shrink:0;margin-top:2px;}
+.pq-level-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.pq-badge{padding:4px 10px;border-radius:3px;font-family:var(--fm);font-size:.6rem;
+  text-transform:uppercase;letter-spacing:1px;border:1px solid var(--border);}
+.pq-badge.done{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.pq-badge.active{background:var(--goldD);border-color:var(--gold);color:var(--gold);}
+.pq-badge.locked{color:var(--muted2);}
 </style>
 </head>
 <body>
@@ -197,6 +224,7 @@ textarea{resize:vertical;min-height:90px;}
   </div>
   <nav class="sb-nav">
     <button class="sn" onclick="goTo('hero')">☀ The Light Mystery <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('photonquest')">⚡ Photon Quest <span class="badge">GAME</span></button>
     <button class="sn" onclick="goTo('opacity')">🔬 Opacity Sorter <span class="badge">E2</span></button>
     <button class="sn" onclick="goTo('raytracer')">〰 Ray Tracer <span class="badge">E3</span></button>
     <button class="sn" onclick="goTo('shadow')">🌑 Shadow Builder <span class="badge">E3</span></button>
@@ -246,6 +274,74 @@ textarea{resize:vertical;min-height:90px;}
   <canvas id="cvHero" style="position:absolute;right:0;top:0;width:50%;height:100%;
     opacity:.35;pointer-events:none;z-index:1;"></canvas>
 </section>
+
+<!-- ══ PHOTON QUEST GAME ══ -->
+<section id="photonquest" style="background:var(--bg2);padding:68px 40px;">
+  <div class="e-tag elaborate" style="background:rgba(240,168,48,.15);color:var(--gold);border-color:rgba(240,168,48,.4);">
+    ⚡ Photon Quest · Interactive Game
+  </div>
+  <h2 class="sec-title" style="color:var(--warm);">Photon Quest: Cave of Shadows</h2>
+  <p class="sec-desc">
+    You are a photon trapped inside an ancient cave. Guide light beams to activate crystals
+    by placing mirrors — but the physics engine enforces one unbreakable rule:
+    <strong style="color:var(--gold);">light ALWAYS travels in perfectly straight lines.</strong>
+    Five levels, five physics proofs. Every win earns a science fact.
+  </p>
+
+  <!-- Level badges -->
+  <div style="margin-bottom:18px;">
+    <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Progress</div>
+    <div class="pq-level-badges" id="pqLevelBadges">
+      <span class="pq-badge active" id="pqBadge0">L1: The Awakening</span>
+      <span class="pq-badge locked" id="pqBadge1">L2: Shadow Proof</span>
+      <span class="pq-badge locked" id="pqBadge2">L3: Crystal Maze</span>
+      <span class="pq-badge locked" id="pqBadge3">L4: Eclipse Chamber</span>
+      <span class="pq-badge locked" id="pqBadge4">L5: Ancient Pinhole</span>
+    </div>
+  </div>
+
+  <!-- Game canvas wrapper -->
+  <div class="pq-wrap" style="max-width:768px;margin:0 auto;">
+    <canvas class="pq-canvas" id="pqCanvas" height="512"></canvas>
+  </div>
+
+  <!-- Controls -->
+  <div style="max-width:768px;margin:12px auto 0;">
+    <div class="pq-btns">
+      <button class="pq-btn pq-btn-gold" onclick="pqNextLevel()" id="pqNextBtn" style="display:none;">→ Next Level</button>
+      <button class="pq-btn pq-btn-ghost" onclick="PQ.restartLevel()">↺ Restart Level</button>
+      <div style="flex:1;"></div>
+      <div style="font-family:var(--fm);font-size:.72rem;color:var(--gold);display:flex;align-items:center;gap:6px;">
+        Score: <span id="pqScore" style="font-size:.9rem;font-weight:700;">0</span>
+      </div>
+    </div>
+
+    <!-- How to play -->
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--gold);">
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">How to Play</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.8rem;color:var(--muted);line-height:1.7;">
+        <div>☀ = Photon source (beam starts here)<br>💎 = Crystal target (must be lit)<br>/ or \ = Mirror you place</div>
+        <div>Click empty cell → place a mirror<br>Click mirror → toggle / ↔ \<br>Click mirror twice → remove it</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:.7rem;color:var(--amber);margin-top:8px;">
+        ⚡ Physics rule: rays ONLY travel in straight lines. You cannot curve light — only redirect it with mirrors.
+      </div>
+    </div>
+
+    <!-- Science log — fills as levels are won -->
+    <div style="margin-top:14px;">
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">
+        Science Discoveries Unlocked <span id="pqDiscoverCount" style="color:var(--gold);">0/5</span>
+      </div>
+      <div class="pq-science-log" id="pqScienceLog">
+        <div style="font-size:.78rem;color:var(--muted2);text-align:center;padding:10px;">
+          Complete a level to unlock a physics discovery…
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <!-- ══ E2: OPACITY SORTER ══ -->
 <section id="opacity">
@@ -1348,6 +1444,7 @@ function buildExamFeedback(answer,turn){
 // ── PROGRESS ──────────────────────────────────────────────────────────────
 function updateProg(){
   const keys={
+    photonGame:'⚡ Photon Quest (3+ levels)',
     sorting:'Opacity Sorter',
     obs:'Observation Q',
     ray1:'Ray Tracer Q',
@@ -1414,6 +1511,897 @@ async function doSubmit(){
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+
+// ═══════════════════════════════════════════════════════════════════
+// PHOTON QUEST GAME — embedded engine + bridge
+// ═══════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════
+// PHOTON QUEST — The Cave of Shadows
+// A physics-accurate light puzzle game proving rectilinear propagation
+// All ray casting uses actual straight-line geometry (no curves allowed)
+// ═══════════════════════════════════════════════════════════════════
+
+'use strict';
+
+const PQ = (() => {
+
+// ── CONSTANTS ──────────────────────────────────────────────────────
+const CELL = 64; // grid cell size px
+const COLS = 12, ROWS = 8;
+const W = COLS * CELL, H = ROWS * CELL;
+const RAY_SPEED = 6; // px per frame
+const MAX_BOUNCES = 8;
+const SCIENCE_FACTS = [
+  { trigger: 'wall', text: '✓ RECTILINEAR PROPAGATION: Light cannot bend around walls — it only travels in straight lines!' },
+  { trigger: 'mirror', text: '✓ REFLECTION LAW: Angle of incidence = angle of reflection. Light still travels straight between reflections.' },
+  { trigger: 'shadow', text: '✓ SHADOWS form because light travels straight — it cannot sneak around the opaque stone.' },
+  { trigger: 'crystal', text: '✓ REFRACTION HINT: Crystals bend light at their boundary — but each segment inside is still a straight ray.' },
+  { trigger: 'level2', text: '⚠ UMBRA vs PENUMBRA: A single photon (point source) makes ONE sharp shadow. Ready for multiple sources?' },
+  { trigger: 'level3', text: '⚡ ANCIENT WISDOM: Egyptians used straight light beams through holes to align the pyramids. Same principle!' },
+  { trigger: 'level4', text: '🌑 ECLIPSE PHYSICS: The Moon\'s umbra is exactly like this cave\'s dark zones — total shadow where NO straight ray reaches.' },
+  { trigger: 'level5', text: '📐 PINHOLE CAMERA: Each point of a scene sends straight rays through a tiny hole — creating an inverted image.' },
+  { trigger: 'complete', text: '🏆 PHOTON MASTER: You\'ve proven rectilinear propagation through every level. Light ALWAYS travels in straight lines!' }
+];
+
+// ── TILE TYPES ─────────────────────────────────────────────────────
+const T = {
+  EMPTY: 0, WALL: 1, SOURCE: 2, TARGET: 3,
+  MIRROR_NE: 4,  // / mirror (reflects NE↔SW)
+  MIRROR_NW: 5,  // \ mirror (reflects NW↔SE)
+  GLASS: 6,      // transparent — passes through
+  PRISM: 7,      // splits beam into 3
+  SHADOW_ZONE: 8, // pre-placed dark zone (students must explain why)
+  DOOR: 9,       // opens when target lit
+  PARTICLE: 10,  // floating dust particle (cosmetic)
+};
+
+// ── LEVELS ─────────────────────────────────────────────────────────
+// Each level has: grid, placeable mirrors, science challenge, story
+const LEVELS = [
+{
+  name: 'The Awakening',
+  story: 'A photon awakens in the ancient cave. Place the mirror to guide it to the crystal — but remember: light NEVER bends.',
+  science: 'Rectilinear Propagation: light travels ONLY in straight lines.',
+  grid: [
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,3,1],
+    [1,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+  ],
+  mirrors: 1,
+  hint: 'Place ONE mirror (/) to turn the beam 90° and reach the crystal.',
+  scienceFact: SCIENCE_FACTS[0],
+  sourceDir: {dx:1,dy:0}, // beam goes right
+},
+{
+  name: 'The Shadow Proof',
+  story: 'An ancient monolith blocks the path. The dark zone behind it is the UMBRA — no light ray can reach it in a straight line.',
+  science: 'Shadows form because light travels straight. The dark zone = umbra.',
+  grid: [
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,1,1,0,0,0,3,0,1],
+    [1,0,0,0,1,1,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+  ],
+  mirrors: 2,
+  hint: 'The monolith blocks straight paths. Use 2 mirrors to route around it — the beam still travels straight between mirrors.',
+  scienceFact: SCIENCE_FACTS[1],
+  sourceDir: {dx:1,dy:0},
+},
+{
+  name: 'The Crystal Maze',
+  story: 'Three crystals must be lit simultaneously. The ancients designed this maze knowing light travels in perfect straight lines.',
+  science: 'Multiple mirrors = multiple straight segments. Never curved.',
+  grid: [
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,1,0,0,0,0,0,3,1],
+    [1,0,0,0,1,0,0,0,0,0,0,1],
+    [1,0,0,0,1,0,0,1,0,0,0,1],
+    [1,0,3,0,0,0,0,1,0,0,0,1],
+    [1,0,0,0,0,0,0,1,0,3,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+  ],
+  mirrors: 4,
+  hint: 'Light a path to all 3 crystals. Each mirror segment is perfectly straight — that\'s the law.',
+  scienceFact: SCIENCE_FACTS[2],
+  sourceDir: {dx:1,dy:0},
+},
+{
+  name: 'The Eclipse Chamber',
+  story: 'An eclipse is happening outside! Inside the chamber, reproduce it: create a total shadow (umbra) zone where no light reaches.',
+  science: 'ECLIPSE: Moon\'s umbra = total shadow. Same as this cave!',
+  grid: [
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,1,0,0,0,0,3,1],
+    [1,0,0,0,0,1,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,2,0,0,0,0,0,0,0,0,3,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+  ],
+  mirrors: 3,
+  hint: 'TWO sources, TWO targets. Create the paths — notice the dark zone between. That\'s the umbra!',
+  scienceFact: SCIENCE_FACTS[3],
+  sourceDir: {dx:1,dy:0},
+},
+{
+  name: 'The Ancient Pinhole',
+  story: 'Final challenge: the ancient pinhole camera. Guide light through the tiny gap — it will create an inverted image on the far wall.',
+  science: 'PINHOLE CAMERA: straight rays cross at the hole → inverted image.',
+  grid: [
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,3,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],  // pinhole gap at col 6
+    [1,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,0,3,1],
+    [1,2,0,0,0,0,1,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+  ],
+  mirrors: 2,
+  hint: 'Both beams must pass through the SAME gap (pinhole) — then diverge to opposite targets. This is exactly how a pinhole camera works!',
+  scienceFact: SCIENCE_FACTS[4],
+  sourceDir: {dx:1,dy:0},
+},
+];
+
+// ── STATE ──────────────────────────────────────────────────────────
+let state = {
+  level: 0,
+  grid: null,
+  mirrors: [], // {col, row, type}
+  photons: [],
+  particles: [],
+  stars: [],
+  phase: 'intro', // intro|play|win|fail|complete
+  factShown: null,
+  score: 0,
+  totalMirrors: 0,
+  animT: 0,
+  camera: {shake:0},
+  dust: [],
+  torches: [],
+  crystalGlow: {},
+  sciencePanel: {visible:false, text:'', alpha:0},
+  completedLevels: new Set(),
+};
+
+// ── CANVAS & CTX ───────────────────────────────────────────────────
+let canvas, ctx, offscreen, offCtx;
+let animId;
+
+function init(canvasEl) {
+  canvas = canvasEl;
+  canvas.width = W; canvas.height = H;
+  // Offscreen for glow effects
+  offscreen = document.createElement('canvas');
+  offscreen.width = W; offscreen.height = H;
+  offCtx = offscreen.getContext('2d');
+
+  initLevel(0);
+  canvas.addEventListener('click', handleClick);
+  canvas.addEventListener('touchend', handleTouch, {passive:false});
+  canvas.addEventListener('mousemove', handleHover);
+  requestAnimationFrame(loop);
+}
+
+// ── LEVEL INIT ─────────────────────────────────────────────────────
+function initLevel(idx) {
+  if (idx >= LEVELS.length) { state.phase = 'complete'; return; }
+  const lv = LEVELS[idx];
+  state.level = idx;
+  state.grid = lv.grid.map(row => [...row]);
+  state.mirrors = [];
+  state.photons = [];
+  state.crystalGlow = {};
+  state.phase = 'intro';
+  state.sciencePanel = { visible:false, text:'', alpha:0 };
+  state.totalMirrors = lv.mirrors;
+
+  // Generate dust particles (atmosphere)
+  state.dust = [];
+  for (let i = 0; i < 40; i++) {
+    state.dust.push({
+      x: Math.random()*W, y: Math.random()*H,
+      r: 0.5+Math.random()*1.5,
+      alpha: 0.1+Math.random()*0.3,
+      vx: (Math.random()-0.5)*0.15,
+      vy: (Math.random()-0.5)*0.1,
+    });
+  }
+
+  // Generate torch positions (decorative fire)
+  state.torches = [];
+  for (let c = 1; c < COLS-1; c++) {
+    for (let r = 1; r < ROWS-1; r++) {
+      if (lv.grid[r][c] === T.WALL && Math.random() < 0.06) {
+        // Check adjacent empty cell
+        if ((r+1 < ROWS && lv.grid[r+1][c] === T.EMPTY) ||
+            (r-1 >= 0 && lv.grid[r-1][c] === T.EMPTY)) {
+          state.torches.push({col:c, row:r, phase: Math.random()*Math.PI*2});
+        }
+      }
+    }
+  }
+
+  // Show intro after 0.5s
+  setTimeout(() => { if (state.phase === 'intro') state.phase = 'play'; }, 1800);
+}
+
+// ── PHOTON CASTING ─────────────────────────────────────────────────
+function castAllRays() {
+  const lv = LEVELS[state.level];
+  const rays = [];
+  state.crystalGlow = {};
+
+  // Find all sources
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (state.grid[r][c] === T.SOURCE) {
+        // Determine source direction from level
+        const sources = findAllSources();
+        const srcIdx = sources.findIndex(s => s.r===r && s.c===c);
+        let dir = lv.sourceDir;
+        if (srcIdx === 1) dir = {dx:1, dy:0}; // second source also goes right (level 4 has 2)
+        const ray = traceRay(c*CELL+CELL/2, r*CELL+CELL/2, dir.dx, dir.dy, 0);
+        rays.push(...ray);
+      }
+    }
+  }
+  return rays;
+}
+
+function findAllSources() {
+  const s = [];
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (state.grid[r][c] === T.SOURCE) s.push({r,c});
+  return s;
+}
+
+function traceRay(startX, startY, dx, dy, bounces) {
+  if (bounces > MAX_BOUNCES) return [];
+  const segments = [];
+  let x = startX, y = startY;
+  const step = 2;
+  let prevX = x, prevY = y;
+  let maxSteps = (W+H)/step + 10;
+
+  while (maxSteps-- > 0) {
+    x += dx * step; y += dy * step;
+    const col = Math.floor(x / CELL);
+    const row = Math.floor(y / CELL);
+    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) {
+      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'edge'});
+      break;
+    }
+    const cell = getCellAt(col, row);
+    if (cell === T.WALL) {
+      segments.push({x1:prevX,y1:prevY,x2:x-dx*step,y2:y-dy*step,bounces,hit:'wall'});
+      break;
+    }
+    if (cell === T.MIRROR_NE) { // / mirror
+      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'mirror'});
+      const [ndx,ndy] = reflectNE(dx,dy);
+      const sub = traceRay(x,y,ndx,ndy,bounces+1);
+      segments.push(...sub);
+      break;
+    }
+    if (cell === T.MIRROR_NW) { // \ mirror
+      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'mirror'});
+      const [ndx,ndy] = reflectNW(dx,dy);
+      const sub = traceRay(x,y,ndx,ndy,bounces+1);
+      segments.push(...sub);
+      break;
+    }
+    if (cell === T.TARGET) {
+      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'target'});
+      state.crystalGlow[`${col},${row}`] = true;
+      break;
+    }
+  }
+  return segments;
+}
+
+function getCellAt(col, row) {
+  if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return T.WALL;
+  // Check placed mirrors first
+  const m = state.mirrors.find(m => m.col===col && m.row===row);
+  if (m) return m.type;
+  return state.grid[row][col];
+}
+
+function reflectNE(dx, dy) { return [-dy, -dx]; } // / mirror
+function reflectNW(dx, dy) { return [dy, dx]; }   // \ mirror
+
+// ── WIN CHECK ─────────────────────────────────────────────────────
+function checkWin() {
+  // Count all targets and lit targets
+  let targets = 0, lit = 0;
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (state.grid[r][c] === T.TARGET) {
+        targets++;
+        if (state.crystalGlow[`${c},${r}`]) lit++;
+      }
+  return targets > 0 && lit >= targets;
+}
+
+// ── INTERACTION ─────────────────────────────────────────────────────
+let hoverCell = null;
+let placingType = 4; // default NE mirror
+
+function handleHover(e) {
+  const {col,row} = eventToCell(e);
+  hoverCell = {col, row};
+}
+
+function handleTouch(e) {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  handlePlacement(touchToCell(t));
+}
+
+function handleClick(e) {
+  handlePlacement(eventToCell(e));
+}
+
+function handlePlacement({col, row}) {
+  if (state.phase !== 'play') return;
+  if (row <= 0 || row >= ROWS-1 || col <= 0 || col >= COLS-1) return;
+  const cell = state.grid[row][col];
+  if (cell !== T.EMPTY) return;
+
+  // Check if mirror already placed here
+  const existIdx = state.mirrors.findIndex(m => m.col===col && m.row===row);
+  if (existIdx >= 0) {
+    // Toggle between / and \ then remove
+    const m = state.mirrors[existIdx];
+    if (m.type === T.MIRROR_NE) { m.type = T.MIRROR_NW; }
+    else { state.mirrors.splice(existIdx, 1); }
+  } else {
+    // Place new mirror if under limit
+    const lv = LEVELS[state.level];
+    if (state.mirrors.length >= lv.mirrors) {
+      // Shake + message
+      state.camera.shake = 8;
+      showSciencePanel(`⚠ Only ${lv.mirrors} mirror${lv.mirrors>1?'s':''} allowed! Remove one first by clicking it.`);
+      return;
+    }
+    state.mirrors.push({col, row, type: T.MIRROR_NE});
+  }
+
+  // Recompute rays
+  castAllRays();
+
+  // Win check after placement
+  if (checkWin()) {
+    setTimeout(() => triggerWin(), 400);
+  }
+}
+
+function eventToCell(e) {
+  const r = canvas.getBoundingClientRect();
+  const scl = canvas.width / r.width;
+  const x = (e.clientX - r.left) * scl;
+  const y = (e.clientY - r.top) * scl;
+  return { col: Math.floor(x/CELL), row: Math.floor(y/CELL) };
+}
+function touchToCell(t) {
+  const r = canvas.getBoundingClientRect();
+  const scl = canvas.width / r.width;
+  const x = (t.clientX - r.left) * scl;
+  const y = (t.clientY - r.top) * scl;
+  return { col: Math.floor(x/CELL), row: Math.floor(y/CELL) };
+}
+
+function triggerWin() {
+  state.phase = 'win';
+  state.completedLevels.add(state.level);
+  state.score += 100 + (LEVELS[state.level].mirrors - state.mirrors.length) * 20;
+  state.camera.shake = 15;
+  const lv = LEVELS[state.level];
+  showSciencePanel(lv.scienceFact?.text || '✓ Level complete!');
+  // Dispatch event so the HTML can hear it
+  if (canvas.dispatchEvent) {
+    canvas.dispatchEvent(new CustomEvent('pq-win', {
+      detail: { level: state.level, score: state.score, fact: lv.scienceFact?.text }
+    }));
+  }
+}
+
+function nextLevel() {
+  if (state.level + 1 >= LEVELS.length) {
+    state.phase = 'complete';
+    canvas.dispatchEvent(new CustomEvent('pq-complete', { detail: { score: state.score } }));
+  } else {
+    initLevel(state.level + 1);
+  }
+}
+
+function restartLevel() { initLevel(state.level); }
+
+function showSciencePanel(text) {
+  state.sciencePanel = { visible:true, text, alpha:0 };
+}
+
+// ── DRAW ──────────────────────────────────────────────────────────
+function loop(ts) {
+  state.animT = ts / 1000;
+  update();
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+function update() {
+  // Camera shake decay
+  state.camera.shake *= 0.85;
+  // Science panel fade
+  if (state.sciencePanel.visible && state.sciencePanel.alpha < 1) {
+    state.sciencePanel.alpha = Math.min(1, state.sciencePanel.alpha + 0.04);
+  }
+  // Dust movement
+  state.dust.forEach(d => {
+    d.x += d.vx; d.y += d.vy;
+    if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+    if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+    d.alpha = 0.1 + 0.15*Math.sin(state.animT*0.7+d.x);
+  });
+}
+
+function draw() {
+  const sx = state.camera.shake > 0.5 ? (Math.random()-0.5)*state.camera.shake : 0;
+  const sy = state.camera.shake > 0.5 ? (Math.random()-0.5)*state.camera.shake : 0;
+  ctx.save();
+  ctx.translate(sx, sy);
+
+  drawBackground();
+  drawGrid();
+  drawDust();
+  drawRaySegments();
+  drawMirrors();
+  drawUI();
+  if (state.sciencePanel.visible) drawSciencePanel();
+  if (state.phase === 'win') drawWinOverlay();
+  if (state.phase === 'complete') drawCompleteOverlay();
+  if (state.phase === 'intro') drawIntroOverlay();
+
+  ctx.restore();
+}
+
+function drawBackground() {
+  // Deep cave atmosphere — layered
+  const bg = ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#0a0806');bg.addColorStop(1,'#130e07');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+  // Vignette
+  const vig = ctx.createRadialGradient(W/2,H/2,H*.2,W/2,H/2,H*.85);
+  vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,0.65)');
+  ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
+}
+
+function drawGrid() {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cell = state.grid[r][c];
+      const x = c*CELL, y = r*CELL;
+      drawCell(ctx, cell, x, y, c, r);
+    }
+  }
+}
+
+function drawCell(ctx, cell, x, y, col, row) {
+  const t = state.animT;
+  const key = `${col},${row}`;
+  const glowing = state.crystalGlow[key];
+
+  if (cell === T.WALL) {
+    // Stone texture
+    const stoneGrad = ctx.createLinearGradient(x,y,x+CELL,y+CELL);
+    stoneGrad.addColorStop(0,'#2a2218');stoneGrad.addColorStop(1,'#1a150e');
+    ctx.fillStyle=stoneGrad;ctx.fillRect(x,y,CELL,CELL);
+    // Stone crags
+    ctx.fillStyle='rgba(0,0,0,.35)';
+    ctx.fillRect(x,y,CELL,2);ctx.fillRect(x,y,2,CELL); // top/left edge
+    ctx.fillStyle='rgba(255,220,100,.06)';
+    ctx.fillRect(x+CELL-2,y,2,CELL);ctx.fillRect(x,y+CELL-2,CELL,2);
+    // Stone grain dots
+    ctx.fillStyle='rgba(255,200,80,.03)';
+    for(let i=0;i<3;i++){
+      ctx.fillRect(x+10+i*18,y+8+i*12,4,2);
+      ctx.fillRect(x+5+i*20,y+30+i*8,3,3);
+    }
+  } else if (cell === T.EMPTY) {
+    // Cave floor
+    ctx.fillStyle='#0d0a06';ctx.fillRect(x,y,CELL,CELL);
+    // subtle floor texture
+    if ((col+row)%3===0) {ctx.fillStyle='rgba(100,70,20,.04)';ctx.fillRect(x+4,y+4,CELL-8,CELL-8);}
+    // Hover highlight
+    if (hoverCell && hoverCell.col===col && hoverCell.row===row) {
+      ctx.fillStyle='rgba(240,168,48,.08)';ctx.fillRect(x,y,CELL,CELL);
+      // Ghost mirror preview
+      ctx.save();ctx.globalAlpha=0.35;
+      drawMirrorSymbol(ctx, x+CELL/2, y+CELL/2, T.MIRROR_NE, CELL);
+      ctx.restore();
+    }
+  } else if (cell === T.SOURCE) {
+    // Source: glowing torch / photon emitter
+    ctx.fillStyle='#0d0a06';ctx.fillRect(x,y,CELL,CELL);
+    // Outer glow
+    const pulse = 0.7+0.3*Math.sin(t*4);
+    const sg = ctx.createRadialGradient(x+CELL/2,y+CELL/2,0,x+CELL/2,y+CELL/2,CELL*0.8*pulse);
+    sg.addColorStop(0,'rgba(255,240,120,.6)');sg.addColorStop(1,'rgba(240,120,0,0)');
+    ctx.fillStyle=sg;ctx.fillRect(x-CELL/2,y-CELL/2,CELL*2,CELL*2);
+    // Core
+    ctx.beginPath();ctx.arc(x+CELL/2,y+CELL/2,10,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,250,150,${pulse})`;ctx.fill();
+    ctx.beginPath();ctx.arc(x+CELL/2,y+CELL/2,5,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();
+    // Source symbol
+    ctx.fillStyle='rgba(255,240,100,.8)';ctx.font=`${CELL*.35}px serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('☀',x+CELL/2,y+CELL/2);
+  } else if (cell === T.TARGET) {
+    // Crystal target
+    ctx.fillStyle='#0d0a06';ctx.fillRect(x,y,CELL,CELL);
+    const cx=x+CELL/2, cy=y+CELL/2;
+    if (glowing) {
+      // Glowing crystal
+      const glow = 0.6+0.4*Math.sin(t*6);
+      const cg = ctx.createRadialGradient(cx,cy,0,cx,cy,CELL*0.9);
+      cg.addColorStop(0,`rgba(120,220,255,${glow})`);cg.addColorStop(0.4,`rgba(80,180,255,${glow*0.5})`);
+      cg.addColorStop(1,'rgba(0,100,200,0)');
+      ctx.fillStyle=cg;ctx.fillRect(x-CELL/2,y-CELL/2,CELL*2,CELL*2);
+      // Crystal shape
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(t*0.5);
+      drawCrystalShape(ctx, 0, 0, 18, 'rgba(180,240,255,0.95)');
+      ctx.restore();
+      // Sparkles
+      for(let i=0;i<4;i++){
+        const a=t*3+i*Math.PI/2;
+        const sr=16+8*Math.sin(t*5+i);
+        ctx.beginPath();ctx.arc(cx+Math.cos(a)*sr,cy+Math.sin(a)*sr,2,0,Math.PI*2);
+        ctx.fillStyle='rgba(200,240,255,.8)';ctx.fill();
+      }
+    } else {
+      // Dim crystal
+      ctx.save();ctx.translate(cx,cy);
+      drawCrystalShape(ctx, 0, 0, 14, 'rgba(60,100,140,0.6)');
+      ctx.restore();
+    }
+  }
+}
+
+function drawCrystalShape(ctx, x, y, r, color) {
+  ctx.beginPath();
+  ctx.moveTo(x, y-r);
+  ctx.lineTo(x+r*0.6, y-r*0.3);
+  ctx.lineTo(x+r*0.6, y+r*0.5);
+  ctx.lineTo(x, y+r);
+  ctx.lineTo(x-r*0.6, y+r*0.5);
+  ctx.lineTo(x-r*0.6, y-r*0.3);
+  ctx.closePath();
+  ctx.fillStyle=color;ctx.fill();
+  ctx.strokeStyle='rgba(200,240,255,0.4)';ctx.lineWidth=1;ctx.stroke();
+}
+
+function drawMirrorSymbol(ctx, cx, cy, type, size) {
+  const s = size * 0.38;
+  ctx.strokeStyle='rgba(200,180,100,0.9)';ctx.lineWidth=2.5;ctx.lineCap='round';
+  ctx.beginPath();
+  if (type === T.MIRROR_NE) { ctx.moveTo(cx-s,cy+s);ctx.lineTo(cx+s,cy-s); }
+  else { ctx.moveTo(cx-s,cy-s);ctx.lineTo(cx+s,cy+s); }
+  ctx.stroke();
+  // Shine
+  ctx.strokeStyle='rgba(255,240,150,0.4)';ctx.lineWidth=1;
+  ctx.beginPath();
+  if (type === T.MIRROR_NE) { ctx.moveTo(cx-s+4,cy+s-4);ctx.lineTo(cx+s-4,cy-s+4); }
+  else { ctx.moveTo(cx-s+4,cy-s+4);ctx.lineTo(cx+s-4,cy+s-4); }
+  ctx.stroke();
+}
+
+function drawMirrors() {
+  state.mirrors.forEach(m => {
+    const x = m.col*CELL, y = m.row*CELL;
+    const cx = x+CELL/2, cy = y+CELL/2;
+    // Mirror backing
+    ctx.fillStyle='rgba(30,22,10,0.8)';
+    ctx.fillRect(x+4,y+4,CELL-8,CELL-8);
+    drawMirrorSymbol(ctx, cx, cy, m.type, CELL);
+    // Label
+    ctx.fillStyle='rgba(200,180,100,0.5)';ctx.font='8px Courier Prime';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(m.type===T.MIRROR_NE?'/':'\\',cx,cy+CELL*.28);
+    ctx.fillText('tap to toggle',cx,cy+CELL*.38);
+  });
+}
+
+function drawRaySegments() {
+  const segs = castAllRays();
+  if (segs.length === 0) return;
+
+  // Draw on offscreen for glow
+  offCtx.clearRect(0,0,W,H);
+  segs.forEach(seg => {
+    const t = state.animT;
+    // Animated ray dash
+    const dash = 8, gap = 4;
+    offCtx.save();
+    offCtx.beginPath();
+    offCtx.moveTo(seg.x1,seg.y1);offCtx.lineTo(seg.x2,seg.y2);
+    // Main beam
+    offCtx.strokeStyle='rgba(255,250,160,0.92)';
+    offCtx.lineWidth=3;
+    offCtx.setLineDash([dash,gap]);
+    offCtx.lineDashOffset=-t*80%( dash+gap);
+    offCtx.stroke();
+    // Core white
+    offCtx.beginPath();offCtx.moveTo(seg.x1,seg.y1);offCtx.lineTo(seg.x2,seg.y2);
+    offCtx.strokeStyle='rgba(255,255,255,0.7)';offCtx.lineWidth=1.5;offCtx.setLineDash([]);
+    offCtx.stroke();
+    offCtx.restore();
+  });
+
+  // Composite with glow
+  ctx.save();
+  ctx.filter='blur(4px)';ctx.globalAlpha=0.7;
+  ctx.drawImage(offscreen,0,0);
+  ctx.filter='none';ctx.globalAlpha=1;
+  ctx.drawImage(offscreen,0,0); // sharp on top
+  ctx.restore();
+
+  // Hit sparks at endpoints
+  segs.forEach(seg => {
+    if (seg.hit === 'wall' || seg.hit === 'target') {
+      drawSpark(seg.x2, seg.y2, seg.hit === 'target');
+    }
+    if (seg.hit === 'mirror') {
+      drawMirrorHit(seg.x2, seg.y2);
+    }
+  });
+}
+
+function drawSpark(x,y,isTarget) {
+  const t=state.animT;
+  const col = isTarget ? 'rgba(120,220,255,' : 'rgba(255,180,60,';
+  const n = isTarget ? 6 : 4;
+  for(let i=0;i<n;i++){
+    const a=t*8+i*(Math.PI*2/n);
+    const r=4+3*Math.sin(t*12+i);
+    ctx.beginPath();ctx.arc(x+Math.cos(a)*r,y+Math.sin(a)*r,1.5,0,Math.PI*2);
+    ctx.fillStyle=col+(0.5+0.4*Math.sin(t*10+i))+')';ctx.fill();
+  }
+}
+
+function drawMirrorHit(x,y){
+  const t=state.animT;
+  const g=ctx.createRadialGradient(x,y,0,x,y,12);
+  g.addColorStop(0,`rgba(255,240,100,${0.6+0.4*Math.sin(t*15)})`);
+  g.addColorStop(1,'rgba(255,180,0,0)');
+  ctx.fillStyle=g;ctx.fillRect(x-12,y-12,24,24);
+}
+
+function drawDust() {
+  state.dust.forEach(d => {
+    ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(200,160,80,${d.alpha})`;ctx.fill();
+  });
+}
+
+function drawUI() {
+  const lv = LEVELS[state.level];
+  // Top bar
+  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,W,28);
+  ctx.fillStyle='rgba(240,168,48,0.9)';ctx.font='bold 11px Courier Prime';
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(`Level ${state.level+1}/5: ${lv.name}`, 8, 14);
+  // Mirror count
+  const used=state.mirrors.length, total=lv.mirrors;
+  ctx.fillStyle= used>=total ? 'rgba(255,80,80,.9)' : 'rgba(120,220,120,.9)';
+  ctx.textAlign='right';
+  ctx.fillText(`Mirrors: ${used}/${total}`, W-8, 14);
+  // Science badge
+  ctx.fillStyle='rgba(240,168,48,0.7)';ctx.font='9px Courier Prime';ctx.textAlign='center';
+  ctx.fillText('Click empty cells to place/toggle mirrors', W/2, 14);
+  // Score
+  ctx.fillStyle='rgba(240,168,48,0.6)';ctx.font='9px Courier Prime';ctx.textAlign='left';
+  ctx.fillText(`Score: ${state.score}`, 8, H-8);
+}
+
+function drawSciencePanel() {
+  const p = state.sciencePanel;
+  if (p.alpha <= 0) return;
+  ctx.save();ctx.globalAlpha = Math.min(p.alpha, 0.92);
+  // Panel
+  const pw=W-40,ph=50,px=20,py=H-80;
+  ctx.fillStyle='rgba(10,8,4,0.9)';
+  ctx.strokeStyle='rgba(240,168,48,0.7)';ctx.lineWidth=1.5;
+  roundRect(ctx,px,py,pw,ph,8);ctx.fill();ctx.stroke();
+  // Text
+  ctx.globalAlpha=p.alpha;
+  ctx.fillStyle='#f0d870';ctx.font='bold 10px Courier Prime';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  // Wrap text
+  wrapText(ctx, p.text, px+pw/2, py+ph/2, pw-20, 13);
+  ctx.restore();
+}
+
+function drawIntroOverlay() {
+  const lv = LEVELS[state.level];
+  ctx.save();ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#f0a830';ctx.font='bold 16px Courier Prime';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(`Level ${state.level+1}: ${lv.name}`,W/2,H/2-40);
+  ctx.fillStyle='rgba(240,220,140,0.85)';ctx.font='10px Courier Prime';
+  wrapText(ctx, lv.story, W/2, H/2, W-60, 16);
+  ctx.fillStyle='rgba(120,220,120,0.8)';ctx.font='9px Courier Prime';
+  wrapText(ctx, `💡 ${lv.hint}`, W/2, H/2+52, W-60, 13);
+  ctx.restore();
+}
+
+function drawWinOverlay() {
+  ctx.save();
+  // Pulsing glow
+  const p = 0.5+0.5*Math.sin(state.animT*4);
+  ctx.fillStyle=`rgba(0,20,60,${0.7+p*0.15})`;ctx.fillRect(0,0,W,H);
+  // Firework particles
+  for(let i=0;i<12;i++){
+    const a=(i/12)*Math.PI*2+state.animT*2;
+    const r=40+20*Math.sin(state.animT*8+i);
+    ctx.beginPath();ctx.arc(W/2+Math.cos(a)*r,H/2-20+Math.sin(a)*r,3,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${(i*30+state.animT*100)%360},100%,70%,${0.6+0.4*Math.sin(state.animT*6+i)})`;ctx.fill();
+  }
+  ctx.fillStyle='#f0e878';ctx.font='bold 18px Courier Prime';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('⚡ PHOTON DELIVERED!',W/2,H/2-30);
+  ctx.fillStyle='rgba(120,220,255,0.9)';ctx.font='10px Courier Prime';
+  ctx.fillText(LEVELS[state.level].science,W/2,H/2-10);
+  ctx.fillStyle='rgba(200,240,200,0.8)';ctx.font='9px Courier Prime';
+  ctx.fillText('Score: +' + (100+(LEVELS[state.level].mirrors-state.mirrors.length)*20),W/2,H/2+8);
+  // Next button area
+  ctx.fillStyle='rgba(240,168,48,0.15)';roundRect(ctx,W/2-60,H/2+22,120,22,4);ctx.fill();
+  ctx.strokeStyle='rgba(240,168,48,0.8)';ctx.lineWidth=1;
+  roundRect(ctx,W/2-60,H/2+22,120,22,4);ctx.stroke();
+  ctx.fillStyle='#f0a830';ctx.font='bold 10px Courier Prime';
+  ctx.fillText('→ NEXT LEVEL',W/2,H/2+33);
+  ctx.restore();
+}
+
+function drawCompleteOverlay() {
+  ctx.save();ctx.fillStyle='rgba(0,10,30,0.88)';ctx.fillRect(0,0,W,H);
+  // Stars
+  for(let i=0;i<20;i++){
+    const a=i*(Math.PI*2/20)+state.animT*.3;
+    ctx.beginPath();ctx.arc(W/2+Math.cos(a)*(40+20*Math.sin(state.animT+i)),
+      H/2-20+Math.sin(a)*(30+15*Math.cos(state.animT*1.3+i)),2,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${(i*18+state.animT*50)%360},100%,75%,.8)`;ctx.fill();
+  }
+  ctx.fillStyle='#fff8cc';ctx.font='bold 20px Courier Prime';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('🏆 PHOTON MASTER!',W/2,H/2-50);
+  ctx.fillStyle='rgba(120,220,255,.9)';ctx.font='11px Courier Prime';
+  ctx.fillText('All 5 levels complete!',W/2,H/2-28);
+  ctx.fillStyle='rgba(240,230,140,.8)';ctx.font='10px Courier Prime';
+  ctx.fillText(`Final Score: ${state.score}`,W/2,H/2-10);
+  ctx.fillStyle='rgba(180,240,180,.8)';ctx.font='9px Courier Prime';
+  wrapText(ctx,'You have PROVEN: light always travels in straight lines. This explains shadows, eclipses, pinhole cameras, and telescopes.',W/2,H/2+16,W-60,13);
+  ctx.restore();
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────────
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+}
+
+function wrapText(ctx,text,x,y,maxW,lineH){
+  const words=text.split(' ');let line='',ty=y-(lineH*(Math.ceil(text.length/55)-1)/2);
+  words.forEach((w,i)=>{
+    const test=line+w+' ';
+    if(ctx.measureText(test).width>maxW&&i>0){ctx.fillText(line.trim(),x,ty);line=w+' ';ty+=lineH;}
+    else line=test;
+  });
+  ctx.fillText(line.trim(),x,ty);
+}
+
+function stop() { if(animId) cancelAnimationFrame(animId); }
+
+// ── PUBLIC API ─────────────────────────────────────────────────────
+return { init, nextLevel, restartLevel, stop,
+  getState: () => state,
+  getLevelCount: () => LEVELS.length,
+  getScore: () => state.score,
+};
+
+})(); // end PQ IIFE
+
+
+// ── PQ BRIDGE (connects game to page UI) ─────────────────────────
+const scienceFacts = [];
+let pqInitialized = false;
+
+function pqInit() {
+  if (pqInitialized) return;
+  const cv = document.getElementById('pqCanvas');
+  if (!cv) return;
+  PQ.ctx = cv.getContext('2d');// expose ctx
+  PQ.init(cv);
+  pqInitialized = true;
+
+  cv.addEventListener('pq-win', e => {
+    const {level, score, fact} = e.detail;
+    // Show next button
+    document.getElementById('pqNextBtn').style.display = 'block';
+    document.getElementById('pqScore').textContent = score;
+    // Update badge
+    const badge = document.getElementById('pqBadge'+level);
+    if (badge) {badge.className='pq-badge done';}
+    const nextBadge = document.getElementById('pqBadge'+(level+1));
+    if (nextBadge) {nextBadge.className='pq-badge active';}
+    // Add science fact to log
+    if (fact && !scienceFacts.includes(fact)) {
+      scienceFacts.push(fact);
+      updateScienceLog();
+    }
+    // Mark lab correct
+    correct['pqLevel'+(level+1)] = true;
+    if (level >= 2) correct.photonGame = true;
+    updateProg();
+  });
+
+  cv.addEventListener('pq-complete', e => {
+    document.getElementById('pqNextBtn').style.display = 'none';
+    document.getElementById('pqScore').textContent = e.detail.score;
+    correct.photonGame = true;
+    correct.pqComplete = true;
+    updateProg();
+    toast('🏆 PHOTON MASTER! All 5 levels complete!');
+  });
+}
+
+function pqNextLevel() {
+  document.getElementById('pqNextBtn').style.display = 'none';
+  PQ.nextLevel();
+  document.getElementById('pqScore').textContent = PQ.getScore();
+}
+
+function updateScienceLog() {
+  const log = document.getElementById('pqScienceLog');
+  const count = document.getElementById('pqDiscoverCount');
+  count.textContent = scienceFacts.length + '/5';
+  log.innerHTML = scienceFacts.map(f => `
+    <div class="pq-science-entry">
+      <span class="pq-sci-icon">💡</span>
+      <span>${f}</span>
+    </div>`).join('');
+}
+
+// Auto-init when game section scrolls into view
+const pqObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    pqInit();
+    pqObserver.disconnect();
+  }
+}, {threshold: 0.1});
+const pqSection = document.getElementById('photonquest');
+if (pqSection) pqObserver.observe(pqSection);
+
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 buildOpacity();
