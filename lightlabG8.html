@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Light Lab — Rectilinear Propagation | Ahmad Ghozlan | Grade 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Literata:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0a07;--bg2:#110e09;--bg3:#161209;
+  --panel:rgba(255,240,200,.03);--panel2:rgba(255,240,200,.06);
+  --border:rgba(255,220,120,.1);--border2:rgba(255,220,120,.2);
+  --text:#f0e6cc;--muted:rgba(240,230,204,.5);--muted2:rgba(240,230,204,.28);
+  --gold:#f0a830;--goldD:rgba(240,168,48,.12);--goldG:rgba(240,168,48,.25);
+  --amber:#e87820;--amberD:rgba(232,120,32,.1);
+  --warm:#fff3cc;--warmD:rgba(255,243,204,.08);
+  --green:#4a9e6a;--greenD:rgba(74,158,106,.1);
+  --red:#c84040;--redD:rgba(200,64,64,.1);
+  --cyan:#68c8c0;--cyanD:rgba(104,200,192,.08);
+  --fh:'Playfair Display',serif;
+  --fb:'Literata',serif;
+  --fm:'Courier Prime',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.7;}
+
+/* Dust particles atmosphere */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 30% 20%,rgba(240,168,48,.04),transparent),
+             radial-gradient(ellipse 40% 60% at 80% 70%,rgba(240,120,32,.03),transparent);}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh;}
+aside{width:260px;background:rgba(12,10,7,.97);backdrop-filter:blur(12px);
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  flex-shrink:0;z-index:100;border-right:1px solid var(--border);}
+main{flex:1;min-width:0;}
+@media(max-width:900px){aside{display:none;}section{padding:40px 16px!important;}}
+
+/* SIDEBAR */
+.sb-logo{padding:26px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-family:var(--fh);font-size:1.1rem;color:var(--gold);font-weight:900;
+  line-height:1.15;letter-spacing:.5px;text-shadow:0 0 24px rgba(240,168,48,.4);}
+.sb-logo p{font-size:.48rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:3px;margin-top:6px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:6px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:.74rem;
+  font-weight:400;color:var(--muted2);border-left:2px solid transparent;
+  transition:all .2s;cursor:pointer;background:none;border-right:none;
+  border-top:none;border-bottom:none;width:100%;font-family:var(--fb);text-align:left;}
+.sn:hover,.sn.active{color:var(--gold);background:var(--goldD);border-left-color:var(--gold);}
+.sn .badge{font-size:.42rem;font-family:var(--fm);background:rgba(240,168,48,.12);
+  padding:2px 6px;border-radius:2px;color:var(--gold);margin-left:auto;}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border);}
+.sb-foot .name{font-weight:600;font-size:.82rem;color:var(--text);font-family:var(--fh);}
+.sb-foot .sub{font-size:.48rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
+
+/* SECTIONS */
+section{padding:68px 54px;border-bottom:1px solid var(--border);position:relative;z-index:1;}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);
+  font-size:.55rem;text-transform:uppercase;letter-spacing:2px;padding:4px 12px;
+  border-radius:2px;margin-bottom:18px;border:1px solid;}
+.e-tag.engage{background:var(--goldD);color:var(--gold);border-color:rgba(240,168,48,.3);}
+.e-tag.explore{background:var(--cyanD);color:var(--cyan);border-color:rgba(104,200,192,.25);}
+.e-tag.explain{background:var(--warmD);color:var(--warm);border-color:rgba(255,243,204,.2);}
+.e-tag.elaborate{background:var(--amberD);color:var(--amber);border-color:rgba(232,120,32,.25);}
+.e-tag.evaluate{background:var(--greenD);color:var(--green);border-color:rgba(74,158,106,.25);}
+.sec-title{font-family:var(--fh);font-size:clamp(1.8rem,3.5vw,2.8rem);
+  font-weight:900;color:var(--warm);line-height:1.05;margin-bottom:10px;}
+.sec-desc{color:var(--muted);font-size:.92rem;max-width:600px;line-height:1.85;margin-bottom:26px;}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:18px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:4px;font-family:var(--fb);font-weight:600;
+  font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-gold{background:var(--gold);color:#111;}
+.btn-gold:hover{filter:brightness(1.12);}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-green{background:var(--green);color:#fff;}
+
+/* MCQ */
+.q-block{background:var(--panel);border:1px solid var(--border2);border-radius:6px;
+  padding:18px;margin-bottom:14px;}
+.q-num{font-family:var(--fm);font-size:.55rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.9rem;color:var(--text);margin-bottom:12px;line-height:1.8;}
+.q-text strong{color:var(--warm);}
+.opts{display:flex;flex-direction:column;gap:7px;margin-bottom:11px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;
+  background:var(--panel2);border:1.5px solid var(--border);border-radius:5px;
+  cursor:pointer;transition:all .2s;font-size:.85rem;user-select:none;
+  -webkit-user-select:none;min-height:44px;}
+.opt:hover{border-color:var(--gold);}
+.opt.sel{border-color:var(--gold);background:var(--goldD);}
+.opt.ok{border-color:var(--green)!important;background:var(--greenD)!important;color:var(--green)!important;}
+.opt.err{border-color:var(--red)!important;background:var(--redD)!important;color:var(--red)!important;}
+.ml{min-width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);
+  color:var(--muted2);font-size:.64rem;font-weight:700;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;font-family:var(--fm);}
+.opt.ok .ml{background:var(--green);color:#000;}
+.opt.err .ml{background:var(--red);color:#fff;}
+.fb{margin-top:10px;padding:11px 14px;border-radius:5px;font-size:.84rem;
+  display:none;line-height:1.8;border-left:3px solid;}
+.fb.ok{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.fb.err{background:var(--redD);border-color:var(--red);color:var(--red);}
+.fb.inf{background:var(--cyanD);border-color:var(--cyan);color:var(--cyan);}
+.chk{padding:9px 20px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:5px;color:var(--text);font-family:var(--fb);font-weight:600;
+  font-size:.82rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.chk:hover{border-color:var(--gold);color:var(--gold);}
+
+/* DRAG BINS */
+.drag-bank{display:flex;flex-wrap:wrap;gap:8px;padding:14px;background:var(--panel);
+  border:1px solid var(--border);border-radius:6px;min-height:60px;margin-bottom:14px;}
+.drag-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+  border-radius:4px;border:1.5px solid var(--border2);font-family:var(--fm);
+  font-size:.72rem;font-weight:700;cursor:grab;user-select:none;
+  -webkit-user-select:none;background:var(--panel2);color:var(--text);
+  transition:all .2s;touch-action:none;}
+.drag-chip:active{cursor:grabbing;opacity:.7;}
+.drag-chip.placed{display:none;}
+.bin{min-height:80px;border:2px dashed var(--border);border-radius:6px;padding:12px;
+  display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;transition:all .2s;}
+.bin.hover{border-color:var(--gold);background:var(--goldD);}
+.bin-label{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;
+  letter-spacing:2px;color:var(--muted2);margin-bottom:8px;display:block;}
+.bin.bin-ok{border-color:var(--green);background:var(--greenD);}
+.bin.bin-err{border-color:var(--red);background:var(--redD);}
+
+/* STUDENT PICKER */
+.sec-btn{padding:9px 20px;border-radius:4px;font-family:var(--fb);font-weight:600;
+  font-size:.88rem;cursor:pointer;border:1.5px solid var(--border2);
+  background:var(--panel);color:var(--muted2);transition:all .2s;min-height:44px;}
+.sec-btn:hover{border-color:var(--gold);color:var(--gold);}
+.sec-btn.on{background:var(--gold);color:#111;border-color:var(--gold);}
+
+select,textarea{background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:5px;padding:10px 14px;color:var(--text);font-family:var(--fb);
+  font-size:.9rem;outline:none;transition:border-color .2s;width:100%;min-height:44px;}
+select:focus,textarea:focus{border-color:var(--gold);}
+select{cursor:pointer;direction:rtl;}
+textarea{resize:vertical;min-height:90px;}
+
+/* PROGRESS RING */
+.prog-ring{transform:rotate(-90deg);}
+.prog-ring-bg{fill:none;stroke:var(--border2);stroke-width:6;}
+.prog-ring-fill{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;
+  stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset .6s ease;}
+.score-row{display:flex;align-items:center;justify-content:space-between;
+  padding:5px 0;border-bottom:1px solid var(--border);}
+.score-key{color:var(--muted2);font-family:var(--fm);font-size:.6rem;text-transform:uppercase;}
+.score-val{font-weight:700;font-family:var(--fm);font-size:.76rem;}
+.score-val.ok{color:var(--green);}
+.score-val.no{color:var(--muted2);}
+
+/* EXAMINER */
+.examiner-box{background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;}
+.chat-area{padding:14px;min-height:120px;max-height:300px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:8px;}
+.chat-msg{padding:10px 14px;border-radius:6px;font-size:.84rem;line-height:1.7;max-width:88%;}
+.chat-msg.ai{background:var(--goldD);border:1px solid rgba(240,168,48,.2);align-self:flex-start;}
+.chat-msg.user{background:var(--cyanD);border:1px solid rgba(104,200,192,.2);align-self:flex-end;}
+.chat-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:ldots .8s infinite;}
+.chat-dot:nth-child(2){animation-delay:.15s;}
+.chat-dot:nth-child(3){animation-delay:.3s;}
+@keyframes ldots{0%,80%,100%{transform:scale(0);}40%{transform:scale(1);}}
+.chat-input-row{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-input-row textarea{flex:1;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:5px;padding:9px 12px;color:var(--text);font-family:var(--fb);
+  font-size:.86rem;resize:none;min-height:44px;outline:none;}
+.chat-input-row textarea:focus{border-color:var(--gold);}
+
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  background:rgba(12,10,7,.95);color:var(--gold);padding:10px 22px;border-radius:4px;
+  font-family:var(--fm);font-size:.72rem;z-index:999;opacity:0;
+  transition:opacity .3s;pointer-events:none;border:1px solid var(--border2);}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="app">
+
+<aside>
+  <div class="sb-logo">
+    <h1>SHADOW<br>STUDIO</h1>
+    <p>Light Lab · Grade 8 · Physics</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">☀ The Light Mystery <span class="badge">E1</span></button>
+    <button class="sn" onclick="goTo('opacity')">🔬 Opacity Sorter <span class="badge">E2</span></button>
+    <button class="sn" onclick="goTo('raytracer')">〰 Ray Tracer <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('shadow')">🌑 Shadow Builder <span class="badge">E3</span></button>
+    <button class="sn" onclick="goTo('sunclock')">🕐 Sun Clock <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('mcqs')">✏ Evaluation <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('examiner')">🤖 AI Examiner <span class="badge">E4</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📊 Submit <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="sub">Physics · Grade 8 · Lebanon</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- ══ E1: ENGAGE ══ -->
+<section id="hero" style="min-height:82vh;display:flex;align-items:center;background:var(--bg2);overflow:hidden;">
+  <div style="max-width:640px;position:relative;z-index:2;">
+    <div style="font-family:var(--fm);font-size:.56rem;color:var(--gold);text-transform:uppercase;
+      letter-spacing:3px;border:1px solid rgba(240,168,48,.3);padding:4px 14px;
+      border-radius:2px;display:inline-block;margin-bottom:22px;">
+      Lesson 3 · After EM Waves
+    </div>
+    <h1 style="font-family:var(--fh);font-size:clamp(2.4rem,6vw,4.8rem);font-weight:900;
+      color:var(--warm);letter-spacing:-1px;line-height:.95;margin-bottom:20px;">
+      THE STRAIGHT<br><span style="color:var(--gold);text-shadow:0 0 40px rgba(240,168,48,.5);">LINE OF LIGHT</span>
+    </h1>
+    <p style="font-size:.96rem;color:var(--muted);line-height:1.9;margin-bottom:10px;max-width:520px;">
+      Right now, light from the sun is hitting every surface in your room —
+      but it never bends around corners. Why?
+    </p>
+    <p style="font-size:.96rem;color:var(--muted);line-height:1.9;margin-bottom:10px;max-width:520px;">
+      At noon, your shadow is short. At 4pm, it's long. Why?
+    </p>
+    <p style="font-size:.96rem;color:var(--muted);line-height:1.9;margin-bottom:26px;max-width:520px;">
+      In this lab you will discover <strong style="color:var(--warm);">rectilinear propagation</strong>
+      — the single law that explains shadows, eclipses, cameras, and telescopes.
+    </p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="goTo('opacity')">Enter the Studio →</button>
+      <a href="emwaves2G8.html" style="text-decoration:none;">
+        <button class="btn btn-ghost">← EM Waves Part 2</button>
+      </a>
+    </div>
+  </div>
+  <canvas id="cvHero" style="position:absolute;right:0;top:0;width:50%;height:100%;
+    opacity:.35;pointer-events:none;z-index:1;"></canvas>
+</section>
+
+<!-- ══ E2: OPACITY SORTER ══ -->
+<section id="opacity">
+  <div class="e-tag explore">E2 · Explore</div>
+  <h2 class="sec-title">Opacity Sorter</h2>
+  <p class="sec-desc">
+    Objects interact with light differently. Sort each material into the correct category
+    by tapping it then tapping the bin — or drag on desktop.
+  </p>
+
+  <!-- Notes -->
+  <div class="g3" style="margin-bottom:20px;">
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Opaque</div>
+      <div style="font-size:.84rem;color:var(--muted);line-height:1.75;">
+        <strong style="color:var(--warm);">No light passes through.</strong><br>
+        A complete shadow (umbra) forms behind it. Example: a brick wall, a metal plate.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--cyan);">
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Translucent</div>
+      <div style="font-size:.84rem;color:var(--muted);line-height:1.75;">
+        <strong style="color:var(--warm);">Some light passes through</strong>, but it scatters.
+        You cannot see clearly through it. Example: frosted glass, tracing paper.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);">
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--amber);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Transparent</div>
+      <div style="font-size:.84rem;color:var(--muted);line-height:1.75;">
+        <strong style="color:var(--warm);">Light passes through completely.</strong>
+        You can see clearly through it. Example: clean glass, clear water.
+      </div>
+    </div>
+  </div>
+
+  <!-- Object bank -->
+  <div style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Objects to sort:</div>
+  <div class="drag-bank" id="opacityBank"></div>
+
+  <!-- Bins -->
+  <div class="g3" style="margin-bottom:14px;">
+    <div>
+      <span class="bin-label" style="color:var(--gold);">Opaque</span>
+      <div class="bin" id="bin-opaque" ondragover="ev.preventDefault();this.classList.add('hover')"
+        ondragleave="this.classList.remove('hover')"
+        ondrop="dropInBin(event,'opaque')"
+        onclick="tapBin('opaque')"></div>
+    </div>
+    <div>
+      <span class="bin-label" style="color:var(--cyan);">Translucent</span>
+      <div class="bin" id="bin-translucent" ondragover="ev.preventDefault();this.classList.add('hover')"
+        ondragleave="this.classList.remove('hover')"
+        ondrop="dropInBin(event,'translucent')"
+        onclick="tapBin('translucent')"></div>
+    </div>
+    <div>
+      <span class="bin-label" style="color:var(--amber);">Transparent</span>
+      <div class="bin" id="bin-transparent" ondragover="ev.preventDefault();this.classList.add('hover')"
+        ondragleave="this.classList.remove('hover')"
+        ondrop="dropInBin(event,'transparent')"
+        onclick="tapBin('transparent')"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="btn btn-gold" onclick="checkOpacity()">⚡ Check Sorting</button>
+    <button class="btn btn-ghost" onclick="resetOpacity()">↺ Reset</button>
+  </div>
+  <div class="fb" id="fbOpacity" style="margin-top:12px;"></div>
+
+  <!-- Observation Q -->
+  <div style="margin-top:22px;">
+    <div class="q-block">
+      <div class="q-num">Observation · After Sorting</div>
+      <div class="q-text">A student holds a book in front of a torch. No light reaches the wall behind it. The book is:</div>
+      <div class="opts" id="obsopts">
+        <div class="opt" onclick="pick('obs','A',this)"><span class="ml">A</span>Transparent — all light passes through</div>
+        <div class="opt" onclick="pick('obs','B',this)"><span class="ml">B</span>Translucent — some light scatters through</div>
+        <div class="opt" onclick="pick('obs','C',this)"><span class="ml">C</span>Opaque — no light passes through</div>
+        <div class="opt" onclick="pick('obs','D',this)"><span class="ml">D</span>Luminous — it produces its own light</div>
+      </div>
+      <button class="chk" onclick="chk('obs','C','✓ Correct! No light passes through an opaque object. The book blocks all the light, so a dark shadow forms on the wall behind it.','✗ If no light reaches the wall, the object must be opaque — it blocks all light completely.')">✓ Check</button>
+      <div class="fb" id="fbobs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E3a: RAY TRACER ══ -->
+<section id="raytracer" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Explain — Rectilinear Propagation</div>
+  <h2 class="sec-title">The Ray Tracer</h2>
+  <p class="sec-desc">
+    Light travels in <strong style="color:var(--warm);">straight lines</strong>.
+    This is called <em>rectilinear propagation</em>. Watch it happen:
+    click anywhere on the canvas to place an opaque obstacle, then see how the shadow forms.
+  </p>
+
+  <!-- Key concept box -->
+  <div class="card" style="border-left:4px solid var(--gold);margin-bottom:20px;max-width:620px;">
+    <div style="font-family:var(--fm);font-size:.6rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">The Law</div>
+    <div style="font-family:var(--fh);font-size:1.2rem;color:var(--warm);margin-bottom:8px;">
+      Light travels in straight lines in a uniform medium.
+    </div>
+    <div style="font-size:.84rem;color:var(--muted);line-height:1.8;">
+      This is why: shadows have sharp edges · you cannot see around corners · 
+      the camera obscura works · eclipses are predictable.
+    </div>
+  </div>
+
+  <div style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;">
+    <div style="background:rgba(255,255,255,.04);padding:12px 18px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span style="font-family:var(--fm);font-size:.72rem;font-weight:700;color:var(--warm);">☀ POINT SOURCE RAY TRACER</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:.72rem;padding:6px 14px;" onclick="clearRays()">Clear obstacles</button>
+        <button class="btn btn-ghost" style="font-size:.72rem;padding:6px 14px;" onclick="toggleRayMode()">Mode: <span id="rayModeLabel">Single Slit</span></button>
+      </div>
+    </div>
+    <div style="padding:16px;text-align:center;">
+      <canvas id="cvRay" height="380" style="max-width:100%;width:100%;display:block;
+        background:#000;border-radius:6px;border:1px solid var(--border);cursor:crosshair;
+        touch-action:none;"></canvas>
+      <div style="font-family:var(--fm);font-size:.62rem;color:var(--muted2);margin-top:8px;">
+        Tap/click to place obstacles · Drag the source ☀ · Watch rays travel in straight lines
+      </div>
+    </div>
+  </div>
+
+  <!-- Derived MCQ -->
+  <div style="margin-top:22px;">
+    <div class="q-block">
+      <div class="q-num">From the Ray Tracer</div>
+      <div class="q-text">You place a large opaque card in front of a small torch. A sharp dark shape appears on the wall. This experiment proves that light:</div>
+      <div class="opts" id="ray1opts">
+        <div class="opt" onclick="pick('ray1','A',this)"><span class="ml">A</span>Bends around objects like water does</div>
+        <div class="opt" onclick="pick('ray1','B',this)"><span class="ml">B</span>Travels in straight lines (rectilinear propagation)</div>
+        <div class="opt" onclick="pick('ray1','C',this)"><span class="ml">C</span>Slows down near opaque objects</div>
+        <div class="opt" onclick="pick('ray1','D',this)"><span class="ml">D</span>Is reflected by all surfaces</div>
+      </div>
+      <button class="chk" onclick="chk('ray1','B','✓ Exactly! A sharp shadow proves rectilinear propagation — light cannot bend around the card. If light curved, no clear shadow would form.','✗ A sharp shadow means light cannot curve around the obstacle. This proves rectilinear propagation: light travels only in straight lines.')">✓ Check</button>
+      <div class="fb" id="fbray1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E3b: SHADOW BUILDER ══ -->
+<section id="shadow">
+  <div class="e-tag explain">E3 · Explain — Shadows</div>
+  <h2 class="sec-title">Shadow Builder</h2>
+  <p class="sec-desc">
+    A <strong style="color:var(--warm);">point source</strong> creates one shadow.
+    An <strong style="color:var(--warm);">extended source</strong> creates two:
+    the <em>umbra</em> (total shadow) and the <em>penumbra</em> (partial shadow).
+    Use the slider to change the source size and watch both regions form.
+  </p>
+
+  <!-- Theory cards -->
+  <div class="g2" style="margin-bottom:20px;">
+    <div class="card" style="border-left:3px solid #111;">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Umbra</div>
+      <div style="font-size:.86rem;color:var(--muted);line-height:1.8;">
+        <strong style="color:var(--warm);">Total shadow.</strong> A region where
+        <em>no</em> light from the source reaches. Formed behind any opaque object
+        blocking all light rays from an extended source.
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid rgba(240,168,48,.4);">
+      <div style="font-family:var(--fm);font-size:.6rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Penumbra</div>
+      <div style="font-size:.86rem;color:var(--muted);line-height:1.8;">
+        <strong style="color:var(--warm);">Partial shadow.</strong> A region where
+        <em>some</em> light from the source reaches. Surrounds the umbra.
+        Gets larger as the source gets bigger.
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;">
+    <div style="background:rgba(255,255,255,.04);padding:12px 18px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <span style="font-family:var(--fm);font-size:.72rem;font-weight:700;color:var(--warm);">🌑 SHADOW SIMULATOR</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="font-family:var(--fm);font-size:.62rem;color:var(--muted2);">SOURCE SIZE:</label>
+        <input type="range" id="srcSizeSlider" min="1" max="80" value="6"
+          style="-webkit-appearance:none;height:4px;border-radius:2px;outline:none;
+            background:linear-gradient(90deg,var(--gold),var(--amber));width:120px;cursor:pointer;"
+          oninput="drawShadow()">
+        <span style="font-family:var(--fm);font-size:.72rem;color:var(--gold);" id="srcSizeLabel">Small</span>
+      </div>
+    </div>
+    <div style="padding:16px;text-align:center;">
+      <canvas id="cvShadow" height="360" style="max-width:100%;width:100%;display:block;
+        background:#000;border-radius:6px;border:1px solid var(--border);
+        touch-action:none;cursor:grab;"></canvas>
+      <div style="font-family:var(--fm);font-size:.62rem;color:var(--muted2);margin-top:8px;">
+        Drag the obstacle · Slide to change source size · Watch umbra (black) and penumbra (grey) form
+      </div>
+    </div>
+  </div>
+
+  <!-- Shadow Q -->
+  <div style="margin-top:22px;">
+    <div class="q-block">
+      <div class="q-num">Shadow Analysis</div>
+      <div class="q-text">As the light source grows larger (extended source), what happens to the penumbra?</div>
+      <div class="opts" id="shad1opts">
+        <div class="opt" onclick="pick('shad1','A',this)"><span class="ml">A</span>It disappears — only umbra remains</div>
+        <div class="opt" onclick="pick('shad1','B',this)"><span class="ml">B</span>It stays the same size</div>
+        <div class="opt" onclick="pick('shad1','C',this)"><span class="ml">C</span>It grows larger — more partial shadow</div>
+        <div class="opt" onclick="pick('shad1','D',this)"><span class="ml">D</span>It becomes brighter</div>
+      </div>
+      <button class="chk" onclick="chk('shad1','C','✓ Correct! A larger extended source means more rays arrive at different angles. This creates a wider zone of partial shadow (penumbra) around the umbra.','✗ Try the slider — a larger source creates more light rays at different angles, producing a wider penumbra.')">✓ Check</button>
+      <div class="fb" id="fbshad1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-num">Lunar Eclipse</div>
+      <div class="q-text">During a lunar eclipse, Earth blocks sunlight reaching the Moon. People standing in Earth's <strong>umbra</strong> on the Moon would see:</div>
+      <div class="opts" id="shad2opts">
+        <div class="opt" onclick="pick('shad2','A',this)"><span class="ml">A</span>A partial eclipse of the Sun — the Moon is partly blocked</div>
+        <div class="opt" onclick="pick('shad2','B',this)"><span class="ml">B</span>A total eclipse of the Sun — Earth blocks the Sun completely</div>
+        <div class="opt" onclick="pick('shad2','C',this)"><span class="ml">C</span>No effect — eclipses only happen on Earth</div>
+        <div class="opt" onclick="pick('shad2','D',this)"><span class="ml">D</span>A brighter Sun than usual</div>
+      </div>
+      <button class="chk" onclick="chk('shad2','B','✓ Brilliant! Standing in Earth\'s umbra, Earth completely blocks the Sun — a total solar eclipse from the Moon\'s perspective. The umbra is always a region of complete darkness.','✗ The umbra is a region where NO light from the source reaches. If you\'re in Earth\'s umbra, Earth completely blocks the Sun — total eclipse.')">✓ Check</button>
+      <div class="fb" id="fbshad2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E4: SUN CLOCK ══ -->
+<section id="sunclock" style="background:var(--bg2);">
+  <div class="e-tag elaborate">E4 · Elaborate — Sun & Shadows</div>
+  <h2 class="sec-title">The Sun Clock</h2>
+  <p class="sec-desc">
+    Ancient civilisations read time from shadows. The <em>gnomon</em> — an upright post —
+    cast a shadow whose length and direction changed through the day.
+    Slide the sun to different times and predict the shadow.
+  </p>
+
+  <div style="background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;margin-bottom:20px;">
+    <div style="background:rgba(255,255,255,.04);padding:12px 18px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <span style="font-family:var(--fm);font-size:.72rem;font-weight:700;color:var(--warm);">🕐 SOLAR SHADOW SIMULATOR</span>
+      <span style="font-family:var(--fm);font-size:.72rem;color:var(--gold);" id="timeLabel">12:00</span>
+    </div>
+    <div style="padding:16px;">
+      <canvas id="cvSun" height="340" style="max-width:100%;width:100%;display:block;
+        background:#000;border-radius:6px;border:1px solid var(--border);margin-bottom:12px;"></canvas>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);">6:00</span>
+        <input type="range" id="timeSlider" min="6" max="18" step="0.25" value="12"
+          style="-webkit-appearance:none;height:5px;border-radius:3px;outline:none;flex:1;
+            background:linear-gradient(90deg,#1a1a3e,#f0a830,#f07820,#f0a830,#1a1a3e);cursor:pointer;"
+          oninput="drawSunClock(this.value)">
+        <span style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);">18:00</span>
+      </div>
+      <div style="font-family:var(--fm);font-size:.62rem;color:var(--muted2);text-align:center;margin-top:6px;">
+        Shadow length: <span id="shadowLenLabel" style="color:var(--gold);">0.0</span> × gnomon height
+      </div>
+    </div>
+  </div>
+
+  <!-- Sun clock questions -->
+  <div class="q-block">
+    <div class="q-num">Sun Clock · Question 1</div>
+    <div class="q-text">At solar noon (12:00), where is the sun in the sky and what happens to the shadow?</div>
+    <div class="opts" id="sun1opts">
+      <div class="opt" onclick="pick('sun1','A',this)"><span class="ml">A</span>The sun is at the horizon — shadow is very short</div>
+      <div class="opt" onclick="pick('sun1','B',this)"><span class="ml">B</span>The sun is directly overhead — shadow is shortest (minimum length)</div>
+      <div class="opt" onclick="pick('sun1','C',this)"><span class="ml">C</span>The sun is overhead — shadow is longest</div>
+      <div class="opt" onclick="pick('sun1','D',this)"><span class="ml">D</span>The sun is setting — shadow points east</div>
+    </div>
+    <button class="chk" onclick="chk('sun1','B','✓ Correct! At noon the sun is highest in the sky (smallest angle to vertical). Rays are nearly vertical, so the shadow is shortest. This is why shadows are short at midday.','✗ At noon, the sun is highest. Light hits at a steep angle — nearly vertical — so the shadow is at its shortest, not longest.')">✓ Check</button>
+    <div class="fb" id="fbsun1"></div>
+  </div>
+  <div class="q-block">
+    <div class="q-num">Sun Clock · Question 2</div>
+    <div class="q-text">A student measures a shadow that is 3× longer than the gnomon. It must be:</div>
+    <div class="opts" id="sun2opts">
+      <div class="opt" onclick="pick('sun2','A',this)"><span class="ml">A</span>Close to midday — the sun is high</div>
+      <div class="opt" onclick="pick('sun2','B',this)"><span class="ml">B</span>Close to sunrise or sunset — the sun is low</div>
+      <div class="opt" onclick="pick('sun2','C',this)"><span class="ml">C</span>Underground — below the horizon</div>
+      <div class="opt" onclick="pick('sun2','D',this)"><span class="ml">D</span>When the gnomon is tilted</div>
+    </div>
+    <button class="chk" onclick="chk('sun2','B','✓ Correct! A long shadow means the sun is low in the sky (small elevation angle). The shadow gets longer as the sun approaches the horizon — near sunrise or sunset.','✗ A shadow 3× longer than the gnomon means the sun is low in the sky. Low sun = long shadow. This happens near sunrise and sunset.')">✓ Check</button>
+    <div class="fb" id="fbsun2"></div>
+  </div>
+</section>
+
+<!-- ══ E4b: MCQs ══ -->
+<section id="mcqs">
+  <div class="e-tag evaluate">E4 · Evaluate</div>
+  <h2 class="sec-title">Evaluation Questions</h2>
+  <p class="sec-desc">Five questions covering all learning objectives.</p>
+
+  <div class="q-block">
+    <div class="q-num">Question 1 · Definition</div>
+    <div class="q-text">Rectilinear propagation of light means that light:</div>
+    <div class="opts" id="q1opts">
+      <div class="opt" onclick="pick('q1','A',this)"><span class="ml">A</span>Travels only through transparent materials</div>
+      <div class="opt" onclick="pick('q1','B',this)"><span class="ml">B</span>Travels in straight lines in a uniform medium</div>
+      <div class="opt" onclick="pick('q1','C',this)"><span class="ml">C</span>Slows down when it hits opaque objects</div>
+      <div class="opt" onclick="pick('q1','D',this)"><span class="ml">D</span>Travels in curved paths through air</div>
+    </div>
+    <button class="chk" onclick="chk('q1','B','✓ Correct! Rectilinear = straight line. Propagation = travel. Light travels in straight lines within any uniform medium (air, glass, water). This law explains shadows, eclipses, and vision.','✗ Rectilinear = straight line. Rectilinear propagation means light travels in straight lines in a uniform medium.')">✓ Check</button>
+    <div class="fb" id="fbq1"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Question 2 · Classification</div>
+    <div class="q-text">Frosted shower glass allows light through but you cannot see clearly through it. It is classified as:</div>
+    <div class="opts" id="q2opts">
+      <div class="opt" onclick="pick('q2','A',this)"><span class="ml">A</span>Opaque</div>
+      <div class="opt" onclick="pick('q2','B',this)"><span class="ml">B</span>Luminous</div>
+      <div class="opt" onclick="pick('q2','C',this)"><span class="ml">C</span>Transparent</div>
+      <div class="opt" onclick="pick('q2','D',this)"><span class="ml">D</span>Translucent</div>
+    </div>
+    <button class="chk" onclick="chk('q2','D','✓ Correct! Frosted glass is translucent — light passes through but scatters, so you cannot see clearly. Transparent = clear. Opaque = no light at all.','✗ Light passes through frosted glass but scatters — you cannot see clearly. This is translucent. Transparent = clear view. Opaque = no light.')">✓ Check</button>
+    <div class="fb" id="fbq2"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Question 3 · Shadows</div>
+    <div class="q-text">The <strong>umbra</strong> of a shadow is described as:</div>
+    <div class="opts" id="q3opts">
+      <div class="opt" onclick="pick('q3','A',this)"><span class="ml">A</span>A region where partial light reaches — partially lit</div>
+      <div class="opt" onclick="pick('q3','B',this)"><span class="ml">B</span>The region of total shadow — no light from the source reaches it</div>
+      <div class="opt" onclick="pick('q3','C',this)"><span class="ml">C</span>The coloured fringe around a shadow</div>
+      <div class="opt" onclick="pick('q3','D',this)"><span class="ml">D</span>Only occurs during solar eclipses</div>
+    </div>
+    <button class="chk" onclick="chk('q3','B','✓ Correct! Umbra = total shadow. No light from any part of the source reaches the umbra region. The penumbra (partial shadow) surrounds it.','✗ Umbra = total shadow = zero light reaches it. The penumbra is the partial shadow around it. Both form behind opaque objects with extended sources.')">✓ Check</button>
+    <div class="fb" id="fbq3"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Question 4 · Application</div>
+    <div class="q-text">A pinhole camera (camera obscura) forms an inverted image because:</div>
+    <div class="opts" id="q4opts">
+      <div class="opt" onclick="pick('q4','A',this)"><span class="ml">A</span>Light bends as it passes through the small hole</div>
+      <div class="opt" onclick="pick('q4','B',this)"><span class="ml">B</span>Only red light passes through small holes</div>
+      <div class="opt" onclick="pick('q4','C',this)"><span class="ml">C</span>Light travels in straight lines — rays from the top cross rays from the bottom</div>
+      <div class="opt" onclick="pick('q4','D',this)"><span class="ml">D</span>The hole acts as a mirror</div>
+    </div>
+    <button class="chk" onclick="chk('q4','C','✓ Brilliant! Because light travels in straight lines, a ray from the top of an object passes down through the pinhole and hits the bottom of the screen. A ray from the bottom hits the top. The image is inverted — direct proof of rectilinear propagation!','✗ The inverted image in a pinhole camera is direct evidence of rectilinear propagation. Rays from the top travel in a straight line downward through the hole, forming the image upside down.')">✓ Check</button>
+    <div class="fb" id="fbq4"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-num">Question 5 · Critical Thinking</div>
+    <div class="q-text">At what time of day does your shadow point <strong>north</strong> (in Lebanon, Northern Hemisphere)?</div>
+    <div class="opts" id="q5opts">
+      <div class="opt" onclick="pick('q5','A',this)"><span class="ml">A</span>At sunrise — sun is in the east</div>
+      <div class="opt" onclick="pick('q5','B',this)"><span class="ml">B</span>At sunset — sun is in the west</div>
+      <div class="opt" onclick="pick('q5','C',this)"><span class="ml">C</span>At solar noon — sun is due south, shadow points north</div>
+      <div class="opt" onclick="pick('q5','D',this)"><span class="ml">D</span>At midnight — no shadow forms</div>
+    </div>
+    <button class="chk" onclick="chk('q5','C','✓ Perfect! In Lebanon (Northern Hemisphere), the sun crosses the southern sky. At solar noon it is due south — your shadow points directly north (away from the sun). This was how ancient navigators found direction!','✗ In Lebanon, the sun is always in the southern sky. At noon it is due south, so your shadow points directly north. At sunrise/sunset shadows point west/east.')">✓ Check</button>
+    <div class="fb" id="fbq5"></div>
+  </div>
+
+  <!-- Written response -->
+  <div class="q-block">
+    <div class="q-num">Question 6 · Written</div>
+    <div class="q-text">Explain why a solar eclipse can only be seen as <strong>total</strong> (complete darkness) from a narrow strip on Earth's surface, while the rest of the daylight side sees only a partial eclipse or nothing.</div>
+    <textarea id="q6text" placeholder="Use umbra, penumbra, and rectilinear propagation in your answer…"></textarea>
+    <div style="margin-top:5px;font-size:.72rem;color:var(--muted2);font-family:var(--fm);">
+      Ahmad reviews your written answer in class.
+    </div>
+  </div>
+</section>
+
+<!-- ══ AI EXAMINER ══ -->
+<section id="examiner" style="background:var(--bg2);">
+  <div class="e-tag elaborate">E4 · AI Examiner 🤖</div>
+  <h2 class="sec-title">The Examiner</h2>
+  <p class="sec-desc">Answer a question about light in your own words. The AI will push back if your answer is incomplete.</p>
+
+  <div class="examiner-box">
+    <div style="background:rgba(255,255,255,.04);padding:14px 18px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:var(--fm);font-size:.72rem;color:var(--gold);">🤖 EXAMINER ONLINE — Rectilinear Propagation</div>
+      <div style="font-size:.62rem;color:var(--muted2);font-family:var(--fm);">Socratic mode</div>
+    </div>
+    <div class="chat-area" id="examChat">
+      <div class="chat-msg ai">Hello! I'm your light examiner. Press <strong>Start Exam</strong> to receive your question. I'll push you to think deeper — good luck! ☀</div>
+    </div>
+    <div class="chat-input-row">
+      <textarea id="examInput" placeholder="Type your answer here…" rows="2"></textarea>
+      <button class="btn btn-gold" onclick="sendExam()" style="flex-shrink:0;min-width:70px;">Send</button>
+    </div>
+    <div style="padding:10px 14px;border-top:1px solid var(--border);">
+      <button class="btn btn-ghost" style="width:100%;" onclick="startExam()" id="startExamBtn">☀ Start Exam</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E5: SUBMIT ══ -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · Submit</div>
+  <h2 class="sec-title">Submit Your Lab Report</h2>
+  <p class="sec-desc">Choose your section and name, then send everything to Ahmad's grade sheet.</p>
+
+  <div class="g2" style="max-width:860px;align-items:start;">
+    <div class="card">
+      <label style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:8px;">Section</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="sec-btn" onclick="setSection('8A')">8A</button>
+        <button class="sec-btn" onclick="setSection('8B')">8B</button>
+        <button class="sec-btn" onclick="setSection('8C')">8C</button>
+        <button class="sec-btn" onclick="setSection('8D')">8D</button>
+      </div>
+      <label style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:6px;">Your Name</label>
+      <select id="stuName" disabled style="margin-bottom:14px;">
+        <option value="">— Choose section first —</option>
+      </select>
+      <input type="hidden" id="stuClass" value="">
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+      <div id="scoreBreakdown" style="margin-bottom:10px;"></div>
+      <div style="height:4px;background:var(--panel2);border-radius:2px;overflow:hidden;margin-bottom:7px;border:1px solid var(--border);">
+        <div id="progFill" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:2px;transition:width .5s;width:0%;"></div>
+      </div>
+      <p id="progTxt" style="font-size:.66rem;color:var(--muted2);margin-bottom:14px;font-family:var(--fm);">0 / 10 completed</p>
+      <button class="btn btn-gold" style="width:100%;font-size:.92rem;" onclick="doSubmit()">📡 Submit to Ahmad's Grade Sheet</button>
+    </div>
+
+    <div>
+      <div style="text-align:center;margin-bottom:12px;">
+        <svg class="prog-ring" width="100" height="100" viewBox="0 0 80 80">
+          <circle class="prog-ring-bg" cx="40" cy="40" r="36"/>
+          <circle class="prog-ring-fill" id="ringFill" cx="40" cy="40" r="36"/>
+        </svg>
+        <div style="font-family:var(--fh);font-size:2rem;font-weight:900;color:var(--warm);margin-top:6px;" id="ringPct">—</div>
+        <div style="font-family:var(--fm);font-size:.56rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);">Lab Score</div>
+      </div>
+      <div class="card2" style="text-align:center;">
+        <div style="font-size:.78rem;color:var(--muted);line-height:1.8;">Ahmad reviews your written response and AI chat in class.</div>
+        <div id="subOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenD);
+          border:1px solid var(--green);border-radius:5px;font-size:.82rem;color:var(--green);
+          font-weight:700;font-family:var(--fm);">✓ Lab submitted!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:20px 54px;border-top:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;z-index:1;">
+  <div>
+    <div style="font-family:var(--fh);font-size:1rem;font-weight:900;color:var(--warm);">SHADOW STUDIO</div>
+    <div style="font-family:var(--fm);font-size:.5rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Ahmad Ghozlan · Grade 8 · Light & Rectilinear Propagation</div>
+  </div>
+  <a href="https://aghozlan.github.io" style="font-size:.7rem;color:var(--muted2);text-decoration:none;border:1px solid var(--border2);padding:5px 14px;border-radius:3px;">↗ All Labs</a>
+</footer>
+</main>
+</div>
+
+<script>
+'use strict';
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ── STUDENT LISTS ─────────────────────────────────────────────────────────
+const STUDENTS={
+  '8A':['أسماء هيثم علي ندوه','ابراهيم طارق صلاح معروف','ابراهيم محمد رفعت ابو حميد','احسان محمد وليد الشحبري','ادم وليد توفيق الخطيب','الين رشيد محمد احمد','تالا محمد عدنان العمري','تيا احمد محمد الركن','جنى ماهر غالب الدالي','جنى محي الدين فاعور','جود محمد مروان الشامي','حسين احمد محمود اسماعيل','حنين علي ابراهيم ميعاد','راما احمد توفيق الزقه','رهف سعيد شحادة فلاح','زينب محمد رياض حماده','سعاد مازن محمد الشامي','سمر محمد صابر ظاهر','سيلين منصور عبد شحاده','عادل محمد عادل ابو عرب','عبد الرحمن وليد محمد','علي مصطفى حسن سالم','علي ياسر نمر فاعور','عمران مازن صالح مرعي','فاطمه محمد خالد قاسم','قمر حسين عمر حمزة','كريم محمود عبد الحفيظ','ليا محمد عمر عباس','لين رشدي موسى الصالح','لين ماهر احمد العيسى','لين وسام احمد حسين','ماريا طلعت احمد مراد','محمد احمد محمد الصعيدي','محمد سامر محمد الصالح','محمد علي محمد ابو شقير','محمد علي محمد عبد الجليل','محمد قاسم عادل عفيفي','محمود شادي محمود شحادة','مرام احمد كايد خضره','نرجس هاني احمد عقلة','نور محمد علي علي','هلا شفيق علي فلوس','يارا محمود السيد السعدني'],
+  '8B':['أسينات احمد فريد العلي','اسامة بسام عبد الرحمن حمو','امال ساري علي زيداني','امنة محمد كمال قدورة','امير هشام مصطفى كروم','ايمان بسام خالد محمد','بيسان بسام عبد الرحمن حمو','تاليا انس ابراهيم المنديل','حبيبة عوني علي الزبيدات','حلا اشرف احمد الحاج علي','حنين فتحي علي حميد','راما خالد محمد عطعوط','رضوان جهاد رضوان ديب','رواد مروان ابراهيم العبدالله','زهراء عماد وليد شيخه','سارة فادي عدنان فارس','سامي يسار سامي معروف','سعيد ماهر سعيد سعيد','سهى عامر احمد عطية','صلاح الدين مصطفى بللي','علي مصطفى علي سريس','عمر حسام حسين الموسى','فاطمه جمال احمد المحمود','فضل احمد محمد حسين','كريم رائد محمد دلاشي','لارا محمد خالد عبد الغني','ليلاس وسيم شحادة شحاده','ماريه يحيى محمد ابو هموس','محمد احمد محمد شريده','محمد حسام عاطف ابو شباب','محمد حكمت غاندي عبدالله','محمد علي محمود احمد','محمد هشام احمد مره','محمود نايف مصطفى قاسميه','مريم محمود محي الدين مره','ملاك يونس محمد رحال','ميريانا احمد مصطفى عيتاني','هدى محمود محمد الركن','وسيله سعدو درويش ششنيه','يحيى زكريا سميح حمو'],
+  '8C':['آلاء رباح محمود شراب','آلاء محمود صالح أدلبي','ابراهيم محمد إبراهيم عزيز','امير ماجد احمد اسماعيل','بتول فايز محمد حمود','بهاء الدين بلال بهاء الدين رشيد','بيان كمال احمد ابو سويد','تبارك محمد محمد السيد يوسف','تغريد خالد عزات يحيى','جمال محمد جمال حوحو','جنى حسن محمد الظريف','جهاد فادي حسن سالم','حلا محمد حسن ابو شنار','حلا مصطفى محمد خير بللي','خالد وسيم خالد حسن','راما زياد علي الحاج علي','راما عبد المجيد محمد سالم','راما محمد يوسف العلي','رزان زياد عبد الناصر اصمهان','روان عماد فوزي ابراهيم','ريم اديب احمد حسين','ريم ماهر عطا الخطيب','ريم نور الدين فايز عبد الرازق','سلام عصام حمودة ناجي','سلام محمد بديع فيصل العلي','سيلا هشام امين الطه','شهد صالح احمد مطر','صالح محمد سامي الشورى','عبد الله حسن سعيد سليمان','علي محمد ابراهيم صالح','علي ناصر علي حماده','عمر عصام الصادق','فرح وائل باسل غزلان','لانا باسم امين صيداوي','لين احمد عيسى قاسم','لين وائل زياد الهبطه','ماسة عمار علي علي','محمد حسين احمد ندوه','محمود محمد سالم نجمي','ملكه سعد الدين برجاوي','نور الهدى جهاد عزات عليان'],
+  '8D':['إسراء ايمن محمد قدسيه','احمد زاهر جهاد قدورة','احمد علاء احمد اسماعيل','احمد محمد رياض الخطيب','ادم خالد محمود قدورة','اسراء احمد داري نوفل','الما محمد جمال ششنيه','اياد احمد حسين محمود','اياد احمد سمير قدوره','بيسان علي احمد قاسم','تقى احمد موسى عبدالله','حسن علي حسن حبقزي','حمزة عاطف محمد الحاج محمد','دانا نبيل نور الدين الهندي','راما فادي علي سليم','رهف خليل عبدالله شاهين','روزا محمود علي عودي','ريتال نضال موسى مناد','زهراء محمد حسن بركات','زينب محمد عبد غنام','سالي فادي عثمان عباس','سماح احمد عطا ابو عنزه','علا محمد زيد عثمان','علي كمال علي سعد','عمر محمود عباس الحايك','غزل محمد خليل ابو عرب','غفران محمد يوسف داوود','كريم عوني خالد عبد الغني','لين علي نايف حميد','ماريا ابراهيم درويش خزعل','محمد براء محمود حسن','محمد بهاء ابراهيم العيسى','محمد خالد محمود مطر','محمد ربيع محمد هنداوي','محمود علي محمود يوسف','مصطفى عماد الدين تراوي','ميار سعيد محمد حسن','نور عباس محمد عمر','هبة يحيى عيسى ابو مايهه','هيلين فيصل فضل الله الراشد','يوسف عامر محمد مصريه','يوسف هيثم فايز بركة']
+};
+
+function setSection(cls){
+  document.getElementById('stuClass').value=cls;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— اختر اسمك —</option>';
+  sel.disabled=false;
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const ids=['hero','opacity','raytracer','shadow','sunclock','mcqs','examiner','evaluate'];
+  let cur='hero';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)cur=id;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+},{passive:true});
+
+// ── MCQ ENGINE ────────────────────────────────────────────────────────────
+const picked={};
+const correct={};
+function pick(key,val,btn){
+  picked[key]=val;
+  btn.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function chk(key,ca,ok,bad){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=picked[key];
+  if(!sel){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  const letters=['A','B','C','D'];
+  const optsDiv=document.getElementById(key+'opts');
+  if(optsDiv){optsDiv.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.remove('sel');
+    if(letters[i]===ca)o.classList.add('ok');
+    else if(letters[i]===sel)o.classList.add('err');
+  });}
+  if(sel===ca){fb.className='fb ok';fb.innerHTML=ok;correct[key]=true;}
+  else{fb.className='fb err';fb.innerHTML=bad;}
+  updateProg();
+}
+
+// ── HERO CANVAS ───────────────────────────────────────────────────────────
+(function heroAnim(){
+  const cv=document.getElementById('cvHero');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let t=0;
+  function frame(){
+    cv.width=cv.offsetWidth||500;cv.height=cv.offsetHeight||600;
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    // Point source bouncing
+    const sx=W*.2+Math.sin(t*.7)*W*.08;
+    const sy=H*.35+Math.cos(t*.5)*H*.1;
+    // Draw many rays
+    const numRays=36;
+    for(let i=0;i<numRays;i++){
+      const angle=(i/numRays)*Math.PI*2+t*.1;
+      const ex=sx+Math.cos(angle)*W*1.5;
+      const ey=sy+Math.sin(angle)*H*1.5;
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);
+      const alpha=.12+.08*Math.sin(t+i);
+      ctx.strokeStyle=`rgba(240,168,48,${alpha})`;ctx.lineWidth=.7;ctx.stroke();
+    }
+    // Opaque obstacle
+    const ox=W*.55,oy=H*.5,ow=14,oh=80;
+    ctx.fillStyle='rgba(255,243,204,.85)';ctx.fillRect(ox-ow/2,oy-oh/2,ow,oh);
+    // Dark shadow region (simplified)
+    ctx.beginPath();
+    const d=Math.hypot(ox-sx,oy-oh/2-sy);
+    const topAngle=Math.atan2(oy-oh/2-sy,ox-sx);
+    const botAngle=Math.atan2(oy+oh/2-sy,ox-sx);
+    ctx.moveTo(ox+ow/2*Math.cos(topAngle-Math.PI/2),oy-oh/2+ow/2*Math.sin(topAngle-Math.PI/2));
+    ctx.lineTo(sx+Math.cos(topAngle)*2000,sy+Math.sin(topAngle)*2000);
+    ctx.lineTo(sx+Math.cos(botAngle)*2000,sy+Math.sin(botAngle)*2000);
+    ctx.closePath();
+    ctx.fillStyle='rgba(0,0,0,.55)';ctx.fill();
+    // Source glow
+    const g=ctx.createRadialGradient(sx,sy,0,sx,sy,40);
+    g.addColorStop(0,'rgba(255,243,150,.9)');g.addColorStop(1,'rgba(240,168,48,0)');
+    ctx.beginPath();ctx.arc(sx,sy,40,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    t+=.012;requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+// ── OPACITY SORTER ────────────────────────────────────────────────────────
+const OBJECTS=[
+  {name:'🧱 Brick Wall',cat:'opaque',icon:'#c84040'},
+  {name:'🪟 Clear Glass',cat:'transparent',icon:'#68c8c0'},
+  {name:'☁️ Frosted Glass',cat:'translucent',icon:'#f0a830'},
+  {name:'📄 Tracing Paper',cat:'translucent',icon:'#f0a830'},
+  {name:'🌊 Clean Water',cat:'transparent',icon:'#68c8c0'},
+  {name:'🪨 Stone',cat:'opaque',icon:'#c84040'},
+  {name:'🌫 Fog',cat:'translucent',icon:'#f0a830'},
+  {name:'🔲 Metal Plate',cat:'opaque',icon:'#c84040'},
+  {name:'🪴 Tinted Glass',cat:'translucent',icon:'#f0a830'},
+  {name:'💎 Diamond',cat:'transparent',icon:'#68c8c0'},
+];
+let selChip=null;
+let binPlacements={};// name→bin
+
+function buildOpacity(){
+  const bank=document.getElementById('opacityBank');
+  bank.innerHTML='';
+  selChip=null;binPlacements={};
+  const shuffled=[...OBJECTS].sort(()=>Math.random()-.5);
+  shuffled.forEach(obj=>{
+    const chip=makeChip(obj);bank.appendChild(chip);
+  });
+  ['opaque','translucent','transparent'].forEach(b=>{
+    document.getElementById('bin-'+b).innerHTML='';
+    document.getElementById('bin-'+b).className='bin';
+  });
+}
+
+function makeChip(obj){
+  const chip=document.createElement('div');
+  chip.className='drag-chip';chip.id='chip_'+obj.name;
+  chip.dataset.name=obj.name;chip.dataset.cat=obj.cat;
+  chip.style.borderColor=obj.icon;chip.style.color=obj.icon;
+  chip.textContent=obj.name;
+  chip.draggable=true;
+  chip.ondragstart=e=>e.dataTransfer.setData('text',obj.name);
+  chip.onclick=()=>{
+    if(chip.classList.contains('placed'))return;
+    if(selChip===obj.name){selChip=null;chip.style.outline='none';toast('Deselected');return;}
+    selChip=obj.name;
+    document.querySelectorAll('.drag-chip').forEach(c=>c.style.outline='none');
+    chip.style.outline='2px solid var(--warm)';
+    toast('Now tap a bin to place');
+  };
+  return chip;
+}
+
+function dropInBin(event,binId){
+  event.preventDefault();
+  document.getElementById('bin-'+binId).classList.remove('hover');
+  const name=event.dataTransfer.getData('text');
+  if(name)placeToBin(name,binId);
+}
+
+function tapBin(binId){
+  if(!selChip)return;
+  placeToBin(selChip,binId);
+  selChip=null;
+  document.querySelectorAll('.drag-chip').forEach(c=>c.style.outline='none');
+}
+
+function placeToBin(name,binId){
+  // Remove from old bin if placed
+  if(binPlacements[name]){
+    const oldBin=document.getElementById('bin-'+binPlacements[name]);
+    const existing=oldBin.querySelector(`[data-name="${name}"]`);
+    if(existing)existing.remove();
+  }
+  binPlacements[name]=binId;
+  // Hide from bank
+  const origChip=document.getElementById('chip_'+name);
+  if(origChip)origChip.classList.add('placed');
+  // Place copy in bin
+  const obj=OBJECTS.find(o=>o.name===name);
+  if(!obj)return;
+  const mini=document.createElement('div');
+  mini.className='drag-chip';mini.dataset.name=name;
+  mini.style.borderColor=obj.icon;mini.style.color=obj.icon;
+  mini.textContent=name;mini.style.fontSize='.62rem';mini.style.cursor='pointer';
+  mini.onclick=()=>{
+    binPlacements[name]=null;
+    mini.remove();
+    const orig=document.getElementById('chip_'+name);
+    if(orig)orig.classList.remove('placed');
+  };
+  document.getElementById('bin-'+binId).appendChild(mini);
+}
+
+function checkOpacity(){
+  const fb=document.getElementById('fbOpacity');fb.style.display='block';
+  let placed=0,correct_=0;
+  OBJECTS.forEach(obj=>{
+    if(binPlacements[obj.name]){
+      placed++;
+      if(binPlacements[obj.name]===obj.cat)correct_++;
+    }
+  });
+  if(placed<OBJECTS.length){fb.className='fb inf';fb.textContent=`Sort all ${OBJECTS.length} objects first! (${placed}/${OBJECTS.length} placed)`;return;}
+  if(correct_===OBJECTS.length){
+    fb.className='fb ok';fb.textContent=`✓ Perfect! All ${OBJECTS.length} objects correctly sorted. Opaque blocks all light; translucent scatters; transparent lets it through clearly.`;
+    correct.sorting=true;
+  } else {
+    fb.className='fb err';fb.textContent=`${correct_}/${OBJECTS.length} correct. Check: Clear glass and diamond are transparent. Brick and metal are opaque. Fog, frosted glass, tracing paper are translucent.`;
+  }
+  updateProg();
+}
+
+function resetOpacity(){
+  document.getElementById('fbOpacity').style.display='none';
+  correct.sorting=false;
+  buildOpacity();updateProg();
+}
+
+// ── RAY TRACER ────────────────────────────────────────────────────────────
+let obstacles=[];// {x,y,w,h}
+let srcX,srcY;
+let rayMode='slit';
+let draggingSrc=false;
+
+function initRay(){
+  const cv=document.getElementById('cvRay');
+  cv.width=cv.offsetWidth||700;
+  srcX=cv.width*.15;srcY=cv.height*.5;
+  drawRays();
+}
+
+function toggleRayMode(){
+  rayMode=rayMode==='slit'?'full':'slit';
+  document.getElementById('rayModeLabel').textContent=rayMode==='slit'?'Single Slit':'Full Rays';
+  drawRays();
+}
+
+function clearRays(){obstacles=[];drawRays();}
+
+function drawRays(){
+  const cv=document.getElementById('cvRay');
+  cv.width=cv.offsetWidth||700;
+  const W=cv.width,H=cv.height||380;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const nRays=rayMode==='slit'?60:90;
+  // Draw rays
+  for(let i=0;i<nRays;i++){
+    const angle=-Math.PI/2.2+(i/(nRays-1))*Math.PI/1.1;
+    let rx=srcX,ry=srcY;
+    const dx=Math.cos(angle),dy=Math.sin(angle);
+    // March ray and check obstacle hits
+    let blocked=false;
+    // Cast to edge
+    const len=Math.max(W,H)*2;
+    const ex=rx+dx*len,ey=ry+dy*len;
+    // Check each obstacle
+    let minT=len;
+    obstacles.forEach(ob=>{
+      // Ray-AABB intersection
+      const t=rayAABB(rx,ry,dx,dy,ob.x,ob.y,ob.w,ob.h);
+      if(t>0&&t<minT)minT=t;
+    });
+    if(minT<len){
+      // Draw ray to hit
+      ctx.beginPath();ctx.moveTo(rx,ry);
+      ctx.lineTo(rx+dx*minT,ry+dy*minT);
+      ctx.strokeStyle='rgba(240,168,48,.55)';ctx.lineWidth=1;ctx.stroke();
+    } else {
+      ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(ex,ey);
+      ctx.strokeStyle='rgba(240,168,48,.38)';ctx.lineWidth=1;ctx.stroke();
+    }
+  }
+  // Draw obstacles
+  obstacles.forEach(ob=>{
+    ctx.fillStyle='rgba(240,243,220,.9)';ctx.fillRect(ob.x,ob.y,ob.w,ob.h);
+    ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;ctx.strokeRect(ob.x,ob.y,ob.w,ob.h);
+  });
+  // Source
+  const g=ctx.createRadialGradient(srcX,srcY,0,srcX,srcY,20);
+  g.addColorStop(0,'rgba(255,250,180,1)');g.addColorStop(1,'rgba(240,168,48,0)');
+  ctx.beginPath();ctx.arc(srcX,srcY,20,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('☀',srcX,srcY);
+}
+
+function rayAABB(ox,oy,dx,dy,rx,ry,rw,rh){
+  const t1=(rx-ox)/dx,t2=(rx+rw-ox)/dx;
+  const t3=(ry-oy)/dy,t4=(ry+rh-oy)/dy;
+  const tmin=Math.max(Math.min(t1,t2),Math.min(t3,t4));
+  const tmax=Math.min(Math.max(t1,t2),Math.max(t3,t4));
+  if(tmax<0||tmin>tmax)return -1;
+  return tmin<0?tmax:tmin;
+}
+
+const cvRay=document.getElementById('cvRay');
+cvRay.addEventListener('click',e=>{
+  const r=cvRay.getBoundingClientRect();
+  const scl=cvRay.width/r.width;
+  const mx=(e.clientX-r.left)*scl,my=(e.clientY-r.top)*scl;
+  // Check if near source
+  if(Math.hypot(mx-srcX,my-srcY)<24){draggingSrc=true;return;}
+  obstacles.push({x:mx-8,y:my-30,w:16,h:60});
+  drawRays();
+});
+cvRay.addEventListener('touchstart',e=>{
+  const r=cvRay.getBoundingClientRect();
+  const scl=cvRay.width/r.width;
+  const t=e.touches[0];
+  const mx=(t.clientX-r.left)*scl,my=(t.clientY-r.top)*scl;
+  if(Math.hypot(mx-srcX,my-srcY)<28){draggingSrc=true;e.preventDefault();}
+},{passive:false});
+cvRay.addEventListener('touchmove',e=>{
+  if(!draggingSrc)return;
+  e.preventDefault();
+  const r=cvRay.getBoundingClientRect();
+  const scl=cvRay.width/r.width;
+  const t=e.touches[0];
+  srcX=(t.clientX-r.left)*scl;srcY=(t.clientY-r.top)*scl;
+  drawRays();
+},{passive:false});
+cvRay.addEventListener('touchend',()=>{draggingSrc=false;});
+cvRay.addEventListener('mousemove',e=>{
+  if(!draggingSrc)return;
+  const r=cvRay.getBoundingClientRect();
+  const scl=cvRay.width/r.width;
+  srcX=(e.clientX-r.left)*scl;srcY=(e.clientY-r.top)*scl;
+  drawRays();
+});
+cvRay.addEventListener('mouseup',()=>{draggingSrc=false;});
+
+// ── SHADOW BUILDER ────────────────────────────────────────────────────────
+let shadowObX,shadowObY;
+let draggingOb=false;
+
+function drawShadow(){
+  const cv=document.getElementById('cvShadow');
+  cv.width=cv.offsetWidth||700;
+  const W=cv.width,H=cv.height||360;
+  const ctx=cv.getContext('2d');
+  const srcSize=parseInt(document.getElementById('srcSizeSlider').value);
+  document.getElementById('srcSizeLabel').textContent=srcSize<15?'Small':srcSize<45?'Medium':'Large (Extended)';
+
+  // Init obstacle position if not set
+  if(!shadowObX){shadowObX=W*.45;shadowObY=H*.5;}
+
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  // Grid dots
+  ctx.fillStyle='rgba(255,255,255,.04)';
+  for(let x=20;x<W;x+=30)for(let y=20;y<H;y+=30){
+    ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();
+  }
+
+  const obsW=20,obsH=70;
+  const obsLeft=shadowObX-obsW/2,obsTop=shadowObY-obsH/2;
+  const obsRight=obsLeft+obsW,obsBot=obsTop+obsH;
+  const srcCX=W*.12;// Source x center
+  const wallX=W*.88;// Shadow wall
+
+  // Draw penumbra and umbra using multiple source points
+  const nSamples=srcSize<4?1:32;
+  const srcRange=srcSize;
+
+  if(nSamples===1){
+    // Point source — pure shadow
+    const topAngle=Math.atan2(obsTop-H*.5,(obsLeft-srcCX));
+    const botAngle=Math.atan2(obsBot-H*.5,(obsLeft-srcCX));
+    // Shadow on wall
+    const wTop=H*.5+Math.tan(topAngle)*(wallX-srcCX);
+    const wBot=H*.5+Math.tan(botAngle)*(wallX-srcCX);
+    ctx.fillStyle='rgba(0,0,0,.9)';
+    ctx.fillRect(wallX-6,Math.min(wTop,wBot),12,Math.abs(wBot-wTop));
+    ctx.fillStyle='rgba(255,255,255,.08)';
+    ctx.fillRect(wallX-6,0,12,Math.min(wTop,wBot));
+    ctx.fillRect(wallX-6,Math.max(wTop,wBot),12,H-Math.max(wTop,wBot));
+  } else {
+    // Extended source — build shadow map on wall
+    const wallH=H;
+    const shadow=new Float32Array(wallH).fill(0);
+    for(let s=0;s<nSamples;s++){
+      const sy_=H*.5+(s/(nSamples-1)-0.5)*srcRange;
+      for(let y=0;y<wallH;y++){
+        const angle=Math.atan2(y-sy_,wallX-srcCX);
+        const obAngleTop=Math.atan2(obsTop-sy_,obsLeft-srcCX);
+        const obAngleBot=Math.atan2(obsBot-sy_,obsLeft-srcCX);
+        const minA=Math.min(obAngleTop,obAngleBot);
+        const maxA=Math.max(obAngleTop,obAngleBot);
+        if(angle>=minA&&angle<=maxA)shadow[y]+=1;
+      }
+    }
+    // Draw wall with shadow
+    const maxS=nSamples;
+    for(let y=0;y<wallH;y++){
+      const frac=shadow[y]/maxS;
+      const br=Math.round((1-frac)*180);
+      ctx.fillStyle=`rgb(${br},${Math.round(br*.8)},${Math.round(br*.4)})`;
+      ctx.fillRect(wallX-5,y,10,1);
+    }
+    // Labels
+    const umbraTop=shadow.findIndex(v=>v>=maxS*.95);
+    const umbraBot=shadow.length-1-[...shadow].reverse().findIndex(v=>v>=maxS*.95);
+    if(umbraBot>umbraTop&&umbraBot-umbraTop>4){
+      ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='bold 11px Courier Prime';ctx.textAlign='left';
+      ctx.fillText('UMBRA',wallX+10,(umbraTop+umbraBot)/2);
+      ctx.fillStyle='rgba(240,168,48,.6)';
+      ctx.fillText('PENUMBRA',wallX+10,umbraTop-8);
+      ctx.fillText('PENUMBRA',wallX+10,umbraBot+14);
+    }
+  }
+
+  // Source
+  const srcGrad=ctx.createLinearGradient(srcCX-srcRange/2,H*.5,srcCX+srcRange/2,H*.5);
+  srcGrad.addColorStop(0,'rgba(255,243,150,.6)');
+  srcGrad.addColorStop(.5,'rgba(255,255,220,1)');
+  srcGrad.addColorStop(1,'rgba(255,243,150,.6)');
+  ctx.fillStyle=srcGrad;
+  ctx.fillRect(srcCX-srcRange/2,H*.5-Math.max(4,srcRange/2),srcRange,Math.max(8,srcRange));
+  // Glow
+  const g2=ctx.createRadialGradient(srcCX,H*.5,0,srcCX,H*.5,srcRange+20);
+  g2.addColorStop(0,`rgba(240,168,48,${Math.min(.5,srcRange/60)})`);g2.addColorStop(1,'rgba(240,168,48,0)');
+  ctx.beginPath();ctx.arc(srcCX,H*.5,srcRange+20,0,Math.PI*2);ctx.fillStyle=g2;ctx.fill();
+
+  // Obstacle
+  ctx.fillStyle='rgba(220,210,180,.9)';ctx.fillRect(obsLeft,obsTop,obsW,obsH);
+  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;ctx.strokeRect(obsLeft,obsTop,obsW,obsH);
+
+  // Ray lines to obstacle edges
+  ctx.strokeStyle='rgba(240,168,48,.2)';ctx.lineWidth=.8;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(srcCX,H*.5);ctx.lineTo(obsLeft,obsTop);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(srcCX,H*.5);ctx.lineTo(obsLeft,obsBot);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle='rgba(240,168,48,.7)';ctx.font='9px Courier Prime';ctx.textAlign='center';
+  ctx.fillText('SOURCE',srcCX,H*.5-srcRange/2-8);
+  ctx.fillStyle='rgba(220,210,180,.7)';
+  ctx.fillText('OBJECT',shadowObX,obsTop-6);
+}
+
+const cvShadow=document.getElementById('cvShadow');
+cvShadow.addEventListener('mousedown',e=>{
+  const r=cvShadow.getBoundingClientRect();
+  const scl=cvShadow.width/r.width;
+  const mx=(e.clientX-r.left)*scl,my=(e.clientY-r.top)*scl;
+  if(shadowObX&&Math.hypot(mx-shadowObX,my-shadowObY)<50)draggingOb=true;
+});
+cvShadow.addEventListener('mousemove',e=>{
+  if(!draggingOb)return;
+  const r=cvShadow.getBoundingClientRect();
+  const scl=cvShadow.width/r.width;
+  shadowObX=(e.clientX-r.left)*scl;shadowObY=(e.clientY-r.top)*scl;
+  drawShadow();
+});
+cvShadow.addEventListener('mouseup',()=>{draggingOb=false;});
+cvShadow.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  const r=cvShadow.getBoundingClientRect();
+  const scl=cvShadow.width/r.width;
+  const t=e.touches[0];
+  const mx=(t.clientX-r.left)*scl,my=(t.clientY-r.top)*scl;
+  if(shadowObX&&Math.hypot(mx-shadowObX,my-shadowObY)<60){draggingOb=true;}
+},{passive:false});
+cvShadow.addEventListener('touchmove',e=>{
+  if(!draggingOb)return;e.preventDefault();
+  const r=cvShadow.getBoundingClientRect();
+  const scl=cvShadow.width/r.width;
+  const t=e.touches[0];
+  shadowObX=(t.clientX-r.left)*scl;shadowObY=(t.clientY-r.top)*scl;
+  drawShadow();
+},{passive:false});
+cvShadow.addEventListener('touchend',()=>{draggingOb=false;});
+
+// ── SUN CLOCK ─────────────────────────────────────────────────────────────
+function drawSunClock(hour){
+  hour=parseFloat(hour);
+  const cv=document.getElementById('cvSun');
+  cv.width=cv.offsetWidth||700;
+  const W=cv.width,H=cv.height||340;
+  const ctx=cv.getContext('2d');
+
+  // Sky gradient
+  const noon=12,t=(hour-6)/12;// 0=6am, 1=6pm
+  const skyR=Math.round(20+t*(1-t)*4*120);
+  const skyG=Math.round(30+t*(1-t)*4*80);
+  const skyB=Math.round(60+t*(1-t)*4*180);
+  const skyGrad=ctx.createLinearGradient(0,0,0,H*.7);
+  skyGrad.addColorStop(0,`rgb(${skyR},${skyG},${skyB})`);
+  skyGrad.addColorStop(1,`rgb(${skyR+30},${skyG+20},${skyB-20})`);
+  ctx.fillStyle=skyGrad;ctx.fillRect(0,0,W,H*.75);
+
+  // Ground
+  const gGrad=ctx.createLinearGradient(0,H*.75,0,H);
+  gGrad.addColorStop(0,'#3a2a10');gGrad.addColorStop(1,'#201508');
+  ctx.fillStyle=gGrad;ctx.fillRect(0,H*.75,W,H*.25);
+  // Ground line
+  ctx.strokeStyle='rgba(200,150,60,.4)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,H*.75);ctx.lineTo(W,H*.75);ctx.stroke();
+
+  // Sun position — arc across sky
+  const sunX=W*(hour-6)/12;
+  const elevation=(1-Math.abs(hour-12)/6);// 0 at 6am/6pm, 1 at noon
+  const sunY=H*.75-elevation*H*.6;
+  // Glow
+  const sg=ctx.createRadialGradient(sunX,sunY,0,sunX,sunY,60);
+  const alpha=0.5+elevation*.4;
+  sg.addColorStop(0,`rgba(255,250,150,${alpha})`);sg.addColorStop(1,'rgba(240,168,48,0)');
+  ctx.beginPath();ctx.arc(sunX,sunY,60,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+  // Sun disk
+  ctx.beginPath();ctx.arc(sunX,sunY,16,0,Math.PI*2);
+  ctx.fillStyle='#fff8cc';ctx.fill();
+
+  // Gnomon (upright post)
+  const gx=W*.45,gy=H*.75;
+  const gH=80;// gnomon height in pixels
+  ctx.strokeStyle='rgba(200,180,100,.9)';ctx.lineWidth=4;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx,gy-gH);ctx.stroke();
+  ctx.beginPath();ctx.arc(gx,gy-gH,5,0,Math.PI*2);ctx.fillStyle='#c8b464';ctx.fill();
+
+  // Shadow — cast from gnomon top toward opposite of sun
+  const dirX=gx-sunX,dirY=gy-sunY;
+  const len=Math.sqrt(dirX*dirX+dirY*dirY);
+  const nx=dirX/len,ny=dirY/len;
+  const elevAngle=Math.atan2(-ny,nx);// angle above horizon
+  let shadowLen=0;
+  if(elevation>0.01){
+    shadowLen=gH/Math.tan(Math.atan2(-(sunY-gy),sunX-gx));
+    shadowLen=Math.abs(shadowLen);
+  }
+  const maxShadow=H*.6;
+  const sSLen=Math.min(shadowLen,maxShadow);
+  const shadowEndX=gx+(sSLen>0?nx*sSLen:0);
+  const shadowEndY=gy;// Shadow on ground
+
+  ctx.strokeStyle='rgba(0,0,0,.6)';ctx.lineWidth=3;ctx.lineCap='round';ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(shadowEndX,shadowEndY);ctx.stroke();
+
+  // Sun rays from sun to gnomon tip
+  ctx.strokeStyle='rgba(255,220,80,.3)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(sunX,sunY);ctx.lineTo(gx,gy-gH);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sunX,sunY);ctx.lineTo(shadowEndX,shadowEndY);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle='rgba(255,250,180,.8)';ctx.font='bold 12px Courier Prime';ctx.textAlign='center';
+  const hh=Math.floor(hour),mm=Math.round((hour-hh)*60);
+  document.getElementById('timeLabel').textContent=`${hh}:${mm.toString().padStart(2,'0')}`;
+  const shadowRatio=elevation>0.01?(sSLen/gH).toFixed(1):'∞ (no sun)';
+  document.getElementById('shadowLenLabel').textContent=shadowRatio;
+
+  // Angle arc
+  if(elevation>0.05){
+    ctx.strokeStyle='rgba(240,168,48,.5)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(gx,gy-gH,30,Math.PI/2,Math.atan2(sunY-(gy-gH),sunX-gx));ctx.stroke();
+    ctx.fillStyle='rgba(240,168,48,.7)';ctx.font='9px Courier Prime';ctx.textAlign='left';
+    ctx.fillText('Elevation',gx+32,gy-gH+10);
+  }
+}
+
+// ── AI EXAMINER ───────────────────────────────────────────────────────────
+const EXAM_QS=[
+  'Explain why you cannot see around a corner, even though light moves extremely fast. Use the term rectilinear propagation.',
+  'A student says "a torch beam curves slightly in air." Is this correct? Explain why shadows have sharp edges.',
+  'Explain why the shadow of a pen held close to a wall is sharp, but when the pen is held far from the wall the shadow edges become blurry.',
+  'Using rectilinear propagation, explain why the Moon can only be seen during a lunar eclipse if you are standing in Earth\'s penumbra, not its umbra.',
+  'Explain how a pinhole camera creates an upside-down image using only the law of rectilinear propagation — no lenses or mirrors.',
+];
+let examHistory=[];
+let examQuestion='';
+let examStarted=false;
+
+function startExam(){
+  const q=EXAM_QS[Math.floor(Math.random()*EXAM_QS.length)];
+  examQuestion=q;examStarted=true;
+  document.getElementById('startExamBtn').style.display='none';
+  addExMsg('ai','📋 Here is your question:<br><br><strong>'+q+'</strong><br><br>Take your time. I will give you feedback and may ask a follow-up.');
+  examHistory=[];
+}
+
+function addExMsg(role,html){
+  const div=document.createElement('div');
+  div.className='chat-msg '+role;
+  div.innerHTML=html.replace(/\n/g,'<br>');
+  document.getElementById('examChat').appendChild(div);
+  document.getElementById('examChat').scrollTop=9999;
+}
+
+async function sendExam(){
+  if(!examStarted){toast('Press "Start Exam" first!');return;}
+  const inp=document.getElementById('examInput');
+  const text=inp.value.trim();if(!text)return;
+  addExMsg('user',text);inp.value='';
+  examHistory.push({role:'user',content:text});
+  const btn=document.querySelector('[onclick="sendExam()"]');btn.disabled=true;
+  const typing=document.createElement('div');typing.className='chat-msg ai';
+  typing.innerHTML='<div style="display:flex;gap:4px;"><div class="chat-dot"></div><div class="chat-dot"></div><div class="chat-dot"></div></div>';
+  document.getElementById('examChat').appendChild(typing);
+  document.getElementById('examChat').scrollTop=9999;
+  const system=`You are a strict but supportive physics examiner for a Grade 8 student in Lebanon. The topic is RECTILINEAR PROPAGATION OF LIGHT.
+The question is: "${examQuestion}"
+Rules:
+1. Acknowledge what the student got right specifically.
+2. Identify ONE gap or error — ask a targeted follow-up.
+3. If the answer is complete (mentions straight-line travel, shadows or real-world application), congratulate and score out of 10.
+4. Keep responses to 3-4 sentences. Use words: rectilinear, propagation, shadow, umbra, penumbra, opaque.
+5. Never give the full answer directly.`;
+  try{
+    const resp=await fetch(APPS,{method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'ai',system,messages:[...examHistory]})});
+    const raw=await resp.text();
+    const data=JSON.parse(raw);
+    const aiText=data.text||data.error||'⚠ No response from AI. Try again.';
+    typing.remove();
+    addExMsg('ai',aiText);
+    examHistory.push({role:'assistant',content:aiText});
+    correct.examiner=examHistory.length>=2;updateProg();
+  }catch(e){
+    typing.remove();
+    // Fallback: local feedback if network fails
+    const local=buildExamFeedback(text,examHistory.length);
+    addExMsg('ai',local+'<br><small style="opacity:.5">(offline mode)</small>');
+    examHistory.push({role:'assistant',content:local});
+    correct.examiner=examHistory.length>=2;updateProg();
+  }
+  btn.disabled=false;
+}
+
+function buildExamFeedback(answer,turn){
+  const hasRectilinear=/rectilinear|straight|line/i.test(answer);
+  const hasShadow=/shadow|umbra|penumbra/i.test(answer);
+  const hasApp=/corner|pinhole|camera|eclipse|bend/i.test(answer);
+  const good=[];
+  if(hasRectilinear)good.push('rectilinear propagation');
+  if(hasShadow)good.push('shadow formation');
+  if(hasApp)good.push('real-world application');
+  if(good.length>=2||turn>=3)
+    return `Strong answer! You've covered ${good.join(' and ')}. Score: ${Math.min(7+good.length,10)}/10. Key point: light travels in straight lines → rays cannot curve → straight shadows. Well done!`;
+  if(good.length>0&&turn===1)
+    return `Good start — you mentioned ${good[0]}. Now explain: because light travels in straight lines, can it ever curve around an obstacle? What does this mean for the edge of a shadow?`;
+  return `You've started well. Be more specific: how does rectilinear propagation (light in straight lines) directly explain why a shadow has a sharp edge? What would happen if light could bend?`;
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────────────────
+function updateProg(){
+  const keys={
+    sorting:'Opacity Sorter',
+    obs:'Observation Q',
+    ray1:'Ray Tracer Q',
+    shad1:'Shadow Builder Q1',
+    shad2:'Shadow Builder Q2',
+    sun1:'Sun Clock Q1',
+    sun2:'Sun Clock Q2',
+    q1:'Eval Q1',q2:'Eval Q2',q3:'Eval Q3',q4:'Eval Q4',q5:'Eval Q5',
+    examiner:'AI Examiner',
+  };
+  const done=Object.keys(keys).filter(k=>correct[k]).length;
+  const total=Object.keys(keys).length;
+  const pct=Math.round(done/total*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=done+' / '+total+' completed';
+  document.getElementById('ringPct').textContent=pct+'%';
+  document.getElementById('ringFill').style.strokeDashoffset=226*(1-pct/100);
+  document.getElementById('scoreBreakdown').innerHTML=
+    Object.entries(keys).map(([k,l])=>
+      `<div class="score-row"><span class="score-key">${l}</span>
+       <span class="score-val ${correct[k]?'ok':'no'}">${correct[k]?'✓':'—'}</span></div>`
+    ).join('');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────
+async function doSubmit(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!cls){toast('Choose your section first!');return;}
+  if(!name||name.startsWith('—')){toast('Select your name!');return;}
+  const btn=document.querySelector('[onclick="doSubmit()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+  const keys=['sorting','obs','ray1','shad1','shad2','sun1','sun2','q1','q2','q3','q4','q5','examiner'];
+  const done=keys.filter(k=>correct[k]).length;
+  const payload={
+    sheet:'LightLab_G8',name,class:cls,
+    sorting:correct.sorting?'✓':'✗',
+    obs:picked.obs||'—',obs_ok:correct.obs?'✓':'✗',
+    ray1:picked.ray1||'—',ray1_ok:correct.ray1?'✓':'✗',
+    shad1:picked.shad1||'—',shad1_ok:correct.shad1?'✓':'✗',
+    shad2:picked.shad2||'—',shad2_ok:correct.shad2?'✓':'✗',
+    sun1:picked.sun1||'—',sun1_ok:correct.sun1?'✓':'✗',
+    sun2:picked.sun2||'—',sun2_ok:correct.sun2?'✓':'✗',
+    q1:picked.q1||'—',q1_ok:correct.q1?'✓':'✗',
+    q2:picked.q2||'—',q2_ok:correct.q2?'✓':'✗',
+    q3:picked.q3||'—',q3_ok:correct.q3?'✓':'✗',
+    q4:picked.q4||'—',q4_ok:correct.q4?'✓':'✗',
+    q5:picked.q5||'—',q5_ok:correct.q5?'✓':'✗',
+    examiner_chat:examHistory.map(m=>(m.role==='user'?'Student':'AI')+': '+m.content).join('\n---\n')||'—',
+    q6_written:document.getElementById('q6text').value||'—',
+    score:Math.round(done/keys.length*100)+'%'
+  };
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)});
+    document.getElementById('subOk').style.display='block';
+    btn.textContent='✓ Submitted!';btn.style.background='var(--green)';btn.style.color='#fff';
+    toast('✓ Lab submitted to Ahmad!');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📡 Submit to Ahmad\'s Grade Sheet';
+    toast('⚠ Connection error — try again');
+  }
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+buildOpacity();
+initRay();
+drawShadow();
+drawSunClock(12);
+updateProg();
+window.addEventListener('resize',()=>{
+  initRay();
+  drawShadow();
+  drawSunClock(document.getElementById('timeSlider').value);
+});
+</script>
+</body>
+</html>
