@@ -1681,6 +1681,7 @@ let animId;
 
 function init(canvasEl) {
   canvas = canvasEl;
+  ctx = canvas.getContext('2d'); // <--- THE FIX FOR THE BLACK SCREEN IS RIGHT HERE!
   canvas.width = W; canvas.height = H;
   // Offscreen for glow effects
   offscreen = document.createElement('canvas');
@@ -2326,8 +2327,7 @@ function pqInit() {
   if (pqInitialized) return;
   const cv = document.getElementById('pqCanvas');
   if (!cv) return;
-  PQ.ctx = cv.getContext('2d');// expose ctx
-  PQ.init(cv);
+  PQ.init(cv); // Changed this! No longer manually modifying PQ.ctx from the outside.
   pqInitialized = true;
 
   cv.addEventListener('pq-win', e => {
