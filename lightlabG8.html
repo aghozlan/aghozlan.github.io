@@ -1536,12 +1536,9 @@ const MAX_BOUNCES = 8;
 const SCIENCE_FACTS = [
   { trigger: 'wall', text: '✓ RECTILINEAR PROPAGATION: Light cannot bend around walls — it only travels in straight lines!' },
   { trigger: 'mirror', text: '✓ REFLECTION LAW: Angle of incidence = angle of reflection. Light still travels straight between reflections.' },
-  { trigger: 'shadow', text: '✓ SHADOWS form because light travels straight — it cannot sneak around the opaque stone.' },
-  { trigger: 'crystal', text: '✓ REFRACTION HINT: Crystals bend light at their boundary — but each segment inside is still a straight ray.' },
-  { trigger: 'level2', text: '⚠ UMBRA vs PENUMBRA: A single photon (point source) makes ONE sharp shadow. Ready for multiple sources?' },
-  { trigger: 'level3', text: '⚡ ANCIENT WISDOM: Egyptians used straight light beams through holes to align the pyramids. Same principle!' },
-  { trigger: 'level4', text: '🌑 ECLIPSE PHYSICS: The Moon\'s umbra is exactly like this cave\'s dark zones — total shadow where NO straight ray reaches.' },
-  { trigger: 'level5', text: '📐 PINHOLE CAMERA: Each point of a scene sends straight rays through a tiny hole — creating an inverted image.' },
+  { trigger: 'shadow', text: '✓ CRYSTALS: You proved that multiple targets can be lit by a single beam passing perfectly straight through them!' },
+  { trigger: 'eclipse', text: '🌑 ECLIPSE PHYSICS: The dark zones you navigated represent the Umbra — where absolutely no straight rays can reach.' },
+  { trigger: 'pinhole', text: '📐 PINHOLE CAMERA: You forced two beams to cross precisely at one gap, reaching opposite targets. Flawless physics!' },
   { trigger: 'complete', text: '🏆 PHOTON MASTER: You\'ve proven rectilinear propagation through every level. Light ALWAYS travels in straight lines!' }
 ];
 
@@ -1558,7 +1555,7 @@ const T = {
 };
 
 // ── LEVELS ─────────────────────────────────────────────────────────
-// Each level has: grid, placeable mirrors, science challenge, story
+// Redesigned to be perfectly solvable and increasingly challenging!
 const LEVELS = [
 {
   name: 'The Awakening',
@@ -1566,16 +1563,16 @@ const LEVELS = [
   science: 'Rectilinear Propagation: light travels ONLY in straight lines.',
   grid: [
     [1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,0,0,1,0,0,0,0,1],
-    [1,0,0,0,0,0,1,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,3,1],
-    [1,0,0,0,0,0,1,0,0,0,0,1],
-    [1,0,0,0,0,0,1,0,0,0,0,1],
-    [1,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,2,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,3,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ],
   mirrors: 1,
-  hint: 'Place ONE mirror (/) to turn the beam 90° and reach the crystal.',
+  hint: 'Place ONE mirror (\\) by tapping the grid to turn the beam 90° down into the crystal.',
   scienceFact: SCIENCE_FACTS[0],
   sourceDir: {dx:1,dy:0}, // beam goes right
 },
@@ -1585,73 +1582,73 @@ const LEVELS = [
   science: 'Shadows form because light travels straight. The dark zone = umbra.',
   grid: [
     [1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,0,0,0,0,0,0,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,1,1,0,0,0,3,0,1],
-    [1,0,0,0,1,1,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,2,0,0,0,1,1,0,0,0,0,1],
+    [1,0,0,0,0,1,1,0,0,0,0,1],
+    [1,0,0,0,0,1,1,0,0,0,0,1],
+    [1,0,0,0,0,1,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,3,1],
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ],
   mirrors: 2,
-  hint: 'The monolith blocks straight paths. Use 2 mirrors to route around it — the beam still travels straight between mirrors.',
+  hint: 'The monolith blocks straight paths. Use 2 mirrors to route the beam around it.',
   scienceFact: SCIENCE_FACTS[1],
   sourceDir: {dx:1,dy:0},
 },
 {
   name: 'The Crystal Maze',
-  story: 'Three crystals must be lit simultaneously. The ancients designed this maze knowing light travels in perfect straight lines.',
-  science: 'Multiple mirrors = multiple straight segments. Never curved.',
+  story: 'Three crystals must be lit simultaneously. The ancients designed this maze knowing light travels perfectly straight THROUGH clear crystals.',
+  science: 'Light can pass perfectly straight through clear objects, illuminating multiple targets!',
   grid: [
     [1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,1,0,0,0,0,0,3,1],
-    [1,0,0,0,1,0,0,0,0,0,0,1],
-    [1,0,0,0,1,0,0,1,0,0,0,1],
-    [1,0,3,0,0,0,0,1,0,0,0,1],
-    [1,0,0,0,0,0,0,1,0,3,0,1],
+    [1,2,0,0,0,0,0,0,3,0,0,1],
+    [1,0,0,1,1,1,1,1,1,0,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,1,1,1,1,1,1,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,3,0,0,0,0,3,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ],
   mirrors: 4,
-  hint: 'Light a path to all 3 crystals. Each mirror segment is perfectly straight — that\'s the law.',
+  hint: 'Light the top crystal first, then let the beam pass straight through it. Route it down and back through the bottom hallway!',
   scienceFact: SCIENCE_FACTS[2],
   sourceDir: {dx:1,dy:0},
 },
 {
   name: 'The Eclipse Chamber',
-  story: 'An eclipse is happening outside! Inside the chamber, reproduce it: create a total shadow (umbra) zone where no light reaches.',
-  science: 'ECLIPSE: Moon\'s umbra = total shadow. Same as this cave!',
+  story: 'An eclipse is happening! Two beams must reach their specific targets, weaving around the central moon column.',
+  science: 'ECLIPSE: Moon\'s umbra = total shadow. You must deflect light around the blockage.',
   grid: [
     [1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,0,0,0,0,0,0,0,1],
+    [1,2,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,3,1],
     [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,1,0,0,0,0,3,1],
-    [1,0,0,0,0,1,0,0,0,0,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,2,0,0,0,0,0,0,0,0,3,1],
+    [1,0,0,0,0,0,0,0,0,0,3,1],
+    [1,2,0,0,0,0,1,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ],
-  mirrors: 3,
-  hint: 'TWO sources, TWO targets. Create the paths — notice the dark zone between. That\'s the umbra!',
+  mirrors: 4,
+  hint: 'Beam 1 must reach the bottom target. Beam 2 must reach the top target. They will need to cross paths!',
   scienceFact: SCIENCE_FACTS[3],
   sourceDir: {dx:1,dy:0},
 },
 {
   name: 'The Ancient Pinhole',
-  story: 'Final challenge: the ancient pinhole camera. Guide light through the tiny gap — it will create an inverted image on the far wall.',
-  science: 'PINHOLE CAMERA: straight rays cross at the hole → inverted image.',
+  story: 'Final Challenge: The Pinhole Camera. Two beams must intersect precisely at a single gap (the pinhole) to reach their opposite destinations.',
+  science: 'PINHOLE CAMERA: straight rays cross at the hole → creating an inverted image.',
   grid: [
     [1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,0,0,1,0,0,0,0,1],
-    [1,0,0,0,0,0,1,0,0,0,3,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],  // pinhole gap at col 6
-    [1,0,0,0,0,0,1,0,0,0,0,1],
-    [1,0,0,0,0,0,1,0,0,0,3,1],
-    [1,2,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,2,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+    [1,2,0,0,0,0,0,0,0,0,3,1],
+    [1,0,0,0,0,0,0,0,3,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1],
   ],
   mirrors: 2,
-  hint: 'Both beams must pass through the SAME gap (pinhole) — then diverge to opposite targets. This is exactly how a pinhole camera works!',
+  hint: 'Flawless logic required: Can one single mirror direct BOTH beams simultaneously to their separate targets?',
   scienceFact: SCIENCE_FACTS[4],
   sourceDir: {dx:1,dy:0},
 },
@@ -1744,31 +1741,20 @@ function initLevel(idx) {
 function castAllRays() {
   const lv = LEVELS[state.level];
   const rays = [];
-  state.crystalGlow = {};
+  state.crystalGlow = {}; // reset glows every frame
 
   // Find all sources
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
       if (state.grid[r][c] === T.SOURCE) {
         // Determine source direction from level
-        const sources = findAllSources();
-        const srcIdx = sources.findIndex(s => s.r===r && s.c===c);
-        let dir = lv.sourceDir;
-        if (srcIdx === 1) dir = {dx:1, dy:0}; // second source also goes right (level 4 has 2)
+        const dir = lv.sourceDir;
         const ray = traceRay(c*CELL+CELL/2, r*CELL+CELL/2, dir.dx, dir.dy, 0);
         rays.push(...ray);
       }
     }
   }
   return rays;
-}
-
-function findAllSources() {
-  const s = [];
-  for (let r = 0; r < ROWS; r++)
-    for (let c = 0; c < COLS; c++)
-      if (state.grid[r][c] === T.SOURCE) s.push({r,c});
-  return s;
 }
 
 function traceRay(startX, startY, dx, dy, bounces) {
@@ -1783,32 +1769,29 @@ function traceRay(startX, startY, dx, dy, bounces) {
     x += dx * step; y += dy * step;
     const col = Math.floor(x / CELL);
     const row = Math.floor(y / CELL);
+    
+    // Bounds check
     if (col < 0 || col >= COLS || row < 0 || row >= ROWS) {
-      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'edge'});
+      segments.push({x1:prevX, y1:prevY, x2:x, y2:y, bounces, hit:'edge'});
       break;
     }
+    
     const cell = getCellAt(col, row);
-    if (cell === T.WALL) {
-      segments.push({x1:prevX,y1:prevY,x2:x-dx*step,y2:y-dy*step,bounces,hit:'wall'});
-      break;
-    }
-    if (cell === T.MIRROR_NE) { // / mirror
-      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'mirror'});
-      const [ndx,ndy] = reflectNE(dx,dy);
-      const sub = traceRay(x,y,ndx,ndy,bounces+1);
-      segments.push(...sub);
-      break;
-    }
-    if (cell === T.MIRROR_NW) { // \ mirror
-      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'mirror'});
-      const [ndx,ndy] = reflectNW(dx,dy);
-      const sub = traceRay(x,y,ndx,ndy,bounces+1);
-      segments.push(...sub);
-      break;
-    }
+    
     if (cell === T.TARGET) {
-      segments.push({x1:prevX,y1:prevY,x2:x,y2:y,bounces,hit:'target'});
+      // Light passes perfectly straight through the crystal!
       state.crystalGlow[`${col},${row}`] = true;
+      // Do NOT break, let the ray continue propagating rectilinearly
+    } 
+    else if (cell === T.WALL) {
+      segments.push({x1:prevX, y1:prevY, x2:x-dx*step, y2:y-dy*step, bounces, hit:'wall'});
+      break;
+    } 
+    else if (cell === T.MIRROR_NE || cell === T.MIRROR_NW) {
+      segments.push({x1:prevX, y1:prevY, x2:x, y2:y, bounces, hit:'mirror'});
+      const [ndx, ndy] = cell === T.MIRROR_NE ? reflectNE(dx,dy) : reflectNW(dx,dy);
+      const sub = traceRay(x, y, ndx, ndy, bounces+1);
+      segments.push(...sub);
       break;
     }
   }
@@ -1841,7 +1824,6 @@ function checkWin() {
 
 // ── INTERACTION ─────────────────────────────────────────────────────
 let hoverCell = null;
-let placingType = 4; // default NE mirror
 
 function handleHover(e) {
   const {col,row} = eventToCell(e);
@@ -1910,9 +1892,13 @@ function touchToCell(t) {
 function triggerWin() {
   state.phase = 'win';
   state.completedLevels.add(state.level);
-  state.score += 100 + (LEVELS[state.level].mirrors - state.mirrors.length) * 20;
-  state.camera.shake = 15;
+  
+  // High score competition logic
   const lv = LEVELS[state.level];
+  const mirrorBonus = (lv.mirrors - state.mirrors.length) * 500;
+  state.score += 1000 + mirrorBonus;
+  state.camera.shake = 15;
+  
   showSciencePanel(lv.scienceFact?.text || '✓ Level complete!');
   // Dispatch event so the HTML can hear it
   if (canvas.dispatchEvent) {
@@ -2217,7 +2203,7 @@ function drawUI() {
   ctx.fillStyle='rgba(240,168,48,0.7)';ctx.font='9px Courier Prime';ctx.textAlign='center';
   ctx.fillText('Click empty cells to place/toggle mirrors', W/2, 14);
   // Score
-  ctx.fillStyle='rgba(240,168,48,0.6)';ctx.font='9px Courier Prime';ctx.textAlign='left';
+  ctx.fillStyle='rgba(240,168,48,0.6)';ctx.font='10px Courier Prime';ctx.textAlign='left';
   ctx.fillText(`Score: ${state.score}`, 8, H-8);
 }
 
@@ -2269,8 +2255,8 @@ function drawWinOverlay() {
   ctx.fillText('⚡ PHOTON DELIVERED!',W/2,H/2-30);
   ctx.fillStyle='rgba(120,220,255,0.9)';ctx.font='10px Courier Prime';
   ctx.fillText(LEVELS[state.level].science,W/2,H/2-10);
-  ctx.fillStyle='rgba(200,240,200,0.8)';ctx.font='9px Courier Prime';
-  ctx.fillText('Score: +' + (100+(LEVELS[state.level].mirrors-state.mirrors.length)*20),W/2,H/2+8);
+  ctx.fillStyle='rgba(200,240,200,0.8)';ctx.font='10px Courier Prime';
+  ctx.fillText('Score: +' + (1000+(LEVELS[state.level].mirrors-state.mirrors.length)*500),W/2,H/2+8);
   // Next button area
   ctx.fillStyle='rgba(240,168,48,0.15)';roundRect(ctx,W/2-60,H/2+22,120,22,4);ctx.fill();
   ctx.strokeStyle='rgba(240,168,48,0.8)';ctx.lineWidth=1;
@@ -2283,21 +2269,21 @@ function drawWinOverlay() {
 function drawCompleteOverlay() {
   ctx.save();ctx.fillStyle='rgba(0,10,30,0.88)';ctx.fillRect(0,0,W,H);
   // Stars
-  for(let i=0;i<20;i++){
-    const a=i*(Math.PI*2/20)+state.animT*.3;
-    ctx.beginPath();ctx.arc(W/2+Math.cos(a)*(40+20*Math.sin(state.animT+i)),
-      H/2-20+Math.sin(a)*(30+15*Math.cos(state.animT*1.3+i)),2,0,Math.PI*2);
-    ctx.fillStyle=`hsla(${(i*18+state.animT*50)%360},100%,75%,.8)`;ctx.fill();
+  for(let i=0;i<40;i++){
+    const a=i*(Math.PI*2/40)+state.animT*.5;
+    ctx.beginPath();ctx.arc(W/2+Math.cos(a)*(60+30*Math.sin(state.animT+i)),
+      H/2-20+Math.sin(a)*(45+20*Math.cos(state.animT*1.3+i)),2,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${(i*18+state.animT*80)%360},100%,75%,.8)`;ctx.fill();
   }
-  ctx.fillStyle='#fff8cc';ctx.font='bold 20px Courier Prime';
+  ctx.fillStyle='#fff8cc';ctx.font='bold 24px Courier Prime';
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('🏆 PHOTON MASTER!',W/2,H/2-50);
-  ctx.fillStyle='rgba(120,220,255,.9)';ctx.font='11px Courier Prime';
-  ctx.fillText('All 5 levels complete!',W/2,H/2-28);
-  ctx.fillStyle='rgba(240,230,140,.8)';ctx.font='10px Courier Prime';
-  ctx.fillText(`Final Score: ${state.score}`,W/2,H/2-10);
-  ctx.fillStyle='rgba(180,240,180,.8)';ctx.font='9px Courier Prime';
-  wrapText(ctx,'You have PROVEN: light always travels in straight lines. This explains shadows, eclipses, pinhole cameras, and telescopes.',W/2,H/2+16,W-60,13);
+  ctx.fillText('🏆 LEGENDARY PHYSICIST!',W/2,H/2-60);
+  ctx.fillStyle='rgba(120,220,255,.9)';ctx.font='12px Courier Prime';
+  ctx.fillText('All 5 levels complete! The cave is illuminated.',W/2,H/2-35);
+  ctx.fillStyle='#f0a830';ctx.font='bold 14px Courier Prime';
+  ctx.fillText(`FINAL SCORE: ${state.score}`,W/2,H/2-10);
+  ctx.fillStyle='rgba(180,240,180,.9)';ctx.font='10px Courier Prime';
+  wrapText(ctx,'You proved: light travels in perfect straight lines! Tell Mr. Ahmad your score to claim your place on the leaderboard!',W/2,H/2+20,W-60,14);
   ctx.restore();
 }
 
