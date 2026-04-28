@@ -1681,7 +1681,7 @@ let animId;
 
 function init(canvasEl) {
   canvas = canvasEl;
-  ctx = canvas.getContext('2d'); // <--- THE FIX FOR THE BLACK SCREEN IS RIGHT HERE!
+  ctx = canvas.getContext('2d');
   canvas.width = W; canvas.height = H;
   // Offscreen for glow effects
   offscreen = document.createElement('canvas');
@@ -1758,6 +1758,7 @@ function castAllRays() {
   return rays;
 }
 
+// THE FIX: Cleanly handle exact center bouncing to prevent getting trapped in the cell
 function traceRay(startX, startY, dx, dy, bounces) {
   if (bounces > MAX_BOUNCES) return [];
   const segments = [];
@@ -1789,9 +1790,15 @@ function traceRay(startX, startY, dx, dy, bounces) {
       break;
     } 
     else if (cell === T.MIRROR_NE || cell === T.MIRROR_NW) {
-      segments.push({x1:prevX, y1:prevY, x2:x, y2:y, bounces, hit:'mirror'});
+      // Snap to exact center of the mirror
+      const cx = col * CELL + CELL/2;
+      const cy = row * CELL + CELL/2;
+      segments.push({x1:prevX, y1:prevY, x2:cx, y2:cy, bounces, hit:'mirror'});
+      
       const [ndx, ndy] = cell === T.MIRROR_NE ? reflectNE(dx,dy) : reflectNW(dx,dy);
-      const sub = traceRay(x, y, ndx, ndy, bounces+1);
+      
+      // Push the new ray slightly outside the mirror cell to prevent infinite loop
+      const sub = traceRay(cx + ndx * (CELL/2 + step), cy + ndy * (CELL/2 + step), ndx, ndy, bounces+1);
       segments.push(...sub);
       break;
     }
@@ -2327,7 +2334,7 @@ function pqInit() {
   if (pqInitialized) return;
   const cv = document.getElementById('pqCanvas');
   if (!cv) return;
-  PQ.init(cv); // Changed this! No longer manually modifying PQ.ctx from the outside.
+  PQ.init(cv);
   pqInitialized = true;
 
   cv.addEventListener('pq-win', e => {
