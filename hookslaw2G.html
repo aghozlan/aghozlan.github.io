@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Hooke's Law — Applications | Grade 9 | Ahmad Ghozlan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=IBM+Plex+Serif:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── ROOT PALETTE: Industrial Steel Workshop ─────────────────────── */
+:root{
+  --bg:#0e1117;--bg2:#13181f;--bg3:#181e27;--bg4:#1e2530;
+  --panel:rgba(100,160,255,.04);--panel2:rgba(100,160,255,.08);
+  --border:rgba(100,180,255,.1);--border2:rgba(100,180,255,.2);
+  --text:#d8e4f0;--muted:rgba(216,228,240,.5);--muted2:rgba(216,228,240,.28);
+  --blue:#4a9ef5;--blueD:rgba(74,158,245,.12);--blueG:rgba(74,158,245,.25);
+  --cyan:#30d5c8;--cyanD:rgba(48,213,200,.1);
+  --green:#22c55e;--greenD:rgba(34,197,94,.1);
+  --red:#ef4444;--redD:rgba(239,68,68,.1);
+  --amber:#f59e0b;--amberD:rgba(245,158,11,.1);
+  --purple:#a855f7;--purpleD:rgba(168,85,247,.1);
+  --spring:#4a9ef5;--compress:#ef4444;--extend:#22c55e;
+  --fh:'IBM Plex Serif',serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'DM Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.65;}
+
+/* Grid texture */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(74,158,245,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,158,245,.025) 1px,transparent 1px);
+  background-size:48px 48px;}
+
+.app{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ──────────────────────────────────────────────────────── */
+aside{width:240px;background:rgba(14,17,23,.97);position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;flex-shrink:0;z-index:100;
+  border-right:1px solid var(--border);}
+@media(max-width:900px){aside{display:none;}section{padding:36px 16px!important;}}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-family:var(--fh);font-size:1rem;color:var(--blue);font-weight:700;
+  line-height:1.2;letter-spacing:.3px;}
+.sb-logo .tag{font-size:.46rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:3px;margin-top:5px;font-family:var(--fm);}
+.sb-logo .pts-badge{display:inline-block;margin-top:8px;padding:3px 10px;
+  background:var(--blueD);border:1px solid var(--border2);border-radius:3px;
+  font-family:var(--fm);font-size:.58rem;color:var(--blue);}
+.sb-nav{flex:1;padding:6px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:9px;padding:8px 16px;font-size:.72rem;
+  font-weight:400;color:var(--muted2);border-left:2px solid transparent;
+  transition:all .2s;cursor:pointer;background:none;border-right:none;
+  border-top:none;border-bottom:none;width:100%;font-family:var(--fb);text-align:left;}
+.sn:hover,.sn.active{color:var(--blue);background:var(--blueD);border-left-color:var(--blue);}
+.sn .pts{font-size:.46rem;font-family:var(--fm);background:rgba(74,158,245,.12);
+  padding:2px 6px;border-radius:2px;color:var(--blue);margin-left:auto;}
+.sn .pts.red{background:rgba(239,68,68,.12);color:var(--red);}
+.sb-timer{padding:10px 16px;border-top:1px solid var(--border);
+  background:rgba(0,0,0,.3);}
+.sb-timer .label{font-family:var(--fm);font-size:.46rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:2px;}
+.sb-timer .time{font-family:var(--fm);font-size:1.1rem;font-weight:500;color:var(--cyan);
+  margin-top:3px;letter-spacing:2px;}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);}
+.sb-foot .name{font-weight:600;font-size:.78rem;color:var(--text);font-family:var(--fh);}
+.sb-foot .sub{font-size:.46rem;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:2px;margin-top:3px;font-family:var(--fm);}
+
+main{flex:1;min-width:0;position:relative;z-index:1;}
+section{padding:60px 52px;border-bottom:1px solid var(--border);}
+
+/* ── TAGS & TITLES ─────────────────────────────────────────────────── */
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);
+  font-size:.5rem;text-transform:uppercase;letter-spacing:2px;padding:3px 10px;
+  border-radius:2px;margin-bottom:16px;border:1px solid;}
+.e-tag.engage{background:var(--blueD);color:var(--blue);border-color:rgba(74,158,245,.3);}
+.e-tag.explore{background:var(--cyanD);color:var(--cyan);border-color:rgba(48,213,200,.25);}
+.e-tag.explain{background:var(--purpleD);color:var(--purple);border-color:rgba(168,85,247,.25);}
+.e-tag.elaborate{background:var(--amberD);color:var(--amber);border-color:rgba(245,158,11,.25);}
+.e-tag.evaluate{background:var(--greenD);color:var(--green);border-color:rgba(34,197,94,.25);}
+.sec-title{font-family:var(--fh);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;
+  color:#e8f2ff;line-height:1.1;margin-bottom:10px;}
+.sec-desc{color:var(--muted);font-size:.88rem;max-width:620px;line-height:1.85;margin-bottom:22px;}
+.pts-label{font-family:var(--fm);font-size:.55rem;color:var(--blue);
+  background:var(--blueD);padding:3px 9px;border:1px solid var(--border2);
+  border-radius:3px;display:inline-block;margin-bottom:14px;}
+
+/* ── CARDS ─────────────────────────────────────────────────────────── */
+.card{background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:18px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* ── FORMULA BOX ───────────────────────────────────────────────────── */
+.formula-box{background:var(--bg3);border:2px solid var(--blue);border-radius:8px;
+  padding:20px 24px;margin:18px 0;text-align:center;}
+.formula-main{font-family:var(--fm);font-size:1.6rem;font-weight:500;color:#e8f2ff;
+  letter-spacing:2px;margin-bottom:6px;}
+.formula-sub{font-size:.78rem;color:var(--muted);font-family:var(--fb);}
+.formula-note{font-family:var(--fm);font-size:.6rem;color:var(--cyan);
+  text-transform:uppercase;letter-spacing:2px;margin-top:10px;}
+
+/* ── MCQ ────────────────────────────────────────────────────────────── */
+.q-block{background:var(--panel);border:1px solid var(--border2);border-radius:6px;
+  padding:18px;margin-bottom:14px;position:relative;}
+.q-pts{position:absolute;top:14px;right:14px;font-family:var(--fm);font-size:.52rem;
+  color:var(--blue);background:var(--blueD);padding:2px 8px;border-radius:2px;
+  border:1px solid var(--border2);}
+.q-num{font-family:var(--fm);font-size:.52rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.88rem;color:var(--text);margin-bottom:12px;line-height:1.82;}
+.q-text strong{color:#e8f2ff;}
+.q-text .fx{font-family:var(--fm);font-size:.82rem;color:var(--cyan);}
+.opts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;
+  background:var(--panel2);border:1.5px solid var(--border);border-radius:5px;
+  cursor:pointer;transition:all .2s;font-size:.83rem;user-select:none;
+  -webkit-user-select:none;min-height:44px;}
+.opt:hover{border-color:var(--blue);}
+.opt.sel{border-color:var(--blue);background:var(--blueD);}
+.opt.ok{border-color:var(--green)!important;background:var(--greenD)!important;color:var(--green)!important;}
+.opt.err{border-color:var(--red)!important;background:var(--redD)!important;color:var(--red)!important;}
+.ml{min-width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);
+  color:var(--muted2);font-size:.6rem;font-weight:700;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;font-family:var(--fm);}
+.opt.ok .ml{background:var(--green);color:#000;}
+.opt.err .ml{background:var(--red);color:#fff;}
+.fb{margin-top:10px;padding:10px 13px;border-radius:5px;font-size:.82rem;
+  display:none;line-height:1.8;border-left:3px solid;}
+.fb.ok{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.fb.err{background:var(--redD);border-color:var(--red);color:var(--red);}
+.fb.inf{background:var(--cyanD);border-color:var(--cyan);color:var(--cyan);}
+.chk{padding:8px 18px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:5px;color:var(--text);font-family:var(--fb);font-weight:600;
+  font-size:.8rem;cursor:pointer;transition:all .2s;min-height:42px;}
+.chk:hover{border-color:var(--blue);color:var(--blue);}
+
+/* ── EXERCISE BLOCKS ──────────────────────────────────────────────── */
+.ex-block{background:var(--panel);border:1px solid var(--border2);border-radius:8px;
+  overflow:hidden;margin-bottom:18px;}
+.ex-header{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);}
+.ex-type-badge{font-family:var(--fm);font-size:.52rem;text-transform:uppercase;
+  letter-spacing:2px;padding:3px 10px;border-radius:3px;border:1px solid;}
+.ex-type-badge.elongation{background:rgba(34,197,94,.12);color:var(--green);
+  border-color:rgba(34,197,94,.3);}
+.ex-type-badge.compression{background:rgba(239,68,68,.12);color:var(--red);
+  border-color:rgba(239,68,68,.3);}
+.ex-body{padding:18px;display:grid;grid-template-columns:1fr 1.2fr;gap:16px;}
+@media(max-width:700px){.ex-body{grid-template-columns:1fr;}}
+.ex-fig{background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  overflow:hidden;}
+.ex-canvas{display:block;width:100%;}
+.ex-content{}
+.ex-context{font-size:.82rem;color:var(--muted);line-height:1.82;margin-bottom:12px;
+  font-style:italic;border-left:2px solid var(--border2);padding-left:10px;}
+.ex-given{margin-bottom:12px;}
+.ex-given-row{display:flex;align-items:center;gap:8px;font-family:var(--fm);
+  font-size:.7rem;color:var(--muted2);padding:4px 0;border-bottom:1px solid var(--border);}
+.ex-given-row:last-child{border-bottom:none;}
+.ex-given-key{color:var(--cyan);min-width:80px;}
+.ex-given-val{color:#e8f2ff;font-weight:500;}
+.ex-question{font-size:.86rem;color:var(--text);margin-bottom:10px;line-height:1.78;}
+.ex-question strong{color:#e8f2ff;}
+.ex-input-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.ex-input{background:var(--bg3);border:1.5px solid var(--border2);border-radius:5px;
+  padding:9px 12px;color:#e8f2ff;font-family:var(--fm);font-size:.9rem;outline:none;
+  width:110px;transition:border-color .2s;text-align:right;}
+.ex-input:focus{border-color:var(--blue);}
+.ex-unit{font-family:var(--fm);font-size:.78rem;color:var(--muted2);}
+.ex-ans{padding:8px 12px;border-radius:5px;font-family:var(--fm);font-size:.78rem;
+  display:none;margin-top:6px;border:1px solid;}
+.ex-ans.ok{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.ex-ans.err{background:var(--redD);border-color:var(--red);color:var(--red);}
+.ex-sub{padding:8px 16px;background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:5px;color:var(--text);font-family:var(--fb);font-weight:600;
+  font-size:.78rem;cursor:pointer;transition:all .2s;min-height:40px;}
+.ex-sub:hover{border-color:var(--blue);color:var(--blue);}
+
+/* ── SPRING INTERACTIVE ───────────────────────────────────────────── */
+.spring-lab{background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;}
+.spring-controls{padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.spring-canvas-wrap{padding:16px;text-align:center;}
+#cvSpring{display:block;background:var(--bg);border-radius:6px;border:1px solid var(--border);width:100%;}
+.spring-readout{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 16px 16px;}
+.readout-card{background:var(--panel);border:1px solid var(--border2);border-radius:5px;
+  padding:10px;text-align:center;}
+.readout-label{font-family:var(--fm);font-size:.46rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
+.readout-val{font-family:var(--fm);font-size:1.1rem;font-weight:500;color:var(--cyan);}
+.readout-unit{font-family:var(--fm);font-size:.52rem;color:var(--muted2);}
+
+/* ── GRAPH SECTION ────────────────────────────────────────────────── */
+.graph-wrap{background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;}
+
+/* ── INPUT FIELDS ─────────────────────────────────────────────────── */
+select,textarea{background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:5px;padding:9px 13px;color:var(--text);font-family:var(--fb);
+  font-size:.88rem;outline:none;transition:border-color .2s;width:100%;min-height:44px;}
+select:focus,textarea:focus{border-color:var(--blue);}
+select{cursor:pointer;direction:rtl;}
+textarea{resize:vertical;min-height:90px;}
+.sec-btn{padding:8px 18px;border-radius:4px;font-family:var(--fb);font-weight:600;
+  font-size:.86rem;cursor:pointer;border:1.5px solid var(--border2);
+  background:var(--panel);color:var(--muted2);transition:all .2s;min-height:42px;}
+.sec-btn:hover{border-color:var(--blue);color:var(--blue);}
+.sec-btn.on{background:var(--blue);color:#0e1117;border-color:var(--blue);}
+.btn{padding:10px 22px;border-radius:4px;font-family:var(--fb);font-weight:600;
+  font-size:.86rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-blue{background:var(--blue);color:#0e1117;}
+.btn-blue:hover{filter:brightness(1.1);}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+
+/* ── SCORE DISPLAY ────────────────────────────────────────────────── */
+.score-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-bottom:12px;}
+.score-row{display:flex;align-items:center;padding:6px 10px;
+  background:var(--panel);border:1px solid var(--border);border-radius:4px;}
+.score-name{color:var(--muted2);font-family:var(--fm);font-size:.58rem;
+  text-transform:uppercase;flex:1;}
+.score-pts{font-weight:600;font-family:var(--fm);font-size:.72rem;min-width:60px;text-align:right;}
+.score-pts.ok{color:var(--green);}
+.score-pts.partial{color:var(--amber);}
+.score-pts.no{color:var(--muted2);}
+.score-total-row{display:flex;align-items:center;padding:10px 12px;
+  background:var(--blueD);border:1.5px solid var(--border2);border-radius:5px;
+  margin-top:6px;}
+.score-total-label{font-family:var(--fm);font-size:.62rem;color:var(--blue);
+  text-transform:uppercase;letter-spacing:2px;flex:1;}
+.score-total-num{font-family:var(--fm);font-size:1.3rem;font-weight:500;color:#e8f2ff;}
+.prog-ring{transform:rotate(-90deg);}
+.prog-ring-bg{fill:none;stroke:var(--border2);stroke-width:6;}
+.prog-ring-fill{fill:none;stroke:var(--blue);stroke-width:6;stroke-linecap:round;
+  stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset .6s ease;}
+
+/* ── GRADE DISPLAY ────────────────────────────────────────────────── */
+.grade-badge{display:inline-flex;align-items:center;justify-content:center;
+  width:60px;height:60px;border-radius:50%;font-family:var(--fh);font-size:1.6rem;
+  font-weight:700;border:3px solid;margin-bottom:6px;}
+.grade-badge.A{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green);}
+.grade-badge.B{background:rgba(74,158,245,.15);border-color:var(--blue);color:var(--blue);}
+.grade-badge.C{background:rgba(245,158,11,.15);border-color:var(--amber);color:var(--amber);}
+.grade-badge.D{background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red);}
+
+/* ── RANGE SLIDER ─────────────────────────────────────────────────── */
+input[type=range]{-webkit-appearance:none;height:5px;border-radius:3px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;background:var(--blue);cursor:pointer;border:2px solid var(--bg);}
+
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  background:rgba(14,17,23,.96);color:var(--blue);padding:10px 22px;border-radius:4px;
+  font-family:var(--fm);font-size:.7rem;z-index:999;opacity:0;transition:opacity .3s;
+  pointer-events:none;border:1px solid var(--border2);}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<script>const LAB_START = Date.now();</script>
+
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside>
+  <div class="sb-logo">
+    <h1>SPRING<br>MECHANICS</h1>
+    <p class="tag">Hooke's Law · Grade 9 · Physics</p>
+    <span class="pts-badge">Total: 25 pts → /20</span>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">⚙ Introduction <span class="pts">–</span></button>
+    <button class="sn" onclick="goTo('lab')">🔬 Virtual Spring Lab <span class="pts">4 pts</span></button>
+    <button class="sn" onclick="goTo('graph')">📈 Graph Reading <span class="pts">3 pts</span></button>
+    <button class="sn" onclick="goTo('exercises')">🏗 Applications <span class="pts">12 pts</span></button>
+    <button class="sn" onclick="goTo('mcqs')">✏ Evaluation <span class="pts">4 pts</span></button>
+    <button class="sn" onclick="goTo('written')">📝 Written <span class="pts red">2 pts</span></button>
+    <button class="sn" onclick="goTo('submit')">📊 Submit <span class="pts">–</span></button>
+  </nav>
+  <div class="sb-timer">
+    <div class="label">Time on task</div>
+    <div class="time" id="timerDisplay">00:00</div>
+  </div>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="sub">Physics · Grade 9 · Lebanon</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- ══ E1: ENGAGE ══ -->
+<section id="hero" style="min-height:78vh;display:flex;align-items:center;background:var(--bg2);">
+  <div style="max-width:640px;">
+    <div style="font-family:var(--fm);font-size:.5rem;color:var(--blue);text-transform:uppercase;
+      letter-spacing:3px;border:1px solid rgba(74,158,245,.3);padding:3px 12px;
+      border-radius:2px;display:inline-block;margin-bottom:20px;">
+      Mechanics · After Forces & Equilibrium
+    </div>
+    <h1 style="font-family:var(--fh);font-size:clamp(2rem,5vw,3.8rem);font-weight:700;
+      color:#e8f2ff;letter-spacing:-1px;line-height:.97;margin-bottom:18px;">
+      HOOKE'S LAW<br><span style="color:var(--blue);">APPLICATIONS</span>
+    </h1>
+    <div class="formula-box" style="max-width:380px;margin:0 0 20px 0;">
+      <div class="formula-main">F = k · x</div>
+      <div class="formula-sub" style="margin-bottom:6px;">F = spring force (N) &ensp;|&ensp; k = spring constant (N/m) &ensp;|&ensp; x = deformation (m)</div>
+      <div class="formula-note">x &gt; 0 → elongation &ensp;|&ensp; x &lt; 0 → compression</div>
+    </div>
+    <p style="font-size:.9rem;color:var(--muted);line-height:1.9;margin-bottom:10px;max-width:520px;">
+      You know the equation F = k·x. Now you will <strong style="color:#e8f2ff;">apply it</strong> in real engineering contexts — suspension bridges, car suspensions, medical devices, and more.
+    </p>
+    <p style="font-size:.9rem;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:520px;">
+      In the Lebanese curriculum, the deformation is called <strong style="color:var(--cyan);">x</strong> — the algebraic elongation of the spring. A positive x means the spring is <span style="color:var(--green);">stretched (elongated)</span>. A negative x means it is <span style="color:var(--red);">compressed</span>.
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-blue" onclick="goTo('lab')">Start Lab →</button>
+    </div>
+  </div>
+  <!-- Animated spring hero -->
+  <canvas id="cvHero" style="position:absolute;right:0;top:0;width:40%;height:100%;
+    opacity:.5;pointer-events:none;z-index:0;"></canvas>
+</section>
+
+<!-- ══ E2: VIRTUAL SPRING LAB (4 pts) ══ -->
+<section id="lab">
+  <div class="e-tag explore">E2 · Explore — Virtual Lab</div>
+  <h2 class="sec-title">Virtual Spring Lab</h2>
+  <div class="pts-label">⬛ 4 points total in this section</div>
+  <p class="sec-desc">
+    Drag the slider to apply a force to the spring. Watch it elongate (+) or compress (−).
+    Record your observations and answer the questions below.
+  </p>
+
+  <div class="spring-lab" style="max-width:760px;margin-bottom:22px;">
+    <div class="spring-controls">
+      <span style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">⚙ SPRING SIMULATOR — k = 200 N/m</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);">Applied Force:</label>
+        <input type="range" id="forceSlider" min="-40" max="40" value="0" step="1"
+          style="width:160px;background:linear-gradient(90deg,var(--red),var(--bg3),var(--green));"
+          oninput="updateSpringLab(this.value)">
+        <span id="forceVal" style="font-family:var(--fm);font-size:.82rem;font-weight:500;
+          color:var(--cyan);min-width:58px;">0 N</span>
+      </div>
+    </div>
+    <div class="spring-canvas-wrap">
+      <canvas id="cvSpring" height="300"></canvas>
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-top:6px;">
+        Drag slider left (−) to compress · right (+) to elongate
+      </div>
+    </div>
+    <div class="spring-readout">
+      <div class="readout-card">
+        <div class="readout-label">Applied Force</div>
+        <div class="readout-val" id="ro-F">0</div>
+        <div class="readout-unit">N</div>
+      </div>
+      <div class="readout-card">
+        <div class="readout-label">Deformation x</div>
+        <div class="readout-val" id="ro-x">0</div>
+        <div class="readout-unit">m</div>
+      </div>
+      <div class="readout-card">
+        <div class="readout-label">Spring State</div>
+        <div class="readout-val" id="ro-state" style="font-size:.78rem;">At rest</div>
+        <div class="readout-unit">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lab questions -->
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Lab Observation · Q1</div>
+    <div class="q-text">In the simulator, k = 200 N/m. When you apply F = +20 N (elongation), what is the value of x?</div>
+    <div class="opts" id="lab1opts">
+      <div class="opt" onclick="pick('lab1','A',this)"><span class="ml">A</span>x = 0.01 m</div>
+      <div class="opt" onclick="pick('lab1','B',this)"><span class="ml">B</span>x = 0.1 m</div>
+      <div class="opt" onclick="pick('lab1','C',this)"><span class="ml">C</span>x = 10 m</div>
+      <div class="opt" onclick="pick('lab1','D',this)"><span class="ml">D</span>x = 0.5 m</div>
+    </div>
+    <button class="chk" onclick="chk('lab1','B',1,'✓ Correct! x = F/k = 20/200 = 0.1 m. Try it in the simulator — set the slider to +20 N and read x = 0.10 m.','✗ x = F/k = 20 ÷ 200 = 0.1 m. Use the simulator to verify.')">✓ Check</button>
+    <div class="fb" id="fblab1"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Lab Observation · Q2</div>
+    <div class="q-text">When you apply F = −30 N (compression), the value of x is:</div>
+    <div class="opts" id="lab2opts">
+      <div class="opt" onclick="pick('lab2','A',this)"><span class="ml">A</span>x = +0.15 m (positive)</div>
+      <div class="opt" onclick="pick('lab2','B',this)"><span class="ml">B</span>x = −0.15 m (negative)</div>
+      <div class="opt" onclick="pick('lab2','C',this)"><span class="ml">C</span>x = 0 m</div>
+      <div class="opt" onclick="pick('lab2','D',this)"><span class="ml">D</span>x = −15 m</div>
+    </div>
+    <button class="chk" onclick="chk('lab2','B',1,'✓ Correct! When F is negative (compression), x = F/k = −30/200 = −0.15 m. Negative x means compressed.','✗ For compression: F is negative, so x = F/k = −30/200 = −0.15 m. Negative x = compressed spring.')">✓ Check</button>
+    <div class="fb" id="fblab2"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">2 pts</div>
+    <div class="q-num">Lab Analysis · Q3</div>
+    <div class="q-text">A student doubles the applied force (from 10 N to 20 N). What happens to the deformation x? This illustrates which property of Hooke's Law?</div>
+    <div class="opts" id="lab3opts">
+      <div class="opt" onclick="pick('lab3','A',this)"><span class="ml">A</span>x stays the same — the spring constant k compensates</div>
+      <div class="opt" onclick="pick('lab3','B',this)"><span class="ml">B</span>x doubles — F and x are directly proportional (F ∝ x)</div>
+      <div class="opt" onclick="pick('lab3','C',this)"><span class="ml">C</span>x decreases — springs resist larger forces</div>
+      <div class="opt" onclick="pick('lab3','D',this)"><span class="ml">D</span>x triples — springs accelerate deformation</div>
+    </div>
+    <button class="chk" onclick="chk('lab3','B',2,'✓ Excellent! F = kx → if F doubles, x doubles. This is the core of Hooke\'s Law: the force is DIRECTLY PROPORTIONAL to the deformation (F ∝ x). The graph F vs x is a straight line through the origin.','✗ From F = kx: if k is constant and F doubles, then x must double too. F and x are directly proportional — this is the key statement of Hooke\'s Law.')">✓ Check</button>
+    <div class="fb" id="fblab3"></div>
+  </div>
+</section>
+
+<!-- ══ E3: GRAPH READING (3 pts) ══ -->
+<section id="graph" style="background:var(--bg2);">
+  <div class="e-tag explain">E3 · Explain — F vs x Graph</div>
+  <h2 class="sec-title">Reading the Spring Graph</h2>
+  <div class="pts-label">⬛ 3 points total in this section</div>
+  <p class="sec-desc">
+    The graph of F (N) as a function of x (m) for a spring is a straight line through the origin. The slope equals the spring constant k.
+  </p>
+
+  <div class="graph-wrap" style="max-width:680px;margin-bottom:22px;">
+    <div style="padding:12px 18px;border-bottom:1px solid var(--border);
+      font-family:var(--fm);font-size:.68rem;font-weight:500;color:#e8f2ff;">
+      📈 F = f(x) — SPRING FORCE GRAPH (two springs shown)
+    </div>
+    <div style="padding:16px;text-align:center;">
+      <canvas id="cvGraph" height="320" style="max-width:100%;width:100%;display:block;
+        background:var(--bg);border-radius:6px;border:1px solid var(--border);"></canvas>
+      <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-top:8px;">
+        Blue line = Spring A &ensp;|&ensp; Red dashed = Spring B &ensp;|&ensp; Positive x = elongation, Negative x = compression
+      </div>
+    </div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Graph · Q1</div>
+    <div class="q-text">From the graph, Spring A passes through the point (x = 0.1 m, F = 30 N). What is the spring constant k<sub>A</sub>?</div>
+    <div class="opts" id="g1opts">
+      <div class="opt" onclick="pick('g1','A',this)"><span class="ml">A</span>k<sub>A</sub> = 3 N/m</div>
+      <div class="opt" onclick="pick('g1','B',this)"><span class="ml">B</span>k<sub>A</sub> = 30 N/m</div>
+      <div class="opt" onclick="pick('g1','C',this)"><span class="ml">C</span>k<sub>A</sub> = 300 N/m</div>
+      <div class="opt" onclick="pick('g1','D',this)"><span class="ml">D</span>k<sub>A</sub> = 0.3 N/m</div>
+    </div>
+    <button class="chk" onclick="chk('g1','C',1,'✓ Correct! k = F/x = 30/0.1 = 300 N/m. The slope of the F-x graph IS the spring constant k.','✗ k = F/x = 30 ÷ 0.1 = 300 N/m. The slope of the line equals the spring constant.')">✓ Check</button>
+    <div class="fb" id="fbg1"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Graph · Q2</div>
+    <div class="q-text">Spring B has a steeper slope than Spring A. This means Spring B is:</div>
+    <div class="opts" id="g2opts">
+      <div class="opt" onclick="pick('g2','A',this)"><span class="ml">A</span>Softer — it stretches more for the same force</div>
+      <div class="opt" onclick="pick('g2','B',this)"><span class="ml">B</span>Stiffer — it requires a larger force for the same deformation</div>
+      <div class="opt" onclick="pick('g2','C',this)"><span class="ml">C</span>Identical — slope doesn't affect stiffness</div>
+      <div class="opt" onclick="pick('g2','D',this)"><span class="ml">D</span>Broken — a steeper slope means elastic limit exceeded</div>
+    </div>
+    <button class="chk" onclick="chk('g2','B',1,'✓ Correct! A steeper slope = larger k = stiffer spring. More force is needed to produce the same deformation x. Think: a stiff car spring vs. a soft pen spring.','✗ A steeper slope means larger k (spring constant). Larger k = stiffer spring = more force needed per meter of deformation.')">✓ Check</button>
+    <div class="fb" id="fbg2"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Graph · Q3 — Compression zone</div>
+    <div class="q-text">In the graph, when x is <strong>negative</strong>, the force F is also negative. What does a negative force value mean physically?</div>
+    <div class="opts" id="g3opts">
+      <div class="opt" onclick="pick('g3','A',this)"><span class="ml">A</span>The spring has broken and no longer obeys Hooke's Law</div>
+      <div class="opt" onclick="pick('g3','B',this)"><span class="ml">B</span>The spring pushes back (restoring force opposes compression)</div>
+      <div class="opt" onclick="pick('g3','C',this)"><span class="ml">C</span>Force cannot be negative — the reading is an error</div>
+      <div class="opt" onclick="pick('g3','D',this)"><span class="ml">D</span>The spring constant k has changed sign</div>
+    </div>
+    <button class="chk" onclick="chk('g3','B',1,'✓ Exactly! When compressed (x < 0), the spring pushes back outward — a restoring force in the opposite direction. The negative sign in F = kx carries all this information automatically.','✗ Negative x means compression. From F = kx: if x < 0, then F < 0. The negative force is the restoring force — the spring pushes back against the compression.')">✓ Check</button>
+    <div class="fb" id="fbg3"></div>
+  </div>
+</section>
+
+<!-- ══ E4: EXERCISES — APPLICATIONS (12 pts) ══ -->
+<section id="exercises">
+  <div class="e-tag elaborate">E4 · Elaborate — Real-World Applications</div>
+  <h2 class="sec-title">Applied Exercises</h2>
+  <div class="pts-label">⬛ 12 points total — 6 exercises × 2 pts each</div>
+  <p class="sec-desc">
+    Six real-world problems — a mix of elongation and compression. Use <span style="font-family:var(--fm);color:var(--cyan);">F = k · x</span> and always check: is x positive (elongated) or negative (compressed)?
+  </p>
+
+  <!-- ── EXERCISE 1: ELONGATION — Hanging weight ── -->
+  <div class="ex-block">
+    <div class="ex-header">
+      <div>
+        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
+          Exercise 1 — Hanging Mass on a Spring
+        </div>
+        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
+          2 pts
+        </div>
+      </div>
+      <span class="ex-type-badge elongation">↓ ELONGATION</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-fig">
+        <canvas class="ex-canvas" id="cvEx1" height="220"></canvas>
+      </div>
+      <div class="ex-content">
+        <p class="ex-context">
+          A butcher hangs a 2.5 kg leg of lamb on a spring scale at the market. The scale spring has a constant k = 490 N/m. (Use g = 10 m/s²)
+        </p>
+        <div class="ex-given">
+          <div class="ex-given-row"><span class="ex-given-key">Mass:</span><span class="ex-given-val">m = 2.5 kg</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">490 N/m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
+        </div>
+        <p class="ex-question"><strong>Find x</strong>, the elongation of the spring scale.</p>
+        <div class="ex-input-row">
+          <input type="number" class="ex-input" id="ans1" placeholder="0.000" step="0.001">
+          <span class="ex-unit">m</span>
+          <button class="ex-sub" onclick="checkEx(1,0.051,'x = F/k = mg/k = 25/490 ≈ 0.051 m')">✓ Check</button>
+        </div>
+        <div class="ex-ans" id="exans1"></div>
+        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
+          Hint: First find F = mg, then x = F/k
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE 2: COMPRESSION — Car suspension ── -->
+  <div class="ex-block">
+    <div class="ex-header">
+      <div>
+        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
+          Exercise 2 — Car Suspension Spring
+        </div>
+        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
+          2 pts
+        </div>
+      </div>
+      <span class="ex-type-badge compression">↑ COMPRESSION</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-fig">
+        <canvas class="ex-canvas" id="cvEx2" height="220"></canvas>
+      </div>
+      <div class="ex-content">
+        <p class="ex-context">
+          Each of the four suspension springs of a car supports 400 kg of the car's mass. The suspension spring constant is k = 80,000 N/m. (g = 10 m/s²)
+        </p>
+        <div class="ex-given">
+          <div class="ex-given-row"><span class="ex-given-key">Mass/spring:</span><span class="ex-given-val">m = 400 kg</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">80,000 N/m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
+        </div>
+        <p class="ex-question"><strong>Find |x|</strong>, the compression of each spring (give the magnitude in meters).</p>
+        <div class="ex-input-row">
+          <input type="number" class="ex-input" id="ans2" placeholder="0.000" step="0.001">
+          <span class="ex-unit">m</span>
+          <button class="ex-sub" onclick="checkEx(2,0.05,'|x| = F/k = 4000/80000 = 0.05 m (5 cm). The spring is compressed by 5 cm under the car weight.')">✓ Check</button>
+        </div>
+        <div class="ex-ans" id="exans2"></div>
+        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
+          The weight pushes DOWN → spring compresses. F = mg (per spring).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE 3: ELONGATION — Bungee cord ── -->
+  <div class="ex-block">
+    <div class="ex-header">
+      <div>
+        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
+          Exercise 3 — Bungee Cord at Maximum Stretch
+        </div>
+        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
+          2 pts
+        </div>
+      </div>
+      <span class="ex-type-badge elongation">↓ ELONGATION</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-fig">
+        <canvas class="ex-canvas" id="cvEx3" height="220"></canvas>
+      </div>
+      <div class="ex-content">
+        <p class="ex-context">
+          A bungee jumper of mass 70 kg reaches the lowest point where their velocity is zero. At this point, the bungee cord exerts its maximum restoring force equal to the jumper's weight. The bungee cord constant is k = 35 N/m.
+        </p>
+        <div class="ex-given">
+          <div class="ex-given-row"><span class="ex-given-key">Mass:</span><span class="ex-given-val">m = 70 kg</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">35 N/m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">F = mg =</span><span class="ex-given-val">700 N</span></div>
+        </div>
+        <p class="ex-question"><strong>Find x</strong>, the maximum elongation of the bungee cord (in meters).</p>
+        <div class="ex-input-row">
+          <input type="number" class="ex-input" id="ans3" placeholder="0.00" step="0.1">
+          <span class="ex-unit">m</span>
+          <button class="ex-sub" onclick="checkEx(3,20,'x = F/k = 700/35 = 20 m. The bungee cord stretches 20 metres at maximum extension!')">✓ Check</button>
+        </div>
+        <div class="ex-ans" id="exans3"></div>
+        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
+          At max stretch: spring force = weight. So F = kx = mg.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE 4: FIND k — Compression spring ── -->
+  <div class="ex-block">
+    <div class="ex-header">
+      <div>
+        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
+          Exercise 4 — Finding the Spring Constant of a Mattress
+        </div>
+        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
+          2 pts
+        </div>
+      </div>
+      <span class="ex-type-badge compression">↑ COMPRESSION</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-fig">
+        <canvas class="ex-canvas" id="cvEx4" height="220"></canvas>
+      </div>
+      <div class="ex-content">
+        <p class="ex-context">
+          A 60 kg person lies on a spring mattress. The mattress springs (all together) compress by 3 cm = 0.03 m. Find the equivalent spring constant of the mattress.
+        </p>
+        <div class="ex-given">
+          <div class="ex-given-row"><span class="ex-given-key">Mass:</span><span class="ex-given-val">m = 60 kg</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">|x| =</span><span class="ex-given-val">0.03 m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
+        </div>
+        <p class="ex-question"><strong>Find k</strong>, the spring constant of the mattress (N/m).</p>
+        <div class="ex-input-row">
+          <input type="number" class="ex-input" id="ans4" placeholder="0" step="100">
+          <span class="ex-unit">N/m</span>
+          <button class="ex-sub" onclick="checkEx(4,20000,'k = F/x = mg/|x| = 600/0.03 = 20,000 N/m. A mattress must be quite stiff to support a person with only 3 cm compression!')">✓ Check</button>
+        </div>
+        <div class="ex-ans" id="exans4"></div>
+        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
+          Rearrange: k = F/x = mg/|x|
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE 5: COMPRESSION — Pen clicker spring ── -->
+  <div class="ex-block">
+    <div class="ex-header">
+      <div>
+        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
+          Exercise 5 — Clicking a Ballpoint Pen
+        </div>
+        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
+          2 pts
+        </div>
+      </div>
+      <span class="ex-type-badge compression">↑ COMPRESSION</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-fig">
+        <canvas class="ex-canvas" id="cvEx5" height="220"></canvas>
+      </div>
+      <div class="ex-content">
+        <p class="ex-context">
+          When you press the top of a ballpoint pen, you compress the small spring inside. The spring constant of the pen spring is k = 150 N/m. You apply a force of 4.5 N to click the pen.
+        </p>
+        <div class="ex-given">
+          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">150 N/m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">F =</span><span class="ex-given-val">4.5 N (compression)</span></div>
+        </div>
+        <p class="ex-question"><strong>Find |x|</strong>, how much the pen spring compresses (in mm). Give your answer in <strong>mm</strong>.</p>
+        <div class="ex-input-row">
+          <input type="number" class="ex-input" id="ans5" placeholder="0.0" step="0.1">
+          <span class="ex-unit">mm</span>
+          <button class="ex-sub" onclick="checkEx(5,30,'|x| = F/k = 4.5/150 = 0.03 m = 30 mm. The pen spring compresses 3 centimetres — a surprisingly large deformation for such a small spring!')">✓ Check</button>
+        </div>
+        <div class="ex-ans" id="exans5"></div>
+        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
+          Find x in metres first, then convert: 1 m = 1000 mm
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EXERCISE 6: ELONGATION — Find mass ── -->
+  <div class="ex-block">
+    <div class="ex-header">
+      <div>
+        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
+          Exercise 6 — Unknown Mass on a Spring Balance
+        </div>
+        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
+          2 pts
+        </div>
+      </div>
+      <span class="ex-type-badge elongation">↓ ELONGATION</span>
+    </div>
+    <div class="ex-body">
+      <div class="ex-fig">
+        <canvas class="ex-canvas" id="cvEx6" height="220"></canvas>
+      </div>
+      <div class="ex-content">
+        <p class="ex-context">
+          A physics student uses a spring balance (k = 250 N/m) to weigh an unknown rock sample. The spring elongates by x = 8 cm = 0.08 m. Find the mass of the rock.
+        </p>
+        <div class="ex-given">
+          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">250 N/m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">x =</span><span class="ex-given-val">0.08 m (elongation)</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
+        </div>
+        <p class="ex-question"><strong>Find m</strong>, the mass of the rock (in kg).</p>
+        <div class="ex-input-row">
+          <input type="number" class="ex-input" id="ans6" placeholder="0.0" step="0.1">
+          <span class="ex-unit">kg</span>
+          <button class="ex-sub" onclick="checkEx(6,2,'m = F/g = kx/g = 250×0.08/10 = 20/10 = 2 kg. The rock has a mass of 2 kg.')">✓ Check</button>
+        </div>
+        <div class="ex-ans" id="exans6"></div>
+        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
+          Steps: F = kx → m = F/g
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E5: MCQ EVALUATION (4 pts) ══ -->
+<section id="mcqs" style="background:var(--bg2);">
+  <div class="e-tag evaluate">E5 · Evaluate — MCQs</div>
+  <h2 class="sec-title">Evaluation Questions</h2>
+  <div class="pts-label">⬛ 4 points — 1 pt per question</div>
+  <p class="sec-desc">Four concept questions covering Hooke's Law, elongation, compression, and the spring constant.</p>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Question 1 — Units</div>
+    <div class="q-text">The spring constant k is expressed in the unit:</div>
+    <div class="opts" id="q1opts">
+      <div class="opt" onclick="pick('q1','A',this)"><span class="ml">A</span>N·m (Newton-metres)</div>
+      <div class="opt" onclick="pick('q1','B',this)"><span class="ml">B</span>N/m (Newtons per metre)</div>
+      <div class="opt" onclick="pick('q1','C',this)"><span class="ml">C</span>m/N (metres per Newton)</div>
+      <div class="opt" onclick="pick('q1','D',this)"><span class="ml">D</span>kg/m²</div>
+    </div>
+    <button class="chk" onclick="chk('q1','B',1,'✓ Correct! From F = kx → k = F/x. Units: N ÷ m = N/m. A stiff spring has a large k in N/m.','✗ From F = kx: k = F/x. Units: Newtons ÷ metres = N/m.')">✓ Check</button>
+    <div class="fb" id="fbq1"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Question 2 — Algebraic Sign</div>
+    <div class="q-text">In the Lebanese curriculum notation F = kx, a <strong>negative</strong> value of x means:</div>
+    <div class="opts" id="q2opts">
+      <div class="opt" onclick="pick('q2','A',this)"><span class="ml">A</span>The spring is elongated (stretched)</div>
+      <div class="opt" onclick="pick('q2','B',this)"><span class="ml">B</span>The spring is at its natural length (rest position)</div>
+      <div class="opt" onclick="pick('q2','C',this)"><span class="ml">C</span>The spring is compressed</div>
+      <div class="opt" onclick="pick('q2','D',this)"><span class="ml">D</span>The spring constant is negative</div>
+    </div>
+    <button class="chk" onclick="chk('q2','C',1,'✓ Correct! In F = kx, x is the algebraic deformation: x > 0 = elongated, x < 0 = compressed, x = 0 = at rest.','✗ x is the algebraic deformation. x < 0 means the spring is compressed (shortened from its natural length).')">✓ Check</button>
+    <div class="fb" id="fbq2"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Question 3 — Comparison</div>
+    <div class="q-text">Spring X has k = 100 N/m and Spring Y has k = 500 N/m. Both are stretched by the same force F = 20 N. Which spring stretches MORE?</div>
+    <div class="opts" id="q3opts">
+      <div class="opt" onclick="pick('q3','A',this)"><span class="ml">A</span>Spring Y (k = 500 N/m) stretches more</div>
+      <div class="opt" onclick="pick('q3','B',this)"><span class="ml">B</span>Spring X (k = 100 N/m) stretches more</div>
+      <div class="opt" onclick="pick('q3','C',this)"><span class="ml">C</span>Both stretch by the same amount</div>
+      <div class="opt" onclick="pick('q3','D',this)"><span class="ml">D</span>Cannot be determined without knowing the length</div>
+    </div>
+    <button class="chk" onclick="chk('q3','B',1,'✓ Correct! x = F/k. Spring X: x = 20/100 = 0.2 m. Spring Y: x = 20/500 = 0.04 m. The softer spring (smaller k) stretches MORE for the same force.','✗ x = F/k. Spring X: x = 20/100 = 0.2 m. Spring Y: x = 20/500 = 0.04 m. Smaller k = softer = stretches more.')">✓ Check</button>
+    <div class="fb" id="fbq3"></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-pts">1 pt</div>
+    <div class="q-num">Question 4 — Application</div>
+    <div class="q-text">A spring (k = 1000 N/m) is compressed by 5 cm. What is the magnitude of the restoring force?</div>
+    <div class="opts" id="q4opts">
+      <div class="opt" onclick="pick('q4','A',this)"><span class="ml">A</span>50,000 N</div>
+      <div class="opt" onclick="pick('q4','B',this)"><span class="ml">B</span>50 N</div>
+      <div class="opt" onclick="pick('q4','C',this)"><span class="ml">C</span>5 N</div>
+      <div class="opt" onclick="pick('q4','D',this)"><span class="ml">D</span>200 N</div>
+    </div>
+    <button class="chk" onclick="chk('q4','B',1,'✓ Correct! Convert: x = 5 cm = 0.05 m. F = kx = 1000 × 0.05 = 50 N. Always convert cm to m first!','✗ First convert: 5 cm = 0.05 m. Then F = kx = 1000 × 0.05 = 50 N. Always convert units before calculating.')">✓ Check</button>
+    <div class="fb" id="fbq4"></div>
+  </div>
+</section>
+
+<!-- ══ E6: WRITTEN RESPONSE (2 pts) ══ -->
+<section id="written">
+  <div class="e-tag evaluate">E6 · Written Response</div>
+  <h2 class="sec-title">Written Analysis</h2>
+  <div class="pts-label">⬛ 2 points — teacher graded</div>
+
+  <div class="q-block">
+    <div class="q-pts">2 pts</div>
+    <div class="q-num">Written Question</div>
+    <div class="q-text">
+      A car goes over a speed bump. Explain what happens to each of the four suspension springs: 
+      (1) Do they elongate or compress? (2) What happens to the deformation x? 
+      (3) How does the spring restore the car to its normal height? Use the equation F = kx in your explanation.
+    </div>
+    <textarea id="writtenAns" placeholder="Write your answer here using F = kx, elongation/compression, restoring force..." style="margin-top:10px;"></textarea>
+    <div style="margin-top:6px;font-size:.7rem;color:var(--muted2);font-family:var(--fm);">
+      Ahmad grades this response in class. Use proper physics vocabulary.
+    </div>
+  </div>
+</section>
+
+<!-- ══ SUBMIT ══ -->
+<section id="submit" style="background:var(--bg2);">
+  <div class="e-tag evaluate">Submit Lab</div>
+  <h2 class="sec-title">Submit Your Work</h2>
+  <p class="sec-desc">Choose your section and name. Your score, grade, and time-on-task will all be recorded.</p>
+
+  <div class="g2" style="max-width:880px;align-items:start;">
+    <div class="card">
+      <label style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:8px;">Section</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="sec-btn" onclick="setSection('9A')">9A</button>
+        <button class="sec-btn" onclick="setSection('9B')">9B</button>
+        <button class="sec-btn" onclick="setSection('9C')">9C</button>
+        <button class="sec-btn" onclick="setSection('9D')">9D</button>
+      </div>
+      <label style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:6px;">Your Name</label>
+      <select id="stuName" disabled style="margin-bottom:14px;"><option value="">— Choose section first —</option></select>
+      <input type="hidden" id="stuClass" value="">
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+
+      <!-- Score breakdown -->
+      <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Score Breakdown</div>
+      <div class="score-grid" id="scoreGrid">
+        <!-- filled by JS -->
+      </div>
+      <div class="score-total-row">
+        <span class="score-total-label">Raw Score (/25)</span>
+        <span class="score-total-num" id="rawScoreDisplay">— / 25</span>
+      </div>
+      <div class="score-total-row" style="margin-top:6px;background:var(--greenD);border-color:var(--green);">
+        <span class="score-total-label" style="color:var(--green);">Final Grade (/20)</span>
+        <span class="score-total-num" id="grade20Display" style="color:var(--green);">— / 20</span>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+
+      <!-- Time display -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;
+        padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:5px;">
+        <span style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;">⏱ Time on task:</span>
+        <span style="font-family:var(--fm);font-size:.92rem;color:var(--cyan);font-weight:500;" id="timeDisplay2">—</span>
+      </div>
+
+      <button class="btn btn-blue" style="width:100%;font-size:.9rem;" onclick="doSubmit()">
+        📡 Submit to Ahmad's Grade Sheet
+      </button>
+    </div>
+
+    <!-- Ring + grade badge -->
+    <div>
+      <div style="text-align:center;margin-bottom:12px;">
+        <svg class="prog-ring" width="100" height="100" viewBox="0 0 80 80">
+          <circle class="prog-ring-bg" cx="40" cy="40" r="36"/>
+          <circle class="prog-ring-fill" id="ringFill" cx="40" cy="40" r="36"/>
+        </svg>
+        <div style="font-family:var(--fh);font-size:2.2rem;font-weight:700;color:#e8f2ff;margin-top:4px;" id="ringPct">—</div>
+        <div style="font-family:var(--fm);font-size:.5rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);">Lab Progress</div>
+      </div>
+
+      <div style="text-align:center;margin-bottom:14px;" id="gradeBadgeWrap">
+        <div class="grade-badge B" id="gradeBadge">—</div>
+        <div style="font-family:var(--fm);font-size:.56rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);">Grade Letter</div>
+      </div>
+
+      <!-- Grade scale -->
+      <div class="card2" style="margin-bottom:10px;">
+        <div style="font-family:var(--fm);font-size:.5rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Grade Scale /20</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-family:var(--fm);font-size:.62rem;">
+          <div style="display:flex;justify-content:space-between;color:var(--green);"><span>A — Excellent</span><span>17–20</span></div>
+          <div style="display:flex;justify-content:space-between;color:var(--blue);"><span>B — Good</span><span>13–16</span></div>
+          <div style="display:flex;justify-content:space-between;color:var(--amber);"><span>C — Satisfactory</span><span>10–12</span></div>
+          <div style="display:flex;justify-content:space-between;color:var(--red);"><span>D — Needs Work</span><span>0–9</span></div>
+        </div>
+      </div>
+
+      <div class="card2">
+        <div style="font-size:.76rem;color:var(--muted);line-height:1.8;">Ahmad reviews the written response (Q6) and time data in class.</div>
+        <div id="subOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenD);
+          border:1px solid var(--green);border-radius:5px;font-size:.8rem;color:var(--green);
+          font-weight:700;font-family:var(--fm);">✓ Lab submitted successfully!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:18px 52px;border-top:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <div>
+    <div style="font-family:var(--fh);font-size:.96rem;font-weight:700;color:#e8f2ff;">SPRING MECHANICS</div>
+    <div style="font-family:var(--fm);font-size:.46rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:2px;">Ahmad Ghozlan · Grade 9 · Hooke's Law Applications</div>
+  </div>
+  <a href="https://aghozlan.github.io" style="font-size:.68rem;color:var(--muted2);text-decoration:none;border:1px solid var(--border2);padding:4px 12px;border-radius:3px;">↗ All Labs</a>
+</footer>
+</main>
+</div>
+
+<script>
+'use strict';
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+
+// ── STUDENT LISTS G9 ──────────────────────────────────────────────────
+// Note to Ahmad: Replace with actual Grade 9 student lists
+const STUDENTS={
+  '9A':['Add 9A student names here'],
+  '9B':['Add 9B student names here'],
+  '9C':['Add 9C student names here'],
+  '9D':['Add 9D student names here'],
+};
+
+function setSection(cls){
+  document.getElementById('stuClass').value=cls;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— اختر اسمك —</option>';
+  sel.disabled=false;
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+}
+
+// ── TIMER ─────────────────────────────────────────────────────────────
+function formatTime(ms){
+  const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+setInterval(()=>{
+  const elapsed=Date.now()-LAB_START;
+  const t=formatTime(elapsed);
+  document.getElementById('timerDisplay').textContent=t;
+  document.getElementById('timeDisplay2').textContent=t;
+},1000);
+
+// ── NAV ───────────────────────────────────────────────────────────────
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const ids=['hero','lab','graph','exercises','mcqs','written','submit'];
+  let cur='hero';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)cur=id;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+},{passive:true});
+
+// ── MCQ ENGINE ────────────────────────────────────────────────────────
+const picked={};
+const scores={};// key → points earned
+const maxPts={lab1:1,lab2:1,lab3:2,g1:1,g2:1,g3:1,ex1:0,ex2:0,ex3:0,ex4:0,ex5:0,ex6:0,q1:1,q2:1,q3:1,q4:1};
+
+function pick(key,val,btn){
+  picked[key]=val;
+  btn.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function chk(key,ca,pts,ok,bad){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=picked[key];
+  if(!sel){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  const letters=['A','B','C','D'];
+  const optsDiv=document.getElementById(key+'opts');
+  if(optsDiv){optsDiv.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.remove('sel');
+    if(letters[i]===ca)o.classList.add('ok');
+    else if(letters[i]===sel)o.classList.add('err');
+  });}
+  if(sel===ca){
+    fb.className='fb ok';fb.innerHTML=ok;
+    scores[key]=pts;
+  } else {
+    fb.className='fb err';fb.innerHTML=bad;
+    scores[key]=0;
+  }
+  updateGrade();
+}
+
+// ── EXERCISE CHECKER ─────────────────────────────────────────────────
+const exAnswers={1:0.051,2:0.05,3:20,4:20000,5:30,6:2};
+const exTolerance={1:0.003,2:0.003,3:0.5,4:500,5:1,6:0.1};
+
+function checkEx(n,correctAns,explanation){
+  const inp=document.getElementById('ans'+n);
+  const ansEl=document.getElementById('exans'+n);
+  const val=parseFloat(inp.value);
+  ansEl.style.display='block';
+  if(isNaN(val)){ansEl.className='ex-ans err';ansEl.textContent='⚠ Enter a number.';return;}
+  const tol=exTolerance[n];
+  if(Math.abs(val-correctAns)<=tol){
+    ansEl.className='ex-ans ok';
+    ansEl.textContent='✓ Correct! '+explanation;
+    scores['ex'+n]=2;inp.style.borderColor='var(--green)';
+  } else {
+    ansEl.className='ex-ans err';
+    ansEl.textContent='✗ Not quite. '+explanation;
+    scores['ex'+n]=0;inp.style.borderColor='var(--red)';
+  }
+  updateGrade();
+}
+
+// ── GRADE CALCULATOR ──────────────────────────────────────────────────
+const SECTIONS=[
+  {key:'E2 — Spring Lab Q1',  keys:['lab1'],     max:1},
+  {key:'E2 — Spring Lab Q2',  keys:['lab2'],     max:1},
+  {key:'E2 — Spring Lab Q3',  keys:['lab3'],     max:2},
+  {key:'E3 — Graph Q1',       keys:['g1'],       max:1},
+  {key:'E3 — Graph Q2',       keys:['g2'],       max:1},
+  {key:'E3 — Graph Q3',       keys:['g3'],       max:1},
+  {key:'E4 — Ex 1 (Butcher)', keys:['ex1'],      max:2},
+  {key:'E4 — Ex 2 (Car)',     keys:['ex2'],      max:2},
+  {key:'E4 — Ex 3 (Bungee)',  keys:['ex3'],      max:2},
+  {key:'E4 — Ex 4 (Mattress)',keys:['ex4'],      max:2},
+  {key:'E4 — Ex 5 (Pen)',     keys:['ex5'],      max:2},
+  {key:'E4 — Ex 6 (Rock)',    keys:['ex6'],      max:2},
+  {key:'E5 — MCQ 1',          keys:['q1'],       max:1},
+  {key:'E5 — MCQ 2',          keys:['q2'],       max:1},
+  {key:'E5 — MCQ 3',          keys:['q3'],       max:1},
+  {key:'E5 — MCQ 4',          keys:['q4'],       max:1},
+  {key:'E6 — Written',        keys:['written'],  max:2},
+];
+
+function calcRaw(){
+  return SECTIONS.slice(0,-1).reduce((s,sec)=>{
+    return s+sec.keys.reduce((a,k)=>a+(scores[k]||0),0);
+  },0);
+}
+
+function gradeFromScore20(s20){
+  if(s20>=17)return{letter:'A',cls:'A'};
+  if(s20>=13)return{letter:'B',cls:'B'};
+  if(s20>=10)return{letter:'C',cls:'C'};
+  return{letter:'D',cls:'D'};
+}
+
+function updateGrade(){
+  const raw=calcRaw();
+  const max=23;// max without written
+  const pct=Math.round(raw/max*100);
+  const score20=Math.round(raw/max*20*10)/10;
+  const {letter,cls}=gradeFromScore20(score20);
+
+  // Progress ring
+  document.getElementById('ringPct').textContent=pct+'%';
+  document.getElementById('ringFill').style.strokeDashoffset=226*(1-pct/100);
+
+  // Scores display
+  document.getElementById('rawScoreDisplay').textContent=raw+' / '+max+' (auto)';
+  document.getElementById('grade20Display').textContent=score20.toFixed(1)+' / 20';
+
+  // Badge
+  const badge=document.getElementById('gradeBadge');
+  badge.textContent=letter;badge.className='grade-badge '+cls;
+
+  // Score grid
+  const grid=document.getElementById('scoreGrid');
+  grid.innerHTML=SECTIONS.map(sec=>{
+    const earned=sec.keys.reduce((a,k)=>a+(scores[k]||0),0);
+    const cls2=earned===sec.max?'ok':earned>0?'partial':'no';
+    return `<div class="score-row">
+      <span class="score-name">${sec.key}</span>
+      <span class="score-pts ${cls2}">${earned} / ${sec.max}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────
+async function doSubmit(){
+  const name=document.getElementById('stuName').value.trim();
+  const cls=document.getElementById('stuClass').value.trim();
+  if(!cls){toast('Choose your section first!');return;}
+  if(!name||name.startsWith('—')){toast('Select your name!');return;}
+  const btn=document.querySelector('[onclick="doSubmit()"]');
+  btn.disabled=true;btn.textContent='⏳ Submitting…';
+
+  const elapsed=Date.now()-LAB_START;
+  const time_min=Math.round(elapsed/60000*10)/10;
+  const raw=calcRaw();
+  const max=23;
+  const score20=Math.round(raw/max*20*10)/10;
+  const {letter}=gradeFromScore20(score20);
+
+  const payload={
+    sheet:'HookesLaw_G9_P2',
+    name, class:cls,
+    time_min,
+    // Lab section
+    lab1_ans:picked.lab1||'—',lab1_ok:scores.lab1?'✓':'✗',
+    lab2_ans:picked.lab2||'—',lab2_ok:scores.lab2?'✓':'✗',
+    lab3_ans:picked.lab3||'—',lab3_ok:scores.lab3?'✓':'✗',lab3_pts:scores.lab3||0,
+    // Graph
+    g1_ans:picked.g1||'—',g1_ok:scores.g1?'✓':'✗',
+    g2_ans:picked.g2||'—',g2_ok:scores.g2?'✓':'✗',
+    g3_ans:picked.g3||'—',g3_ok:scores.g3?'✓':'✗',
+    // Exercises
+    ex1_ans:document.getElementById('ans1').value||'—',ex1_pts:scores.ex1||0,
+    ex2_ans:document.getElementById('ans2').value||'—',ex2_pts:scores.ex2||0,
+    ex3_ans:document.getElementById('ans3').value||'—',ex3_pts:scores.ex3||0,
+    ex4_ans:document.getElementById('ans4').value||'—',ex4_pts:scores.ex4||0,
+    ex5_ans:document.getElementById('ans5').value||'—',ex5_pts:scores.ex5||0,
+    ex6_ans:document.getElementById('ans6').value||'—',ex6_pts:scores.ex6||0,
+    // MCQs
+    q1_ans:picked.q1||'—',q1_ok:scores.q1?'✓':'✗',
+    q2_ans:picked.q2||'—',q2_ok:scores.q2?'✓':'✗',
+    q3_ans:picked.q3||'—',q3_ok:scores.q3?'✓':'✗',
+    q4_ans:picked.q4||'—',q4_ok:scores.q4?'✓':'✗',
+    // Written
+    written:document.getElementById('writtenAns').value||'—',
+    // Summary
+    raw_score:raw,
+    max_auto:max,
+    score_20:score20,
+    grade_letter:letter,
+  };
+
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)});
+    document.getElementById('subOk').style.display='block';
+    btn.textContent='✓ Submitted!';btn.style.background='var(--green)';btn.style.color='#0e1117';
+    toast('✓ Lab submitted! Time: '+formatTime(elapsed));
+  }catch(e){
+    btn.disabled=false;btn.textContent="📡 Submit to Ahmad's Grade Sheet";
+    toast('⚠ Connection error — try again');
+  }
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+
+// ═══════════════════════════════════════════════════════════════════
+// CANVAS DRAWINGS
+// ═══════════════════════════════════════════════════════════════════
+
+// ── HERO ANIMATION ─────────────────────────────────────────────────
+(function heroAnim(){
+  const cv=document.getElementById('cvHero');if(!cv)return;
+  const ctx=cv.getContext('2d');let t=0;
+  function frame(){
+    cv.width=cv.offsetWidth||400;cv.height=cv.offsetHeight||600;
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    const amp=40*Math.sin(t*.8);
+    drawSpringVertical(ctx,W*.5,H*.12,H*.7,amp,W*.1,'rgba(74,158,245,.7)',true);
+    t+=.02;requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+// ── SPRING DRAW UTILITY ────────────────────────────────────────────
+function drawSpringVertical(ctx,cx,topY,naturalH,elongation,coilW,color,animated,t2){
+  const totalH=naturalH+elongation;
+  const nCoils=12,coilH=totalH/nCoils;
+  ctx.save();
+  // Top attachment line
+  ctx.beginPath();ctx.moveTo(cx,topY);ctx.lineTo(cx,topY+coilH*.5);
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();
+  // Spring coils
+  ctx.beginPath();ctx.moveTo(cx,topY+coilH*.5);
+  for(let i=0;i<nCoils*4;i++){
+    const progress=i/(nCoils*4);
+    const y=topY+coilH*.5+progress*(totalH-coilH);
+    const x=cx+coilW*Math.cos(i*Math.PI/2+(animated&&t2?t2*3:0));
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
+  // Bottom attachment line
+  const bY=topY+totalH;
+  ctx.beginPath();ctx.moveTo(cx,bY-coilH*.5);ctx.lineTo(cx,bY);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawSpringHorizontal(ctx,leftX,cy,naturalW,deform,coilH,color){
+  const totalW=naturalW+deform;
+  const nCoils=10,coilW=totalW/nCoils;
+  ctx.save();
+  ctx.beginPath();ctx.moveTo(leftX,cy);ctx.lineTo(leftX+coilW*.5,cy);
+  for(let i=0;i<nCoils*4;i++){
+    const progress=i/(nCoils*4);
+    const x=leftX+coilW*.5+progress*(totalW-coilW);
+    const y=cy+coilH*Math.sin(i*Math.PI/2);
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.lineTo(leftX+totalW,cy);
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
+  ctx.restore();
+}
+
+// ── VIRTUAL SPRING LAB ─────────────────────────────────────────────
+function updateSpringLab(fVal){
+  const F=parseFloat(fVal);
+  const k=200,x=F/k;
+  document.getElementById('forceVal').textContent=(F>0?'+':'')+F+' N';
+  document.getElementById('ro-F').textContent=(F>0?'+':'')+F;
+  document.getElementById('ro-x').textContent=x.toFixed(3);
+  const stEl=document.getElementById('ro-state');
+  const stColor=F>0?'var(--green)':F<0?'var(--red)':'var(--cyan)';
+  const stText=F>0?'Elongated ↓':F<0?'Compressed ↑':'At rest';
+  stEl.textContent=stText;stEl.style.color=stColor;
+  drawSpringSimulator(F,x);
+}
+
+function drawSpringSimulator(F,x){
+  const cv=document.getElementById('cvSpring');
+  cv.width=cv.offsetWidth||600;
+  const W=cv.width,H=300,ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+
+  // Wall (ceiling)
+  ctx.fillStyle='#2a3040';ctx.fillRect(W*.3,0,W*.4,16);
+  // Hatch marks
+  ctx.strokeStyle='rgba(74,158,245,.3)';ctx.lineWidth=1;
+  for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(W*.3+i*W*.05,0);ctx.lineTo(W*.3+i*W*.05+12,16);ctx.stroke();}
+
+  const cx=W*.5;
+  const naturalH=H*.45,topY=16;
+  const elongPx=x*800;// scale for display
+  const color=F>0?'#22c55e':F<0?'#ef4444':'#4a9ef5';
+  drawSpringVertical(ctx,cx,topY,naturalH,elongPx,W*.08,color,false);
+
+  // Mass/weight block at bottom
+  const blockY=topY+naturalH+elongPx;
+  const bW=60,bH=36;
+  ctx.fillStyle='rgba(74,158,245,.2)';ctx.fillRect(cx-bW/2,blockY,bW,bH);
+  ctx.strokeStyle='rgba(74,158,245,.5)';ctx.lineWidth=1.5;ctx.strokeRect(cx-bW/2,blockY,bW,bH);
+  ctx.fillStyle='rgba(74,158,245,.9)';ctx.font='bold 11px DM Mono';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(F!==0?Math.abs(F)+'N':'Load',cx,blockY+bH/2);
+
+  // Arrows and labels
+  if(Math.abs(F)>0.5){
+    // F arrow
+    const arrowDir=F>0?1:-1;
+    const arrowY=blockY+bH/2;
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.fillStyle=color;
+    ctx.beginPath();ctx.moveTo(cx+bW/2+10,arrowY);
+    ctx.lineTo(cx+bW/2+10+arrowDir*40,arrowY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx+bW/2+10+arrowDir*40,arrowY-6);
+    ctx.lineTo(cx+bW/2+10+arrowDir*40+arrowDir*8,arrowY);
+    ctx.lineTo(cx+bW/2+10+arrowDir*40,arrowY+6);ctx.fill();
+    ctx.font='10px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('F = '+(F>0?'+':'')+F+' N',cx+bW/2+65,arrowY);
+  }
+
+  // x measurement bracket
+  if(Math.abs(elongPx)>5){
+    const bracketX=cx-bW/2-30;
+    const y1=topY+naturalH,y2=topY+naturalH+elongPx;
+    ctx.strokeStyle='rgba(245,158,11,.7)';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(bracketX,y1);ctx.lineTo(bracketX-10,y1);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bracketX,y2);ctx.lineTo(bracketX-10,y2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bracketX-5,y1);ctx.lineTo(bracketX-5,y2);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(245,158,11,.9)';ctx.font='bold 10px DM Mono';
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.fillText('x = '+(x>0?'+':'')+x.toFixed(3)+' m',bracketX-14,(y1+y2)/2);
+  }
+
+  // Natural length indicator
+  ctx.strokeStyle='rgba(100,150,200,.25)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(cx-40,topY+naturalH);ctx.lineTo(cx+40,topY+naturalH);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(100,150,200,.5)';ctx.font='9px DM Mono';
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('natural length',cx+45,topY+naturalH);
+}
+
+// ── GRAPH DRAWING ─────────────────────────────────────────────────
+function drawGraph(){
+  const cv=document.getElementById('cvGraph');
+  cv.width=cv.offsetWidth||640;
+  const W=cv.width,H=320,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+
+  const mg=50,// margin
+  kA=300,kB=480;
+  const xRange=0.15,fRange=kB*xRange;// ±0.15m, ±72N
+  const cx=mg+(W-2*mg)*.5,cy=mg+(H-2*mg)*.5;// origin
+  const scX=(W-2*mg)/(2*xRange),scY=(H-2*mg)/(2*fRange);
+
+  // Grid lines
+  ctx.strokeStyle='rgba(74,158,245,.1)';ctx.lineWidth=1;
+  for(let x=-xRange;x<=xRange+.001;x+=.05){
+    const px=cx+x*scX;
+    ctx.beginPath();ctx.moveTo(px,mg);ctx.lineTo(px,H-mg);ctx.stroke();
+  }
+  for(let f=-fRange;f<=fRange+1;f+=20){
+    const py=cy-f*scY;
+    ctx.beginPath();ctx.moveTo(mg,py);ctx.lineTo(W-mg,py);ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle='rgba(216,228,240,.5)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(mg,cy);ctx.lineTo(W-mg,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,mg);ctx.lineTo(cx,H-mg);ctx.stroke();
+  // Arrowheads
+  ctx.fillStyle='rgba(216,228,240,.5)';
+  ctx.beginPath();ctx.moveTo(W-mg,cy-5);ctx.lineTo(W-mg+8,cy);ctx.lineTo(W-mg,cy+5);ctx.fill();
+  ctx.beginPath();ctx.moveTo(cx-5,mg);ctx.lineTo(cx,mg-8);ctx.lineTo(cx+5,mg);ctx.fill();
+
+  // Axis labels
+  ctx.fillStyle='rgba(216,228,240,.7)';ctx.font='11px DM Mono';
+  ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('x (m)',W-mg+4,cy+4);
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('F (N)',cx+8,mg+2);
+  ctx.fillText('0',cx+5,cy+5);
+
+  // Tick labels x-axis
+  ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';
+  [-0.1,-0.05,0.05,0.1].forEach(x=>{
+    ctx.fillText(x,cx+x*scX,cy+5);
+  });
+  // Tick labels y-axis
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  [-40,-20,20,40].forEach(f=>{
+    ctx.fillText(f,cx-5,cy-f*scY);
+  });
+
+  // Zone labels
+  ctx.font='9px DM Mono';ctx.fillStyle='rgba(239,68,68,.6)';ctx.textAlign='left';
+  ctx.fillText('← compression (x < 0)',mg+4,mg+6);
+  ctx.fillStyle='rgba(34,197,94,.6)';ctx.textAlign='right';
+  ctx.fillText('elongation (x > 0) →',W-mg-4,mg+6);
+
+  // Spring A line (blue, slope kA=300)
+  ctx.beginPath();
+  ctx.moveTo(cx+(-xRange)*scX,cy-(-xRange*kA)*scY);
+  ctx.lineTo(cx+(xRange)*scX,cy-(xRange*kA)*scY);
+  ctx.strokeStyle='rgba(74,158,245,.9)';ctx.lineWidth=2.5;ctx.setLineDash([]);ctx.stroke();
+  ctx.fillStyle='rgba(74,158,245,.9)';ctx.font='bold 10px DM Mono';
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText('Spring A (k=300 N/m)',cx+xRange*scX-80,cy-xRange*kA*scY-16);
+
+  // Spring B line (red dashed, slope kB=480)
+  ctx.beginPath();
+  ctx.moveTo(cx+(-xRange)*scX,cy-(-xRange*kB)*scY);
+  ctx.lineTo(cx+(xRange)*scX,cy-(xRange*kB)*scY);
+  ctx.strokeStyle='rgba(239,68,68,.85)';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(239,68,68,.85)';
+  ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillText('Spring B (steeper = stiffer)',cx+xRange*scX-100,cy-xRange*kB*scY+16);
+
+  // Highlight point (0.1, 30) on Spring A
+  const px=cx+0.1*scX,py=cy-30*scY;
+  ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+  ctx.fillStyle='rgba(74,158,245,1)';ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='9px DM Mono';
+  ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillText('(0.1 m, 30 N)',px+7,py-4);
+  // Dotted lines to axes
+  ctx.strokeStyle='rgba(74,158,245,.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cx,py);ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ── EXERCISE FIGURES ──────────────────────────────────────────────
+function drawEx1(){
+  const cv=document.getElementById('cvEx1');cv.width=cv.offsetWidth||280;
+  const W=cv.width,H=220,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  // Ceiling
+  ctx.fillStyle='#2a3040';ctx.fillRect(W*.3,0,W*.4,12);
+  for(let i=0;i<5;i++){ctx.strokeStyle='rgba(74,158,245,.3)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*.3+i*W*.08,0);ctx.lineTo(W*.3+i*W*.08+10,12);ctx.stroke();}
+  // Spring (elongated green)
+  drawSpringVertical(ctx,W*.5,12,H*.5,35,W*.1,'rgba(34,197,94,.8)',false);
+  // Meat block
+  const bY=12+H*.5+35;
+  ctx.fillStyle='rgba(200,80,80,.3)';ctx.fillRect(W*.35,bY,W*.3,38);
+  ctx.strokeStyle='rgba(200,80,80,.6)';ctx.lineWidth=1.5;ctx.strokeRect(W*.35,bY,W*.3,38);
+  ctx.fillStyle='rgba(255,180,180,.8)';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('2.5 kg',W*.5,bY+19);
+  // Labels
+  ctx.fillStyle='rgba(34,197,94,.7)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('x = ?',W*.62,bY-18);
+  ctx.fillStyle='rgba(245,158,11,.6)';
+  ctx.fillText('F = mg = 25 N ↓',W*.04,bY+19);
+}
+
+function drawEx2(){
+  const cv=document.getElementById('cvEx2');cv.width=cv.offsetWidth||280;
+  const W=cv.width,H=220,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  // Car body
+  const carY=H*.18;
+  ctx.fillStyle='rgba(74,158,245,.15)';ctx.fillRect(W*.15,carY,W*.7,H*.28);
+  ctx.strokeStyle='rgba(74,158,245,.5)';ctx.lineWidth=1.5;ctx.strokeRect(W*.15,carY,W*.7,H*.28);
+  ctx.fillStyle='rgba(74,158,245,.8)';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('CAR BODY',W*.5,carY+H*.14);
+  ctx.fillText('400 kg / spring',W*.5,carY+H*.14+13);
+  // Spring (compressed red)
+  const sprTopY=carY+H*.28;
+  drawSpringVertical(ctx,W*.5,sprTopY,H*.32,-25,W*.1,'rgba(239,68,68,.8)',false);
+  // Ground
+  ctx.fillStyle='#2a3040';ctx.fillRect(0,H*.88,W,H*.12);
+  for(let i=0;i<8;i++){ctx.strokeStyle='rgba(74,158,245,.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(i*W*.14,H*.88);ctx.lineTo(i*W*.14-10,H);ctx.stroke();}
+  // Compression arrow
+  ctx.strokeStyle='rgba(239,68,68,.7)';ctx.fillStyle='rgba(239,68,68,.7)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(W*.72,sprTopY+5);ctx.lineTo(W*.72,sprTopY+H*.18);ctx.stroke();
+  ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(239,68,68,.7)';ctx.fillText('x=? (compressed)',W*.04,sprTopY+H*.12);
+}
+
+function drawEx3(){
+  const cv=document.getElementById('cvEx3');cv.width=cv.offsetWidth||280;
+  const W=cv.width,H=220,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  // Bridge/cliff
+  ctx.fillStyle='#2a3040';ctx.fillRect(0,0,W,22);
+  for(let i=0;i<8;i++){ctx.strokeStyle='rgba(74,158,245,.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(i*W*.14,22);ctx.lineTo(i*W*.14-8,0);ctx.stroke();}
+  // Bungee (very elongated green)
+  drawSpringVertical(ctx,W*.5,22,H*.15,H*.55,W*.08,'rgba(34,197,94,.7)',false);
+  // Jumper
+  const jY=22+H*.15+H*.55;
+  ctx.beginPath();ctx.arc(W*.5,jY+10,12,0,Math.PI*2);ctx.fillStyle='rgba(74,158,245,.3)';ctx.fill();
+  ctx.strokeStyle='rgba(74,158,245,.7)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle='rgba(74,158,245,.9)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('70kg',W*.5,jY+10);
+  // x label
+  ctx.fillStyle='rgba(34,197,94,.7)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('x = ?',W*.62,22+H*.15+H*.28);
+  ctx.fillStyle='rgba(239,68,68,.7)';ctx.fillText('F = 700N ↓',W*.04,jY+24);
+}
+
+function drawEx4(){
+  const cv=document.getElementById('cvEx4');cv.width=cv.offsetWidth||280;
+  const W=cv.width,H=220,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  // Person lying (stick figure ish)
+  ctx.strokeStyle='rgba(74,158,245,.5)';ctx.fillStyle='rgba(74,158,245,.2)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(W*.5,H*.12,14,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*.5,H*.12+14);ctx.lineTo(W*.5,H*.38);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*.28,H*.22);ctx.lineTo(W*.72,H*.22);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*.5,H*.38);ctx.lineTo(W*.3,H*.58);ctx.moveTo(W*.5,H*.38);ctx.lineTo(W*.7,H*.58);ctx.stroke();
+  ctx.fillStyle='rgba(74,158,245,.7)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('60 kg',W*.5,H*.1);
+  // Mattress (compressed springs)
+  const mattY=H*.6;
+  for(let i=0;i<4;i++){
+    drawSpringVertical(ctx,W*(.2+i*.2),mattY,H*.2,-18,W*.06,'rgba(239,68,68,.6)',false);
+  }
+  // Ground
+  ctx.fillStyle='#2a3040';ctx.fillRect(0,H*.88,W,H*.12);
+  ctx.fillStyle='rgba(239,68,68,.7)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('|x| = 3 cm (compressed)',W*.5,H*.91);
+  ctx.fillStyle='rgba(245,158,11,.7)';ctx.fillText('k = ?',W*.5,H*.91+12);
+}
+
+function drawEx5(){
+  const cv=document.getElementById('cvEx5');cv.width=cv.offsetWidth||280;
+  const W=cv.width,H=220,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  // Pen barrel
+  ctx.fillStyle='rgba(74,158,245,.15)';ctx.fillRect(W*.3,H*.08,W*.15,H*.75);
+  ctx.strokeStyle='rgba(74,158,245,.4)';ctx.lineWidth=1.5;ctx.strokeRect(W*.3,H*.08,W*.15,H*.75);
+  // Spring inside pen (compressed)
+  drawSpringVertical(ctx,W*.375,H*.2,H*.3,-20,W*.04,'rgba(239,68,68,.8)',false);
+  // Top button
+  ctx.fillStyle='rgba(239,68,68,.3)';ctx.fillRect(W*.3,H*.05,W*.15,H*.05);
+  ctx.strokeStyle='rgba(239,68,68,.6)';ctx.strokeRect(W*.3,H*.05,W*.15,H*.05);
+  // Finger
+  ctx.beginPath();ctx.arc(W*.375,H*.05,10,Math.PI,0);ctx.fillStyle='rgba(245,200,180,.4)';ctx.fill();
+  ctx.strokeStyle='rgba(245,200,180,.6)';ctx.lineWidth=1;ctx.stroke();
+  // Labels
+  ctx.fillStyle='rgba(245,158,11,.8)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('F = 4.5 N ↓',W*.52,H*.1);
+  ctx.fillStyle='rgba(239,68,68,.7)';ctx.fillText('|x| = ? mm',W*.52,H*.45);
+  ctx.fillStyle='rgba(216,228,240,.4)';ctx.fillText('k = 150 N/m',W*.52,H*.6);
+}
+
+function drawEx6(){
+  const cv=document.getElementById('cvEx6');cv.width=cv.offsetWidth||280;
+  const W=cv.width,H=220,ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  // Stand
+  ctx.fillStyle='#2a3040';ctx.fillRect(W*.15,0,W*.7,14);
+  for(let i=0;i<6;i++){ctx.strokeStyle='rgba(74,158,245,.25)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*.15+i*W*.12,14);ctx.lineTo(W*.15+i*W*.12-8,0);ctx.stroke();}
+  // Spring (elongated, green)
+  drawSpringVertical(ctx,W*.5,14,H*.42,40,W*.1,'rgba(34,197,94,.8)',false);
+  // Rock
+  const rY=14+H*.42+40;
+  ctx.save();ctx.beginPath();
+  ctx.moveTo(W*.38,rY);ctx.lineTo(W*.55,rY+4);ctx.lineTo(W*.65,rY+18);ctx.lineTo(W*.58,rY+40);
+  ctx.lineTo(W*.42,rY+44);ctx.lineTo(W*.3,rY+28);ctx.lineTo(W*.32,rY+10);ctx.closePath();
+  ctx.fillStyle='rgba(120,130,150,.4)';ctx.fill();ctx.strokeStyle='rgba(150,160,180,.6)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(216,228,240,.7)';ctx.font='bold 10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?kg',W*.49,rY+22);
+  // Labels
+  ctx.fillStyle='rgba(34,197,94,.7)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('x = 8 cm = 0.08 m',W*.04,14+H*.42+20);
+  ctx.fillStyle='rgba(245,158,11,.7)';ctx.fillText('m = ?',W*.04,rY+40);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+updateSpringLab(0);
+drawGraph();
+drawEx1();drawEx2();drawEx3();drawEx4();drawEx5();drawEx6();
+updateGrade();
+
+window.addEventListener('resize',()=>{
+  updateSpringLab(document.getElementById('forceSlider').value);
+  drawGraph();
+  drawEx1();drawEx2();drawEx3();drawEx4();drawEx5();drawEx6();
+});
+</script>
+</body>
+</html>
