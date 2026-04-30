@@ -18,7 +18,7 @@
   --red:#ef4444;--redD:rgba(239,68,68,.1);
   --amber:#f59e0b;--amberD:rgba(245,158,11,.1);
   --purple:#a855f7;--purpleD:rgba(168,85,247,.1);
-  --spring:#4a9ef5;--compress:#ef4444;--extend:#22c55e;
+  --spring:#4a9ef5;--extend:#22c55e;
   --fh:'IBM Plex Serif',serif;
   --fb:'DM Sans',sans-serif;
   --fm:'DM Mono',monospace;
@@ -144,16 +144,15 @@ section{padding:60px 52px;border-bottom:1px solid var(--border);}
 .ex-header{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);}
 .ex-type-badge{font-family:var(--fm);font-size:.52rem;text-transform:uppercase;
-  letter-spacing:2px;padding:3px 10px;border-radius:3px;border:1px solid;}
-.ex-type-badge.elongation{background:rgba(34,197,94,.12);color:var(--green);
-  border-color:rgba(34,197,94,.3);}
-.ex-type-badge.compression{background:rgba(239,68,68,.12);color:var(--red);
-  border-color:rgba(239,68,68,.3);}
+  letter-spacing:2px;padding:3px 10px;border-radius:3px;border:1px solid;
+  background:rgba(34,197,94,.12);color:var(--green);border-color:rgba(34,197,94,.3);}
 .ex-body{padding:18px;display:grid;grid-template-columns:1fr 1.2fr;gap:16px;}
 @media(max-width:700px){.ex-body{grid-template-columns:1fr;}}
 .ex-fig{background:var(--bg3);border:1px solid var(--border);border-radius:6px;
-  overflow:hidden;}
+  overflow:hidden;position:relative;}
 .ex-canvas{display:block;width:100%;}
+.interactive-slider{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  width:80%;background:rgba(0,0,0,0.5);padding:6px 10px;border-radius:5px;border:1px solid var(--border);}
 .ex-content{}
 .ex-context{font-size:.82rem;color:var(--muted);line-height:1.82;margin-bottom:12px;
   font-style:italic;border-left:2px solid var(--border2);padding-left:10px;}
@@ -172,7 +171,7 @@ section{padding:60px 52px;border-bottom:1px solid var(--border);}
 .ex-input:focus{border-color:var(--blue);}
 .ex-unit{font-family:var(--fm);font-size:.78rem;color:var(--muted2);}
 .ex-ans{padding:8px 12px;border-radius:5px;font-family:var(--fm);font-size:.78rem;
-  display:none;margin-top:6px;border:1px solid;}
+  display:none;margin-top:6px;border:1px solid;line-height:1.6;}
 .ex-ans.ok{background:var(--greenD);border-color:var(--green);color:var(--green);}
 .ex-ans.err{background:var(--redD);border-color:var(--red);color:var(--red);}
 .ex-sub{padding:8px 16px;background:var(--panel2);border:1.5px solid var(--border2);
@@ -307,13 +306,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="formula-box" style="max-width:380px;margin:0 0 20px 0;">
       <div class="formula-main">F = k · x</div>
       <div class="formula-sub" style="margin-bottom:6px;">F = spring force (N) &ensp;|&ensp; k = spring constant (N/m) &ensp;|&ensp; x = deformation (m)</div>
-      <div class="formula-note">x &gt; 0 → elongation &ensp;|&ensp; x &lt; 0 → compression</div>
+      <div class="formula-note">x > 0 → pure elongation</div>
     </div>
     <p style="font-size:.9rem;color:var(--muted);line-height:1.9;margin-bottom:10px;max-width:520px;">
-      You know the equation F = k·x. Now you will <strong style="color:#e8f2ff;">apply it</strong> in real engineering contexts — suspension bridges, car suspensions, medical devices, and more.
+      You know the equation F = k·x. Now you will <strong style="color:#e8f2ff;">apply it</strong> to real-world systems involving elongation: measuring scales, trampolines, and archery bows.
     </p>
     <p style="font-size:.9rem;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:520px;">
-      In the Lebanese curriculum, the deformation is called <strong style="color:var(--cyan);">x</strong> — the algebraic elongation of the spring. A positive x means the spring is <span style="color:var(--green);">stretched (elongated)</span>. A negative x means it is <span style="color:var(--red);">compressed</span>.
+      In the Lebanese curriculum, the deformation is called <strong style="color:var(--cyan);">x</strong> — the elongation of the spring. In this lab, we will focus exclusively on cases where the spring is <span style="color:var(--green);">stretched (x > 0)</span>.
     </p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button class="btn btn-blue" onclick="goTo('lab')">Start Lab →</button>
@@ -330,7 +329,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <h2 class="sec-title">Virtual Spring Lab</h2>
   <div class="pts-label">⬛ 4 points total in this section</div>
   <p class="sec-desc">
-    Drag the slider to apply a force to the spring. Watch it elongate (+) or compress (−).
+    Drag the slider to apply a stretching force to the spring. Watch it elongate (+).
     Record your observations and answer the questions below.
   </p>
 
@@ -338,9 +337,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="spring-controls">
       <span style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">⚙ SPRING SIMULATOR — k = 200 N/m</span>
       <div style="display:flex;align-items:center;gap:10px;">
-        <label style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);">Applied Force:</label>
-        <input type="range" id="forceSlider" min="-40" max="40" value="0" step="1"
-          style="width:160px;background:linear-gradient(90deg,var(--red),var(--bg3),var(--green));"
+        <label style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);">Applied Pulling Force:</label>
+        <input type="range" id="forceSlider" min="0" max="40" value="0" step="1"
+          style="width:160px;background:linear-gradient(90deg,var(--bg3),var(--green));"
           oninput="updateSpringLab(this.value)">
         <span id="forceVal" style="font-family:var(--fm);font-size:.82rem;font-weight:500;
           color:var(--cyan);min-width:58px;">0 N</span>
@@ -349,7 +348,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="spring-canvas-wrap">
       <canvas id="cvSpring" height="300"></canvas>
       <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-top:6px;">
-        Drag slider left (−) to compress · right (+) to elongate
+        Drag slider right to stretch the spring
       </div>
     </div>
     <div class="spring-readout">
@@ -375,42 +374,42 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="q-block">
     <div class="q-pts">1 pt</div>
     <div class="q-num">Lab Observation · Q1</div>
-    <div class="q-text">In the simulator, k = 200 N/m. When you apply F = +20 N (elongation), what is the value of x?</div>
+    <div class="q-text">In the simulator, k = 200 N/m. When you apply F = 20 N (elongation), what is the value of x?</div>
     <div class="opts" id="lab1opts">
       <div class="opt" onclick="pick('lab1','A',this)"><span class="ml">A</span>x = 0.01 m</div>
       <div class="opt" onclick="pick('lab1','B',this)"><span class="ml">B</span>x = 0.1 m</div>
       <div class="opt" onclick="pick('lab1','C',this)"><span class="ml">C</span>x = 10 m</div>
       <div class="opt" onclick="pick('lab1','D',this)"><span class="ml">D</span>x = 0.5 m</div>
     </div>
-    <button class="chk" onclick="chk('lab1','B',1,'✓ Correct! x = F/k = 20/200 = 0.1 m. Try it in the simulator — set the slider to +20 N and read x = 0.10 m.','✗ x = F/k = 20 ÷ 200 = 0.1 m. Use the simulator to verify.')">✓ Check</button>
+    <button class="chk" onclick="chk('lab1','B',1,'✓ Correct! x = F/k = 20/200 = 0.1 m. Try it in the simulator — set the slider to 20 N and read x = 0.10 m.','✗ x = F/k = 20 ÷ 200 = 0.1 m. Use the simulator to verify.')">✓ Check</button>
     <div class="fb" id="fblab1"></div>
   </div>
 
   <div class="q-block">
     <div class="q-pts">1 pt</div>
     <div class="q-num">Lab Observation · Q2</div>
-    <div class="q-text">When you apply F = −30 N (compression), the value of x is:</div>
+    <div class="q-text">Slide the force up to F = 40 N. What is the new elongation x?</div>
     <div class="opts" id="lab2opts">
-      <div class="opt" onclick="pick('lab2','A',this)"><span class="ml">A</span>x = +0.15 m (positive)</div>
-      <div class="opt" onclick="pick('lab2','B',this)"><span class="ml">B</span>x = −0.15 m (negative)</div>
-      <div class="opt" onclick="pick('lab2','C',this)"><span class="ml">C</span>x = 0 m</div>
-      <div class="opt" onclick="pick('lab2','D',this)"><span class="ml">D</span>x = −15 m</div>
+      <div class="opt" onclick="pick('lab2','A',this)"><span class="ml">A</span>x = 0.2 m</div>
+      <div class="opt" onclick="pick('lab2','B',this)"><span class="ml">B</span>x = 0.4 m</div>
+      <div class="opt" onclick="pick('lab2','C',this)"><span class="ml">C</span>x = 0.8 m</div>
+      <div class="opt" onclick="pick('lab2','D',this)"><span class="ml">D</span>x = 2 m</div>
     </div>
-    <button class="chk" onclick="chk('lab2','B',1,'✓ Correct! When F is negative (compression), x = F/k = −30/200 = −0.15 m. Negative x means compressed.','✗ For compression: F is negative, so x = F/k = −30/200 = −0.15 m. Negative x = compressed spring.')">✓ Check</button>
+    <button class="chk" onclick="chk('lab2','A',1,'✓ Correct! x = F/k = 40/200 = 0.2 m.','✗ Slide the bar all the way to 40N to check the reading! 40 / 200 = 0.2 m.')">✓ Check</button>
     <div class="fb" id="fblab2"></div>
   </div>
 
   <div class="q-block">
     <div class="q-pts">2 pts</div>
     <div class="q-num">Lab Analysis · Q3</div>
-    <div class="q-text">A student doubles the applied force (from 10 N to 20 N). What happens to the deformation x? This illustrates which property of Hooke's Law?</div>
+    <div class="q-text">Notice what happened in Q1 and Q2. When the applied force doubled (from 20 N to 40 N), what happened to the deformation x? This illustrates which property of Hooke's Law?</div>
     <div class="opts" id="lab3opts">
       <div class="opt" onclick="pick('lab3','A',this)"><span class="ml">A</span>x stays the same — the spring constant k compensates</div>
       <div class="opt" onclick="pick('lab3','B',this)"><span class="ml">B</span>x doubles — F and x are directly proportional (F ∝ x)</div>
       <div class="opt" onclick="pick('lab3','C',this)"><span class="ml">C</span>x decreases — springs resist larger forces</div>
       <div class="opt" onclick="pick('lab3','D',this)"><span class="ml">D</span>x triples — springs accelerate deformation</div>
     </div>
-    <button class="chk" onclick="chk('lab3','B',2,'✓ Excellent! F = kx → if F doubles, x doubles. This is the core of Hooke\'s Law: the force is DIRECTLY PROPORTIONAL to the deformation (F ∝ x). The graph F vs x is a straight line through the origin.','✗ From F = kx: if k is constant and F doubles, then x must double too. F and x are directly proportional — this is the key statement of Hooke\'s Law.')">✓ Check</button>
+    <button class="chk" onclick="chk('lab3','B',2,'✓ Excellent! F = kx → if F doubles, x doubles. This is the core of Hooke\'s Law: the force is DIRECTLY PROPORTIONAL to the deformation (F ∝ x). The graph F vs x is a straight line passing through the origin.','✗ From F = kx: if k is constant and F doubles, then x must double too. F and x are directly proportional — this is the key statement of Hooke\'s Law.')">✓ Check</button>
     <div class="fb" id="fblab3"></div>
   </div>
 </section>
@@ -421,7 +420,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <h2 class="sec-title">Reading the Spring Graph</h2>
   <div class="pts-label">⬛ 3 points total in this section</div>
   <p class="sec-desc">
-    The graph of F (N) as a function of x (m) for a spring is a straight line through the origin. The slope equals the spring constant k.
+    The graph of F (N) as a function of x (m) for an elongated spring is a straight line through the origin in the positive quadrant. The slope equals the spring constant k.
   </p>
 
   <div class="graph-wrap" style="max-width:680px;margin-bottom:22px;">
@@ -433,7 +432,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       <canvas id="cvGraph" height="320" style="max-width:100%;width:100%;display:block;
         background:var(--bg);border-radius:6px;border:1px solid var(--border);"></canvas>
       <div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-top:8px;">
-        Blue line = Spring A &ensp;|&ensp; Red dashed = Spring B &ensp;|&ensp; Positive x = elongation, Negative x = compression
+        Blue line = Spring A &ensp;|&ensp; Red dashed = Spring B
       </div>
     </div>
   </div>
@@ -458,25 +457,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="q-text">Spring B has a steeper slope than Spring A. This means Spring B is:</div>
     <div class="opts" id="g2opts">
       <div class="opt" onclick="pick('g2','A',this)"><span class="ml">A</span>Softer — it stretches more for the same force</div>
-      <div class="opt" onclick="pick('g2','B',this)"><span class="ml">B</span>Stiffer — it requires a larger force for the same deformation</div>
+      <div class="opt" onclick="pick('g2','B',this)"><span class="ml">B</span>Stiffer — it requires a larger force for the same elongation</div>
       <div class="opt" onclick="pick('g2','C',this)"><span class="ml">C</span>Identical — slope doesn't affect stiffness</div>
       <div class="opt" onclick="pick('g2','D',this)"><span class="ml">D</span>Broken — a steeper slope means elastic limit exceeded</div>
     </div>
-    <button class="chk" onclick="chk('g2','B',1,'✓ Correct! A steeper slope = larger k = stiffer spring. More force is needed to produce the same deformation x. Think: a stiff car spring vs. a soft pen spring.','✗ A steeper slope means larger k (spring constant). Larger k = stiffer spring = more force needed per meter of deformation.')">✓ Check</button>
+    <button class="chk" onclick="chk('g2','B',1,'✓ Correct! A steeper slope = larger k = stiffer spring. More force is needed to produce the same elongation x.','✗ A steeper slope means larger k (spring constant). Larger k = stiffer spring = more force needed per meter of elongation.')">✓ Check</button>
     <div class="fb" id="fbg2"></div>
   </div>
 
   <div class="q-block">
     <div class="q-pts">1 pt</div>
-    <div class="q-num">Graph · Q3 — Compression zone</div>
-    <div class="q-text">In the graph, when x is <strong>negative</strong>, the force F is also negative. What does a negative force value mean physically?</div>
+    <div class="q-num">Graph · Q3</div>
+    <div class="q-text">If you apply too much force and the graph suddenly curves and loses its straight-line shape, what has happened physically to the spring?</div>
     <div class="opts" id="g3opts">
-      <div class="opt" onclick="pick('g3','A',this)"><span class="ml">A</span>The spring has broken and no longer obeys Hooke's Law</div>
-      <div class="opt" onclick="pick('g3','B',this)"><span class="ml">B</span>The spring pushes back (restoring force opposes compression)</div>
-      <div class="opt" onclick="pick('g3','C',this)"><span class="ml">C</span>Force cannot be negative — the reading is an error</div>
-      <div class="opt" onclick="pick('g3','D',this)"><span class="ml">D</span>The spring constant k has changed sign</div>
+      <div class="opt" onclick="pick('g3','A',this)"><span class="ml">A</span>It has become a perfect Hookean spring</div>
+      <div class="opt" onclick="pick('g3','B',this)"><span class="ml">B</span>Its elastic limit has been exceeded (permanent damage)</div>
+      <div class="opt" onclick="pick('g3','C',this)"><span class="ml">C</span>The mass of the spring vanished</div>
+      <div class="opt" onclick="pick('g3','D',this)"><span class="ml">D</span>The gravity constant g increased</div>
     </div>
-    <button class="chk" onclick="chk('g3','B',1,'✓ Exactly! When compressed (x < 0), the spring pushes back outward — a restoring force in the opposite direction. The negative sign in F = kx carries all this information automatically.','✗ Negative x means compression. From F = kx: if x < 0, then F < 0. The negative force is the restoring force — the spring pushes back against the compression.')">✓ Check</button>
+    <button class="chk" onclick="chk('g3','B',1,'✓ Exactly! Hooke\'s Law only applies within the elastic limit. If you stretch a spring too far, it deforms permanently, and the graph stops being a straight line.','✗ Hooke\'s Law (the straight line) only works within the elastic limit. A curve means the spring was stretched too far and is permanently deformed.')">✓ Check</button>
     <div class="fb" id="fbg3"></div>
   </div>
 </section>
@@ -484,28 +483,34 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <!-- ══ E4: EXERCISES — APPLICATIONS (12 pts) ══ -->
 <section id="exercises">
   <div class="e-tag elaborate">E4 · Elaborate — Real-World Applications</div>
-  <h2 class="sec-title">Applied Exercises</h2>
-  <div class="pts-label">⬛ 12 points total — 6 exercises × 2 pts each</div>
+  <h2 class="sec-title">Applied Interactive Exercises</h2>
+  <div class="pts-label">⬛ 12 points total — 4 exercises × 3 pts each</div>
   <p class="sec-desc">
-    Six real-world problems — a mix of elongation and compression. Use <span style="font-family:var(--fm);color:var(--cyan);">F = k · x</span> and always check: is x positive (elongated) or negative (compressed)?
+    Four real-world elongation problems. <strong>Use the sliders to experiment with the system in real-time</strong> before calculating your final answers. Use <span style="font-family:var(--fm);color:var(--cyan);">F = k · x</span>.
   </p>
 
-  <!-- ── EXERCISE 1: ELONGATION — Hanging weight ── -->
+  <!-- ── EXERCISE 1: Butcher's Scale ── -->
   <div class="ex-block">
     <div class="ex-header">
       <div>
         <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
-          Exercise 1 — Hanging Mass on a Spring
+          Exercise 1 — The Butcher's Scale
         </div>
         <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
-          2 pts
+          3 pts
         </div>
       </div>
-      <span class="ex-type-badge elongation">↓ ELONGATION</span>
+      <span class="ex-type-badge">↓ ELONGATION</span>
     </div>
     <div class="ex-body">
       <div class="ex-fig">
-        <canvas class="ex-canvas" id="cvEx1" height="220"></canvas>
+        <canvas class="ex-canvas" id="cvEx1" height="240"></canvas>
+        <div class="interactive-slider">
+          <div style="display:flex;justify-content:space-between;color:var(--muted2);font-size:.6rem;font-family:var(--fm);">
+            <span>Test Mass (kg):</span><span id="sl-val1" style="color:var(--cyan)">0 kg</span>
+          </div>
+          <input type="range" id="ex1_slider" min="0" max="5" value="0" step="0.5" oninput="updateEx1(this.value)" style="width:100%;margin-top:4px;">
+        </div>
       </div>
       <div class="ex-content">
         <p class="ex-context">
@@ -524,206 +529,135 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
         </div>
         <div class="ex-ans" id="exans1"></div>
         <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
-          Hint: First find F = mg, then x = F/k
+          Set the slider to 2.5 kg to visualize the setup!
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── EXERCISE 2: COMPRESSION — Car suspension ── -->
+  <!-- ── EXERCISE 2: Trampoline ── -->
   <div class="ex-block">
     <div class="ex-header">
       <div>
         <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
-          Exercise 2 — Car Suspension Spring
+          Exercise 2 — The Trampoline
         </div>
         <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
-          2 pts
+          3 pts
         </div>
       </div>
-      <span class="ex-type-badge compression">↑ COMPRESSION</span>
+      <span class="ex-type-badge">↓ ELONGATION</span>
     </div>
     <div class="ex-body">
       <div class="ex-fig">
-        <canvas class="ex-canvas" id="cvEx2" height="220"></canvas>
+        <canvas class="ex-canvas" id="cvEx2" height="240"></canvas>
+        <div class="interactive-slider">
+          <div style="display:flex;justify-content:space-between;color:var(--muted2);font-size:.6rem;font-family:var(--fm);">
+            <span>Jumper Mass (kg):</span><span id="sl-val2" style="color:var(--cyan)">0 kg</span>
+          </div>
+          <input type="range" id="ex2_slider" min="0" max="80" value="0" step="10" oninput="updateEx2(this.value)" style="width:100%;margin-top:4px;">
+        </div>
       </div>
       <div class="ex-content">
         <p class="ex-context">
-          Each of the four suspension springs of a car supports 400 kg of the car's mass. The suspension spring constant is k = 80,000 N/m. (g = 10 m/s²)
-        </p>
-        <div class="ex-given">
-          <div class="ex-given-row"><span class="ex-given-key">Mass/spring:</span><span class="ex-given-val">m = 400 kg</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">80,000 N/m</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
-        </div>
-        <p class="ex-question"><strong>Find |x|</strong>, the compression of each spring (give the magnitude in meters).</p>
-        <div class="ex-input-row">
-          <input type="number" class="ex-input" id="ans2" placeholder="0.000" step="0.001">
-          <span class="ex-unit">m</span>
-          <button class="ex-sub" onclick="checkEx(2,0.05,'|x| = F/k = 4000/80000 = 0.05 m (5 cm). The spring is compressed by 5 cm under the car weight.')">✓ Check</button>
-        </div>
-        <div class="ex-ans" id="exans2"></div>
-        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
-          The weight pushes DOWN → spring compresses. F = mg (per spring).
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── EXERCISE 3: ELONGATION — Bungee cord ── -->
-  <div class="ex-block">
-    <div class="ex-header">
-      <div>
-        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
-          Exercise 3 — Bungee Cord at Maximum Stretch
-        </div>
-        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
-          2 pts
-        </div>
-      </div>
-      <span class="ex-type-badge elongation">↓ ELONGATION</span>
-    </div>
-    <div class="ex-body">
-      <div class="ex-fig">
-        <canvas class="ex-canvas" id="cvEx3" height="220"></canvas>
-      </div>
-      <div class="ex-content">
-        <p class="ex-context">
-          A bungee jumper of mass 70 kg reaches the lowest point where their velocity is zero. At this point, the bungee cord exerts its maximum restoring force equal to the jumper's weight. The bungee cord constant is k = 35 N/m.
-        </p>
-        <div class="ex-given">
-          <div class="ex-given-row"><span class="ex-given-key">Mass:</span><span class="ex-given-val">m = 70 kg</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">35 N/m</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">F = mg =</span><span class="ex-given-val">700 N</span></div>
-        </div>
-        <p class="ex-question"><strong>Find x</strong>, the maximum elongation of the bungee cord (in meters).</p>
-        <div class="ex-input-row">
-          <input type="number" class="ex-input" id="ans3" placeholder="0.00" step="0.1">
-          <span class="ex-unit">m</span>
-          <button class="ex-sub" onclick="checkEx(3,20,'x = F/k = 700/35 = 20 m. The bungee cord stretches 20 metres at maximum extension!')">✓ Check</button>
-        </div>
-        <div class="ex-ans" id="exans3"></div>
-        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
-          At max stretch: spring force = weight. So F = kx = mg.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── EXERCISE 4: FIND k — Compression spring ── -->
-  <div class="ex-block">
-    <div class="ex-header">
-      <div>
-        <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
-          Exercise 4 — Finding the Spring Constant of a Mattress
-        </div>
-        <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
-          2 pts
-        </div>
-      </div>
-      <span class="ex-type-badge compression">↑ COMPRESSION</span>
-    </div>
-    <div class="ex-body">
-      <div class="ex-fig">
-        <canvas class="ex-canvas" id="cvEx4" height="220"></canvas>
-      </div>
-      <div class="ex-content">
-        <p class="ex-context">
-          A 60 kg person lies on a spring mattress. The mattress springs (all together) compress by 3 cm = 0.03 m. Find the equivalent spring constant of the mattress.
+          A 60 kg gymnast stands completely still in the exact center of a trampoline. The elastic mat stretches downward by x = 0.4 m. Treat the trampoline mat as a single giant spring.
         </p>
         <div class="ex-given">
           <div class="ex-given-row"><span class="ex-given-key">Mass:</span><span class="ex-given-val">m = 60 kg</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">|x| =</span><span class="ex-given-val">0.03 m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">x =</span><span class="ex-given-val">0.4 m</span></div>
           <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
         </div>
-        <p class="ex-question"><strong>Find k</strong>, the spring constant of the mattress (N/m).</p>
+        <p class="ex-question"><strong>Find k</strong>, the equivalent spring constant of the trampoline mat.</p>
         <div class="ex-input-row">
-          <input type="number" class="ex-input" id="ans4" placeholder="0" step="100">
+          <input type="number" class="ex-input" id="ans2" placeholder="0" step="10">
           <span class="ex-unit">N/m</span>
-          <button class="ex-sub" onclick="checkEx(4,20000,'k = F/x = mg/|x| = 600/0.03 = 20,000 N/m. A mattress must be quite stiff to support a person with only 3 cm compression!')">✓ Check</button>
+          <button class="ex-sub" onclick="checkEx(2,1500,'k = F/x = mg/x = 600/0.4 = 1500 N/m. Excellent!')">✓ Check</button>
         </div>
-        <div class="ex-ans" id="exans4"></div>
+        <div class="ex-ans" id="exans2"></div>
         <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
-          Rearrange: k = F/x = mg/|x|
+          Set the slider to 60 kg to see the 0.4 m drop.
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── EXERCISE 5: COMPRESSION — Pen clicker spring ── -->
+  <!-- ── EXERCISE 3: Archery Bow ── -->
   <div class="ex-block">
     <div class="ex-header">
       <div>
         <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
-          Exercise 5 — Clicking a Ballpoint Pen
+          Exercise 3 — Archery Bow
         </div>
         <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
-          2 pts
+          3 pts
         </div>
       </div>
-      <span class="ex-type-badge compression">↑ COMPRESSION</span>
+      <span class="ex-type-badge">→ ELONGATION</span>
     </div>
     <div class="ex-body">
       <div class="ex-fig">
-        <canvas class="ex-canvas" id="cvEx5" height="220"></canvas>
+        <canvas class="ex-canvas" id="cvEx3" height="240"></canvas>
+        <div class="interactive-slider">
+          <div style="display:flex;justify-content:space-between;color:var(--muted2);font-size:.6rem;font-family:var(--fm);">
+            <span>Draw Force (N):</span><span id="sl-val3" style="color:var(--cyan)">0 N</span>
+          </div>
+          <input type="range" id="ex3_slider" min="0" max="200" value="0" step="10" oninput="updateEx3(this.value)" style="width:100%;margin-top:4px;">
+        </div>
       </div>
       <div class="ex-content">
         <p class="ex-context">
-          When you press the top of a ballpoint pen, you compress the small spring inside. The spring constant of the pen spring is k = 150 N/m. You apply a force of 4.5 N to click the pen.
+          An archer pulls back the bowstring. The bow behaves like a spring with a stiffness constant of k = 500 N/m. The archer applies a pulling force of F = 150 N.
         </p>
         <div class="ex-given">
-          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">150 N/m</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">F =</span><span class="ex-given-val">4.5 N (compression)</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">500 N/m</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">F =</span><span class="ex-given-val">150 N</span></div>
         </div>
-        <p class="ex-question"><strong>Find |x|</strong>, how much the pen spring compresses (in mm). Give your answer in <strong>mm</strong>.</p>
+        <p class="ex-question"><strong>Find x</strong>, how far back the bowstring is pulled (in meters).</p>
         <div class="ex-input-row">
-          <input type="number" class="ex-input" id="ans5" placeholder="0.0" step="0.1">
-          <span class="ex-unit">mm</span>
-          <button class="ex-sub" onclick="checkEx(5,30,'|x| = F/k = 4.5/150 = 0.03 m = 30 mm. The pen spring compresses 3 centimetres — a surprisingly large deformation for such a small spring!')">✓ Check</button>
+          <input type="number" class="ex-input" id="ans3" placeholder="0.00" step="0.01">
+          <span class="ex-unit">m</span>
+          <button class="ex-sub" onclick="checkEx(3,0.3,'x = F/k = 150/500 = 0.3 m. The archer draws the string back by 30 cm.')">✓ Check</button>
         </div>
-        <div class="ex-ans" id="exans5"></div>
-        <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
-          Find x in metres first, then convert: 1 m = 1000 mm
-        </div>
+        <div class="ex-ans" id="exans3"></div>
       </div>
     </div>
   </div>
 
-  <!-- ── EXERCISE 6: ELONGATION — Find mass ── -->
+  <!-- ── EXERCISE 4: Unknown Rock ── -->
   <div class="ex-block">
     <div class="ex-header">
       <div>
         <div style="font-family:var(--fm);font-size:.7rem;font-weight:500;color:#e8f2ff;">
-          Exercise 6 — Unknown Mass on a Spring Balance
+          Exercise 4 — Unknown Rock Sample
         </div>
         <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);margin-top:3px;">
-          2 pts
+          3 pts
         </div>
       </div>
-      <span class="ex-type-badge elongation">↓ ELONGATION</span>
+      <span class="ex-type-badge">↓ ELONGATION</span>
     </div>
     <div class="ex-body">
       <div class="ex-fig">
-        <canvas class="ex-canvas" id="cvEx6" height="220"></canvas>
+        <canvas class="ex-canvas" id="cvEx4" height="240"></canvas>
       </div>
       <div class="ex-content">
         <p class="ex-context">
-          A physics student uses a spring balance (k = 250 N/m) to weigh an unknown rock sample. The spring elongates by x = 8 cm = 0.08 m. Find the mass of the rock.
+          A physics student uses a spring balance (k = 250 N/m) to weigh an unknown rock sample. The spring elongates by exactly x = 8 cm. Find the mass of the rock.
         </p>
         <div class="ex-given">
           <div class="ex-given-row"><span class="ex-given-key">k =</span><span class="ex-given-val">250 N/m</span></div>
-          <div class="ex-given-row"><span class="ex-given-key">x =</span><span class="ex-given-val">0.08 m (elongation)</span></div>
+          <div class="ex-given-row"><span class="ex-given-key">x =</span><span class="ex-given-val">8 cm = 0.08 m</span></div>
           <div class="ex-given-row"><span class="ex-given-key">g =</span><span class="ex-given-val">10 m/s²</span></div>
         </div>
         <p class="ex-question"><strong>Find m</strong>, the mass of the rock (in kg).</p>
         <div class="ex-input-row">
-          <input type="number" class="ex-input" id="ans6" placeholder="0.0" step="0.1">
+          <input type="number" class="ex-input" id="ans4" placeholder="0.0" step="0.1">
           <span class="ex-unit">kg</span>
-          <button class="ex-sub" onclick="checkEx(6,2,'m = F/g = kx/g = 250×0.08/10 = 20/10 = 2 kg. The rock has a mass of 2 kg.')">✓ Check</button>
+          <button class="ex-sub" onclick="checkEx(4,2,'m = F/g = kx/g = 250×0.08/10 = 20/10 = 2 kg. Perfect!')">✓ Check</button>
         </div>
-        <div class="ex-ans" id="exans6"></div>
+        <div class="ex-ans" id="exans4"></div>
         <div style="font-size:.72rem;color:var(--muted2);font-family:var(--fm);margin-top:6px;">
-          Steps: F = kx → m = F/g
+          Steps: Find F using F=kx, then find m using F=mg.
         </div>
       </div>
     </div>
@@ -735,7 +669,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="e-tag evaluate">E5 · Evaluate — MCQs</div>
   <h2 class="sec-title">Evaluation Questions</h2>
   <div class="pts-label">⬛ 4 points — 1 pt per question</div>
-  <p class="sec-desc">Four concept questions covering Hooke's Law, elongation, compression, and the spring constant.</p>
+  <p class="sec-desc">Four concept questions covering Hooke's Law, elongation, and the spring constant.</p>
 
   <div class="q-block">
     <div class="q-pts">1 pt</div>
@@ -753,15 +687,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
   <div class="q-block">
     <div class="q-pts">1 pt</div>
-    <div class="q-num">Question 2 — Algebraic Sign</div>
-    <div class="q-text">In the Lebanese curriculum notation F = kx, a <strong>negative</strong> value of x means:</div>
+    <div class="q-num">Question 2 — Limits</div>
+    <div class="q-text">What happens if you hang a massive weight on a thin spring, pulling it far beyond its elastic limit?</div>
     <div class="opts" id="q2opts">
-      <div class="opt" onclick="pick('q2','A',this)"><span class="ml">A</span>The spring is elongated (stretched)</div>
-      <div class="opt" onclick="pick('q2','B',this)"><span class="ml">B</span>The spring is at its natural length (rest position)</div>
-      <div class="opt" onclick="pick('q2','C',this)"><span class="ml">C</span>The spring is compressed</div>
-      <div class="opt" onclick="pick('q2','D',this)"><span class="ml">D</span>The spring constant is negative</div>
+      <div class="opt" onclick="pick('q2','A',this)"><span class="ml">A</span>It permanently deforms and will not return to its original length</div>
+      <div class="opt" onclick="pick('q2','B',this)"><span class="ml">B</span>It behaves perfectly according to Hooke's law forever</div>
+      <div class="opt" onclick="pick('q2','C',this)"><span class="ml">C</span>Its spring constant k becomes zero instantly</div>
+      <div class="opt" onclick="pick('q2','D',this)"><span class="ml">D</span>It turns into a solid rod</div>
     </div>
-    <button class="chk" onclick="chk('q2','C',1,'✓ Correct! In F = kx, x is the algebraic deformation: x > 0 = elongated, x < 0 = compressed, x = 0 = at rest.','✗ x is the algebraic deformation. x < 0 means the spring is compressed (shortened from its natural length).')">✓ Check</button>
+    <button class="chk" onclick="chk('q2','A',1,'✓ Correct! Exceeding the elastic limit ruins the spring. It undergoes plastic deformation and stays stretched out permanently.','✗ Hooke\'s law only applies in the elastic zone. Pulling too hard permanently damages (deforms) the spring.')">✓ Check</button>
     <div class="fb" id="fbq2"></div>
   </div>
 
@@ -782,7 +716,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="q-block">
     <div class="q-pts">1 pt</div>
     <div class="q-num">Question 4 — Application</div>
-    <div class="q-text">A spring (k = 1000 N/m) is compressed by 5 cm. What is the magnitude of the restoring force?</div>
+    <div class="q-text">A spring (k = 1000 N/m) is stretched by 5 cm. What is the magnitude of the restoring force?</div>
     <div class="opts" id="q4opts">
       <div class="opt" onclick="pick('q4','A',this)"><span class="ml">A</span>50,000 N</div>
       <div class="opt" onclick="pick('q4','B',this)"><span class="ml">B</span>50 N</div>
@@ -804,13 +738,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="q-pts">2 pts</div>
     <div class="q-num">Written Question</div>
     <div class="q-text">
-      A car goes over a speed bump. Explain what happens to each of the four suspension springs: 
-      (1) Do they elongate or compress? (2) What happens to the deformation x? 
-      (3) How does the spring restore the car to its normal height? Use the equation F = kx in your explanation.
+      Explain why heavy-duty trucks require suspension springs with a much higher spring constant (k) than those used in small passenger cars. Base your reasoning mathematically on Hooke's Law (F = kx).
     </div>
-    <textarea id="writtenAns" placeholder="Write your answer here using F = kx, elongation/compression, restoring force..." style="margin-top:10px;"></textarea>
+    <textarea id="writtenAns" placeholder="Write your answer here..." style="margin-top:10px;"></textarea>
     <div style="margin-top:6px;font-size:.7rem;color:var(--muted2);font-family:var(--fm);">
-      Ahmad grades this response in class. Use proper physics vocabulary.
+      Ahmad grades this response in class.
     </div>
   </div>
 </section>
@@ -838,9 +770,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
       <!-- Score breakdown -->
       <div style="font-family:var(--fm);font-size:.54rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Score Breakdown</div>
-      <div class="score-grid" id="scoreGrid">
-        <!-- filled by JS -->
-      </div>
+      <div class="score-grid" id="scoreGrid"></div>
       <div class="score-total-row">
         <span class="score-total-label">Raw Score (/25)</span>
         <span class="score-total-num" id="rawScoreDisplay">— / 25</span>
@@ -892,7 +822,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       </div>
 
       <div class="card2">
-        <div style="font-size:.76rem;color:var(--muted);line-height:1.8;">Ahmad reviews the written response (Q6) and time data in class.</div>
+        <div style="font-size:.76rem;color:var(--muted);line-height:1.8;">Ahmad reviews the written response and time data in class.</div>
         <div id="subOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenD);
           border:1px solid var(--green);border-radius:5px;font-size:.8rem;color:var(--green);
           font-weight:700;font-family:var(--fm);">✓ Lab submitted successfully!</div>
@@ -905,7 +835,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
   <div>
     <div style="font-family:var(--fh);font-size:.96rem;font-weight:700;color:#e8f2ff;">SPRING MECHANICS</div>
-    <div style="font-family:var(--fm);font-size:.46rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:2px;">Ahmad Ghozlan · Grade 9 · Hooke's Law Applications</div>
+    <div style="font-family:var(--fm);font-size:.46rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:2px;">Ahmad Ghozlan · Grade 9 · Hooke's Law</div>
   </div>
   <a href="https://aghozlan.github.io" style="font-size:.68rem;color:var(--muted2);text-decoration:none;border:1px solid var(--border2);padding:4px 12px;border-radius:3px;">↗ All Labs</a>
 </footer>
@@ -917,7 +847,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
 
 // ── STUDENT LISTS G9 ──────────────────────────────────────────────────
-// Note to Ahmad: Replace with actual Grade 9 student lists
 const STUDENTS={
   '9A':['Add 9A student names here'],
   '9B':['Add 9B student names here'],
@@ -960,8 +889,8 @@ window.addEventListener('scroll',()=>{
 
 // ── MCQ ENGINE ────────────────────────────────────────────────────────
 const picked={};
-const scores={};// key → points earned
-const maxPts={lab1:1,lab2:1,lab3:2,g1:1,g2:1,g3:1,ex1:0,ex2:0,ex3:0,ex4:0,ex5:0,ex6:0,q1:1,q2:1,q3:1,q4:1};
+const scores={};
+const maxPts={lab1:1,lab2:1,lab3:2,g1:1,g2:1,g3:1,ex1:3,ex2:3,ex3:3,ex4:3,q1:1,q2:1,q3:1,q4:1};
 
 function pick(key,val,btn){
   picked[key]=val;
@@ -991,8 +920,8 @@ function chk(key,ca,pts,ok,bad){
 }
 
 // ── EXERCISE CHECKER ─────────────────────────────────────────────────
-const exAnswers={1:0.051,2:0.05,3:20,4:20000,5:30,6:2};
-const exTolerance={1:0.003,2:0.003,3:0.5,4:500,5:1,6:0.1};
+const exAnswers={1:0.051,2:1500,3:0.3,4:2};
+const exTolerance={1:0.003,2:5,3:0.02,4:0.1};
 
 function checkEx(n,correctAns,explanation){
   const inp=document.getElementById('ans'+n);
@@ -1004,7 +933,7 @@ function checkEx(n,correctAns,explanation){
   if(Math.abs(val-correctAns)<=tol){
     ansEl.className='ex-ans ok';
     ansEl.textContent='✓ Correct! '+explanation;
-    scores['ex'+n]=2;inp.style.borderColor='var(--green)';
+    scores['ex'+n]=3;inp.style.borderColor='var(--green)';
   } else {
     ansEl.className='ex-ans err';
     ansEl.textContent='✗ Not quite. '+explanation;
@@ -1015,23 +944,14 @@ function checkEx(n,correctAns,explanation){
 
 // ── GRADE CALCULATOR ──────────────────────────────────────────────────
 const SECTIONS=[
-  {key:'E2 — Spring Lab Q1',  keys:['lab1'],     max:1},
-  {key:'E2 — Spring Lab Q2',  keys:['lab2'],     max:1},
-  {key:'E2 — Spring Lab Q3',  keys:['lab3'],     max:2},
-  {key:'E3 — Graph Q1',       keys:['g1'],       max:1},
-  {key:'E3 — Graph Q2',       keys:['g2'],       max:1},
-  {key:'E3 — Graph Q3',       keys:['g3'],       max:1},
-  {key:'E4 — Ex 1 (Butcher)', keys:['ex1'],      max:2},
-  {key:'E4 — Ex 2 (Car)',     keys:['ex2'],      max:2},
-  {key:'E4 — Ex 3 (Bungee)',  keys:['ex3'],      max:2},
-  {key:'E4 — Ex 4 (Mattress)',keys:['ex4'],      max:2},
-  {key:'E4 — Ex 5 (Pen)',     keys:['ex5'],      max:2},
-  {key:'E4 — Ex 6 (Rock)',    keys:['ex6'],      max:2},
-  {key:'E5 — MCQ 1',          keys:['q1'],       max:1},
-  {key:'E5 — MCQ 2',          keys:['q2'],       max:1},
-  {key:'E5 — MCQ 3',          keys:['q3'],       max:1},
-  {key:'E5 — MCQ 4',          keys:['q4'],       max:1},
-  {key:'E6 — Written',        keys:['written'],  max:2},
+  {key:'E2 — Spring Lab',     keys:['lab1','lab2','lab3'], max:4},
+  {key:'E3 — Graph',          keys:['g1','g2','g3'],       max:3},
+  {key:'E4 — Ex 1 (Butcher)', keys:['ex1'],                max:3},
+  {key:'E4 — Ex 2 (Tramp)',   keys:['ex2'],                max:3},
+  {key:'E4 — Ex 3 (Bow)',     keys:['ex3'],                max:3},
+  {key:'E4 — Ex 4 (Rock)',    keys:['ex4'],                max:3},
+  {key:'E5 — MCQs',           keys:['q1','q2','q3','q4'],  max:4},
+  {key:'E6 — Written',        keys:['written'],            max:2},
 ];
 
 function calcRaw(){
@@ -1054,19 +974,13 @@ function updateGrade(){
   const score20=Math.round(raw/max*20*10)/10;
   const {letter,cls}=gradeFromScore20(score20);
 
-  // Progress ring
   document.getElementById('ringPct').textContent=pct+'%';
   document.getElementById('ringFill').style.strokeDashoffset=226*(1-pct/100);
-
-  // Scores display
   document.getElementById('rawScoreDisplay').textContent=raw+' / '+max+' (auto)';
   document.getElementById('grade20Display').textContent=score20.toFixed(1)+' / 20';
-
-  // Badge
   const badge=document.getElementById('gradeBadge');
   badge.textContent=letter;badge.className='grade-badge '+cls;
 
-  // Score grid
   const grid=document.getElementById('scoreGrid');
   grid.innerHTML=SECTIONS.map(sec=>{
     const earned=sec.keys.reduce((a,k)=>a+(scores[k]||0),0);
@@ -1096,35 +1010,9 @@ async function doSubmit(){
 
   const payload={
     sheet:'HookesLaw_G9_P2',
-    name, class:cls,
-    time_min,
-    // Lab section
-    lab1_ans:picked.lab1||'—',lab1_ok:scores.lab1?'✓':'✗',
-    lab2_ans:picked.lab2||'—',lab2_ok:scores.lab2?'✓':'✗',
-    lab3_ans:picked.lab3||'—',lab3_ok:scores.lab3?'✓':'✗',lab3_pts:scores.lab3||0,
-    // Graph
-    g1_ans:picked.g1||'—',g1_ok:scores.g1?'✓':'✗',
-    g2_ans:picked.g2||'—',g2_ok:scores.g2?'✓':'✗',
-    g3_ans:picked.g3||'—',g3_ok:scores.g3?'✓':'✗',
-    // Exercises
-    ex1_ans:document.getElementById('ans1').value||'—',ex1_pts:scores.ex1||0,
-    ex2_ans:document.getElementById('ans2').value||'—',ex2_pts:scores.ex2||0,
-    ex3_ans:document.getElementById('ans3').value||'—',ex3_pts:scores.ex3||0,
-    ex4_ans:document.getElementById('ans4').value||'—',ex4_pts:scores.ex4||0,
-    ex5_ans:document.getElementById('ans5').value||'—',ex5_pts:scores.ex5||0,
-    ex6_ans:document.getElementById('ans6').value||'—',ex6_pts:scores.ex6||0,
-    // MCQs
-    q1_ans:picked.q1||'—',q1_ok:scores.q1?'✓':'✗',
-    q2_ans:picked.q2||'—',q2_ok:scores.q2?'✓':'✗',
-    q3_ans:picked.q3||'—',q3_ok:scores.q3?'✓':'✗',
-    q4_ans:picked.q4||'—',q4_ok:scores.q4?'✓':'✗',
-    // Written
+    name, class:cls, time_min,
+    raw_score:raw, max_auto:max, score_20:score20, grade_letter:letter,
     written:document.getElementById('writtenAns').value||'—',
-    // Summary
-    raw_score:raw,
-    max_auto:max,
-    score_20:score20,
-    grade_letter:letter,
   };
 
   try{
@@ -1143,74 +1031,64 @@ async function doSubmit(){
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
 // ═══════════════════════════════════════════════════════════════════
-// CANVAS DRAWINGS
+// ANIMATION ENGINE & CANVAS DRAWINGS
 // ═══════════════════════════════════════════════════════════════════
 
-// ── HERO ANIMATION ─────────────────────────────────────────────────
-(function heroAnim(){
-  const cv=document.getElementById('cvHero');if(!cv)return;
-  const ctx=cv.getContext('2d');let t=0;
-  function frame(){
-    cv.width=cv.offsetWidth||400;cv.height=cv.offsetHeight||600;
-    const W=cv.width,H=cv.height;
-    ctx.clearRect(0,0,W,H);
-    const amp=40*Math.sin(t*.8);
-    drawSpringVertical(ctx,W*.5,H*.12,H*.7,amp,W*.1,'rgba(74,158,245,.7)',true);
-    t+=.02;requestAnimationFrame(frame);
-  }
-  frame();
-})();
+let globalTime = 0;
+function animateAll() {
+  globalTime += 0.04;
+  drawHero();
+  drawEx1Canvas();
+  drawEx2Canvas();
+  drawEx3Canvas();
+  drawEx4Canvas();
+  requestAnimationFrame(animateAll);
+}
 
 // ── SPRING DRAW UTILITY ────────────────────────────────────────────
-function drawSpringVertical(ctx,cx,topY,naturalH,elongation,coilW,color,animated,t2){
+function drawSpringVertical(ctx,cx,topY,naturalH,elongation,coilW,color,animated){
   const totalH=naturalH+elongation;
   const nCoils=12,coilH=totalH/nCoils;
   ctx.save();
-  // Top attachment line
+  // Top attachment
   ctx.beginPath();ctx.moveTo(cx,topY);ctx.lineTo(cx,topY+coilH*.5);
   ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();
-  // Spring coils
+  // Coils
   ctx.beginPath();ctx.moveTo(cx,topY+coilH*.5);
   for(let i=0;i<nCoils*4;i++){
     const progress=i/(nCoils*4);
     const y=topY+coilH*.5+progress*(totalH-coilH);
-    const x=cx+coilW*Math.cos(i*Math.PI/2+(animated&&t2?t2*3:0));
+    const x=cx+coilW*Math.cos(i*Math.PI/2+(animated?globalTime*4:0));
     if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
   }
   ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
-  // Bottom attachment line
+  // Bottom attachment
   const bY=topY+totalH;
   ctx.beginPath();ctx.moveTo(cx,bY-coilH*.5);ctx.lineTo(cx,bY);
   ctx.stroke();
   ctx.restore();
 }
 
-function drawSpringHorizontal(ctx,leftX,cy,naturalW,deform,coilH,color){
-  const totalW=naturalW+deform;
-  const nCoils=10,coilW=totalW/nCoils;
-  ctx.save();
-  ctx.beginPath();ctx.moveTo(leftX,cy);ctx.lineTo(leftX+coilW*.5,cy);
-  for(let i=0;i<nCoils*4;i++){
-    const progress=i/(nCoils*4);
-    const x=leftX+coilW*.5+progress*(totalW-coilW);
-    const y=cy+coilH*Math.sin(i*Math.PI/2);
-    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-  }
-  ctx.lineTo(leftX+totalW,cy);
-  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
-  ctx.restore();
+function drawHero() {
+  const cv=document.getElementById('cvHero');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  cv.width=cv.offsetWidth||400;cv.height=cv.offsetHeight||600;
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  const amp=30 + 30*Math.sin(globalTime*.8); // Pure elongation pulse
+  drawSpringVertical(ctx,W*.5,H*.12,H*.6,amp,W*.1,'rgba(74,158,245,.7)',true);
 }
 
 // ── VIRTUAL SPRING LAB ─────────────────────────────────────────────
 function updateSpringLab(fVal){
   const F=parseFloat(fVal);
   const k=200,x=F/k;
-  document.getElementById('forceVal').textContent=(F>0?'+':'')+F+' N';
-  document.getElementById('ro-F').textContent=(F>0?'+':'')+F;
+  document.getElementById('forceVal').textContent='+'+F+' N';
+  document.getElementById('ro-F').textContent='+'+F;
   document.getElementById('ro-x').textContent=x.toFixed(3);
   const stEl=document.getElementById('ro-state');
-  const stColor=F>0?'var(--green)':F<0?'var(--red)':'var(--cyan)';
-  const stText=F>0?'Elongated ↓':F<0?'Compressed ↑':'At rest';
+  const stColor=F>0?'var(--green)':'var(--cyan)';
+  const stText=F>0?'Elongated ↓':'At rest';
   stEl.textContent=stText;stEl.style.color=stColor;
   drawSpringSimulator(F,x);
 }
@@ -1222,44 +1100,37 @@ function drawSpringSimulator(F,x){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
 
-  // Wall (ceiling)
+  // Ceiling
   ctx.fillStyle='#2a3040';ctx.fillRect(W*.3,0,W*.4,16);
-  // Hatch marks
   ctx.strokeStyle='rgba(74,158,245,.3)';ctx.lineWidth=1;
   for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(W*.3+i*W*.05,0);ctx.lineTo(W*.3+i*W*.05+12,16);ctx.stroke();}
 
   const cx=W*.5;
   const naturalH=H*.45,topY=16;
-  const elongPx=x*800;// scale for display
-  const color=F>0?'#22c55e':F<0?'#ef4444':'#4a9ef5';
+  const elongPx=x*400;// Scale visualization
+  const color=F>0?'#22c55e':'#4a9ef5';
   drawSpringVertical(ctx,cx,topY,naturalH,elongPx,W*.08,color,false);
 
-  // Mass/weight block at bottom
+  // Weight block
   const blockY=topY+naturalH+elongPx;
   const bW=60,bH=36;
   ctx.fillStyle='rgba(74,158,245,.2)';ctx.fillRect(cx-bW/2,blockY,bW,bH);
   ctx.strokeStyle='rgba(74,158,245,.5)';ctx.lineWidth=1.5;ctx.strokeRect(cx-bW/2,blockY,bW,bH);
   ctx.fillStyle='rgba(74,158,245,.9)';ctx.font='bold 11px DM Mono';
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(F!==0?Math.abs(F)+'N':'Load',cx,blockY+bH/2);
+  ctx.fillText(F!==0?F+'N':'Load',cx,blockY+bH/2);
 
-  // Arrows and labels
-  if(Math.abs(F)>0.5){
-    // F arrow
-    const arrowDir=F>0?1:-1;
+  if(F>0.5){
     const arrowY=blockY+bH/2;
     ctx.strokeStyle=color;ctx.lineWidth=2;ctx.fillStyle=color;
-    ctx.beginPath();ctx.moveTo(cx+bW/2+10,arrowY);
-    ctx.lineTo(cx+bW/2+10+arrowDir*40,arrowY);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(cx+bW/2+10+arrowDir*40,arrowY-6);
-    ctx.lineTo(cx+bW/2+10+arrowDir*40+arrowDir*8,arrowY);
-    ctx.lineTo(cx+bW/2+10+arrowDir*40,arrowY+6);ctx.fill();
-    ctx.font='10px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.fillText('F = '+(F>0?'+':'')+F+' N',cx+bW/2+65,arrowY);
+    ctx.beginPath();ctx.moveTo(cx+bW/2+10,arrowY);ctx.lineTo(cx+bW/2+50,arrowY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx+bW/2+50,arrowY-6);ctx.lineTo(cx+bW/2+58,arrowY);ctx.lineTo(cx+bW/2+50,arrowY+6);ctx.fill();
+    ctx.font='10px DM Mono';ctx.textAlign='left';
+    ctx.fillText('F = +'+F+' N',cx+bW/2+65,arrowY);
   }
 
-  // x measurement bracket
-  if(Math.abs(elongPx)>5){
+  // Bracket
+  if(elongPx>5){
     const bracketX=cx-bW/2-30;
     const y1=topY+naturalH,y2=topY+naturalH+elongPx;
     ctx.strokeStyle='rgba(245,158,11,.7)';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
@@ -1268,17 +1139,14 @@ function drawSpringSimulator(F,x){
     ctx.beginPath();ctx.moveTo(bracketX-5,y1);ctx.lineTo(bracketX-5,y2);ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle='rgba(245,158,11,.9)';ctx.font='bold 10px DM Mono';
-    ctx.textAlign='right';ctx.textBaseline='middle';
-    ctx.fillText('x = '+(x>0?'+':'')+x.toFixed(3)+' m',bracketX-14,(y1+y2)/2);
+    ctx.textAlign='right';
+    ctx.fillText('x = +'+x.toFixed(3)+' m',bracketX-14,(y1+y2)/2);
   }
 
-  // Natural length indicator
+  // Natural length line
   ctx.strokeStyle='rgba(100,150,200,.25)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
   ctx.beginPath();ctx.moveTo(cx-40,topY+naturalH);ctx.lineTo(cx+40,topY+naturalH);ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle='rgba(100,150,200,.5)';ctx.font='9px DM Mono';
-  ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText('natural length',cx+45,topY+naturalH);
 }
 
 // ── GRAPH DRAWING ─────────────────────────────────────────────────
@@ -1288,235 +1156,232 @@ function drawGraph(){
   const W=cv.width,H=320,ctx=cv.getContext('2d');
   ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
 
-  const mg=50,// margin
-  kA=300,kB=480;
-  const xRange=0.15,fRange=kB*xRange;// ±0.15m, ±72N
-  const cx=mg+(W-2*mg)*.5,cy=mg+(H-2*mg)*.5;// origin
-  const scX=(W-2*mg)/(2*xRange),scY=(H-2*mg)/(2*fRange);
+  const mg=40;
+  const kA=300,kB=480;
+  // Origin shifted to bottom-left for purely positive quadrant
+  const cx=mg+20, cy=H-mg-20;
+  const xRange=0.2, fRange=100;
+  const scX=(W-mg-cx)/xRange, scY=(cy-mg)/fRange;
 
-  // Grid lines
   ctx.strokeStyle='rgba(74,158,245,.1)';ctx.lineWidth=1;
-  for(let x=-xRange;x<=xRange+.001;x+=.05){
+  for(let x=0;x<=xRange+.001;x+=.05){
     const px=cx+x*scX;
-    ctx.beginPath();ctx.moveTo(px,mg);ctx.lineTo(px,H-mg);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px,mg);ctx.lineTo(px,cy);ctx.stroke();
   }
-  for(let f=-fRange;f<=fRange+1;f+=20){
+  for(let f=0;f<=fRange+1;f+=20){
     const py=cy-f*scY;
-    ctx.beginPath();ctx.moveTo(mg,py);ctx.lineTo(W-mg,py);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,py);ctx.lineTo(W-mg,py);ctx.stroke();
   }
 
   // Axes
   ctx.strokeStyle='rgba(216,228,240,.5)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(mg,cy);ctx.lineTo(W-mg,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,mg);ctx.lineTo(cx,H-mg);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(W-mg,cy);ctx.stroke(); // X axis
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,mg);ctx.stroke();   // Y axis
   // Arrowheads
   ctx.fillStyle='rgba(216,228,240,.5)';
   ctx.beginPath();ctx.moveTo(W-mg,cy-5);ctx.lineTo(W-mg+8,cy);ctx.lineTo(W-mg,cy+5);ctx.fill();
   ctx.beginPath();ctx.moveTo(cx-5,mg);ctx.lineTo(cx,mg-8);ctx.lineTo(cx+5,mg);ctx.fill();
 
-  // Axis labels
   ctx.fillStyle='rgba(216,228,240,.7)';ctx.font='11px DM Mono';
   ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText('x (m)',W-mg+4,cy+4);
-  ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText('F (N)',cx+8,mg+2);
-  ctx.fillText('0',cx+5,cy+5);
-
-  // Tick labels x-axis
-  ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';
-  [-0.1,-0.05,0.05,0.1].forEach(x=>{
-    ctx.fillText(x,cx+x*scX,cy+5);
-  });
-  // Tick labels y-axis
+  ctx.fillText('x (m) [Elongation]',W-mg-10,cy+12);
   ctx.textAlign='right';ctx.textBaseline='middle';
-  [-40,-20,20,40].forEach(f=>{
-    ctx.fillText(f,cx-5,cy-f*scY);
-  });
+  ctx.fillText('Force F (N)',cx-10,mg+2);
+  ctx.fillText('0',cx-8,cy+8);
 
-  // Zone labels
-  ctx.font='9px DM Mono';ctx.fillStyle='rgba(239,68,68,.6)';ctx.textAlign='left';
-  ctx.fillText('← compression (x < 0)',mg+4,mg+6);
-  ctx.fillStyle='rgba(34,197,94,.6)';ctx.textAlign='right';
-  ctx.fillText('elongation (x > 0) →',W-mg-4,mg+6);
+  ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';
+  [0.05,0.1,0.15,0.2].forEach(x=>{ ctx.fillText(x,cx+x*scX,cy+5); });
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  [20,40,60,80,100].forEach(f=>{ ctx.fillText(f,cx-5,cy-f*scY); });
 
-  // Spring A line (blue, slope kA=300)
-  ctx.beginPath();
-  ctx.moveTo(cx+(-xRange)*scX,cy-(-xRange*kA)*scY);
-  ctx.lineTo(cx+(xRange)*scX,cy-(xRange*kA)*scY);
-  ctx.strokeStyle='rgba(74,158,245,.9)';ctx.lineWidth=2.5;ctx.setLineDash([]);ctx.stroke();
+  // Spring A (kA=300)
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+(0.2)*scX,cy-(0.2*kA)*scY);
+  ctx.strokeStyle='rgba(74,158,245,.9)';ctx.lineWidth=2.5;ctx.stroke();
   ctx.fillStyle='rgba(74,158,245,.9)';ctx.font='bold 10px DM Mono';
-  ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillText('Spring A (k=300 N/m)',cx+xRange*scX-80,cy-xRange*kA*scY-16);
+  ctx.textAlign='left';ctx.fillText('Spring A (k=300 N/m)',cx+0.12*scX,cy-0.12*kA*scY+15);
 
-  // Spring B line (red dashed, slope kB=480)
-  ctx.beginPath();
-  ctx.moveTo(cx+(-xRange)*scX,cy-(-xRange*kB)*scY);
-  ctx.lineTo(cx+(xRange)*scX,cy-(xRange*kB)*scY);
+  // Spring B (kB=480)
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+(0.2)*scX,cy-(0.2*kB)*scY);
   ctx.strokeStyle='rgba(239,68,68,.85)';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();
   ctx.setLineDash([]);
   ctx.fillStyle='rgba(239,68,68,.85)';
-  ctx.textAlign='left';ctx.textBaseline='bottom';
-  ctx.fillText('Spring B (steeper = stiffer)',cx+xRange*scX-100,cy-xRange*kB*scY+16);
+  ctx.fillText('Spring B (stiffer)',cx+0.12*scX-20,cy-0.12*kB*scY-10);
 
-  // Highlight point (0.1, 30) on Spring A
+  // Point on Spring A
   const px=cx+0.1*scX,py=cy-30*scY;
   ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
   ctx.fillStyle='rgba(74,158,245,1)';ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='9px DM Mono';
-  ctx.textAlign='left';ctx.textBaseline='bottom';
-  ctx.fillText('(0.1 m, 30 N)',px+7,py-4);
-  // Dotted lines to axes
+  ctx.fillText('(0.1 m, 30 N)',px+7,py+10);
   ctx.strokeStyle='rgba(74,158,245,.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
   ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,cy);ctx.stroke();
   ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cx,py);ctx.stroke();
   ctx.setLineDash([]);
 }
 
-// ── EXERCISE FIGURES ──────────────────────────────────────────────
-function drawEx1(){
-  const cv=document.getElementById('cvEx1');cv.width=cv.offsetWidth||280;
-  const W=cv.width,H=220,ctx=cv.getContext('2d');
+// ── INTERACTIVE EXERCISES STATE & LOGIC ────────────────────────────
+let ex1_val = 0; // Mass kg
+function updateEx1(val) {
+  ex1_val = parseFloat(val);
+  document.getElementById('sl-val1').textContent = ex1_val + ' kg';
+}
+function drawEx1Canvas() {
+  const cv=document.getElementById('cvEx1'); cv.width=cv.offsetWidth||280;
+  const W=cv.width, H=cv.height||240, ctx=cv.getContext('2d');
   ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+  
+  const m = ex1_val, k = 490, g = 10;
+  const F = m * g;
+  const x = F / k;
+  const elongPx = x * 1000; // Visual scale
+
   // Ceiling
   ctx.fillStyle='#2a3040';ctx.fillRect(W*.3,0,W*.4,12);
-  for(let i=0;i<5;i++){ctx.strokeStyle='rgba(74,158,245,.3)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*.3+i*W*.08,0);ctx.lineTo(W*.3+i*W*.08+10,12);ctx.stroke();}
-  // Spring (elongated green)
-  drawSpringVertical(ctx,W*.5,12,H*.5,35,W*.1,'rgba(34,197,94,.8)',false);
-  // Meat block
-  const bY=12+H*.5+35;
-  ctx.fillStyle='rgba(200,80,80,.3)';ctx.fillRect(W*.35,bY,W*.3,38);
-  ctx.strokeStyle='rgba(200,80,80,.6)';ctx.lineWidth=1.5;ctx.strokeRect(W*.35,bY,W*.3,38);
-  ctx.fillStyle='rgba(255,180,180,.8)';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('2.5 kg',W*.5,bY+19);
-  // Labels
-  ctx.fillStyle='rgba(34,197,94,.7)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText('x = ?',W*.62,bY-18);
-  ctx.fillStyle='rgba(245,158,11,.6)';
-  ctx.fillText('F = mg = 25 N ↓',W*.04,bY+19);
-}
+  // Scale body
+  ctx.fillStyle='rgba(74,158,245,.15)';ctx.fillRect(W*.4,12,W*.2,60);
+  ctx.strokeStyle='rgba(74,158,245,.5)';ctx.strokeRect(W*.4,12,W*.2,60);
+  // Dial needle
+  ctx.beginPath();ctx.arc(W*.5,42,15,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*.5,42);
+  const angle = -Math.PI/2 + (m/5) * Math.PI*2;
+  ctx.lineTo(W*.5+10*Math.cos(angle), 42+10*Math.sin(angle));
+  ctx.strokeStyle='var(--red)';ctx.stroke();
 
-function drawEx2(){
-  const cv=document.getElementById('cvEx2');cv.width=cv.offsetWidth||280;
-  const W=cv.width,H=220,ctx=cv.getContext('2d');
-  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
-  // Car body
-  const carY=H*.18;
-  ctx.fillStyle='rgba(74,158,245,.15)';ctx.fillRect(W*.15,carY,W*.7,H*.28);
-  ctx.strokeStyle='rgba(74,158,245,.5)';ctx.lineWidth=1.5;ctx.strokeRect(W*.15,carY,W*.7,H*.28);
-  ctx.fillStyle='rgba(74,158,245,.8)';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('CAR BODY',W*.5,carY+H*.14);
-  ctx.fillText('400 kg / spring',W*.5,carY+H*.14+13);
-  // Spring (compressed red)
-  const sprTopY=carY+H*.28;
-  drawSpringVertical(ctx,W*.5,sprTopY,H*.32,-25,W*.1,'rgba(239,68,68,.8)',false);
-  // Ground
-  ctx.fillStyle='#2a3040';ctx.fillRect(0,H*.88,W,H*.12);
-  for(let i=0;i<8;i++){ctx.strokeStyle='rgba(74,158,245,.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(i*W*.14,H*.88);ctx.lineTo(i*W*.14-10,H);ctx.stroke();}
-  // Compression arrow
-  ctx.strokeStyle='rgba(239,68,68,.7)';ctx.fillStyle='rgba(239,68,68,.7)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(W*.72,sprTopY+5);ctx.lineTo(W*.72,sprTopY+H*.18);ctx.stroke();
-  ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillStyle='rgba(239,68,68,.7)';ctx.fillText('x=? (compressed)',W*.04,sprTopY+H*.12);
-}
+  // Spring inside/under scale
+  drawSpringVertical(ctx,W*.5,72,20,elongPx,W*.05,'rgba(34,197,94,.8)',false);
 
-function drawEx3(){
-  const cv=document.getElementById('cvEx3');cv.width=cv.offsetWidth||280;
-  const W=cv.width,H=220,ctx=cv.getContext('2d');
-  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
-  // Bridge/cliff
-  ctx.fillStyle='#2a3040';ctx.fillRect(0,0,W,22);
-  for(let i=0;i<8;i++){ctx.strokeStyle='rgba(74,158,245,.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(i*W*.14,22);ctx.lineTo(i*W*.14-8,0);ctx.stroke();}
-  // Bungee (very elongated green)
-  drawSpringVertical(ctx,W*.5,22,H*.15,H*.55,W*.08,'rgba(34,197,94,.7)',false);
-  // Jumper
-  const jY=22+H*.15+H*.55;
-  ctx.beginPath();ctx.arc(W*.5,jY+10,12,0,Math.PI*2);ctx.fillStyle='rgba(74,158,245,.3)';ctx.fill();
-  ctx.strokeStyle='rgba(74,158,245,.7)';ctx.lineWidth=1.5;ctx.stroke();
-  ctx.fillStyle='rgba(74,158,245,.9)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('70kg',W*.5,jY+10);
-  // x label
-  ctx.fillStyle='rgba(34,197,94,.7)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText('x = ?',W*.62,22+H*.15+H*.28);
-  ctx.fillStyle='rgba(239,68,68,.7)';ctx.fillText('F = 700N ↓',W*.04,jY+24);
-}
-
-function drawEx4(){
-  const cv=document.getElementById('cvEx4');cv.width=cv.offsetWidth||280;
-  const W=cv.width,H=220,ctx=cv.getContext('2d');
-  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
-  // Person lying (stick figure ish)
-  ctx.strokeStyle='rgba(74,158,245,.5)';ctx.fillStyle='rgba(74,158,245,.2)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(W*.5,H*.12,14,0,Math.PI*2);ctx.fill();ctx.stroke();
-  ctx.beginPath();ctx.moveTo(W*.5,H*.12+14);ctx.lineTo(W*.5,H*.38);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(W*.28,H*.22);ctx.lineTo(W*.72,H*.22);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(W*.5,H*.38);ctx.lineTo(W*.3,H*.58);ctx.moveTo(W*.5,H*.38);ctx.lineTo(W*.7,H*.58);ctx.stroke();
-  ctx.fillStyle='rgba(74,158,245,.7)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('60 kg',W*.5,H*.1);
-  // Mattress (compressed springs)
-  const mattY=H*.6;
-  for(let i=0;i<4;i++){
-    drawSpringVertical(ctx,W*(.2+i*.2),mattY,H*.2,-18,W*.06,'rgba(239,68,68,.6)',false);
+  // Meat Hook and Block
+  const bY = 72 + 20 + elongPx;
+  ctx.strokeStyle='var(--muted)';ctx.beginPath();ctx.arc(W*.5,bY+10,10,-Math.PI/2,Math.PI/2,true);ctx.stroke();
+  
+  if(m > 0) {
+    ctx.fillStyle='rgba(200,80,80,.4)';ctx.beginPath();
+    ctx.ellipse(W*.5,bY+20+m*5, 15+m*2, 10+m*5, 0, 0, Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(m+'kg',W*.5,bY+20+m*5);
   }
-  // Ground
-  ctx.fillStyle='#2a3040';ctx.fillRect(0,H*.88,W,H*.12);
-  ctx.fillStyle='rgba(239,68,68,.7)';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText('|x| = 3 cm (compressed)',W*.5,H*.91);
-  ctx.fillStyle='rgba(245,158,11,.7)';ctx.fillText('k = ?',W*.5,H*.91+12);
 }
 
-function drawEx5(){
-  const cv=document.getElementById('cvEx5');cv.width=cv.offsetWidth||280;
-  const W=cv.width,H=220,ctx=cv.getContext('2d');
+let ex2_val = 0; // Mass kg
+function updateEx2(val) {
+  ex2_val = parseFloat(val);
+  document.getElementById('sl-val2').textContent = ex2_val + ' kg';
+}
+function drawEx2Canvas() {
+  const cv=document.getElementById('cvEx2'); cv.width=cv.offsetWidth||280;
+  const W=cv.width, H=cv.height||240, ctx=cv.getContext('2d');
   ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
-  // Pen barrel
-  ctx.fillStyle='rgba(74,158,245,.15)';ctx.fillRect(W*.3,H*.08,W*.15,H*.75);
-  ctx.strokeStyle='rgba(74,158,245,.4)';ctx.lineWidth=1.5;ctx.strokeRect(W*.3,H*.08,W*.15,H*.75);
-  // Spring inside pen (compressed)
-  drawSpringVertical(ctx,W*.375,H*.2,H*.3,-20,W*.04,'rgba(239,68,68,.8)',false);
-  // Top button
-  ctx.fillStyle='rgba(239,68,68,.3)';ctx.fillRect(W*.3,H*.05,W*.15,H*.05);
-  ctx.strokeStyle='rgba(239,68,68,.6)';ctx.strokeRect(W*.3,H*.05,W*.15,H*.05);
-  // Finger
-  ctx.beginPath();ctx.arc(W*.375,H*.05,10,Math.PI,0);ctx.fillStyle='rgba(245,200,180,.4)';ctx.fill();
-  ctx.strokeStyle='rgba(245,200,180,.6)';ctx.lineWidth=1;ctx.stroke();
-  // Labels
-  ctx.fillStyle='rgba(245,158,11,.8)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText('F = 4.5 N ↓',W*.52,H*.1);
-  ctx.fillStyle='rgba(239,68,68,.7)';ctx.fillText('|x| = ? mm',W*.52,H*.45);
-  ctx.fillStyle='rgba(216,228,240,.4)';ctx.fillText('k = 150 N/m',W*.52,H*.6);
+
+  const m = ex2_val, k = 1500, g = 10;
+  const F = m * g;
+  const x = F / k; // m
+  const elongPx = x * 150; // Visual drop
+
+  // Trampoline frame
+  const frameY = H*.4;
+  ctx.fillStyle='#2a3040';ctx.fillRect(W*.1,frameY,8,H*.5); ctx.fillRect(W*.9-8,frameY,8,H*.5);
+  
+  // Mat curve
+  ctx.strokeStyle='rgba(74,158,245,.8)';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(W*.1+8,frameY);
+  ctx.quadraticCurveTo(W*.5, frameY + elongPx*2, W*.9-8, frameY);
+  ctx.stroke();
+
+  // Springs on edges (visual only)
+  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;
+  for(let i=0;i<4;i++){
+    ctx.beginPath();ctx.moveTo(W*.1+8+i*5,frameY);ctx.lineTo(W*.1+8+i*5+4,frameY+(elongPx*2)*0.2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(W*.9-8-i*5,frameY);ctx.lineTo(W*.9-8-i*5-4,frameY+(elongPx*2)*0.2);ctx.stroke();
+  }
+
+  // Jumper
+  if(m > 0) {
+    const jY = frameY + elongPx - 15;
+    ctx.beginPath();ctx.arc(W*.5, jY, 15, 0, Math.PI*2);
+    ctx.fillStyle='rgba(239,68,68,.8)';ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(m+'kg',W*.5,jY);
+  }
 }
 
-function drawEx6(){
-  const cv=document.getElementById('cvEx6');cv.width=cv.offsetWidth||280;
-  const W=cv.width,H=220,ctx=cv.getContext('2d');
+let ex3_val = 0; // Force N
+function updateEx3(val) {
+  ex3_val = parseFloat(val);
+  document.getElementById('sl-val3').textContent = ex3_val + ' N';
+}
+function drawEx3Canvas() {
+  const cv=document.getElementById('cvEx3'); cv.width=cv.offsetWidth||280;
+  const W=cv.width, H=cv.height||240, ctx=cv.getContext('2d');
   ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+
+  const F = ex3_val, k = 500;
+  const x = F / k;
+  const pullPx = x * 150; // Visual pullback
+
+  const cx = W*.2, cy = H*.45;
+  const bowH = 100;
+  
+  // Bow wood (curves based on pull)
+  ctx.strokeStyle='#a36936';ctx.lineWidth=5;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx, cy-bowH);
+  ctx.quadraticCurveTo(cx - pullPx*0.2, cy, cx, cy+bowH);
+  ctx.stroke();
+
+  // Bow string
+  ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx, cy-bowH);
+  ctx.lineTo(cx + pullPx, cy);
+  ctx.lineTo(cx, cy+bowH);
+  ctx.stroke();
+
+  // Arrow
+  if(F > 0) {
+    ctx.strokeStyle='rgba(200,200,200,.9)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx + pullPx, cy);ctx.lineTo(cx - 30, cy);ctx.stroke();
+    // Arrowhead
+    ctx.beginPath();ctx.moveTo(cx - 30, cy);ctx.lineTo(cx - 20, cy-4);ctx.lineTo(cx - 20, cy+4);ctx.fillStyle='#fff';ctx.fill();
+    
+    // Force label
+    ctx.fillStyle='rgba(245,158,11,.8)';ctx.font='10px DM Mono';ctx.textAlign='left';
+    ctx.fillText('F = '+F+' N', cx + pullPx + 10, cy);
+  }
+}
+
+// Exercise 4 - Unknown Rock (Continuous floating animation)
+function drawEx4Canvas() {
+  const cv=document.getElementById('cvEx4'); cv.width=cv.offsetWidth||280;
+  const W=cv.width, H=cv.height||240, ctx=cv.getContext('2d');
+  ctx.fillStyle='#080b10';ctx.fillRect(0,0,W,H);
+
   // Stand
   ctx.fillStyle='#2a3040';ctx.fillRect(W*.15,0,W*.7,14);
-  for(let i=0;i<6;i++){ctx.strokeStyle='rgba(74,158,245,.25)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*.15+i*W*.12,14);ctx.lineTo(W*.15+i*W*.12-8,0);ctx.stroke();}
-  // Spring (elongated, green)
-  drawSpringVertical(ctx,W*.5,14,H*.42,40,W*.1,'rgba(34,197,94,.8)',false);
+  
+  // Spring (elongated)
+  const baseElong = 60; // Represents 0.08m
+  const bob = Math.sin(globalTime*3) * 4; // Gentle bobbing
+  drawSpringVertical(ctx,W*.5,14, 40, baseElong + bob, W*.1, 'rgba(34,197,94,.8)', false);
+  
   // Rock
-  const rY=14+H*.42+40;
+  const rY = 14 + 40 + baseElong + bob;
   ctx.save();ctx.beginPath();
   ctx.moveTo(W*.38,rY);ctx.lineTo(W*.55,rY+4);ctx.lineTo(W*.65,rY+18);ctx.lineTo(W*.58,rY+40);
   ctx.lineTo(W*.42,rY+44);ctx.lineTo(W*.3,rY+28);ctx.lineTo(W*.32,rY+10);ctx.closePath();
   ctx.fillStyle='rgba(120,130,150,.4)';ctx.fill();ctx.strokeStyle='rgba(150,160,180,.6)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.restore();
-  ctx.fillStyle='rgba(216,228,240,.7)';ctx.font='bold 10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?kg',W*.49,rY+22);
-  // Labels
-  ctx.fillStyle='rgba(34,197,94,.7)';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText('x = 8 cm = 0.08 m',W*.04,14+H*.42+20);
-  ctx.fillStyle='rgba(245,158,11,.7)';ctx.fillText('m = ?',W*.04,rY+40);
+  
+  ctx.fillStyle='rgba(216,228,240,.9)';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.fillText('? kg',W*.49,rY+22);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────
 updateSpringLab(0);
 drawGraph();
-drawEx1();drawEx2();drawEx3();drawEx4();drawEx5();drawEx6();
 updateGrade();
+requestAnimationFrame(animateAll);
 
 window.addEventListener('resize',()=>{
   updateSpringLab(document.getElementById('forceSlider').value);
   drawGraph();
-  drawEx1();drawEx2();drawEx3();drawEx4();drawEx5();drawEx6();
 });
 </script>
 </body>
