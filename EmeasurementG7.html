@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Electric Measurement — Voltmeter & Ammeter | Grade 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#050d1f;
+  --navy2:#0a1a35;
+  --panel:#0d2040;
+  --panel2:#102448;
+  --grid:#1a3560;
+  --green:#00ff9d;
+  --green2:#00cc7a;
+  --blue:#00aaff;
+  --amber:#ffaa00;
+  --red:#ff4466;
+  --purple:#aa66ff;
+  --text:#c8e0ff;
+  --text2:#7aa0cc;
+  --white:#ffffff;
+  --border:#1e4080;
+  --glow:0 0 20px rgba(0,255,157,0.3);
+  --glow-blue:0 0 20px rgba(0,170,255,0.3);
+  --glow-amber:0 0 20px rgba(255,170,0,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* Blueprint grid background */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,170,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,170,255,0.04) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;z-index:0;
+}
+
+/* Scanning line effect */
+body::after{
+  content:'';position:fixed;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  animation:scan 4s linear infinite;z-index:1;pointer-events:none;
+}
+@keyframes scan{0%{top:-3px}100%{top:100vh}}
+
+/* ===== HEADER ===== */
+header{
+  position:relative;z-index:10;
+  background:linear-gradient(135deg,var(--navy2),var(--panel));
+  border-bottom:2px solid var(--green);
+  padding:1.2rem 2rem;
+  display:flex;align-items:center;gap:1.5rem;
+  box-shadow:0 4px 30px rgba(0,255,157,0.15);
+}
+.header-icon{
+  width:60px;height:60px;
+  background:var(--panel2);border:2px solid var(--green);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;
+  color:var(--green);box-shadow:var(--glow);
+  animation:pulse-icon 2s ease-in-out infinite;
+}
+@keyframes pulse-icon{0%,100%{box-shadow:var(--glow)}50%{box-shadow:0 0 35px rgba(0,255,157,0.6)}}
+.header-text h1{font-size:1.6rem;font-weight:900;color:var(--white);letter-spacing:1px}
+.header-text h1 span{color:var(--green)}
+.header-text p{font-size:0.85rem;color:var(--text2);margin-top:0.2rem;font-family:'JetBrains Mono',monospace}
+.header-badge{
+  margin-left:auto;background:var(--panel2);border:1px solid var(--blue);
+  border-radius:8px;padding:0.5rem 1rem;text-align:center;
+  font-family:'JetBrains Mono',monospace;
+}
+.header-badge .grade{font-size:0.7rem;color:var(--blue);text-transform:uppercase;letter-spacing:2px}
+.header-badge .subject{font-size:1rem;font-weight:700;color:var(--white)}
+
+/* ===== LAYOUT ===== */
+.layout{display:flex;min-height:calc(100vh - 80px);position:relative;z-index:5}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:220px;min-width:220px;
+  background:var(--panel);border-right:1px solid var(--border);
+  padding:1.5rem 1rem;
+  position:sticky;top:0;height:calc(100vh - 80px);
+  overflow-y:auto;display:flex;flex-direction:column;gap:1rem;
+}
+.timer-box{
+  background:var(--navy2);border:1px solid var(--green);border-radius:10px;
+  padding:1rem;text-align:center;
+}
+.timer-label{font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:2px;font-family:'JetBrains Mono',monospace}
+.timer-value{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--green);margin-top:0.3rem;
+  text-shadow:0 0 10px var(--green);}
+.timer-icon{font-size:1.2rem;margin-bottom:0.2rem}
+
+.progress-box{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.progress-label{font-size:0.65rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;font-family:'JetBrains Mono',monospace}
+.prog-item{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;cursor:pointer;padding:0.3rem;border-radius:6px;transition:background 0.2s}
+.prog-item:hover{background:var(--panel2)}
+.prog-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all 0.3s}
+.prog-dot.done{background:var(--green);border-color:var(--green);box-shadow:0 0 8px var(--green)}
+.prog-dot.active{background:var(--blue);border-color:var(--blue);box-shadow:0 0 8px var(--blue)}
+.prog-name{font-size:0.75rem;color:var(--text2)}
+
+.score-box{
+  background:var(--navy2);border:1px solid var(--amber);border-radius:10px;
+  padding:1rem;text-align:center;margin-top:auto;
+}
+.score-label{font-size:0.65rem;color:var(--amber);text-transform:uppercase;letter-spacing:2px;font-family:'JetBrains Mono',monospace}
+.score-value{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700;color:var(--amber);margin-top:0.3rem}
+
+/* ===== MAIN CONTENT ===== */
+.main{flex:1;padding:2rem;overflow-y:auto;display:flex;flex-direction:column;gap:2rem}
+
+/* ===== STUDENT PICKER ===== */
+.student-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:1.5rem;
+}
+.card-title{
+  font-size:0.7rem;text-transform:uppercase;letter-spacing:3px;
+  color:var(--green);font-family:'JetBrains Mono',monospace;margin-bottom:1rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.card-title::before{content:'>';color:var(--green)}
+.sec-btns{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.sec-btn{
+  background:var(--panel2);border:1px solid var(--border);
+  color:var(--text2);padding:0.5rem 1rem;border-radius:6px;
+  cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:600;font-size:0.85rem;
+  transition:all 0.2s;
+}
+.sec-btn:hover{border-color:var(--blue);color:var(--blue)}
+.sec-btn.on{background:var(--blue);border-color:var(--blue);color:var(--white);box-shadow:var(--glow-blue)}
+.picker-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+select{
+  background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  padding:0.6rem 1rem;border-radius:8px;font-family:'Exo 2',sans-serif;
+  font-size:0.9rem;width:100%;outline:none;transition:border 0.2s;
+}
+select:focus{border-color:var(--green);box-shadow:0 0 10px rgba(0,255,157,0.2)}
+select option{background:var(--panel2)}
+.picker-name-hint{font-size:0.75rem;color:var(--text2);margin-top:0.5rem;font-family:'JetBrains Mono',monospace}
+
+/* ===== SECTION CARDS ===== */
+.section-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;transition:all 0.3s;
+}
+.section-header{
+  padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;
+  cursor:pointer;user-select:none;
+  background:linear-gradient(90deg,var(--panel2),var(--panel));
+  border-bottom:1px solid var(--border);
+}
+.section-badge{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:0.9rem;flex-shrink:0;
+}
+.section-header h2{font-size:1rem;font-weight:700;color:var(--white)}
+.section-header p{font-size:0.75rem;color:var(--text2);margin-top:0.1rem}
+.section-tag{
+  margin-left:auto;font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;
+  padding:0.3rem 0.7rem;border-radius:20px;font-family:'JetBrains Mono',monospace;
+}
+.section-body{padding:1.5rem;display:none}
+.section-body.open{display:block}
+.section-card.active .section-header{border-bottom-color:var(--green)}
+
+/* Stage colors */
+.s1 .section-badge{background:rgba(0,255,157,0.15);color:var(--green);border:1px solid var(--green)}
+.s1 .section-tag{background:rgba(0,255,157,0.1);color:var(--green);border:1px solid var(--green)}
+.s2 .section-badge{background:rgba(0,170,255,0.15);color:var(--blue);border:1px solid var(--blue)}
+.s2 .section-tag{background:rgba(0,170,255,0.1);color:var(--blue);border:1px solid var(--blue)}
+.s3 .section-badge{background:rgba(170,102,255,0.15);color:var(--purple);border:1px solid var(--purple)}
+.s3 .section-tag{background:rgba(170,102,255,0.1);color:var(--purple);border:1px solid var(--purple)}
+.s4 .section-badge{background:rgba(255,170,0,0.15);color:var(--amber);border:1px solid var(--amber)}
+.s4 .section-tag{background:rgba(255,170,0,0.1);color:var(--amber);border:1px solid var(--amber)}
+.s5 .section-badge{background:rgba(255,68,102,0.15);color:var(--red);border:1px solid var(--red)}
+.s5 .section-tag{background:rgba(255,68,102,0.1);color:var(--red);border:1px solid var(--red)}
+
+/* ===== INSTRUMENT SYMBOLS ===== */
+.instruments-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1rem 0}
+.instrument-card{
+  background:var(--navy2);border-radius:12px;padding:1.5rem;text-align:center;
+  border:2px solid transparent;transition:all 0.3s;cursor:default;
+  position:relative;overflow:hidden;
+}
+.instrument-card::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;
+}
+.instrument-card.ammeter{border-color:var(--amber)}
+.instrument-card.ammeter::before{background:radial-gradient(circle at 50% 50%,rgba(255,170,0,0.08),transparent)}
+.instrument-card.voltmeter{border-color:var(--blue)}
+.instrument-card.voltmeter::before{background:radial-gradient(circle at 50% 50%,rgba(0,170,255,0.08),transparent)}
+.instrument-card:hover::before{opacity:1}
+
+.inst-symbol{
+  width:80px;height:80px;border-radius:50%;margin:0 auto 1rem;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;
+  border:4px solid;position:relative;
+}
+.inst-symbol.A{border-color:var(--amber);color:var(--amber);
+  box-shadow:0 0 20px rgba(255,170,0,0.4),inset 0 0 20px rgba(255,170,0,0.1);
+  background:rgba(255,170,0,0.05);
+  animation:glow-amber 2s ease-in-out infinite;}
+.inst-symbol.V{border-color:var(--blue);color:var(--blue);
+  box-shadow:0 0 20px rgba(0,170,255,0.4),inset 0 0 20px rgba(0,170,255,0.1);
+  background:rgba(0,170,255,0.05);
+  animation:glow-blue 2s ease-in-out infinite;}
+@keyframes glow-amber{0%,100%{box-shadow:0 0 20px rgba(255,170,0,0.4),inset 0 0 20px rgba(255,170,0,0.1)}
+  50%{box-shadow:0 0 35px rgba(255,170,0,0.7),inset 0 0 30px rgba(255,170,0,0.2)}}
+@keyframes glow-blue{0%,100%{box-shadow:0 0 20px rgba(0,170,255,0.4),inset 0 0 20px rgba(0,170,255,0.1)}
+  50%{box-shadow:0 0 35px rgba(0,170,255,0.7),inset 0 0 30px rgba(0,170,255,0.2)}}
+
+.inst-name{font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:0.3rem}
+.inst-measures{font-size:0.8rem;color:var(--text2);margin-bottom:0.5rem;font-family:'JetBrains Mono',monospace}
+.inst-unit{display:inline-block;padding:0.2rem 0.7rem;border-radius:20px;font-size:0.8rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.inst-unit.A{background:rgba(255,170,0,0.15);color:var(--amber);border:1px solid var(--amber)}
+.inst-unit.V{background:rgba(0,170,255,0.15);color:var(--blue);border:1px solid var(--blue)}
+.inst-connection{margin-top:0.8rem;font-size:0.8rem;padding:0.4rem;border-radius:6px}
+.inst-connection.A{background:rgba(255,170,0,0.08);color:var(--amber);border:1px solid rgba(255,170,0,0.2)}
+.inst-connection.V{background:rgba(0,170,255,0.08);color:var(--blue);border:1px solid rgba(0,170,255,0.2)}
+
+/* ===== CONNECTION RULES PANEL ===== */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.rule-card{
+  background:var(--navy2);border-radius:10px;padding:1.2rem;
+  border-left:4px solid;
+}
+.rule-card.series{border-color:var(--amber)}
+.rule-card.parallel{border-color:var(--blue)}
+.rule-title{font-weight:700;font-size:0.9rem;color:var(--white);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem}
+.rule-icon{font-size:1.2rem}
+.rule-text{font-size:0.8rem;color:var(--text2);line-height:1.5}
+.rule-tip{margin-top:0.5rem;font-size:0.75rem;padding:0.3rem 0.5rem;border-radius:4px;font-family:'JetBrains Mono',monospace}
+.rule-tip.A{background:rgba(255,170,0,0.1);color:var(--amber)}
+.rule-tip.V{background:rgba(0,170,255,0.1);color:var(--blue)}
+
+/* ===== PHET FRAME ===== */
+.phet-wrapper{
+  background:var(--navy2);border-radius:12px;overflow:hidden;
+  border:2px solid var(--blue);position:relative;
+}
+.phet-header{
+  background:linear-gradient(90deg,var(--panel2),var(--panel));
+  padding:0.8rem 1.2rem;display:flex;align-items:center;gap:0.8rem;
+  border-bottom:1px solid var(--blue);
+}
+.phet-dot{width:12px;height:12px;border-radius:50%}
+.phet-dot:nth-child(1){background:#ff5f57}
+.phet-dot:nth-child(2){background:#febc2e}
+.phet-dot:nth-child(3){background:#28c840}
+.phet-title{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text2);margin-left:0.5rem}
+.phet-frame{width:100%;height:550px;border:none;display:block;background:#000}
+
+/* ===== PHET ACTIVITY QUESTIONS ===== */
+.phet-questions{margin-top:1.5rem}
+.phet-q{
+  background:var(--navy2);border-radius:10px;padding:1.2rem;margin-bottom:1rem;
+  border-left:3px solid var(--blue);position:relative;
+}
+.phet-q-num{
+  position:absolute;top:-12px;left:1rem;
+  background:var(--blue);color:var(--white);
+  width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;
+}
+.phet-q-text{font-size:0.9rem;color:var(--text);margin-bottom:0.8rem;padding-top:0.3rem}
+.phet-q input[type=text],.phet-q textarea{
+  background:var(--panel2);border:1px solid var(--border);color:var(--white);
+  padding:0.6rem 1rem;border-radius:8px;width:100%;
+  font-family:'JetBrains Mono',monospace;font-size:0.9rem;outline:none;transition:border 0.2s;
+}
+.phet-q input:focus,.phet-q textarea:focus{border-color:var(--blue);box-shadow:0 0 10px rgba(0,170,255,0.2)}
+.phet-q textarea{resize:vertical;min-height:70px}
+.check-btn{
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  border:none;color:var(--white);padding:0.5rem 1.2rem;border-radius:6px;
+  cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:600;font-size:0.85rem;
+  margin-top:0.5rem;transition:all 0.2s;
+}
+.check-btn:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(0,170,255,0.4)}
+.feedback-inline{
+  margin-top:0.5rem;padding:0.5rem 0.8rem;border-radius:6px;font-size:0.8rem;
+  font-family:'JetBrains Mono',monospace;display:none;
+}
+.feedback-inline.ok{background:rgba(0,255,157,0.1);color:var(--green);border:1px solid var(--green)}
+.feedback-inline.err{background:rgba(255,68,102,0.1);color:var(--red);border:1px solid var(--red)}
+.feedback-inline.show{display:block}
+
+/* ===== GAME ===== */
+.game-wrapper{background:var(--navy2);border-radius:12px;padding:1.5rem;border:2px solid var(--green)}
+.game-title{font-size:1.1rem;font-weight:700;color:var(--green);margin-bottom:0.3rem}
+.game-subtitle{font-size:0.8rem;color:var(--text2);margin-bottom:1rem;font-family:'JetBrains Mono',monospace}
+#gameCanvas{
+  display:block;margin:0 auto;border-radius:10px;border:1px solid var(--border);
+  cursor:pointer;background:var(--navy);
+  max-width:100%;
+}
+.game-controls{display:flex;gap:0.8rem;margin-top:1rem;flex-wrap:wrap;align-items:center}
+.game-btn{
+  background:var(--panel2);border:1px solid var(--green);color:var(--green);
+  padding:0.5rem 1.2rem;border-radius:6px;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:0.85rem;
+  transition:all 0.2s;
+}
+.game-btn:hover{background:var(--green);color:var(--navy);box-shadow:var(--glow)}
+.game-score-display{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:0.9rem;
+  color:var(--amber);
+}
+.game-instructions{
+  background:var(--panel);border-radius:8px;padding:1rem;margin-bottom:1rem;
+  font-size:0.82rem;color:var(--text2);line-height:1.6;border-left:3px solid var(--green);
+}
+.game-instructions strong{color:var(--green)}
+
+/* ===== CIRCUIT DIAGRAM INTERACTIVE ===== */
+.circuit-interactive{
+  background:var(--navy2);border-radius:12px;padding:1.5rem;
+  border:1px solid var(--border);margin:1rem 0;
+}
+.circuit-label{font-size:0.75rem;color:var(--text2);text-align:center;margin-top:0.5rem;font-family:'JetBrains Mono',monospace}
+#circuitCanvas{display:block;margin:0 auto;border-radius:8px}
+
+/* ===== EXERCISES ===== */
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.ex-card{
+  background:var(--navy2);border-radius:10px;padding:1.2rem;
+  border:1px solid var(--border);position:relative;transition:border 0.3s;
+}
+.ex-card:hover{border-color:var(--blue)}
+.ex-num{
+  position:absolute;top:-10px;left:1rem;
+  background:var(--amber);color:var(--navy);
+  padding:0.15rem 0.5rem;border-radius:4px;
+  font-size:0.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;
+}
+.ex-question{font-size:0.88rem;color:var(--text);margin-bottom:0.8rem;margin-top:0.3rem;line-height:1.5}
+.ex-input-row{display:flex;gap:0.5rem;align-items:center}
+.ex-input{
+  background:var(--panel2);border:1px solid var(--border);color:var(--white);
+  padding:0.5rem 0.8rem;border-radius:6px;flex:1;
+  font-family:'JetBrains Mono',monospace;font-size:0.95rem;outline:none;transition:border 0.2s;
+}
+.ex-input:focus{border-color:var(--amber);box-shadow:0 0 10px rgba(255,170,0,0.2)}
+.ex-unit{font-size:0.8rem;color:var(--text2);font-family:'JetBrains Mono',monospace;min-width:20px}
+.ex-check{
+  background:var(--panel2);border:1px solid var(--amber);color:var(--amber);
+  padding:0.5rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.8rem;
+  font-family:'Exo 2',sans-serif;font-weight:600;transition:all 0.2s;
+}
+.ex-check:hover{background:var(--amber);color:var(--navy)}
+.ex-feedback{margin-top:0.5rem;font-size:0.78rem;font-family:'JetBrains Mono',monospace;display:none;padding:0.3rem 0.5rem;border-radius:4px}
+.ex-feedback.ok{background:rgba(0,255,157,0.1);color:var(--green);border:1px solid var(--green);display:block}
+.ex-feedback.err{background:rgba(255,68,102,0.1);color:var(--red);border:1px solid var(--red);display:block}
+.ex-pts{float:right;font-size:0.7rem;color:var(--text2);font-family:'JetBrains Mono',monospace}
+
+/* ===== MCQ ===== */
+.mcq-card{
+  background:var(--navy2);border-radius:10px;padding:1.2rem;margin-bottom:1rem;
+  border:1px solid var(--border);position:relative;
+}
+.mcq-q{font-size:0.9rem;color:var(--text);margin-bottom:0.8rem;font-weight:600}
+.mcq-options{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.mcq-opt{
+  background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);padding:0.6rem 0.9rem;border-radius:8px;
+  cursor:pointer;font-size:0.85rem;transition:all 0.2s;text-align:center;
+}
+.mcq-opt:hover{border-color:var(--purple);color:var(--white)}
+.mcq-opt.selected{border-color:var(--purple);background:rgba(170,102,255,0.15);color:var(--white)}
+.mcq-opt.correct{border-color:var(--green);background:rgba(0,255,157,0.15);color:var(--green)}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(255,68,102,0.15);color:var(--red)}
+.mcq-pts{font-size:0.7rem;color:var(--text2);font-family:'JetBrains Mono',monospace;margin-bottom:0.5rem}
+
+/* ===== ONEDRIVE UPLOAD ===== */
+.upload-card{
+  background:var(--navy2);border-radius:12px;padding:1.5rem;
+  border:2px dashed var(--blue);text-align:center;
+  transition:all 0.3s;cursor:pointer;
+}
+.upload-card:hover{border-color:var(--green);background:rgba(0,255,157,0.03)}
+.upload-icon{font-size:2.5rem;margin-bottom:0.5rem}
+.upload-title{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:0.3rem}
+.upload-subtitle{font-size:0.8rem;color:var(--text2);margin-bottom:1rem}
+.upload-link{
+  display:inline-block;background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:var(--white);padding:0.7rem 1.5rem;border-radius:8px;
+  text-decoration:none;font-weight:600;font-size:0.9rem;
+  transition:all 0.2s;
+}
+.upload-link:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,170,255,0.4)}
+
+/* ===== WRITTEN ===== */
+.written-area{
+  background:var(--panel2);border:1px solid var(--border);color:var(--white);
+  padding:1rem;border-radius:8px;width:100%;min-height:100px;
+  font-family:'Exo 2',sans-serif;font-size:0.9rem;outline:none;
+  transition:border 0.2s;resize:vertical;
+}
+.written-area:focus{border-color:var(--purple);box-shadow:0 0 10px rgba(170,102,255,0.2)}
+
+/* ===== SUBMIT ===== */
+.submit-area{
+  background:var(--panel);border:1px solid var(--green);border-radius:12px;
+  padding:2rem;text-align:center;
+}
+.grade-display{
+  background:var(--navy2);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;
+  border:1px solid var(--border);
+}
+.grade-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;margin:1rem 0}
+.grade-item{
+  background:var(--panel2);border-radius:8px;padding:0.8rem;text-align:center;
+  border:1px solid var(--border);
+}
+.grade-item-label{font-size:0.65rem;color:var(--text2);text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.grade-item-value{font-size:1.2rem;font-weight:700;color:var(--white);font-family:'JetBrains Mono',monospace}
+.grade-total{
+  font-size:2.5rem;font-weight:900;font-family:'JetBrains Mono',monospace;
+  color:var(--green);text-shadow:0 0 20px var(--green);
+}
+.grade-out{font-size:0.9rem;color:var(--text2)}
+.grade-letter-badge{
+  display:inline-block;padding:0.5rem 1.5rem;border-radius:8px;
+  font-size:1.5rem;font-weight:900;margin-left:1rem;font-family:'JetBrains Mono',monospace;
+}
+
+.submit-btn{
+  background:linear-gradient(135deg,var(--green),var(--blue));
+  border:none;color:var(--navy);padding:1rem 3rem;border-radius:10px;
+  font-family:'Exo 2',sans-serif;font-size:1.1rem;font-weight:900;
+  cursor:pointer;transition:all 0.2s;letter-spacing:1px;
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,255,157,0.4)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.submit-status{margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--text2)}
+
+/* ===== UTILITY ===== */
+.info-box{
+  background:rgba(0,170,255,0.07);border:1px solid rgba(0,170,255,0.3);
+  border-radius:8px;padding:1rem;margin:0.8rem 0;
+  font-size:0.85rem;color:var(--text2);line-height:1.6;
+}
+.info-box strong{color:var(--blue)}
+.warn-box{
+  background:rgba(255,170,0,0.07);border:1px solid rgba(255,170,0,0.3);
+  border-radius:8px;padding:1rem;margin:0.8rem 0;
+  font-size:0.85rem;color:var(--text2);line-height:1.6;
+}
+.warn-box strong{color:var(--amber)}
+.nav-btn{
+  background:linear-gradient(135deg,var(--green),var(--blue));
+  border:none;color:var(--navy);padding:0.7rem 2rem;border-radius:8px;
+  font-family:'Exo 2',sans-serif;font-size:0.9rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;margin-top:1rem;
+}
+.nav-btn:hover{transform:translateY(-2px);box-shadow:var(--glow)}
+.section-title-main{font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:0.3rem}
+.section-desc{font-size:0.85rem;color:var(--text2);margin-bottom:1.2rem;line-height:1.5}
+
+/* ===== QUIZ DRAG ===== */
+.drag-area{
+  display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;margin:1rem 0;
+}
+.drag-item{
+  background:var(--panel2);border:2px solid var(--border);
+  border-radius:8px;padding:0.5rem 1rem;cursor:grab;
+  font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--white);
+  user-select:none;transition:all 0.2s;
+}
+.drag-item:hover{border-color:var(--green);box-shadow:var(--glow)}
+.drag-item:active{cursor:grabbing;transform:scale(1.05)}
+.drop-zone{
+  background:var(--navy2);border:2px dashed var(--border);border-radius:8px;
+  padding:0.8rem 1rem;min-width:120px;min-height:44px;
+  font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--text2);
+  display:flex;align-items:center;justify-content:center;transition:all 0.2s;
+}
+.drop-zone.over{border-color:var(--green);background:rgba(0,255,157,0.05)}
+.drop-zone.filled{border-style:solid;border-color:var(--blue);color:var(--white)}
+.drop-zone.correct{border-color:var(--green);background:rgba(0,255,157,0.1);color:var(--green)}
+.drop-zone.wrong{border-color:var(--red);background:rgba(255,68,102,0.1);color:var(--red)}
+.drag-check-btn{
+  background:var(--panel2);border:1px solid var(--purple);color:var(--purple);
+  padding:0.5rem 1rem;border-radius:6px;cursor:pointer;margin-top:0.5rem;
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:0.85rem;transition:all 0.2s;
+}
+.drag-check-btn:hover{background:var(--purple);color:var(--white)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
+  .instruments-grid,.rules-grid,.ex-grid,.mcq-options,.grade-breakdown{grid-template-columns:1fr}
+  .picker-row{grid-template-columns:1fr}
+  header{flex-wrap:wrap}
+  .header-badge{margin-left:0;width:100%}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-icon">⚡</div>
+  <div class="header-text">
+    <h1>Electric <span>Measurement</span></h1>
+    <p>AMMETER &amp; VOLTMETER — ELECTRIC CIRCUITS LAB</p>
+  </div>
+  <div class="header-badge">
+    <div class="grade">Grade 7</div>
+    <div class="subject">Physics</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="timer-box">
+      <div class="timer-icon">⏱</div>
+      <div class="timer-label">Time Elapsed</div>
+      <div class="timer-value" id="timerDisplay">00:00</div>
+    </div>
+    <div class="progress-box">
+      <div class="progress-label">Progress</div>
+      <div class="prog-item" onclick="goTo(1)"><div class="prog-dot active" id="dot1"></div><div class="prog-name">Engage</div></div>
+      <div class="prog-item" onclick="goTo(2)"><div class="prog-dot" id="dot2"></div><div class="prog-name">Explore (PhET)</div></div>
+      <div class="prog-item" onclick="goTo(3)"><div class="prog-dot" id="dot3"></div><div class="prog-name">Explain</div></div>
+      <div class="prog-item" onclick="goTo(4)"><div class="prog-dot" id="dot4"></div><div class="prog-name">Elaborate (Game)</div></div>
+      <div class="prog-item" onclick="goTo(5)"><div class="prog-dot" id="dot5"></div><div class="prog-name">Evaluate</div></div>
+    </div>
+    <div class="score-box">
+      <div class="score-label">Score</div>
+      <div class="score-value" id="sideScore">0/20</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- STUDENT PICKER -->
+    <div class="student-card">
+      <div class="card-title">STUDENT IDENTIFICATION</div>
+      <div class="sec-btns">
+        <button class="sec-btn" onclick="setSection('7A')">7A</button>
+        <button class="sec-btn" onclick="setSection('7B')">7B</button>
+        <button class="sec-btn" onclick="setSection('7C')">7C</button>
+        <button class="sec-btn" onclick="setSection('7D')">7D</button>
+      </div>
+      <div class="picker-row">
+        <div>
+          <select id="stuName" disabled>
+            <option value="">— Choose your name —</option>
+          </select>
+          <div class="picker-name-hint" id="nameHint">← Select your section first</div>
+        </div>
+        <input type="hidden" id="stuClass" value=""/>
+      </div>
+    </div>
+
+    <!-- SECTION 1: ENGAGE -->
+    <div class="section-card s1 active" id="sec1">
+      <div class="section-header" onclick="toggleSection(1)">
+        <div class="section-badge">E1</div>
+        <div>
+          <h2>Engage — The Measurement Mystery</h2>
+          <p>Discover what happens when we measure electricity</p>
+        </div>
+        <div class="section-tag">ENGAGE</div>
+      </div>
+      <div class="section-body open" id="body1">
+        <div class="section-title-main">⚡ How do we know what's happening inside a circuit?</div>
+        <div class="section-desc">Electric current is invisible — but we can measure it! Two special instruments let us see exactly what electricity is doing. Let's discover them.</div>
+
+        <div class="instruments-grid">
+          <div class="instrument-card ammeter">
+            <div class="inst-symbol A">A</div>
+            <div class="inst-name">Ammeter</div>
+            <div class="inst-measures">Measures electric current</div>
+            <div class="inst-unit A">Amperes (A)</div>
+            <div class="inst-connection A">📌 Connected in SERIES — in the path of current</div>
+          </div>
+          <div class="instrument-card voltmeter">
+            <div class="inst-symbol V">V</div>
+            <div class="inst-name">Voltmeter</div>
+            <div class="inst-measures">Measures voltage (potential difference)</div>
+            <div class="inst-unit V">Volts (V)</div>
+            <div class="inst-connection V">📌 Connected in PARALLEL — across the component</div>
+          </div>
+        </div>
+
+        <!-- Animated Circuit SVG -->
+        <div class="circuit-interactive">
+          <div class="card-title">LIVE CIRCUIT — Click the instruments to learn more</div>
+          <canvas id="circuitCanvas" width="600" height="260"></canvas>
+          <div class="circuit-label" id="circuitInfo">Click on the ⓐ or ⓥ symbols in the circuit above</div>
+        </div>
+
+        <!-- Connection Rules -->
+        <div class="rules-grid">
+          <div class="rule-card series">
+            <div class="rule-title"><span class="rule-icon">🔗</span> Ammeter — Series Connection</div>
+            <div class="rule-text">The ammeter is placed <strong>in the main path</strong> of the circuit so that all the current flows through it. It has very low resistance so it doesn't affect the current.</div>
+            <div class="rule-tip A">Same current enters and exits the ammeter</div>
+          </div>
+          <div class="rule-card parallel">
+            <div class="rule-title"><span class="rule-icon">⚡</span> Voltmeter — Parallel Connection</div>
+            <div class="rule-text">The voltmeter is connected <strong>across (beside) the component</strong> you want to measure. It has very high resistance so almost no current flows through it.</div>
+            <div class="rule-tip V">Measures the potential difference across two points</div>
+          </div>
+        </div>
+
+        <div class="warn-box">
+          <strong>⚠ Never connect an ammeter in parallel</strong> — it can damage the instrument due to its very low resistance. <strong>Never connect a voltmeter in series</strong> — it has very high resistance and the reading will be nearly zero.
+        </div>
+
+        <!-- Drag & Drop Activity -->
+        <div class="card-title" style="margin-top:1.5rem">DRAG & DROP — Place the instruments correctly</div>
+        <div style="background:var(--navy2);border-radius:10px;padding:1.2rem;border:1px solid var(--border)">
+          <div style="font-size:0.88rem;color:var(--text);margin-bottom:1rem">Drag the correct instrument to each connection type:</div>
+          <div class="drag-area" id="dragSource">
+            <div class="drag-item" draggable="true" data-val="Ammeter" id="dragA" ondragstart="dragStart(event)">⬤ Ammeter</div>
+            <div class="drag-item" draggable="true" data-val="Voltmeter" id="dragV" ondragstart="dragStart(event)">⬤ Voltmeter</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.8rem">
+            <div style="text-align:center">
+              <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.5rem">Connected in SERIES → measures:</div>
+              <div class="drop-zone" id="drop1" ondragover="dragOver(event)" ondrop="dropHere(event,'drop1','Ammeter')" ondragleave="dragLeave(event)">Drop here</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.5rem">Connected in PARALLEL → measures:</div>
+              <div class="drop-zone" id="drop2" ondragover="dragOver(event)" ondrop="dropHere(event,'drop2','Voltmeter')" ondragleave="dragLeave(event)">Drop here</div>
+            </div>
+          </div>
+          <button class="drag-check-btn" onclick="checkDrag()">✓ Check My Answer</button>
+          <div class="feedback-inline" id="dragFeedback"></div>
+        </div>
+
+        <div style="text-align:right;margin-top:1rem">
+          <button class="nav-btn" onclick="goTo(2)">Next: PhET Exploration →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: EXPLORE — PHET -->
+    <div class="section-card s2" id="sec2">
+      <div class="section-header" onclick="toggleSection(2)">
+        <div class="section-badge">E2</div>
+        <div>
+          <h2>Explore — PhET Virtual Lab</h2>
+          <p>Build circuits and use virtual instruments</p>
+        </div>
+        <div class="section-tag">EXPLORE</div>
+      </div>
+      <div class="section-body" id="body2">
+        <div class="section-desc">Use the PhET simulation below. Follow each task carefully, then answer the questions.</div>
+
+        <div class="info-box">
+          <strong>📋 Instructions:</strong><br>
+          1. Open the simulation below → select <strong>"Lab"</strong> tab in PhET<br>
+          2. Build a simple series circuit: Battery → Wire → Bulb → back to Battery<br>
+          3. Add an <strong>Ammeter</strong> (current meter) <em>in series</em> in the circuit<br>
+          4. Add a <strong>Voltmeter</strong> — connect its probes <em>across the bulb</em><br>
+          5. Observe the readings and answer the questions below
+        </div>
+
+        <div class="phet-wrapper">
+          <div class="phet-header">
+            <div class="phet-dot"></div><div class="phet-dot"></div><div class="phet-dot"></div>
+            <div class="phet-title">PhET Interactive Simulations — DC Circuit Construction Kit</div>
+          </div>
+          <iframe class="phet-frame" src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_en.html" allowfullscreen></iframe>
+        </div>
+
+        <div class="phet-questions">
+          <div class="card-title" style="margin-bottom:1rem">PHET ACTIVITY QUESTIONS</div>
+
+          <div class="phet-q">
+            <div class="phet-q-num">1</div>
+            <div class="phet-q-text">Build a simple circuit with one battery and one light bulb. Where did you place the ammeter? Describe its position in the circuit.</div>
+            <textarea id="pq1" placeholder="Describe where you placed the ammeter..."></textarea>
+          </div>
+
+          <div class="phet-q">
+            <div class="phet-q-num">2</div>
+            <div class="phet-q-text">What is the ammeter reading in your circuit? Write the value with its unit.</div>
+            <div style="display:flex;gap:0.5rem;align-items:center">
+              <input type="number" id="pq2" placeholder="e.g. 0.9" step="0.1" style="background:var(--panel2);border:1px solid var(--border);color:var(--white);padding:0.6rem 1rem;border-radius:8px;width:120px;font-family:'JetBrains Mono',monospace;font-size:0.95rem;outline:none"/>
+              <span style="color:var(--amber);font-family:'JetBrains Mono',monospace">Amperes (A)</span>
+            </div>
+          </div>
+
+          <div class="phet-q">
+            <div class="phet-q-num">3</div>
+            <div class="phet-q-text">Now connect the voltmeter probes across the light bulb. What does the voltmeter read?</div>
+            <div style="display:flex;gap:0.5rem;align-items:center">
+              <input type="number" id="pq3" placeholder="e.g. 9.0" step="0.1" style="background:var(--panel2);border:1px solid var(--border);color:var(--white);padding:0.6rem 1rem;border-radius:8px;width:120px;font-family:'JetBrains Mono',monospace;font-size:0.95rem;outline:none"/>
+              <span style="color:var(--blue);font-family:'JetBrains Mono',monospace">Volts (V)</span>
+            </div>
+          </div>
+
+          <div class="phet-q">
+            <div class="phet-q-num">4</div>
+            <div class="phet-q-text">Add a second light bulb in SERIES with the first. What happened to the ammeter reading? Did it increase, decrease, or stay the same? Explain why.</div>
+            <select id="pq4a" style="background:var(--panel2);border:1px solid var(--border);color:var(--white);padding:0.6rem 1rem;border-radius:8px;margin-bottom:0.5rem;font-family:'Exo 2',sans-serif;font-size:0.9rem;outline:none">
+              <option value="">Select what happened...</option>
+              <option value="decreased">Decreased ↓</option>
+              <option value="increased">Increased ↑</option>
+              <option value="same">Stayed the same →</option>
+            </select>
+            <textarea id="pq4b" placeholder="Explain why the current changed (or didn't)..."></textarea>
+            <button class="check-btn" onclick="checkPQ4()">✓ Check</button>
+            <div class="feedback-inline" id="fbpq4"></div>
+          </div>
+
+          <div class="phet-q">
+            <div class="phet-q-num">5</div>
+            <div class="phet-q-text">Now try adding the second bulb in PARALLEL instead of series. What happened to the ammeter reading from the battery?</div>
+            <select id="pq5a" style="background:var(--panel2);border:1px solid var(--border);color:var(--white);padding:0.6rem 1rem;border-radius:8px;margin-bottom:0.5rem;font-family:'Exo 2',sans-serif;font-size:0.9rem;outline:none">
+              <option value="">Select what happened...</option>
+              <option value="decreased">Decreased ↓</option>
+              <option value="increased">Increased ↑</option>
+              <option value="same">Stayed the same →</option>
+            </select>
+            <textarea id="pq5b" placeholder="Explain what you observe..."></textarea>
+            <button class="check-btn" onclick="checkPQ5()">✓ Check</button>
+            <div class="feedback-inline" id="fbpq5"></div>
+          </div>
+        </div>
+
+        <!-- OneDrive Upload -->
+        <div class="card-title" style="margin-top:1.5rem">📸 UPLOAD YOUR SCREENSHOT</div>
+        <div class="upload-card" onclick="window.open('https://unrwaedu-my.sharepoint.com/:f:/g/personal/a_ghozlan_unrwa-edu_org/IgCT-yOwbfI1ToTSvAMvUVXvAdcpGbWxwG4WcX5KOfxHGB8?e=oLjbWt','_blank')">
+          <div class="upload-icon">📁</div>
+          <div class="upload-title">Upload Your Work to Grade 7 Folder</div>
+          <div class="upload-subtitle">Take a screenshot of your PhET circuit showing both meters reading correctly, then upload it here.</div>
+          <div class="upload-link">Open Grade 7 Folder ↗</div>
+        </div>
+
+        <div style="text-align:right;margin-top:1rem">
+          <button class="nav-btn" onclick="goTo(3)">Next: Explain →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: EXPLAIN -->
+    <div class="section-card s3" id="sec3">
+      <div class="section-header" onclick="toggleSection(3)">
+        <div class="section-badge">E3</div>
+        <div>
+          <h2>Explain — Symbols &amp; Circuit Rules</h2>
+          <p>Master the official circuit symbols and connection rules</p>
+        </div>
+        <div class="section-tag">EXPLAIN</div>
+      </div>
+      <div class="section-body" id="body3">
+        <div class="section-title-main">🔍 Reading Circuit Diagrams</div>
+        <div class="section-desc">In circuit diagrams, every component has a standard symbol. The ammeter and voltmeter each have their own — a circle with a capital letter inside.</div>
+
+        <!-- Symbol Reference Canvas -->
+        <div class="circuit-interactive">
+          <div class="card-title">CIRCUIT DIAGRAM — COMPLETE CIRCUIT WITH BOTH METERS</div>
+          <canvas id="explainCanvas" width="620" height="200"></canvas>
+          <div class="circuit-label">Standard circuit diagram: Battery → Ammeter (series) → Bulb with Voltmeter (parallel)</div>
+        </div>
+
+        <div class="info-box" style="margin-top:1.2rem">
+          <strong>Key Symbol Rules:</strong><br>
+          • <strong style="color:var(--amber)">Ammeter (A in circle)</strong> — drawn IN the wire, breaks the circuit like a door<br>
+          • <strong style="color:var(--blue)">Voltmeter (V in circle)</strong> — drawn BESIDE the component, with two wires connecting across it<br>
+          • Both symbols: <strong>circle with capital letter</strong> — ⓐ and ⓥ<br>
+          • The connecting wires in diagrams are always straight lines at right angles
+        </div>
+
+        <!-- MCQ Knowledge Check -->
+        <div class="card-title" style="margin-top:1.5rem">QUICK CHECK — SYMBOLS & CONNECTIONS</div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">1. In a circuit diagram, the symbol for an ammeter is:</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m1',this,'A')">A circle with the letter A</div>
+            <div class="mcq-opt" onclick="pickMCQ('m1',this,'B')">A rectangle with two lines</div>
+            <div class="mcq-opt" onclick="pickMCQ('m1',this,'C')">A zigzag line</div>
+            <div class="mcq-opt" onclick="pickMCQ('m1',this,'D')">Two parallel lines</div>
+          </div>
+          <div class="feedback-inline" id="fbm1"></div>
+        </div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">2. An ammeter must always be connected:</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m2',this,'A')">In parallel with the component</div>
+            <div class="mcq-opt" onclick="pickMCQ('m2',this,'B')">In series in the circuit</div>
+            <div class="mcq-opt" onclick="pickMCQ('m2',this,'C')">Across the battery</div>
+            <div class="mcq-opt" onclick="pickMCQ('m2',this,'D')">Outside the circuit</div>
+          </div>
+          <div class="feedback-inline" id="fbm2"></div>
+        </div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">3. The voltmeter measures the _______ across a component.</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m3',this,'A')">Electric current</div>
+            <div class="mcq-opt" onclick="pickMCQ('m3',this,'B')">Resistance</div>
+            <div class="mcq-opt" onclick="pickMCQ('m3',this,'C')">Voltage (potential difference)</div>
+            <div class="mcq-opt" onclick="pickMCQ('m3',this,'D')">Power</div>
+          </div>
+          <div class="feedback-inline" id="fbm3"></div>
+        </div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">4. What happens if you accidentally connect an ammeter in parallel?</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m4',this,'A')">It reads zero — no problem</div>
+            <div class="mcq-opt" onclick="pickMCQ('m4',this,'B')">It measures voltage correctly</div>
+            <div class="mcq-opt" onclick="pickMCQ('m4',this,'C')">It may be damaged — too much current</div>
+            <div class="mcq-opt" onclick="pickMCQ('m4',this,'D')">Nothing changes in the circuit</div>
+          </div>
+          <div class="feedback-inline" id="fbm4"></div>
+        </div>
+
+        <div style="text-align:right;margin-top:1rem">
+          <button class="nav-btn" onclick="goTo(4)">Next: Elaborate — Game →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: ELABORATE — GAME -->
+    <div class="section-card s4" id="sec4">
+      <div class="section-header" onclick="toggleSection(4)">
+        <div class="section-badge">E4</div>
+        <div>
+          <h2>Elaborate — Circuit Challenge Game</h2>
+          <p>Place the meters correctly to complete each circuit!</p>
+        </div>
+        <div class="section-tag">ELABORATE</div>
+      </div>
+      <div class="section-body" id="body4">
+        <div class="game-wrapper">
+          <div class="game-title">⚡ CIRCUIT METER CHALLENGE</div>
+          <div class="game-subtitle">Place the AMMETER and VOLTMETER in the correct positions to complete the circuit</div>
+          <div class="game-instructions">
+            <strong>How to play:</strong> Each round shows a circuit with empty slots (marked <strong style="color:var(--amber)">[ ? ]</strong>). 
+            Click a slot to place the correct instrument. <strong>Ammeter</strong> goes IN SERIES (breaks the wire). 
+            <strong>Voltmeter</strong> goes IN PARALLEL (across a component).<br>
+            Score points for correct placements. 3 lives — don't waste them! 🎯
+          </div>
+          <canvas id="gameCanvas" width="640" height="360"></canvas>
+          <div class="game-controls">
+            <button class="game-btn" onclick="startGame()">▶ Start Game</button>
+            <button class="game-btn" id="placeA" onclick="selectInstrument('A')" style="border-color:var(--amber);color:var(--amber)">Place ⓐ Ammeter</button>
+            <button class="game-btn" id="placeV" onclick="selectInstrument('V')" style="border-color:var(--blue);color:var(--blue)">Place ⓥ Voltmeter</button>
+            <div class="game-score-display">Score: <span id="gameScore">0</span> | Lives: <span id="gameLives">❤❤❤</span></div>
+          </div>
+        </div>
+
+        <div style="text-align:right;margin-top:1rem">
+          <button class="nav-btn" onclick="goTo(5)">Next: Evaluate →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: EVALUATE -->
+    <div class="section-card s5" id="sec5">
+      <div class="section-header" onclick="toggleSection(5)">
+        <div class="section-badge">E5</div>
+        <div>
+          <h2>Evaluate — Assessment</h2>
+          <p>Exercises, MCQ &amp; submit your work</p>
+        </div>
+        <div class="section-tag">EVALUATE</div>
+      </div>
+      <div class="section-body" id="body5">
+        <div class="section-title-main">📊 Calculation Exercises</div>
+        <div class="section-desc">Use the given values to answer each question. Show your understanding of ammeter and voltmeter readings.</div>
+
+        <div class="ex-grid">
+          <div class="ex-card">
+            <div class="ex-num">Ex 1 — 2 pts</div>
+            <div class="ex-question">An ammeter in a circuit reads <strong>0.5 A</strong>. If the voltage of the battery is <strong>6 V</strong>, what is the resistance of the circuit?<br><small style="color:var(--text2)">(Use: R = V ÷ I)</small></div>
+            <div class="ex-input-row">
+              <input class="ex-input" id="ex1" type="number" placeholder="R = ?" step="0.1"/>
+              <span class="ex-unit">Ω</span>
+              <button class="ex-check" onclick="checkEx(1,12,0.5)">✓</button>
+            </div>
+            <div class="ex-feedback" id="exFb1"></div>
+          </div>
+
+          <div class="ex-card">
+            <div class="ex-num">Ex 2 — 2 pts</div>
+            <div class="ex-question">A voltmeter reads <strong>9 V</strong> across a resistor. The ammeter reads <strong>3 A</strong>. What is the resistance?<br><small style="color:var(--text2)">(Use: R = V ÷ I)</small></div>
+            <div class="ex-input-row">
+              <input class="ex-input" id="ex2" type="number" placeholder="R = ?" step="0.1"/>
+              <span class="ex-unit">Ω</span>
+              <button class="ex-check" onclick="checkEx(2,3,0.1)">✓</button>
+            </div>
+            <div class="ex-feedback" id="exFb2"></div>
+          </div>
+
+          <div class="ex-card">
+            <div class="ex-num">Ex 3 — 2 pts</div>
+            <div class="ex-question">A circuit has a <strong>12 V</strong> battery and a resistance of <strong>4 Ω</strong>. What should the ammeter read?<br><small style="color:var(--text2)">(Use: I = V ÷ R)</small></div>
+            <div class="ex-input-row">
+              <input class="ex-input" id="ex3" type="number" placeholder="I = ?" step="0.1"/>
+              <span class="ex-unit">A</span>
+              <button class="ex-check" onclick="checkEx(3,3,0.1)">✓</button>
+            </div>
+            <div class="ex-feedback" id="exFb3"></div>
+          </div>
+
+          <div class="ex-card">
+            <div class="ex-num">Ex 4 — 2 pts</div>
+            <div class="ex-question">An ammeter reads <strong>2 A</strong> in a circuit with resistance <strong>5 Ω</strong>. What should the voltmeter across the resistor read?<br><small style="color:var(--text2)">(Use: V = I × R)</small></div>
+            <div class="ex-input-row">
+              <input class="ex-input" id="ex4" type="number" placeholder="V = ?" step="0.1"/>
+              <span class="ex-unit">V</span>
+              <button class="ex-check" onclick="checkEx(4,10,0.5)">✓</button>
+            </div>
+            <div class="ex-feedback" id="exFb4"></div>
+          </div>
+        </div>
+
+        <!-- MCQ Evaluate -->
+        <div class="card-title" style="margin-top:1.5rem">MCQ — CIRCUIT DIAGRAMS (4 pts)</div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">5. Which instrument is connected in series in a circuit?</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m5',this,'A')">Voltmeter</div>
+            <div class="mcq-opt" onclick="pickMCQ('m5',this,'B')">Ammeter</div>
+            <div class="mcq-opt" onclick="pickMCQ('m5',this,'C')">Both instruments</div>
+            <div class="mcq-opt" onclick="pickMCQ('m5',this,'D')">Neither instrument</div>
+          </div>
+          <div class="feedback-inline" id="fbm5"></div>
+        </div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">6. The unit of measurement for the ammeter is:</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m6',this,'A')">Volt (V)</div>
+            <div class="mcq-opt" onclick="pickMCQ('m6',this,'B')">Ohm (Ω)</div>
+            <div class="mcq-opt" onclick="pickMCQ('m6',this,'C')">Ampere (A)</div>
+            <div class="mcq-opt" onclick="pickMCQ('m6',this,'D')">Watt (W)</div>
+          </div>
+          <div class="feedback-inline" id="fbm6"></div>
+        </div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">7. A student connects a voltmeter in series by mistake. What will happen?</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m7',this,'A')">The reading will be very high</div>
+            <div class="mcq-opt" onclick="pickMCQ('m7',this,'B')">The voltmeter will be damaged</div>
+            <div class="mcq-opt" onclick="pickMCQ('m7',this,'C')">Almost no current will flow — the circuit barely works</div>
+            <div class="mcq-opt" onclick="pickMCQ('m7',this,'D')">The circuit works normally</div>
+          </div>
+          <div class="feedback-inline" id="fbm7"></div>
+        </div>
+
+        <div class="mcq-card">
+          <div class="mcq-pts">1 pt</div>
+          <div class="mcq-q">8. Two identical bulbs are connected in series. You measure the current after the first bulb and after the second bulb. What do you find?</div>
+          <div class="mcq-options">
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'A')">The current is higher after the first bulb</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'B')">The current is the same at both points</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'C')">The current is zero after the second bulb</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'D')">The current doubles after each bulb</div>
+          </div>
+          <div class="feedback-inline" id="fbm8"></div>
+        </div>
+
+        <!-- Written Response -->
+        <div class="card-title" style="margin-top:1.5rem">WRITTEN RESPONSE — 4 pts</div>
+        <div class="ex-card" style="grid-column:1/-1">
+          <div class="ex-question">A student wants to measure the voltage across a bulb AND the current through it at the same time. Describe exactly how they should connect both instruments in the circuit. Use the words "series" and "parallel" in your answer.</div>
+          <textarea class="written-area" id="writtenAns" placeholder="Write your answer here..."></textarea>
+        </div>
+
+        <!-- Upload work -->
+        <div class="card-title" style="margin-top:1.5rem">📁 UPLOAD COMPLETED WORK</div>
+        <div class="upload-card" onclick="window.open('https://unrwaedu-my.sharepoint.com/:f:/g/personal/a_ghozlan_unrwa-edu_org/IgCT-yOwbfI1ToTSvAMvUVXvAdcpGbWxwG4WcX5KOfxHGB8?e=oLjbWt','_blank')">
+          <div class="upload-icon">📤</div>
+          <div class="upload-title">Upload Your Completed Lab to Grade 7 Folder</div>
+          <div class="upload-subtitle">You can upload screenshots, documents, or any evidence of your work here.</div>
+          <div class="upload-link">Open Grade 7 Folder ↗</div>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="submit-area" style="margin-top:1.5rem">
+          <div class="card-title">SUBMIT YOUR RESULTS</div>
+          <div class="grade-display">
+            <div class="grade-breakdown">
+              <div class="grade-item">
+                <div class="grade-item-label">Exercises</div>
+                <div class="grade-item-value" id="gradeEx">0/8</div>
+              </div>
+              <div class="grade-item">
+                <div class="grade-item-label">MCQ</div>
+                <div class="grade-item-value" id="gradeMCQ">0/8</div>
+              </div>
+              <div class="grade-item">
+                <div class="grade-item-label">PhET</div>
+                <div class="grade-item-value" id="gradePhet">0/4</div>
+              </div>
+              <div class="grade-item">
+                <div class="grade-item-label">Written</div>
+                <div class="grade-item-value" id="gradeWritten">4/4</div>
+              </div>
+            </div>
+            <div>
+              <span class="grade-total" id="grade20">0</span>
+              <span class="grade-out">/20</span>
+              <span class="grade-letter-badge" id="gradeLetter" style="background:rgba(0,255,157,0.1);color:var(--green);border:1px solid var(--green)">—</span>
+            </div>
+          </div>
+          <button class="submit-btn" id="submitBtn" onclick="submitLab()">⚡ Submit Results</button>
+          <div class="submit-status" id="submitStatus"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ===== CONSTANTS =====
+const APPS = 'https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+const LAB_START = Date.now();
+
+// ===== STUDENTS =====
+const STUDENTS = {
+  '7A': [],
+  '7B': [],
+  '7C': [],
+  '7D': []
+};
+
+// ===== TIMER =====
+function pad(n){return String(n).padStart(2,'0');}
+setInterval(function(){
+  const s=Math.floor((Date.now()-LAB_START)/1000);
+  document.getElementById('timerDisplay').textContent=pad(Math.floor(s/60))+':'+pad(s%60);
+},1000);
+
+// ===== STUDENT PICKER =====
+function setSection(cls){
+  document.getElementById('stuClass').value=cls;
+  document.querySelectorAll('.sec-btn').forEach(function(b){
+    b.classList.toggle('on',b.textContent.trim()===cls);
+  });
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">-- Choose your name --</option>';
+  sel.disabled=false;
+  const list=(STUDENTS[cls]||[]).slice().sort(function(a,b){return a.localeCompare(b,'ar');});
+  list.forEach(function(n){
+    const o=document.createElement('option');
+    o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+  document.getElementById('nameHint').textContent='';
+}
+
+// ===== SECTION NAVIGATION =====
+let currentSection=1;
+const sectionDone=[false,false,false,false,false];
+
+function toggleSection(n){
+  const body=document.getElementById('body'+n);
+  body.classList.toggle('open');
+}
+function goTo(n){
+  sectionDone[currentSection-1]=true;
+  document.getElementById('dot'+currentSection).classList.remove('active');
+  document.getElementById('dot'+currentSection).classList.add('done');
+  document.getElementById('body'+currentSection).classList.remove('open');
+
+  currentSection=n;
+  document.getElementById('dot'+n).classList.add('active');
+  document.getElementById('body'+n).classList.add('open');
+  document.getElementById('sec'+n).scrollIntoView({behavior:'smooth',block:'start'});
+  updateScore();
+}
+
+// ===== DRAG & DROP =====
+let dragVal='';
+function dragStart(e){dragVal=e.target.getAttribute('data-val');e.dataTransfer.effectAllowed='move';}
+function dragOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
+function dragLeave(e){e.currentTarget.classList.remove('over');}
+function dropHere(e,zoneId,correct){
+  e.preventDefault();
+  const zone=document.getElementById(zoneId);
+  zone.classList.remove('over');
+  zone.textContent=dragVal;
+  zone.classList.add('filled');
+  zone.setAttribute('data-placed',dragVal);
+}
+function checkDrag(){
+  const d1=document.getElementById('drop1').getAttribute('data-placed')||'';
+  const d2=document.getElementById('drop2').getAttribute('data-placed')||'';
+  const fb=document.getElementById('dragFeedback');
+  const ok1=d1==='Ammeter', ok2=d2==='Voltmeter';
+  if(ok1&&ok2){
+    fb.textContent='✓ Perfect! Ammeter in series, Voltmeter in parallel.';
+    fb.className='feedback-inline ok show';
+    document.getElementById('drop1').classList.add('correct');
+    document.getElementById('drop2').classList.add('correct');
+  } else {
+    fb.textContent='✗ Not quite. Remember: Ammeter measures CURRENT (series), Voltmeter measures VOLTAGE (parallel).';
+    fb.className='feedback-inline err show';
+    if(!ok1)document.getElementById('drop1').classList.add('wrong');
+    if(!ok2)document.getElementById('drop2').classList.add('wrong');
+  }
+}
+
+// ===== CIRCUIT CANVAS — ENGAGE =====
+(function(){
+  const c=document.getElementById('circuitCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0,hover=-1;
+
+  const slots=[
+    {x:420,y:H/2,type:'A',label:'Ammeter',color:'#ffaa00'},
+    {x:320,y:H/2-55,type:'V',label:'Voltmeter',color:'#00aaff'}
+  ];
+
+  function drawCircuit(){
+    ctx.clearRect(0,0,W,H);
+    // Background
+    ctx.fillStyle='rgba(5,13,31,0.95)';
+    ctx.fillRect(0,0,W,H);
+
+    // Animated electrons
+    const electronPos=(t%100)/100;
+    const pathPts=[
+      {x:60,y:H/2},{x:60,y:40},{x:520,y:40},{x:520,y:H/2},
+      {x:420,y:H/2},{x:280,y:H/2},{x:180,y:H/2},
+      {x:180,y:H-40},{x:60,y:H-40},{x:60,y:H/2}
+    ];
+
+    // Wire
+    ctx.strokeStyle='#1e4080';ctx.lineWidth=4;ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(60,H/2);ctx.lineTo(60,40);ctx.lineTo(520,40);ctx.lineTo(520,H/2);
+    ctx.lineTo(420,H/2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(280,H/2);ctx.lineTo(180,H/2);
+    ctx.lineTo(180,H-40);ctx.lineTo(60,H-40);ctx.lineTo(60,H/2);
+    ctx.stroke();
+
+    // Parallel voltmeter wires
+    ctx.strokeStyle='rgba(0,170,255,0.4)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(280,H/2);ctx.lineTo(280,H/2-55);ctx.lineTo(320,H/2-55);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(420,H/2);ctx.lineTo(420,H/2-55);ctx.lineTo(320+36,H/2-55);ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Battery
+    drawBattery(ctx,60,H/2);
+    // Bulb
+    drawBulb(ctx,350,H/2,t);
+
+    // Ammeter
+    drawMeter(ctx,420,H/2,'A','#ffaa00',hover===0);
+    // Voltmeter
+    drawMeter(ctx,320,H/2-55,'V','#00aaff',hover===1);
+
+    // Electrons
+    ctx.fillStyle=hover>=0?'#fff':'#00ff9d';
+    for(let i=0;i<5;i++){
+      const ep=((electronPos+(i*0.2))%1);
+      const pt=getPathPt(pathPts,ep);
+      ctx.beginPath();ctx.arc(pt.x,pt.y,3,0,Math.PI*2);ctx.fill();
+    }
+    // Labels
+    ctx.font='12px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillStyle='rgba(200,224,255,0.5)';
+    ctx.fillText('Click instruments to learn',W/2,H-10);
+    t++;
+    requestAnimationFrame(drawCircuit);
+  }
+
+  function getPathPt(pts,p){
+    const segs=pts.length-1;
+    const sp=p*segs;
+    const si=Math.floor(sp);
+    const sf=sp-si;
+    const p1=pts[Math.min(si,segs-1)];
+    const p2=pts[Math.min(si+1,segs)];
+    return {x:p1.x+(p2.x-p1.x)*sf,y:p1.y+(p2.y-p1.y)*sf};
+  }
+
+  function drawBattery(ctx,x,y){
+    ctx.fillStyle='#334466';ctx.beginPath();ctx.roundRect(x-20,y-30,40,60,6);ctx.fill();
+    ctx.strokeStyle='#00ff9d';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#00ff9d';ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText('⚡',x,y+7);
+    ctx.font='10px Exo 2';ctx.fillStyle='rgba(200,224,255,0.7)';ctx.fillText('9V',x,y+22);
+  }
+
+  function drawBulb(ctx,x,y,t){
+    const glow=0.5+0.5*Math.sin(t*0.08);
+    ctx.beginPath();ctx.arc(x,y,22,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,200,0,'+(.2+glow*.3)+')';
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,200,0,'+(.4+glow*.4)+')';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#ffcc00';ctx.font='bold 20px serif';ctx.textAlign='center';
+    ctx.fillText('💡',x,y+7);
+    ctx.font='10px Exo 2';ctx.fillStyle='rgba(200,224,255,0.6)';ctx.fillText('Bulb',x,y+40);
+  }
+
+  function drawMeter(ctx,x,y,letter,color,hov){
+    const r=22;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=hov?color+'33':'rgba(10,26,53,0.9)';
+    ctx.fill();
+    ctx.strokeStyle=color;ctx.lineWidth=hov?3:2;ctx.stroke();
+    if(hov){ctx.shadowColor=color;ctx.shadowBlur=15;}
+    ctx.fillStyle=color;ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText(letter,x,y+6);
+    ctx.shadowBlur=0;
+    ctx.font='10px Exo 2';ctx.fillStyle=color+'99';
+    ctx.fillText(letter==='A'?'Ammeter':'Voltmeter',x,y+38);
+  }
+
+  c.addEventListener('mousemove',function(e){
+    const rect=c.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    const sx=c.width/rect.width,sy=c.height/rect.height;
+    const cx=mx*sx,cy=my*sy;
+    hover=-1;
+    slots.forEach(function(s,i){
+      const d=Math.hypot(cx-s.x,cy-s.y);
+      if(d<28)hover=i;
+    });
+    document.getElementById('circuitInfo').textContent=hover>=0?
+      (hover===0?'🟡 AMMETER: Measures current in Amperes (A). Connected IN SERIES in the circuit wire.':
+                 '🔵 VOLTMETER: Measures voltage in Volts (V). Connected IN PARALLEL across a component.'):
+      'Click on the ⓐ or ⓥ symbols in the circuit above';
+    c.style.cursor=hover>=0?'pointer':'default';
+  });
+
+  drawCircuit();
+})();
+
+// ===== EXPLAIN CANVAS =====
+(function(){
+  const c=document.getElementById('explainCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+
+  function drawExplain(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(5,13,31,0.9)';ctx.fillRect(0,0,W,H);
+
+    // Circuit: Battery — wire — Ammeter — wire — Bulb — wire — back
+    // Voltmeter across bulb
+    const y=H/2;
+    const bx=60,ax=220,lx=380,vx=380;
+
+    // Main wire
+    ctx.strokeStyle='#2a5080';ctx.lineWidth=5;
+    ctx.beginPath();
+    ctx.moveTo(bx+25,y);ctx.lineTo(ax-28,y);ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(ax+28,y);ctx.lineTo(lx-28,y);ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(lx+28,y);ctx.lineTo(560,y);
+    ctx.lineTo(560,H-30);ctx.lineTo(60,H-30);ctx.lineTo(60,y+30);ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(60,y-30);ctx.lineTo(60,40);ctx.lineTo(220,40);ctx.lineTo(ax,y-28);ctx.stroke();
+
+    // Voltmeter parallel wire
+    ctx.strokeStyle='rgba(0,170,255,0.5)';ctx.lineWidth=2;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(lx-28,y);ctx.lineTo(lx-28,y-60);ctx.lineTo(vx,y-60);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(lx+28,y);ctx.lineTo(lx+28,y-60);ctx.lineTo(vx+28,y-60);ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Battery symbol
+    ctx.strokeStyle='#00ff9d';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(60,y-25);ctx.lineTo(60,y+25);ctx.stroke();
+    ctx.lineWidth=1.5;ctx.strokeStyle='rgba(0,255,157,0.5)';
+    ctx.beginPath();ctx.moveTo(68,y-15);ctx.lineTo(68,y+15);ctx.stroke();
+    ctx.font='bold 11px JetBrains Mono';ctx.fillStyle='#00ff9d';ctx.textAlign='center';
+    ctx.fillText('Battery',60,H-10);ctx.fillText('+',48,y+5);ctx.fillText('-',72,y+5);
+
+    // Ammeter
+    ctx.beginPath();ctx.arc(ax,y,25,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,170,0,0.1)';ctx.fill();
+    ctx.strokeStyle='#ffaa00';ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle='#ffaa00';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText('A',ax,y+7);
+    ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,170,0,0.8)';
+    ctx.fillText('Ammeter',ax,y+45);
+    ctx.fillText('(series)',ax,y+58);
+
+    // Bulb
+    ctx.beginPath();ctx.arc(lx,y,25,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,200,0,0.15)';ctx.fill();
+    ctx.strokeStyle='rgba(255,200,0,0.6)';ctx.lineWidth=2;ctx.stroke();
+    ctx.font='22px serif';ctx.fillText('💡',lx,y+8);
+    ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,200,100,0.8)';
+    ctx.fillText('Bulb',lx,y+45);
+
+    // Voltmeter
+    ctx.beginPath();ctx.arc(vx,y-60,22,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,170,255,0.1)';ctx.fill();
+    ctx.strokeStyle='#00aaff';ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle='#00aaff';ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText('V',vx,y-54);
+    ctx.font='11px Exo 2';ctx.fillStyle='rgba(0,170,255,0.8)';
+    ctx.fillText('Voltmeter',vx,y-30);
+    ctx.fillText('(parallel)',vx,y-18);
+
+    // Labels on wires
+    ctx.font='10px JetBrains Mono';ctx.fillStyle='rgba(0,255,157,0.6)';
+    ctx.fillText('series connection',155,y-10);
+  }
+
+  drawExplain();
+})();
+
+// ===== MCQ ANSWERS =====
+const MCQ_ANSWERS={m1:'A',m2:'B',m3:'C',m4:'C',m5:'B',m6:'C',m7:'C',m8:'B'};
+const MCQ_EXPLANATIONS={
+  m1:'The ammeter symbol is a circle with the capital letter A inside.',
+  m2:'The ammeter must be in series so all current flows through it.',
+  m3:'Voltage (potential difference) — measured in Volts (V).',
+  m4:'The ammeter has very low resistance — in parallel it creates a short circuit and gets damaged.',
+  m5:'The ammeter is always in series.',
+  m6:'Current is measured in Amperes (A).',
+  m7:'The voltmeter has very high resistance — in series it blocks current almost completely.',
+  m8:'In a series circuit, the current is the same everywhere.'
+};
+const mcqState={};
+
+function pickMCQ(id,el,choice){
+  if(mcqState[id])return;
+  mcqState[id]=choice;
+  const correct=MCQ_ANSWERS[id];
+  const opts=el.parentNode.querySelectorAll('.mcq-opt');
+  opts.forEach(function(o){o.style.pointerEvents='none';});
+  if(choice===correct){
+    el.classList.add('correct');
+    document.getElementById('fb'+id).textContent='✓ Correct! '+MCQ_EXPLANATIONS[id];
+    document.getElementById('fb'+id).className='feedback-inline ok show';
+  } else {
+    el.classList.add('wrong');
+    document.getElementById('fb'+id).textContent='✗ Not quite. '+MCQ_EXPLANATIONS[id];
+    document.getElementById('fb'+id).className='feedback-inline err show';
+    // Show correct
+    opts.forEach(function(o){if(o.textContent.trim()&&MCQ_ANSWERS[id]===getOptLetter(o))o.classList.add('correct');});
+  }
+  updateScore();
+}
+
+function getOptLetter(el){
+  const opts=el.parentNode.querySelectorAll('.mcq-opt');
+  const letters=['A','B','C','D'];
+  for(let i=0;i<opts.length;i++)if(opts[i]===el)return letters[i];
+  return '';
+}
+
+// ===== PHET CHECKS =====
+function checkPQ4(){
+  const v=document.getElementById('pq4a').value;
+  const fb=document.getElementById('fbpq4');
+  if(v==='decreased'){
+    fb.textContent='✓ Correct! Adding a bulb in series increases total resistance, so current decreases.';
+    fb.className='feedback-inline ok show';
+  } else if(v){
+    fb.textContent='✗ Try again. More resistance in series = less current flowing.';
+    fb.className='feedback-inline err show';
+  }
+  updateScore();
+}
+function checkPQ5(){
+  const v=document.getElementById('pq5a').value;
+  const fb=document.getElementById('fbpq5');
+  if(v==='increased'){
+    fb.textContent='✓ Correct! Adding a bulb in parallel gives more paths for current, increasing total current from the battery.';
+    fb.className='feedback-inline ok show';
+  } else if(v){
+    fb.textContent='✗ Try again. Parallel circuits provide more current paths — total current from battery increases.';
+    fb.className='feedback-inline err show';
+  }
+  updateScore();
+}
+
+// ===== EXERCISES =====
+const exState={};
+function checkEx(n,ans,tol){
+  const val=parseFloat(document.getElementById('ex'+n).value);
+  const fb=document.getElementById('exFb'+n);
+  if(isNaN(val)){fb.textContent='✗ Please enter a number.';fb.className='ex-feedback err';return;}
+  if(Math.abs(val-ans)<=tol){
+    fb.textContent='✓ Correct! Answer: '+ans+(n<=2?'Ω':(n===3?'A':'V'));
+    fb.className='ex-feedback ok';
+    exState[n]=true;
+  } else {
+    fb.textContent='✗ Not quite. Check your formula and try again.';
+    fb.className='ex-feedback err';
+    exState[n]=false;
+  }
+  updateScore();
+}
+
+// ===== SCORE =====
+function updateScore(){
+  const mcqPts=['m1','m2','m3','m4','m5','m6','m7','m8'];
+  let mcqScore=0;
+  mcqPts.forEach(function(m){if(mcqState[m]===MCQ_ANSWERS[m])mcqScore++;});
+
+  let exScore=0;
+  [1,2,3,4].forEach(function(n){if(exState[n])exScore+=2;});
+
+  const pq4ok=document.getElementById('pq4a').value==='decreased'?1:0;
+  const pq5ok=document.getElementById('pq5a').value==='increased'?1:0;
+  const phetScore=pq4ok+pq5ok+
+    (document.getElementById('pq1').value.trim().length>10?1:0)+
+    (document.getElementById('pq2').value?1:0);
+  const phetCapped=Math.min(phetScore,4);
+
+  const written=document.getElementById('writtenAns').value.trim();
+  const writtenScore=written.length>30?4:0;
+
+  const raw=exScore+mcqScore+phetCapped+writtenScore;
+  const out20=Math.round(Math.min(raw/20*20,20)*10)/10;
+
+  document.getElementById('gradeEx').textContent=exScore+'/8';
+  document.getElementById('gradeMCQ').textContent=mcqScore+'/8';
+  document.getElementById('gradePhet').textContent=phetCapped+'/4';
+  document.getElementById('gradeWritten').textContent=writtenScore+'/4';
+  document.getElementById('grade20').textContent=out20;
+  document.getElementById('sideScore').textContent=out20+'/20';
+
+  const lb=document.getElementById('gradeLetter');
+  let letter='F';
+  if(out20>=18)letter='A+';else if(out20>=16)letter='A';
+  else if(out20>=14)letter='B';else if(out20>=12)letter='C';
+  else if(out20>=10)letter='D';
+  lb.textContent=letter;
+  const colors={
+    'A+':'#00ff9d','A':'#00cc7a','B':'#00aaff','C':'#ffaa00','D':'#ff7744','F':'#ff4466'
+  };
+  lb.style.color=colors[letter]||'#ff4466';
+  lb.style.borderColor=colors[letter]||'#ff4466';
+  lb.style.background=(colors[letter]||'#ff4466')+'22';
+}
+
+// ===== GAME =====
+let gameActive=false,gameScore=0,gameLives=3,gameRound=0,selectedInstrument='';
+let gameSlots=[];
+const GAME_ROUNDS=[
+  {desc:'Simple circuit: 1 battery + 1 bulb',slots:[
+    {x:320,y:180,correct:'A',placed:'',label:'Measure current here'},
+    {x:450,y:100,correct:'V',placed:'',label:'Measure voltage across bulb'}
+  ]},
+  {desc:'Two bulbs in series',slots:[
+    {x:200,y:180,correct:'A',placed:'',label:'Current through circuit'},
+    {x:380,y:90,correct:'V',placed:'',label:'Voltage across bulb 1'},
+    {x:500,y:90,correct:'V',placed:'',label:'Voltage across bulb 2'}
+  ]},
+  {desc:'Identify wrong connections!',slots:[
+    {x:280,y:180,correct:'A',placed:'',label:'Series slot — which meter?'},
+    {x:420,y:100,correct:'V',placed:'',label:'Parallel slot — which meter?'}
+  ]}
+];
+
+function startGame(){
+  gameActive=true;gameScore=0;gameLives=3;gameRound=0;selectedInstrument='';
+  updateGameUI();
+  drawGame();
+}
+
+function selectInstrument(type){
+  selectedInstrument=type;
+  document.getElementById('placeA').style.background=type==='A'?'var(--amber)':'';
+  document.getElementById('placeA').style.color=type==='A'?'var(--navy)':'var(--amber)';
+  document.getElementById('placeV').style.background=type==='V'?'var(--blue)':'';
+  document.getElementById('placeV').style.color=type==='V'?'var(--navy)':'var(--blue)';
+}
+
+function updateGameUI(){
+  document.getElementById('gameScore').textContent=gameScore;
+  const hearts=['','❤','❤❤','❤❤❤','❤❤❤❤'];
+  document.getElementById('gameLives').textContent=hearts[Math.max(0,gameLives)]||'💀';
+}
+
+const gc=document.getElementById('gameCanvas');
+if(gc){
+  gc.addEventListener('click',function(e){
+    if(!gameActive||!selectedInstrument)return;
+    const rect=gc.getBoundingClientRect();
+    const sx=gc.width/rect.width,sy=gc.height/rect.height;
+    const cx=(e.clientX-rect.left)*sx,cy=(e.clientY-rect.top)*sy;
+    const round=GAME_ROUNDS[gameRound];
+    if(!round)return;
+    round.slots.forEach(function(slot){
+      if(slot.placed)return;
+      const d=Math.hypot(cx-slot.x,cy-slot.y);
+      if(d<30){
+        slot.placed=selectedInstrument;
+        if(selectedInstrument===slot.correct){
+          gameScore+=10;
+        } else {
+          gameLives--;
+          slot.wrong=true;
+        }
+        updateGameUI();
+        drawGame();
+        // Check if round complete
+        const allPlaced=round.slots.every(function(s){return s.placed&&s.placed===s.correct;});
+        if(allPlaced){
+          setTimeout(function(){
+            gameRound++;
+            if(gameRound>=GAME_ROUNDS.length){
+              gameActive=false;
+              drawGameEnd();
+            } else {
+              GAME_ROUNDS[gameRound].slots.forEach(function(s){s.placed='';s.wrong=false;});
+              drawGame();
+            }
+          },1200);
+        }
+        if(gameLives<=0){gameActive=false;drawGameEnd();}
+      }
+    });
+  });
+}
+
+function drawGame(){
+  const c=document.getElementById('gameCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#050d1f';ctx.fillRect(0,0,W,H);
+
+  if(!gameActive&&gameRound===0){
+    ctx.fillStyle='rgba(0,255,157,0.6)';ctx.font='bold 22px Exo 2';ctx.textAlign='center';
+    ctx.fillText('Press "Start Game" to begin!',W/2,H/2-20);
+    ctx.font='14px JetBrains Mono';ctx.fillStyle='rgba(200,224,255,0.5)';
+    ctx.fillText('Select an instrument then click a slot to place it',W/2,H/2+20);
+    return;
+  }
+
+  const round=GAME_ROUNDS[Math.min(gameRound,GAME_ROUNDS.length-1)];
+
+  // Round info
+  ctx.fillStyle='rgba(0,170,255,0.8)';ctx.font='14px JetBrains Mono';ctx.textAlign='left';
+  ctx.fillText('Round '+(gameRound+1)+'/'+GAME_ROUNDS.length+': '+round.desc,20,30);
+
+  // Draw circuit background
+  drawGameCircuit(ctx,round,W,H);
+
+  // Draw slots
+  round.slots.forEach(function(slot){
+    const placed=slot.placed;
+    const color=placed?(placed===slot.correct?'#00ff9d':'#ff4466'):'rgba(0,170,255,0.6)';
+    ctx.beginPath();ctx.arc(slot.x,slot.y,28,0,Math.PI*2);
+    ctx.fillStyle=placed?color+'22':'rgba(0,170,255,0.1)';
+    ctx.fill();
+    ctx.strokeStyle=color;ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle=color;ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText(placed||'?',slot.x,slot.y+7);
+    ctx.font='10px Exo 2';ctx.fillStyle=color+'99';
+    ctx.fillText(slot.label,slot.x,slot.y+46);
+  });
+
+  // Selected instrument indicator
+  if(selectedInstrument){
+    ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='12px JetBrains Mono';ctx.textAlign='right';
+    const sc=selectedInstrument==='A'?'#ffaa00':'#00aaff';
+    ctx.fillStyle=sc;
+    ctx.fillText('Placing: '+selectedInstrument,W-20,H-15);
+  }
+}
+
+function drawGameCircuit(ctx,round,W,H){
+  const ym=H*0.55;
+  ctx.strokeStyle='#1e4080';ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(80,ym);ctx.lineTo(80,60);ctx.lineTo(W-80,60);
+  ctx.lineTo(W-80,ym);ctx.lineTo(80,ym);ctx.stroke();
+  // Battery
+  ctx.strokeStyle='#00ff9d';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(80,ym-30);ctx.lineTo(80,ym+30);ctx.stroke();
+  ctx.strokeStyle='rgba(0,255,157,0.4)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(88,ym-18);ctx.lineTo(88,ym+18);ctx.stroke();
+  ctx.fillStyle='#00ff9d';ctx.font='11px Exo 2';ctx.textAlign='center';
+  ctx.fillText('Battery',80,ym+55);
+}
+
+function drawGameEnd(){
+  const c=document.getElementById('gameCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle='#050d1f';ctx.fillRect(0,0,c.width,c.height);
+  const won=gameLives>0;
+  ctx.font='bold 32px Exo 2';ctx.textAlign='center';
+  ctx.fillStyle=won?'#00ff9d':'#ff4466';
+  ctx.fillText(won?'🎉 Circuit Master! 🎉':'⚡ Game Over',c.width/2,c.height/2-30);
+  ctx.font='20px JetBrains Mono';ctx.fillStyle='#ffaa00';
+  ctx.fillText('Score: '+gameScore,c.width/2,c.height/2+20);
+  ctx.font='14px Exo 2';ctx.fillStyle='rgba(200,224,255,0.7)';
+  ctx.fillText('Press Start Game to play again',c.width/2,c.height/2+60);
+}
+
+// ===== SUBMIT =====
+async function submitLab(){
+  const name=document.getElementById('stuName').value;
+  const cls=document.getElementById('stuClass').value;
+  if(!name||!cls){alert('Please select your section and name first.');return;}
+  updateScore();
+  const elapsed=Math.round((Date.now()-LAB_START)/60000);
+  const score20=parseFloat(document.getElementById('grade20').textContent)||0;
+  const letter=document.getElementById('gradeLetter').textContent;
+
+  const payload={
+    sheet:'ElectricMeasure_G7',
+    name:name, class:cls,
+    time_min:elapsed,
+    pq1:document.getElementById('pq1').value||'—',
+    pq2:document.getElementById('pq2').value||'—',
+    pq3:document.getElementById('pq3').value||'—',
+    pq4:document.getElementById('pq4a').value||'—',
+    pq4_ok:document.getElementById('pq4a').value==='decreased'?'YES':'NO',
+    pq5:document.getElementById('pq5a').value||'—',
+    pq5_ok:document.getElementById('pq5a').value==='increased'?'YES':'NO',
+    ex1_ans:document.getElementById('ex1').value||'—',ex1_ok:exState[1]?'YES':'NO',
+    ex2_ans:document.getElementById('ex2').value||'—',ex2_ok:exState[2]?'YES':'NO',
+    ex3_ans:document.getElementById('ex3').value||'—',ex3_ok:exState[3]?'YES':'NO',
+    ex4_ans:document.getElementById('ex4').value||'—',ex4_ok:exState[4]?'YES':'NO',
+    mcq_score:['m1','m2','m3','m4','m5','m6','m7','m8'].filter(function(m){return mcqState[m]===MCQ_ANSWERS[m];}).length,
+    written:document.getElementById('writtenAns').value||'—',
+    game_score:gameScore,
+    score_20:score20,
+    grade_letter:letter
+  };
+
+  const btn=document.getElementById('submitBtn');
+  const st=document.getElementById('submitStatus');
+  btn.disabled=true;
+  st.textContent='Submitting...';
+
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)});
+    st.textContent='✓ Submitted successfully! Well done, '+name+'!';
+    st.style.color='var(--green)';
+  } catch(err){
+    st.textContent='Connection error — please try again.';
+    st.style.color='var(--red)';
+    btn.disabled=false;
+  }
+}
+
+// Live score update
+['pq1','pq2','pq3','pq4a','pq5a','writtenAns'].forEach(function(id){
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',updateScore);
+});
+
+// Initial draw
+drawGame();
+updateScore();
+</script>
+</body>
+</html>
