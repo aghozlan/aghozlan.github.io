@@ -466,25 +466,25 @@ select option{background:var(--panel2)}
 .section-title-main{font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:0.3rem}
 .section-desc{font-size:0.85rem;color:var(--text2);margin-bottom:1.2rem;line-height:1.5}
 
-/* ===== QUIZ DRAG ===== */
+/* ===== QUIZ TAP (Formerly Drag) ===== */
 .drag-area{
   display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;margin:1rem 0;
 }
 .drag-item{
   background:var(--panel2);border:2px solid var(--border);
-  border-radius:8px;padding:0.5rem 1rem;cursor:grab;
+  border-radius:8px;padding:0.5rem 1rem;cursor:pointer;
   font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--white);
   user-select:none;transition:all 0.2s;
 }
 .drag-item:hover{border-color:var(--green);box-shadow:var(--glow)}
-.drag-item:active{cursor:grabbing;transform:scale(1.05)}
 .drop-zone{
   background:var(--navy2);border:2px dashed var(--border);border-radius:8px;
   padding:0.8rem 1rem;min-width:120px;min-height:44px;
   font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--text2);
   display:flex;align-items:center;justify-content:center;transition:all 0.2s;
+  cursor:pointer;
 }
-.drop-zone.over{border-color:var(--green);background:rgba(0,255,157,0.05)}
+.drop-zone:hover{border-color:var(--green);background:rgba(0,255,157,0.05)}
 .drop-zone.filled{border-style:solid;border-color:var(--blue);color:var(--white)}
 .drop-zone.correct{border-color:var(--green);background:rgba(0,255,157,0.1);color:var(--green)}
 .drop-zone.wrong{border-color:var(--red);background:rgba(255,68,102,0.1);color:var(--red)}
@@ -495,22 +495,21 @@ select option{background:var(--panel2)}
 }
 .drag-check-btn:hover{background:var(--purple);color:var(--white)}
 
-/* ===== MULTIMETER INTERACTIVE ===== */
+/* ===== MULTIMETER INTERACTIVE TAP ===== */
 .multi-drop-zone {
   width: 80px; height: 80px; border: 2px dashed var(--border); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text2);
-  transition: all 0.2s;
+  transition: all 0.2s; cursor:pointer;
 }
-.multi-drop-zone.over { border-color: var(--green); background: rgba(0,255,157,0.1); }
+.multi-drop-zone:hover { border-color: var(--green); background: rgba(0,255,157,0.1); }
 .multi-drop-zone.filled { border-style: solid; color: var(--white); }
 .multi-wire {
-  width: 50px; height: 50px; border-radius: 50%; cursor: grab;
+  width: 50px; height: 50px; border-radius: 50%; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   font-family: 'JetBrains Mono', monospace; font-weight: bold; color: white;
   user-select: none; transition: transform 0.2s;
 }
-.multi-wire:active { cursor: grabbing; transform: scale(1.1); }
 
 /* Circut overlay dots */
 .circuit-com-drop {
@@ -518,7 +517,7 @@ select option{background:var(--panel2)}
   background: rgba(10,26,53,0.8);
   font-size: 0.65rem;
 }
-.circuit-com-drop.over { border-color: var(--green); background: rgba(0,255,157,0.3); }
+.circuit-com-drop:hover { border-color: var(--green); background: rgba(0,255,157,0.3); }
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
@@ -645,25 +644,25 @@ select option{background:var(--panel2)}
           <strong>⚠ Never connect an ammeter in parallel</strong> — it can damage the instrument due to its very low resistance. <strong>Never connect a voltmeter in series</strong> — it has very high resistance and the reading will be nearly zero.
         </div>
 
-        <!-- Drag & Drop Activity -->
-        <div class="card-title" style="margin-top:1.5rem">DRAG & DROP — Place the instruments correctly</div>
+        <!-- TAP TO PLACE Activity -->
+        <div class="card-title" style="margin-top:1.5rem">TAP & MATCH — Place the instruments correctly</div>
         <div style="background:var(--navy2);border-radius:10px;padding:1.2rem;border:1px solid var(--border)">
-          <div style="font-size:0.88rem;color:var(--text);margin-bottom:1rem">Drag the correct instrument to each connection type:</div>
+          <div style="font-size:0.88rem;color:var(--text);margin-bottom:1rem"><strong>Tap</strong> the correct instrument below, then <strong>Tap</strong> the connection box to place it:</div>
           <div class="drag-area" id="dragSource">
-            <div class="drag-item" draggable="true" data-val="Ammeter" id="dragA" ondragstart="dragStart(event)">⬤ Ammeter</div>
-            <div class="drag-item" draggable="true" data-val="Voltmeter" id="dragV" ondragstart="dragStart(event)">⬤ Voltmeter</div>
+            <div class="drag-item" id="tapA" onclick="selectInst('Ammeter', this)">⬤ Ammeter</div>
+            <div class="drag-item" id="tapV" onclick="selectInst('Voltmeter', this)">⬤ Voltmeter</div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.8rem">
             <div style="text-align:center">
               <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.5rem">Connected in SERIES → measures:</div>
-              <div class="drop-zone" id="drop1" ondragover="dragOver(event)" ondrop="dropHere(event,'drop1','Ammeter')" ondragleave="dragLeave(event)">Drop here</div>
+              <div class="drop-zone" id="drop1" onclick="placeInst('drop1')">Tap here</div>
             </div>
             <div style="text-align:center">
               <div style="font-size:0.8rem;color:var(--text2);margin-bottom:0.5rem">Connected in PARALLEL → measures:</div>
-              <div class="drop-zone" id="drop2" ondragover="dragOver(event)" ondrop="dropHere(event,'drop2','Voltmeter')" ondragleave="dragLeave(event)">Drop here</div>
+              <div class="drop-zone" id="drop2" onclick="placeInst('drop2')">Tap here</div>
             </div>
           </div>
-          <button class="drag-check-btn" onclick="checkDrag()">✓ Check My Answer</button>
+          <button class="drag-check-btn" onclick="checkTap()">✓ Check My Answer</button>
           <div class="feedback-inline" id="dragFeedback"></div>
         </div>
 
@@ -795,11 +794,11 @@ select option{background:var(--panel2)}
           <div style="position:relative; width:100%; max-width:620px; margin:0 auto;">
             <canvas id="explainCanvas" width="620" height="200" style="width:100%; height:auto;"></canvas>
             
-            <!-- Ammeter COM drop (Right side of Ammeter, connects towards Bulb) -->
-            <div class="multi-drop-zone circuit-com-drop" id="dropCircA" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropCircA')" ondragleave="dragLeave(event)" style="position:absolute; left:55.6%; top:20%; width:36px; height:36px; transform:translate(-50%, -50%);">COM?</div>
+            <!-- Ammeter COM drop -->
+            <div class="multi-drop-zone circuit-com-drop" id="dropCircA" onclick="placeWire('dropCircA')" style="position:absolute; left:55.6%; top:20%; width:36px; height:36px; transform:translate(-50%, -50%);">Tap?</div>
             
-            <!-- Voltmeter COM drop (Left side of Voltmeter, connected to negative battery path) -->
-            <div class="multi-drop-zone circuit-com-drop" id="dropCircV" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropCircV')" ondragleave="dragLeave(event)" style="position:absolute; left:40.3%; top:50%; width:36px; height:36px; transform:translate(-50%, -50%);">COM?</div>
+            <!-- Voltmeter COM drop -->
+            <div class="multi-drop-zone circuit-com-drop" id="dropCircV" onclick="placeWire('dropCircV')" style="position:absolute; left:40.3%; top:50%; width:36px; height:36px; transform:translate(-50%, -50%);">Tap?</div>
           </div>
           
           <div class="circuit-label">Standard circuit diagram: Battery → Ammeter (series) → Bulb with Voltmeter (parallel)</div>
@@ -813,40 +812,38 @@ select option{background:var(--panel2)}
           • The connecting wires in diagrams are always straight lines at right angles
         </div>
 
-        <!-- REAL WORLD MULTIMETER DRAG -->
+        <!-- REAL WORLD MULTIMETER (TAP TO PLACE) -->
         <div class="card-title" style="margin-top:2rem">REAL WORLD — THE DIGITAL MULTIMETER</div>
         <div class="section-desc">In the real lab, we use a single device called a <strong>Multimeter</strong>. It has two main wire probes: a Red wire and a Black wire.</div>
         
         <div style="background:var(--navy2);border-radius:10px;padding:1.5rem;border:1px solid var(--border);margin-bottom:1.5rem;">
             <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1rem;">
-                <!-- Multimeter description -->
                 <div style="max-width:300px;">
                     <p style="font-size:0.85rem; color:var(--text2); line-height:1.6;">
                         The <strong>COM (Common)</strong> terminal is always connected to the Black wire. <br><br>
                         <strong>Rule:</strong> The COM terminal must always face the <strong style="color:var(--blue)">Negative (-)</strong> side of the circuit, and the Red wire faces the <strong style="color:var(--red)">Positive (+)</strong> side.<br><br>
-                        <em>Drag the COM and RED wire markers to their correct places on the battery below, <strong>and</strong> drag the COM wire into the correct connection spots directly on the circuit diagram above!</em>
+                        <em><strong>Tap</strong> a wire below to select it, then <strong>Tap</strong> the correct spots on the battery and the circuit diagram above to connect it!</em>
                     </p>
                     <div style="display:flex; gap:1rem; margin-top:1rem;" id="multiDragSource">
-                        <div class="multi-wire" draggable="true" data-wire="COM" ondragstart="multiDragStart(event)" style="background:#222; border:2px solid #555;">COM</div>
-                        <div class="multi-wire" draggable="true" data-wire="RED" ondragstart="multiDragStart(event)" style="background:var(--red); border:2px solid #ff8888;">RED</div>
+                        <div class="multi-wire" onclick="selectWire('COM', this)" style="background:#222; border:2px solid #555;">COM</div>
+                        <div class="multi-wire" onclick="selectWire('RED', this)" style="background:var(--red); border:2px solid #ff8888;">RED</div>
                     </div>
                 </div>
 
-                <!-- Drop zones -->
                 <div style="display:flex; gap:2rem; background:var(--panel2); padding:1rem; border-radius:12px; border:1px solid var(--panel);">
                     <div style="text-align:center;">
                         <div style="font-size:0.8rem; font-weight:bold; color:var(--red); margin-bottom:0.5rem;">Battery (+)</div>
-                        <div class="multi-drop-zone" id="dropMultiPos" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropMultiPos')" ondragleave="dragLeave(event)">Drop Here</div>
+                        <div class="multi-drop-zone" id="dropMultiPos" onclick="placeWire('dropMultiPos')">Tap Here</div>
                     </div>
                     <div style="text-align:center;">
                         <div style="font-size:0.8rem; font-weight:bold; color:var(--blue); margin-bottom:0.5rem;">Battery (-)</div>
-                        <div class="multi-drop-zone" id="dropMultiNeg" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropMultiNeg')" ondragleave="dragLeave(event)">Drop Here</div>
+                        <div class="multi-drop-zone" id="dropMultiNeg" onclick="placeWire('dropMultiNeg')">Tap Here</div>
                     </div>
                 </div>
             </div>
             
             <div style="margin-top:1rem;">
-                <button class="drag-check-btn" onclick="checkMultiDrag()">✓ Check All Wires</button>
+                <button class="drag-check-btn" onclick="checkMultiTap()">✓ Check All Wires</button>
                 <div class="feedback-inline" id="multiFeedback"></div>
             </div>
         </div>
@@ -1177,7 +1174,6 @@ const sectionDone=[false,false,false,false,false];
 function toggleSection(n){
   const body=document.getElementById('body'+n);
   body.classList.toggle('open');
-  // Redraw when opened to fix display:none browser bug
   if(n===3 && window.renderExplainCanvas) window.renderExplainCanvas();
   if(n===4 && window.drawGameInternal) window.drawGameInternal();
 }
@@ -1193,29 +1189,39 @@ function goTo(n){
   document.getElementById('sec'+n).scrollIntoView({behavior:'smooth',block:'start'});
   updateScore();
 
-  // Redraw when targeted to fix display:none browser bug
   if(n===3 && window.renderExplainCanvas) window.renderExplainCanvas();
   if(n===4 && window.drawGameInternal) window.drawGameInternal();
 }
 
-// ===== DRAG & DROP 1 (METERS) =====
-let dragVal='';
-function dragStart(e){dragVal=e.target.getAttribute('data-val');e.dataTransfer.effectAllowed='move';}
-function dragOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
-function dragLeave(e){e.currentTarget.classList.remove('over');}
-function dropHere(e,zoneId,correct){
-  e.preventDefault();
-  const zone=document.getElementById(zoneId);
-  zone.classList.remove('over');
-  zone.textContent=dragVal;
-  zone.classList.add('filled');
-  zone.setAttribute('data-placed',dragVal);
+// ===== ACTIVITY 1: TAP TO PLACE METERS =====
+let activeInst = '';
+function selectInst(val, el) {
+    activeInst = val;
+    document.querySelectorAll('#dragSource .drag-item').forEach(w => w.style.borderColor = 'var(--border)');
+    if(el) el.style.borderColor = 'var(--green)';
 }
-function checkDrag(){
+function placeInst(zoneId) {
+    if(!activeInst) {
+        alert("Please tap 'Ammeter' or 'Voltmeter' first to select it!");
+        return;
+    }
+    const zone = document.getElementById(zoneId);
+    zone.textContent = activeInst;
+    zone.classList.add('filled');
+    zone.setAttribute('data-placed', activeInst);
+}
+function checkTap(){
   const d1=document.getElementById('drop1').getAttribute('data-placed')||'';
   const d2=document.getElementById('drop2').getAttribute('data-placed')||'';
   const fb=document.getElementById('dragFeedback');
   const ok1=d1==='Ammeter', ok2=d2==='Voltmeter';
+  
+  if(!d1 || !d2) {
+      fb.textContent='Please tap to place both instruments first.';
+      fb.className='feedback-inline err show';
+      return;
+  }
+  
   if(ok1&&ok2){
     fb.textContent='✓ Perfect! Ammeter in series, Voltmeter in parallel.';
     fb.className='feedback-inline ok show';
@@ -1229,31 +1235,38 @@ function checkDrag(){
   }
 }
 
-// ===== DRAG & DROP 2 (MULTIMETER/COM) =====
-let multiDragVal='';
-function multiDragStart(e){
-    multiDragVal=e.target.getAttribute('data-wire');
-    e.dataTransfer.effectAllowed='move';
+// ===== ACTIVITY 2: TAP TO PLACE MULTIMETER WIRES =====
+let activeWire = '';
+function selectWire(wireType, el) {
+    activeWire = wireType;
+    document.querySelectorAll('.multi-wire').forEach(w => w.style.boxShadow = '');
+    if(el) el.style.boxShadow = '0 0 15px rgba(255,255,255,0.8)';
 }
-function multiDropHere(e, zoneId) {
-    e.preventDefault();
+function placeWire(zoneId) {
+    if(!activeWire) {
+        alert("Please tap COM or RED first to select a wire!");
+        return;
+    }
     const zone = document.getElementById(zoneId);
-    zone.classList.remove('over');
-    
-    // We update the target without moving the original item (infinite dispenser)
-    zone.innerHTML = multiDragVal;
-    zone.style.background = multiDragVal === 'COM' ? '#222' : 'var(--red)';
+    zone.innerHTML = activeWire;
+    zone.style.background = activeWire === 'COM' ? '#222' : 'var(--red)';
     zone.style.color = '#fff';
     zone.style.borderStyle = 'solid';
     zone.style.fontSize = '0.75rem';
-    zone.setAttribute('data-placed', multiDragVal);
+    zone.setAttribute('data-placed', activeWire);
 }
-function checkMultiDrag() {
+function checkMultiTap() {
     const pos = document.getElementById('dropMultiPos').getAttribute('data-placed') || '';
     const neg = document.getElementById('dropMultiNeg').getAttribute('data-placed') || '';
     const circA = document.getElementById('dropCircA').getAttribute('data-placed') || '';
     const circV = document.getElementById('dropCircV').getAttribute('data-placed') || '';
     const fb = document.getElementById('multiFeedback');
+    
+    if(!pos || !neg || !circA || !circV) {
+        fb.textContent = 'Please tap to fill all four spots first.';
+        fb.className = 'feedback-inline err show';
+        return;
+    }
     
     const okPos = pos === 'RED';
     const okNeg = neg === 'COM';
@@ -1267,7 +1280,7 @@ function checkMultiDrag() {
         fb.textContent = '✗ Check the battery terminals below first. COM goes to Negative.';
         fb.className = 'feedback-inline err show';
     } else {
-        fb.textContent = '✗ Check your drops on the circuit diagram! COM must face the negative path (-) on both meters.';
+        fb.textContent = '✗ Check your placement on the circuit diagram! COM must face the negative path (-) on both meters.';
         fb.className = 'feedback-inline err show';
     }
 }
@@ -1288,11 +1301,9 @@ function checkMultiDrag() {
 
   function drawCircuit(){
     ctx.clearRect(0,0,W,H);
-    // Background
     ctx.fillStyle='rgba(5,13,31,0.95)';
     ctx.fillRect(0,0,W,H);
 
-    // Animated electrons
     const electronPos=(t%100)/100;
     const pathPts=[
       {x:60,y:H/2},{x:60,y:40},{x:520,y:40},{x:520,y:H/2},
@@ -1300,7 +1311,6 @@ function checkMultiDrag() {
       {x:180,y:H-40},{x:60,y:H-40},{x:60,y:H/2}
     ];
 
-    // Wire main loops
     ctx.strokeStyle='#1e4080';ctx.lineWidth=4;ctx.lineCap='round';
     ctx.beginPath();
     ctx.moveTo(60,H/2);ctx.lineTo(60,40);ctx.lineTo(520,40);ctx.lineTo(520,H/2);
@@ -1338,7 +1348,7 @@ function checkMultiDrag() {
     }
     ctx.font='12px JetBrains Mono';ctx.textAlign='center';
     ctx.fillStyle='rgba(200,224,255,0.5)';
-    ctx.fillText('Click instruments to learn',W/2,H-10);
+    ctx.fillText('Tap instruments to learn',W/2,H-10);
     t++;
     requestAnimationFrame(drawCircuit);
   }
@@ -1399,7 +1409,7 @@ function checkMultiDrag() {
     document.getElementById('circuitInfo').textContent=hover>=0?
       (hover===0?'🟡 AMMETER: Measures current in Amperes (A). Connected IN SERIES in the circuit wire.':
                  '🔵 VOLTMETER: Measures voltage in Volts (V). Connected IN PARALLEL across a component.'):
-      'Click on the ⓐ or ⓥ symbols in the circuit above';
+      'Tap on the ⓐ or ⓥ symbols in the circuit above';
     c.style.cursor=hover>=0?'pointer':'default';
   });
 
@@ -1453,8 +1463,8 @@ window.renderExplainCanvas = function(){
   ctx.fillStyle='#ffaa00';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('A',ax,ay+7);
   ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,170,0,0.8)';
-  ctx.fillText('Ammeter',ax,ay-30);
-  ctx.fillText('(series)',ax,ay-18);
+  ctx.fillText('Ammeter',ax,ay-35);
+  ctx.fillText('(series)',ax,ay-23);
 
   // Bulb - Fixed Overlap
   ctx.beginPath();ctx.arc(lx,ly,25,0,Math.PI*2);
@@ -1462,7 +1472,7 @@ window.renderExplainCanvas = function(){
   ctx.strokeStyle='rgba(255,200,0,0.6)';ctx.lineWidth=2;ctx.stroke();
   ctx.font='22px serif';ctx.fillText('💡',lx,ly+8);
   ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,200,100,0.8)';
-  ctx.fillText('Bulb',lx,ly+40);
+  ctx.fillText('Bulb',lx,ly+45);
 
   // Voltmeter - Fixed Overlap
   ctx.beginPath();ctx.arc(lx,100,22,0,Math.PI*2);
@@ -1471,8 +1481,8 @@ window.renderExplainCanvas = function(){
   ctx.fillStyle='#00aaff';ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('V',lx,106);
   ctx.font='11px Exo 2';ctx.fillStyle='rgba(0,170,255,0.8)';
-  ctx.fillText('Voltmeter',lx,100-35);
-  ctx.fillText('(parallel)',lx,100-23);
+  ctx.fillText('Voltmeter',lx,100-40);
+  ctx.fillText('(parallel)',lx,100-28);
   
   ctx.font='10px JetBrains Mono';ctx.fillStyle='rgba(0,255,157,0.6)';
   ctx.fillText('series connection', 185, 30);
