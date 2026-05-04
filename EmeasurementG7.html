@@ -325,7 +325,9 @@ select option{background:var(--panel2)}
   border:1px solid var(--border);margin:1rem 0;
 }
 .circuit-label{font-size:0.75rem;color:var(--text2);text-align:center;margin-top:0.5rem;font-family:'JetBrains Mono',monospace}
-#circuitCanvas{display:block;margin:0 auto;border-radius:8px}
+#circuitCanvas, #explainCanvas {
+  display:block; margin:0 auto; border-radius:8px; max-width: 100%;
+}
 
 /* ===== EXERCISES ===== */
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
@@ -492,6 +494,23 @@ select option{background:var(--panel2)}
   font-family:'Exo 2',sans-serif;font-weight:600;font-size:0.85rem;transition:all 0.2s;
 }
 .drag-check-btn:hover{background:var(--purple);color:var(--white)}
+
+/* ===== MULTIMETER INTERACTIVE ===== */
+.multi-drop-zone {
+  width: 80px; height: 80px; border: 2px dashed var(--border); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text2);
+  transition: all 0.2s;
+}
+.multi-drop-zone.over { border-color: var(--green); background: rgba(0,255,157,0.1); }
+.multi-drop-zone.filled { border-style: solid; color: var(--white); }
+.multi-wire {
+  width: 50px; height: 50px; border-radius: 50%; cursor: grab;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-weight: bold; color: white;
+  user-select: none; transition: transform 0.2s;
+}
+.multi-wire:active { cursor: grabbing; transform: scale(1.1); }
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
@@ -776,6 +795,43 @@ select option{background:var(--panel2)}
           • The connecting wires in diagrams are always straight lines at right angles
         </div>
 
+        <!-- REAL WORLD MULTIMETER DRAG -->
+        <div class="card-title" style="margin-top:2rem">REAL WORLD — THE DIGITAL MULTIMETER</div>
+        <div class="section-desc">In the real lab, we use a single device called a <strong>Multimeter</strong>. It has two main wire probes: a Red wire and a Black wire.</div>
+        
+        <div style="background:var(--navy2);border-radius:10px;padding:1.5rem;border:1px solid var(--border);margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1rem;">
+                <!-- Multimeter description -->
+                <div style="max-width:300px;">
+                    <p style="font-size:0.85rem; color:var(--text2); line-height:1.6;">
+                        The <strong>COM (Common)</strong> terminal is always connected to the Black wire. <br><br>
+                        <strong>Rule:</strong> The COM terminal must always face the <strong style="color:var(--blue)">Negative (-)</strong> side of the circuit, and the Red wire faces the <strong style="color:var(--red)">Positive (+)</strong> side.
+                    </p>
+                    <div style="display:flex; gap:1rem; margin-top:1rem;" id="multiDragSource">
+                        <div class="multi-wire" draggable="true" data-wire="COM" ondragstart="multiDragStart(event)" style="background:#222; border:2px solid #555;">COM</div>
+                        <div class="multi-wire" draggable="true" data-wire="RED" ondragstart="multiDragStart(event)" style="background:var(--red); border:2px solid #ff8888;">RED</div>
+                    </div>
+                </div>
+
+                <!-- Drop zones -->
+                <div style="display:flex; gap:2rem; background:var(--panel2); padding:1rem; border-radius:12px; border:1px solid var(--panel);">
+                    <div style="text-align:center;">
+                        <div style="font-size:0.8rem; font-weight:bold; color:var(--red); margin-bottom:0.5rem;">(+) Terminal</div>
+                        <div class="multi-drop-zone" id="dropMultiPos" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropMultiPos')" ondragleave="dragLeave(event)">Drop Here</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:0.8rem; font-weight:bold; color:var(--blue); margin-bottom:0.5rem;">(-) Terminal</div>
+                        <div class="multi-drop-zone" id="dropMultiNeg" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropMultiNeg')" ondragleave="dragLeave(event)">Drop Here</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top:1rem;">
+                <button class="drag-check-btn" onclick="checkMultiDrag()">✓ Check Wires</button>
+                <div class="feedback-inline" id="multiFeedback"></div>
+            </div>
+        </div>
+
         <!-- MCQ Knowledge Check -->
         <div class="card-title" style="margin-top:1.5rem">QUICK CHECK — SYMBOLS & CONNECTIONS</div>
 
@@ -855,7 +911,7 @@ select option{background:var(--panel2)}
           </div>
           <canvas id="gameCanvas" width="640" height="360"></canvas>
           <div class="game-controls">
-            <button class="game-btn" onclick="startGame()">▶ Start Game</button>
+            <button class="game-btn" id="gameActionBtn" onclick="handleGameAction()">▶ Start Game</button>
             <button class="game-btn" id="placeA" onclick="selectInstrument('A')" style="border-color:var(--amber);color:var(--amber)">Place ⓐ Ammeter</button>
             <button class="game-btn" id="placeV" onclick="selectInstrument('V')" style="border-color:var(--blue);color:var(--blue)">Place ⓥ Voltmeter</button>
             <div class="game-score-display">Score: <span id="gameScore">0</span> | Lives: <span id="gameLives">❤❤❤</span></div>
@@ -1111,6 +1167,9 @@ const sectionDone=[false,false,false,false,false];
 function toggleSection(n){
   const body=document.getElementById('body'+n);
   body.classList.toggle('open');
+  // Redraw when opened to fix display:none browser bug
+  if(n===3 && window.renderExplainCanvas) window.renderExplainCanvas();
+  if(n===4 && window.drawGameInternal) window.drawGameInternal();
 }
 function goTo(n){
   sectionDone[currentSection-1]=true;
@@ -1123,9 +1182,13 @@ function goTo(n){
   document.getElementById('body'+n).classList.add('open');
   document.getElementById('sec'+n).scrollIntoView({behavior:'smooth',block:'start'});
   updateScore();
+
+  // Redraw when targeted to fix display:none browser bug
+  if(n===3 && window.renderExplainCanvas) window.renderExplainCanvas();
+  if(n===4 && window.drawGameInternal) window.drawGameInternal();
 }
 
-// ===== DRAG & DROP =====
+// ===== DRAG & DROP 1 (METERS) =====
 let dragVal='';
 function dragStart(e){dragVal=e.target.getAttribute('data-val');e.dataTransfer.effectAllowed='move';}
 function dragOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
@@ -1155,6 +1218,54 @@ function checkDrag(){
     if(!ok2)document.getElementById('drop2').classList.add('wrong');
   }
 }
+
+// ===== DRAG & DROP 2 (MULTIMETER) =====
+let multiDragVal='';
+function multiDragStart(e){
+    multiDragVal=e.target.getAttribute('data-wire');
+    e.dataTransfer.effectAllowed='move';
+}
+function multiDropHere(e, zoneId) {
+    e.preventDefault();
+    const zone = document.getElementById(zoneId);
+    zone.classList.remove('over');
+    
+    // Clear previous items from this zone if necessary
+    zone.innerHTML = '';
+    
+    // Create new element representing the wire
+    const elem = document.createElement('div');
+    elem.textContent = multiDragVal;
+    elem.style.background = multiDragVal === 'COM' ? '#222' : 'var(--red)';
+    elem.style.color = '#fff';
+    elem.style.width = '100%';
+    elem.style.height = '100%';
+    elem.style.borderRadius = '50%';
+    elem.style.display = 'flex';
+    elem.style.alignItems = 'center';
+    elem.style.justifyContent = 'center';
+    
+    zone.appendChild(elem);
+    zone.classList.add('filled');
+    zone.setAttribute('data-placed', multiDragVal);
+}
+function checkMultiDrag() {
+    const pos = document.getElementById('dropMultiPos').getAttribute('data-placed') || '';
+    const neg = document.getElementById('dropMultiNeg').getAttribute('data-placed') || '';
+    const fb = document.getElementById('multiFeedback');
+    
+    const okPos = pos === 'RED';
+    const okNeg = neg === 'COM';
+    
+    if(okPos && okNeg) {
+        fb.textContent = '✓ Correct! COM (Black) goes to Negative, RED goes to Positive.';
+        fb.className = 'feedback-inline ok show';
+    } else {
+        fb.textContent = '✗ Try again. Remember: COM stands for Common (Ground/Negative).';
+        fb.className = 'feedback-inline err show';
+    }
+}
+
 
 // ===== CIRCUIT CANVAS — ENGAGE =====
 (function(){
@@ -1300,87 +1411,85 @@ function checkDrag(){
 })();
 
 // ===== EXPLAIN CANVAS =====
-(function(){
+window.renderExplainCanvas = function(){
   const c=document.getElementById('explainCanvas');
   if(!c)return;
   const ctx=c.getContext('2d');
   const W=c.width,H=c.height;
 
-  function drawExplain(){
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle='rgba(5,13,31,0.9)';ctx.fillRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='rgba(5,13,31,0.9)';ctx.fillRect(0,0,W,H);
 
-    // Create a very clean, rectangular circuit drawing to eliminate overlays and align perfectly.
-    const rectL=60, rectR=560, rectT=40, rectB=160;
-    const ax=310, ay=40; // Ammeter center (top)
-    const lx=310, ly=160; // Bulb center (bottom)
-    
-    ctx.strokeStyle='#2a5080';ctx.lineWidth=5;
-    
-    // Left wire (connecting perfectly to horizontal battery plates)
-    ctx.beginPath(); ctx.moveTo(rectL, rectT); ctx.lineTo(rectL, 80); ctx.stroke(); 
-    ctx.beginPath(); ctx.moveTo(rectL, 100); ctx.lineTo(rectL, rectB); ctx.stroke(); 
-    
-    // Top wire (connecting perfectly around ammeter gap)
-    ctx.beginPath(); ctx.moveTo(rectL, rectT); ctx.lineTo(ax-25, rectT); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(ax+25, rectT); ctx.lineTo(rectR, rectT); ctx.stroke();
-    
-    // Right wire (full)
-    ctx.beginPath(); ctx.moveTo(rectR, rectT); ctx.lineTo(rectR, rectB); ctx.stroke();
-    
-    // Bottom wire (connecting perfectly around bulb gap)
-    ctx.beginPath(); ctx.moveTo(rectR, rectB); ctx.lineTo(lx+25, rectB); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(lx-25, rectB); ctx.lineTo(rectL, rectB); ctx.stroke();
+  // Create a very clean, rectangular circuit drawing to eliminate overlays and align perfectly.
+  const rectL=60, rectR=560, rectT=40, rectB=160;
+  const ax=310, ay=40; // Ammeter center (top)
+  const lx=310, ly=160; // Bulb center (bottom)
+  
+  ctx.strokeStyle='#2a5080';ctx.lineWidth=5;
+  
+  // Left wire (connecting perfectly to horizontal battery plates)
+  ctx.beginPath(); ctx.moveTo(rectL, rectT); ctx.lineTo(rectL, 80); ctx.stroke(); 
+  ctx.beginPath(); ctx.moveTo(rectL, 100); ctx.lineTo(rectL, rectB); ctx.stroke(); 
+  
+  // Top wire (connecting perfectly around ammeter gap)
+  ctx.beginPath(); ctx.moveTo(rectL, rectT); ctx.lineTo(ax-25, rectT); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ax+25, rectT); ctx.lineTo(rectR, rectT); ctx.stroke();
+  
+  // Right wire (full)
+  ctx.beginPath(); ctx.moveTo(rectR, rectT); ctx.lineTo(rectR, rectB); ctx.stroke();
+  
+  // Bottom wire (connecting perfectly around bulb gap)
+  ctx.beginPath(); ctx.moveTo(rectR, rectB); ctx.lineTo(lx+25, rectB); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(lx-25, rectB); ctx.lineTo(rectL, rectB); ctx.stroke();
 
-    // Voltmeter wires (Parallel correctly connected above the bulb, NO overlay)
-    ctx.strokeStyle='rgba(0,170,255,0.5)';ctx.lineWidth=2;ctx.setLineDash([5,5]);
-    ctx.beginPath(); ctx.moveTo(250, rectB); ctx.lineTo(250, 100); ctx.lineTo(lx-22, 100); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(370, rectB); ctx.lineTo(370, 100); ctx.lineTo(lx+22, 100); ctx.stroke();
-    ctx.setLineDash([]);
+  // Voltmeter wires (Parallel correctly connected above the bulb, NO overlay)
+  ctx.strokeStyle='rgba(0,170,255,0.5)';ctx.lineWidth=2;ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(250, rectB); ctx.lineTo(250, 100); ctx.lineTo(lx-22, 100); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(370, rectB); ctx.lineTo(370, 100); ctx.lineTo(lx+22, 100); ctx.stroke();
+  ctx.setLineDash([]);
 
-    // Battery symbol (Now physically aligned horizontally with vertical wire flow)
-    ctx.strokeStyle='#00ff9d';ctx.lineWidth=3;
-    ctx.beginPath(); ctx.moveTo(40, 80); ctx.lineTo(80, 80); ctx.stroke(); // Long plate (+)
-    ctx.lineWidth=5; ctx.strokeStyle='rgba(0,255,157,0.7)';
-    ctx.beginPath(); ctx.moveTo(48, 100); ctx.lineTo(72, 100); ctx.stroke(); // Short plate (-)
-    ctx.font='bold 11px JetBrains Mono';ctx.fillStyle='#00ff9d';ctx.textAlign='center';
-    ctx.fillText('Battery', rectL, 125); ctx.fillText('+', 30, 84); ctx.fillText('-', 30, 104);
+  // Battery symbol (Now physically aligned horizontally with vertical wire flow)
+  ctx.strokeStyle='#00ff9d';ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(40, 80); ctx.lineTo(80, 80); ctx.stroke(); // Long plate (+)
+  ctx.lineWidth=5; ctx.strokeStyle='rgba(0,255,157,0.7)';
+  ctx.beginPath(); ctx.moveTo(48, 100); ctx.lineTo(72, 100); ctx.stroke(); // Short plate (-)
+  ctx.font='bold 11px JetBrains Mono';ctx.fillStyle='#00ff9d';ctx.textAlign='center';
+  ctx.fillText('Battery', rectL, 125); ctx.fillText('+', 30, 84); ctx.fillText('-', 30, 104);
 
-    // Ammeter
-    ctx.beginPath();ctx.arc(ax,ay,25,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,170,0,0.1)';ctx.fill();
-    ctx.strokeStyle='#ffaa00';ctx.lineWidth=3;ctx.stroke();
-    ctx.fillStyle='#ffaa00';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';
-    ctx.fillText('A',ax,ay+7);
-    ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,170,0,0.8)';
-    ctx.fillText('Ammeter',ax,ay+45);
-    ctx.fillText('(series)',ax,ay+58);
+  // Ammeter
+  ctx.beginPath();ctx.arc(ax,ay,25,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,170,0,0.1)';ctx.fill();
+  ctx.strokeStyle='#ffaa00';ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle='#ffaa00';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';
+  ctx.fillText('A',ax,ay+7);
+  ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,170,0,0.8)';
+  ctx.fillText('Ammeter',ax,ay+45);
+  ctx.fillText('(series)',ax,ay+58);
 
-    // Bulb
-    ctx.beginPath();ctx.arc(lx,ly,25,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,200,0,0.15)';ctx.fill();
-    ctx.strokeStyle='rgba(255,200,0,0.6)';ctx.lineWidth=2;ctx.stroke();
-    ctx.font='22px serif';ctx.fillText('💡',lx,ly+8);
-    ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,200,100,0.8)';
-    ctx.fillText('Bulb',lx,ly-35);
+  // Bulb
+  ctx.beginPath();ctx.arc(lx,ly,25,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,200,0,0.15)';ctx.fill();
+  ctx.strokeStyle='rgba(255,200,0,0.6)';ctx.lineWidth=2;ctx.stroke();
+  ctx.font='22px serif';ctx.fillText('💡',lx,ly+8);
+  ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,200,100,0.8)';
+  ctx.fillText('Bulb',lx,ly-35);
 
-    // Voltmeter
-    ctx.beginPath();ctx.arc(lx,100,22,0,Math.PI*2);
-    ctx.fillStyle='rgba(0,170,255,0.1)';ctx.fill();
-    ctx.strokeStyle='#00aaff';ctx.lineWidth=3;ctx.stroke();
-    ctx.fillStyle='#00aaff';ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
-    ctx.fillText('V',lx,106);
-    ctx.font='11px Exo 2';ctx.fillStyle='rgba(0,170,255,0.8)';
-    ctx.fillText('Voltmeter',lx,100-30);
-    ctx.fillText('(parallel)',lx,100-18);
-    
-    // Labels on wires
-    ctx.font='10px JetBrains Mono';ctx.fillStyle='rgba(0,255,157,0.6)';
-    ctx.fillText('series connection', 185, 30);
-  }
-
-  drawExplain();
-})();
+  // Voltmeter
+  ctx.beginPath();ctx.arc(lx,100,22,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,170,255,0.1)';ctx.fill();
+  ctx.strokeStyle='#00aaff';ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle='#00aaff';ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
+  ctx.fillText('V',lx,106);
+  ctx.font='11px Exo 2';ctx.fillStyle='rgba(0,170,255,0.8)';
+  ctx.fillText('Voltmeter',lx,100-30);
+  ctx.fillText('(parallel)',lx,100-18);
+  
+  // Labels on wires
+  ctx.font='10px JetBrains Mono';ctx.fillStyle='rgba(0,255,157,0.6)';
+  ctx.fillText('series connection', 185, 30);
+};
+// Initial attempt to draw
+window.renderExplainCanvas();
 
 // ===== MCQ ANSWERS =====
 const MCQ_ANSWERS={m1:'A',m2:'B',m3:'C',m4:'C',m5:'B',m6:'C',m7:'C',m8:'B'};
@@ -1514,10 +1623,9 @@ function updateScore(){
 }
 
 // ===== GAME =====
-let gameActive=false,gameScore=0,gameLives=3,gameRound=0,selectedInstrument='';
-let gameSlots=[];
+let gameState='idle'; // idle, playing, round_won, game_over
+let gameScore=0,gameLives=3,gameRound=0,selectedInstrument='';
 
-// Rebuilt GAME_ROUNDS to accurately align with physical circuitry inside the canvas space
 const GAME_ROUNDS=[
   {desc:'Simple circuit: 1 battery + 1 bulb',slots:[
     {x:320,y:60,correct:'A',placed:'',label:'Series connection'},
@@ -1534,13 +1642,44 @@ const GAME_ROUNDS=[
   ]}
 ];
 
+function handleGameAction() {
+    if(gameState === 'idle' || gameState === 'game_over') {
+        startGame();
+    } else if (gameState === 'round_won') {
+        nextRound();
+    } else if (gameState === 'playing') {
+        // Option to restart mid-game
+        startGame();
+    }
+}
+
+function updateGameBtn() {
+    const btn = document.getElementById('gameActionBtn');
+    if(gameState === 'idle') { btn.textContent = '▶ Start Game'; btn.style.background = ''; btn.style.color = ''; }
+    else if(gameState === 'playing') { btn.textContent = '↻ Restart Game'; btn.style.background = 'var(--panel2)'; btn.style.color = 'var(--text2)'; }
+    else if(gameState === 'round_won') { btn.textContent = '▶ Next Level'; btn.style.background = 'var(--blue)'; btn.style.color = 'var(--navy)'; }
+    else if(gameState === 'game_over') { btn.textContent = '↻ Play Again'; btn.style.background = 'var(--green)'; btn.style.color = 'var(--navy)'; }
+}
+
 function startGame(){
-  gameActive=true;gameScore=0;gameLives=3;gameRound=0;selectedInstrument='';
+  gameState='playing'; gameScore=0; gameLives=3; gameRound=0; selectedInstrument='';
+  GAME_ROUNDS.forEach(r => r.slots.forEach(s => { s.placed = ''; s.wrong = false; }));
   updateGameUI();
-  drawGame();
+  updateGameBtn();
+  drawGameInternal();
+}
+
+function nextRound() {
+    gameState = 'playing';
+    gameRound++;
+    selectedInstrument='';
+    GAME_ROUNDS[gameRound].slots.forEach(s => { s.placed = ''; s.wrong = false; });
+    updateGameBtn();
+    drawGameInternal();
 }
 
 function selectInstrument(type){
+  if(gameState !== 'playing') return;
   selectedInstrument=type;
   document.getElementById('placeA').style.background=type==='A'?'var(--amber)':'';
   document.getElementById('placeA').style.color=type==='A'?'var(--navy)':'var(--amber)';
@@ -1557,12 +1696,12 @@ function updateGameUI(){
 const gc=document.getElementById('gameCanvas');
 if(gc){
   gc.addEventListener('click',function(e){
-    if(!gameActive||!selectedInstrument)return;
+    if(gameState !== 'playing' || !selectedInstrument) return;
     const rect=gc.getBoundingClientRect();
     const sx=gc.width/rect.width,sy=gc.height/rect.height;
     const cx=(e.clientX-rect.left)*sx,cy=(e.clientY-rect.top)*sy;
     const round=GAME_ROUNDS[gameRound];
-    if(!round)return;
+    
     round.slots.forEach(function(slot){
       if(slot.placed)return;
       const d=Math.hypot(cx-slot.x,cy-slot.y);
@@ -1575,28 +1714,30 @@ if(gc){
           slot.wrong=true;
         }
         updateGameUI();
-        drawGame();
+        drawGameInternal();
+        
         // Check if round complete
-        const allPlaced=round.slots.every(function(s){return s.placed&&s.placed===s.correct;});
+        const allPlaced=round.slots.every(s => s.placed && s.placed===s.correct);
         if(allPlaced){
-          setTimeout(function(){
-            gameRound++;
-            if(gameRound>=GAME_ROUNDS.length){
-              gameActive=false;
-              drawGameEnd();
-            } else {
-              GAME_ROUNDS[gameRound].slots.forEach(function(s){s.placed='';s.wrong=false;});
-              drawGame();
-            }
-          },1200);
+          if(gameRound >= GAME_ROUNDS.length - 1) {
+              gameState = 'game_over';
+              setTimeout(drawGameEnd, 800);
+          } else {
+              gameState = 'round_won';
+              setTimeout(drawGameInternal, 800);
+          }
+          updateGameBtn();
+        } else if(gameLives<=0){
+          gameState = 'game_over';
+          updateGameBtn();
+          setTimeout(drawGameEnd, 800);
         }
-        if(gameLives<=0){gameActive=false;drawGameEnd();}
       }
     });
   });
 }
 
-function drawGame(){
+function drawGameInternal(){
   const c=document.getElementById('gameCanvas');
   if(!c)return;
   const ctx=c.getContext('2d');
@@ -1604,7 +1745,7 @@ function drawGame(){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#050d1f';ctx.fillRect(0,0,W,H);
 
-  if(!gameActive&&gameRound===0){
+  if(gameState === 'idle'){
     ctx.fillStyle='rgba(0,255,157,0.6)';ctx.font='bold 22px Exo 2';ctx.textAlign='center';
     ctx.fillText('Press "Start Game" to begin!',W/2,H/2-20);
     ctx.font='14px JetBrains Mono';ctx.fillStyle='rgba(200,224,255,0.5)';
@@ -1618,10 +1759,10 @@ function drawGame(){
   ctx.fillStyle='rgba(0,170,255,0.8)';ctx.font='14px JetBrains Mono';ctx.textAlign='left';
   ctx.fillText('Round '+(gameRound+1)+'/'+GAME_ROUNDS.length+': '+round.desc,20,30);
 
-  // Draw accurately bridged circuits (no visual overlays)
+  // Draw accurately bridged circuits
   drawGameCircuit(ctx, W, H);
 
-  // Draw slots over the empty wire bridges
+  // Draw slots
   round.slots.forEach(function(slot){
     const placed=slot.placed;
     const color=placed?(placed===slot.correct?'#00ff9d':'#ff4466'):'rgba(0,170,255,0.6)';
@@ -1635,12 +1776,19 @@ function drawGame(){
     ctx.fillText(slot.label,slot.x,slot.y+46);
   });
 
-  // Selected instrument indicator
-  if(selectedInstrument){
+  if(gameState === 'playing' && selectedInstrument){
     ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='12px JetBrains Mono';ctx.textAlign='right';
     const sc=selectedInstrument==='A'?'#ffaa00':'#00aaff';
     ctx.fillStyle=sc;
     ctx.fillText('Placing: '+selectedInstrument,W-20,H-15);
+  }
+  
+  if(gameState === 'round_won') {
+      ctx.fillStyle='rgba(0,0,0,0.7)'; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#00aaff'; ctx.font='bold 36px Exo 2'; ctx.textAlign='center';
+      ctx.fillText('Level Cleared!', W/2, H/2);
+      ctx.font='16px JetBrains Mono'; ctx.fillStyle='#fff';
+      ctx.fillText('Click "Next Level" below to continue', W/2, H/2+40);
   }
 }
 
@@ -1733,7 +1881,7 @@ function drawGameEnd(){
   ctx.font='20px JetBrains Mono';ctx.fillStyle='#ffaa00';
   ctx.fillText('Final Score: '+gameScore,c.width/2,c.height/2+30);
   ctx.font='14px Exo 2';ctx.fillStyle='rgba(200,224,255,0.7)';
-  ctx.fillText('Press "Start Game" to play again',c.width/2,c.height/2+70);
+  ctx.fillText('Press "Play Again" to restart',c.width/2,c.height/2+70);
 }
 
 // ===== SUBMIT =====
@@ -1793,7 +1941,7 @@ async function submitLab(){
 });
 
 // Initial draw
-drawGame();
+window.drawGameInternal();
 updateScore();
 </script>
 </body>
