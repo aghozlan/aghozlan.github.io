@@ -512,6 +512,14 @@ select option{background:var(--panel2)}
 }
 .multi-wire:active { cursor: grabbing; transform: scale(1.1); }
 
+/* Circut overlay dots */
+.circuit-com-drop {
+  border: 2px dashed var(--blue);
+  background: rgba(10,26,53,0.8);
+  font-size: 0.65rem;
+}
+.circuit-com-drop.over { border-color: var(--green); background: rgba(0,255,157,0.3); }
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .layout{flex-direction:column}
@@ -780,10 +788,20 @@ select option{background:var(--panel2)}
         <div class="section-title-main">🔍 Reading Circuit Diagrams</div>
         <div class="section-desc">In circuit diagrams, every component has a standard symbol. The ammeter and voltmeter each have their own — a circle with a capital letter inside.</div>
 
-        <!-- Symbol Reference Canvas -->
+        <!-- Symbol Reference Canvas with Drop Zones Overlaid -->
         <div class="circuit-interactive">
           <div class="card-title">CIRCUIT DIAGRAM — COMPLETE CIRCUIT WITH BOTH METERS</div>
-          <canvas id="explainCanvas" width="620" height="200"></canvas>
+          
+          <div style="position:relative; width:100%; max-width:620px; margin:0 auto;">
+            <canvas id="explainCanvas" width="620" height="200" style="width:100%; height:auto;"></canvas>
+            
+            <!-- Ammeter COM drop (Right side of Ammeter, connects towards Bulb) -->
+            <div class="multi-drop-zone circuit-com-drop" id="dropCircA" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropCircA')" ondragleave="dragLeave(event)" style="position:absolute; left:55.6%; top:20%; width:36px; height:36px; transform:translate(-50%, -50%);">COM?</div>
+            
+            <!-- Voltmeter COM drop (Left side of Voltmeter, connected to negative battery path) -->
+            <div class="multi-drop-zone circuit-com-drop" id="dropCircV" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropCircV')" ondragleave="dragLeave(event)" style="position:absolute; left:40.3%; top:50%; width:36px; height:36px; transform:translate(-50%, -50%);">COM?</div>
+          </div>
+          
           <div class="circuit-label">Standard circuit diagram: Battery → Ammeter (series) → Bulb with Voltmeter (parallel)</div>
         </div>
 
@@ -805,7 +823,8 @@ select option{background:var(--panel2)}
                 <div style="max-width:300px;">
                     <p style="font-size:0.85rem; color:var(--text2); line-height:1.6;">
                         The <strong>COM (Common)</strong> terminal is always connected to the Black wire. <br><br>
-                        <strong>Rule:</strong> The COM terminal must always face the <strong style="color:var(--blue)">Negative (-)</strong> side of the circuit, and the Red wire faces the <strong style="color:var(--red)">Positive (+)</strong> side.
+                        <strong>Rule:</strong> The COM terminal must always face the <strong style="color:var(--blue)">Negative (-)</strong> side of the circuit, and the Red wire faces the <strong style="color:var(--red)">Positive (+)</strong> side.<br><br>
+                        <em>Drag the COM and RED wire markers to their correct places on the battery below, <strong>and</strong> drag the COM wire into the correct connection spots directly on the circuit diagram above!</em>
                     </p>
                     <div style="display:flex; gap:1rem; margin-top:1rem;" id="multiDragSource">
                         <div class="multi-wire" draggable="true" data-wire="COM" ondragstart="multiDragStart(event)" style="background:#222; border:2px solid #555;">COM</div>
@@ -816,18 +835,18 @@ select option{background:var(--panel2)}
                 <!-- Drop zones -->
                 <div style="display:flex; gap:2rem; background:var(--panel2); padding:1rem; border-radius:12px; border:1px solid var(--panel);">
                     <div style="text-align:center;">
-                        <div style="font-size:0.8rem; font-weight:bold; color:var(--red); margin-bottom:0.5rem;">(+) Terminal</div>
+                        <div style="font-size:0.8rem; font-weight:bold; color:var(--red); margin-bottom:0.5rem;">Battery (+)</div>
                         <div class="multi-drop-zone" id="dropMultiPos" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropMultiPos')" ondragleave="dragLeave(event)">Drop Here</div>
                     </div>
                     <div style="text-align:center;">
-                        <div style="font-size:0.8rem; font-weight:bold; color:var(--blue); margin-bottom:0.5rem;">(-) Terminal</div>
+                        <div style="font-size:0.8rem; font-weight:bold; color:var(--blue); margin-bottom:0.5rem;">Battery (-)</div>
                         <div class="multi-drop-zone" id="dropMultiNeg" ondragover="dragOver(event)" ondrop="multiDropHere(event, 'dropMultiNeg')" ondragleave="dragLeave(event)">Drop Here</div>
                     </div>
                 </div>
             </div>
             
             <div style="margin-top:1rem;">
-                <button class="drag-check-btn" onclick="checkMultiDrag()">✓ Check Wires</button>
+                <button class="drag-check-btn" onclick="checkMultiDrag()">✓ Check All Wires</button>
                 <div class="feedback-inline" id="multiFeedback"></div>
             </div>
         </div>
@@ -857,30 +876,6 @@ select option{background:var(--panel2)}
             <div class="mcq-opt" onclick="pickMCQ('m2',this,'D')">Outside the circuit</div>
           </div>
           <div class="feedback-inline" id="fbm2"></div>
-        </div>
-
-        <div class="mcq-card">
-          <div class="mcq-pts">1 pt</div>
-          <div class="mcq-q">3. The voltmeter measures the _______ across a component.</div>
-          <div class="mcq-options">
-            <div class="mcq-opt" onclick="pickMCQ('m3',this,'A')">Electric current</div>
-            <div class="mcq-opt" onclick="pickMCQ('m3',this,'B')">Resistance</div>
-            <div class="mcq-opt" onclick="pickMCQ('m3',this,'C')">Voltage (potential difference)</div>
-            <div class="mcq-opt" onclick="pickMCQ('m3',this,'D')">Power</div>
-          </div>
-          <div class="feedback-inline" id="fbm3"></div>
-        </div>
-
-        <div class="mcq-card">
-          <div class="mcq-pts">1 pt</div>
-          <div class="mcq-q">4. What happens if you accidentally connect an ammeter in parallel?</div>
-          <div class="mcq-options">
-            <div class="mcq-opt" onclick="pickMCQ('m4',this,'A')">It reads zero — no problem</div>
-            <div class="mcq-opt" onclick="pickMCQ('m4',this,'B')">It measures voltage correctly</div>
-            <div class="mcq-opt" onclick="pickMCQ('m4',this,'C')">It may be damaged — too much current</div>
-            <div class="mcq-opt" onclick="pickMCQ('m4',this,'D')">Nothing changes in the circuit</div>
-          </div>
-          <div class="feedback-inline" id="fbm4"></div>
         </div>
 
         <div style="text-align:right;margin-top:1rem">
@@ -935,57 +930,72 @@ select option{background:var(--panel2)}
         <div class="section-tag">EVALUATE</div>
       </div>
       <div class="section-body" id="body5">
-        <div class="section-title-main">📊 Calculation Exercises</div>
-        <div class="section-desc">Apply the rules of electric measurement for Series and Parallel circuits. Remember how current and voltage behave!</div>
+        <div class="section-title-main">📊 Concept Exercises</div>
+        <div class="section-desc">Test your understanding of the proper way to connect measurement instruments and their main roles.</div>
 
         <div class="ex-grid">
           <div class="ex-card">
             <div class="ex-num">Ex 1 — 2 pts</div>
-            <div class="ex-question">In a <strong>series circuit</strong> with two identical bulbs, an ammeter next to the battery reads <strong>2 A</strong>. What will a second ammeter placed between the two bulbs read?<br><small style="color:var(--text2)">(Rule: Current in a series circuit)</small></div>
+            <div class="ex-question">What does an <strong>Ammeter</strong> measure and how must it be connected?</div>
             <div class="ex-input-row">
-              <input class="ex-input" id="ex1" type="number" placeholder="I = ?" step="0.1"/>
-              <span class="ex-unit">A</span>
-              <button class="ex-check" onclick="checkEx(1,2,0)">✓</button>
+              <select class="ex-input" id="ex1">
+                <option value="">Select answer...</option>
+                <option value="v_p">Voltage, Parallel</option>
+                <option value="c_s">Current, Series</option>
+                <option value="c_p">Current, Parallel</option>
+              </select>
+              <button class="ex-check" onclick="checkExQual(1, 'c_s')">✓</button>
             </div>
             <div class="ex-feedback" id="exFb1"></div>
           </div>
 
           <div class="ex-card">
             <div class="ex-num">Ex 2 — 2 pts</div>
-            <div class="ex-question">A battery supplies <strong>12 V</strong>. Two identical bulbs are connected in <strong>series</strong>. What is the voltage across <strong>each</strong> bulb?<br><small style="color:var(--text2)">(Rule: Voltage is shared in series)</small></div>
+            <div class="ex-question">What does a <strong>Voltmeter</strong> measure and how must it be connected?</div>
             <div class="ex-input-row">
-              <input class="ex-input" id="ex2" type="number" placeholder="V = ?" step="0.1"/>
-              <span class="ex-unit">V</span>
-              <button class="ex-check" onclick="checkEx(2,6,0)">✓</button>
+              <select class="ex-input" id="ex2">
+                <option value="">Select answer...</option>
+                <option value="v_p">Voltage, Parallel</option>
+                <option value="c_s">Current, Series</option>
+                <option value="v_s">Voltage, Series</option>
+              </select>
+              <button class="ex-check" onclick="checkExQual(2, 'v_p')">✓</button>
             </div>
             <div class="ex-feedback" id="exFb2"></div>
           </div>
 
           <div class="ex-card">
             <div class="ex-num">Ex 3 — 2 pts</div>
-            <div class="ex-question">Two identical bulbs are connected in <strong>parallel</strong>. The main current leaving the battery is <strong>4 A</strong>. What is the current flowing through <strong>one</strong> bulb?<br><small style="color:var(--text2)">(Rule: Current splits in parallel)</small></div>
+            <div class="ex-question">Which multimeter terminal is the <strong>COM</strong> port, and where does it connect?</div>
             <div class="ex-input-row">
-              <input class="ex-input" id="ex3" type="number" placeholder="I = ?" step="0.1"/>
-              <span class="ex-unit">A</span>
-              <button class="ex-check" onclick="checkEx(3,2,0)">✓</button>
+              <select class="ex-input" id="ex3">
+                <option value="">Select answer...</option>
+                <option value="red_pos">Red wire, Positive (+)</option>
+                <option value="blk_neg">Black wire, Negative (-)</option>
+                <option value="blk_pos">Black wire, Positive (+)</option>
+              </select>
+              <button class="ex-check" onclick="checkExQual(3, 'blk_neg')">✓</button>
             </div>
             <div class="ex-feedback" id="exFb3"></div>
           </div>
 
           <div class="ex-card">
             <div class="ex-num">Ex 4 — 2 pts</div>
-            <div class="ex-question">A voltmeter measures <strong>9 V</strong> across a battery. Three identical bulbs are connected in <strong>parallel</strong> with the battery. What will a voltmeter across <strong>one</strong> bulb read?<br><small style="color:var(--text2)">(Rule: Voltage in a parallel circuit)</small></div>
+            <div class="ex-question">Why must a voltmeter be connected in <strong>parallel</strong>?</div>
             <div class="ex-input-row">
-              <input class="ex-input" id="ex4" type="number" placeholder="V = ?" step="0.1"/>
-              <span class="ex-unit">V</span>
-              <button class="ex-check" onclick="checkEx(4,9,0)">✓</button>
+              <select class="ex-input" id="ex4">
+                <option value="">Select answer...</option>
+                <option value="r_high">It has very high resistance to measure difference across points</option>
+                <option value="r_low">It has low resistance to let all current flow through it</option>
+              </select>
+              <button class="ex-check" onclick="checkExQual(4, 'r_high')">✓</button>
             </div>
             <div class="ex-feedback" id="exFb4"></div>
           </div>
         </div>
 
         <!-- MCQ Evaluate -->
-        <div class="card-title" style="margin-top:1.5rem">MCQ — CIRCUIT DIAGRAMS (4 pts)</div>
+        <div class="card-title" style="margin-top:1.5rem">MCQ — CIRCUIT CONNECTIONS (4 pts)</div>
 
         <div class="mcq-card">
           <div class="mcq-pts">1 pt</div>
@@ -1025,12 +1035,12 @@ select option{background:var(--panel2)}
 
         <div class="mcq-card">
           <div class="mcq-pts">1 pt</div>
-          <div class="mcq-q">8. Two identical bulbs are connected in series. You measure the current after the first bulb and after the second bulb. What do you find?</div>
+          <div class="mcq-q">8. What happens if you accidentally connect an ammeter in parallel across a bulb?</div>
           <div class="mcq-options">
-            <div class="mcq-opt" onclick="pickMCQ('m8',this,'A')">The current is higher after the first bulb</div>
-            <div class="mcq-opt" onclick="pickMCQ('m8',this,'B')">The current is the same at both points</div>
-            <div class="mcq-opt" onclick="pickMCQ('m8',this,'C')">The current is zero after the second bulb</div>
-            <div class="mcq-opt" onclick="pickMCQ('m8',this,'D')">The current doubles after each bulb</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'A')">It reads zero</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'B')">It measures voltage correctly</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'C')">It creates a short circuit and may get damaged</div>
+            <div class="mcq-opt" onclick="pickMCQ('m8',this,'D')">Nothing changes</div>
           </div>
           <div class="feedback-inline" id="fbm8"></div>
         </div>
@@ -1219,7 +1229,7 @@ function checkDrag(){
   }
 }
 
-// ===== DRAG & DROP 2 (MULTIMETER) =====
+// ===== DRAG & DROP 2 (MULTIMETER/COM) =====
 let multiDragVal='';
 function multiDragStart(e){
     multiDragVal=e.target.getAttribute('data-wire');
@@ -1230,38 +1240,34 @@ function multiDropHere(e, zoneId) {
     const zone = document.getElementById(zoneId);
     zone.classList.remove('over');
     
-    // Clear previous items from this zone if necessary
-    zone.innerHTML = '';
-    
-    // Create new element representing the wire
-    const elem = document.createElement('div');
-    elem.textContent = multiDragVal;
-    elem.style.background = multiDragVal === 'COM' ? '#222' : 'var(--red)';
-    elem.style.color = '#fff';
-    elem.style.width = '100%';
-    elem.style.height = '100%';
-    elem.style.borderRadius = '50%';
-    elem.style.display = 'flex';
-    elem.style.alignItems = 'center';
-    elem.style.justifyContent = 'center';
-    
-    zone.appendChild(elem);
-    zone.classList.add('filled');
+    // We update the target without moving the original item (infinite dispenser)
+    zone.innerHTML = multiDragVal;
+    zone.style.background = multiDragVal === 'COM' ? '#222' : 'var(--red)';
+    zone.style.color = '#fff';
+    zone.style.borderStyle = 'solid';
+    zone.style.fontSize = '0.75rem';
     zone.setAttribute('data-placed', multiDragVal);
 }
 function checkMultiDrag() {
     const pos = document.getElementById('dropMultiPos').getAttribute('data-placed') || '';
     const neg = document.getElementById('dropMultiNeg').getAttribute('data-placed') || '';
+    const circA = document.getElementById('dropCircA').getAttribute('data-placed') || '';
+    const circV = document.getElementById('dropCircV').getAttribute('data-placed') || '';
     const fb = document.getElementById('multiFeedback');
     
     const okPos = pos === 'RED';
     const okNeg = neg === 'COM';
+    const okCircA = circA === 'COM';
+    const okCircV = circV === 'COM';
     
-    if(okPos && okNeg) {
-        fb.textContent = '✓ Correct! COM (Black) goes to Negative, RED goes to Positive.';
+    if(okPos && okNeg && okCircA && okCircV) {
+        fb.textContent = '✓ Perfect! COM always connects facing the negative path back to the battery.';
         fb.className = 'feedback-inline ok show';
+    } else if (!okPos || !okNeg) {
+        fb.textContent = '✗ Check the battery terminals below first. COM goes to Negative.';
+        fb.className = 'feedback-inline err show';
     } else {
-        fb.textContent = '✗ Try again. Remember: COM stands for Common (Ground/Negative).';
+        fb.textContent = '✗ Check your drops on the circuit diagram! COM must face the negative path (-) on both meters.';
         fb.className = 'feedback-inline err show';
     }
 }
@@ -1297,49 +1303,39 @@ function checkMultiDrag() {
     // Wire main loops
     ctx.strokeStyle='#1e4080';ctx.lineWidth=4;ctx.lineCap='round';
     ctx.beginPath();
-    // Top and right side down to ammeter (gap exactly on ammeter)
     ctx.moveTo(60,H/2);ctx.lineTo(60,40);ctx.lineTo(520,40);ctx.lineTo(520,H/2);
-    ctx.lineTo(442,H/2); // 420+22
+    ctx.lineTo(442,H/2); 
     ctx.stroke();
 
     ctx.beginPath();
-    // Gap bridging between ammeter and bulb
-    ctx.moveTo(398,H/2); // 420-22
-    ctx.lineTo(372,H/2); // 350+22
+    ctx.moveTo(398,H/2); 
+    ctx.lineTo(372,H/2); 
     ctx.stroke();
 
     ctx.beginPath();
-    // Gap from bulb left edge to bottom loop
-    ctx.moveTo(328,H/2); // 350-22
+    ctx.moveTo(328,H/2); 
     ctx.lineTo(280,H/2);
     ctx.lineTo(180,H/2);
     ctx.lineTo(180,H-40);ctx.lineTo(60,H-40);ctx.lineTo(60,H/2);
     ctx.stroke();
 
-    // Parallel voltmeter wires tightly bridging across the bulb
     ctx.strokeStyle='rgba(0,170,255,0.4)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
     ctx.beginPath();ctx.moveTo(300,H/2);ctx.lineTo(300,H/2-55);ctx.lineTo(328,H/2-55);ctx.stroke();
     ctx.beginPath();ctx.moveTo(400,H/2);ctx.lineTo(400,H/2-55);ctx.lineTo(372,H/2-55);ctx.stroke();
     ctx.setLineDash([]);
 
-    // Battery
     drawBattery(ctx,60,H/2);
-    // Bulb
     drawBulb(ctx,350,H/2,t);
 
-    // Ammeter
     drawMeter(ctx,420,H/2,'A','#ffaa00',hover===0);
-    // Voltmeter
     drawMeter(ctx,350,H/2-55,'V','#00aaff',hover===1);
 
-    // Electrons
     ctx.fillStyle=hover>=0?'#fff':'#00ff9d';
     for(let i=0;i<5;i++){
       const ep=((electronPos+(i*0.2))%1);
       const pt=getPathPt(pathPts,ep);
       ctx.beginPath();ctx.arc(pt.x,pt.y,3,0,Math.PI*2);ctx.fill();
     }
-    // Labels
     ctx.font='12px JetBrains Mono';ctx.textAlign='center';
     ctx.fillStyle='rgba(200,224,255,0.5)';
     ctx.fillText('Click instruments to learn',W/2,H-10);
@@ -1420,79 +1416,71 @@ window.renderExplainCanvas = function(){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='rgba(5,13,31,0.9)';ctx.fillRect(0,0,W,H);
 
-  // Create a very clean, rectangular circuit drawing to eliminate overlays and align perfectly.
   const rectL=60, rectR=560, rectT=40, rectB=160;
-  const ax=310, ay=40; // Ammeter center (top)
-  const lx=310, ly=160; // Bulb center (bottom)
+  const ax=310, ay=40; 
+  const lx=310, ly=160; 
   
   ctx.strokeStyle='#2a5080';ctx.lineWidth=5;
   
-  // Left wire (connecting perfectly to horizontal battery plates)
   ctx.beginPath(); ctx.moveTo(rectL, rectT); ctx.lineTo(rectL, 80); ctx.stroke(); 
   ctx.beginPath(); ctx.moveTo(rectL, 100); ctx.lineTo(rectL, rectB); ctx.stroke(); 
   
-  // Top wire (connecting perfectly around ammeter gap)
   ctx.beginPath(); ctx.moveTo(rectL, rectT); ctx.lineTo(ax-25, rectT); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(ax+25, rectT); ctx.lineTo(rectR, rectT); ctx.stroke();
   
-  // Right wire (full)
   ctx.beginPath(); ctx.moveTo(rectR, rectT); ctx.lineTo(rectR, rectB); ctx.stroke();
   
-  // Bottom wire (connecting perfectly around bulb gap)
   ctx.beginPath(); ctx.moveTo(rectR, rectB); ctx.lineTo(lx+25, rectB); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(lx-25, rectB); ctx.lineTo(rectL, rectB); ctx.stroke();
 
-  // Voltmeter wires (Parallel correctly connected above the bulb, NO overlay)
   ctx.strokeStyle='rgba(0,170,255,0.5)';ctx.lineWidth=2;ctx.setLineDash([5,5]);
   ctx.beginPath(); ctx.moveTo(250, rectB); ctx.lineTo(250, 100); ctx.lineTo(lx-22, 100); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(370, rectB); ctx.lineTo(370, 100); ctx.lineTo(lx+22, 100); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Battery symbol (Now physically aligned horizontally with vertical wire flow)
+  // Battery
   ctx.strokeStyle='#00ff9d';ctx.lineWidth=3;
-  ctx.beginPath(); ctx.moveTo(40, 80); ctx.lineTo(80, 80); ctx.stroke(); // Long plate (+)
+  ctx.beginPath(); ctx.moveTo(40, 80); ctx.lineTo(80, 80); ctx.stroke(); 
   ctx.lineWidth=5; ctx.strokeStyle='rgba(0,255,157,0.7)';
-  ctx.beginPath(); ctx.moveTo(48, 100); ctx.lineTo(72, 100); ctx.stroke(); // Short plate (-)
+  ctx.beginPath(); ctx.moveTo(48, 100); ctx.lineTo(72, 100); ctx.stroke(); 
   ctx.font='bold 11px JetBrains Mono';ctx.fillStyle='#00ff9d';ctx.textAlign='center';
   ctx.fillText('Battery', rectL, 125); ctx.fillText('+', 30, 84); ctx.fillText('-', 30, 104);
 
-  // Ammeter
+  // Ammeter - Fixed Overlap
   ctx.beginPath();ctx.arc(ax,ay,25,0,Math.PI*2);
   ctx.fillStyle='rgba(255,170,0,0.1)';ctx.fill();
   ctx.strokeStyle='#ffaa00';ctx.lineWidth=3;ctx.stroke();
   ctx.fillStyle='#ffaa00';ctx.font='bold 20px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('A',ax,ay+7);
   ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,170,0,0.8)';
-  ctx.fillText('Ammeter',ax,ay+45);
-  ctx.fillText('(series)',ax,ay+58);
+  ctx.fillText('Ammeter',ax,ay-30);
+  ctx.fillText('(series)',ax,ay-18);
 
-  // Bulb
+  // Bulb - Fixed Overlap
   ctx.beginPath();ctx.arc(lx,ly,25,0,Math.PI*2);
   ctx.fillStyle='rgba(255,200,0,0.15)';ctx.fill();
   ctx.strokeStyle='rgba(255,200,0,0.6)';ctx.lineWidth=2;ctx.stroke();
   ctx.font='22px serif';ctx.fillText('💡',lx,ly+8);
   ctx.font='11px Exo 2';ctx.fillStyle='rgba(255,200,100,0.8)';
-  ctx.fillText('Bulb',lx,ly-35);
+  ctx.fillText('Bulb',lx,ly+40);
 
-  // Voltmeter
+  // Voltmeter - Fixed Overlap
   ctx.beginPath();ctx.arc(lx,100,22,0,Math.PI*2);
   ctx.fillStyle='rgba(0,170,255,0.1)';ctx.fill();
   ctx.strokeStyle='#00aaff';ctx.lineWidth=3;ctx.stroke();
   ctx.fillStyle='#00aaff';ctx.font='bold 18px JetBrains Mono';ctx.textAlign='center';
   ctx.fillText('V',lx,106);
   ctx.font='11px Exo 2';ctx.fillStyle='rgba(0,170,255,0.8)';
-  ctx.fillText('Voltmeter',lx,100-30);
-  ctx.fillText('(parallel)',lx,100-18);
+  ctx.fillText('Voltmeter',lx,100-35);
+  ctx.fillText('(parallel)',lx,100-23);
   
-  // Labels on wires
   ctx.font='10px JetBrains Mono';ctx.fillStyle='rgba(0,255,157,0.6)';
   ctx.fillText('series connection', 185, 30);
 };
-// Initial attempt to draw
 window.renderExplainCanvas();
 
 // ===== MCQ ANSWERS =====
-const MCQ_ANSWERS={m1:'A',m2:'B',m3:'C',m4:'C',m5:'B',m6:'C',m7:'C',m8:'B'};
+const MCQ_ANSWERS={m1:'A',m2:'B',m3:'C',m4:'C',m5:'B',m6:'C',m7:'C',m8:'C'};
 const MCQ_EXPLANATIONS={
   m1:'The ammeter symbol is a circle with the capital letter A inside.',
   m2:'The ammeter must be in series so all current flows through it.',
@@ -1501,7 +1489,7 @@ const MCQ_EXPLANATIONS={
   m5:'The ammeter is always in series.',
   m6:'Current is measured in Amperes (A).',
   m7:'The voltmeter has very high resistance — in series it blocks current almost completely.',
-  m8:'In a series circuit, the current is the same everywhere.'
+  m8:'The ammeter acts as a short circuit with very low resistance. It can damage the circuit.'
 };
 const mcqState={};
 
@@ -1519,7 +1507,6 @@ function pickMCQ(id,el,choice){
     el.classList.add('wrong');
     document.getElementById('fb'+id).textContent='✗ Not quite. '+MCQ_EXPLANATIONS[id];
     document.getElementById('fb'+id).className='feedback-inline err show';
-    // Show correct
     opts.forEach(function(o){if(o.textContent.trim()&&MCQ_ANSWERS[id]===getOptLetter(o))o.classList.add('correct');});
   }
   updateScore();
@@ -1558,23 +1545,20 @@ function checkPQ5(){
   updateScore();
 }
 
-// ===== EXERCISES =====
+// ===== EXERCISES (Qualitative) =====
 const exState={};
-function checkEx(n,ans,tol){
-  const val=parseFloat(document.getElementById('ex'+n).value);
+function checkExQual(n,ans){
+  const val=document.getElementById('ex'+n).value;
   const fb=document.getElementById('exFb'+n);
-  if(isNaN(val)){fb.textContent='✗ Please enter a number.';fb.className='ex-feedback err';return;}
-  if(Math.abs(val-ans)<=tol){
-    fb.textContent='✓ Correct! Answer: '+ans+(n===1||n===3?' A':' V');
+  if(!val){fb.textContent='✗ Please select an answer.';fb.className='ex-feedback err';return;}
+  if(val===ans){
+    fb.textContent='✓ Correct!';
     fb.className='ex-feedback ok';
     exState[n]=true;
   } else {
     exState[n]=false;
     fb.className='ex-feedback err';
-    if(n===1) fb.textContent='✗ Incorrect. Remember: In a series circuit, current is exactly the same everywhere!';
-    if(n===2) fb.textContent='✗ Incorrect. Remember: In a series circuit, total voltage is shared equally among identical bulbs.';
-    if(n===3) fb.textContent='✗ Incorrect. Remember: In a parallel circuit, the main current splits evenly between the branches.';
-    if(n===4) fb.textContent='✗ Incorrect. Remember: In a parallel circuit, every branch receives the full voltage of the battery.';
+    fb.textContent='✗ Incorrect. Review the rules in the previous sections!';
   }
   updateScore();
 }
@@ -1623,7 +1607,7 @@ function updateScore(){
 }
 
 // ===== GAME =====
-let gameState='idle'; // idle, playing, round_won, game_over
+let gameState='idle'; 
 let gameScore=0,gameLives=3,gameRound=0,selectedInstrument='';
 
 const GAME_ROUNDS=[
@@ -1648,7 +1632,6 @@ function handleGameAction() {
     } else if (gameState === 'round_won') {
         nextRound();
     } else if (gameState === 'playing') {
-        // Option to restart mid-game
         startGame();
     }
 }
@@ -1716,7 +1699,6 @@ if(gc){
         updateGameUI();
         drawGameInternal();
         
-        // Check if round complete
         const allPlaced=round.slots.every(s => s.placed && s.placed===s.correct);
         if(allPlaced){
           if(gameRound >= GAME_ROUNDS.length - 1) {
@@ -1737,7 +1719,7 @@ if(gc){
   });
 }
 
-function drawGameInternal(){
+window.drawGameInternal = function(){
   const c=document.getElementById('gameCanvas');
   if(!c)return;
   const ctx=c.getContext('2d');
@@ -1755,14 +1737,11 @@ function drawGameInternal(){
 
   const round=GAME_ROUNDS[Math.min(gameRound,GAME_ROUNDS.length-1)];
 
-  // Round info
   ctx.fillStyle='rgba(0,170,255,0.8)';ctx.font='14px JetBrains Mono';ctx.textAlign='left';
   ctx.fillText('Round '+(gameRound+1)+'/'+GAME_ROUNDS.length+': '+round.desc,20,30);
 
-  // Draw accurately bridged circuits
   drawGameCircuit(ctx, W, H);
 
-  // Draw slots
   round.slots.forEach(function(slot){
     const placed=slot.placed;
     const color=placed?(placed===slot.correct?'#00ff9d':'#ff4466'):'rgba(0,170,255,0.6)';
@@ -1790,9 +1769,8 @@ function drawGameInternal(){
       ctx.font='16px JetBrains Mono'; ctx.fillStyle='#fff';
       ctx.fillText('Click "Next Level" below to continue', W/2, H/2+40);
   }
-}
+};
 
-// Helper to draw realistic static bulb gaps
 function drawGameBulb(ctx,x,y){
   ctx.beginPath();ctx.arc(x,y,20,0,Math.PI*2);
   ctx.fillStyle='rgba(255,200,0,0.2)';ctx.fill();
@@ -1805,39 +1783,33 @@ function drawGameCircuit(ctx, W, H){
   const rl=80, rr=560, rt=60, rb=260;
   ctx.strokeStyle='#1e4080';ctx.lineWidth=4;
 
-  // Accurately aligned horizontal battery structure
   ctx.strokeStyle='#00ff9d';ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(60,140);ctx.lineTo(100,140);ctx.stroke(); // Positive (+)
+  ctx.beginPath();ctx.moveTo(60,140);ctx.lineTo(100,140);ctx.stroke(); 
   ctx.lineWidth=5;ctx.strokeStyle='rgba(0,255,157,0.7)';
-  ctx.beginPath();ctx.moveTo(68,160);ctx.lineTo(92,160);ctx.stroke(); // Negative (-)
+  ctx.beginPath();ctx.moveTo(68,160);ctx.lineTo(92,160);ctx.stroke(); 
   ctx.fillStyle='#00ff9d';ctx.font='11px Exo 2';ctx.textAlign='center';
   ctx.fillText('Battery',40,154);
 
-  // Connection mapping logic ensuring perfect wire bridging around objects
   ctx.strokeStyle='#1e4080';ctx.lineWidth=4;
   ctx.beginPath();ctx.moveTo(rl,rt);ctx.lineTo(rl,140);ctx.stroke();
   ctx.beginPath();ctx.moveTo(rl,160);ctx.lineTo(rl,rb);ctx.stroke();
 
   if(gameRound===0){
-    // Round 1 wires
-    ctx.beginPath();ctx.moveTo(rl,rb);ctx.lineTo(300,rb);ctx.stroke(); // Left to bulb
-    ctx.beginPath();ctx.moveTo(340,rb);ctx.lineTo(rr,rb);ctx.lineTo(rr,rt);ctx.lineTo(348,rt);ctx.stroke(); // Bulb to Slot A
-    ctx.beginPath();ctx.moveTo(292,rt);ctx.lineTo(rl,rt);ctx.stroke(); // Slot A to Left
+    ctx.beginPath();ctx.moveTo(rl,rb);ctx.lineTo(300,rb);ctx.stroke(); 
+    ctx.beginPath();ctx.moveTo(340,rb);ctx.lineTo(rr,rb);ctx.lineTo(rr,rt);ctx.lineTo(348,rt);ctx.stroke(); 
+    ctx.beginPath();ctx.moveTo(292,rt);ctx.lineTo(rl,rt);ctx.stroke(); 
     drawGameBulb(ctx, 320, rb);
-    // V wires
     ctx.strokeStyle='rgba(0,170,255,0.4)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
     ctx.beginPath();ctx.moveTo(260,rb);ctx.lineTo(260,180);ctx.lineTo(292,180);ctx.stroke();
     ctx.beginPath();ctx.moveTo(380,rb);ctx.lineTo(380,180);ctx.lineTo(348,180);ctx.stroke();
     ctx.setLineDash([]);
   } else if(gameRound===1){
-    // Round 2 wires
     ctx.beginPath();ctx.moveTo(rl,rb);ctx.lineTo(220,rb);ctx.stroke();
     ctx.beginPath();ctx.moveTo(260,rb);ctx.lineTo(380,rb);ctx.stroke();
     ctx.beginPath();ctx.moveTo(420,rb);ctx.lineTo(rr,rb);ctx.lineTo(rr,rt);ctx.lineTo(348,rt);ctx.stroke();
     ctx.beginPath();ctx.moveTo(292,rt);ctx.lineTo(rl,rt);ctx.stroke();
     drawGameBulb(ctx, 240, rb);
     drawGameBulb(ctx, 400, rb);
-    // V1 and V2 wires
     ctx.strokeStyle='rgba(0,170,255,0.4)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
     ctx.beginPath();ctx.moveTo(180,rb);ctx.lineTo(180,180);ctx.lineTo(212,180);ctx.stroke();
     ctx.beginPath();ctx.moveTo(300,rb);ctx.lineTo(300,180);ctx.lineTo(268,180);ctx.stroke();
@@ -1845,12 +1817,10 @@ function drawGameCircuit(ctx, W, H){
     ctx.beginPath();ctx.moveTo(460,rb);ctx.lineTo(460,180);ctx.lineTo(428,180);ctx.stroke();
     ctx.setLineDash([]);
   } else if(gameRound===2){
-    // Round 3 wires
-    ctx.beginPath();ctx.moveTo(rl,rb);ctx.lineTo(292,rb);ctx.stroke(); // Left to Slot A
-    ctx.beginPath();ctx.moveTo(348,rb);ctx.lineTo(rr,rb);ctx.lineTo(rr,180);ctx.stroke(); // Slot A to bulb bottom
-    ctx.beginPath();ctx.moveTo(rr,140);ctx.lineTo(rr,rt);ctx.lineTo(rl,rt);ctx.stroke(); // Bulb top to Left
+    ctx.beginPath();ctx.moveTo(rl,rb);ctx.lineTo(292,rb);ctx.stroke(); 
+    ctx.beginPath();ctx.moveTo(348,rb);ctx.lineTo(rr,rb);ctx.lineTo(rr,180);ctx.stroke(); 
+    ctx.beginPath();ctx.moveTo(rr,140);ctx.lineTo(rr,rt);ctx.lineTo(rl,rt);ctx.stroke(); 
     drawGameBulb(ctx, rr, 160);
-    // V wires
     ctx.strokeStyle='rgba(0,170,255,0.4)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
     ctx.beginPath();ctx.moveTo(rr,100);ctx.lineTo(480,100);ctx.lineTo(480,132);ctx.stroke();
     ctx.beginPath();ctx.moveTo(rr,220);ctx.lineTo(480,220);ctx.lineTo(480,188);ctx.stroke();
