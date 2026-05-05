@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Shadow Studio II — Light Lab Part 2 | Ahmad Ghozlan | Grade 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Literata:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0a07;--bg2:#110e09;--bg3:#161209;
+  --panel:rgba(255,240,200,.03);--panel2:rgba(255,240,200,.06);
+  --border:rgba(255,220,120,.1);--border2:rgba(255,220,120,.2);
+  --text:#f0e6cc;--muted:rgba(240,230,204,.5);--muted2:rgba(240,230,204,.28);
+  --gold:#f0a830;--goldD:rgba(240,168,48,.12);
+  --amber:#e87820;--amberD:rgba(232,120,32,.1);
+  --warm:#fff3cc;--warmD:rgba(255,243,204,.08);
+  --green:#4a9e6a;--greenD:rgba(74,158,106,.1);
+  --red:#c84040;--redD:rgba(200,64,64,.1);
+  --cyan:#68c8c0;--cyanD:rgba(104,200,192,.08);
+  --fh:'Playfair Display',serif;--fb:'Literata',serif;--fm:'Courier Prime',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 30% 20%,rgba(240,168,48,.04),transparent),
+             radial-gradient(ellipse 40% 60% at 80% 70%,rgba(240,120,32,.03),transparent);}
+.app{display:flex;min-height:100vh;}
+aside{width:260px;background:rgba(12,10,7,.97);position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;flex-shrink:0;z-index:100;border-right:1px solid var(--border);}
+main{flex:1;min-width:0;}
+@media(max-width:900px){aside{display:none;}section{padding:40px 18px!important;}}
+
+/* SIDEBAR */
+.sb-logo{padding:26px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-family:var(--fh);font-size:1.05rem;color:var(--gold);font-weight:900;line-height:1.15;text-shadow:0 0 24px rgba(240,168,48,.4);}
+.sb-logo p{font-size:.46rem;color:var(--muted2);text-transform:uppercase;letter-spacing:3px;margin-top:5px;font-family:var(--fm);}
+.sb-nav{flex:1;padding:6px 0;overflow-y:auto;}
+.sn{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:.74rem;color:var(--muted2);
+  border-left:2px solid transparent;transition:all .2s;cursor:pointer;background:none;
+  border-right:none;border-top:none;border-bottom:none;width:100%;font-family:var(--fb);text-align:left;}
+.sn:hover,.sn.active{color:var(--gold);background:var(--goldD);border-left-color:var(--gold);}
+.sn .badge{font-size:.42rem;font-family:var(--fm);background:rgba(240,168,48,.12);padding:2px 6px;border-radius:2px;color:var(--gold);margin-left:auto;}
+.sb-timer{padding:10px 18px;border-top:1px solid var(--border);}
+.sb-tl{font-family:var(--fm);font-size:.44rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;}
+.sb-tv{font-family:var(--fm);font-size:1.25rem;color:var(--gold);letter-spacing:2px;line-height:1.1;}
+.sb-foot{padding:12px 18px;border-top:1px solid var(--border);}
+.sb-foot .name{font-weight:600;font-size:.8rem;color:var(--text);font-family:var(--fh);}
+.sb-foot .sub{font-size:.44rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:2px;font-family:var(--fm);}
+
+/* SECTIONS */
+section{padding:64px 54px;border-bottom:1px solid var(--border);position:relative;z-index:1;}
+.e-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.53rem;
+  text-transform:uppercase;letter-spacing:2px;padding:4px 12px;border-radius:2px;margin-bottom:16px;border:1px solid;}
+.e-tag.engage{background:var(--goldD);color:var(--gold);border-color:rgba(240,168,48,.3);}
+.e-tag.elaborate{background:var(--amberD);color:var(--amber);border-color:rgba(232,120,32,.25);}
+.e-tag.evaluate{background:var(--greenD);color:var(--green);border-color:rgba(74,158,106,.25);}
+.sec-title{font-family:var(--fh);font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:900;color:var(--warm);line-height:1.05;margin-bottom:10px;}
+.sec-desc{color:var(--muted);font-size:.9rem;max-width:600px;line-height:1.85;margin-bottom:24px;}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:18px;}
+.card2{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:4px;font-family:var(--fb);font-weight:600;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;min-height:44px;}
+.btn-gold{background:var(--gold);color:#111;}.btn-gold:hover{filter:brightness(1.12);}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--text);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* MCQ */
+.q-block{background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:18px;margin-bottom:14px;}
+.q-num{font-family:var(--fm);font-size:.53rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;}
+.q-text{font-size:.9rem;color:var(--text);margin-bottom:12px;line-height:1.8;}
+.q-text strong{color:var(--warm);}
+.opts{display:flex;flex-direction:column;gap:7px;margin-bottom:11px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:var(--panel2);
+  border:1.5px solid var(--border);border-radius:5px;cursor:pointer;transition:all .2s;
+  font-size:.85rem;user-select:none;-webkit-user-select:none;min-height:44px;}
+.opt:hover{border-color:var(--gold);}
+.opt.sel{border-color:var(--gold);background:var(--goldD);}
+.opt.ok{border-color:var(--green)!important;background:var(--greenD)!important;color:var(--green)!important;}
+.opt.err{border-color:var(--red)!important;background:var(--redD)!important;color:var(--red)!important;}
+.ml{min-width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);color:var(--muted2);
+  font-size:.64rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--fm);}
+.opt.ok .ml{background:var(--green);color:#000;}.opt.err .ml{background:var(--red);color:#fff;}
+.fb{margin-top:10px;padding:11px 14px;border-radius:5px;font-size:.84rem;display:none;line-height:1.8;border-left:3px solid;}
+.fb.ok{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.fb.err{background:var(--redD);border-color:var(--red);color:var(--red);}
+.fb.inf{background:var(--cyanD);border-color:var(--cyan);color:var(--cyan);}
+.chk{padding:9px 20px;background:var(--panel2);border:1.5px solid var(--border2);border-radius:5px;
+  color:var(--text);font-family:var(--fb);font-weight:600;font-size:.82rem;cursor:pointer;transition:all .2s;min-height:44px;}
+.chk:hover{border-color:var(--gold);color:var(--gold);}
+
+/* STUDENT PICKER */
+.sec-btn{padding:9px 20px;border-radius:4px;font-family:var(--fb);font-weight:600;font-size:.88rem;
+  cursor:pointer;border:1.5px solid var(--border2);background:var(--panel);color:var(--muted2);transition:all .2s;min-height:44px;}
+.sec-btn:hover{border-color:var(--gold);color:var(--gold);}
+.sec-btn.on{background:var(--gold);color:#111;border-color:var(--gold);}
+select,textarea{background:var(--panel2);border:1.5px solid var(--border2);border-radius:5px;padding:10px 14px;
+  color:var(--text);font-family:var(--fb);font-size:.9rem;outline:none;transition:border-color .2s;width:100%;min-height:44px;}
+select:focus,textarea:focus{border-color:var(--gold);}
+select{cursor:pointer;direction:rtl;}
+textarea{resize:vertical;min-height:80px;}
+input[type=number]{background:var(--panel2);border:1.5px solid var(--border2);border-radius:5px;
+  padding:9px 12px;color:var(--text);font-family:var(--fm);font-size:.9rem;outline:none;
+  transition:border-color .2s;min-height:44px;width:110px;}
+input[type=number]:focus{border-color:var(--gold);}
+
+/* SCORE RING */
+.prog-ring{transform:rotate(-90deg);}
+.prog-ring-bg{fill:none;stroke:var(--border2);stroke-width:6;}
+.prog-ring-fill{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset .6s ease;}
+.score-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.score-key{color:var(--muted2);font-family:var(--fm);font-size:.58rem;text-transform:uppercase;}
+.score-val{font-weight:700;font-family:var(--fm);font-size:.76rem;}
+.score-val.ok{color:var(--green);}
+
+/* TOAST */
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(12,10,7,.96);
+  color:var(--gold);padding:10px 22px;border-radius:4px;font-family:var(--fm);font-size:.72rem;
+  z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid var(--border2);}
+#toast.show{opacity:1;}
+
+/* GAME CANVAS */
+.pq-wrap{position:relative;background:#000;border-radius:10px;overflow:hidden;
+  box-shadow:0 0 60px rgba(240,168,48,.12),0 0 120px rgba(0,0,0,.8);}
+.pq-hud{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;
+  background:rgba(0,0,0,.6);flex-wrap:wrap;gap:6px;}
+.pq-stat{font-family:var(--fm);font-size:.68rem;color:var(--muted2);}
+.pq-stat span{color:var(--gold);font-weight:700;}
+.pq-badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.pq-badge{padding:3px 10px;border-radius:3px;font-family:var(--fm);font-size:.56rem;
+  text-transform:uppercase;letter-spacing:1px;border:1px solid var(--border);color:var(--muted2);}
+.pq-badge.done{background:var(--greenD);border-color:var(--green);color:var(--green);}
+.pq-badge.active{background:var(--goldD);border-color:var(--gold);color:var(--gold);}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside>
+  <div class="sb-logo">
+    <h1>SHADOW<br>STUDIO II</h1>
+    <p>Light Lab · Part 2 · Grade 8</p>
+  </div>
+  <nav class="sb-nav">
+    <button class="sn" onclick="goTo('hero')">☀ Warm-Up <span class="badge">RECALL</span></button>
+    <button class="sn" onclick="goTo('game')">🌑 Shadow Puppeteer <span class="badge">GAME</span></button>
+    <button class="sn" onclick="goTo('mcqs')">✏ MCQ <span class="badge">6 pts</span></button>
+    <button class="sn" onclick="goTo('numerical')">📐 Pinhole Calc <span class="badge">4 pts</span></button>
+    <button class="sn" onclick="goTo('evaluate')">📡 Submit <span class="badge">E5</span></button>
+  </nav>
+  <div class="sb-timer">
+    <div class="sb-tl">Time Elapsed</div>
+    <div class="sb-tv" id="timerVal">00:00</div>
+  </div>
+  <div class="sb-foot">
+    <div class="name">Ahmad Ghozlan</div>
+    <div class="sub">Physics · Grade 8 · Lebanon</div>
+  </div>
+</aside>
+
+<main>
+
+<!-- ══ E1: WARM-UP RECALL ══ -->
+<section id="hero" style="background:var(--bg2);min-height:80vh;display:flex;align-items:center;">
+  <div style="max-width:660px;">
+    <div style="font-family:var(--fm);font-size:.54rem;color:var(--gold);text-transform:uppercase;
+      letter-spacing:3px;border:1px solid rgba(240,168,48,.3);padding:4px 14px;border-radius:2px;
+      display:inline-block;margin-bottom:20px;">Part 2 · Application &amp; Evaluation</div>
+    <h1 style="font-family:var(--fh);font-size:clamp(2.2rem,5.5vw,4.2rem);font-weight:900;
+      color:var(--warm);line-height:.98;letter-spacing:-1px;margin-bottom:18px;">
+      THE SHADOW<br><span style="color:var(--gold);text-shadow:0 0 40px rgba(240,168,48,.5);">IS YOURS TO CAST</span>
+    </h1>
+    <p style="font-size:.94rem;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:500px;">
+      No new theory. Pure application. Two recall checks, then you take control of the physics engine and play with real shadows.
+    </p>
+
+    <!-- 2 RECALL MCQs built inline — tight -->
+    <div class="q-block" style="margin-bottom:12px;">
+      <div class="q-num">Recall · 1 — Classification &nbsp;·&nbsp; 1 point</div>
+      <div class="q-text">Frosted shower glass lets light in but you cannot see clearly through it. It is:</div>
+      <div class="opts" id="r1opts">
+        <div class="opt" onclick="pick('r1','A',this)"><span class="ml">A</span>Opaque — blocks all light</div>
+        <div class="opt" onclick="pick('r1','B',this)"><span class="ml">B</span>Translucent — light passes but scatters</div>
+        <div class="opt" onclick="pick('r1','C',this)"><span class="ml">C</span>Transparent — light passes clearly</div>
+        <div class="opt" onclick="pick('r1','D',this)"><span class="ml">D</span>Luminous — emits its own light</div>
+      </div>
+      <button class="chk" onclick="chkR('r1','B',1,'✓ Translucent — light passes but scatters. No clear image. Examples: frosted glass, tracing paper, tissue.','✗ Translucent: light passes but scatters — blurry, no clear image. Transparent = clear view. Opaque = zero light.')">✓ Check</button>
+      <div class="fb" id="fbr1"></div>
+    </div>
+
+    <div class="q-block" style="margin-bottom:24px;">
+      <div class="q-num">Recall · 2 — Shadow &nbsp;·&nbsp; 1 point</div>
+      <div class="q-text">The region behind an opaque object where <strong>absolutely no light</strong> reaches from any part of the source is:</div>
+      <div class="opts" id="r2opts">
+        <div class="opt" onclick="pick('r2','A',this)"><span class="ml">A</span>Penumbra — partial shadow around the edges</div>
+        <div class="opt" onclick="pick('r2','B',this)"><span class="ml">B</span>Umbra — total shadow, zero light</div>
+        <div class="opt" onclick="pick('r2','C',this)"><span class="ml">C</span>Reflection zone</div>
+        <div class="opt" onclick="pick('r2','D',this)"><span class="ml">D</span>Diffraction zone</div>
+      </div>
+      <button class="chk" onclick="chkR('r2','B',1,'✓ Umbra = total shadow. Zero light from any part of the source. The penumbra (partial shadow) surrounds it.','✗ Umbra is total shadow — zero light. Penumbra is the partial shadow that surrounds it.')">✓ Check</button>
+      <div class="fb" id="fbr2"></div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="goTo('game')">Enter Shadow Puppeteer →</button>
+      <a href="lightlabG8.html" style="text-decoration:none;"><button class="btn btn-ghost">← Part 1</button></a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E2: SHADOW PUPPETEER GAME ══ -->
+<section id="game" style="background:var(--bg2);padding:64px 40px;">
+  <div class="e-tag elaborate">🌑 Shadow Puppeteer · Interactive Game</div>
+  <h2 class="sec-title">Shadow Puppeteer</h2>
+  <p class="sec-desc">
+    You control an opaque object between a real physics light source and a wall.
+    <strong style="color:var(--warm);">Drag it. Resize it. Watch the live shadow obey the laws of rectilinear propagation.</strong>
+    Each level gives you a target shadow shape on the wall — match it to score.
+    Five levels. Six points. Can you master the shadow?
+  </p>
+
+  <div style="margin-bottom:10px;">
+    <div class="pq-badge-row" id="badgeRow">
+      <span class="pq-badge active" id="b0">L1 · Point Source</span>
+      <span class="pq-badge" id="b1">L2 · Extended Source</span>
+      <span class="pq-badge" id="b2">L3 · Move the Object</span>
+      <span class="pq-badge" id="b3">L4 · Two Sources</span>
+      <span class="pq-badge" id="b4">L5 · Eclipse!</span>
+    </div>
+  </div>
+
+  <div class="pq-wrap" style="max-width:780px;">
+    <canvas id="spCanvas" height="440" style="display:block;width:100%;cursor:grab;touch-action:none;"></canvas>
+    <div class="pq-hud">
+      <div class="pq-stat">Level: <span id="spLevel">1</span>/5</div>
+      <div class="pq-stat">Score: <span id="spScore">0</span>/6</div>
+      <div class="pq-stat">Accuracy: <span id="spAcc">—</span></div>
+      <div class="pq-stat" id="spMsg" style="color:var(--gold);">Drag the glowing object to cast a shadow!</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+    <button class="btn btn-gold" id="spNextBtn" onclick="spNext()" style="display:none;">Next Level →</button>
+    <button class="btn btn-ghost" onclick="spReset()">↺ Restart Level</button>
+    <button class="btn btn-ghost" onclick="goTo('mcqs')">Skip to MCQ →</button>
+  </div>
+  <div class="fb" id="fbGame" style="max-width:680px;margin-top:14px;"></div>
+
+  <!-- science log -->
+  <div style="margin-top:18px;background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:16px;max-width:680px;">
+    <div style="font-family:var(--fm);font-size:.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">Physics Facts Unlocked <span id="factCount" style="color:var(--gold);">0/5</span></div>
+    <div id="factLog" style="font-size:.82rem;color:var(--muted);line-height:1.8;">Complete each level to unlock a physics fact.</div>
+  </div>
+</section>
+
+<!-- ══ E3: MCQ EVALUATION ══ -->
+<section id="mcqs">
+  <div class="e-tag evaluate">E5 · Evaluation — MCQ &nbsp;<span style="font-family:var(--fm);font-size:.56rem;background:rgba(74,158,106,.12);padding:2px 8px;border-radius:2px;color:var(--green);">6 pts · 1 each</span></div>
+  <h2 class="sec-title">Six Evaluation Questions</h2>
+  <p class="sec-desc">One point each. Check after every question — feedback explains the physics.</p>
+  <div id="mcqContainer"></div>
+</section>
+
+<!-- ══ E4: PINHOLE NUMERICAL ══ -->
+<section id="numerical" style="background:var(--bg2);">
+  <div class="e-tag evaluate">E5 · Numerical — Pinhole Camera &nbsp;<span style="font-family:var(--fm);font-size:.56rem;background:rgba(74,158,106,.12);padding:2px 8px;border-radius:2px;color:var(--green);">4 pts</span></div>
+  <h2 class="sec-title">Calculate the Image</h2>
+
+  <div class="card" style="max-width:700px;margin-bottom:20px;border-left:4px solid var(--gold);">
+    <div style="font-family:var(--fm);font-size:.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">The Situation</div>
+    <div style="font-size:.9rem;color:var(--text);line-height:1.9;margin-bottom:12px;">
+      A candle <strong style="color:var(--warm);">H = 18 cm</strong> tall stands <strong style="color:var(--warm);">d<sub>o</sub> = 54 cm</strong> in front of a pinhole camera.
+      The screen inside the camera is <strong style="color:var(--warm);">d<sub>i</sub> = 18 cm</strong> behind the pinhole.
+    </div>
+    <!-- live animated pinhole diagram -->
+    <canvas id="cvPin" height="160" style="width:100%;max-width:640px;display:block;background:#000;border-radius:6px;border:1px solid var(--border);margin-bottom:14px;"></canvas>
+    <div style="background:var(--goldD);border:1px solid rgba(240,168,48,.2);border-radius:4px;padding:8px 14px;font-family:var(--fm);font-size:.78rem;color:var(--gold);margin-bottom:14px;">
+      Similar triangles rule: &nbsp; h / H = d<sub>i</sub> / d<sub>o</sub>
+    </div>
+    <div style="font-size:.9rem;color:var(--text);font-weight:600;margin-bottom:12px;">
+      a) Calculate the height <strong style="color:var(--warm);">h</strong> of the image on the screen. <span style="font-family:var(--fm);font-size:.7rem;color:var(--green);">(2 pts)</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+      <label style="font-size:.84rem;color:var(--muted);">h =</label>
+      <input type="number" step="0.1" id="pAns" placeholder="?" oninput="pinLive()">
+      <span style="font-family:var(--fm);color:var(--gold);font-size:.84rem;">cm</span>
+      <button class="chk" onclick="checkPin()">✓ Check</button>
+    </div>
+    <div class="fb" id="fbPin"></div>
+  </div>
+
+  <div class="card" style="max-width:700px;border-left:4px solid var(--amber);">
+    <div style="font-family:var(--fm);font-size:.58rem;color:var(--amber);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Follow-Up Questions <span style="color:var(--green);">1 pt each</span></div>
+
+    <div class="q-block" style="background:var(--bg3);">
+      <div class="q-num">Pinhole · Q2</div>
+      <div class="q-text">If the candle moves <strong>closer</strong> to the pinhole (d<sub>o</sub> decreases), the image on the screen:</div>
+      <div class="opts" id="pq2opts">
+        <div class="opt" onclick="pick('pq2','A',this)"><span class="ml">A</span>Gets smaller — object is closer</div>
+        <div class="opt" onclick="pick('pq2','B',this)"><span class="ml">B</span>Gets larger — the ratio d<sub>i</sub>/d<sub>o</sub> increases</div>
+        <div class="opt" onclick="pick('pq2','C',this)"><span class="ml">C</span>Stays the same — pinhole controls size</div>
+        <div class="opt" onclick="pick('pq2','D',this)"><span class="ml">D</span>Disappears</div>
+      </div>
+      <button class="chk" onclick="chk('pq2','B','✓ Correct! As d_o decreases, the ratio d_i/d_o increases — so h = H × (d_i/d_o) gets larger. The image grows as the object moves closer to the pinhole.','✗ Use the formula: h = H × (d_i / d_o). If d_o decreases, the ratio d_i/d_o increases, so h increases — the image gets LARGER.')">✓ Check</button>
+      <div class="fb" id="fbpq2"></div>
+    </div>
+
+    <div class="q-block" style="background:var(--bg3);margin-bottom:0;">
+      <div class="q-num">Pinhole · Q3</div>
+      <div class="q-text">The image formed inside a pinhole camera is always <strong>inverted</strong> (upside down) because:</div>
+      <div class="opts" id="pq3opts">
+        <div class="opt" onclick="pick('pq3','A',this)"><span class="ml">A</span>The hole flips the light like a mirror</div>
+        <div class="opt" onclick="pick('pq3','B',this)"><span class="ml">B</span>Light travels in straight lines — rays from the top cross rays from the bottom through the pinhole</div>
+        <div class="opt" onclick="pick('pq3','C',this)"><span class="ml">C</span>The screen is at the wrong angle</div>
+        <div class="opt" onclick="pick('pq3','D',this)"><span class="ml">D</span>Only red light passes through small holes</div>
+      </div>
+      <button class="chk" onclick="chk('pq3','B','✓ Perfect! Rectilinear propagation: a ray from the TOP of the candle travels downward in a straight line through the hole → hits the BOTTOM of the screen. Rays cross = inverted image.','✗ Rectilinear propagation causes inversion. A ray from the top of the candle passes through the hole in a straight line downward — it hits the bottom of the screen, and vice versa.')">✓ Check</button>
+      <div class="fb" id="fbpq3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ E5: SUBMIT ══ -->
+<section id="evaluate">
+  <div class="e-tag evaluate">E5 · Submit</div>
+  <h2 class="sec-title">Submit Your Lab</h2>
+  <p class="sec-desc">Select your section and name, then send your results to Ahmad's grade sheet.</p>
+
+  <div class="g2" style="max-width:840px;align-items:start;">
+    <div class="card">
+      <label style="font-family:var(--fm);font-size:.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:8px;">Section</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="sec-btn" onclick="setSection('8A')">8A</button>
+        <button class="sec-btn" onclick="setSection('8B')">8B</button>
+        <button class="sec-btn" onclick="setSection('8C')">8C</button>
+        <button class="sec-btn" onclick="setSection('8D')">8D</button>
+      </div>
+      <label style="font-family:var(--fm);font-size:.56rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;display:block;margin-bottom:6px;">Your Name</label>
+      <select id="stuName" disabled style="margin-bottom:14px;"><option value="">— Choose section first —</option></select>
+      <input type="hidden" id="stuClass" value="">
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+      <div class="score-row"><span class="score-key">Recall warm-up (2 pts)</span><span class="score-val" id="srRecall">—</span></div>
+      <div class="score-row"><span class="score-key">Shadow Puppeteer game (6 pts)</span><span class="score-val" id="srGame">—</span></div>
+      <div class="score-row"><span class="score-key">MCQ — 6 questions (6 pts)</span><span class="score-val" id="srMCQ">—</span></div>
+      <div class="score-row" style="border:none;"><span class="score-key">Pinhole numerical (6 pts)</span><span class="score-val" id="srNum">—</span></div>
+      <hr style="border:none;border-top:1px solid var(--border2);margin:10px 0;">
+      <div class="score-row" style="border:none;">
+        <span class="score-key" style="color:var(--gold);font-size:.68rem;">TOTAL / 20</span>
+        <span class="score-val ok" style="font-size:1rem;" id="srTotal">—</span>
+      </div>
+      <div style="height:3px;background:var(--panel2);border-radius:2px;overflow:hidden;margin:12px 0 6px;">
+        <div id="progFill" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:2px;transition:width .5s;width:0%;"></div>
+      </div>
+      <p id="progTxt" style="font-size:.62rem;color:var(--muted2);margin-bottom:14px;font-family:var(--fm);">Answer the sections to see your score</p>
+      <button class="btn btn-gold" style="width:100%;font-size:.92rem;" onclick="doSubmit()" id="submitBtn">📡 Submit to Ahmad's Grade Sheet</button>
+      <div id="subOk" style="display:none;margin-top:10px;padding:10px;background:var(--greenD);border:1px solid var(--green);border-radius:5px;font-size:.82rem;color:var(--green);font-weight:700;font-family:var(--fm);">✓ Submitted! Well done.</div>
+    </div>
+
+    <div>
+      <div style="text-align:center;margin-bottom:14px;">
+        <svg class="prog-ring" width="110" height="110" viewBox="0 0 80 80">
+          <circle class="prog-ring-bg" cx="40" cy="40" r="36"/>
+          <circle class="prog-ring-fill" id="ringFill" cx="40" cy="40" r="36"/>
+        </svg>
+        <div style="font-family:var(--fh);font-size:2.2rem;font-weight:900;color:var(--warm);margin-top:4px;" id="ringPct">—</div>
+        <div style="font-family:var(--fm);font-size:.52rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);">Score / 20</div>
+      </div>
+      <div class="card2">
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.8;">
+          Grade: <br>
+          <strong style="color:var(--warm);">Recall</strong> 2 pts · auto<br>
+          <strong style="color:var(--warm);">Game</strong> 6 pts · auto<br>
+          <strong style="color:var(--warm);">MCQ</strong> 6 pts · auto<br>
+          <strong style="color:var(--warm);">Pinhole</strong> 6 pts · auto<br>
+          <span style="color:var(--gold);">Total = /20</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:20px 54px;border-top:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;z-index:1;">
+  <div>
+    <div style="font-family:var(--fh);font-size:1rem;font-weight:900;color:var(--warm);">SHADOW STUDIO II</div>
+    <div style="font-family:var(--fm);font-size:.46rem;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:3px;">Ahmad Ghozlan · Grade 8 · Light Applications & Evaluation</div>
+  </div>
+  <a href="https://aghozlan.github.io" style="font-size:.7rem;color:var(--muted2);text-decoration:none;border:1px solid var(--border2);padding:5px 14px;border-radius:3px;">↗ All Labs</a>
+</footer>
+</main>
+</div>
+
+<script>
+'use strict';
+const APPS='https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+const LAB_START=Date.now();
+
+// ── STUDENTS ──────────────────────────────────────────────────────────────────
+const STUDENTS={
+  '8A':['أسماء هيثم علي ندوه','ابراهيم طارق صلاح معروف','ابراهيم محمد رفعت ابو حميد','احسان محمد وليد الشحبري','ادم وليد توفيق الخطيب','الين رشيد محمد احمد','تالا محمد عدنان العمري','تيا احمد محمد الركن','جنى ماهر غالب الدالي','جنى محي الدين فاعور','جود محمد مروان الشامي','حسين احمد محمود اسماعيل','حنين علي ابراهيم ميعاد','راما احمد توفيق الزقه','رهف سعيد شحادة فلاح','زينب محمد رياض حماده','سعاد مازن محمد الشامي','سمر محمد صابر ظاهر','سيلين منصور عبد شحاده','عادل محمد عادل ابو عرب','عبد الرحمن وليد محمد','علي مصطفى حسن سالم','علي ياسر نمر فاعور','عمران مازن صالح مرعي','فاطمه محمد خالد قاسم','قمر حسين عمر حمزة','كريم محمود عبد الحفيظ','ليا محمد عمر عباس','لين رشدي موسى الصالح','لين ماهر احمد العيسى','لين وسام احمد حسين','ماريا طلعت احمد مراد','محمد احمد محمد الصعيدي','محمد سامر محمد الصالح','محمد علي محمد ابو شقير','محمد علي محمد عبد الجليل','محمد قاسم عادل عفيفي','محمود شادي محمود شحادة','مرام احمد كايد خضره','نرجس هاني احمد عقلة','نور محمد علي علي','هلا شفيق علي فلوس','يارا محمود السيد السعدني'],
+  '8B':['أسينات احمد فريد العلي','اسامة بسام عبد الرحمن حمو','امال ساري علي زيداني','امنة محمد كمال قدورة','امير هشام مصطفى كروم','ايمان بسام خالد محمد','بيسان بسام عبد الرحمن حمو','تاليا انس ابراهيم المنديل','حبيبة عوني علي الزبيدات','حلا اشرف احمد الحاج علي','حنين فتحي علي حميد','راما خالد محمد عطعوط','رضوان جهاد رضوان ديب','رواد مروان ابراهيم العبدالله','زهراء عماد وليد شيخه','سارة فادي عدنان فارس','سامي يسار سامي معروف','سعيد ماهر سعيد سعيد','سهى عامر احمد عطية','صلاح الدين مصطفى بللي','علي مصطفى علي سريس','عمر حسام حسين الموسى','فاطمه جمال احمد المحمود','فضل احمد محمد حسين','كريم رائد محمد دلاشي','لارا محمد خالد عبد الغني','ليلاس وسيم شحادة شحاده','ماريه يحيى محمد ابو هموس','محمد احمد محمد شريده','محمد حسام عاطف ابو شباب','محمد حكمت غاندي عبدالله','محمد علي محمود احمد','محمد هشام احمد مره','محمود نايف مصطفى قاسميه','مريم محمود محي الدين مره','ملاك يونس محمد رحال','ميريانا احمد مصطفى عيتاني','هدى محمود محمد الركن','وسيله سعدو درويش ششنيه','يحيى زكريا سميح حمو'],
+  '8C':['آلاء رباح محمود شراب','آلاء محمود صالح أدلبي','ابراهيم محمد إبراهيم عزيز','امير ماجد احمد اسماعيل','بتول فايز محمد حمود','بهاء الدين بلال بهاء الدين رشيد','بيان كمال احمد ابو سويد','تبارك محمد محمد السيد يوسف','تغريد خالد عزات يحيى','جمال محمد جمال حوحو','جنى حسن محمد الظريف','جهاد فادي حسن سالم','حلا محمد حسن ابو شنار','حلا مصطفى محمد خير بللي','خالد وسيم خالد حسن','راما زياد علي الحاج علي','راما عبد المجيد محمد سالم','راما محمد يوسف العلي','رزان زياد عبد الناصر اصمهان','روان عماد فوزي ابراهيم','ريم اديب احمد حسين','ريم ماهر عطا الخطيب','ريم نور الدين فايز عبد الرازق','سلام عصام حمودة ناجي','سلام محمد بديع فيصل العلي','سيلا هشام امين الطه','شهد صالح احمد مطر','صالح محمد سامي الشورى','عبد الله حسن سعيد سليمان','علي محمد ابراهيم صالح','علي ناصر علي حماده','عمر عصام الصادق','فرح وائل باسل غزلان','لانا باسم امين صيداوي','لين احمد عيسى قاسم','لين وائل زياد الهبطه','ماسة عمار علي علي','محمد حسين احمد ندوه','محمود محمد سالم نجمي','ملكه سعد الدين برجاوي','نور الهدى جهاد عزات عليان'],
+  '8D':['إسراء ايمن محمد قدسيه','احمد زاهر جهاد قدورة','احمد علاء احمد اسماعيل','احمد محمد رياض الخطيب','ادم خالد محمود قدورة','اسراء احمد داري نوفل','الما محمد جمال ششنيه','اياد احمد حسين محمود','اياد احمد سمير قدوره','بيسان علي احمد قاسم','تقى احمد موسى عبدالله','حسن علي حسن حبقزي','حمزة عاطف محمد الحاج محمد','دانا نبيل نور الدين الهندي','راما فادي علي سليم','رهف خليل عبدالله شاهين','روزا محمود علي عودي','ريتال نضال موسى مناد','زهراء محمد حسن بركات','زينب محمد عبد غنام','سالي فادي عثمان عباس','سماح احمد عطا ابو عنزه','علا محمد زيد عثمان','علي كمال علي سعد','عمر محمود عباس الحايك','غزل محمد خليل ابو عرب','غفران محمد يوسف داوود','كريم عوني خالد عبد الغني','لين علي نايف حميد','ماريا ابراهيم درويش خزعل','محمد براء محمود حسن','محمد بهاء ابراهيم العيسى','محمد خالد محمود مطر','محمد ربيع محمد هنداوي','محمود علي محمود يوسف','مصطفى عماد الدين تراوي','ميار سعيد محمد حسن','نور عباس محمد عمر','هبة يحيى عيسى ابو مايهه','هيلين فيصل فضل الله الراشد','يوسف عامر محمد مصريه','يوسف هيثم فايز بركة']
+};
+function setSection(cls){
+  document.getElementById('stuClass').value=cls;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— Choose your name —</option>';
+  sel.disabled=false;
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});}
+const snBtns=document.querySelectorAll('.sn');
+window.addEventListener('scroll',()=>{
+  const ids=['hero','game','mcqs','numerical','evaluate'];
+  let cur='hero';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-200)cur=id;});
+  snBtns.forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes("'"+cur+"'")));
+},{passive:true});
+
+// ── TIMER ─────────────────────────────────────────────────────────────────────
+let elapsed=0;
+setInterval(()=>{
+  elapsed++;
+  const m=String(Math.floor(elapsed/60)).padStart(2,'0');
+  const s=String(elapsed%60).padStart(2,'0');
+  document.getElementById('timerVal').textContent=m+':'+s;
+},1000);
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── MCQ ENGINE ────────────────────────────────────────────────────────────────
+const picked={};
+const correct={};
+function pick(key,val,btn){
+  picked[key]=val;
+  btn.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function chk(key,ca,ok,bad){
+  const fb=document.getElementById('fb'+key);fb.style.display='block';
+  const sel=picked[key];
+  if(!sel){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  const letters=['A','B','C','D'];
+  const optsDiv=document.getElementById(key+'opts');
+  if(optsDiv){optsDiv.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.remove('sel');
+    if(letters[i]===ca)o.classList.add('ok');
+    else if(letters[i]===sel)o.classList.add('err');
+  });}
+  if(sel===ca){fb.className='fb ok';fb.innerHTML=ok;correct[key]=true;}
+  else{fb.className='fb err';fb.innerHTML=bad;}
+  updateScore();
+}
+function chkR(key,ca,pts,ok,bad){chk(key,ca,ok,bad);}
+
+// ── SHADOW PUPPETEER GAME ──────────────────────────────────────────────────────
+// Physics: real-time ray casting from source(s) past draggable opaque rectangle
+// Each level has a target shadow region on the right wall — student drags object to match
+
+const SP_FACTS=[
+  '💡 A point source creates exactly ONE sharp shadow (umbra only) — no penumbra. This is because all light originates from a single point.',
+  '💡 An extended source creates BOTH an umbra (total shadow) and a penumbra (partial shadow). The larger the source, the wider the penumbra.',
+  '💡 Moving the opaque object closer to the WALL shrinks the shadow. Moving it closer to the SOURCE enlarges it. The ratio is exact.',
+  '💡 Two light sources create two overlapping shadows. Where they overlap = deepest darkness (both sources blocked). Where only one shadow falls = partial shadow.',
+  '💡 A solar eclipse happens because the Moon\'s umbra falls on Earth — the same geometry you just used, scaled to 384,000 km!'
+];
+const SP_LEVELS=[
+  {name:'L1 · Point Source',src:[{x:80,y:220,r:8,ext:false}],
+   obj:{x:320,y:150,w:30,h:140},wallX:650,
+   target:{top:0.08,bot:0.92},
+   task:'Drag the object until the shadow fills most of the wall.',
+   fact:SP_FACTS[0]},
+  {name:'L2 · Extended Source',src:[{x:80,y:220,r:36,ext:true}],
+   obj:{x:320,y:145,w:28,h:130},wallX:650,
+   target:{top:0.05,bot:0.45},
+   task:'Extended source: move the object so the UMBRA covers only the top half of the wall.',
+   fact:SP_FACTS[1]},
+  {name:'L3 · Size Matters',src:[{x:80,y:220,r:8,ext:false}],
+   obj:{x:440,y:160,w:28,h:120},wallX:650,
+   target:{top:0.3,bot:0.7},
+   task:'Pull the object CLOSE to the wall so the shadow shrinks to only the middle third.',
+   fact:SP_FACTS[2]},
+  {name:'L4 · Two Sources',src:[{x:80,y:120,r:8,ext:false},{x:80,y:320,r:8,ext:false}],
+   obj:{x:320,y:155,w:28,h:130},wallX:650,
+   target:{top:0.35,bot:0.65},
+   task:'Two sources: position the object so the overlapping dark region covers the middle band.',
+   fact:SP_FACTS[3]},
+  {name:'L5 · Eclipse!',src:[{x:60,y:220,r:50,ext:true}],
+   obj:{x:260,y:185,w:26,h:70},wallX:650,
+   target:{top:0.38,bot:0.62},
+   task:'Eclipse simulation! Make the Moon\'s umbra land precisely on the centre of Earth (the wall).',
+   fact:SP_FACTS[4]}
+];
+
+let spLevel=0, spScore=0, spDragging=false, spDragOff={x:0,y:0};
+const spCanvas=document.getElementById('spCanvas');
+const spCtx=spCanvas.getContext('2d');
+let spW,spH,spObj;
+const factsUnlocked=[];
+
+function spSetup(){
+  spW=spCanvas.offsetWidth||780;spH=spCanvas.height;
+  spCanvas.width=spW;
+  spObj={...SP_LEVELS[spLevel].obj};
+  // scale from 780 base
+  const sx=spW/780;
+  spObj.x=Math.round(spObj.x*sx);spObj.y=Math.round(spObj.y*sx);
+  spObj.w=Math.round(spObj.w*sx);spObj.h=Math.round(spObj.h*sx);
+}
+
+function spSources(){
+  const sx=spW/780;
+  return SP_LEVELS[spLevel].src.map(s=>({x:s.x*sx,y:s.y*sx,r:s.r*sx,ext:s.ext}));
+}
+
+function spWallX(){return SP_LEVELS[spLevel].wallX*spW/780;}
+
+// Compute shadow cast by one source on the right wall
+function castShadow(src,obj,wallX){
+  const edges=[{y:obj.y},{y:obj.y+obj.h}];
+  let topY=Infinity,botY=-Infinity;
+  edges.forEach(e=>{
+    if(obj.x>src.x){
+      const t=(wallX-src.x)/(obj.x-src.x);
+      const wy=src.y+(e.y-src.y)*t;
+      if(wy<topY)topY=wy;if(wy>botY)botY=wy;
+    }
+  });
+  // also check other column of object
+  [{y:obj.y},{y:obj.y+obj.h}].forEach(e=>{
+    if(obj.x+obj.w>src.x){
+      const t=(wallX-src.x)/((obj.x+obj.w)-src.x);
+      const wy=src.y+(e.y-src.y)*t;
+      if(wy<topY)topY=wy;if(wy>botY)botY=wy;
+    }
+  });
+  return {top:topY,bot:botY};
+}
+
+function spDraw(){
+  if(!spW)spSetup();
+  const ctx=spCtx;
+  ctx.clearRect(0,0,spW,spH);
+  ctx.fillStyle='#050300';ctx.fillRect(0,0,spW,spH);
+  const wx=spWallX();
+  const lv=SP_LEVELS[spLevel];
+  const srcs=spSources();
+
+  // subtle grid
+  ctx.strokeStyle='rgba(255,220,120,.04)';ctx.lineWidth=1;
+  for(let x=0;x<spW;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,spH);ctx.stroke();}
+  for(let y=0;y<spH;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(spW,y);ctx.stroke();}
+
+  // wall
+  ctx.fillStyle='rgba(255,243,204,.07)';ctx.fillRect(wx,0,spW-wx,spH);
+  ctx.strokeStyle='rgba(255,220,120,.35)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(wx,0);ctx.lineTo(wx,spH);ctx.stroke();
+  ctx.fillStyle='rgba(240,230,204,.3)';ctx.font='bold 10px Courier Prime,monospace';
+  ctx.textAlign='center';ctx.fillText('SCREEN WALL',(wx+spW)/2,14);
+
+  // target zone (what the student aims for)
+  const tgt=lv.target;
+  ctx.fillStyle='rgba(240,168,48,.06)';
+  ctx.fillRect(wx,spH*tgt.top,spW-wx,spH*(tgt.bot-tgt.top));
+  ctx.strokeStyle='rgba(240,168,48,.25)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.strokeRect(wx,spH*tgt.top,spW-wx,spH*(tgt.bot-tgt.top));
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(240,168,48,.5)';ctx.font='9px Courier Prime,monospace';
+  ctx.textAlign='right';ctx.fillText('TARGET',(spW-4),spH*tgt.top+12);
+
+  // light sources
+  srcs.forEach(src=>{
+    if(src.ext){
+      // extended — disc glow
+      const g=ctx.createRadialGradient(src.x,src.y,0,src.x,src.y,src.r*2);
+      g.addColorStop(0,'rgba(255,243,150,.9)');g.addColorStop(1,'rgba(240,168,48,0)');
+      ctx.beginPath();ctx.arc(src.x,src.y,src.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,220,80,.2)';ctx.fill();
+      ctx.strokeStyle='rgba(255,220,80,.7)';ctx.lineWidth=2;ctx.stroke();
+      // extended source rays (sample points)
+      [-1,-.5,0,.5,1].forEach(f=>{
+        const sy2=src.y+src.r*f;
+        const topA=Math.atan2(spObj.y-sy2,spObj.x-src.x);
+        const botA=Math.atan2(spObj.y+spObj.h-sy2,spObj.x-src.x);
+        const ex1=src.x+Math.cos(topA)*600,ey1=sy2+Math.sin(topA)*600;
+        const ex2=src.x+Math.cos(botA)*600,ey2=sy2+Math.sin(botA)*600;
+        ctx.strokeStyle='rgba(255,220,80,.06)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(src.x,sy2);ctx.lineTo(ex1,ey1);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(src.x,sy2);ctx.lineTo(ex2,ey2);ctx.stroke();
+      });
+    } else {
+      // point source glow + rays
+      const g=ctx.createRadialGradient(src.x,src.y,0,src.x,src.y,src.r*4);
+      g.addColorStop(0,'rgba(255,243,150,.95)');g.addColorStop(1,'rgba(240,168,48,0)');
+      ctx.beginPath();ctx.arc(src.x,src.y,src.r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      // boundary rays
+      [[spObj.x,spObj.y],[spObj.x,spObj.y+spObj.h],[spObj.x+spObj.w,spObj.y],[spObj.x+spObj.w,spObj.y+spObj.h]].forEach(([ex,ey])=>{
+        ctx.strokeStyle='rgba(255,220,80,.1)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(src.x,src.y);ctx.lineTo(ex,ey);ctx.stroke();
+      });
+      // extend past object to wall
+      [[spObj.x,spObj.y],[spObj.x,spObj.y+spObj.h]].forEach(([ex,ey])=>{
+        const dx=ex-src.x,dy=ey-src.y;
+        const len=Math.hypot(dx,dy);
+        ctx.strokeStyle='rgba(255,160,40,.12)';ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex+dx/len*800,ey+dy/len*800);ctx.stroke();
+      });
+    }
+    ctx.fillStyle='rgba(255,243,150,.7)';ctx.font='9px Courier Prime,monospace';ctx.textAlign='left';
+    ctx.fillText(src.ext?'Extended Source':'Point Source',src.x+src.r+6,src.y+4);
+  });
+
+  // shadows on wall — render from back (all sources)
+  // compute union / intersection of shadow regions per source
+  const shadows=srcs.map(src=>castShadow(src,spObj,wx));
+  if(srcs.length===1){
+    const sh=shadows[0];
+    if(sh.top<sh.bot){
+      ctx.fillStyle='rgba(0,0,0,.9)';
+      ctx.fillRect(wx,sh.top,spW-wx,sh.bot-sh.top);
+      // label
+      ctx.fillStyle='rgba(200,64,64,.7)';ctx.font='bold 10px Courier Prime,monospace';
+      ctx.textAlign='center';ctx.fillText('UMBRA',(wx+spW)/2,(sh.top+sh.bot)/2+4);
+    }
+    // penumbra for extended
+    if(srcs[0].ext){
+      const src=srcs[0];
+      const pTop=castShadow({...src,y:src.y-src.r},spObj,wx);
+      const pBot=castShadow({...src,y:src.y+src.r},spObj,wx);
+      const penTop=Math.min(pTop.top,pBot.top);
+      const penBot=Math.max(pTop.bot,pBot.bot);
+      // draw penumbra region (lighter)
+      if(penTop<sh.top){
+        ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(wx,penTop,spW-wx,sh.top-penTop);
+      }
+      if(sh.bot<penBot){
+        ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(wx,sh.bot,spW-wx,penBot-sh.bot);
+      }
+      ctx.fillStyle='rgba(240,168,48,.5)';ctx.font='9px Courier Prime,monospace';
+      ctx.textAlign='center';
+      if(penTop<sh.top)ctx.fillText('PENUMBRA',(wx+spW)/2,(penTop+sh.top)/2+4);
+    }
+  } else {
+    // two sources — draw overlap
+    shadows.forEach((sh,i)=>{
+      if(sh.top<sh.bot){
+        ctx.fillStyle=i===0?'rgba(200,100,50,.35)':'rgba(50,100,200,.35)';
+        ctx.fillRect(wx,sh.top,spW-wx,sh.bot-sh.top);
+      }
+    });
+    // overlap = darkest
+    const oTop=Math.max(shadows[0].top,shadows[1].top);
+    const oBot=Math.min(shadows[0].bot,shadows[1].bot);
+    if(oBot>oTop){
+      ctx.fillStyle='rgba(0,0,0,.92)';ctx.fillRect(wx,oTop,spW-wx,oBot-oTop);
+      ctx.fillStyle='rgba(200,64,64,.7)';ctx.font='bold 10px Courier Prime,monospace';
+      ctx.textAlign='center';ctx.fillText('UMBRA (both blocked)',(wx+spW)/2,(oTop+oBot)/2+4);
+    }
+  }
+
+  // draggable opaque object
+  const isHover=spHover;
+  ctx.fillStyle=isHover?'rgba(255,243,204,.92)':'rgba(255,243,204,.82)';
+  ctx.fillRect(spObj.x,spObj.y,spObj.w,spObj.h);
+  ctx.strokeStyle=isHover?'rgba(240,168,48,.9)':'rgba(240,168,48,.5)';
+  ctx.lineWidth=isHover?2.5:1.5;ctx.strokeRect(spObj.x,spObj.y,spObj.w,spObj.h);
+  ctx.fillStyle='rgba(12,10,7,.8)';ctx.font='bold 9px Courier Prime,monospace';ctx.textAlign='center';
+  ctx.fillText('OPAQUE',spObj.x+spObj.w/2,spObj.y+spObj.h/2+3);
+
+  // accuracy meter
+  const acc=spAccuracy();
+  document.getElementById('spAcc').textContent=acc+'%';
+  if(acc>=85){document.getElementById('spMsg').textContent='✓ Target matched! Hit Next Level.';}
+  else if(acc>=60){document.getElementById('spMsg').textContent='Getting close — keep adjusting!';}
+  else{document.getElementById('spMsg').textContent=lv.task;}
+  document.getElementById('spNextBtn').style.display=acc>=85?'inline-flex':'none';
+}
+
+// Accuracy: how well does the current shadow match the target
+function spAccuracy(){
+  const lv=SP_LEVELS[spLevel];
+  const wx=spWallX();
+  const srcs=spSources();
+  const shadows=srcs.map(src=>castShadow(src,spObj,wx));
+  let shTop,shBot;
+  if(srcs.length===1){shTop=shadows[0].top;shBot=shadows[0].bot;}
+  else{shTop=Math.max(shadows[0].top,shadows[1].top);shBot=Math.min(shadows[0].bot,shadows[1].bot);}
+  const tTop=lv.target.top*spH,tBot=lv.target.bot*spH;
+  const overlap=Math.max(0,Math.min(shBot,tBot)-Math.max(shTop,tTop));
+  const union=Math.max(shBot,tBot)-Math.min(shTop,tTop);
+  if(union<=0)return 0;
+  return Math.round((overlap/union)*100);
+}
+
+// drag handling
+let spHover=false;
+function ptInObj(x,y){return x>=spObj.x&&x<=spObj.x+spObj.w&&y>=spObj.y&&y<=spObj.y+spObj.h;}
+function evPos(e){
+  const rect=spCanvas.getBoundingClientRect();
+  const sx=spW/rect.width;
+  const t=e.touches?e.touches[0]:e;
+  return{x:(t.clientX-rect.left)*sx,y:(t.clientY-rect.top)*(spH/rect.height)};
+}
+spCanvas.addEventListener('mousedown',e=>{
+  const p=evPos(e);
+  if(ptInObj(p.x,p.y)){spDragging=true;spDragOff={x:p.x-spObj.x,y:p.y-spObj.y};spCanvas.style.cursor='grabbing';}
+});
+spCanvas.addEventListener('mousemove',e=>{
+  const p=evPos(e);spHover=ptInObj(p.x,p.y);
+  if(spDragging){
+    const wx=spWallX();
+    spObj.x=Math.max(srcs()[0].x+20,Math.min(wx-spObj.w-10,p.x-spDragOff.x));
+    spObj.y=Math.max(5,Math.min(spH-spObj.h-5,p.y-spDragOff.y));
+  }
+  spDraw();
+});
+function srcs(){return spSources();}
+spCanvas.addEventListener('mouseup',()=>{spDragging=false;spCanvas.style.cursor='grab';});
+spCanvas.addEventListener('mouseleave',()=>{spDragging=false;spHover=false;});
+spCanvas.addEventListener('touchstart',e=>{e.preventDefault();const p=evPos(e);if(ptInObj(p.x,p.y)){spDragging=true;spDragOff={x:p.x-spObj.x,y:p.y-spObj.y};}},{passive:false});
+spCanvas.addEventListener('touchmove',e=>{
+  e.preventDefault();const p=evPos(e);
+  if(spDragging){
+    const wx=spWallX();
+    spObj.x=Math.max(90,Math.min(wx-spObj.w-10,p.x-spDragOff.x));
+    spObj.y=Math.max(5,Math.min(spH-spObj.h-5,p.y-spDragOff.y));
+    spDraw();
+  }
+},{passive:false});
+spCanvas.addEventListener('touchend',()=>{spDragging=false;});
+
+function spNext(){
+  const lv=SP_LEVELS[spLevel];
+  const pts=spLevel<2?1:spLevel<4?1:2; // L5 worth 2 pts
+  spScore+=pts;correct['sp'+spLevel]=true;
+  // unlock fact
+  factsUnlocked.push(lv.fact);
+  document.getElementById('factCount').textContent=factsUnlocked.length+'/5';
+  document.getElementById('factLog').innerHTML=factsUnlocked.map(f=>`<div style="padding:5px 0;border-bottom:1px solid var(--border);font-size:.8rem;">${f}</div>`).join('');
+  // badge
+  document.getElementById('b'+spLevel).className='pq-badge done';
+  spLevel++;
+  if(spLevel>=SP_LEVELS.length){
+    document.getElementById('spNextBtn').style.display='none';
+    document.getElementById('spMsg').textContent='🏆 All levels complete! Score: '+spScore+'/6';
+    document.getElementById('fbGame').className='fb ok';
+    document.getElementById('fbGame').style.display='block';
+    document.getElementById('fbGame').textContent='Outstanding! You mastered all 5 levels of shadow physics. Your score: '+spScore+'/6 pts.';
+    toast('🏆 Shadow Puppeteer complete! '+spScore+'/6');
+    updateScore();return;
+  }
+  document.getElementById('b'+spLevel).className='pq-badge active';
+  document.getElementById('spLevel').textContent=spLevel+1;
+  document.getElementById('spScore').textContent=spScore;
+  document.getElementById('spNextBtn').style.display='none';
+  spSetup();spDraw();
+  document.getElementById('fbGame').className='fb ok';
+  document.getElementById('fbGame').style.display='block';
+  document.getElementById('fbGame').textContent=lv.fact+' — Level '+(spLevel)+' unlocked!';
+  toast('Level '+(spLevel)+' unlocked! '+pts+' pt'+(pts>1?'s':''));
+  updateScore();
+}
+function spReset(){spSetup();spDraw();}
+function spInit(){spSetup();spDraw();}
+
+// ── MCQ BANK ──────────────────────────────────────────────────────────────────
+const MCQS=[
+  {q:'A sharp-edged shadow with no soft region around it is produced by:',
+   opts:['A large extended source like a fluorescent strip light','A point source — single origin, boundary rays are perfectly defined','Two sources at different positions','A translucent object'],
+   ans:1,fb:'A point source has no width, so two exact boundary rays define a perfect sharp-edged umbra. No partial blocking = no penumbra.'},
+  {q:'As you move an opaque ball closer to a point light source (further from the wall), the shadow on the wall:',
+   opts:['Gets smaller and sharper','Gets larger — the diverging rays are blocked at a wider angle','Stays the same — only the wall distance matters','Disappears'],
+   ans:1,fb:'Moving the object closer to the source intercepts more of the diverging cone of light, projecting a larger shadow. Moving it closer to the wall shrinks it.'},
+  {q:'During a total solar eclipse seen from Earth, the observer is standing in the Moon\'s:',
+   opts:['Penumbra — some sunlight still arrives','Umbra — no sunlight reaches them at all','Reflection zone — Moon reflects sunlight away','Above the shadow entirely'],
+   ans:1,fb:'Total solar eclipse = inside the umbra. Zero direct sunlight. Standing in the penumbra gives only a partial eclipse. Rectilinear propagation makes the geometry predictable.'},
+  {q:'A student makes a pinhole camera and photographs a tree. The image is upside down. Why?',
+   opts:['The pinhole acts as a lens and inverts the image optically','Light from the top of the tree travels in a straight line downward through the hole, hitting the bottom of the screen — and vice versa','Cameras always flip images electronically','The screen material reverses the image'],
+   ans:1,fb:'Rectilinear propagation: a ray from the top travels straight downward through the tiny hole and strikes the bottom of the screen. Rays cross at the pinhole — image inverts.'},
+  {q:'Translucent materials are used in bathroom windows because:',
+   opts:['They block all light keeping the room dark','They scatter light — the room gets illuminated but no clear image forms (privacy)','They reflect light back outside','They absorb ultraviolet rays only'],
+   ans:1,fb:'Translucent = light passes through but scatters. Result: room is lit (practical) but no clear image forms through the glass (private). Perfect application of material classification.'},
+  {q:'You observe that your shadow is exactly twice as long as you are tall. At the same time of day in summer, your shadow is only 0.8× your height. What changed?',
+   opts:['You grew taller in winter','The sun is LOWER in the sky in winter — rays hit at a shallower angle, making shadows longer','The ground is longer in winter','The sun is further away in winter'],
+   ans:1,fb:'In winter, the sun reaches a lower maximum elevation angle above the horizon. Lower sun = rays arrive more horizontally = longer shadow. Same geometry as moving a lamp lower in a room.'}
+];
+let mcqScores=new Array(MCQS.length).fill(0);
+let mcqLocked=new Array(MCQS.length).fill(false);
+function buildMCQ(){
+  const cont=document.getElementById('mcqContainer');
+  MCQS.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='q-block';
+    d.innerHTML=`<div class="q-num">Question ${i+1} of ${MCQS.length} &nbsp;·&nbsp; 1 point</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts" id="mqopts${i}">
+        ${q.opts.map((o,oi)=>`<div class="opt" onclick="pickMQ(${i},${oi},this)"><span class="ml">${String.fromCharCode(65+oi)}</span>${o}</div>`).join('')}
+      </div>
+      <button class="chk" onclick="chkMQ(${i})">✓ Check</button>
+      <div class="fb" id="fbmq${i}"></div>`;
+    cont.appendChild(d);
+  });
+}
+function pickMQ(qi,oi,btn){
+  if(mcqLocked[qi])return;
+  document.querySelectorAll('#mqopts'+qi+' .opt').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');picked['mq_'+qi]=oi;
+}
+function chkMQ(qi){
+  if(mcqLocked[qi])return;
+  const q=MCQS[qi];const sel=picked['mq_'+qi];
+  const fb=document.getElementById('fbmq'+qi);fb.style.display='block';
+  if(sel===undefined){fb.className='fb inf';fb.textContent='Select an answer first!';return;}
+  document.querySelectorAll('#mqopts'+qi+' .opt').forEach((o,i)=>{
+    o.classList.remove('sel');
+    if(i===q.ans)o.classList.add('ok');
+    else if(i===sel&&sel!==q.ans)o.classList.add('err');
+  });
+  if(sel===q.ans){fb.className='fb ok';fb.textContent='✓ '+q.fb;mcqScores[qi]=1;correct['mq_'+qi]=true;}
+  else{fb.className='fb err';fb.textContent='✗ '+q.fb;}
+  mcqLocked[qi]=true;updateScore();
+}
+buildMCQ();
+
+// ── PINHOLE NUMERICAL ─────────────────────────────────────────────────────────
+// h = H × (d_i/d_o) = 18 × (18/54) = 6 cm
+let pinScore=0;
+function checkPin(){
+  const val=parseFloat(document.getElementById('pAns').value);
+  const fb=document.getElementById('fbPin');fb.style.display='block';
+  if(isNaN(val)){fb.className='fb inf';fb.textContent='Enter your calculated answer!';return;}
+  if(Math.abs(val-6)<=0.15){
+    fb.className='fb ok';
+    fb.textContent='✓ Correct! h = 18 × (18/54) = 18 × 0.333 = 6 cm. The image is 6 cm tall and inverted.';
+    pinScore=2;correct.pin=true;
+  } else {
+    fb.className='fb err';
+    fb.textContent='✗ Use: h = H × (d_i / d_o) = 18 × (18 / 54). Tip: 18/54 = 1/3.';
+    pinScore=0;
+  }
+  drawPinhole(parseFloat(document.getElementById('pAns').value)||0);
+  updateScore();
+}
+function pinLive(){drawPinhole(parseFloat(document.getElementById('pAns').value)||0);}
+
+function drawPinhole(studentH){
+  const cv=document.getElementById('cvPin');if(!cv)return;
+  const W=cv.offsetWidth||640;cv.width=W;
+  const ctx=cv.getContext('2d');const H=cv.height;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  const scale=W/640;
+  const ox=70*scale,oy=H/2,OH=70*scale; // object
+  const px=290*scale;                   // pinhole x
+  const sx=520*scale;                   // screen x
+  const imgH=6*scale*4;                 // correct image = 6cm → display units
+  const stuH=Math.min(Math.abs(studentH)*scale*4,H*.44);
+
+  // object (candle)
+  ctx.strokeStyle='rgba(240,168,48,.9)';ctx.lineWidth=3*scale;
+  ctx.beginPath();ctx.moveTo(ox,oy+OH);ctx.lineTo(ox,oy-OH);ctx.stroke();
+  ctx.fillStyle='rgba(255,243,150,.9)';ctx.beginPath();ctx.arc(ox,oy-OH,5*scale,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(240,168,48,.7)';ctx.font=(10*scale)+'px Courier Prime,monospace';ctx.textAlign='center';
+  ctx.fillText('H=18cm',ox,oy+OH+14*scale);
+  ctx.fillText('d_o=54cm',(ox+px)/2,oy+H*.3);
+
+  // pinhole
+  ctx.strokeStyle='rgba(255,243,204,.3)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,oy-10*scale);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px,oy+10*scale);ctx.lineTo(px,H);ctx.stroke();
+  ctx.fillStyle='rgba(240,168,48,.8)';ctx.font='bold '+(9*scale)+'px Courier Prime,monospace';
+  ctx.fillText('•',px,oy+3*scale);ctx.fillText('pinhole',px,oy-16*scale);
+  ctx.fillText('d_i=18cm',(px+sx)/2,oy+H*.3);
+
+  // screen
+  ctx.strokeStyle='rgba(255,243,204,.4)';ctx.lineWidth=2*scale;
+  ctx.beginPath();ctx.moveTo(sx,0);ctx.lineTo(sx,H);ctx.stroke();
+  ctx.fillStyle='rgba(255,243,204,.1)';ctx.fillRect(sx,0,30*scale,H);
+
+  // rays from top and bottom of candle through pinhole
+  ctx.strokeStyle='rgba(255,160,40,.22)';ctx.lineWidth=1.2*scale;ctx.setLineDash([5,3]);
+  // top ray: from (ox,oy-OH) through (px,oy) to screen bottom
+  const topRayY=oy+(oy-OH-oy)/(px-ox)*(sx-px)+oy; // = oy+OH at sx (inverted)
+  ctx.beginPath();ctx.moveTo(ox,oy-OH);ctx.lineTo(px,oy);ctx.lineTo(sx,oy+OH);ctx.stroke();
+  // bottom ray
+  ctx.beginPath();ctx.moveTo(ox,oy+OH);ctx.lineTo(px,oy);ctx.lineTo(sx,oy-OH);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // correct image (green ghost)
+  ctx.strokeStyle='rgba(74,158,106,.5)';ctx.lineWidth=2*scale;
+  ctx.beginPath();ctx.moveTo(sx+5*scale,oy+imgH);ctx.lineTo(sx+5*scale,oy-imgH);ctx.stroke();
+  ctx.fillStyle='rgba(74,158,106,.5)';ctx.fillText('h=6cm (correct)',sx+28*scale,oy);
+
+  // student answer (gold)
+  if(stuH>0){
+    ctx.strokeStyle='rgba(240,168,48,.8)';ctx.lineWidth=2.5*scale;
+    ctx.beginPath();ctx.moveTo(sx+14*scale,oy+stuH);ctx.lineTo(sx+14*scale,oy-stuH);ctx.stroke();
+    ctx.fillStyle='rgba(240,168,48,.8)';ctx.fillText('your h',sx+36*scale,oy-stuH-4*scale);
+  }
+  ctx.fillStyle='rgba(240,230,204,.25)';ctx.font=(9*scale)+'px Courier Prime,monospace';
+  ctx.textAlign='center';ctx.fillText('Inverted image',sx+15*scale,H-6*scale);
+}
+drawPinhole(0);
+window.addEventListener('resize',()=>{if(spW)spSetup();drawPinhole(parseFloat(document.getElementById('pAns').value)||0);});
+
+// ── SCORING ───────────────────────────────────────────────────────────────────
+function calcScore(){
+  const recall=(correct.r1?1:0)+(correct.r2?1:0);          // /2
+  const game=spScore;                                        // /6
+  const mcq=mcqScores.reduce((a,b)=>a+b,0);                // /6
+  const numPin=pinScore;                                     // /2
+  const numMCQ=(correct.pq2?1:0)+(correct.pq3?1:0);        // /2 (2 follow-up q's)
+  const num=numPin+numMCQ;                                   // /4 total numerical section
+  const raw=recall+game+mcq+num;                             // /18 max auto
+  // Scale: recall 2 + game 6 + mcq 6 + num 4 = 18 base → /20 via linear scale
+  // BUT: we keep it clean: just add 2 bonus pts if they complete all (participation)
+  const total=Math.min(20,raw+(raw>=16?2:raw>=12?1:0));
+  return{recall,game,mcq,num,raw,total};
+}
+function updateScore(){
+  const s=calcScore();
+  document.getElementById('srRecall').textContent=s.recall+'/2';
+  document.getElementById('srGame').textContent=s.game+'/6';
+  document.getElementById('srMCQ').textContent=s.mcq+'/6';
+  document.getElementById('srNum').textContent=s.num+'/4';
+  document.getElementById('srTotal').textContent=s.total+'/20';
+  document.getElementById('ringPct').textContent=s.total;
+  document.getElementById('ringFill').style.strokeDashoffset=226-(226*s.total/20);
+  const done=Object.keys(correct).length;
+  const max=2+SP_LEVELS.length+MCQS.length+3; // recall+game levels+mcq+pin+2followup
+  document.getElementById('progFill').style.width=Math.min(100,done/max*100)+'%';
+  document.getElementById('progTxt').textContent=s.total+' / 20 — keep going!';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+async function doSubmit(){
+  const name=document.getElementById('stuName').value;
+  const cls=document.getElementById('stuClass').value;
+  if(!name){toast('Choose your name first!');return;}
+  const s=calcScore();
+  const payload={
+    sheet:'LightLab2_G8',name,class:cls,
+    time_min:+(elapsed/60).toFixed(1),
+    recall:s.recall,game_score:s.game,
+    mcq_score:s.mcq,num_score:s.num,
+    raw_score:s.raw,score_20:s.total,
+    mq0:mcqScores[0],mq1:mcqScores[1],mq2:mcqScores[2],
+    mq3:mcqScores[3],mq4:mcqScores[4],mq5:mcqScores[5],
+    pin_ans:document.getElementById('pAns').value||'',
+    pin_ok:pinScore>0?1:0,
+    pq2_ok:correct.pq2?1:0,pq3_ok:correct.pq3?1:0,
+    sp_levels:spLevel,facts:factsUnlocked.length
+  };
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Sending…';
+  try{
+    await fetch(APPS,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)});
+    document.getElementById('subOk').style.display='block';
+    btn.textContent='✓ Submitted';
+    toast('Lab submitted! Score: '+s.total+'/20');
+  }catch(e){btn.textContent='Error — retry';btn.disabled=false;toast('Connection error. Try again.');}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+spInit();
+updateScore();
+</script>
+</body>
+</html>
