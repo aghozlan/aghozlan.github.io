@@ -36,25 +36,19 @@ body{
   overflow-x:hidden;
 }
 
-/* RESPONSIVE SCALING */
+/* ─────────────── RESPONSIVE FIXES ─────────────── */
 .game-canvas-wrap, .circuit-wrap, #mmCanvas {
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-canvas {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-}
+canvas { max-width: 100%; height: auto; object-fit: contain; }
 
-/* UI GRIDS & DECORATIONS */
+/* ─────────────── UI ELEMENTS ─────────────── */
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(245,209,48,.018) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(245,209,48,.018) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(245,209,48,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(245,209,48,.018) 1px,transparent 1px);
   background-size:44px 44px;
 }
 body::after{
@@ -83,9 +77,9 @@ aside{
 .timer-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:.5rem .7rem;display:flex;align-items:center;gap:.5rem;}
 .timer-icon{color:var(--accent);font-size:.85rem;}
 .timer-val{font-family:'IBM Plex Mono',monospace;font-size:1rem;font-weight:600;color:var(--accent);letter-spacing:.05em;}
-.prog-label{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-.prog-dots{display:flex;gap:.4rem;flex-wrap:wrap;}
-.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .3s;font-family:'IBM Plex Mono',monospace;}
+
+.prog-dots{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom: 1rem;}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .3s;}
 .dot.done{background:var(--lime);border-color:var(--lime);color:#0a0c0e;box-shadow:0 0 8px var(--lime);}
 .dot.active{background:var(--bg);border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px rgba(245,209,48,.4);}
 
@@ -95,12 +89,6 @@ aside{
 .ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset .6s ease;transform:rotate(-90deg);transform-origin:50% 50%;}
 .ring-label{font-family:'IBM Plex Mono',monospace;font-size:1.2rem;font-weight:600;fill:var(--accent);}
 .ring-sub{font-size:.55rem;fill:var(--muted);}
-.score-tag{font-size:.65rem;color:var(--muted);text-align:center;letter-spacing:.05em;}
-
-.nav-links{display:flex;flex-direction:column;gap:.2rem;margin-top:auto;}
-.nav-link{font-size:.68rem;color:var(--muted);padding:.3rem .5rem;border-radius:4px;cursor:pointer;transition:all .2s;text-decoration:none;display:flex;align-items:center;gap:.4rem;}
-.nav-link:hover,.nav-link.active-link{color:var(--accent);background:var(--panel2);}
-.nav-link-badge{font-size:.5rem;font-weight:700;font-family:'IBM Plex Mono',monospace;background:var(--border2);color:var(--accent);padding:.1rem .3rem;border-radius:3px;}
 
 main{flex:1;padding:2rem 2.2rem;max-width:880px;}
 
@@ -112,26 +100,19 @@ main{flex:1;padding:2rem 2.2rem;max-width:880px;}
 .sec-tag{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.15rem .4rem;border-radius:3px;margin-left:auto;}
 .tag-explore{background:rgba(78,205,196,.15);color:var(--blue);}
 .tag-explain{background:rgba(255,220,50,.15);color:var(--accent);}
+.tag-evaluate{background:rgba(162,155,254,.15);color:var(--purple);}
 .sec-chevron{color:var(--muted);transition:transform .3s;font-size:.8rem;margin-left:.5rem;}
 .section.open .sec-chevron{transform:rotate(180deg);}
 .section-title{font-size:.95rem;font-weight:700;color:var(--white);}
 .section-body{display:none;padding:1.4rem 1.5rem;}
 .section.open .section-body{display:block;}
 
-h3{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:.7rem;}
-p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
+.picker-card{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:1.2rem;margin-bottom:1.8rem;}
+.picker-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;}
+select, input[type="text"], textarea{background:var(--bg2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;padding:.5rem .7rem;width:100%;}
+select:focus, input:focus, textarea:focus{outline:none;border-color:var(--accent);}
 
-.ex-row{display:flex;align-items:center;gap:.7rem;margin:.5rem 0;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:.7rem 1rem;flex-wrap:wrap;}
-.ex-label{font-size:.78rem;color:var(--text);flex:1;min-width:200px;}
-.ex-input{background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;padding:.35rem .6rem;width:90px;text-align:center;}
-.ex-input:focus{outline:none;border-color:var(--accent);}
-.ex-unit{font-size:.7rem;color:var(--muted);}
-.ex-btn{font-size:.7rem;font-weight:700;padding:.35rem .7rem;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;color:var(--accent);cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;}
-.ex-btn:hover{background:var(--accent);color:#0a0c0e;}
-.ex-fb{font-size:.72rem;font-weight:600;min-width:80px;}
-.ex-fb.correct{color:var(--lime);}
-.ex-fb.wrong{color:var(--red);}
-
+/* ─────────────── WORKBENCH STYLES ─────────────── */
 #mmCanvas{border:1px solid var(--border2);border-radius:8px;display:block;cursor:pointer; background:#0f1215;}
 .circuit-wrap{display:flex;flex-direction:column;align-items:center;gap:.8rem;}
 .game-controls{display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap;align-items:center;}
@@ -144,18 +125,30 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
 .meter-reading.zero{color:var(--muted);}
 .meter-reading.danger{color:var(--red); border-color:var(--red); background:rgba(255,71,87,0.05);}
 
-/* Status Box */
 #wbStatusBox { padding: .8rem; margin-top: .5rem; border-radius: 6px; font-size: .8rem; font-weight: 600; display: none; text-align: center; }
 #wbStatusBox.warning { background: rgba(255,159,67,0.1); color: var(--orange); border: 1px solid var(--orange); display: block; }
 #wbStatusBox.danger { background: rgba(255,71,87,0.1); color: var(--red); border: 1px solid var(--red); display: block; }
 #wbStatusBox.success { background: rgba(143,255,107,0.1); color: var(--lime); border: 1px solid var(--lime); display: block; }
 #wbStatusBox.info { background: rgba(78,205,196,0.1); color: var(--blue); border: 1px solid var(--blue); display: block; }
 
+/* ─────────────── EXERCISE & SUBMIT STYLES ─────────────── */
+.ex-row{display:flex;align-items:center;gap:.7rem;margin:.5rem 0;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:.7rem 1rem;flex-wrap:wrap;}
+.ex-label{font-size:.78rem;color:var(--text);flex:1;min-width:200px;}
+.ex-input{background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;padding:.35rem .6rem;width:90px;text-align:center;}
+.ex-btn{font-size:.7rem;font-weight:700;padding:.35rem .7rem;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;color:var(--accent);cursor:pointer;transition:all .2s;}
+.ex-btn:hover{background:var(--accent);color:#0a0c0e;}
+.ex-fb{font-size:.72rem;font-weight:600;min-width:80px;}
+.ex-fb.correct{color:var(--lime);}
+.ex-fb.wrong{color:var(--red);}
+
+.submit-btn{font-size:.9rem;font-weight:800;padding:.8rem 2rem;border-radius:7px;border:none;background:linear-gradient(135deg,var(--accent),var(--orange));color:#0a0c0e;cursor:pointer;transition:all .2s;display:block;margin:2rem auto 1rem;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,209,48,.3);}
+#submitResult{display:none;text-align:center;padding:1.5rem;background:var(--panel2);border:1px solid var(--border2);border-radius:10px;}
+
 @media(max-width:820px){
   .app{flex-direction:column;}
-  aside{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:.8rem;}
+  aside{width:100%;height:auto;flex-direction:row;flex-wrap:wrap;padding:.8rem;}
   main{padding:1.2rem 1rem;}
-  .nav-links{display:none;}
 }
 </style>
 </head>
@@ -166,16 +159,22 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
     <div class="lab-brand">
       <div class="lab-icon">🔌</div>
       <div class="lab-title">Electric Measurement</div>
-      <div class="lab-sub">Part 2 · Grade 7 · Physics</div>
+      <div class="lab-sub">Part 2 · Grade 7</div>
     </div>
+    
+    <div class="timer-box">
+      <span class="timer-icon">⏱</span>
+      <span class="timer-val" id="timerDisp">00:00</span>
+    </div>
+
     <div>
-      <div class="prog-label">PROGRESS</div>
       <div class="prog-dots">
         <div class="dot active" id="dot1" onclick="openSection('s1')">E1</div>
         <div class="dot" id="dot2" onclick="openSection('s2')">E2</div>
         <div class="dot" id="dot3" onclick="openSection('s3')">E3</div>
       </div>
     </div>
+
     <div class="score-wrap">
       <svg class="score-ring-svg" width="80" height="80" viewBox="0 0 80 80">
         <circle class="ring-track" cx="40" cy="40" r="36"/>
@@ -183,16 +182,27 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
         <text class="ring-label" x="40" y="44" text-anchor="middle" id="ringScore">0</text>
         <text class="ring-sub" x="40" y="54" text-anchor="middle">/20</text>
       </svg>
-      <div class="score-tag">LIVE SCORE</div>
-    </div>
-    <div class="nav-links">
-      <a class="nav-link active-link" onclick="openSection('s1')"><span class="nav-link-badge">E1</span>Interactive Workbench</a>
-      <a class="nav-link" onclick="openSection('s2')"><span class="nav-link-badge">E2</span>Calculations</a>
+      <div class="score-tag">TOTAL SCORE</div>
     </div>
   </aside>
 
   <main>
-    
+    <div class="picker-card">
+      <div class="picker-row">
+        <div style="flex:1;">
+          <label style="font-size:0.7rem; color:var(--accent);">STUDENT NAME</label>
+          <input type="text" id="studentName" placeholder="Enter full name" onchange="initStudent()">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:0.7rem; color:var(--accent);">CLASS</label>
+          <select id="studentClass">
+            <option value="7A">Grade 7 - Section A</option>
+            <option value="7B">Grade 7 - Section B</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="section open" id="s1">
       <div class="section-header" onclick="toggleSection('s1')">
         <div class="sec-badge">E1</div>
@@ -201,7 +211,7 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
         <div class="sec-chevron">▼</div>
       </div>
       <div class="section-body">
-        <p><strong>Goal:</strong> Learn to connect your multimeter properly. Drag the red and black probes from the multimeter to the glowing contact points on the circuit. Use the "Cut / Close Wire" button when needed!</p>
+        <p><strong>Goal:</strong> Learn to connect your multimeter properly. Drag the red and black probes from the multimeter to the glowing contact points on the circuit. Use the "Cut / Close Wire" button when measuring current!</p>
         
         <div class="circuit-wrap">
           <div style="display:flex; width:100%; justify-content:space-between; align-items:flex-end;">
@@ -210,7 +220,7 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
               <button class="gc-btn secondary" id="btnModeVm" onclick="wbSetMode('voltmeter')">Use as Voltmeter (V)</button>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:.65rem;color:var(--muted);font-family:'IBM Plex Mono';">MULTIMETER READING</div>
+              <div style="font-size:.65rem;color:var(--muted);">READING</div>
               <div style="display:flex; align-items:baseline; gap:.4rem; justify-content:flex-end;">
                 <div class="meter-reading zero" id="mmReadVal">—</div>
                 <div style="font-weight:700;color:var(--accent);font-size:1.1rem;" id="mmReadUnit"></div>
@@ -240,20 +250,46 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
         <div class="sec-chevron">▼</div>
       </div>
       <div class="section-body">
-        <p>Verify Ohm's Law and voltage divider rules using the $U$ notation.</p>
+        <p>Apply Ohm's Law using standard notation ($U$ for Voltage, $I$ for Current, $R$ for Resistance).</p>
         <div class="ex-row">
-          <span class="ex-label">A lamp has resistance <span id="r1d">12</span> Ω and is connected to a $U$ = <span id="u1d">6</span> V battery. What current does the ammeter read?</span>
+          <span class="ex-label">A lamp has resistance <span id="r1d">12</span> Ω and is connected to a battery with $U$ = <span id="u1d">6</span> V. What current $I$ does the ammeter read?</span>
           <input class="ex-input" id="ex1" placeholder="0.00">
-          <span class="ex-unit">A</span>
           <button class="ex-btn" onclick="checkEx(1)">Check</button>
           <span class="ex-fb" id="exFb1"></span>
         </div>
-        <div class="ex-row" style="margin-top:.7rem;">
-          <span class="ex-label">Two lamps (<span id="r2ad">8</span> Ω and <span id="r2bd">12</span> Ω) are in SERIES with a $U$ = <span id="u2d">10</span> V battery. What is the voltage drop $U_{L1}$ across the first lamp?</span>
+        <div class="ex-row">
+          <span class="ex-label">Two lamps (<span id="r2ad">8</span> Ω and <span id="r2bd">12</span> Ω) are in SERIES with a battery $U$ = <span id="u2d">10</span> V. What is the voltage drop $U_{L1}$ across the first lamp?</span>
           <input class="ex-input" id="ex2" placeholder="0.00">
-          <span class="ex-unit">V</span>
           <button class="ex-btn" onclick="checkEx(2)">Check</button>
           <span class="ex-fb" id="exFb2"></span>
+        </div>
+        <div class="ex-row">
+          <span class="ex-label">In a parallel circuit: Branch A has <span id="ra3d">6</span> Ω. The Battery supplies $U$ = <span id="u3d">12</span> V. What current does the ammeter in Branch A read?</span>
+          <input class="ex-input" id="ex3" placeholder="0.00">
+          <button class="ex-btn" onclick="checkEx(3)">Check</button>
+          <span class="ex-fb" id="exFb3"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s3">
+      <div class="section-header" onclick="toggleSection('s3')">
+        <div class="sec-badge">E3</div>
+        <div class="section-title">Final Assessment & Submission</div>
+        <div class="sec-tag tag-evaluate">Evaluate</div>
+        <div class="sec-chevron">▼</div>
+      </div>
+      <div class="section-body">
+        <p style="margin-bottom: 0.5rem; color:var(--accent);">Written Explanation:</p>
+        <textarea id="writtenAns" placeholder="In your own words, explain the difference in how you connect an ammeter versus a voltmeter in a circuit. Why is this difference important?"></textarea>
+        
+        <button class="submit-btn" onclick="submitApp()">Submit Simulation Data</button>
+        
+        <div id="submitResult">
+          <div style="font-size:1.2rem; color:var(--white); margin-bottom: 0.5rem;">Submission Successful!</div>
+          <div class="final-score" id="finalScore">0/20</div>
+          <div style="font-size:1rem; color:var(--lime); margin-top:0.5rem;" id="finalGrade"></div>
+          <div style="font-size:0.8rem; color:var(--muted); margin-top:0.5rem;" id="finalMsg"></div>
         </div>
       </div>
     </div>
@@ -262,50 +298,94 @@ p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
 </div>
 
 <script>
-/* ─── UI & NAVIGATION ─── */
+/* ─── STATE VARIABLES ─── */
+let R1=12, U1=6, R2a=8, R2b=12, U2=10, Ra3=6, Rb3=12, U3=12;
+let exScores = {1:0, 2:0, 3:0};
+let mcqScores = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0}; // Placeholders to prevent script failure
+let gameScore = 0, gameBonus = 0, gameLives = 3;
+let selfRatings = {s1:'good', s2:'good'};
+let currentStudentName = '', currentStudentClass = '';
+
+// Timer Logic
+let startTime = Date.now();
+setInterval(() => {
+  const diff = Math.floor((Date.now() - startTime) / 1000);
+  const m = String(Math.floor(diff / 60)).padStart(2, '0');
+  const s = String(diff % 60).padStart(2, '0');
+  document.getElementById('timerDisp').textContent = `${m}:${s}`;
+}, 1000);
+
+// UI Navigation
 function openSection(id){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));
   document.getElementById(id).classList.add('open');
   document.querySelectorAll('.dot').forEach(d=>d.classList.remove('active'));
   document.getElementById('dot'+id.replace('s','')).classList.add('active');
 }
-function toggleSection(id){
-  document.getElementById(id).classList.toggle('open');
+function toggleSection(id){ document.getElementById(id).classList.toggle('open'); }
+
+// Score UI
+function updateScoreUI(){
+  const total = exScores[1] + exScores[2] + exScores[3] + gameScore; 
+  document.getElementById('ringScore').textContent = total;
+  const offset = 226 - (total/20) * 226;
+  document.getElementById('ringFill').style.strokeDashoffset = Math.max(0, offset);
 }
 
-/* ─── STATE VARIABLES & NOTATION ($U$) ─── */
-let R1=12, U1=6, R2a=8, R2b=12, U2=10;
+// Seeding Values
+function initStudent(){
+  currentStudentName = document.getElementById('studentName').value;
+  currentStudentClass = document.getElementById('studentClass').value;
+  if(currentStudentName.length > 2){
+    const seed = currentStudentName.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    R1 = [10, 12, 15][seed%3]; U1 = [6, 9, 12][(seed+1)%3];
+    R2a = [4, 8][seed%2]; R2b = [6, 12][(seed+1)%2]; U2 = [10, 20][(seed+2)%2];
+    Ra3 = [6, 12][seed%2]; U3 = [12, 24][(seed+1)%2];
+    
+    document.getElementById('r1d').textContent = R1;
+    document.getElementById('u1d').textContent = U1;
+    document.getElementById('r2ad').textContent = R2a;
+    document.getElementById('r2bd').textContent = R2b;
+    document.getElementById('u2d').textContent = U2;
+    document.getElementById('ra3d').textContent = Ra3;
+    document.getElementById('u3d').textContent = U3;
+  }
+}
 
+/* ─── EXERCISES (WITH $U$ LOGIC) ─── */
 function checkEx(num){
   const val = parseFloat(document.getElementById('ex'+num).value);
   let correct, tol;
   
   if(num === 1){ correct = U1/R1; tol = correct*0.05+0.01; }
   if(num === 2){ const I = U2/(R2a+R2b); correct = I*R2a; tol = correct*0.05+0.01; }
+  if(num === 3){ correct = U3/Ra3; tol = correct*0.05+0.01; }
   
   const ok = Math.abs(val - correct) <= tol;
   const fb = document.getElementById('exFb' + num);
-  fb.textContent = ok ? '✓ Correct!' : '✗ Try again';
+  fb.textContent = ok ? '✓ Correct! (2 pts)' : '✗ Try again';
   fb.className = 'ex-fb ' + (ok ? 'correct' : 'wrong');
   
-  // Update UI dot
-  if(ok) document.getElementById('dot2').classList.add('done');
+  if(ok){
+    exScores[num] = 2;
+    updateScoreUI();
+    if(exScores[1]&&exScores[2]&&exScores[3]) document.getElementById('dot2').classList.add('done');
+  }
 }
 
-/* ─── INTERACTIVE WORKBENCH LOGIC ─── */
+/* ─── INTERACTIVE WORKBENCH (CURVY WIRES + PRECEDENCE FIX) ─── */
 const c = document.getElementById('mmCanvas');
 const ctx = c.getContext('2d');
-let wbMode = 'ammeter'; // ammeter or voltmeter
-let wbBreakOpen = false; // Is the switch cut/open?
+let wbMode = 'ammeter'; 
+let wbBreakOpen = false; 
 let pulseAngle = 0;
 
-// Probes explicitly start near multimeter
 let wbProbes = {
   red:   { node:null, x:460, y:300, isDragging:false },
   black: { node:null, x:410, y:300, isDragging:false }
 };
 
-const WB_NODE_PX = {}; // Dynamic snap points
+const WB_NODE_PX = {}; 
 
 function wbSetMode(m){
   wbMode = m;
@@ -318,23 +398,18 @@ function wbReset(){
   wbProbes.red = {node:null, x:460, y:300, isDragging:false};
   wbProbes.black = {node:null, x:410, y:300, isDragging:false};
   wbComputeReading();
-  wbDrawFrame();
 }
 
 function wbToggleBreak(){
   wbBreakOpen = !wbBreakOpen;
   document.getElementById('btnToggleSwitch').textContent = wbBreakOpen ? "🔌 Close Wire (Close Switch)" : "✂️ Cut Wire (Open Switch)";
-  
-  // Detach probes if wire state changes underneath them
   if(!wbBreakOpen){
     if(wbProbes.red.node==='wire-l' || wbProbes.red.node==='wire-r') wbProbes.red.node=null;
     if(wbProbes.black.node==='wire-l' || wbProbes.black.node==='wire-r') wbProbes.black.node=null;
   }
   wbComputeReading();
-  wbDrawFrame();
 }
 
-/* CRITICAL PEDAGOGY: Computing logic + Misconception checking */
 function wbComputeReading(){
   const disp = document.getElementById('mmReadVal');
   const unit = document.getElementById('mmReadUnit');
@@ -342,127 +417,101 @@ function wbComputeReading(){
   const rNode = wbProbes.red.node;
   const bNode = wbProbes.black.node;
 
-  // Initial UI Setup
   disp.className = 'meter-reading';
   let U_bat = 6.0; 
   let R_lamp = 12.0;
 
   if(!rNode || !bNode){
     disp.textContent = '—'; unit.textContent = ''; disp.className = 'meter-reading zero';
-    if(wbMode === 'ammeter'){
-      box.className = 'info'; box.innerHTML = "<strong>Goal (Ammeter):</strong> To measure current, you must cut the wire to open the circuit, then place probes across the gap (Series).";
-    } else {
-      box.className = 'info'; box.innerHTML = "<strong>Goal (Voltmeter):</strong> Keep the circuit closed. Place probes across the lamp to measure potential difference (Parallel).";
-    }
+    box.className = 'info'; 
+    box.innerHTML = wbMode === 'ammeter' 
+      ? "<strong>Goal (Ammeter):</strong> Cut the wire to open the circuit, then place probes across the gap (Series)."
+      : "<strong>Goal (Voltmeter):</strong> Keep circuit closed. Place probes across the lamp (Parallel).";
     return;
   }
 
-  // Determine physical state
   const isAcrossLamp = ((rNode==='lamp-l' && bNode==='lamp-r') || (rNode==='lamp-r' && bNode==='lamp-l'));
-  const isAcrossBreak = wbBreakOpen && ((rNode==='wire-l' && bNode==='wire-r') || (rNode==='wire-r' && bNode==='wire-l'));
+  
+  // LOGIC FIX: Wrapped in Parentheses to fix precedence bug
+  const isAcrossBreak = wbBreakOpen && (
+    ((rNode==='wire-l' && bNode==='wire-r') || (rNode==='wire-r' && bNode==='wire-l'))
+  );
 
   if(wbMode === 'ammeter'){
-    // SHORT CIRCUIT TRAP
     if(isAcrossLamp && !wbBreakOpen){
       disp.textContent = 'ERR'; unit.textContent = 'A'; disp.className = 'meter-reading danger';
-      box.className = 'danger'; box.innerHTML = "⚠️ <strong>SHORT CIRCUIT!</strong> An ammeter has near-zero resistance. Connecting it in parallel bypasses the lamp, causing a dangerous power surge!";
+      box.className = 'danger'; box.innerHTML = "⚠️ <strong>SHORT CIRCUIT!</strong> Parallel connection causes a dangerous power surge!";
       return;
     }
-    // CORRECT SERIES
     if(isAcrossBreak){
-      const current = U_bat / R_lamp; // Ammeter resistance negligible here for simplicity
-      disp.textContent = (rNode==='wire-l' ? current : -current).toFixed(2); // Polarity check
+      const current = U_bat / R_lamp; 
+      disp.textContent = (rNode==='wire-l' ? current : -current).toFixed(2); 
       unit.textContent = 'A'; disp.className = 'meter-reading';
-      box.className = 'success'; box.innerHTML = "✅ <strong>Correct!</strong> The ammeter is in SERIES. Current flows through the meter to complete the circuit.";
-      document.getElementById('dot1').classList.add('done');
+      box.className = 'success'; box.innerHTML = "✅ <strong>Correct!</strong> Ammeter is in SERIES.";
+      gameScore = 5; updateScoreUI(); document.getElementById('dot1').classList.add('done');
       return;
     }
-    // Broken circuit placement
     disp.textContent = '0.00'; unit.textContent = 'A';
-    box.className = 'warning'; box.innerHTML = "Circuit is broken or probes are placed incorrectly. No current flows.";
-  } 
-  
-  else if (wbMode === 'voltmeter') {
-    // BLOCKED CIRCUIT TRAP
+    box.className = 'warning'; box.innerHTML = "Circuit broken or probes placed incorrectly.";
+  } else {
     if(isAcrossBreak){
       disp.textContent = (rNode==='wire-l' ? U_bat : -U_bat).toFixed(2); unit.textContent = 'V';
-      box.className = 'warning'; box.innerHTML = "⚠️ <strong>CIRCUIT BLOCKED!</strong> A voltmeter has huge resistance. Placed in series, it stops the current! It reads the battery voltage because no drop happens over the lamp.";
+      box.className = 'warning'; box.innerHTML = "⚠️ <strong>CIRCUIT BLOCKED!</strong> Voltmeter in series stops the current!";
       return;
     }
-    // CORRECT PARALLEL
     if(isAcrossLamp){
       if(wbBreakOpen){
         disp.textContent = '0.00'; unit.textContent = 'V';
-        box.className = 'warning'; box.innerHTML = "The switch is open! No current is flowing, so there is no voltage drop across the lamp.";
+        box.className = 'warning'; box.innerHTML = "Switch is open! No current flowing.";
       } else {
         disp.textContent = (rNode==='lamp-l' ? U_bat : -U_bat).toFixed(2); unit.textContent = 'V';
-        box.className = 'success'; box.innerHTML = "✅ <strong>Correct!</strong> The voltmeter is in PARALLEL across the lamp, accurately measuring the potential difference.";
-        document.getElementById('dot1').classList.add('done');
+        box.className = 'success'; box.innerHTML = "✅ <strong>Correct!</strong> Voltmeter is in PARALLEL.";
+        gameScore = 5; updateScoreUI(); document.getElementById('dot1').classList.add('done');
       }
       return;
     }
-    // Zero reading default
     disp.textContent = '0.00'; unit.textContent = 'V';
-    box.className = 'info'; box.innerHTML = "Probes attached, but no potential difference detected at these points.";
+    box.className = 'info'; box.innerHTML = "No potential difference detected.";
   }
 }
 
-/* ─── DRAWING ENGINE ─── */
 function wbDrawFrame(){
   ctx.clearRect(0,0,c.width,c.height);
   pulseAngle += 0.05;
   const pulseR = 8 + Math.sin(pulseAngle)*3;
 
-  // 1. Draw Circuit Path
   const T = 120, B = 280, L = 80, R = 320;
   ctx.lineWidth = 4; ctx.strokeStyle = '#333';
   ctx.beginPath();
   
-  // Left side (Battery)
-  ctx.moveTo(L, T); ctx.lineTo(L, B);
-  // Bottom side
-  ctx.lineTo(R, B);
-  // Right side
-  ctx.lineTo(R, T);
-  // Top side (with Switch / Gap and Lamp)
-  ctx.lineTo(R-40, T); // Lamp right edge
-  ctx.moveTo(R-120, T); // Lamp left edge
+  ctx.moveTo(L, T); ctx.lineTo(L, B); ctx.lineTo(R, B); ctx.lineTo(R, T);
+  ctx.lineTo(R-40, T); ctx.moveTo(R-120, T);
   
-  // Switch area
-  if(wbBreakOpen){
-    ctx.lineTo(L+100, T); // Gap right edge
-    ctx.moveTo(L+40, T); // Gap left edge
-  } else {
-    ctx.lineTo(L, T);
-  }
+  if(wbBreakOpen){ ctx.lineTo(L+100, T); ctx.moveTo(L+40, T); } 
+  else { ctx.lineTo(L, T); }
   ctx.stroke();
 
-  // 2. Components
-  // Battery
+  // Battery & Lamp
   ctx.fillStyle = '#111'; ctx.fillRect(L-20, 170, 40, 60);
-  ctx.fillStyle = '#ff4757'; ctx.fillRect(L-15, 160, 30, 10); // + Term
+  ctx.fillStyle = '#ff4757'; ctx.fillRect(L-15, 160, 30, 10); 
   ctx.fillStyle = '#fff'; ctx.font='14px Syne'; ctx.fillText('+', L, 155);
 
-  // Lamp
   const lampX = R-80, lampY = T;
   ctx.beginPath(); ctx.arc(lampX, lampY, 20, 0, Math.PI*2);
   ctx.fillStyle = '#222'; ctx.fill(); ctx.stroke();
-  ctx.strokeStyle = '#666'; ctx.beginPath(); ctx.moveTo(lampX-10, lampY-10); ctx.lineTo(lampX+10, lampY+10); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(lampX+10, lampY-10); ctx.lineTo(lampX-10, lampY+10); ctx.stroke();
   
-  if(!wbBreakOpen){ // Lamp Glow if circuit closed
+  if(!wbBreakOpen){ 
     ctx.beginPath(); ctx.arc(lampX, lampY, 20, 0, Math.PI*2);
     ctx.fillStyle = 'rgba(245,209,48,0.4)'; ctx.fill();
     ctx.shadowColor = '#f5d130'; ctx.shadowBlur = 20; ctx.stroke(); ctx.shadowBlur = 0;
   }
 
-  // 3. Define Interaction Nodes
+  // Nodes & Snap Points
   WB_NODE_PX['lamp-l'] = {x: lampX - 30, y: T};
   WB_NODE_PX['lamp-r'] = {x: lampX + 30, y: T};
   WB_NODE_PX['wire-l'] = {x: L + 30, y: T};
   WB_NODE_PX['wire-r'] = {x: L + 110, y: T};
 
-  // 4. Draw Guide Pulses based on Mode
   ctx.fillStyle = 'rgba(78,205,196,0.6)';
   if(wbMode === 'ammeter' && wbBreakOpen) {
     ctx.beginPath(); ctx.arc(WB_NODE_PX['wire-l'].x, WB_NODE_PX['wire-l'].y, pulseR, 0, Math.PI*2); ctx.fill();
@@ -472,90 +521,100 @@ function wbDrawFrame(){
     ctx.beginPath(); ctx.arc(WB_NODE_PX['lamp-r'].x, WB_NODE_PX['lamp-r'].y, pulseR, 0, Math.PI*2); ctx.fill();
   }
 
-  // 5. Draw Nodes (Snap Points)
   for(let key in WB_NODE_PX){
     const n = WB_NODE_PX[key];
     ctx.beginPath(); ctx.arc(n.x, n.y, 6, 0, Math.PI*2);
     ctx.fillStyle = '#444'; ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
   }
 
-  // 6. Draw Multimeter Body
+  // Multimeter & Wires
   const mx = 400, my = 50;
-  ctx.fillStyle = '#f5d130'; ctx.fillRect(mx, my, 160, 240); // Yellow case
-  ctx.fillStyle = '#222'; ctx.fillRect(mx+10, my+10, 140, 60); // Screen
-  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(mx+80, my+140, 40, 0, Math.PI*2); ctx.fill(); // Dial
+  ctx.fillStyle = '#f5d130'; ctx.fillRect(mx, my, 160, 240); 
+  ctx.fillStyle = '#222'; ctx.fillRect(mx+10, my+10, 140, 60); 
+  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(mx+80, my+140, 40, 0, Math.PI*2); ctx.fill(); 
 
-  // Multimeter Terminals (Origins for Wires)
   const termCOM = {x: mx+50, y: my+210};
   const termV = {x: mx+110, y: my+210};
-  
   ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(termCOM.x, termCOM.y, 8, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#ff4757'; ctx.beginPath(); ctx.arc(termV.x, termV.y, 8, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#222'; ctx.font='10px IBM Plex Mono'; ctx.fillText('COM', termCOM.x-10, termCOM.y+20); ctx.fillText('V/Ω', termV.x-8, termV.y+20);
 
-  // 7. Draw Curvy Probe Wires
   ctx.lineWidth = 4; ctx.lineCap = 'round';
-  // Black Wire
-  ctx.beginPath(); ctx.moveTo(termCOM.x, termCOM.y);
-  ctx.bezierCurveTo(termCOM.x, termCOM.y+150, wbProbes.black.x, wbProbes.black.y+100, wbProbes.black.x, wbProbes.black.y);
-  ctx.strokeStyle = '#1a1a1a'; ctx.stroke();
-  // Red Wire
-  ctx.beginPath(); ctx.moveTo(termV.x, termV.y);
-  ctx.bezierCurveTo(termV.x, termV.y+150, wbProbes.red.x, wbProbes.red.y+100, wbProbes.red.x, wbProbes.red.y);
-  ctx.strokeStyle = '#ff4757'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(termCOM.x, termCOM.y); ctx.bezierCurveTo(termCOM.x, termCOM.y+150, wbProbes.black.x, wbProbes.black.y+100, wbProbes.black.x, wbProbes.black.y); ctx.strokeStyle = '#1a1a1a'; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(termV.x, termV.y); ctx.bezierCurveTo(termV.x, termV.y+150, wbProbes.red.x, wbProbes.red.y+100, wbProbes.red.x, wbProbes.red.y); ctx.strokeStyle = '#ff4757'; ctx.stroke();
 
-  // 8. Draw Probe Handles
-  ctx.fillStyle = '#1a1a1a'; ctx.fillRect(wbProbes.black.x-4, wbProbes.black.y-40, 8, 40); // Black handle
-  ctx.fillStyle = '#999'; ctx.beginPath(); ctx.moveTo(wbProbes.black.x-2, wbProbes.black.y); ctx.lineTo(wbProbes.black.x, wbProbes.black.y+15); ctx.lineTo(wbProbes.black.x+2, wbProbes.black.y); ctx.fill(); // Tip
-
-  ctx.fillStyle = '#ff4757'; ctx.fillRect(wbProbes.red.x-4, wbProbes.red.y-40, 8, 40); // Red handle
-  ctx.fillStyle = '#999'; ctx.beginPath(); ctx.moveTo(wbProbes.red.x-2, wbProbes.red.y); ctx.lineTo(wbProbes.red.x, wbProbes.red.y+15); ctx.lineTo(wbProbes.red.x+2, wbProbes.red.y); ctx.fill(); // Tip
+  ctx.fillStyle = '#1a1a1a'; ctx.fillRect(wbProbes.black.x-4, wbProbes.black.y-40, 8, 40); 
+  ctx.fillStyle = '#999'; ctx.beginPath(); ctx.moveTo(wbProbes.black.x-2, wbProbes.black.y); ctx.lineTo(wbProbes.black.x, wbProbes.black.y+15); ctx.lineTo(wbProbes.black.x+2, wbProbes.black.y); ctx.fill(); 
+  ctx.fillStyle = '#ff4757'; ctx.fillRect(wbProbes.red.x-4, wbProbes.red.y-40, 8, 40); 
+  ctx.fillStyle = '#999'; ctx.beginPath(); ctx.moveTo(wbProbes.red.x-2, wbProbes.red.y); ctx.lineTo(wbProbes.red.x, wbProbes.red.y+15); ctx.lineTo(wbProbes.red.x+2, wbProbes.red.y); ctx.fill(); 
 
   requestAnimationFrame(wbDrawFrame);
 }
 
-/* ─── DRAG AND DROP EVENT LISTENERS ─── */
+// Drag Events
 c.addEventListener('mousedown', (e)=>{
   const rect = c.getBoundingClientRect();
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  
-  // Check hit for probe handles (y-40 to y)
-  if(Math.abs(mx - wbProbes.red.x) < 20 && my > wbProbes.red.y - 40 && my < wbProbes.red.y + 15){
-    wbProbes.red.isDragging = true;
-    wbProbes.red.node = null;
-  } else if (Math.abs(mx - wbProbes.black.x) < 20 && my > wbProbes.black.y - 40 && my < wbProbes.black.y + 15){
-    wbProbes.black.isDragging = true;
-    wbProbes.black.node = null;
-  }
+  if(Math.abs(mx - wbProbes.red.x) < 20 && my > wbProbes.red.y - 40 && my < wbProbes.red.y + 15){ wbProbes.red.isDragging = true; wbProbes.red.node = null; } 
+  else if (Math.abs(mx - wbProbes.black.x) < 20 && my > wbProbes.black.y - 40 && my < wbProbes.black.y + 15){ wbProbes.black.isDragging = true; wbProbes.black.node = null; }
 });
-
 c.addEventListener('mousemove', (e)=>{
   const rect = c.getBoundingClientRect();
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   if(wbProbes.red.isDragging) { wbProbes.red.x = mx; wbProbes.red.y = my; }
   if(wbProbes.black.isDragging) { wbProbes.black.x = mx; wbProbes.black.y = my; }
 });
-
 c.addEventListener('mouseup', ()=>{
   ['red', 'black'].forEach(p => {
     if(wbProbes[p].isDragging){
       wbProbes[p].isDragging = false;
-      // Snapping logic
       for(let key in WB_NODE_PX){
         const n = WB_NODE_PX[key];
-        if(Math.hypot(wbProbes[p].x - n.x, wbProbes[p].y - n.y) < 25){
-          wbProbes[p].x = n.x; wbProbes[p].y = n.y - 15; // Shift visually to rest on top
-          wbProbes[p].node = key;
-        }
+        if(Math.hypot(wbProbes[p].x - n.x, wbProbes[p].y - n.y) < 25){ wbProbes[p].x = n.x; wbProbes[p].y = n.y - 15; wbProbes[p].node = key; }
       }
     }
   });
   wbComputeReading();
 });
 
-// Boot
 wbDrawFrame();
 wbComputeReading();
+initStudent();
+
+/* ─── GOOGLE APPS SCRIPT SUBMISSION ─── */
+async function submitApp(){
+  if(!currentStudentName) { alert("Please enter your name at the top before submitting."); return; }
+  
+  const score20 = exScores[1] + exScores[2] + exScores[3] + gameScore + mcqScores[1]; // simplified calc
+  const time_min = Math.floor((Date.now() - startTime) / 60000);
+  
+  document.getElementById('finalScore').textContent = score20 + '/20';
+  document.getElementById('finalGrade').textContent = score20 >= 15 ? 'Grade: Excellent' : 'Grade: Good';
+  document.getElementById('submitResult').style.display = 'block';
+  document.getElementById('dot3').classList.add('done');
+
+  // Exact JSON payload format requested
+  const APPS_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_URL/exec';
+  try {
+    await fetch(APPS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        sheet: 'ElecMeasP2',
+        name: currentStudentName,
+        class: currentStudentClass,
+        time_min: time_min,
+        q1: mcqScores[1]||0, q2: mcqScores[2]||0,
+        q3: mcqScores[3]||0, q4: mcqScores[4]||0,
+        ex1: exScores[1]||0, ex2: exScores[2]||0, q5: mcqScores[5]||0,
+        game_score: gameScore, game_bonus: gameBonus, game_lives_left: gameLives,
+        q6: mcqScores[6]||0, q7: mcqScores[7]||0, ex3: exScores[3]||0,
+        written: document.getElementById('writtenAns').value,
+        self_s1: selfRatings['s1']||'', self_s2: selfRatings['s2']||''
+      })
+    });
+  } catch(e) { console.error("Network Error during submission."); }
+}
 </script>
 </body>
 </html>
