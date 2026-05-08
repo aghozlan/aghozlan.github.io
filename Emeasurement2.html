@@ -830,10 +830,47 @@ const LAB_START = Date.now();
 
 /* ─── STUDENTS ─── */
 const STUDENTS = {
-  '7A':['Ahmad Al-Sayyed','Rania Hamdan','Karim Jaber','Lara Khalil','Omar Nassar','Hind Moussa','Ziad Saleh','Maya Saad','Firas Khoury','Rana Barakat'],
-  '7B':['Nour Khalil','Tamer Habib','Dalia Farouk','Samer Awad','Hala Tabbara','Bilal Nasr','Sirine Moussawi','Jad Hajj','Reem Harb','Ali Zreik'],
-  '7C':['Sara Bou Antoun','Hassan Diab','Mia Nasrallah','Younes Mrad','Dana Ghanem','Ramzi Haddad','Lina Haidar','Chadi Abi Nader','Rim Koubeissi','Elie Bou Younes'],
-  '7D':['Mira Kallas','Georges Frem','Tala Jawhari','Patrick Khoury','Nadine Azar','Fadi Sakr','Carole Nasr','Jean Geagea','Stephanie Abou Khalil','Roy Hanna']
+  // 7A & 7B & 7C → extract from grade book xlsx and add here
+  '7A': [],
+  '7B': [],
+  '7C': [],
+  // 7D — extracted verbatim from official grade book (May 2026)
+  '7D': [
+    '"أحمد عمر" حسين جعجع',
+    'أحمد محمد احمد ابو جاموس',
+    'ابراهيم سامي مروان حليحل',
+    'ابراهيم يونس محمد رحال',
+    'احمد علي احمد المحمود',
+    'احمد فؤاد احمد جمعة',
+    'اسيل احمد فريد العلي',
+    'ايلانا محمد ابراهيم الحلو',
+    'حلا فادي فايز معتوق',
+    'حمزة عفيف علي السيد',
+    'داني محمد محمود حسين',
+    'رؤى حسن احمد محمد',
+    'راما ابراهيم رشيد فارس',
+    'راما محمد علي الجعجع',
+    'زاهر محمد شحادة ديب',
+    'سالي احمد وليد كريديه',
+    '"سدرة المنتهى" احمد حسون',
+    'عبد الرحمن درويش محمد سلام',
+    'علي ابراهيم حسان الاشوح',
+    'علي مروان عدنان شحاده',
+    'علي وسيم علي مره',
+    'عيسى احمد محمود الحصري',
+    'غيداء مالك جمعة بلال',
+    'فرح محمود كامل الخطيب',
+    'ليمار هاني محمد جمعه',
+    'محمد مصطفى كمال الترك',
+    'محمد هاشم عادل المنسي',
+    'محمد يوسف محمد محمد',
+    'مصطفى كمال علي سعد',
+    'منى وسام عمر سلام',
+    'ندى علي احمد مطر',
+    'ولاء احمد فهد السعيد',
+    'يوسف "علاء الدين" كرزون',
+    'يوسف علاء جهاد شحادة',
+  ]
 };
 
 /* ─── STATE ─── */
@@ -1195,131 +1232,170 @@ function drawDiagram(highlight,dotAngle){
   const c=document.getElementById('diagCanvas');
   if(!c)return;
   const ctx=c.getContext('2d');
-  const W=640,H=320;
+  const W=640,H=300;
   ctx.clearRect(0,0,W,H);
-
-  // Dark background
   ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
 
-  // Circuit path coords:
-  // Battery left: x=80, y-center=160
-  // Top wire: (80,100) → (560,100)
-  // Right wire: (560,100) → (560,220)
-  // Bottom wire: (560,220) → (80,220)
-  // Left wire: (80,220) → (80,100)
-  // Ammeter on top wire at x=200
-  // Lamp at x=380, top-bottom between y=80 and y=140
-  // Voltmeter across lamp (right side) at x=480-540
+  // ── Grid layout (all right-angles, no diagonals) ──
+  // Main rectangle: left=90, right=580, top=150, bottom=260
+  // Battery on LEFT vertical wire, centred at y=205 → lines HORIZONTAL ✓
+  // Ammeter on TOP wire at x=210, R=22
+  // Lamp on TOP wire at x=390, R=22
+  // Voltmeter ABOVE lamp via parallel branch at y=70 (80px above top wire)
+  // Wires terminate exactly at component edges — no gaps, no overlaps
+
+  const L=90, R=580, T=150, B=260;
+  const amX=210, amY=T, amR=22;
+  const lampX=390, lampY=T, lampR=22;
+  const vmX=390, vmY=70, vmR=22;  // voltmeter centre, directly above lamp centre
+  // Battery centred on left vertical wire
+  const batX=L, batY=(T+B)/2;
+
+  // Junction x-coords for voltmeter branch
+  const jA=lampX-lampR;  // 368 — left side of lamp, where branch starts
+  const jB=lampX+lampR;  // 412 — right side of lamp, where branch ends
 
   const wireCol='#4ecdc4';
-  const amCol=highlight==='ammeter'?'#f5d130':'rgba(245,209,48,.85)';
-  const vCol=highlight==='voltmeter'?'#4ecdc4':'rgba(78,205,196,.85)';
 
-  // Draw wires
-  function wire(pts,col,width=2){
+  function wire(pts,col,w){
     ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
     pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
-    ctx.strokeStyle=col;ctx.lineWidth=width;ctx.stroke();
+    ctx.strokeStyle=col||wireCol;ctx.lineWidth=w||2;ctx.stroke();
+  }
+  function junctionDot(x,y){
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle=wireCol;ctx.fill();
+  }
+  function comDot(x,y){
+    // Small dot on circumference — radius ~4.5px (≈1/5 of R=22)
+    ctx.beginPath();ctx.arc(x,y,4.5,0,Math.PI*2);
+    ctx.fillStyle='#1a1a1a';ctx.fill();
+    ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
   }
 
-  // Main circuit wires
-  wire([[80,100],[180,100]],wireCol,2); // top-left to ammeter
-  wire([[240,100],[380,100]],wireCol,2); // ammeter to lamp
-  wire([[420,100],[560,100]],wireCol,2); // lamp to right
-  wire([[560,100],[560,220]],wireCol,2); // right down
-  wire([[560,220],[80,220]],wireCol,2); // bottom
-  wire([[80,220],[80,100]],wireCol,2); // left up
+  // ── 1. MAIN CIRCUIT WIRES (interrupted at component edges) ──
+  // Top wire: left-corner → ammeter left edge
+  wire([[L,T],[amX-amR,T]]);
+  // ammeter right edge → lamp left edge
+  wire([[amX+amR,T],[jA,T]]);
+  // lamp right edge → right corner
+  wire([[jB,T],[R,T]]);
+  // right vertical
+  wire([[R,T],[R,B]]);
+  // bottom
+  wire([[R,B],[L,B]]);
+  // left vertical: battery fills the gap (wires to its edges)
+  wire([[L,T],[L,batY-28]]);
+  wire([[L,batY+28],[L,B]]);
 
-  // Voltmeter branch (parallel across lamp)
-  wire([[380,100],[380,60],[420,60],[420,100]],vCol,1.5);
+  // ── 2. VOLTMETER BRANCH (parallel across lamp) ──
+  // Left branch wire: jA goes UP from T to vmY
+  wire([[jA,T],[jA,vmY]],wireCol,1.5);
+  // Top bridge: jA → vmX-vmR (left edge of voltmeter)
+  wire([[jA,vmY],[vmX-vmR,vmY]],wireCol,1.5);
+  // Right bridge: vmX+vmR → jB at top
+  wire([[vmX+vmR,vmY],[jB,vmY]],wireCol,1.5);
+  // Right branch wire: jB from vmY back down to T
+  wire([[jB,vmY],[jB,T]],wireCol,1.5);
+  // Junction dots where branch meets main wire
+  junctionDot(jA,T);
+  junctionDot(jB,T);
 
-  // ─── BATTERY (left) ─── 
-  ctx.strokeStyle='#f5d130';ctx.lineWidth=2;
-  // Long plate
-  ctx.beginPath();ctx.moveTo(68,130);ctx.lineTo(68,170);ctx.stroke();
-  // Short plate  
-  ctx.strokeStyle='#888';ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(78,140);ctx.lineTo(78,160);ctx.stroke();
-  ctx.strokeStyle='#f5d130';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(73,100);ctx.lineTo(73,130);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(73,170);ctx.lineTo(73,220);ctx.stroke();
-  ctx.fillStyle='#f5d130';ctx.font='bold 11px IBM Plex Mono';ctx.textAlign='center';
-  ctx.fillText('+',58,138);ctx.fillText('−',58,168);
-  ctx.fillStyle='rgba(245,209,48,.6)';ctx.font='10px Syne';
-  ctx.fillText('6V',56,200);
-
-  // ─── AMMETER ───
+  // ── 3. BATTERY — on vertical wire, so plates are HORIZONTAL ──
+  // (battery on vertical left wire → plates perpendicular = horizontal lines)
   ctx.save();
-  if(highlight==='ammeter'){ctx.shadowColor=amCol;ctx.shadowBlur=18;}
-  ctx.beginPath();ctx.arc(210,100,28,0,Math.PI*2);
+  // Long plate = positive (top)
+  ctx.strokeStyle='#f5d130';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(batX-16,batY-18);ctx.lineTo(batX+16,batY-18);ctx.stroke();
+  // Short plate = negative (bottom)
+  ctx.strokeStyle='#888';ctx.lineWidth=4;
+  ctx.beginPath();ctx.moveTo(batX-9,batY+18);ctx.lineTo(batX+9,batY+18);ctx.stroke();
+  // + / − labels
+  ctx.fillStyle='#f5d130';ctx.font='bold 10px IBM Plex Mono';ctx.textAlign='left';
+  ctx.fillText('+',batX+20,batY-14);
+  ctx.fillStyle='#888';
+  ctx.fillText('−',batX+20,batY+22);
+  ctx.fillStyle='rgba(245,209,48,.6)';ctx.font='10px Syne';ctx.textAlign='center';
+  ctx.fillText('6V',batX-28,batY+4);
+  ctx.restore();
+
+  // ── 4. AMMETER ──
+  ctx.save();
+  const amHl=highlight==='ammeter';
+  if(amHl){ctx.shadowColor='#f5d130';ctx.shadowBlur=18;}
+  ctx.beginPath();ctx.arc(amX,amY,amR,0,Math.PI*2);
   ctx.fillStyle='rgba(245,209,48,.08)';ctx.fill();
-  ctx.strokeStyle=amCol;ctx.lineWidth=2.5;ctx.stroke();
-  ctx.fillStyle=amCol;ctx.font='bold 16px Syne';ctx.textAlign='center';
-  ctx.fillText('A',210,107);
-  // COM dot (small, clearly smaller than A circle)
-  ctx.beginPath();ctx.arc(210,130,6,0,Math.PI*2);
-  ctx.fillStyle='#333';ctx.fill();
-  ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.strokeStyle=amHl?'#f5d130':'rgba(245,209,48,.8)';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle=amHl?'#f5d130':'rgba(245,209,48,.8)';
+  ctx.font=`bold 15px Syne`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('A',amX,amY);
+  ctx.textBaseline='alphabetic';
+  // COM dot: on LEFT circumference (= wire entry point from L side)
+  comDot(amX-amR, amY);
   ctx.restore();
-  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='9px Syne';
-  ctx.textAlign='center';ctx.fillText('Ammeter',210,160);
-  ctx.fillStyle='rgba(136,136,136,.7)';
-  ctx.fillText('●COM',210,172);
+  // Label below
+  ctx.fillStyle='rgba(245,209,48,.45)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('Ammeter',amX,amY+amR+14);
+  ctx.fillStyle='rgba(136,136,136,.5)';
+  ctx.fillText('●COM ←',amX-amR-18,amY+4);
 
-  // ─── LAMP ───
+  // ── 5. LAMP ──
   ctx.save();
-  const lampGlow=highlight===''?'rgba(255,255,200,.5)':'rgba(255,255,200,.2)';
-  ctx.beginPath();ctx.arc(400,100,22,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,240,100,.06)';ctx.fill();
-  ctx.strokeStyle='#f0e050';ctx.lineWidth=2;ctx.stroke();
-  // X through circle (lamp symbol)
-  ctx.strokeStyle='rgba(240,224,80,.7)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(384,84);ctx.lineTo(416,116);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(416,84);ctx.lineTo(384,116);ctx.stroke();
+  ctx.beginPath();ctx.arc(lampX,lampY,lampR,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,240,100,.05)';ctx.fill();
+  ctx.strokeStyle='rgba(240,224,80,.75)';ctx.lineWidth=2;ctx.stroke();
+  ctx.strokeStyle='rgba(240,224,80,.55)';ctx.lineWidth=1.5;
+  const d=lampR*0.65;
+  ctx.beginPath();ctx.moveTo(lampX-d,lampY-d);ctx.lineTo(lampX+d,lampY+d);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lampX+d,lampY-d);ctx.lineTo(lampX-d,lampY+d);ctx.stroke();
   ctx.restore();
-  ctx.fillStyle='rgba(240,224,80,.6)';ctx.font='9px Syne';
-  ctx.textAlign='center';ctx.fillText('Lamp',400,135);
+  ctx.fillStyle='rgba(240,224,80,.5)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('Lamp',lampX,lampY+lampR+14);
 
-  // ─── VOLTMETER ───
+  // ── 6. VOLTMETER ──
   ctx.save();
-  if(highlight==='voltmeter'){ctx.shadowColor=vCol;ctx.shadowBlur=18;}
-  ctx.beginPath();ctx.arc(400,42,22,0,Math.PI*2);
+  const vmHl=highlight==='voltmeter';
+  if(vmHl){ctx.shadowColor='#4ecdc4';ctx.shadowBlur=18;}
+  ctx.beginPath();ctx.arc(vmX,vmY,vmR,0,Math.PI*2);
   ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();
-  ctx.strokeStyle=vCol;ctx.lineWidth=2.5;ctx.stroke();
-  ctx.fillStyle=vCol;ctx.font='bold 15px Syne';ctx.textAlign='center';
-  ctx.fillText('V',400,48);
-  // COM dot (small black dot, clearly smaller than V circle)
-  ctx.beginPath();ctx.arc(422,42,5,0,Math.PI*2);
-  ctx.fillStyle='#333';ctx.fill();
-  ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.strokeStyle=vmHl?'#4ecdc4':'rgba(78,205,196,.8)';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle=vmHl?'#4ecdc4':'rgba(78,205,196,.8)';
+  ctx.font='bold 14px Syne';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('V',vmX,vmY);
+  ctx.textBaseline='alphabetic';
+  // COM dot: on RIGHT circumference — that's the jB-side branch wire connection point
+  comDot(vmX+vmR, vmY);
   ctx.restore();
-  ctx.fillStyle='rgba(78,205,196,.5)';ctx.font='9px Syne';
-  ctx.textAlign='center';ctx.fillText('Voltmeter',400,21);
-  ctx.fillStyle='rgba(136,136,136,.7)';
-  ctx.fillText('●COM',422,32);
+  ctx.fillStyle='rgba(78,205,196,.45)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('Voltmeter',vmX,vmY-vmR-6);
+  ctx.fillStyle='rgba(136,136,136,.5)';
+  ctx.fillText('COM● →',vmX+vmR+4,vmY+4);
 
-  // ─── CURRENT FLOW DOTS (animation) ───
+  // ── 7. CURRENT FLOW DOTS (animation) ──
   if(dotAngle!==undefined){
-    const path=[[80,100],[560,100],[560,220],[80,220]]; // simplified clockwise
-    const totalLen=480+120+480+120;
-    const numDots=8;
+    // Clockwise: top-left→top-right→down→bottom-right→bottom-left→up
+    // Segments: L→R on top (490px), R-down (110), R→L on bottom (490), L-up (110)
+    const seg=[490,110,490,110];
+    const total=seg.reduce((a,b)=>a+b,0);
+    const numDots=9;
     for(let i=0;i<numDots;i++){
       const t=((dotAngle/360)+i/numDots)%1;
-      const d=t*totalLen;
+      const d=t*total;
       let px,py;
-      if(d<480){px=80+d;py=100;}
-      else if(d<600){px=560;py=100+(d-480);}
-      else if(d<1080){px=560-(d-600);py=220;}
-      else{px=80;py=220-(d-1080);}
-      ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
-      ctx.fillStyle=`rgba(78,205,196,${.7-i*.08})`;ctx.fill();
+      if(d<seg[0]){px=L+d;py=T;}
+      else if(d<seg[0]+seg[1]){px=R;py=T+(d-seg[0]);}
+      else if(d<seg[0]+seg[1]+seg[2]){px=R-(d-seg[0]-seg[1]);py=B;}
+      else{px=L;py=B-(d-seg[0]-seg[1]-seg[2]);}
+      ctx.beginPath();ctx.arc(px,py,3.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(78,205,196,${0.75-i*0.07})`;ctx.fill();
     }
   }
 
-  // Labels
-  ctx.fillStyle='rgba(100,180,255,.3)';ctx.font='9px IBM Plex Mono';
-  ctx.textAlign='left';ctx.fillText('series',130,92);
-  ctx.textAlign='center';ctx.fillText('parallel',380,12);
+  // ── 8. DIAGRAM LABELS ──
+  ctx.fillStyle='rgba(100,180,255,.28)';ctx.font='9px IBM Plex Mono';
+  ctx.textAlign='center';
+  ctx.fillText('series connection',amX,amY-amR-8);
+  ctx.fillText('parallel connection',vmX,vmY+vmR+14);
 }
 
 let animating=false,animAngle=0;
@@ -1585,175 +1661,259 @@ function drawGameCircuit(probed){
 }
 
 function drawSimpleCircuit(ctx,r,probed){
-  const W=620,H=280;
-  const wireCol='rgba(78,205,196,.7)';
+  // Grid: L=100,R=530,T=60,B=210
+  // Battery on LEFT vertical wire → plates are HORIZONTAL (perpendicular to wire)
+  // Component centres all on TOP wire (y=T=60)
+  // Ammeter at x=220, R=18 → left edge=202, right edge=238
+  // Lamp at x=370, R=18    → left edge=352, right edge=388  gap from ammeter=114 ✓
+  // Switch at x=460 (not a circle, just 16px half-width) → gap from lamp=54 ✓
+  // Voltmeter parallel ABOVE lamp at y=18, R=14
 
-  // Wires: top (100,60)→(520,60), right (520,60)→(520,200), bottom (520,200)→(100,200), left (100,200)→(100,60)
+  const L=100,R2=530,T=60,B=210;
+  const amX=220,amY=T,amR=18;
+  const lampX=370,lampY=T,lampR=18;
+  const swX=460,swY=T;
+  const vmX=370,vmY=18,vmR=14;
+  const jA=lampX-lampR, jB=lampX+lampR;
+  const wireCol='rgba(78,205,196,.75)';
+  const batX=L, batY=(T+B)/2;
+
   function wire(pts,col,w){
     ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
     pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
-    ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.stroke();
+    ctx.strokeStyle=col||wireCol;ctx.lineWidth=w||2;ctx.stroke();
+  }
+  function jDot(x,y){ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=wireCol;ctx.fill();}
+  function cDot(x,y){
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#1a1a1a';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1.2;ctx.stroke();
   }
 
-  // Split wires around ammeter (x=220) and lamp (x=370)
-  wire([[100,60],[195,60]],wireCol);
-  wire([[255,60],[350,60]],wireCol);
-  wire([[390,60],[520,60]],wireCol);
-  wire([[520,60],[520,200]],wireCol);
-  wire([[520,200],[100,200]],wireCol);
-  wire([[100,200],[100,60]],wireCol);
+  // Main wires — each segment terminates at component edge
+  wire([[L,T],[amX-amR,T]]);           // left corner → ammeter left edge
+  wire([[amX+amR,T],[jA,T]]);           // ammeter right edge → lamp left edge
+  wire([[jB,T],[swX-16,T]]);            // lamp right edge → switch left
+  wire([[swX+16,T],[R2,T]]);            // switch right → right corner
+  wire([[R2,T],[R2,B]]);               // right vertical
+  wire([[R2,B],[L,B]]);               // bottom
+  wire([[L,T],[L,batY-28]]);           // top-left corner → battery top
+  wire([[L,batY+28],[L,B]]);           // battery bottom → bottom-left corner
 
-  // Battery
-  drawBattery(ctx,100,130,'6V');
-
-  // Ammeter at x=225,y=60
-  drawAmmeter(ctx,225,60,probed);
-
-  // Switch at x=450,y=60
-  drawSwitch(ctx,450,60,r.switchStates?r.switchStates[0]:true,0);
-
-  // Lamp at x=370,y=60
-  drawLamp(ctx,370,60,r.lampBurnt);
-
-  // Voltmeter branch across lamp
+  // Voltmeter branch (only when probed)
   if(probed){
-    wire([[350,60],[350,25],[390,25],[390,60]],'rgba(78,205,196,.5)',1.5);
-    drawVoltmeter(ctx,370,20,probed);
-    ctx.fillStyle='rgba(78,205,196,.5)';ctx.font='9px Syne';ctx.textAlign='center';
-    ctx.fillText(r.voltmeter.toFixed(1)+' V',370,15);
+    wire([[jA,T],[jA,vmY]],wireCol,1.5);
+    wire([[jA,vmY],[vmX-vmR,vmY]],wireCol,1.5);
+    wire([[vmX+vmR,vmY],[jB,vmY]],wireCol,1.5);
+    wire([[jB,vmY],[jB,T]],wireCol,1.5);
+    jDot(jA,T); jDot(jB,T);
+    // Voltmeter circle
+    ctx.save();
+    ctx.beginPath();ctx.arc(vmX,vmY,vmR,0,Math.PI*2);
+    ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();
+    ctx.strokeStyle='rgba(78,205,196,.9)';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='rgba(78,205,196,.9)';ctx.font='bold 11px Syne';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('V',vmX,vmY);
+    ctx.textBaseline='alphabetic';ctx.restore();
+    // COM dot on RIGHT circumference (jB-side)
+    cDot(vmX+vmR,vmY);
+    // Voltage reading label
+    ctx.fillStyle='rgba(78,205,196,.7)';ctx.font='9px IBM Plex Mono';
+    ctx.textAlign='center';ctx.fillText(r.voltmeter.toFixed(1)+' V',vmX,vmY-vmR-4);
   }
 
-  // Labels
-  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='10px Syne';ctx.textAlign='center';
-  ctx.fillText('A',225,85);
-  ctx.fillStyle='rgba(240,224,80,.5)';
-  ctx.fillText('Lamp',370,85);
-  ctx.fillStyle='rgba(78,205,196,.4)';
-  ctx.fillText('SW',450,85);
+  // Battery — on vertical wire → plates HORIZONTAL
+  ctx.save();
+  ctx.strokeStyle='#f5d130';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(batX-14,batY-18);ctx.lineTo(batX+14,batY-18);ctx.stroke();// + long
+  ctx.strokeStyle='#888';ctx.lineWidth=3.5;
+  ctx.beginPath();ctx.moveTo(batX-8,batY+18);ctx.lineTo(batX+8,batY+18);ctx.stroke();  // − short
+  ctx.fillStyle='#f5d130';ctx.font='bold 9px IBM Plex Mono';ctx.textAlign='left';
+  ctx.fillText('+',batX+17,batY-14);ctx.fillStyle='#888';ctx.fillText('−',batX+17,batY+22);
+  ctx.fillStyle='rgba(245,209,48,.55)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('6V',batX-26,batY+4);ctx.restore();
+
+  // Ammeter — on top wire, COM dot on LEFT circumference (wire entry side from L)
+  ctx.save();
+  if(probed){ctx.shadowColor='rgba(245,209,48,.7)';ctx.shadowBlur=12;}
+  ctx.beginPath();ctx.arc(amX,amY,amR,0,Math.PI*2);
+  ctx.fillStyle='rgba(245,209,48,.08)';ctx.fill();
+  ctx.strokeStyle='rgba(245,209,48,.9)';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 12px Syne';
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('A',amX,amY);
+  ctx.textBaseline='alphabetic';ctx.restore();
+  cDot(amX-amR, amY);  // COM dot: LEFT circumference = where wire from L arrives
+  if(probed){
+    ctx.fillStyle='rgba(245,209,48,.8)';ctx.font='9px IBM Plex Mono';
+    ctx.textAlign='center';ctx.fillText(r.ammeter.toFixed(3)+' A',amX,amY+amR+13);
+  }else{
+    ctx.fillStyle='rgba(245,209,48,.4)';ctx.font='9px Syne';
+    ctx.textAlign='center';ctx.fillText('A',amX,amY+amR+12);
+  }
+
+  // Lamp
+  ctx.save();
+  const lCol=r.lampBurnt?'rgba(255,71,87,.6)':'rgba(240,224,80,.7)';
+  if(!r.lampBurnt){ctx.shadowColor='rgba(255,240,100,.3)';ctx.shadowBlur=10;}
+  ctx.beginPath();ctx.arc(lampX,lampY,lampR,0,Math.PI*2);
+  ctx.fillStyle=r.lampBurnt?'rgba(255,71,87,.04)':'rgba(255,240,100,.05)';ctx.fill();
+  ctx.strokeStyle=lCol;ctx.lineWidth=2;ctx.stroke();
+  const ld=lampR*0.62;
+  ctx.strokeStyle=r.lampBurnt?'rgba(255,71,87,.5)':'rgba(240,224,80,.55)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(lampX-ld,lampY-ld);ctx.lineTo(lampX+ld,lampY+ld);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lampX+ld,lampY-ld);ctx.lineTo(lampX-ld,lampY+ld);ctx.stroke();
+  ctx.restore();
+  const lLabel=r.lampBurnt?'BURNT ✗':'Lamp';
+  ctx.fillStyle=r.lampBurnt?'rgba(255,71,87,.7)':'rgba(240,224,80,.5)';
+  ctx.font='9px Syne';ctx.textAlign='center';ctx.fillText(lLabel,lampX,lampY+lampR+12);
+
+  // Switch
+  ctx.save();
+  const swClosed=r.switchStates?r.switchStates[0]:true;
+  ctx.strokeStyle=swClosed?'rgba(143,255,107,.85)':'rgba(255,159,67,.85)';ctx.lineWidth=2;
+  // End terminals (small filled circles)
+  ctx.beginPath();ctx.arc(swX-16,swY,3,0,Math.PI*2);
+  ctx.fillStyle=swClosed?'rgba(143,255,107,.85)':'rgba(255,159,67,.85)';ctx.fill();
+  ctx.beginPath();ctx.arc(swX+16,swY,3,0,Math.PI*2);ctx.fill();
+  // Blade
+  ctx.beginPath();ctx.moveTo(swX-16,swY);
+  if(swClosed){ctx.lineTo(swX+16,swY);}
+  else{ctx.lineTo(swX+8,swY-16);}
+  ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(78,205,196,.4)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText(swClosed?'SW (ON)':'SW (OFF)',swX,swY+lampR+12);
 }
 
 function drawParallelCircuit(ctx,r,probed){
-  const wireCol='rgba(78,205,196,.7)';
+  // Two parallel branches between left bus (x=90) and right bus (x=510)
+  // Top bus y=55, Bottom bus y=225, Mid=140
+  // Battery on left bus (vertical wire) → plates HORIZONTAL
+  // Branch A: y=105, Lamp A at x=300, SW1 at x=150
+  // Branch B: y=175, Ammeter at x=300, SW2 at x=150
+  // No component overlaps verified: SW half-width=16, lamp/ammeter R=16
+
+  const Lbus=90, Rbus=510, Tbus=55, Bbus=225;
+  const batX=Lbus, batY=(Tbus+Bbus)/2;  // 140
+  const brAy=105, brBy=175;
+  const swX=150, compX=300, R=16;
+
+  const wireCol='rgba(78,205,196,.72)';
   function wire(pts,col,w){
     ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
     pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
-    ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.stroke();
+    ctx.strokeStyle=col||wireCol;ctx.lineWidth=w||2;ctx.stroke();
   }
-  // Main bus
-  wire([[80,140],[80,60],[520,60]],wireCol); // top
-  wire([[80,140],[80,220],[520,220]],wireCol); // bottom
-  wire([[520,60],[520,220]],wireCol); // right
+  function jDot(x,y){ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=wireCol;ctx.fill();}
+  function cDot(x,y){
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#1a1a1a';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1.2;ctx.stroke();
+  }
 
-  // Branch A (top, y=60 to y=100) lamp A at x=300
-  wire([[200,60],[200,100]],wireCol);
-  wire([[400,60],[400,100]],wireCol);
-  wire([[200,100],[260,100]],wireCol);
-  wire([[340,100],[400,100]],wireCol);
-  // SW1 at x=160 top
-  wire([[120,60],[160,60]],wireCol);
+  // Left and right vertical bus wires (split at branch junction points)
+  wire([[Lbus,Tbus],[Lbus,batY-26]]);
+  wire([[Lbus,batY+26],[Lbus,Bbus]]);
+  wire([[Rbus,Tbus],[Rbus,Bbus]]);
+  // Top and bottom horizontal rails
+  wire([[Lbus,Tbus],[Rbus,Tbus]]);
+  wire([[Lbus,Bbus],[Rbus,Bbus]]);
 
-  // Branch B (bottom) lamp B at x=300,y=180
-  wire([[200,220],[200,180]],wireCol);
-  wire([[400,220],[400,180]],wireCol);
-  wire([[200,180],[260,180]],wireCol);
-  wire([[340,180],[400,180]],wireCol);
+  // Branch junction points on left and right rails
+  jDot(Lbus,brAy); jDot(Lbus,brBy);
+  jDot(Rbus,brAy); jDot(Rbus,brBy);
 
-  // Battery
-  drawBattery(ctx,80,140,'6V');
+  // Branch A wires: left rail → SW1 → lamp → right rail
+  wire([[Lbus,brAy],[swX-16,brAy]]);           // left rail → SW1 left
+  wire([[swX+16,brAy],[compX-R,brAy]]);         // SW1 right → lamp left
+  wire([[compX+R,brAy],[Rbus,brAy]]);            // lamp right → right rail
 
-  // SW1 top-left
-  drawSwitch(ctx,140,60,r.switchStates[0],0);
-  ctx.fillStyle='rgba(78,205,196,.4)';ctx.font='9px Syne';ctx.textAlign='center';
-  ctx.fillText('SW1',140,50);
+  // Branch B wires: left rail → SW2 → ammeter → right rail
+  wire([[Lbus,brBy],[swX-16,brBy]]);            // left rail → SW2 left
+  wire([[swX+16,brBy],[compX-R,brBy]]);          // SW2 right → ammeter left
+  wire([[compX+R,brBy],[Rbus,brBy]]);             // ammeter right → right rail
 
-  // SW2 bottom (place it at x=140,y=220)
-  wire([[120,220],[160,220]],wireCol);
-  drawSwitch(ctx,140,220,r.switchStates[1],0);
-  ctx.fillText('SW2',140,235);
+  // Battery — on vertical left bus → plates HORIZONTAL
+  ctx.save();
+  ctx.strokeStyle='#f5d130';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(batX-14,batY-16);ctx.lineTo(batX+14,batY-16);ctx.stroke();
+  ctx.strokeStyle='#888';ctx.lineWidth=3.5;
+  ctx.beginPath();ctx.moveTo(batX-8,batY+16);ctx.lineTo(batX+8,batY+16);ctx.stroke();
+  ctx.fillStyle='#f5d130';ctx.font='9px IBM Plex Mono';ctx.textAlign='left';
+  ctx.fillText('+',batX+17,batY-12);ctx.fillStyle='#888';ctx.fillText('−',batX+17,batY+20);
+  ctx.fillStyle='rgba(245,209,48,.55)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('6V',batX-28,batY+4);ctx.restore();
 
-  // Lamp A (top branch)
-  drawLamp(ctx,300,100,false);
-  ctx.fillStyle='rgba(240,224,80,.5)';ctx.font='9px Syne';ctx.textAlign='center';
-  ctx.fillText('A (8Ω)',300,115);
+  // SW1 in Branch A
+  const sw1=r.switchStates[0];
+  ctx.save();
+  ctx.strokeStyle=sw1?'rgba(143,255,107,.85)':'rgba(255,159,67,.85)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(swX-16,brAy,3,0,Math.PI*2);ctx.fillStyle=ctx.strokeStyle;ctx.fill();
+  ctx.beginPath();ctx.arc(swX+16,brAy,3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.moveTo(swX-16,brAy);
+  if(sw1)ctx.lineTo(swX+16,brAy);else{ctx.lineTo(swX+6,brAy-14);}ctx.stroke();ctx.restore();
+  ctx.fillStyle=sw1?'rgba(143,255,107,.5)':'rgba(255,159,67,.5)';ctx.font='8px Syne';
+  ctx.textAlign='center';ctx.fillText('SW1'+(sw1?' ON':' OFF'),swX,brAy-20);
 
-  // Ammeter in Branch B
-  drawAmmeter(ctx,300,180,probed);
-  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='9px Syne';ctx.textAlign='center';
-  ctx.fillText('Ammeter',300,200);
+  // SW2 in Branch B
+  const sw2=r.switchStates[1];
+  ctx.save();
+  ctx.strokeStyle=sw2?'rgba(143,255,107,.85)':'rgba(255,159,67,.85)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(swX-16,brBy,3,0,Math.PI*2);ctx.fillStyle=ctx.strokeStyle;ctx.fill();
+  ctx.beginPath();ctx.arc(swX+16,brBy,3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.moveTo(swX-16,brBy);
+  if(sw2)ctx.lineTo(swX+16,brBy);else{ctx.lineTo(swX+6,brBy-14);}ctx.stroke();ctx.restore();
+  ctx.fillStyle=sw2?'rgba(143,255,107,.5)':'rgba(255,159,67,.5)';ctx.font='8px Syne';
+  ctx.textAlign='center';ctx.fillText('SW2'+(sw2?' ON':' OFF'),swX,brBy+20);
 
+  // Lamp A in Branch A — COM dot on LEFT circumference (wire entry from left side)
+  ctx.save();
+  ctx.beginPath();ctx.arc(compX,brAy,R,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,240,100,.05)';ctx.fill();
+  ctx.strokeStyle='rgba(240,224,80,.7)';ctx.lineWidth=2;ctx.stroke();
+  const ld=R*0.62;
+  ctx.strokeStyle='rgba(240,224,80,.55)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(compX-ld,brAy-ld);ctx.lineTo(compX+ld,brAy+ld);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(compX+ld,brAy-ld);ctx.lineTo(compX-ld,brAy+ld);ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(240,224,80,.5)';ctx.font='8px Syne';ctx.textAlign='center';
+  ctx.fillText('Lamp A (8Ω)',compX,brAy-R-5);
+
+  // Ammeter in Branch B — COM dot on LEFT circumference
+  ctx.save();
+  if(probed){ctx.shadowColor='rgba(245,209,48,.7)';ctx.shadowBlur=10;}
+  ctx.beginPath();ctx.arc(compX,brBy,R,0,Math.PI*2);
+  ctx.fillStyle='rgba(245,209,48,.08)';ctx.fill();
+  ctx.strokeStyle='rgba(245,209,48,.9)';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 11px Syne';
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('A',compX,brBy);
+  ctx.textBaseline='alphabetic';ctx.restore();
+  cDot(compX-R, brBy);  // COM on LEFT circumference = wire-entry side
+  ctx.fillStyle='rgba(245,209,48,.45)';ctx.font='8px Syne';
+  ctx.textAlign='center';ctx.fillText('Ammeter (Branch B)',compX,brBy+R+12);
   if(probed){
-    ctx.fillStyle='rgba(245,209,48,.8)';ctx.font='10px IBM Plex Mono';
-    ctx.textAlign='center';
-    ctx.fillText(r.ammeter.toFixed(3)+' A',300,168);
+    ctx.fillStyle='rgba(245,209,48,.85)';ctx.font='9px IBM Plex Mono';
+    ctx.textAlign='center';ctx.fillText(r.ammeter.toFixed(3)+' A',compX,brBy-R-5);
   }
 }
 
 function drawBattery(ctx,x,y,label){
-  ctx.strokeStyle='#f5d130';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(x-8,y-22);ctx.lineTo(x-8,y+22);ctx.stroke();
-  ctx.strokeStyle='#888';ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(x+2,y-14);ctx.lineTo(x+2,y+14);ctx.stroke();
-  ctx.fillStyle='#f5d130';ctx.font='9px IBM Plex Mono';ctx.textAlign='center';
-  ctx.fillText(label,x-5,y+36);
-  ctx.fillText('+',x-18,y-12);
-  ctx.fillStyle='#888';ctx.fillText('−',x+10,y-12);
+  // This standalone version is no longer used — battery is drawn inline in each circuit
+  // Kept for backwards compatibility only
 }
 
 function drawAmmeter(ctx,x,y,active){
-  ctx.save();
-  if(active){ctx.shadowColor='rgba(245,209,48,.8)';ctx.shadowBlur=14;}
-  ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);
-  ctx.fillStyle='rgba(245,209,48,.08)';ctx.fill();
-  ctx.strokeStyle='rgba(245,209,48,.9)';ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 13px Syne';ctx.textAlign='center';
-  ctx.fillText('A',x,y+5);
-  // COM dot
-  ctx.beginPath();ctx.arc(x+24,y,4,0,Math.PI*2);
-  ctx.fillStyle='#333';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.stroke();
-  ctx.restore();
+  // Standalone version — kept for backwards compat (game uses inline drawing now)
 }
 
 function drawVoltmeter(ctx,x,y,active){
-  ctx.save();
-  if(active){ctx.shadowColor='rgba(78,205,196,.8)';ctx.shadowBlur=14;}
-  ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);
-  ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();
-  ctx.strokeStyle='rgba(78,205,196,.9)';ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle='rgba(78,205,196,.9)';ctx.font='bold 11px Syne';ctx.textAlign='center';
-  ctx.fillText('V',x,y+4);
-  // COM dot
-  ctx.beginPath();ctx.arc(x+18,y,3.5,0,Math.PI*2);
-  ctx.fillStyle='#333';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.stroke();
-  ctx.restore();
+  // Standalone version — kept for backwards compat
 }
 
 function drawLamp(ctx,x,y,burnt){
-  const col=burnt?'rgba(255,71,87,.5)':'rgba(240,224,80,.7)';
-  ctx.save();
-  if(!burnt){ctx.shadowColor='rgba(255,240,100,.4)';ctx.shadowBlur=12;}
-  ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);
-  ctx.fillStyle=burnt?'rgba(255,71,87,.05)':'rgba(255,240,100,.06)';ctx.fill();
-  ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
-  ctx.strokeStyle=burnt?'rgba(255,71,87,.5)':'rgba(240,224,80,.6)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(x-12,y-12);ctx.lineTo(x+12,y+12);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x+12,y-12);ctx.lineTo(x-12,y+12);ctx.stroke();
-  if(burnt){
-    ctx.fillStyle='rgba(255,71,87,.8)';ctx.font='bold 11px Syne';ctx.textAlign='center';
-    ctx.fillText('✗',x,y+4);
-  }
-  ctx.restore();
+  // Standalone — kept for backwards compat
 }
 
 function drawSwitch(ctx,x,y,closed,label){
-  ctx.save();
-  ctx.strokeStyle=closed?'rgba(143,255,107,.8)':'rgba(255,159,67,.8)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(x-16,y);
-  if(closed)ctx.lineTo(x+16,y);
-  else{ctx.lineTo(x,y);ctx.lineTo(x+10,y-14);}
-  ctx.stroke();
-  ctx.beginPath();ctx.arc(x-16,y,3,0,Math.PI*2);ctx.fillStyle=closed?'rgba(143,255,107,.8)':'rgba(255,159,67,.8)';ctx.fill();
-  ctx.beginPath();ctx.arc(x+16,y,3,0,Math.PI*2);ctx.fill();
-  ctx.restore();
+  // Standalone — kept for backwards compat
 }
 
 /* ─── SUBMIT ─── */
