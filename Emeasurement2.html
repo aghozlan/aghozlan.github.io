@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Electric Measurement — Part 2 | Grade 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────── DESIGN SYSTEM ─────────────── */
+:root {
+  --bg:      #0a0c0e;
+  --bg2:     #0f1215;
+  --bg3:     #141820;
+  --panel:   rgba(255,220,50,.03);
+  --panel2:  rgba(255,220,50,.07);
+  --border:  rgba(255,220,50,.12);
+  --border2: rgba(255,220,50,.25);
+  --text:    #dde4ee;
+  --muted:   rgba(221,228,238,.45);
+  --accent:  #f5d130;      /* electric yellow */
+  --lime:    #8fff6b;      /* correct green */
+  --red:     #ff4757;
+  --blue:    #4ecdc4;
+  --orange:  #ff9f43;
+  --purple:  #a29bfe;
+  --white:   #f0f4ff;
+  --r: 6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+/* Circuit-trace grid */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(245,209,48,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(245,209,48,.018) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+/* Scanline top edge glow */
+body::after{
+  content:'';position:fixed;top:0;left:0;right:0;height:2px;z-index:100;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  animation:scanTop 4s ease-in-out infinite;
+}
+@keyframes scanTop{0%,100%{opacity:.4}50%{opacity:1}}
+
+.app{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ─── SIDEBAR ─── */
+aside{
+  width:230px;flex-shrink:0;
+  background:linear-gradient(180deg,var(--bg2),var(--bg3));
+  border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;
+  padding:1.2rem .9rem;
+  gap:.7rem;overflow:hidden;
+}
+.lab-brand{text-align:center;border-bottom:1px solid var(--border);padding-bottom:.9rem;}
+.lab-icon{font-size:2rem;filter:drop-shadow(0 0 10px var(--accent));}
+.lab-title{font-size:.75rem;font-weight:700;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-top:.3rem;}
+.lab-sub{font-size:.65rem;color:var(--muted);margin-top:.2rem;}
+
+/* Timer */
+.timer-box{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  padding:.5rem .7rem;display:flex;align-items:center;gap:.5rem;
+}
+.timer-icon{color:var(--accent);font-size:.85rem;}
+.timer-val{font-family:'IBM Plex Mono',monospace;font-size:1rem;font-weight:600;color:var(--accent);letter-spacing:.05em;}
+
+/* Progress dots */
+.prog-label{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.prog-dots{display:flex;gap:.4rem;flex-wrap:wrap;}
+.dot{
+  width:26px;height:26px;border-radius:50%;
+  border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.55rem;font-weight:700;color:var(--muted);
+  cursor:pointer;transition:all .3s;font-family:'IBM Plex Mono',monospace;
+}
+.dot.done{background:var(--lime);border-color:var(--lime);color:#0a0c0e;box-shadow:0 0 8px var(--lime);}
+.dot.active{background:var(--bg);border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px rgba(245,209,48,.4);}
+
+/* Score ring */
+.score-wrap{display:flex;flex-direction:column;align-items:center;gap:.4rem;}
+.score-ring-svg{overflow:visible;}
+.ring-track{fill:none;stroke:var(--border2);stroke-width:5;}
+.ring-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;
+  stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset .6s ease;
+  transform:rotate(-90deg);transform-origin:50% 50%;}
+.ring-label{font-family:'IBM Plex Mono',monospace;font-size:1.2rem;font-weight:600;fill:var(--accent);}
+.ring-sub{font-size:.55rem;fill:var(--muted);}
+.score-tag{font-size:.65rem;color:var(--muted);text-align:center;letter-spacing:.05em;}
+
+/* Nav links */
+.nav-links{display:flex;flex-direction:column;gap:.2rem;margin-top:auto;}
+.nav-link{
+  font-size:.68rem;color:var(--muted);padding:.3rem .5rem;border-radius:4px;
+  cursor:pointer;transition:all .2s;text-decoration:none;display:flex;align-items:center;gap:.4rem;
+}
+.nav-link:hover,.nav-link.active-link{color:var(--accent);background:var(--panel2);}
+.nav-link-badge{
+  font-size:.5rem;font-weight:700;font-family:'IBM Plex Mono',monospace;
+  background:var(--border2);color:var(--accent);padding:.1rem .3rem;border-radius:3px;
+}
+
+/* ─── MAIN ─── */
+main{flex:1;padding:2rem 2.2rem;max-width:880px;}
+
+/* Student picker */
+.picker-card{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:10px;
+  padding:1.2rem 1.5rem;margin-bottom:1.8rem;
+}
+.picker-title{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;}
+.sec-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem;}
+.sec-btn{
+  font-family:'Noto Kufi Arabic',sans-serif;font-size:.75rem;font-weight:600;
+  padding:.35rem .7rem;border-radius:5px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;
+}
+.sec-btn.on{background:var(--accent);border-color:var(--accent);color:#0a0c0e;}
+.picker-row{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;}
+select{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:5px;
+  color:var(--text);font-family:'Noto Kufi Arabic',sans-serif;font-size:.8rem;
+  padding:.4rem .7rem;min-width:180px;direction:rtl;
+}
+select:focus{outline:none;border-color:var(--accent);}
+.picker-info{font-size:.65rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+
+/* Section cards */
+.section{
+  background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:1.4rem;overflow:hidden;transition:border-color .3s;
+}
+.section:hover{border-color:var(--border2);}
+.section-header{
+  display:flex;align-items:center;gap:.8rem;
+  padding:1rem 1.2rem;cursor:pointer;user-select:none;
+  border-bottom:1px solid transparent;transition:border-color .3s;
+}
+.section.open .section-header{border-bottom-color:var(--border);}
+.sec-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;
+  background:var(--border2);color:var(--accent);padding:.2rem .4rem;border-radius:4px;
+  min-width:28px;text-align:center;
+}
+.sec-tag{
+  font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:.15rem .4rem;border-radius:3px;margin-left:auto;
+}
+.tag-engage{background:rgba(162,155,254,.15);color:var(--purple);}
+.tag-explore{background:rgba(78,205,196,.15);color:var(--blue);}
+.tag-explain{background:rgba(255,220,50,.15);color:var(--accent);}
+.tag-elaborate{background:rgba(255,159,67,.15);color:var(--orange);}
+.tag-evaluate{background:rgba(143,255,107,.15);color:var(--lime);}
+.sec-chevron{color:var(--muted);transition:transform .3s;font-size:.8rem;margin-left:.5rem;}
+.section.open .sec-chevron{transform:rotate(180deg);}
+.section-title{font-size:.95rem;font-weight:700;color:var(--white);}
+.section-body{display:none;padding:1.4rem 1.5rem;}
+.section.open .section-body{display:block;}
+
+/* Content elements */
+h3{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:.7rem;}
+h4{font-size:.85rem;font-weight:600;color:var(--blue);margin-bottom:.5rem;}
+p{font-size:.82rem;line-height:1.65;color:var(--text);margin-bottom:.7rem;}
+.info-box{
+  background:var(--panel2);border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0;padding:.8rem 1rem;margin:.8rem 0;font-size:.8rem;
+}
+.info-box.blue{border-left-color:var(--blue);}
+.info-box.lime{border-left-color:var(--lime);}
+.info-box.red{border-left-color:var(--red);}
+
+/* MCQ */
+.mcq-block{margin:1rem 0;}
+.mcq-q{font-size:.82rem;font-weight:600;color:var(--white);margin-bottom:.5rem;}
+.opts{display:flex;flex-direction:column;gap:.35rem;}
+.opt{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
+  padding:.5rem .8rem;cursor:pointer;transition:all .2s;font-size:.78rem;
+}
+.opt:hover{border-color:var(--border2);background:var(--panel);}
+.opt.selected{border-color:var(--accent);background:rgba(245,209,48,.08);}
+.opt.correct{border-color:var(--lime)!important;background:rgba(143,255,107,.1)!important;color:var(--lime);}
+.opt.wrong{border-color:var(--red)!important;background:rgba(255,71,87,.08)!important;color:var(--red);}
+.opt-key{
+  font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:600;
+  background:var(--border2);color:var(--accent);padding:.1rem .3rem;
+  border-radius:3px;min-width:18px;text-align:center;
+}
+.chk-btn{
+  margin-top:.5rem;font-size:.75rem;font-weight:700;padding:.4rem .9rem;
+  background:var(--accent);color:#0a0c0e;border:none;border-radius:5px;cursor:pointer;
+  transition:opacity .2s;font-family:'Syne',sans-serif;
+}
+.chk-btn:hover{opacity:.85;}
+.fb{font-size:.75rem;margin-top:.4rem;font-weight:600;}
+.fb.ok{color:var(--lime);}
+.fb.ng{color:var(--red);}
+
+/* Exercise */
+.ex-row{
+  display:flex;align-items:center;gap:.7rem;margin:.5rem 0;
+  background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:.7rem 1rem;
+  flex-wrap:wrap;
+}
+.ex-label{font-size:.78rem;color:var(--text);flex:1;min-width:200px;}
+.ex-input{
+  background:var(--bg);border:1px solid var(--border2);border-radius:5px;
+  color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;
+  padding:.35rem .6rem;width:90px;text-align:center;
+}
+.ex-input:focus{outline:none;border-color:var(--accent);}
+.ex-unit{font-size:.7rem;color:var(--muted);}
+.ex-btn{
+  font-size:.7rem;font-weight:700;padding:.35rem .7rem;
+  background:var(--panel2);border:1px solid var(--border2);border-radius:5px;
+  color:var(--accent);cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;
+}
+.ex-btn:hover{background:var(--accent);color:#0a0c0e;}
+.ex-fb{font-size:.72rem;font-weight:600;min-width:80px;}
+.ex-fb.correct{color:var(--lime);}
+.ex-fb.wrong{color:var(--red);}
+.pts-badge{
+  font-size:.6rem;font-family:'IBM Plex Mono',monospace;
+  background:rgba(245,209,48,.1);color:var(--accent);
+  padding:.1rem .4rem;border-radius:3px;white-space:nowrap;
+}
+
+/* Hint system */
+.hint-wrap{margin-top:.6rem;}
+.hint-btn{
+  font-size:.68rem;padding:.28rem .6rem;
+  background:transparent;border:1px dashed var(--border2);border-radius:5px;
+  color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;
+}
+.hint-btn:hover{border-color:var(--orange);color:var(--orange);}
+.hint-text{
+  margin-top:.4rem;font-size:.73rem;color:var(--orange);
+  background:rgba(255,159,67,.07);border-radius:5px;padding:.5rem .7rem;
+  border-left:2px solid var(--orange);display:none;
+}
+
+/* Multimeter canvas */
+#mmCanvas{border:1px solid var(--border2);border-radius:8px;display:block;cursor:pointer;}
+
+/* Circuit diagram canvas */
+.circuit-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:.8rem;
+}
+canvas{max-width:100%;display:block;}
+
+/* Game */
+.game-wrap{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:10px;
+  padding:1.2rem;
+}
+.game-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem;}
+.game-title{font-size:.85rem;font-weight:700;color:var(--accent);}
+.game-stats{display:flex;gap:.8rem;align-items:center;}
+.stat-pill{
+  font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:600;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:20px;
+  padding:.2rem .6rem;color:var(--text);
+}
+.stat-pill span{color:var(--accent);}
+.game-canvas-wrap{border:1px solid var(--border);border-radius:8px;overflow:hidden;position:relative;}
+.game-msg{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(10,12,14,.92);border:1px solid var(--border2);border-radius:8px;
+  padding:1rem 1.5rem;text-align:center;font-weight:700;font-size:.9rem;
+  display:none;z-index:10;white-space:nowrap;
+}
+.game-controls{display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap;align-items:center;}
+.gc-btn{
+  font-size:.73rem;font-weight:700;padding:.4rem .9rem;border-radius:5px;border:none;
+  cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;
+}
+.gc-btn.primary{background:var(--accent);color:#0a0c0e;}
+.gc-btn.secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
+.gc-btn:hover{opacity:.8;}
+.meter-reading{
+  font-family:'IBM Plex Mono',monospace;font-size:1.3rem;font-weight:600;
+  color:var(--lime);background:var(--bg);border:1px solid var(--border2);
+  border-radius:5px;padding:.4rem .9rem;min-width:100px;text-align:center;
+  letter-spacing:.05em;
+}
+.meter-reading.zero{color:var(--muted);}
+.probe-legend{display:flex;gap:1rem;font-size:.7rem;margin-top:.4rem;}
+.probe-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:.3rem;}
+
+/* Self-assessment */
+.self-assess{margin-top:1.2rem;}
+.self-label{font-size:.72rem;color:var(--muted);margin-bottom:.5rem;}
+.emoji-btns{display:flex;gap:.5rem;}
+.emoji-btn{
+  font-size:1.2rem;padding:.3rem .5rem;border-radius:6px;border:1px solid var(--border2);
+  background:transparent;cursor:pointer;transition:all .2s;
+}
+.emoji-btn:hover,.emoji-btn.selected-emoji{border-color:var(--accent);background:var(--panel2);}
+
+/* Score breakdown */
+.score-table{width:100%;border-collapse:collapse;font-size:.75rem;margin:1rem 0;}
+.score-table th{text-align:left;color:var(--muted);font-weight:600;padding:.4rem .7rem;
+  border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:.65rem;}
+.score-table td{padding:.5rem .7rem;border-bottom:1px solid var(--border);}
+.score-table .pts{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-weight:600;}
+.score-table .total-row td{color:var(--lime);font-weight:700;}
+
+/* Submit */
+.submit-btn{
+  font-size:.9rem;font-weight:800;padding:.8rem 2rem;border-radius:7px;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--orange));color:#0a0c0e;
+  cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;letter-spacing:.03em;
+  display:block;margin:1rem auto 0;
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,209,48,.3);}
+.submit-result{
+  display:none;text-align:center;padding:1.5rem;
+  background:var(--panel2);border:1px solid var(--border2);border-radius:10px;margin-top:1rem;
+}
+.final-score{font-size:2.5rem;font-weight:800;color:var(--accent);font-family:'IBM Plex Mono',monospace;}
+.final-grade{font-size:1.4rem;font-weight:700;color:var(--lime);}
+
+/* Written */
+textarea{
+  width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;
+  color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;padding:.8rem;
+  resize:vertical;min-height:90px;line-height:1.6;
+}
+textarea:focus{outline:none;border-color:var(--accent);}
+
+/* Confetti */
+.confetti-piece{
+  position:fixed;width:8px;height:8px;border-radius:2px;
+  pointer-events:none;z-index:9999;
+  animation:confetti-fall 2s ease-in forwards;
+}
+@keyframes confetti-fall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
+}
+
+/* Next button */
+.next-btn{
+  display:block;margin-top:1.2rem;margin-left:auto;
+  font-size:.75rem;font-weight:700;padding:.4rem 1rem;border-radius:5px;border:1px solid var(--border2);
+  background:var(--panel);color:var(--text);cursor:pointer;transition:all .2s;
+  font-family:'Syne',sans-serif;
+}
+.next-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Responsive */
+@media(max-width:820px){
+  .app{flex-direction:column;}
+  aside{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:.8rem;}
+  main{padding:1.2rem 1rem;}
+  .nav-links{display:none;}
+}
+
+/* Multimeter tooltip */
+.mm-tooltip{
+  position:absolute;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:6px;padding:.5rem .8rem;font-size:.72rem;color:var(--text);
+  pointer-events:none;z-index:50;display:none;max-width:200px;
+  box-shadow:0 4px 16px rgba(0,0,0,.6);
+}
+
+/* diagram labels */
+.diag-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.6rem;font-size:.72rem;color:var(--muted);align-items:center;}
+.legend-swatch{width:14px;height:14px;border-radius:3px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside>
+  <div class="lab-brand">
+    <div class="lab-icon">🔌</div>
+    <div class="lab-title">Electric Measurement</div>
+    <div class="lab-sub">Part 2 · Grade 7 · Physics</div>
+  </div>
+
+  <div class="timer-box">
+    <span class="timer-icon">⏱</span>
+    <span class="timer-val" id="timerDisp">00:00</span>
+  </div>
+
+  <div>
+    <div class="prog-label">PROGRESS</div>
+    <div class="prog-dots">
+      <div class="dot active" id="dot1" onclick="openSection('s1')">E1</div>
+      <div class="dot" id="dot2" onclick="openSection('s2')">E2</div>
+      <div class="dot" id="dot3" onclick="openSection('s3')">E3</div>
+      <div class="dot" id="dot4" onclick="openSection('s4')">E4</div>
+      <div class="dot" id="dot5" onclick="openSection('s5')">E5</div>
+    </div>
+  </div>
+
+  <div class="score-wrap">
+    <svg class="score-ring-svg" width="80" height="80" viewBox="0 0 80 80">
+      <circle class="ring-track" cx="40" cy="40" r="36"/>
+      <circle class="ring-fill" id="ringFill" cx="40" cy="40" r="36"/>
+      <text class="ring-label" x="40" y="44" text-anchor="middle" id="ringScore">0</text>
+      <text class="ring-sub" x="40" y="54" text-anchor="middle">/20</text>
+    </svg>
+    <div class="score-tag">LIVE SCORE</div>
+  </div>
+
+  <div class="nav-links">
+    <a class="nav-link active-link" onclick="openSection('s1')"><span class="nav-link-badge">E1</span>Engage</a>
+    <a class="nav-link" onclick="openSection('s2')"><span class="nav-link-badge">E2</span>Explore</a>
+    <a class="nav-link" onclick="openSection('s3')"><span class="nav-link-badge">E3</span>Explain</a>
+    <a class="nav-link" onclick="openSection('s4')"><span class="nav-link-badge">E4</span>Elaborate</a>
+    <a class="nav-link" onclick="openSection('s5')"><span class="nav-link-badge">E5</span>Evaluate</a>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+  <!-- Student picker -->
+  <div class="picker-card">
+    <div class="picker-title">⚡ Student Identification — تعريف الطالب</div>
+    <div class="sec-btns">
+      <button class="sec-btn" onclick="setSection('7A')">7A</button>
+      <button class="sec-btn" onclick="setSection('7B')">7B</button>
+      <button class="sec-btn" onclick="setSection('7C')">7C</button>
+      <button class="sec-btn" onclick="setSection('7D')">7D</button>
+    </div>
+    <div class="picker-row">
+      <input type="hidden" id="stuClass" value="">
+      <select id="stuName" disabled onchange="onStudentPicked()">
+        <option value="">— اختر اسمك —</option>
+      </select>
+      <span class="picker-info" id="pickerInfo">Select your section first</span>
+    </div>
+  </div>
+
+  <!-- ═══ E1 ENGAGE ═══ -->
+  <div class="section open" id="s1">
+    <div class="section-header" onclick="toggleSection('s1')">
+      <span class="sec-badge">E1</span>
+      <span class="section-title">The Real Multimeter — Meet the Tool</span>
+      <span class="sec-tag tag-engage">ENGAGE</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <p>In Part 1 you learned that <strong>ammeters</strong> measure current and <strong>voltmeters</strong> measure voltage. But in a real lab, scientists use a single device that does both — and much more. Click different parts of the multimeter below to discover what each one does.</p>
+
+      <div style="position:relative;display:inline-block;">
+        <canvas id="mmCanvas" width="340" height="420"></canvas>
+        <div class="mm-tooltip" id="mmTooltip"></div>
+      </div>
+
+      <div class="info-box" style="margin-top:.8rem;">
+        <strong>🔑 Key insight:</strong> Every multimeter has a <span style="color:var(--accent)">COM terminal</span> (Common / Negative). No matter what you measure — current <em>or</em> voltage — the <strong>black probe always goes into COM</strong>. COM stands for "common ground" — it completes the circuit for every measurement mode.
+      </div>
+
+      <div class="mcq-block">
+        <div class="mcq-q">Q1 · What does COM stand for in a multimeter? <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts1">
+          <div class="opt opt-1" data-choice="A" onclick="pick(1,'A')"><span class="opt-key">A</span> Copper Only Measurement</div>
+          <div class="opt opt-1" data-choice="B" onclick="pick(1,'B')"><span class="opt-key">B</span> Common (negative/ground) terminal</div>
+          <div class="opt opt-1" data-choice="C" onclick="pick(1,'C')"><span class="opt-key">C</span> Current Output Meter</div>
+          <div class="opt opt-1" data-choice="D" onclick="pick(1,'D')"><span class="opt-key">D</span> Calibration Output Mode</div>
+        </div>
+        <button class="chk-btn" onclick="chk(1,'B')">Check ✓</button>
+        <div class="fb" id="fb1"></div>
+      </div>
+
+      <div class="mcq-block">
+        <div class="mcq-q">Q2 · When using a multimeter as an ammeter, where does the black probe go? <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts2">
+          <div class="opt opt-2" data-choice="A" onclick="pick(2,'A')"><span class="opt-key">A</span> Into the "V" (voltage) terminal</div>
+          <div class="opt opt-2" data-choice="B" onclick="pick(2,'B')"><span class="opt-key">B</span> Into the "A" (ampere) terminal</div>
+          <div class="opt opt-2" data-choice="C" onclick="pick(2,'C')"><span class="opt-key">C</span> Always into COM, regardless of mode</div>
+          <div class="opt opt-2" data-choice="D" onclick="pick(2,'D')"><span class="opt-key">D</span> Anywhere — colour doesn't matter</div>
+        </div>
+        <button class="chk-btn" onclick="chk(2,'C')">Check ✓</button>
+        <div class="fb" id="fb2"></div>
+      </div>
+
+      <div class="self-assess">
+        <div class="self-label">How confident do you feel about the multimeter? (self-assessment)</div>
+        <div class="emoji-btns">
+          <button class="emoji-btn" onclick="selfRate('s1','😕')">😕</button>
+          <button class="emoji-btn" onclick="selfRate('s1','🤔')">🤔</button>
+          <button class="emoji-btn" onclick="selfRate('s1','😊')">😊</button>
+          <button class="emoji-btn" onclick="selfRate('s1','🎯')">🎯</button>
+        </div>
+      </div>
+
+      <button class="next-btn" onclick="nextSection('s1','s2')">Next → Explore</button>
+    </div>
+  </div>
+
+  <!-- ═══ E2 EXPLORE ═══ -->
+  <div class="section" id="s2">
+    <div class="section-header" onclick="toggleSection('s2')">
+      <span class="sec-badge">E2</span>
+      <span class="section-title">Circuit Diagrams — Ammeter & Voltmeter Symbols</span>
+      <span class="sec-tag tag-explore">EXPLORE</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <p>Now we convert the real multimeter into <strong>circuit diagram symbols</strong>. The small black dot next to each symbol represents the <span style="color:var(--accent)">COM probe connection point</span> — always present but always smaller than the instrument symbol itself.</p>
+
+      <div class="circuit-wrap">
+        <canvas id="diagCanvas" width="640" height="320" style="border:1px solid var(--border2);border-radius:8px;"></canvas>
+        <div class="diag-legend">
+          <span><span class="legend-swatch" style="background:var(--accent)"></span> Ammeter (A) — series</span>
+          <span><span class="legend-swatch" style="background:var(--blue)"></span> Voltmeter (V) — parallel</span>
+          <span><span class="legend-swatch" style="background:#888;border-radius:50%"></span> COM point (●)</span>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem;">
+          <button class="gc-btn primary" onclick="animateDiagram()">▶ Animate Current Flow</button>
+          <button class="gc-btn secondary" onclick="highlightAmmeter()">Highlight Ammeter</button>
+          <button class="gc-btn secondary" onclick="highlightVoltmeter()">Highlight Voltmeter</button>
+        </div>
+      </div>
+
+      <div class="info-box blue" style="margin-top:.8rem;">
+        <strong>🔵 Ammeter in Series:</strong> Current <em>passes through</em> the ammeter. It must be <strong>in the main wire</strong> of the circuit — like a checkpoint the electrons walk through.<br><br>
+        <strong>🟡 Voltmeter in Parallel:</strong> Voltage is measured <em>across</em> a component. The voltmeter connects to <strong>both sides</strong> of the component, like reading the height difference between two points.
+      </div>
+
+      <div class="mcq-block">
+        <div class="mcq-q">Q3 · How is an ammeter connected in a circuit? <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts3">
+          <div class="opt opt-3" data-choice="A" onclick="pick(3,'A')"><span class="opt-key">A</span> In parallel across the component</div>
+          <div class="opt opt-3" data-choice="B" onclick="pick(3,'B')"><span class="opt-key">B</span> In series, in the main wire</div>
+          <div class="opt opt-3" data-choice="C" onclick="pick(3,'C')"><span class="opt-key">C</span> Connected to the positive terminal only</div>
+          <div class="opt opt-3" data-choice="D" onclick="pick(3,'D')"><span class="opt-key">D</span> Anywhere near the circuit</div>
+        </div>
+        <button class="chk-btn" onclick="chk(3,'B')">Check ✓</button>
+        <div class="fb" id="fb3"></div>
+      </div>
+
+      <div class="mcq-block">
+        <div class="mcq-q">Q4 · In the circuit diagram, the small black dot (●) near A or V represents… <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts4">
+          <div class="opt opt-4" data-choice="A" onclick="pick(4,'A')"><span class="opt-key">A</span> A junction/node in the wire</div>
+          <div class="opt opt-4" data-choice="B" onclick="pick(4,'B')"><span class="opt-key">B</span> The COM (negative/ground) probe connection</div>
+          <div class="opt opt-4" data-choice="C" onclick="pick(4,'C')"><span class="opt-key">C</span> A resistor symbol</div>
+          <div class="opt opt-4" data-choice="D" onclick="pick(4,'D')"><span class="opt-key">D</span> The position of the battery</div>
+        </div>
+        <button class="chk-btn" onclick="chk(4,'B')">Check ✓</button>
+        <div class="fb" id="fb4"></div>
+      </div>
+
+      <div class="self-assess">
+        <div class="self-label">How confident are you now with circuit diagram symbols?</div>
+        <div class="emoji-btns">
+          <button class="emoji-btn" onclick="selfRate('s2','😕')">😕</button>
+          <button class="emoji-btn" onclick="selfRate('s2','🤔')">🤔</button>
+          <button class="emoji-btn" onclick="selfRate('s2','😊')">😊</button>
+          <button class="emoji-btn" onclick="selfRate('s2','🎯')">🎯</button>
+        </div>
+      </div>
+
+      <button class="next-btn" onclick="nextSection('s2','s3')">Next → Explain</button>
+    </div>
+  </div>
+
+  <!-- ═══ E3 EXPLAIN ═══ -->
+  <div class="section" id="s3">
+    <div class="section-header" onclick="toggleSection('s3')">
+      <span class="sec-badge">E3</span>
+      <span class="section-title">Readings & Rules — When Things Go Wrong</span>
+      <span class="sec-tag tag-explain">EXPLAIN</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <h3>What does the meter tell you?</h3>
+      <p>Understanding <em>unusual</em> readings is as important as understanding normal ones. A skilled electrician reads the meter and instantly knows what's happening in the circuit.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1rem 0;">
+        <div class="info-box">
+          <strong>Ammeter reads 0 A</strong><br>
+          <span style="font-size:.75rem;">→ Circuit is open (broken). No current can flow.</span>
+        </div>
+        <div class="info-box blue">
+          <strong>Voltmeter reads battery voltage</strong><br>
+          <span style="font-size:.75rem;">→ Measured component is open/broken (all voltage drops across it).</span>
+        </div>
+        <div class="info-box lime">
+          <strong>Voltmeter reads 0 V</strong><br>
+          <span style="font-size:.75rem;">→ Either the component has no resistance, or the voltmeter is short-circuiting it.</span>
+        </div>
+        <div class="info-box red">
+          <strong>Ammeter reads very high</strong><br>
+          <span style="font-size:.75rem;">→ Possible short circuit — current takes a path with almost no resistance.</span>
+        </div>
+      </div>
+
+      <!-- Numerical exercise with variable values -->
+      <h4>🧮 Exercises — Calculate the missing values <span id="varNote" style="color:var(--muted);font-size:.7rem;"></span></h4>
+
+      <div class="ex-row">
+        <span class="ex-label">A lamp has resistance <span id="r1d">12</span> Ω and is connected to a <span id="v1d">6</span> V battery. What current does the ammeter read?</span>
+        <input class="ex-input" id="ex1" placeholder="0.00">
+        <span class="ex-unit">A</span>
+        <button class="ex-btn" onclick="checkEx(1)">Check</button>
+        <span class="ex-fb" id="exFb1"></span>
+        <span class="pts-badge">2 pts</span>
+      </div>
+      <div class="hint-wrap">
+        <button class="hint-btn" onclick="showHint(1)">💡 Need a hint?</button>
+        <div class="hint-text" id="hint1"></div>
+      </div>
+
+      <div class="ex-row" style="margin-top:.7rem;">
+        <span class="ex-label">Two lamps (<span id="r2ad">8</span> Ω and <span id="r2bd">12</span> Ω) in series with a <span id="v2d">10</span> V battery. What does the voltmeter read across the <span id="r2ad2">8</span> Ω lamp?</span>
+        <input class="ex-input" id="ex2" placeholder="0.00">
+        <span class="ex-unit">V</span>
+        <button class="ex-btn" onclick="checkEx(2)">Check</button>
+        <span class="ex-fb" id="exFb2"></span>
+        <span class="pts-badge">2 pts</span>
+      </div>
+      <div class="hint-wrap">
+        <button class="hint-btn" onclick="showHint(2)">💡 Need a hint?</button>
+        <div class="hint-text" id="hint2"></div>
+      </div>
+
+      <div class="mcq-block" style="margin-top:1rem;">
+        <div class="mcq-q">Q5 · An ammeter is placed in a circuit with an open switch. What does it read? <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts5">
+          <div class="opt opt-5" data-choice="A" onclick="pick(5,'A')"><span class="opt-key">A</span> The maximum current the battery can supply</div>
+          <div class="opt opt-5" data-choice="B" onclick="pick(5,'B')"><span class="opt-key">B</span> 0 A — no current flows in an open circuit</div>
+          <div class="opt opt-5" data-choice="C" onclick="pick(5,'C')"><span class="opt-key">C</span> The battery voltage in amperes</div>
+          <div class="opt opt-5" data-choice="D" onclick="pick(5,'D')"><span class="opt-key">D</span> It doesn't matter — ammeters only work in closed circuits</div>
+        </div>
+        <button class="chk-btn" onclick="chk(5,'B')">Check ✓</button>
+        <div class="fb" id="fb5"></div>
+      </div>
+
+      <div class="self-assess">
+        <div class="self-label">How confident are you interpreting meter readings?</div>
+        <div class="emoji-btns">
+          <button class="emoji-btn" onclick="selfRate('s3','😕')">😕</button>
+          <button class="emoji-btn" onclick="selfRate('s3','🤔')">🤔</button>
+          <button class="emoji-btn" onclick="selfRate('s3','😊')">😊</button>
+          <button class="emoji-btn" onclick="selfRate('s3','🎯')">🎯</button>
+        </div>
+      </div>
+
+      <button class="next-btn" onclick="nextSection('s3','s4')">Next → Elaborate (Game!)</button>
+    </div>
+  </div>
+
+  <!-- ═══ E4 ELABORATE — GAME ═══ -->
+  <div class="section" id="s4">
+    <div class="section-header" onclick="toggleSection('s4')">
+      <span class="sec-badge">E4</span>
+      <span class="section-title">🎮 Circuit Detective — Find the Fault!</span>
+      <span class="sec-tag tag-elaborate">ELABORATE</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <p>You are an electrician with a multimeter. Use your probes to measure current and voltage in circuits with switches, branches, and faulty components. Identify what's wrong and answer correctly to score points.</p>
+
+      <div class="game-wrap">
+        <div class="game-header">
+          <span class="game-title">⚡ Circuit Detective</span>
+          <div class="game-stats">
+            <span class="stat-pill">Round <span id="gRound">1</span>/5</span>
+            <span class="stat-pill">❤️ <span id="gLives">3</span></span>
+            <span class="stat-pill">Score <span id="gScore">0</span></span>
+          </div>
+        </div>
+
+        <!-- Ammeter / Voltmeter reading displays -->
+        <div style="display:flex;gap:1rem;margin-bottom:.6rem;flex-wrap:wrap;align-items:center;">
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:.2rem;font-family:'IBM Plex Mono',monospace;">AMMETER (A)</div>
+            <div class="meter-reading" id="gAmReading">—</div>
+          </div>
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:.2rem;font-family:'IBM Plex Mono',monospace;">VOLTMETER (V)</div>
+            <div class="meter-reading" id="gVReading">—</div>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:.7rem;color:var(--muted);line-height:1.5;" id="gScenario">Loading scenario...</div>
+          </div>
+        </div>
+
+        <div class="game-canvas-wrap">
+          <canvas id="gameCanvas" width="620" height="280"></canvas>
+          <div class="game-msg" id="gameMsg"></div>
+        </div>
+
+        <div style="margin-top:.7rem;">
+          <div style="font-size:.75rem;font-weight:700;color:var(--white);margin-bottom:.4rem;" id="gQuestion">What is happening in this circuit?</div>
+          <div class="opts" id="gameOpts" style="max-width:560px;"></div>
+        </div>
+
+        <div class="game-controls">
+          <button class="gc-btn primary" id="gMeasureBtn" onclick="measureProbes()">🔴 Place Probes & Measure</button>
+          <button class="gc-btn secondary" onclick="toggleSwitch()">🔘 Toggle Switch</button>
+          <button class="gc-btn secondary" id="gNextBtn" onclick="nextRound()" style="display:none;">Next Round →</button>
+          <span style="font-size:.7rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;" id="gFeedback"></span>
+        </div>
+
+        <div class="probe-legend">
+          <span><span class="probe-dot" style="background:var(--red)"></span>Red probe = + terminal (A or V)</span>
+          <span><span class="probe-dot" style="background:#555"></span>Black probe = COM terminal (always)</span>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:.8rem;">
+        <strong>🏆 Bonus:</strong> Complete all 5 rounds without losing a life → earn <strong>+1 bonus point</strong>!
+      </div>
+
+      <div class="self-assess">
+        <div class="self-label">How was the detective challenge?</div>
+        <div class="emoji-btns">
+          <button class="emoji-btn" onclick="selfRate('s4','😕')">😕</button>
+          <button class="emoji-btn" onclick="selfRate('s4','🤔')">🤔</button>
+          <button class="emoji-btn" onclick="selfRate('s4','😊')">😊</button>
+          <button class="emoji-btn" onclick="selfRate('s4','🎯')">🎯</button>
+        </div>
+      </div>
+
+      <button class="next-btn" onclick="nextSection('s4','s5')">Next → Evaluate</button>
+    </div>
+  </div>
+
+  <!-- ═══ E5 EVALUATE ═══ -->
+  <div class="section" id="s5">
+    <div class="section-header" onclick="toggleSection('s5')">
+      <span class="sec-badge">E5</span>
+      <span class="section-title">Evaluate — Final Assessment & Submit</span>
+      <span class="sec-tag tag-evaluate">EVALUATE</span>
+      <span class="sec-chevron">▾</span>
+    </div>
+    <div class="section-body">
+
+      <div class="mcq-block">
+        <div class="mcq-q">Q6 · A voltmeter placed across an intact wire reads 0 V. This is because… <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts6">
+          <div class="opt opt-6" data-choice="A" onclick="pick(6,'A')"><span class="opt-key">A</span> The voltmeter is broken</div>
+          <div class="opt opt-6" data-choice="B" onclick="pick(6,'B')"><span class="opt-key">B</span> A wire with no resistance has no voltage drop across it</div>
+          <div class="opt opt-6" data-choice="C" onclick="pick(6,'C')"><span class="opt-key">C</span> Voltmeters only work with batteries</div>
+          <div class="opt opt-6" data-choice="D" onclick="pick(6,'D')"><span class="opt-key">D</span> Current is too low to measure</div>
+        </div>
+        <button class="chk-btn" onclick="chk(6,'B')">Check ✓</button>
+        <div class="fb" id="fb6"></div>
+      </div>
+
+      <div class="mcq-block">
+        <div class="mcq-q">Q7 · A voltmeter across a burnt-out lamp reads 6 V (= battery voltage). Why? <span class="pts-badge">1 pt</span></div>
+        <div class="opts" id="opts7">
+          <div class="opt opt-7" data-choice="A" onclick="pick(7,'A')"><span class="opt-key">A</span> The lamp has very low resistance</div>
+          <div class="opt opt-7" data-choice="B" onclick="pick(7,'B')"><span class="opt-key">B</span> The broken filament acts as an open circuit — all voltage drops across it</div>
+          <div class="opt opt-7" data-choice="C" onclick="pick(7,'C')"><span class="opt-key">C</span> The ammeter is drawing extra current</div>
+          <div class="opt opt-7" data-choice="D" onclick="pick(7,'D')"><span class="opt-key">D</span> The voltmeter is connected in series</div>
+        </div>
+        <button class="chk-btn" onclick="chk(7,'B')">Check ✓</button>
+        <div class="fb" id="fb7"></div>
+      </div>
+
+      <!-- Final numerical exercise -->
+      <div class="ex-row" style="margin-top:.8rem;">
+        <span class="ex-label">In a parallel circuit: Branch A has <span id="ra3d">6</span> Ω, Branch B has <span id="rb3d">12</span> Ω. Battery = <span id="v3d">12</span> V. What current does the ammeter in Branch A read?</span>
+        <input class="ex-input" id="ex3" placeholder="0.00">
+        <span class="ex-unit">A</span>
+        <button class="ex-btn" onclick="checkEx(3)">Check</button>
+        <span class="ex-fb" id="exFb3"></span>
+        <span class="pts-badge">2 pts</span>
+      </div>
+      <div class="hint-wrap">
+        <button class="hint-btn" onclick="showHint(3)">💡 Need a hint?</button>
+        <div class="hint-text" id="hint3"></div>
+      </div>
+
+      <!-- Written response -->
+      <div style="margin-top:1rem;">
+        <h4>📝 Written Response <span class="pts-badge">3 pts (teacher-graded)</span></h4>
+        <p>Explain in your own words: <em>why is the COM terminal always connected to the negative probe, and what would happen if you swapped the probes in the wrong terminals?</em></p>
+        <textarea id="writtenAns" placeholder="Write your answer here (2–4 sentences)..."></textarea>
+      </div>
+
+      <!-- Score table -->
+      <h4 style="margin-top:1.2rem;">📊 Score Breakdown</h4>
+      <table class="score-table">
+        <thead>
+          <tr><th>Section</th><th>Component</th><th class="pts">Earned</th><th class="pts">Max</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>E1 Engage</td><td>Q1 + Q2 (MCQ)</td><td class="pts" id="ts1">0</td><td class="pts">2</td></tr>
+          <tr><td>E2 Explore</td><td>Q3 + Q4 (MCQ)</td><td class="pts" id="ts2">0</td><td class="pts">2</td></tr>
+          <tr><td>E3 Explain</td><td>Exercises + Q5</td><td class="pts" id="ts3">0</td><td class="pts">5</td></tr>
+          <tr><td>E4 Game</td><td>Circuit Detective</td><td class="pts" id="ts4">0</td><td class="pts">5+1</td></tr>
+          <tr><td>E5 Evaluate</td><td>Q6 + Q7 + Ex3</td><td class="pts" id="ts5">0</td><td class="pts">4</td></tr>
+          <tr><td>E5 Written</td><td>Open response</td><td class="pts">—</td><td class="pts">3</td></tr>
+          <tr class="total-row"><td colspan="2"><strong>AUTO TOTAL (raw)</strong></td><td class="pts" id="rawTotal">0</td><td class="pts">18+1</td></tr>
+          <tr class="total-row"><td colspan="2"><strong>SCORE /20</strong></td><td class="pts" id="score20">0</td><td class="pts">20</td></tr>
+        </tbody>
+      </table>
+
+      <button class="submit-btn" onclick="submitLab()">⚡ Submit Lab Results</button>
+
+      <div class="submit-result" id="submitResult">
+        <div style="font-size:1rem;color:var(--muted);margin-bottom:.5rem;">Your Results</div>
+        <div class="final-score" id="finalScore">0/20</div>
+        <div class="final-grade" id="finalGrade">—</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:.8rem;" id="finalMsg"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
+<script>
+const LAB_START = Date.now();
+
+/* ─── STUDENTS ─── */
+const STUDENTS = {
+  '7A':['Ahmad Al-Sayyed','Rania Hamdan','Karim Jaber','Lara Khalil','Omar Nassar','Hind Moussa','Ziad Saleh','Maya Saad','Firas Khoury','Rana Barakat'],
+  '7B':['Nour Khalil','Tamer Habib','Dalia Farouk','Samer Awad','Hala Tabbara','Bilal Nasr','Sirine Moussawi','Jad Hajj','Reem Harb','Ali Zreik'],
+  '7C':['Sara Bou Antoun','Hassan Diab','Mia Nasrallah','Younes Mrad','Dana Ghanem','Ramzi Haddad','Lina Haidar','Chadi Abi Nader','Rim Koubeissi','Elie Bou Younes'],
+  '7D':['Mira Kallas','Georges Frem','Tala Jawhari','Patrick Khoury','Nadine Azar','Fadi Sakr','Carole Nasr','Jean Geagea','Stephanie Abou Khalil','Roy Hanna']
+};
+
+/* ─── STATE ─── */
+let mcqAnswers={},mcqScores={},exScores={1:0,2:0,3:0};
+let gameScore=0,gameLives=3,gameRound=0,gamePerfect=true,gameBonus=0;
+let selfRatings={},hintLevels={1:0,2:0,3:0},writtenAttempts=0;
+let exAttempts={1:0,2:0,3:0};
+let currentStudentName='',currentStudentClass='';
+let diagHighlight='',diagAnimFrame=null,currentDotAngle=0;
+let switchStates=[false,false];
+let measuredThisRound=false;
+
+/* ─── VARIABLE VALUES (per student name to prevent copying) ─── */
+let R1=12,V1=6,R2a=8,R2b=12,V2=10,Ra3=6,Rb3=12,V3=12;
+function seedValues(name){
+  const seed=name.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  R1=[10,12,15,18,20][seed%5];
+  V1=[4,6,8,9,10][seed%5];
+  R2a=[6,8,10,12,15][(seed+1)%5];
+  R2b=[10,12,15,18,20][(seed+1)%5];
+  V2=[8,10,12,15,20][(seed+2)%5];
+  Ra3=[4,6,8,10,12][(seed+3)%5];
+  Rb3=[8,12,15,20,24][(seed+3)%5];
+  V3=[8,10,12,15,18][(seed+4)%5];
+  document.getElementById('r1d').textContent=R1;
+  document.getElementById('v1d').textContent=V1;
+  document.getElementById('r2ad').textContent=R2a;
+  document.getElementById('r2bd').textContent=R2b;
+  document.getElementById('v2d').textContent=V2;
+  document.getElementById('r2ad2').textContent=R2a;
+  document.getElementById('ra3d').textContent=Ra3;
+  document.getElementById('rb3d').textContent=Rb3;
+  document.getElementById('v3d').textContent=V3;
+  document.getElementById('varNote').textContent=`(values personalised for ${name.split(' ')[0]})`;
+  buildHints();
+}
+function buildHints(){
+  const I1=(V1/R1).toFixed(2);
+  const I2=V2/(R2a+R2b);
+  const V2a=(I2*R2a).toFixed(2);
+  const I3a=(V3/Ra3).toFixed(2);
+  hintData={
+    1:[`Hint 1: Use Ohm's Law — I = V ÷ R`,
+       `Hint 2: Voltage = ${V1} V, Resistance = ${R1} Ω`,
+       `Hint 3: I = ${V1} ÷ ${R1} = ${I1} A`],
+    2:[`Hint 1: In a series circuit, total current I = V_total ÷ R_total`,
+       `Hint 2: R_total = ${R2a} + ${R2b} = ${R2a+R2b} Ω, so I = ${V2} ÷ ${R2a+R2b} = ${(V2/(R2a+R2b)).toFixed(3)} A`,
+       `Hint 3: V across ${R2a} Ω = I × ${R2a} = ${V2a} V`],
+    3:[`Hint 1: In parallel, each branch has the full battery voltage (${V3} V)`,
+       `Hint 2: Use Ohm's Law for Branch A only: I_A = V ÷ R_A`,
+       `Hint 3: I_A = ${V3} ÷ ${Ra3} = ${I3a} A`]
+  };
+}
+let hintData={};
+
+/* ─── PICKER ─── */
+function setSection(cls){
+  document.getElementById('stuClass').value=cls;
+  currentStudentClass=cls;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim()===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— اختر اسمك —</option>';
+  sel.disabled=false;
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar'))
+    .forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+  document.getElementById('pickerInfo').textContent='Now choose your name ↗';
+}
+function onStudentPicked(){
+  const name=document.getElementById('stuName').value;
+  currentStudentName=name;
+  if(name){
+    document.getElementById('pickerInfo').textContent=`Welcome, ${name.split(' ')[0]}! 🎉`;
+    seedValues(name);
+    initGame();
+  }
+}
+
+/* ─── TIMER ─── */
+setInterval(()=>{
+  const s=Math.floor((Date.now()-LAB_START)/1000);
+  const m=Math.floor(s/60);
+  document.getElementById('timerDisp').textContent=
+    String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+},1000);
+
+/* ─── SECTION MANAGEMENT ─── */
+function toggleSection(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('open');
+}
+function openSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));
+  document.getElementById(id).classList.add('open');
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.nav-link').forEach((l,i)=>{
+    l.classList.toggle('active-link',['s1','s2','s3','s4','s5'][i]===id);
+  });
+}
+function nextSection(cur,next){
+  markDone(cur);
+  openSection(next);
+}
+function markDone(sId){
+  const map={s1:'dot1',s2:'dot2',s3:'dot3',s4:'dot4',s5:'dot5'};
+  const dot=document.getElementById(map[sId]);
+  if(dot){dot.classList.remove('active');dot.classList.add('done');}
+  const nextMap={s1:'dot2',s2:'dot3',s3:'dot4',s4:'dot5'};
+  const nd=document.getElementById(nextMap[sId]);
+  if(nd)nd.classList.add('active');
+}
+
+/* ─── MCQ ENGINE ─── */
+function pick(qNum,choice){
+  mcqAnswers[qNum]=choice;
+  document.querySelectorAll(`.opt-${qNum}`).forEach(el=>
+    el.classList.toggle('selected',el.dataset.choice===choice));
+}
+function chk(qNum,correct){
+  const ans=mcqAnswers[qNum];
+  if(!ans){return;}
+  const ok=ans===correct;
+  const fb=document.getElementById('fb'+qNum);
+  document.querySelectorAll(`.opt-${qNum}`).forEach(el=>{
+    if(el.dataset.choice===correct)el.classList.add('correct');
+    if(el.dataset.choice===ans&&!ok)el.classList.add('wrong');
+    el.onclick=null;
+  });
+  mcqScores[qNum]=ok?1:0;
+  fb.textContent=ok?'✓ Correct! Well done.':'✗ Not quite — see the highlighted correct answer.';
+  fb.className='fb '+(ok?'ok':'ng');
+  if(ok)playSuccess(); else playWrong();
+  updateScore();
+}
+
+/* ─── EXERCISES ─── */
+function checkEx(num){
+  const val=parseFloat(document.getElementById('ex'+num).value);
+  let correct,tol;
+  if(num===1){correct=V1/R1;tol=correct*0.05+0.01;}
+  if(num===2){const I=V2/(R2a+R2b);correct=I*R2a;tol=correct*0.05+0.01;}
+  if(num===3){correct=V3/Ra3;tol=correct*0.05+0.01;}
+  exAttempts[num]=(exAttempts[num]||0)+1;
+  const ok=Math.abs(val-correct)<=tol;
+  const fb=document.getElementById('exFb'+num);
+  fb.textContent=ok?'✓ Correct!':'✗ Try again';
+  fb.className='ex-fb '+(ok?'correct':'wrong');
+  exScores[num]=ok?2:0;
+  if(ok)playSuccess(); else playWrong();
+  updateScore();
+}
+
+/* ─── HINTS (3-tier) ─── */
+function showHint(num){
+  hintLevels[num]=(hintLevels[num]||0);
+  const hints=hintData[num]||[];
+  const box=document.getElementById('hint'+num);
+  if(hintLevels[num]<hints.length){
+    box.textContent=hints[hintLevels[num]++];
+    box.style.display='block';
+  }
+}
+
+/* ─── SELF-ASSESSMENT ─── */
+function selfRate(section,emoji){
+  selfRatings[section]=emoji;
+  event.currentTarget.parentElement.querySelectorAll('.emoji-btn').forEach(b=>{
+    b.classList.toggle('selected-emoji',b.textContent===emoji);
+  });
+}
+
+/* ─── SCORE ENGINE ─── */
+function updateScore(){
+  const s1=(mcqScores[1]||0)+(mcqScores[2]||0);
+  const s2=(mcqScores[3]||0)+(mcqScores[4]||0);
+  const s3=(exScores[1]||0)+(exScores[2]||0)+(mcqScores[5]||0);
+  const s4raw=Math.min(gameScore,5)+gameBonus;
+  const s5=(mcqScores[6]||0)+(mcqScores[7]||0)+(exScores[3]||0);
+  document.getElementById('ts1').textContent=s1;
+  document.getElementById('ts2').textContent=s2;
+  document.getElementById('ts3').textContent=s3;
+  document.getElementById('ts4').textContent=s4raw;
+  document.getElementById('ts5').textContent=s5;
+  const raw=s1+s2+s3+s4raw+s5;
+  const max=18+gameBonus;
+  const s20=Math.round((raw/max)*20);
+  document.getElementById('rawTotal').textContent=raw;
+  document.getElementById('score20').textContent=Math.min(s20,20);
+  const circ=2*Math.PI*36;
+  const offset=circ*(1-Math.min(s20/20,1));
+  document.getElementById('ringFill').style.strokeDashoffset=offset;
+  document.getElementById('ringScore').textContent=Math.min(s20,20);
+}
+
+/* ─── SOUND (Web Audio API) ─── */
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playTone(freq,dur,type='sine'){
+  try{
+    const ctx=getAudioCtx();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(0.18,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    o.start();o.stop(ctx.currentTime+dur);
+  }catch(e){}
+}
+function playSuccess(){playTone(880,.08);setTimeout(()=>playTone(1100,.15),90);}
+function playWrong(){playTone(180,.3,'sawtooth');}
+function playBonus(){[880,1100,1320,1760].forEach((f,i)=>setTimeout(()=>playTone(f,.12),i*80));}
+
+/* ─── CONFETTI ─── */
+function celebrate(){
+  const colors=['#f5d130','#8fff6b','#4ecdc4','#ff9f43','#a29bfe','#ff4757'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`
+      left:${Math.random()*100}vw;
+      top:-10px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-delay:${Math.random()*1}s;
+      animation-duration:${1.5+Math.random()}s;
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3000);
+  }
+  playBonus();
+}
+
+/* ════════════════════════════════════════
+   MULTIMETER CANVAS (E1)
+════════════════════════════════════════ */
+function drawMultimeter(){
+  const canvas=document.getElementById('mmCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=340,H=420;
+  ctx.clearRect(0,0,W,H);
+
+  // Body
+  const grad=ctx.createLinearGradient(30,0,310,0);
+  grad.addColorStop(0,'#1a2030');grad.addColorStop(1,'#0f141a');
+  ctx.fillStyle=grad;
+  ctx.beginPath();ctx.roundRect(30,10,280,400,18);ctx.fill();
+  ctx.strokeStyle='rgba(245,209,48,.25)';ctx.lineWidth=1.5;ctx.stroke();
+
+  // Brand strip
+  ctx.fillStyle='rgba(245,209,48,.08)';
+  ctx.fillRect(30,10,280,30);
+  ctx.fillStyle='#f5d130';ctx.font='bold 13px Syne,sans-serif';
+  ctx.textAlign='center';ctx.fillText('MULTIMETER DT-830D',170,31);
+
+  // Display screen
+  const dGrad=ctx.createLinearGradient(55,50,295,130);
+  dGrad.addColorStop(0,'#0a1a10');dGrad.addColorStop(1,'#061208');
+  ctx.fillStyle=dGrad;
+  ctx.beginPath();ctx.roundRect(55,45,230,90,8);ctx.fill();
+  ctx.strokeStyle='rgba(143,255,107,.3)';ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle='#8fff6b';ctx.font='bold 40px IBM Plex Mono,monospace';
+  ctx.textAlign='center';ctx.fillText('1.85',170,105);
+  ctx.fillStyle='rgba(143,255,107,.5)';ctx.font='12px IBM Plex Mono';
+  ctx.fillText('DC  V',230,70);
+
+  // Dial wheel
+  ctx.beginPath();ctx.arc(170,205,68,0,Math.PI*2);
+  ctx.fillStyle='#1e2840';ctx.fill();
+  ctx.strokeStyle='rgba(245,209,48,.3)';ctx.lineWidth=2;ctx.stroke();
+  const modes=[
+    {a:-Math.PI*.75,label:'OFF',col:'#555'},
+    {a:-Math.PI*.5,label:'V~',col:'#a29bfe'},
+    {a:-Math.PI*.25,label:'V⎓',col:'#f5d130'},
+    {a:0,label:'Ω',col:'#ff9f43'},
+    {a:Math.PI*.25,label:'A',col:'#4ecdc4'},
+    {a:Math.PI*.5,label:'mA',col:'#4ecdc4'},
+    {a:Math.PI*.75,label:'DIODE',col:'#ff4757'},
+  ];
+  modes.forEach(m=>{
+    const x=170+Math.cos(m.a)*50,y=205+Math.sin(m.a)*50;
+    ctx.fillStyle=m.col;ctx.font='bold 10px Syne,sans-serif';
+    ctx.textAlign='center';ctx.fillText(m.label,x,y+4);
+  });
+  // Dial pointer (pointing to V⎓)
+  ctx.save();ctx.translate(170,205);ctx.rotate(-Math.PI*.25);
+  ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);
+  ctx.fillStyle='#f5d130';ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#dde4ee';ctx.font='10px Syne';
+  ctx.textAlign='center';ctx.fillText('RANGE',170,248);
+
+  // Terminals row
+  const terminals=[
+    {x:90,label:'10A',col:'#ff4757',id:'t10a'},
+    {x:140,label:'mA',col:'#ff9f43',id:'tmA'},
+    {x:190,label:'COM',col:'#888',id:'tCOM'},
+    {x:250,label:'VΩ',col:'#f5d130',id:'tVOhm'}
+  ];
+  terminals.forEach(t=>{
+    ctx.beginPath();ctx.arc(t.x,310,13,0,Math.PI*2);
+    ctx.fillStyle=t.col==='#888'?'#333':'rgba(0,0,0,.5)';ctx.fill();
+    ctx.strokeStyle=t.col;ctx.lineWidth=2;ctx.stroke();
+    // holes
+    ctx.beginPath();ctx.arc(t.x,310,6,0,Math.PI*2);
+    ctx.fillStyle='#050708';ctx.fill();
+    ctx.fillStyle=t.col;ctx.font='bold 9px IBM Plex Mono,monospace';
+    ctx.textAlign='center';ctx.fillText(t.label,t.x,333);
+  });
+
+  // Probes (red and black)
+  ctx.strokeStyle='#ff4757';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(250,310);ctx.lineTo(295,380);ctx.stroke();
+  ctx.fillStyle='#ff4757';ctx.beginPath();ctx.arc(295,382,4,0,Math.PI*2);ctx.fill();
+
+  ctx.strokeStyle='#666';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(190,310);ctx.lineTo(150,385);ctx.stroke();
+  ctx.fillStyle='#555';ctx.beginPath();ctx.arc(150,388,4,0,Math.PI*2);ctx.fill();
+
+  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='9px Syne';
+  ctx.textAlign='center';
+  ctx.fillText('RED (+)',295,397);
+  ctx.fillStyle='rgba(136,136,136,.7)';
+  ctx.fillText('BLACK (COM)',150,400);
+}
+
+/* Multimeter tooltip */
+const mmHotspots=[
+  {x:55,y:45,w:230,h:90,label:'🟢 Display Screen','tip':'Shows the measurement value. Currently reading 1.85 V DC. The unit shown top-right changes when you turn the dial.'},
+  {x:100,y:137,w:140,h:130,label:'🎛 Mode Dial','tip':'Turn this dial to select what you measure: V⎓ (DC Voltage), V~ (AC Voltage), A (Ampere / Current), Ω (Resistance), DIODE.'},
+  {x:77,y:285,w:52,h:55,label:'10A Terminal','tip':'Red probe here ONLY when measuring large currents (>200 mA). Bypasses internal fuse protection.'},
+  {x:127,y:285,w:50,h:55,label:'mA Terminal','tip':'Red probe here for small current measurements (up to 200 mA). Most current measurements use this.'},
+  {x:177,y:285,w:50,h:55,label:'⚫ COM Terminal','tip':'BLACK probe ALWAYS goes here. COM = Common = Ground. Used for every single measurement mode — current, voltage, or resistance.'},
+  {x:227,y:285,w:55,h:55,label:'VΩ Terminal','tip':'Red probe here when measuring VOLTAGE (V) or RESISTANCE (Ω). This is the main positive terminal.'},
+];
+const mmCanvas=document.getElementById('mmCanvas');
+const tooltip=document.getElementById('mmTooltip');
+mmCanvas.addEventListener('mousemove',e=>{
+  const rect=mmCanvas.getBoundingClientRect();
+  const sx=mmCanvas.width/rect.width,sy=mmCanvas.height/rect.height;
+  const mx=(e.clientX-rect.left)*sx,my=(e.clientY-rect.top)*sy;
+  let found=null;
+  mmHotspots.forEach(h=>{if(mx>=h.x&&mx<=h.x+h.w&&my>=h.y&&my<=h.y+h.h)found=h;});
+  if(found){
+    tooltip.style.display='block';
+    tooltip.style.left=(e.clientX-rect.left+12)+'px';
+    tooltip.style.top=(e.clientY-rect.top+12)+'px';
+    tooltip.innerHTML=`<strong>${found.label}</strong><br>${found.tip}`;
+    mmCanvas.style.cursor='pointer';
+  } else {
+    tooltip.style.display='none';
+    mmCanvas.style.cursor='default';
+  }
+});
+mmCanvas.addEventListener('mouseleave',()=>{tooltip.style.display='none';});
+
+/* ════════════════════════════════════════
+   CIRCUIT DIAGRAM CANVAS (E2)
+════════════════════════════════════════ */
+function drawDiagram(highlight,dotAngle){
+  const c=document.getElementById('diagCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=640,H=320;
+  ctx.clearRect(0,0,W,H);
+
+  // Dark background
+  ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
+
+  // Circuit path coords:
+  // Battery left: x=80, y-center=160
+  // Top wire: (80,100) → (560,100)
+  // Right wire: (560,100) → (560,220)
+  // Bottom wire: (560,220) → (80,220)
+  // Left wire: (80,220) → (80,100)
+  // Ammeter on top wire at x=200
+  // Lamp at x=380, top-bottom between y=80 and y=140
+  // Voltmeter across lamp (right side) at x=480-540
+
+  const wireCol='#4ecdc4';
+  const amCol=highlight==='ammeter'?'#f5d130':'rgba(245,209,48,.85)';
+  const vCol=highlight==='voltmeter'?'#4ecdc4':'rgba(78,205,196,.85)';
+
+  // Draw wires
+  function wire(pts,col,width=2){
+    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+    ctx.strokeStyle=col;ctx.lineWidth=width;ctx.stroke();
+  }
+
+  // Main circuit wires
+  wire([[80,100],[180,100]],wireCol,2); // top-left to ammeter
+  wire([[240,100],[380,100]],wireCol,2); // ammeter to lamp
+  wire([[420,100],[560,100]],wireCol,2); // lamp to right
+  wire([[560,100],[560,220]],wireCol,2); // right down
+  wire([[560,220],[80,220]],wireCol,2); // bottom
+  wire([[80,220],[80,100]],wireCol,2); // left up
+
+  // Voltmeter branch (parallel across lamp)
+  wire([[380,100],[380,60],[420,60],[420,100]],vCol,1.5);
+
+  // ─── BATTERY (left) ─── 
+  ctx.strokeStyle='#f5d130';ctx.lineWidth=2;
+  // Long plate
+  ctx.beginPath();ctx.moveTo(68,130);ctx.lineTo(68,170);ctx.stroke();
+  // Short plate  
+  ctx.strokeStyle='#888';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(78,140);ctx.lineTo(78,160);ctx.stroke();
+  ctx.strokeStyle='#f5d130';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(73,100);ctx.lineTo(73,130);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(73,170);ctx.lineTo(73,220);ctx.stroke();
+  ctx.fillStyle='#f5d130';ctx.font='bold 11px IBM Plex Mono';ctx.textAlign='center';
+  ctx.fillText('+',58,138);ctx.fillText('−',58,168);
+  ctx.fillStyle='rgba(245,209,48,.6)';ctx.font='10px Syne';
+  ctx.fillText('6V',56,200);
+
+  // ─── AMMETER ───
+  ctx.save();
+  if(highlight==='ammeter'){ctx.shadowColor=amCol;ctx.shadowBlur=18;}
+  ctx.beginPath();ctx.arc(210,100,28,0,Math.PI*2);
+  ctx.fillStyle='rgba(245,209,48,.08)';ctx.fill();
+  ctx.strokeStyle=amCol;ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle=amCol;ctx.font='bold 16px Syne';ctx.textAlign='center';
+  ctx.fillText('A',210,107);
+  // COM dot (small, clearly smaller than A circle)
+  ctx.beginPath();ctx.arc(210,130,6,0,Math.PI*2);
+  ctx.fillStyle='#333';ctx.fill();
+  ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='9px Syne';
+  ctx.textAlign='center';ctx.fillText('Ammeter',210,160);
+  ctx.fillStyle='rgba(136,136,136,.7)';
+  ctx.fillText('●COM',210,172);
+
+  // ─── LAMP ───
+  ctx.save();
+  const lampGlow=highlight===''?'rgba(255,255,200,.5)':'rgba(255,255,200,.2)';
+  ctx.beginPath();ctx.arc(400,100,22,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,240,100,.06)';ctx.fill();
+  ctx.strokeStyle='#f0e050';ctx.lineWidth=2;ctx.stroke();
+  // X through circle (lamp symbol)
+  ctx.strokeStyle='rgba(240,224,80,.7)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(384,84);ctx.lineTo(416,116);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(416,84);ctx.lineTo(384,116);ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(240,224,80,.6)';ctx.font='9px Syne';
+  ctx.textAlign='center';ctx.fillText('Lamp',400,135);
+
+  // ─── VOLTMETER ───
+  ctx.save();
+  if(highlight==='voltmeter'){ctx.shadowColor=vCol;ctx.shadowBlur=18;}
+  ctx.beginPath();ctx.arc(400,42,22,0,Math.PI*2);
+  ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();
+  ctx.strokeStyle=vCol;ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle=vCol;ctx.font='bold 15px Syne';ctx.textAlign='center';
+  ctx.fillText('V',400,48);
+  // COM dot (small black dot, clearly smaller than V circle)
+  ctx.beginPath();ctx.arc(422,42,5,0,Math.PI*2);
+  ctx.fillStyle='#333';ctx.fill();
+  ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(78,205,196,.5)';ctx.font='9px Syne';
+  ctx.textAlign='center';ctx.fillText('Voltmeter',400,21);
+  ctx.fillStyle='rgba(136,136,136,.7)';
+  ctx.fillText('●COM',422,32);
+
+  // ─── CURRENT FLOW DOTS (animation) ───
+  if(dotAngle!==undefined){
+    const path=[[80,100],[560,100],[560,220],[80,220]]; // simplified clockwise
+    const totalLen=480+120+480+120;
+    const numDots=8;
+    for(let i=0;i<numDots;i++){
+      const t=((dotAngle/360)+i/numDots)%1;
+      const d=t*totalLen;
+      let px,py;
+      if(d<480){px=80+d;py=100;}
+      else if(d<600){px=560;py=100+(d-480);}
+      else if(d<1080){px=560-(d-600);py=220;}
+      else{px=80;py=220-(d-1080);}
+      ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
+      ctx.fillStyle=`rgba(78,205,196,${.7-i*.08})`;ctx.fill();
+    }
+  }
+
+  // Labels
+  ctx.fillStyle='rgba(100,180,255,.3)';ctx.font='9px IBM Plex Mono';
+  ctx.textAlign='left';ctx.fillText('series',130,92);
+  ctx.textAlign='center';ctx.fillText('parallel',380,12);
+}
+
+let animating=false,animAngle=0;
+function animateDiagram(){
+  if(animating)return;
+  animating=true;
+  diagHighlight='';
+  function frame(){
+    animAngle=(animAngle+2)%360;
+    drawDiagram(diagHighlight,animAngle);
+    if(animating)requestAnimationFrame(frame);
+  }
+  frame();
+  setTimeout(()=>{animating=false;drawDiagram(diagHighlight);},5000);
+}
+function highlightAmmeter(){animating=false;diagHighlight='ammeter';drawDiagram('ammeter');}
+function highlightVoltmeter(){animating=false;diagHighlight='voltmeter';drawDiagram('voltmeter');}
+
+/* ════════════════════════════════════════
+   GAME — CIRCUIT DETECTIVE
+════════════════════════════════════════ */
+const ROUNDS=[
+  {
+    id:1,
+    name:'Open Circuit (switch OFF)',
+    description:'Switch is OPEN. No current path exists.',
+    lampBurnt:false,
+    switchStates:[false],
+    ammeter:0,
+    voltmeter:6,
+    voltmeterPos:'battery',
+    question:'What does the ammeter read, and why?',
+    options:[
+      {text:'0 A — switch is open, circuit is broken',correct:true},
+      {text:'1 A — current flows through the switch',correct:false},
+      {text:'6 A — battery voltage drives current',correct:false},
+      {text:'Cannot be determined',correct:false}
+    ]
+  },
+  {
+    id:2,
+    name:'Closed Circuit (switch ON)',
+    description:'Switch closed. Lamp R=12Ω, Battery=6V.',
+    lampBurnt:false,
+    switchStates:[true],
+    ammeter:0.5,
+    voltmeter:6,
+    voltmeterPos:'lamp',
+    question:'Voltmeter reads 6V across the lamp. This means…',
+    options:[
+      {text:'The lamp is broken (open filament) — all voltage drops here',correct:false},
+      {text:'Normal operation — the full battery voltage appears across the only lamp',correct:true},
+      {text:'The ammeter is short-circuiting the lamp',correct:false},
+      {text:'The COM probe is disconnected',correct:false}
+    ]
+  },
+  {
+    id:3,
+    name:'Burnt-Out Lamp!',
+    description:'Switch ON, but lamp filament is broken inside.',
+    lampBurnt:true,
+    switchStates:[true],
+    ammeter:0,
+    voltmeter:6,
+    voltmeterPos:'lamp',
+    question:'Ammeter reads 0A, voltmeter reads 6V across lamp. Diagnose the fault:',
+    options:[
+      {text:'Circuit is fine — this is normal',correct:false},
+      {text:'The lamp filament is burnt out (open circuit inside lamp)',correct:true},
+      {text:'The battery is dead',correct:false},
+      {text:'The ammeter is faulty',correct:false}
+    ]
+  },
+  {
+    id:4,
+    name:'Two Branches — SW1 Only',
+    description:'Parallel circuit: Lamp A (8Ω) and Lamp B (16Ω). SW1 open, SW2 closed.',
+    lampBurnt:false,
+    switchStates:[false,true],
+    ammeter:0.375,
+    ammeterBranch:'B',
+    voltmeter:6,
+    question:'SW1 is OPEN, SW2 is CLOSED. Ammeter is in Branch B. What does it read?',
+    options:[
+      {text:'0 A — both switches must be closed',correct:false},
+      {text:'0.75 A — total current from both branches',correct:false},
+      {text:'0.375 A — only Branch B (16Ω) carries current: I=6÷16',correct:true},
+      {text:'0.5 A — average of both branches',correct:false}
+    ]
+  },
+  {
+    id:5,
+    name:'Both Branches ON',
+    description:'Parallel circuit: SW1 & SW2 both CLOSED. Total current measured at source.',
+    lampBurnt:false,
+    switchStates:[true,true],
+    ammeter:1.125,
+    voltmeter:6,
+    question:'Both switches closed. Ammeter at source reads total current. What is it?',
+    options:[
+      {text:'0.75 A (only Branch A: 6÷8)',correct:false},
+      {text:'0.375 A (only Branch B: 6÷16)',correct:false},
+      {text:'1.125 A (I_total = 6/8 + 6/16 = 0.75+0.375)',correct:true},
+      {text:'12 A (battery voltage × number of lamps)',correct:false}
+    ]
+  }
+];
+
+let currentRound=0;
+
+function initGame(){
+  currentRound=0;
+  gameLives=3;gameScore=0;gamePerfect=true;gameBonus=0;
+  document.getElementById('gLives').textContent=gameLives;
+  document.getElementById('gScore').textContent=gameScore;
+  document.getElementById('gRound').textContent=1;
+  loadRound(0);
+}
+
+function loadRound(idx){
+  if(idx>=ROUNDS.length){endGame();return;}
+  const r=ROUNDS[idx];
+  currentRound=idx;
+  measuredThisRound=false;
+  document.getElementById('gRound').textContent=idx+1;
+  document.getElementById('gScenario').textContent=r.description;
+  document.getElementById('gQuestion').textContent=r.question;
+  document.getElementById('gAmReading').textContent='—';
+  document.getElementById('gAmReading').className='meter-reading';
+  document.getElementById('gVReading').textContent='—';
+  document.getElementById('gVReading').className='meter-reading';
+  document.getElementById('gFeedback').textContent='';
+  document.getElementById('gameMsg').style.display='none';
+  document.getElementById('gNextBtn').style.display='none';
+  document.getElementById('gMeasureBtn').disabled=false;
+
+  // Build options
+  const optsEl=document.getElementById('gameOpts');
+  optsEl.innerHTML='';
+  const shuffled=[...r.options].sort(()=>Math.random()-.5);
+  shuffled.forEach((o,i)=>{
+    const keys=['A','B','C','D'];
+    const div=document.createElement('div');
+    div.className='opt';
+    div.innerHTML=`<span class="opt-key">${keys[i]}</span>${o.text}`;
+    div.style.cursor='pointer';
+    div.onclick=()=>{
+      if(!measuredThisRound){
+        document.getElementById('gFeedback').textContent='⚠ Measure first before answering!';
+        document.getElementById('gFeedback').style.color='var(--orange)';
+        return;
+      }
+      submitGameAnswer(o.correct,div,optsEl,shuffled);
+    };
+    optsEl.appendChild(div);
+  });
+
+  // Update switch states
+  if(r.switchStates)r.switchStates.forEach((s,i)=>switchStates[i]=s);
+  drawGameCircuit();
+}
+
+function measureProbes(){
+  const r=ROUNDS[currentRound];
+  measuredThisRound=true;
+  const am=document.getElementById('gAmReading');
+  const vm=document.getElementById('gVReading');
+  am.textContent=r.ammeter.toFixed(3)+' A';
+  am.className='meter-reading'+(r.ammeter===0?' zero':'');
+  vm.textContent=r.voltmeter.toFixed(1)+' V';
+  vm.className='meter-reading';
+  document.getElementById('gMeasureBtn').disabled=true;
+  document.getElementById('gFeedback').textContent='Readings captured! Now answer the question.';
+  document.getElementById('gFeedback').style.color='var(--lime)';
+  drawGameCircuit(true);
+  playTone(440,.1);
+}
+
+function submitGameAnswer(correct,chosenEl,optsEl,options){
+  optsEl.querySelectorAll('.opt').forEach(el=>el.onclick=null);
+  const r=ROUNDS[currentRound];
+  options.forEach((o,i)=>{
+    const el=optsEl.children[i];
+    if(o.correct)el.classList.add('correct');
+    if(el===chosenEl&&!o.correct)el.classList.add('wrong');
+  });
+  if(correct){
+    gameScore=Math.min(gameScore+1,5);
+    document.getElementById('gScore').textContent=gameScore;
+    showGameMsg('✓ Correct!',true);
+    playSuccess();
+  } else {
+    gameLives--;gamePerfect=false;
+    document.getElementById('gLives').textContent=gameLives;
+    showGameMsg('✗ Wrong — study the reading!',false);
+    playWrong();
+    if(gameLives<=0){setTimeout(()=>endGame(),1500);return;}
+  }
+  document.getElementById('gNextBtn').style.display='inline-block';
+  updateScore();
+}
+
+function showGameMsg(text,ok){
+  const el=document.getElementById('gameMsg');
+  el.textContent=text;
+  el.style.color=ok?'var(--lime)':'var(--red)';
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none',1800);
+}
+
+function toggleSwitch(){
+  const r=ROUNDS[currentRound];
+  if(r.switchStates&&r.switchStates.length>1){
+    switchStates[0]=!switchStates[0];
+  } else if(r.switchStates){
+    switchStates[0]=!switchStates[0];
+  }
+  measuredThisRound=false;
+  document.getElementById('gAmReading').textContent='—';
+  document.getElementById('gAmReading').className='meter-reading';
+  document.getElementById('gVReading').textContent='—';
+  document.getElementById('gVReading').className='meter-reading';
+  document.getElementById('gMeasureBtn').disabled=false;
+  document.getElementById('gFeedback').textContent='Switch toggled — measure again!';
+  document.getElementById('gFeedback').style.color='var(--orange)';
+  drawGameCircuit();
+}
+
+function nextRound(){
+  document.getElementById('gNextBtn').style.display='none';
+  loadRound(currentRound+1);
+}
+
+function endGame(){
+  if(gamePerfect&&gameLives===3){
+    gameBonus=1;
+    showGameMsg('🏆 PERFECT! +1 Bonus!',true);
+    celebrate();
+  }
+  document.getElementById('gScenario').textContent='Game complete! Score: '+gameScore+'/5'+(gameBonus?' +1 bonus bonus!':'');
+  document.getElementById('gQuestion').textContent='All rounds complete. Scroll down to submit your lab.';
+  document.getElementById('gameOpts').innerHTML='';
+  updateScore();
+}
+
+/* ─── GAME CANVAS DRAWING ─── */
+function drawGameCircuit(probed){
+  const c=document.getElementById('gameCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=620,H=280;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
+
+  const r=ROUNDS[currentRound];
+  const isParallel=r.id===4||r.id===5;
+
+  if(!isParallel){
+    drawSimpleCircuit(ctx,r,probed);
+  } else {
+    drawParallelCircuit(ctx,r,probed);
+  }
+}
+
+function drawSimpleCircuit(ctx,r,probed){
+  const W=620,H=280;
+  const wireCol='rgba(78,205,196,.7)';
+
+  // Wires: top (100,60)→(520,60), right (520,60)→(520,200), bottom (520,200)→(100,200), left (100,200)→(100,60)
+  function wire(pts,col,w){
+    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+    ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.stroke();
+  }
+
+  // Split wires around ammeter (x=220) and lamp (x=370)
+  wire([[100,60],[195,60]],wireCol);
+  wire([[255,60],[350,60]],wireCol);
+  wire([[390,60],[520,60]],wireCol);
+  wire([[520,60],[520,200]],wireCol);
+  wire([[520,200],[100,200]],wireCol);
+  wire([[100,200],[100,60]],wireCol);
+
+  // Battery
+  drawBattery(ctx,100,130,'6V');
+
+  // Ammeter at x=225,y=60
+  drawAmmeter(ctx,225,60,probed);
+
+  // Switch at x=450,y=60
+  drawSwitch(ctx,450,60,r.switchStates?r.switchStates[0]:true,0);
+
+  // Lamp at x=370,y=60
+  drawLamp(ctx,370,60,r.lampBurnt);
+
+  // Voltmeter branch across lamp
+  if(probed){
+    wire([[350,60],[350,25],[390,25],[390,60]],'rgba(78,205,196,.5)',1.5);
+    drawVoltmeter(ctx,370,20,probed);
+    ctx.fillStyle='rgba(78,205,196,.5)';ctx.font='9px Syne';ctx.textAlign='center';
+    ctx.fillText(r.voltmeter.toFixed(1)+' V',370,15);
+  }
+
+  // Labels
+  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='10px Syne';ctx.textAlign='center';
+  ctx.fillText('A',225,85);
+  ctx.fillStyle='rgba(240,224,80,.5)';
+  ctx.fillText('Lamp',370,85);
+  ctx.fillStyle='rgba(78,205,196,.4)';
+  ctx.fillText('SW',450,85);
+}
+
+function drawParallelCircuit(ctx,r,probed){
+  const wireCol='rgba(78,205,196,.7)';
+  function wire(pts,col,w){
+    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+    ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.stroke();
+  }
+  // Main bus
+  wire([[80,140],[80,60],[520,60]],wireCol); // top
+  wire([[80,140],[80,220],[520,220]],wireCol); // bottom
+  wire([[520,60],[520,220]],wireCol); // right
+
+  // Branch A (top, y=60 to y=100) lamp A at x=300
+  wire([[200,60],[200,100]],wireCol);
+  wire([[400,60],[400,100]],wireCol);
+  wire([[200,100],[260,100]],wireCol);
+  wire([[340,100],[400,100]],wireCol);
+  // SW1 at x=160 top
+  wire([[120,60],[160,60]],wireCol);
+
+  // Branch B (bottom) lamp B at x=300,y=180
+  wire([[200,220],[200,180]],wireCol);
+  wire([[400,220],[400,180]],wireCol);
+  wire([[200,180],[260,180]],wireCol);
+  wire([[340,180],[400,180]],wireCol);
+
+  // Battery
+  drawBattery(ctx,80,140,'6V');
+
+  // SW1 top-left
+  drawSwitch(ctx,140,60,r.switchStates[0],0);
+  ctx.fillStyle='rgba(78,205,196,.4)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('SW1',140,50);
+
+  // SW2 bottom (place it at x=140,y=220)
+  wire([[120,220],[160,220]],wireCol);
+  drawSwitch(ctx,140,220,r.switchStates[1],0);
+  ctx.fillText('SW2',140,235);
+
+  // Lamp A (top branch)
+  drawLamp(ctx,300,100,false);
+  ctx.fillStyle='rgba(240,224,80,.5)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('A (8Ω)',300,115);
+
+  // Ammeter in Branch B
+  drawAmmeter(ctx,300,180,probed);
+  ctx.fillStyle='rgba(245,209,48,.5)';ctx.font='9px Syne';ctx.textAlign='center';
+  ctx.fillText('Ammeter',300,200);
+
+  if(probed){
+    ctx.fillStyle='rgba(245,209,48,.8)';ctx.font='10px IBM Plex Mono';
+    ctx.textAlign='center';
+    ctx.fillText(r.ammeter.toFixed(3)+' A',300,168);
+  }
+}
+
+function drawBattery(ctx,x,y,label){
+  ctx.strokeStyle='#f5d130';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x-8,y-22);ctx.lineTo(x-8,y+22);ctx.stroke();
+  ctx.strokeStyle='#888';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(x+2,y-14);ctx.lineTo(x+2,y+14);ctx.stroke();
+  ctx.fillStyle='#f5d130';ctx.font='9px IBM Plex Mono';ctx.textAlign='center';
+  ctx.fillText(label,x-5,y+36);
+  ctx.fillText('+',x-18,y-12);
+  ctx.fillStyle='#888';ctx.fillText('−',x+10,y-12);
+}
+
+function drawAmmeter(ctx,x,y,active){
+  ctx.save();
+  if(active){ctx.shadowColor='rgba(245,209,48,.8)';ctx.shadowBlur=14;}
+  ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);
+  ctx.fillStyle='rgba(245,209,48,.08)';ctx.fill();
+  ctx.strokeStyle='rgba(245,209,48,.9)';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 13px Syne';ctx.textAlign='center';
+  ctx.fillText('A',x,y+5);
+  // COM dot
+  ctx.beginPath();ctx.arc(x+24,y,4,0,Math.PI*2);
+  ctx.fillStyle='#333';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.stroke();
+  ctx.restore();
+}
+
+function drawVoltmeter(ctx,x,y,active){
+  ctx.save();
+  if(active){ctx.shadowColor='rgba(78,205,196,.8)';ctx.shadowBlur=14;}
+  ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);
+  ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();
+  ctx.strokeStyle='rgba(78,205,196,.9)';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='rgba(78,205,196,.9)';ctx.font='bold 11px Syne';ctx.textAlign='center';
+  ctx.fillText('V',x,y+4);
+  // COM dot
+  ctx.beginPath();ctx.arc(x+18,y,3.5,0,Math.PI*2);
+  ctx.fillStyle='#333';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.stroke();
+  ctx.restore();
+}
+
+function drawLamp(ctx,x,y,burnt){
+  const col=burnt?'rgba(255,71,87,.5)':'rgba(240,224,80,.7)';
+  ctx.save();
+  if(!burnt){ctx.shadowColor='rgba(255,240,100,.4)';ctx.shadowBlur=12;}
+  ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);
+  ctx.fillStyle=burnt?'rgba(255,71,87,.05)':'rgba(255,240,100,.06)';ctx.fill();
+  ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+  ctx.strokeStyle=burnt?'rgba(255,71,87,.5)':'rgba(240,224,80,.6)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(x-12,y-12);ctx.lineTo(x+12,y+12);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+12,y-12);ctx.lineTo(x-12,y+12);ctx.stroke();
+  if(burnt){
+    ctx.fillStyle='rgba(255,71,87,.8)';ctx.font='bold 11px Syne';ctx.textAlign='center';
+    ctx.fillText('✗',x,y+4);
+  }
+  ctx.restore();
+}
+
+function drawSwitch(ctx,x,y,closed,label){
+  ctx.save();
+  ctx.strokeStyle=closed?'rgba(143,255,107,.8)':'rgba(255,159,67,.8)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x-16,y);
+  if(closed)ctx.lineTo(x+16,y);
+  else{ctx.lineTo(x,y);ctx.lineTo(x+10,y-14);}
+  ctx.stroke();
+  ctx.beginPath();ctx.arc(x-16,y,3,0,Math.PI*2);ctx.fillStyle=closed?'rgba(143,255,107,.8)':'rgba(255,159,67,.8)';ctx.fill();
+  ctx.beginPath();ctx.arc(x+16,y,3,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+/* ─── SUBMIT ─── */
+async function submitLab(){
+  if(!currentStudentName){alert('Please select your name first!');return;}
+  const time_min=Math.round((Date.now()-LAB_START)/60000);
+  const raw=parseInt(document.getElementById('rawTotal').textContent)||0;
+  const score20=parseInt(document.getElementById('score20').textContent)||0;
+  const grade=score20>=17?'A':score20>=14?'B':score20>=11?'C':'D';
+  const msgs={A:'Excellent! Outstanding understanding of electric measurement. 🏆',
+              B:'Good work! Solid grasp of the concepts. Keep it up! 👍',
+              C:'Fair performance. Review the ammeter/voltmeter rules and try again! 📚',
+              D:'Keep going! Review the material and ask your teacher for help. 💪'};
+
+  document.getElementById('finalScore').textContent=score20+'/20';
+  document.getElementById('finalGrade').textContent='Grade: '+grade;
+  document.getElementById('finalMsg').textContent=msgs[grade];
+  document.getElementById('submitResult').style.display='block';
+
+  if(score20===20)celebrate();
+
+  const APPS_URL='https://script.google.com/macros/s/YOUR_APPS_SCRIPT_URL/exec';
+  try{
+    await fetch(APPS_URL,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({
+        sheet:'ElecMeasP2',
+        name:currentStudentName,
+        class:currentStudentClass,
+        time_min,
+        q1:mcqScores[1]||0,q2:mcqScores[2]||0,
+        q3:mcqScores[3]||0,q4:mcqScores[4]||0,
+        ex1:exScores[1]||0,ex2:exScores[2]||0,q5:mcqScores[5]||0,
+        game_score:gameScore,game_bonus:gameBonus,game_lives_left:gameLives,
+        q6:mcqScores[6]||0,q7:mcqScores[7]||0,ex3:exScores[3]||0,
+        written:document.getElementById('writtenAns').value,
+        self_s1:selfRatings['s1']||'',self_s2:selfRatings['s2']||'',
+        self_s3:selfRatings['s3']||'',self_s4:selfRatings['s4']||'',
+        ex1_attempts:exAttempts[1],ex2_attempts:exAttempts[2],ex3_attempts:exAttempts[3],
+        raw_score:raw,score_20:score20,grade_letter:grade
+      })
+    });
+  }catch(e){console.log('Submit (no-cors):',e);}
+}
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded',()=>{
+  drawMultimeter();
+  drawDiagram('');
+  drawGameCircuit();
+});
+</script>
+</body>
+</html>
