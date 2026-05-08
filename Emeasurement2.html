@@ -2318,51 +2318,63 @@ function drawSimpleCircuit(ctx,r,probed){
   const lampX=370,lampY=T,lampR=18;
   const swX=460,swY=T;
   const vmX=370,vmY=18,vmR=14;
-  const jA=lampX-lampR, jB=lampX+lampR;
+  // Voltmeter tap points: on the wire OUTSIDE lamp circle, not touching it
+  const vmTapL=lampX-lampR-8, vmTapR=lampX+lampR+8;
   const wireCol='rgba(78,205,196,.75)';
   const batX=L, batY=(T+B)/2;
+
+  // ── PHYSICS: always compute readings fresh — never read from r directly ──
+  const readings = computeReadings(r);
 
   function wire(pts,col,w){
     ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
     pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
     ctx.strokeStyle=col||wireCol;ctx.lineWidth=w||2;ctx.stroke();
   }
-  function jDot(x,y){ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=wireCol;ctx.fill();}
+  // Junction dot: T-junction on wire (white filled) — drawn on wire, NOT on component
+  function jDot(x,y){
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#ffffff';ctx.fill();
+  }
+  // COM terminal dot: hollow dark — drawn at wire END, outside component radius
   function cDot(x,y){
     ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);
     ctx.fillStyle='#1a1a1a';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1.2;ctx.stroke();
   }
 
-  // Main wires — each segment terminates at component edge
+  // Main wires — each segment terminates exactly at component edge (not inside)
   wire([[L,T],[amX-amR,T]]);           // left corner → ammeter left edge
-  wire([[amX+amR,T],[jA,T]]);           // ammeter right edge → lamp left edge
-  wire([[jB,T],[swX-16,T]]);            // lamp right edge → switch left
-  wire([[swX+16,T],[R2,T]]);            // switch right → right corner
-  wire([[R2,T],[R2,B]]);               // right vertical
-  wire([[R2,B],[L,B]]);               // bottom
-  wire([[L,T],[L,batY-28]]);           // top-left corner → battery top
-  wire([[L,batY+28],[L,B]]);           // battery bottom → bottom-left corner
+  wire([[amX+amR,T],[lampX-lampR,T]]); // ammeter right edge → lamp left edge
+  wire([[lampX+lampR,T],[swX-16,T]]); // lamp right edge → switch left
+  wire([[swX+16,T],[R2,T]]);           // switch right → right corner
+  wire([[R2,T],[R2,B]]);              // right vertical
+  wire([[R2,B],[L,B]]);              // bottom
+  wire([[L,T],[L,batY-28]]);          // top-left corner → battery top
+  wire([[L,batY+28],[L,B]]);          // battery bottom → bottom-left corner
 
-  // Voltmeter branch (only when probed)
+  // Voltmeter branch (only when probed) — taps on wire OUTSIDE lamp body
   if(probed){
-    wire([[jA,T],[jA,vmY]],wireCol,1.5);
-    wire([[jA,vmY],[vmX-vmR,vmY]],wireCol,1.5);
-    wire([[vmX+vmR,vmY],[jB,vmY]],wireCol,1.5);
-    wire([[jB,vmY],[jB,T]],wireCol,1.5);
-    jDot(jA,T); jDot(jB,T);
+    // Vertical stubs from tap points up to voltmeter level
+    wire([[vmTapL,T],[vmTapL,vmY]],wireCol,1.5);
+    wire([[vmTapL,vmY],[vmX-vmR,vmY]],wireCol,1.5);
+    wire([[vmX+vmR,vmY],[vmTapR,vmY]],wireCol,1.5);
+    wire([[vmTapR,vmY],[vmTapR,T]],wireCol,1.5);
+    // Junction dots on the WIRE (not on lamp circle)
+    jDot(vmTapL,T); jDot(vmTapR,T);
     // Voltmeter circle
     ctx.save();
     ctx.beginPath();ctx.arc(vmX,vmY,vmR,0,Math.PI*2);
-    ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();
-    ctx.strokeStyle='rgba(78,205,196,.9)';ctx.lineWidth=2;ctx.stroke();
-    ctx.fillStyle='rgba(78,205,196,.9)';ctx.font='bold 11px Syne';
+    ctx.fillStyle='rgba(78,205,196,.1)';ctx.fill();
+    ctx.strokeStyle='rgba(78,205,196,.95)';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='rgba(78,205,196,.95)';ctx.font='bold 11px Syne';
     ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('V',vmX,vmY);
     ctx.textBaseline='alphabetic';ctx.restore();
-    // COM dot on RIGHT circumference (jB-side)
-    cDot(vmX+vmR,vmY);
-    // Voltage reading label
-    ctx.fillStyle='rgba(78,205,196,.7)';ctx.font='9px IBM Plex Mono';
-    ctx.textAlign='center';ctx.fillText(r.voltmeter.toFixed(1)+' V',vmX,vmY-vmR-4);
+    // COM terminal dot — on the wire just outside voltmeter circle, NOT on circumference
+    cDot(vmX+vmR+6, vmY);
+    // Voltage reading label — computed from physics
+    ctx.fillStyle='rgba(78,205,196,.85)';ctx.font='bold 9px IBM Plex Mono';
+    ctx.textAlign='center';
+    ctx.fillText(readings.voltmeter.toFixed(2)+' V',vmX,vmY-vmR-5);
   }
 
   // Battery — on vertical wire → plates HORIZONTAL
@@ -2376,7 +2388,7 @@ function drawSimpleCircuit(ctx,r,probed){
   ctx.fillStyle='rgba(245,209,48,.55)';ctx.font='9px Syne';ctx.textAlign='center';
   ctx.fillText('6V',batX-26,batY+4);ctx.restore();
 
-  // Ammeter — on top wire, COM dot on LEFT circumference (wire entry side from L)
+  // Ammeter — on top wire, COM dot on wire just OUTSIDE left edge (not on circle)
   ctx.save();
   if(probed){ctx.shadowColor='rgba(245,209,48,.7)';ctx.shadowBlur=12;}
   ctx.beginPath();ctx.arc(amX,amY,amR,0,Math.PI*2);
@@ -2385,10 +2397,13 @@ function drawSimpleCircuit(ctx,r,probed){
   ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 12px Syne';
   ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('A',amX,amY);
   ctx.textBaseline='alphabetic';ctx.restore();
-  cDot(amX-amR, amY);  // COM dot: LEFT circumference = where wire from L arrives
+  // COM dot sits on the wire outside the circle, not touching the circle edge
+  cDot(amX-amR-6, amY);
   if(probed){
-    ctx.fillStyle='rgba(245,209,48,.8)';ctx.font='9px IBM Plex Mono';
-    ctx.textAlign='center';ctx.fillText(r.ammeter.toFixed(3)+' A',amX,amY+amR+13);
+    ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 9px IBM Plex Mono';
+    ctx.textAlign='center';
+    // Reading from physics engine — not from r.ammeter which doesn't exist
+    ctx.fillText(readings.ammeter.toFixed(3)+' A',amX,amY+amR+14);
   }else{
     ctx.fillStyle='rgba(245,209,48,.4)';ctx.font='9px Syne';
     ctx.textAlign='center';ctx.fillText('A',amX,amY+amR+12);
@@ -2521,7 +2536,8 @@ function drawParallelCircuit(ctx,r,probed){
   ctx.fillStyle='rgba(240,224,80,.5)';ctx.font='8px Syne';ctx.textAlign='center';
   ctx.fillText('Lamp A (8Ω)',compX,brAy-R-5);
 
-  // Ammeter in Branch B — COM dot on LEFT circumference
+  // Ammeter in Branch B — COM dot on wire just OUTSIDE left edge (not on circle)
+  const parReadings = computeReadings(r);
   ctx.save();
   if(probed){ctx.shadowColor='rgba(245,209,48,.7)';ctx.shadowBlur=10;}
   ctx.beginPath();ctx.arc(compX,brBy,R,0,Math.PI*2);
@@ -2530,12 +2546,19 @@ function drawParallelCircuit(ctx,r,probed){
   ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 11px Syne';
   ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('A',compX,brBy);
   ctx.textBaseline='alphabetic';ctx.restore();
-  cDot(compX-R, brBy);  // COM on LEFT circumference = wire-entry side
+  // COM dot on wire, 6px outside the circle (not touching it)
+  {
+    const cdCtx=ctx;
+    cdCtx.beginPath();cdCtx.arc(compX-R-6,brBy,3.5,0,Math.PI*2);
+    cdCtx.fillStyle='#1a1a1a';cdCtx.fill();cdCtx.strokeStyle='#888';cdCtx.lineWidth=1.2;cdCtx.stroke();
+  }
   ctx.fillStyle='rgba(245,209,48,.45)';ctx.font='8px Syne';
-  ctx.textAlign='center';ctx.fillText('Ammeter (Branch B)',compX,brBy+R+12);
+  ctx.textAlign='center';ctx.fillText('Ammeter (Branch B)',compX,brBy+R+14);
   if(probed){
-    ctx.fillStyle='rgba(245,209,48,.85)';ctx.font='9px IBM Plex Mono';
-    ctx.textAlign='center';ctx.fillText(r.ammeter.toFixed(3)+' A',compX,brBy-R-5);
+    ctx.fillStyle='rgba(245,209,48,.9)';ctx.font='bold 9px IBM Plex Mono';
+    ctx.textAlign='center';
+    // Reading from physics engine — not from r.ammeter
+    ctx.fillText(parReadings.ammeter.toFixed(3)+' A',compX,brBy-R-6);
   }
 }
 
