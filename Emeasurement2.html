@@ -994,8 +994,16 @@ function wbDrawCircuit(ctx){
   ctx.beginPath();ctx.moveTo(wbBreakOpen?brX+brGap:bx,lampY);ctx.lineTo(lampX-lampR,lampY);ctx.stroke();
   ctx.beginPath();ctx.moveTo(lampX+lampR,lampY);ctx.lineTo(R,lampY);ctx.stroke();
   ctx.beginPath();ctx.arc(lampX,lampY,lampR,0,Math.PI*2);
-  // PHYSICS FIX: lamp is ON whenever circuit is CLOSED — probe position irrelevant
-  const lampActive=!wbBreakOpen;
+  // PHYSICS: Circuit is closed (lamp ON, current flows) when EITHER:
+  //   (a) The break is not open — wire is intact as normal, OR
+  //   (b) Break IS open but ammeter probes are bridging it correctly.
+  //       A real ammeter ≈ 1Ω — it IS the wire when placed in series.
+  //       Voltmeter (10MΩ) does NOT close the circuit — lamp stays dark.
+  const amBridging = wbBreakOpen && wbMode==='ammeter' &&
+    wbProbes.red.node !== wbProbes.black.node &&
+    new Set(['wire-a','lamp-l']).has(wbProbes.red.node) &&
+    new Set(['wire-a','lamp-l']).has(wbProbes.black.node);
+  const lampActive = !wbBreakOpen || amBridging;
   ctx.fillStyle=lampActive?'rgba(255,240,100,.18)':'rgba(255,240,100,.05)';ctx.fill();
   ctx.strokeStyle=lampActive?'rgba(240,224,80,1)':'rgba(240,224,80,.75)';ctx.lineWidth=2.5;ctx.stroke();
   const ld=lampR*0.6;ctx.strokeStyle=lampActive?'rgba(240,224,80,.8)':'rgba(240,224,80,.5)';ctx.lineWidth=1.5;
@@ -1012,8 +1020,8 @@ function wbDrawCircuit(ctx){
     if(!snapped){ctx.beginPath();ctx.arc(px.x,px.y,10,0,Math.PI*2);ctx.strokeStyle=col;ctx.lineWidth=1;ctx.globalAlpha=0.35+Math.sin(wbAnim/12)*0.15;ctx.stroke();ctx.globalAlpha=1;}
     const lbl={'wire-a':'red','lamp-l':'black','wire-b':'red','lamp-r':'black','bat+':'bat+','bat-':'bat-'}[id];
     ctx.fillStyle=col;ctx.font='7px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(lbl,px.x,px.y+(id==='bat+'||id==='bat-'?-9:12));ctx.restore();}
-  // PHYSICS: current always flows when circuit is CLOSED — probes are observers, not circuit elements
-  const circuitClosed=!wbBreakOpen;
+  // Current dots animate whenever the circuit is complete — same condition as lampActive
+  const circuitClosed = lampActive;
   if(circuitClosed){
     const totalW=R-bx,totalH=B-T,total=(totalW+totalH)*2;
     const wbPath=[[bx,T],[R,T],[R,B],[bx,B]];
