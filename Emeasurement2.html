@@ -243,7 +243,7 @@ textarea:focus{outline:none;border-color:var(--accent);}
       <span class="sec-chevron">▾</span>
     </div>
     <div class="section-body">
-      <p>You are a real electrician. Below is a workbench with a battery, a lamp, and a multimeter. <strong>Drag the probe wires</strong> from the multimeter terminals to the circuit nodes to connect it — just like in a real lab.</p>
+      <p>You are a real electrician. The circuit is <strong>already running</strong> — the battery is connected and current is flowing through the lamp right now. The multimeter is your measurement tool. <strong>Drag its probe wires</strong> to different points in the circuit to observe what the meter reads. The probes <em>observe</em> — they do not start or stop the current.</p>
       <div id="wbWrap" style="position:relative;user-select:none;touch-action:none;">
         <canvas id="wbCanvas" width="680" height="420" style="border:1px solid var(--border2);border-radius:10px;display:block;cursor:crosshair;background:#0a0c0e;"></canvas>
         <div id="mmDisplay" style="position:absolute;top:14px;right:14px;background:#0a1208;border:2px solid rgba(143,255,107,.35);border-radius:8px;padding:.5rem .9rem;font-family:'IBM Plex Mono',monospace;box-shadow:0 0 18px rgba(143,255,107,.15);min-width:130px;text-align:center;">
@@ -253,13 +253,13 @@ textarea:focus{outline:none;border-color:var(--accent);}
           <div id="mmMode" style="font-size:.55rem;color:var(--accent);margin-top:.3rem;letter-spacing:.08em;">MODE: —</div>
         </div>
         <div id="wbInstr" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(10,12,14,.85);border:1px solid var(--border2);border-radius:20px;padding:.3rem 1rem;font-size:.7rem;color:var(--muted);white-space:nowrap;">
-          🔴 Drag <b style="color:#ff4757">red probe</b> · ⚫ Drag <b style="color:#aaa">black probe</b> · Toggle mode below
+          🔴 Drag <b style="color:#ff4757">red probe</b> · ⚫ Drag <b style="color:#aaa">black probe</b> · Current always flows — break wire to open circuit
         </div>
       </div>
       <div style="display:flex;gap:.6rem;margin-top:.6rem;flex-wrap:wrap;align-items:center;">
         <button class="gc-btn primary" onclick="wbSetMode('ammeter')" id="btnAmMode">⚡ Ammeter mode (A)</button>
         <button class="gc-btn secondary" onclick="wbSetMode('voltmeter')" id="btnVMode">🔋 Voltmeter mode (V)</button>
-        <button class="gc-btn secondary" onclick="wbToggleBreak()" id="btnBreak">✂ Open/Close break</button>
+        <button class="gc-btn secondary" onclick="wbToggleBreak()" id="btnBreak">✂ Break / Restore wire</button>
         <button class="gc-btn secondary" onclick="wbReset()">↺ Reset probes</button>
         <span id="wbStatus" style="font-size:.72rem;color:var(--orange);font-family:'IBM Plex Mono',monospace;max-width:340px;line-height:1.4;"></span>
       </div>
@@ -578,6 +578,17 @@ textarea:focus{outline:none;border-color:var(--accent);}
         </tbody>
       </table>
       <button class="submit-btn" onclick="submitLab()">⚡ Submit Lab Results</button>
+
+      <div style="margin:1rem 0 0;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;">
+        <div style="font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;font-family:'IBM Plex Mono',monospace;">Grade Scale (auto-scored part)</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <span style="font-size:.72rem;padding:.25rem .6rem;border-radius:4px;background:rgba(143,255,107,.12);color:var(--lime);font-weight:700;">A ≥ 17/20</span>
+          <span style="font-size:.72rem;padding:.25rem .6rem;border-radius:4px;background:rgba(78,205,196,.12);color:var(--blue);font-weight:700;">B ≥ 14/20</span>
+          <span style="font-size:.72rem;padding:.25rem .6rem;border-radius:4px;background:rgba(255,159,67,.12);color:var(--orange);font-weight:700;">C ≥ 11/20</span>
+          <span style="font-size:.72rem;padding:.25rem .6rem;border-radius:4px;background:rgba(255,71,87,.12);color:var(--red);font-weight:700;">D &lt; 11/20</span>
+          <span style="font-size:.68rem;color:var(--muted);align-self:center;">+ 3 pts written (teacher-graded)</span>
+        </div>
+      </div>
       <div class="submit-result" id="submitResult">
         <div style="font-size:1rem;color:var(--muted);margin-bottom:.5rem;">Your Results</div>
         <div class="final-score" id="finalScore">0/20</div>
@@ -979,9 +990,12 @@ function wbDrawCircuit(ctx){
     ctx.fillStyle='rgba(255,159,67,'+(pulse+0.2)+')';ctx.font='7px Syne';ctx.textAlign='center';ctx.fillText('click to open',brX,brY-12);ctx.restore();
   }
   ctx.save();ctx.fillStyle='#0a0c0e';ctx.beginPath();ctx.arc(lampX,lampY,lampR+1,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle=wireCol;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(lampX-lampR,lampY);ctx.stroke();ctx.beginPath();ctx.moveTo(lampX+lampR,lampY);ctx.lineTo(R,lampY);ctx.stroke();
+  ctx.strokeStyle=wireCol;ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(wbBreakOpen?brX+brGap:bx,lampY);ctx.lineTo(lampX-lampR,lampY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lampX+lampR,lampY);ctx.lineTo(R,lampY);ctx.stroke();
   ctx.beginPath();ctx.arc(lampX,lampY,lampR,0,Math.PI*2);
-  const lampActive=(wbMode==='ammeter'&&wbProbes.red.node&&wbProbes.black.node&&wbBreakOpen)||(wbMode==='voltmeter'&&wbProbes.red.node&&wbProbes.black.node&&new Set(['bat+','wire-a','lamp-l']).has(wbProbes.red.node)&&new Set(['bat-','wire-b','lamp-r']).has(wbProbes.black.node));
+  // PHYSICS FIX: lamp is ON whenever circuit is CLOSED — probe position irrelevant
+  const lampActive=!wbBreakOpen;
   ctx.fillStyle=lampActive?'rgba(255,240,100,.18)':'rgba(255,240,100,.05)';ctx.fill();
   ctx.strokeStyle=lampActive?'rgba(240,224,80,1)':'rgba(240,224,80,.75)';ctx.lineWidth=2.5;ctx.stroke();
   const ld=lampR*0.6;ctx.strokeStyle=lampActive?'rgba(240,224,80,.8)':'rgba(240,224,80,.5)';ctx.lineWidth=1.5;
@@ -989,7 +1003,7 @@ function wbDrawCircuit(ctx){
   ctx.beginPath();ctx.moveTo(lampX+ld,lampY-ld);ctx.lineTo(lampX-ld,lampY+ld);ctx.stroke();
   if(lampActive){const gr=ctx.createRadialGradient(lampX,lampY,lampR,lampX,lampY,lampR+18);gr.addColorStop(0,'rgba(255,240,80,.35)');gr.addColorStop(1,'rgba(255,240,80,0)');ctx.beginPath();ctx.arc(lampX,lampY,lampR+18,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();}
   ctx.restore();
-  ctx.fillStyle=lampActive?'rgba(255,220,50,.8)':'rgba(240,224,80,.45)';ctx.font='9px Syne';ctx.textAlign='center';ctx.fillText(lampActive?'ON':'Lamp 12Ω',lampX,lampY+lampR+14);
+  ctx.fillStyle=lampActive?'rgba(255,220,50,.8)':'rgba(240,224,80,.45)';ctx.font='9px Syne';ctx.textAlign='center';ctx.fillText(lampActive?'Lamp (ON)':'Lamp (OFF)',lampX,lampY+lampR+14);
   WB_NODE_PX['bat+']={x:bx,y:T};WB_NODE_PX['bat-']={x:bx,y:B};WB_NODE_PX['wire-a']={x:brX-brGap,y:T};WB_NODE_PX['lamp-l']={x:brX+brGap,y:T};WB_NODE_PX['lamp-r']={x:lampX+lampR,y:T};WB_NODE_PX['wire-b']={x:lampX-lampR,y:T};
   const showNodes=wbMode==='ammeter'?['wire-a','lamp-l']:['wire-b','lamp-r','bat+','bat-'];
   for(const id of showNodes){const px=WB_NODE_PX[id];if(!px)continue;const snapR=wbProbes.red.node===id,snapB=wbProbes.black.node===id,snapped=snapR||snapB;
@@ -998,9 +1012,16 @@ function wbDrawCircuit(ctx){
     if(!snapped){ctx.beginPath();ctx.arc(px.x,px.y,10,0,Math.PI*2);ctx.strokeStyle=col;ctx.lineWidth=1;ctx.globalAlpha=0.35+Math.sin(wbAnim/12)*0.15;ctx.stroke();ctx.globalAlpha=1;}
     const lbl={'wire-a':'red','lamp-l':'black','wire-b':'red','lamp-r':'black','bat+':'bat+','bat-':'bat-'}[id];
     ctx.fillStyle=col;ctx.font='7px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(lbl,px.x,px.y+(id==='bat+'||id==='bat-'?-9:12));ctx.restore();}
-  if(lampActive){const totalW=R-bx,totalH=B-T,total=(totalW+totalH)*2;const path=[[bx,T],[R,T],[R,B],[bx,B]];const segs=[{dx:totalW,dy:0},{dx:0,dy:totalH},{dx:-totalW,dy:0},{dx:0,dy:-totalH}];
-    for(let i=0;i<8;i++){const t=((wbAnim/360)+i/8)%1;const d=t*total;let cum=0,px=bx,py=T;for(let s=0;s<4;s++){const sLen=Math.abs(segs[s].dx||segs[s].dy);if(d<=cum+sLen){const f=(d-cum)/sLen;px=path[s][0]+segs[s].dx*f;py=path[s][1]+segs[s].dy*f;break;}cum+=sLen;}
-      ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fillStyle='rgba(78,205,196,'+(0.9-i*0.09)+')';ctx.fill();}}
+  // PHYSICS: current always flows when circuit is CLOSED — probes are observers, not circuit elements
+  const circuitClosed=!wbBreakOpen;
+  if(circuitClosed){
+    const totalW=R-bx,totalH=B-T,total=(totalW+totalH)*2;
+    const wbPath=[[bx,T],[R,T],[R,B],[bx,B]];
+    const wbSegs=[{dx:totalW,dy:0},{dx:0,dy:totalH},{dx:-totalW,dy:0},{dx:0,dy:-totalH}];
+    for(let i=0;i<8;i++){
+      const t=((wbAnim/360)+i/8)%1;const d=t*total;let cum=0,dotX=bx,dotY=T;
+      for(let s=0;s<4;s++){const sLen=Math.abs(wbSegs[s].dx||wbSegs[s].dy);if(d<=cum+sLen){const f=(d-cum)/sLen;dotX=wbPath[s][0]+wbSegs[s].dx*f;dotY=wbPath[s][1]+wbSegs[s].dy*f;break;}cum+=sLen;}
+      ctx.beginPath();ctx.arc(dotX,dotY,4,0,Math.PI*2);ctx.fillStyle='rgba(78,205,196,'+(0.9-i*0.09)+')';ctx.fill();}}
 }
 function wbDrawMultimeter(ctx){
   const mx=545,my=60,mw=120,mh=330,mr=14;const bg=ctx.createLinearGradient(mx,my,mx+mw,my+mh);bg.addColorStop(0,'#14202e');bg.addColorStop(1,'#0a0f14');
@@ -1050,7 +1071,14 @@ function drawDiagram(highlight,dotAngle){
   ctx.save();ctx.fillStyle='#0a0c0e';ctx.beginPath();ctx.arc(lampX,lampY,lampR+1,0,Math.PI*2);ctx.fill();ctx.strokeStyle=wireCol;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(amX+amR,lampY);ctx.lineTo(lampX-lampR,lampY);ctx.stroke();ctx.beginPath();ctx.moveTo(lampX+lampR,lampY);ctx.lineTo(jB,lampY);ctx.stroke();ctx.beginPath();ctx.arc(lampX,lampY,lampR,0,Math.PI*2);ctx.fillStyle='rgba(255,240,100,.05)';ctx.fill();ctx.strokeStyle='rgba(240,224,80,.75)';ctx.lineWidth=2;ctx.stroke();const ld=lampR*0.65;ctx.strokeStyle='rgba(240,224,80,.55)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(lampX-ld,lampY-ld);ctx.lineTo(lampX+ld,lampY+ld);ctx.stroke();ctx.beginPath();ctx.moveTo(lampX+ld,lampY-ld);ctx.lineTo(lampX-ld,lampY+ld);ctx.stroke();ctx.restore();
   ctx.fillStyle='rgba(240,224,80,.5)';ctx.font='9px Syne';ctx.textAlign='center';ctx.fillText('Lamp',lampX,lampY+lampR+14);
   ctx.save();const vmHl=highlight==='voltmeter';if(vmHl){ctx.shadowColor='#4ecdc4';ctx.shadowBlur=18;}ctx.fillStyle='#0a0c0e';ctx.beginPath();ctx.arc(vmX,vmY,vmR+1,0,Math.PI*2);ctx.fill();ctx.strokeStyle=wireCol;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(jA,vmY);ctx.lineTo(vmX-vmR,vmY);ctx.stroke();ctx.beginPath();ctx.moveTo(vmX+vmR,vmY);ctx.lineTo(jB,vmY);ctx.stroke();ctx.beginPath();ctx.arc(vmX,vmY,vmR,0,Math.PI*2);ctx.fillStyle='rgba(78,205,196,.08)';ctx.fill();ctx.strokeStyle=vmHl?'#4ecdc4':'rgba(78,205,196,.8)';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle=vmHl?'#4ecdc4':'rgba(78,205,196,.8)';ctx.font='bold 14px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('V',vmX,vmY);ctx.textBaseline='alphabetic';ctx.restore();
-  comDot(vmX+vmR+8,vmY);ctx.fillStyle='rgba(136,136,136,.5)';ctx.font='8px Syne';ctx.textAlign='center';ctx.fillText('COM',vmX+vmR+8,vmY-10);ctx.fillStyle='rgba(78,205,196,.45)';ctx.font='9px Syne';ctx.fillText('Voltmeter',vmX,vmY-vmR-8);
+  // COM dot: on the RIGHT vertical branch wire, between voltmeter bottom edge and main circuit wire
+  // Right branch: from (jB, vmY) down to (jB, T). Midpoint = (jB, (vmY+T)/2)
+  // jB=412, vmY=70, T=150 → midpoint y = 110. This is clearly ON the wire, inside the circuit.
+  const vmComX=jB, vmComY=Math.round((vmY+T)/2);
+  comDot(vmComX,vmComY);
+  ctx.fillStyle='rgba(136,136,136,.5)';ctx.font='8px Syne';ctx.textAlign='left';
+  ctx.fillText('COM',vmComX+7,vmComY+3);
+  ctx.fillStyle='rgba(78,205,196,.45)';ctx.font='9px Syne';ctx.textAlign='center';ctx.fillText('Voltmeter',vmX,vmY-vmR-8);
   if(dotAngle!==undefined){
     const seg=[490,110,490,110];const total=seg.reduce((a,b)=>a+b,0);const numDots=9;
     for(let i=0;i<numDots;i++){const t=((dotAngle/360)+i/numDots)%1;const d=t*total;let px,py;
@@ -1343,12 +1371,39 @@ function drawSimpleCircuit(ctx,r,probed){
   wire([[L,T],[amX-amR,T]]);wire([[amX+amR,T],[lampX-lampR,T]]);wire([[lampX+lampR,T],[swX-16,T]]);wire([[swX+16,T],[R2,T]]);wire([[R2,T],[R2,B]]);wire([[R2,B],[L,B]]);wire([[L,T],[L,batY-28]]);wire([[L,batY+28],[L,B]]);
 
   if(probed){
-    wire([[vmTapL,T],[vmTapL,vmY]],wireCol,1.5);wire([[vmTapL,vmY],[vmX-vmR,vmY]],wireCol,1.5);
-    wire([[vmX+vmR,vmY],[vmTapR,vmY]],wireCol,1.5);wire([[vmTapR,vmY],[vmTapR,T]],wireCol,1.5);
+    // Round 5 special case: show AMMETER in parallel (the wrong connection)
+    // All other rounds: show voltmeter in parallel (the correct measurement tool)
+    const isAmmeterParallel = (r.id===5);
+    const branchColor = isAmmeterParallel ? 'rgba(255,71,87,.95)' : 'rgba(78,205,196,.95)';
+    const branchFill  = isAmmeterParallel ? 'rgba(255,71,87,.12)'  : 'rgba(78,205,196,.1)';
+    const branchLabel = isAmmeterParallel ? 'A' : 'V';
+    wire([[vmTapL,T],[vmTapL,vmY]],isAmmeterParallel?'rgba(255,71,87,.7)':wireCol,1.5);
+    wire([[vmTapL,vmY],[vmX-vmR,vmY]],isAmmeterParallel?'rgba(255,71,87,.7)':wireCol,1.5);
+    wire([[vmX+vmR,vmY],[vmTapR,vmY]],isAmmeterParallel?'rgba(255,71,87,.7)':wireCol,1.5);
+    wire([[vmTapR,vmY],[vmTapR,T]],isAmmeterParallel?'rgba(255,71,87,.7)':wireCol,1.5);
     jDot(vmTapL,T);jDot(vmTapR,T);
-    ctx.save();ctx.beginPath();ctx.arc(vmX,vmY,vmR,0,Math.PI*2);ctx.fillStyle='rgba(78,205,196,.1)';ctx.fill();ctx.strokeStyle='rgba(78,205,196,.95)';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='rgba(78,205,196,.95)';ctx.font='bold 11px Syne';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('V',vmX,vmY);ctx.textBaseline='alphabetic';ctx.restore();
+    ctx.save();
+    if(isAmmeterParallel){
+      // Danger glow — wrong connection warning
+      ctx.shadowColor='rgba(255,71,87,.9)';ctx.shadowBlur=20;
+    }
+    ctx.beginPath();ctx.arc(vmX,vmY,vmR,0,Math.PI*2);
+    ctx.fillStyle=branchFill;ctx.fill();
+    ctx.strokeStyle=branchColor;ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=branchColor;ctx.font='bold 11px Syne';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(branchLabel,vmX,vmY);ctx.textBaseline='alphabetic';ctx.shadowBlur=0;ctx.restore();
     cDot(vmX+vmR+6,vmY);
-    ctx.fillStyle='rgba(78,205,196,.85)';ctx.font='bold 9px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(readings.voltmeter.toFixed(2)+' V',vmX,vmY-vmR-5);
+    if(isAmmeterParallel){
+      // Show "SHORT!" warning label instead of a reading
+      ctx.fillStyle='rgba(255,71,87,.9)';ctx.font='bold 9px IBM Plex Mono';ctx.textAlign='center';
+      ctx.fillText('⚡ SHORT!',vmX,vmY-vmR-5);
+      // Danger label below
+      ctx.fillStyle='rgba(255,71,87,.7)';ctx.font='8px Syne';ctx.textAlign='center';
+      ctx.fillText('A in parallel = DANGER',vmX,vmY+vmR+12);
+    } else {
+      ctx.fillStyle='rgba(78,205,196,.85)';ctx.font='bold 9px IBM Plex Mono';ctx.textAlign='center';
+      ctx.fillText(readings.voltmeter.toFixed(2)+' V',vmX,vmY-vmR-5);
+    }
   }
 
   // Battery plates HORIZONTAL (battery on vertical wire) ← correct orientation
