@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>امتحان السعي — اللغة العربية — الصف السابع</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #faf8f3;
+  --bg2:      #f5f1e8;
+  --bg3:      #eee9d8;
+  --panel:    rgba(139,90,43,.05);
+  --border:   rgba(139,90,43,.18);
+  --border2:  rgba(139,90,43,.35);
+  --text:     #1a1208;
+  --muted:    #6b5c3e;
+  --accent:   #7c4a1e;
+  --accent2:  #b8860b;
+  --green:    #2d6a2d;
+  --red:      #8b1a1a;
+  --blue:     #1a3d6b;
+  --ink:      #0d0d0d;
+  --r: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Noto Kufi Arabic',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  direction:rtl;
+}
+/* Subtle lined paper texture */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:repeating-linear-gradient(transparent,transparent 27px,rgba(139,90,43,.08) 27px,rgba(139,90,43,.08) 28px);
+  background-size:100% 28px;
+}
+.app{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:1rem;}
+
+/* ── HEADER ── */
+.exam-header{
+  background:linear-gradient(135deg,#3d1f08,#7c4a1e);
+  color:#fff;border-radius:12px;padding:1.5rem 2rem;margin-bottom:1.2rem;
+  display:flex;flex-direction:column;gap:.5rem;
+  box-shadow:0 4px 20px rgba(60,30,10,.3);
+}
+.school-name{font-size:.95rem;font-weight:600;opacity:.85;letter-spacing:.03em;}
+.exam-title{font-size:1.6rem;font-weight:800;font-family:'Amiri',serif;line-height:1.3;}
+.exam-meta{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.78rem;opacity:.8;margin-top:.3rem;}
+.meta-item{display:flex;align-items:center;gap:.3rem;}
+
+/* ── TIMER ── */
+.timer-bar{
+  background:var(--bg2);border:2px solid var(--border2);border-radius:10px;
+  padding:.7rem 1.2rem;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;position:sticky;top:.5rem;z-index:50;
+  box-shadow:0 2px 12px rgba(0,0,0,.1);
+}
+.timer-display{
+  font-family:'Noto Kufi Arabic',monospace;font-size:1.5rem;font-weight:800;
+  color:var(--accent);letter-spacing:.04em;direction:ltr;
+}
+.timer-display.warn{color:#b8540a;animation:pulse-timer 1s ease infinite;}
+.timer-display.critical{color:var(--red);animation:pulse-timer .5s ease infinite;}
+@keyframes pulse-timer{0%,100%{opacity:1}50%{opacity:.5}}
+.timer-label{font-size:.8rem;color:var(--muted);font-weight:600;}
+.timer-progress{flex:1;margin:0 1rem;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.timer-fill{height:100%;background:linear-gradient(90deg,#2d6a2d,#b8860b);border-radius:4px;transition:width 1s linear;}
+.timer-fill.warn{background:linear-gradient(90deg,#b8540a,#e87722);}
+.timer-fill.critical{background:var(--red);}
+
+/* ── STUDENT PICKER ── */
+.picker-card{
+  background:var(--bg2);border:2px solid var(--border2);border-radius:12px;
+  padding:1.4rem 1.6rem;margin-bottom:1.2rem;
+}
+.picker-title{font-size:.85rem;font-weight:700;color:var(--accent);margin-bottom:1rem;
+  border-bottom:1px solid var(--border);padding-bottom:.5rem;}
+.picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.field-group{display:flex;flex-direction:column;gap:.4rem;}
+.field-label{font-size:.78rem;font-weight:600;color:var(--muted);}
+select,input[type=text]{
+  background:#fff;border:1.5px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:'Noto Kufi Arabic',sans-serif;font-size:.85rem;
+  padding:.5rem .8rem;width:100%;direction:rtl;
+}
+select:focus,input:focus{outline:none;border-color:var(--accent);}
+.version-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(124,74,30,.12);border:1px solid rgba(124,74,30,.3);
+  border-radius:20px;padding:.25rem .7rem;font-size:.72rem;font-weight:700;
+  color:var(--accent);margin-top:.5rem;
+}
+.start-btn{
+  display:block;width:100%;margin-top:1rem;
+  font-family:'Noto Kufi Arabic',sans-serif;font-size:1rem;font-weight:700;
+  padding:.7rem;border-radius:8px;border:none;
+  background:linear-gradient(135deg,#7c4a1e,#b8860b);color:#fff;
+  cursor:pointer;transition:all .2s;letter-spacing:.02em;
+}
+.start-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,74,30,.4);}
+.start-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* ── BLOCKED SCREEN ── */
+.blocked-screen{
+  display:none;text-align:center;padding:3rem 2rem;
+  background:var(--bg2);border:2px solid var(--red);border-radius:12px;margin:2rem 0;
+}
+.blocked-icon{font-size:3rem;margin-bottom:1rem;}
+.blocked-title{font-size:1.2rem;font-weight:800;color:var(--red);margin-bottom:.5rem;}
+.blocked-msg{font-size:.85rem;color:var(--muted);line-height:1.8;}
+
+/* ── EXAM BODY ── */
+.exam-body{display:none;}
+
+/* ── TEXT SECTION ── */
+.text-section{
+  background:#fff;border:2px solid var(--border2);border-radius:12px;
+  padding:1.5rem 2rem;margin-bottom:1.2rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.text-section-title{
+  font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:.06em;
+  text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;
+}
+.passage-title{
+  font-family:'Amiri',serif;font-size:1.3rem;font-weight:700;text-align:center;
+  color:var(--ink);margin-bottom:.8rem;
+}
+.passage-text{
+  font-family:'Amiri',serif;font-size:1.05rem;line-height:2;color:var(--ink);
+  text-align:justify;
+}
+.passage-text p{margin-bottom:.6rem;}
+.passage-text .para-num{
+  font-size:.7rem;font-weight:700;color:var(--accent);
+  background:rgba(124,74,30,.1);border-radius:3px;padding:.1rem .3rem;
+  margin-left:.3rem;
+}
+.footnotes{
+  margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);
+  font-size:.8rem;color:var(--muted);line-height:1.9;
+}
+.footnotes .fn-title{font-weight:700;color:var(--accent);margin-bottom:.3rem;}
+.source-line{
+  text-align:left;font-size:.78rem;color:var(--muted);margin-top:.6rem;
+  font-style:italic;direction:rtl;
+}
+
+/* ── VOICE RECORDER ── */
+.voice-box{
+  background:rgba(45,106,45,.06);border:2px solid rgba(45,106,45,.25);
+  border-radius:10px;padding:1rem 1.2rem;margin:1rem 0;
+}
+.voice-title{font-size:.8rem;font-weight:700;color:var(--green);margin-bottom:.7rem;display:flex;align-items:center;gap:.4rem;}
+.voice-controls{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;}
+.voice-btn{
+  font-family:'Noto Kufi Arabic',sans-serif;font-size:.78rem;font-weight:700;
+  padding:.4rem .9rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:.4rem;
+}
+.voice-btn.record{background:var(--red);color:#fff;}
+.voice-btn.stop{background:var(--green);color:#fff;display:none;}
+.voice-btn.play{background:var(--blue);color:#fff;display:none;}
+.voice-status{font-size:.72rem;color:var(--muted);font-family:'Noto Kufi Arabic',monospace;}
+.voice-indicator{
+  width:10px;height:10px;border-radius:50%;background:var(--red);
+  display:none;animation:blink-rec 1s ease infinite;
+}
+@keyframes blink-rec{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── QUESTION SECTIONS ── */
+.q-section{
+  background:#fff;border:1.5px solid var(--border);border-radius:10px;
+  padding:1.3rem 1.6rem;margin-bottom:1rem;
+  box-shadow:0 1px 6px rgba(0,0,0,.05);
+}
+.q-section-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:1rem;margin-bottom:1rem;padding-bottom:.6rem;
+  border-bottom:2px solid var(--bg3);flex-wrap:wrap;
+}
+.q-section-title{font-size:.88rem;font-weight:700;color:var(--accent);line-height:1.5;}
+.marks-badge{
+  font-size:.72rem;font-weight:700;font-family:'Noto Kufi Arabic',monospace;
+  background:rgba(124,74,30,.1);color:var(--accent);
+  border:1px solid rgba(124,74,30,.25);border-radius:20px;
+  padding:.2rem .6rem;white-space:nowrap;flex-shrink:0;
+}
+
+/* Inputs */
+.answer-input{
+  width:100%;background:#fafafa;border:1.5px solid var(--border2);border-radius:6px;
+  color:var(--ink);font-family:'Amiri',serif;font-size:1rem;
+  padding:.5rem .8rem;resize:vertical;min-height:42px;line-height:1.8;
+  direction:rtl;transition:border-color .2s;
+}
+.answer-input:focus{outline:none;border-color:var(--accent);background:#fff;}
+textarea.answer-input{min-height:80px;}
+.fill-line{
+  display:inline-block;border-bottom:1.5px solid var(--border2);
+  min-width:220px;margin:0 .3rem;vertical-align:bottom;
+}
+.fill-row{
+  display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;
+  margin:.4rem 0;font-family:'Amiri',serif;font-size:1rem;line-height:2;
+}
+
+/* MCQ */
+.mcq-opts{display:flex;flex-direction:column;gap:.4rem;margin-top:.4rem;}
+.mcq-opt{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:7px;
+  padding:.5rem .9rem;cursor:pointer;transition:all .2s;
+  font-family:'Amiri',serif;font-size:1rem;
+}
+.mcq-opt:hover{border-color:var(--accent);background:rgba(124,74,30,.06);}
+.mcq-opt.selected{border-color:var(--accent);background:rgba(124,74,30,.1);}
+.mcq-opt input[type=radio]{accent-color:var(--accent);width:15px;height:15px;flex-shrink:0;}
+.mcq-block{margin-bottom:.8rem;}
+.mcq-q-text{font-family:'Amiri',serif;font-size:1rem;font-weight:700;
+  color:var(--ink);margin-bottom:.3rem;line-height:1.7;}
+
+/* Table */
+.arab-table{width:100%;border-collapse:collapse;font-family:'Amiri',serif;
+  font-size:.95rem;margin:.5rem 0;}
+.arab-table th{
+  background:rgba(124,74,30,.1);border:1.5px solid var(--border2);
+  padding:.5rem .7rem;font-weight:700;color:var(--accent);text-align:center;
+}
+.arab-table td{
+  border:1.5px solid var(--border);padding:.4rem .5rem;text-align:center;vertical-align:middle;
+}
+.arab-table td input{
+  width:100%;border:none;background:transparent;font-family:'Amiri',serif;font-size:.95rem;
+  text-align:center;direction:rtl;color:var(--ink);
+}
+.arab-table td input:focus{outline:1px solid var(--accent);border-radius:3px;}
+
+/* Match columns */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.5rem 0;}
+.match-col-title{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:.4rem;text-align:center;}
+.match-item{
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:7px;
+  padding:.5rem .8rem;font-family:'Amiri',serif;font-size:.95rem;line-height:1.6;
+  margin-bottom:.3rem;
+}
+.match-item.col-a{border-right:3px solid var(--accent);}
+.match-item.col-b{border-right:3px solid var(--accent2);}
+.match-select{
+  font-family:'Noto Kufi Arabic',sans-serif;font-size:.75rem;
+  background:#fff;border:1px solid var(--border2);border-radius:4px;
+  padding:.2rem .4rem;margin-top:.3rem;direction:rtl;width:100%;
+  color:var(--ink);
+}
+
+/* Reorder drag */
+.order-list{list-style:none;display:flex;flex-direction:column;gap:.4rem;margin:.5rem 0;}
+.order-item{
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:7px;
+  padding:.5rem .9rem;font-family:'Amiri',serif;font-size:.95rem;
+  display:flex;align-items:center;gap:.6rem;cursor:grab;user-select:none;
+  transition:all .2s;
+}
+.order-item:hover{border-color:var(--accent);}
+.order-item.dragging{opacity:.4;background:rgba(124,74,30,.1);}
+.drag-handle{color:var(--muted);font-size:.8rem;cursor:grab;flex-shrink:0;}
+.order-num{
+  font-size:.7rem;font-weight:800;color:var(--accent);
+  background:rgba(124,74,30,.1);border-radius:3px;
+  padding:.1rem .35rem;flex-shrink:0;
+}
+
+/* ── SUBMIT SECTION ── */
+.submit-area{
+  background:var(--bg2);border:2px solid var(--border2);border-radius:12px;
+  padding:1.5rem;text-align:center;margin-top:1.5rem;
+}
+.submit-btn{
+  font-family:'Noto Kufi Arabic',sans-serif;font-size:1.1rem;font-weight:800;
+  padding:.8rem 3rem;border-radius:8px;border:none;
+  background:linear-gradient(135deg,#2d6a2d,#4a9a4a);color:#fff;
+  cursor:pointer;transition:all .2s;letter-spacing:.02em;
+  box-shadow:0 3px 12px rgba(45,106,45,.3);
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(45,106,45,.4);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.submit-note{font-size:.75rem;color:var(--muted);margin-top:.5rem;line-height:1.6;}
+
+/* ── SUCCESS SCREEN ── */
+.success-screen{
+  display:none;text-align:center;padding:3rem 2rem;
+  background:#fff;border:2px solid rgba(45,106,45,.3);border-radius:12px;margin:2rem 0;
+}
+.success-icon{font-size:3rem;margin-bottom:1rem;}
+.success-title{font-size:1.2rem;font-weight:800;color:var(--green);margin-bottom:.5rem;}
+.success-msg{font-size:.88rem;color:var(--muted);line-height:2;}
+.success-receipt{
+  margin-top:1rem;background:var(--bg2);border-radius:8px;
+  padding:.8rem 1.2rem;font-size:.8rem;color:var(--muted);
+  font-family:'Noto Kufi Arabic',monospace;text-align:right;line-height:2;
+}
+
+/* ── VERSION SELECTOR (teacher view) ── */
+.version-selector{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem;}
+.v-btn{
+  font-family:'Noto Kufi Arabic',sans-serif;font-size:.75rem;font-weight:700;
+  padding:.3rem .7rem;border-radius:5px;border:1.5px solid var(--border2);
+  background:var(--bg2);color:var(--muted);cursor:pointer;transition:all .2s;
+}
+.v-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Notes */
+.q-note{font-size:.78rem;color:var(--muted);font-style:italic;margin-bottom:.4rem;line-height:1.6;}
+.inline-q{font-family:'Amiri',serif;font-size:1rem;line-height:2;margin-bottom:.5rem;}
+.dotted-line{border-bottom:1px dashed var(--border2);min-height:32px;width:100%;display:block;margin:.3rem 0;}
+
+@media(max-width:640px){
+  .picker-grid{grid-template-columns:1fr;}
+  .match-grid{grid-template-columns:1fr;}
+  .exam-header{padding:1rem;}
+  .timer-display{font-size:1.2rem;}
+  .q-section{padding:1rem;}
+  main{padding:.5rem;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ HEADER ═══ -->
+<div class="exam-header">
+  <div class="school-name">🏫 مدرسة بيت جالا المختلطة / أونروا</div>
+  <div class="exam-title">امتحان السّعي في مادّة اللُّغة العربيَّة</div>
+  <div class="exam-meta">
+    <span class="meta-item">📚 الصّفّ السّابع الأساسيّ</span>
+    <span class="meta-item">⏱ المدّة: 90 دقيقة</span>
+    <span class="meta-item">✏️ العلامة القصوى: 40</span>
+    <span class="meta-item">📅 العام الدّراسيّ: 2025–2026</span>
+  </div>
+</div>
+
+<!-- ═══ TIMER ═══ -->
+<div class="timer-bar" id="timerBar" style="display:none;">
+  <div>
+    <div class="timer-label">الوقت المتبقّي</div>
+    <div class="timer-display" id="timerDisp">90:00</div>
+  </div>
+  <div class="timer-progress">
+    <div class="timer-fill" id="timerFill" style="width:100%"></div>
+  </div>
+  <div style="text-align:center;">
+    <div style="font-size:.7rem;color:var(--muted);">النسخة</div>
+    <div style="font-size:1rem;font-weight:800;color:var(--accent);" id="versionLabel">—</div>
+  </div>
+</div>
+
+<!-- ═══ STUDENT PICKER ═══ -->
+<div class="picker-card" id="pickerCard">
+  <div class="picker-title">🎓 تعريف الطالب — يُرجى اختيار شعبتك واسمك قبل البدء</div>
+  <div class="picker-grid">
+    <div class="field-group">
+      <label class="field-label">الشعبة:</label>
+      <select id="selClass" onchange="onClassChange()">
+        <option value="">— اختر الشعبة —</option>
+        <option value="7C">7C</option>
+        <option value="7D">7D</option>
+        <option value="7E">7E</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">الاسم:</label>
+      <select id="selName" disabled onchange="onNameChange()">
+        <option value="">— اختر اسمك —</option>
+      </select>
+    </div>
+  </div>
+  <div id="versionInfo" style="margin-top:.6rem;display:none;">
+    <div class="version-badge" id="vBadge">📄 النسخة —</div>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;" id="vDesc"></div>
+  </div>
+  <button class="start-btn" id="startBtn" onclick="startExam()" disabled>
+    🚀 بدء الامتحان
+  </button>
+  <div style="font-size:.72rem;color:var(--muted);margin-top:.5rem;text-align:center;">
+    ⚠️ بعد البدء، لا يمكن إعادة فتح الامتحان مجدداً. تأكّد من اسمك قبل الضغط.
+  </div>
+</div>
+
+<!-- ═══ BLOCKED SCREEN ═══ -->
+<div class="blocked-screen" id="blockedScreen">
+  <div class="blocked-icon">🔒</div>
+  <div class="blocked-title">تمّ إغلاق هذا الامتحان</div>
+  <div class="blocked-msg">
+    لقد أجريتَ هذا الامتحان مسبقاً وتمّ تسجيل إجاباتك.<br>
+    لا يمكن إعادة الدخول إلى الامتحان مرّة ثانية.<br><br>
+    إذا كنتَ تعتقد أنّ هذا خطأ، تواصل مع المعلّمة عبير.
+  </div>
+</div>
+
+<!-- ═══ EXAM BODY ═══ -->
+<div class="exam-body" id="examBody">
+
+  <!-- ═ TEXT PASSAGE ═ -->
+  <div class="text-section">
+    <div class="text-section-title">📖 النّصّ القرائي — اقرأ بتأمّل</div>
+    <div class="passage-title">صيدا البساطة والعراقة</div>
+    <div class="passage-text">
+      <p><span class="para-num">١</span>وانطلقت بنا السيارةُ من بيروت عاصمة لبنان إلى صيدا عاصمة محافظة الجنوب، مخترقةً سهل الدامور حيث أشجار الموز عن يميننا تُغطي السهلَ بالأخضر النضر.</p>
+      <p><span class="para-num">٢</span>الفصلُ ربيعٌ. السماءُ زرقاءُ، والصباحُ الباكرُ ينشرُ نسيمَهُ اللطيف. ونحن نتبادلُ الأحاديثَ على وقع موسيقى هادئةٍ تنبعثُ من مذياع السيارةِ.</p>
+      <p><span class="para-num">٣</span>وأطلت علينا صيدا... وكأن أشجار النخيل عند المدخل الشمالي قد تأهبت لاستقبالنا أشجارٌ باسقةٌ صامدةٌ آيةٌ في الجمال.</p>
+      <p><span class="para-num">٤</span>وعن يميننا بحرٌ موجاتُهُ اللطيفة متتابعة، زبدُها الأبيضُ كأنّه ثلجٌ متحركٌ، كأني بالموجة الأخيرة توشوشُ أباها: «الحياة تتابع واستمرار، فلا يأس ولا قنوط».</p>
+      <p><span class="para-num">٥</span>نادانا المعلمون فتابعنا سيرنا، وهدفنا القلعةُ البحرية... دقائق مرّت... ها نحن في القلعة البحرية. نقف على سطحها. أمامنا، من الغرب، البحر الأزرق، ومن الشرق صيدا بأبنيتها القديمة والجديدة، ووراءها جبالٌ ترعاها.</p>
+      <p><span class="para-num">٦</span>تركنا القلعة البحرية، وقصدْنَا متحفَ الصابون. وهو متحف تمّ افتتاحه في العام ألفين. يتألف من ثلاث طبقات على مساحة ثماني مئة متر مربع في سوق صيدا القديمة. ما أروع هذا المتحف وما أجمله! ليتك تزورُهُ!</p>
+      <p><span class="para-num">٧</span>متحف الصابون يشدّنا، لكن السوق القديمة تنتظرنا. غادرنا المتحف<sup>١</sup>، وبدأنا نتجوّل في السوق القديمة: هنا إسكافي<sup>٢</sup> يبتسم لنا؛ وهنا يحوكُ<sup>٣</sup> المُنجّدٌ لحافاً؛ وأمامي بائع عصير؛ وعن يميني محل للذهب... محلات قديمة آية في الهندسة المعمارية. قناطر من حجر صخري، تحملني إلى عالم جميلٍ لا يَعرفُ الكسلَ، فلسفته البسيطة تعتمد على «الرزق على الله».</p>
+      <p><span class="para-num">٨</span>اشترينا ما اشترينا، وخرجنا من السوق القديمة. ركبْنَا السيارةَ وأفلنا عائدين نحو بيروت. أشجار النخيل عن يميننا تُلقي علينا السلام، والبحر عن يسارنا، بأمواجه اللطيفة، يدعو لنا بالتوفيق.</p>
+    </div>
+    <div class="source-line">سلطان ناصر الدين، «مشاهد ملوّنة» (بتصرّف)</div>
+    <div class="footnotes">
+      <div class="fn-title">الحواشي:</div>
+      <div>١ — المتحف: موضع يضمّ تحفاً فنيّة أو أثريّة أو علميّة.</div>
+      <div>٢ — إسكافي: من امتهن صناعة الأحذية.</div>
+      <div>٣ — يحوكُ: ينسجُ.</div>
+    </div>
+
+    <!-- VOICE RECORDER -->
+    <div class="voice-box">
+      <div class="voice-title">🎙 قراءة النّصّ بصوتك — اضغط لتسجيل قراءتك</div>
+      <div class="voice-controls">
+        <button class="voice-btn record" id="btnRecord" onclick="startRecording()">⏺ ابدأ التسجيل</button>
+        <button class="voice-btn stop" id="btnStop" onclick="stopRecording()">⏹ إيقاف التسجيل</button>
+        <button class="voice-btn play" id="btnPlay" onclick="playRecording()">▶ استمع إلى تسجيلك</button>
+        <div class="voice-indicator" id="recIndicator"></div>
+        <span class="voice-status" id="voiceStatus">لم يتمّ التسجيل بعد</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ QUESTIONS — rendered by JS per version ═══ -->
+  <div id="questionsContainer"></div>
+
+  <!-- ═ SUBMIT ═ -->
+  <div class="submit-area">
+    <button class="submit-btn" id="submitBtn" onclick="submitExam()">
+      ✅ تسليم الامتحان
+    </button>
+    <div class="submit-note">
+      بعد الضغط على زر التسليم لن تتمكّن من تعديل إجاباتك.<br>
+      يُرسَل الامتحان تلقائياً عند انتهاء الوقت في حال لم تُسلّمه بنفسك.
+    </div>
+  </div>
+
+</div><!-- /examBody -->
+
+<!-- ═══ SUCCESS SCREEN ═══ -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">تمّ تسليم الامتحان بنجاح</div>
+  <div class="success-msg">
+    شكراً لك. تمّت إجاباتك على امتحان اللغة العربية.<br>
+    ستُصحَّح الأوراق من قِبَل المعلّمة عبير وستُعلَن النتائج لاحقاً.
+  </div>
+  <div class="success-receipt" id="receiptBox"></div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+//  STUDENT LISTS
+// ══════════════════════════════════════════════════════════════════════
+const STUDENTS = {
+  '7C': [
+    'احمد محمد فيصل شحادة','تالين وسيم شحادة شحادة','تسنيم وليد "علي حسين" وهبه',
+    'جاد اسامة عبدالله العبدالله','حمزه محمد عبد العزيز عبد العزيز','دانه محمود احمد احمد',
+    'دانية رياض مصطفى معطي','ربيع احمد ابراهيم عطور','رزان محمد ايمن الزعبوطي',
+    'ريان علي غالب الساري','ريم احمد صبحي رمضان','"زين العابدين" فيصل العوضي',
+    'سجود عباس محمد عمر','سعيد كاسر سعيد الغوش','صبا فادي كامل كايد',
+    'عبد الرحمن محمود عمر صفية','عبدالله ابراهيم محمود ابو جبل','علي محمد وليد شيخه',
+    'لارين سامر احمد الغضبان','لانا فادي "محمد منير" الحاج شحادة','محمد انس محمد تميم',
+    'محمد حسين احمد المحمود','محمد خالد محمد غنوم','"محمد عمر" احمد خضر بشر',
+    'محمد فؤاد محمد جمعة','محمد وسام علي يوسف','محمود خالد احمد الجبيلي',
+    'مريم احمد طه المصري','مصطفى رياض احمد المحمود','مصطفى فؤاد محمد جمعة',
+    'موسى محمود موسى العبد الله','"نور الهدى" كميل لطفي مليجي','يوسف احمد سمير قدورة',
+    'يوسف ايمن محمد بشر','يوسف ربيع يوسف العوضي'
+  ],
+  '7D': [
+    '"أحمد عمر" حسين جعجع','أحمد محمد احمد ابو جاموس','ابراهيم سامي مروان حليحل',
+    'ابراهيم يونس محمد رحال','احمد علي احمد المحمود','احمد فؤاد احمد جمعة',
+    'اسيل احمد فريد العلي','ايلانا محمد ابراهيم الحلو','حلا فادي فايز معتوق',
+    'حمزة عفيف علي السيد','داني محمد محمود حسين','رؤى حسن احمد محمد',
+    'راما ابراهيم رشيد فارس','راما محمد علي الجعجع','زاهر محمد شحادة ديب',
+    'سالي احمد وليد كريديه','"سدرة المنتهى" احمد حسون','عبد الرحمن درويش محمد سلام',
+    'علي ابراهيم حسان الاشوح','علي مروان عدنان شحاده','علي وسيم علي مره',
+    'عيسى احمد محمود الحصري','غيداء مالك جمعة بلال','فرح محمود كامل الخطيب',
+    'ليمار هاني محمد جمعه','محمد مصطفى كمال الترك','محمد هاشم عادل المنسي',
+    'محمد يوسف محمد محمد','مصطفى كمال علي سعد','منى وسام عمر سلام',
+    'ندى علي احمد مطر','ولاء احمد فهد السعيد','يوسف "علاء الدين" كرزون',
+    'يوسف علاء جهاد شحادة'
+  ],
+  '7E': [
+    'أروى محمود احمد فطايرجي','أية حسن محمد الظريف','ابراهيم سامر ابراهيم ياسين',
+    'احمد محمد احمد الهندي','احمد محمد محمود شحادة','امير ابراهيم فوزي الميعاري',
+    'بكر محمد احمد اسماعيل','جواد محمد سعيد سعيد','حسين محمد حسين قاسم',
+    'دعاء "محمد خير" موسى','رندة سهيل كمال المحمد','رهف محمد مصطفى حويلا',
+    'ريماس شادي عبد الله يوسف','زهير يوسف زهير عود الله','زين عمار فضيل علي',
+    'سديل احمد محمد بركه','"سعد الدين" سامر سعدو الحاج','سندس "محمد خير" موسى',
+    'سيلين ربيع محمود حمزه','طارق محمد فوزي عبد الغني','علي حسن "محي الدين" سلمان',
+    'غزل احمد مصطفى الحاج','غزل مروان حسن حسن','فاطمة صلاح علي عبد الهادي',
+    '"فاطمه الزهراء" ضياء يوسف محمود','فرح ايمن محمد قدسيه','لؤي وليد محمود العريض',
+    'محمد خضر "محي الدين" إسكندراني','محمد زياد محمد كرديه','مصطفى محمد فوزي عبد الغني',
+    'هاجر جهاد محمد العطار','وليد ايمن محمد حسن','وليد خالد وسيم مره',
+    'ياسمين علي ابراهيم الاشوح'
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════════════
+//  VERSION ASSIGNMENT — deterministic from name hash
+//  5 standard versions (v1–v5), version 6 = special cases only
+// ══════════════════════════════════════════════════════════════════════
+function getVersion(name, cls) {
+  // Spread students evenly across 5 versions per class
+  const list = STUDENTS[cls] || [];
+  const idx = list.indexOf(name);
+  if (idx === -1) return 1;
+  return (idx % 5) + 1; // 1–5
+}
+
+const VERSION_LABELS = {
+  1: 'أ', 2: 'ب', 3: 'ج', 4: 'د', 5: 'هـ', 6: 'و (خاصة)'
+};
+const VERSION_DESCS = {
+  1: 'النسخة الأولى — أسئلة المجموعة أ',
+  2: 'النسخة الثانية — أسئلة المجموعة ب',
+  3: 'النسخة الثالثة — أسئلة المجموعة ج',
+  4: 'النسخة الرابعة — أسئلة المجموعة د',
+  5: 'النسخة الخامسة — أسئلة المجموعة هـ',
+  6: 'النسخة الخاصة — للحالات الاستثنائية'
+};
+
+// ══════════════════════════════════════════════════════════════════════
+//  EXAM VERSIONS — 5 standard + 1 special, same marks, different questions
+// ══════════════════════════════════════════════════════════════════════
+// Each version is an array of question objects.
+// Marks total = 40. No auto-correction. All answers sent to sheet as text.
+
+const EXAM_VERSIONS = {
+
+  // ─────────────── VERSION 1 ───────────────
+  1: [
+    {
+      id:'v1q1', type:'fill_header', marks:3,
+      title:'في الفهم والتّحليل — استناداً إلى الحواشي أعدْ كتابة ما يأتي',
+      fields:[
+        {label:'النّصّ يحمل عنوان:', id:'v1q1a'},
+        {label:'وهو للكاتب:', id:'v1q1b'},
+        {label:'وقد أُخِذَ من:', id:'v1q1c'}
+      ]
+    },
+    {
+      id:'v1q2', type:'short', marks:1,
+      title:'كلمة "بتصرُّف" في الحاشية تعني:',
+      placeholder:'اكتب إجابتك هنا...'
+    },
+    {
+      id:'v1q3', type:'mcq_group', marks:4,
+      title:'ضعْ دائرة حول الإجابةَ الصّحيحةَ',
+      questions:[
+        {
+          q:'ينتمي هذا النّصّ إلى أدب:',
+          opts:['الرّحلة','السيرة الذاتيّة','الأقصوصة','الخطابة'],
+          id:'v1q3a'
+        },
+        {
+          q:'معنى كلمة «العراقة» في عنوان «صيدا البساطة والعراقة» هو:',
+          opts:['الحداثة والتجديد','الأصالة والقِدَم','المجهوليّة','الغرابة'],
+          id:'v1q3b'
+        },
+        {
+          q:'ضدّ كلمة «صامدة» في «أشجارٌ باسقةٌ صامدةٌ» هو:',
+          opts:['ثابتة','قوية','مستسلمة','شامخة'],
+          id:'v1q3c'
+        },
+        {
+          q:'الفعل في جملة «تركنا القلعةَ البحريَّة» هو:',
+          opts:['فعل معلوم','فعل مجهول','فعل ناقص','فعل تامّ مضارع'],
+          id:'v1q3d'
+        }
+      ]
+    },
+    {
+      id:'v1q4', type:'reorder', marks:1.5,
+      title:'أعدْ ترتيب هذه الأماكن حسب تسلسل الرحلة الزمنيّ في النّصّ',
+      note:'اسحب العناصر أو رقّمها من 1 (الأوّل) إلى 5 (الأخير)',
+      items:['متحف الصابون','القلعة البحرية','سهل الدامور','السوق القديمة','مدخل صيدا (أشجار النخيل)'],
+      id:'v1q4'
+    },
+    {
+      id:'v1q5', type:'senses_table', marks:3,
+      title:'في الفقرة الثانية، وظّف الكاتب حاستَين. اذكرهما مع شاهدَين لكلّ حاسّة',
+      rows:2, id:'v1q5'
+    },
+    {
+      id:'v1q6', type:'conjugation', marks:3,
+      title:'صرّف الجملة الآتية مع الضّمائر المطلوبة',
+      base:'أنا: وقفتُ على سطح القلعة وأغمضتُ عينيَّ.',
+      pronouns:['أنتما','هنَّ','نحن'],
+      id:'v1q6'
+    },
+    {
+      id:'v1q7', type:'match', marks:2.5,
+      title:'صِلْ ما في العمود الأوّل بما يناسبه في العمود الثاني',
+      colA:[
+        {letter:'أ', text:'وقفنا على سطح القلعة، البحر من أمامنا والجبال من ورائنا'},
+        {letter:'ب', text:'موجُ البحر يبدو مثل ثلجٍ متحرّك'},
+        {letter:'ج', text:'أشجار النخيل تُلقي علينا السلام'},
+        {letter:'هـ', text:'أنا لا أدري لماذا أحبّ الأشجار هذا الحبّ اللامتناهي؟!'},
+        {letter:'و', text:'لقد أراحت عيني، وأنعشت قلبي'}
+      ],
+      colB:['تشبيه','طباق','جملة إنشائية استفهامية','جملة خبرية مؤكّدة','استعارة'],
+      id:'v1q7'
+    },
+    {
+      id:'v1q8', type:'long', marks:3,
+      title:'ورد تشبيه في الفقرة الرابعة «زبدُها الأبيضُ كأنّه ثلجٌ متحرّكٌ». حدِّدْ أركانه الأربعة، ثم أوضح دوره في إظهار جمال البحر',
+      placeholder:'حدّد: المُشَبَّه — المُشَبَّه به — وجه الشَّبه — أداة التشبيه\nثمّ اشرح دوره في التصوير الجمالي...'
+    },
+    {
+      id:'v1q9', type:'pattern', marks:3.5,
+      title:'ما النّمط الغالب على النّصّ؟ اذكرْ مؤشّرَين مع شاهدَين على كلّ مؤشّر',
+      placeholder:'النمط الغالب هو: ...\nالمؤشّر الأوّل: ... الشاهد الأوّل: ... الشاهد الثاني: ...\nالمؤشّر الثاني: ... الشاهد الأوّل: ... الشاهد الثاني: ...'
+    },
+    {
+      id:'v1q10', type:'expression', marks:3,
+      title:'عبّر عمّا تراه في صورة القلعة البحريّة مخاطِباً إيّاها، مادحاً صمودها على مرّ العصور، مستخدماً جملاً إنشائيّة وصوراً بيانيّة (3 إلى 4 أسطر)',
+      placeholder:'اكتب تعبيرك هنا (3–4 أسطر)...',
+      rows:5
+    },
+    {
+      id:'v1q11', type:'active_passive', marks:2,
+      title:'حوّل الجملتَين من المعلوم إلى المجهول',
+      sentences:[
+        {q:'ركبْنَا السيارةَ', id:'v1q11a'},
+        {q:'يحوكُ المُنجّدٌ لحافاً', id:'v1q11b'}
+      ]
+    },
+    {
+      id:'v1q12', type:'faail', marks:3,
+      title:'دلّ على الفاعل محدِّداً نوعه وعلامة رفعه',
+      sentences:[
+        {q:'قصدْنَا متحفَ الصّابون', id:'v1q12a'},
+        {q:'نادانا المعلمون', id:'v1q12b'}
+      ]
+    },
+    {
+      id:'v1q13', type:'mafoul', marks:3,
+      title:'دلّ على المفعول به محدِّداً نوعه وعلامة نصبه',
+      sentences:[
+        {q:'توشوشُ أباها', id:'v1q13a'},
+        {q:'ليتك تزورُهُ', id:'v1q13b'}
+      ]
+    },
+    {
+      id:'v1q14', type:'iraab', marks:4.5,
+      title:'أعرِبْ ما تحته خطّ إعرابَ مفرداتٍ',
+      words:[
+        {sentence:'نتبادلُ ـ<u>الأحاديثَ</u>ـ على وقع موسيقى هادئة', word:'الأحاديثَ', id:'v1q14a'},
+        {sentence:'تركْنَا ـ<u>القلعةَ</u>ـ البحريَّةَ', word:'القلعةَ', id:'v1q14b'},
+        {sentence:'ـ<u>نتبادلُ</u>ـ الأحاديثَ', word:'نتبادلُ', id:'v1q14c'},
+        {sentence:'تركْنَا القلعةَ ـ<u>البحريَّةَ</u>ـ', word:'البحريَّةَ', id:'v1q14d'}
+      ]
+    }
+  ],
+
+  // ─────────────── VERSION 2 ───────────────
+  2: [
+    {
+      id:'v2q1', type:'fill_header', marks:3,
+      title:'في الفهم والتّحليل — استناداً إلى الحواشي أعدْ كتابة ما يأتي',
+      fields:[
+        {label:'النّصّ يحمل عنوان:', id:'v2q1a'},
+        {label:'الكاتب هو:', id:'v2q1b'},
+        {label:'أُخِذَ النّصّ من كتاب:', id:'v2q1c'}
+      ]
+    },
+    {
+      id:'v2q2', type:'short', marks:1,
+      title:'ما معنى كلمة "بتصرُّف" الواردة في الحاشية؟',
+      placeholder:'اكتب المعنى بكلماتك...'
+    },
+    {
+      id:'v2q3', type:'mcq_group', marks:4,
+      title:'اختر الإجابة الصّحيحة',
+      questions:[
+        {
+          q:'جنس هذا النّصّ الأدبيّ:',
+          opts:['أدب الرّحلة','القصّة القصيرة','الخطابة','المقالة'],
+          id:'v2q3a'
+        },
+        {
+          q:'«باسقةٌ» في «أشجار باسقة صامدة» تعني:',
+          opts:['قصيرة','طويلة شامخة','يابسة','كثيفة الأوراق'],
+          id:'v2q3b'
+        },
+        {
+          q:'مرادف كلمة «قنوط» في «فلا يأس ولا قنوط» هو:',
+          opts:['الفرح','الأمل','اليأس','السرور'],
+          id:'v2q3c'
+        },
+        {
+          q:'الفعل في «نادانا المعلمون» هو:',
+          opts:['فعل مضارع','فعل أمر','فعل ماضٍ معلوم','فعل مجهول'],
+          id:'v2q3d'
+        }
+      ]
+    },
+    {
+      id:'v2q4', type:'reorder', marks:1.5,
+      title:'رتّب الأحداث الآتية حسب وقوعها في النّصّ من الأوّل إلى الأخير',
+      items:['زيارة السوق القديمة','رؤية أشجار النخيل عند المدخل','الوقوف على سطح القلعة','زيارة متحف الصابون','الانطلاق من بيروت'],
+      id:'v2q4'
+    },
+    {
+      id:'v2q5', type:'senses_table', marks:3,
+      title:'في الفقرة الثالثة والرابعة، وظّف الكاتب حواسّه. اذكر حاستَين مع شاهدَين لكلّ منهما',
+      rows:2, id:'v2q5'
+    },
+    {
+      id:'v2q6', type:'conjugation', marks:3,
+      title:'صرّف الجملة التالية مع الضمائر المطلوبة',
+      base:'أنا: تركتُ القلعةَ وقصدتُ متحفَ الصابون.',
+      pronouns:['هو','أنتنّ','هما (مثنّى مؤنّث)'],
+      id:'v2q6'
+    },
+    {
+      id:'v2q7', type:'match', marks:2.5,
+      title:'وصِّل كلّ جملة بالأسلوب البلاغيّ المناسب',
+      colA:[
+        {letter:'أ', text:'كأنّ أشجار النخيل تأهبت لاستقبالنا'},
+        {letter:'ب', text:'الحياة تتابع واستمرار، فلا يأس ولا قنوط'},
+        {letter:'ج', text:'ما أروع هذا المتحف وما أجمله!'},
+        {letter:'د', text:'البحر عن يسارنا والجبال خلفنا'},
+        {letter:'هـ', text:'لقد أراحت عيني وأنعشت قلبي'}
+      ],
+      colB:['تشبيه','طباق','جملة إنشائية تعجّبية','جملة خبرية مؤكّدة','استعارة'],
+      id:'v2q7'
+    },
+    {
+      id:'v2q8', type:'long', marks:3,
+      title:'«كأنّ أشجار النخيل تأهبت لاستقبالنا» — هذا تشبيه بليغ. حدِّدْ أركانه وبيّن أثره في النّصّ',
+      placeholder:'حدّد: المُشَبَّه — المُشَبَّه به — وجه الشَّبه — أداة التشبيه (إن وُجدت)\nثمّ اشرح أثره الفنّي...'
+    },
+    {
+      id:'v2q9', type:'pattern', marks:3.5,
+      title:'حدِّدْ النمط السرديّ / الوصفيّ في النّصّ. اذكر مؤشّرَين مع شاهدَين على كلٍّ منهما',
+      placeholder:'النمط الغالب هو: ...\nالمؤشّر الأوّل: ... الشاهد الأوّل: ... الشاهد الثاني: ...\nالمؤشّر الثاني: ... الشاهد الأوّل: ... الشاهد الثاني: ...'
+    },
+    {
+      id:'v2q10', type:'expression', marks:3,
+      title:'تخيّل أنّك تقف أمام البحر في صيدا. اكتب فقرة تعبيريّة (3–4 أسطر) تخاطب البحر مستخدماً جملاً إنشائيّة وصوراً بيانيّة',
+      placeholder:'اكتب تعبيرك هنا (3–4 أسطر)...',
+      rows:5
+    },
+    {
+      id:'v2q11', type:'active_passive', marks:2,
+      title:'حوّل الجملتَين الآتيتَين من المعلوم إلى المجهول',
+      sentences:[
+        {q:'قصدْنَا متحفَ الصابون', id:'v2q11a'},
+        {q:'تُغطّي الأشجارُ السهلَ بالأخضر', id:'v2q11b'}
+      ]
+    },
+    {
+      id:'v2q12', type:'faail', marks:3,
+      title:'دلّ على الفاعل محدِّداً نوعه وعلامة رفعه في الجملتَين',
+      sentences:[
+        {q:'تركنا القلعةَ البحريّة', id:'v2q12a'},
+        {q:'ينشرُ الصباحُ الباكرُ نسيمَهُ', id:'v2q12b'}
+      ]
+    },
+    {
+      id:'v2q13', type:'mafoul', marks:3,
+      title:'دلّ على المفعول به محدِّداً نوعه وعلامة نصبه',
+      sentences:[
+        {q:'تُغطّي الأشجارُ السهلَ', id:'v2q13a'},
+        {q:'ركبْنَا السيارةَ', id:'v2q13b'}
+      ]
+    },
+    {
+      id:'v2q14', type:'iraab', marks:4.5,
+      title:'أعرِبْ الكلمات المسطَّر تحتها إعرابَ مفرداتٍ',
+      words:[
+        {sentence:'نادانا ـ<u>المعلمونَ</u>ـ', word:'المعلمونَ', id:'v2q14a'},
+        {sentence:'ـ<u>نادانا</u>ـ المعلمون', word:'نادانا', id:'v2q14b'},
+        {sentence:'قصدْنَا ـ<u>متحفَ</u>ـ الصّابون', word:'متحفَ', id:'v2q14c'},
+        {sentence:'قصدْنَا متحفَ ـ<u>الصّابونِ</u>ـ', word:'الصّابونِ', id:'v2q14d'}
+      ]
+    }
+  ],
+
+  // ─────────────── VERSION 3 ───────────────
+  3: [
+    {
+      id:'v3q1', type:'fill_header', marks:3,
+      title:'في الفهم والتّحليل — أجب عن الأسئلة التالية',
+      fields:[
+        {label:'عنوان النّصّ:', id:'v3q1a'},
+        {label:'اسم الكاتب:', id:'v3q1b'},
+        {label:'المصدر (الكتاب):', id:'v3q1c'}
+      ]
+    },
+    {
+      id:'v3q2', type:'short', marks:1,
+      title:'ما الفرق بين النّصّ «الأصليّ» والنّصّ «بتصرُّف»؟',
+      placeholder:'اشرح الفرق بجملة...'
+    },
+    {
+      id:'v3q3', type:'mcq_group', marks:4,
+      title:'اختر الإجابة الصّحيحة لكلّ سؤال',
+      questions:[
+        {
+          q:'«أدب الرّحلة» يعني:',
+          opts:['كتابة القصائد عن الأماكن','تدوين تجارب وملاحظات مكتشَفة في رحلة','نقد الأماكن السياحية','كتابة السيرة الذاتية'],
+          id:'v3q3a'
+        },
+        {
+          q:'معنى «توشوش» في «توشوشُ أباها» هو:',
+          opts:['تصرخ عليه','تهمس له بهدوء','تناديه بصوت عالٍ','تغني له'],
+          id:'v3q3b'
+        },
+        {
+          q:'ضدّ «باكر» في «الصباح الباكر» هو:',
+          opts:['المتأخّر','المبكّر','الصافي','المسائي'],
+          id:'v3q3c'
+        },
+        {
+          q:'جملة «ما أروع هذا المتحف!» هي:',
+          opts:['جملة خبريّة','جملة إنشائيّة استفهاميّة','جملة إنشائيّة تعجّبيّة','جملة شرطيّة'],
+          id:'v3q3d'
+        }
+      ]
+    },
+    {
+      id:'v3q4', type:'reorder', marks:1.5,
+      title:'رتّب الأماكن التالية كما وردت في النّصّ من الأوّل إلى الأخير',
+      items:['السوق القديمة','القلعة البحرية','سهل الدامور','متحف الصابون','مدينة صيدا (الدخول)'],
+      id:'v3q4'
+    },
+    {
+      id:'v3q5', type:'senses_table', marks:3,
+      title:'في الفقرة الأولى والثانية، حدِّدْ حاستَين وظّفهما الكاتب مع شاهدَين لكلٍّ منهما',
+      rows:2, id:'v3q5'
+    },
+    {
+      id:'v3q6', type:'conjugation', marks:3,
+      title:'صرّف الجملة الآتية مع الضمائر المطلوبة',
+      base:'أنا: اشتريتُ من السوق وخرجتُ سعيداً.',
+      pronouns:['أنتَ','هنَّ','هما (مثنّى مذكّر)'],
+      id:'v3q6'
+    },
+    {
+      id:'v3q7', type:'match', marks:2.5,
+      title:'وصِّل الجملة بالأسلوب البيانيّ المناسب',
+      colA:[
+        {letter:'أ', text:'الصباح ينشر نسيمه اللطيف'},
+        {letter:'ب', text:'زبدها الأبيض كأنّه ثلج متحرّك'},
+        {letter:'ج', text:'ليتك تزورُهُ!'},
+        {letter:'د', text:'لقد أراحت عيني وأنعشت قلبي'},
+        {letter:'هـ', text:'فلا يأس ولا قنوط'}
+      ],
+      colB:['تشبيه','طباق','جملة إنشائيّة تمنّيّة','جملة خبريّة مؤكّدة','استعارة'],
+      id:'v3q7'
+    },
+    {
+      id:'v3q8', type:'long', marks:3,
+      title:'«الصباح الباكر ينشر نسيمَهُ اللطيف» — في هذه الجملة استعارة. حدِّدها وبيّن أثرها الجمالي في النّصّ',
+      placeholder:'الاستعارة هي: ...\nالمقصود بها: ...\nأثرها الجمالي: ...'
+    },
+    {
+      id:'v3q9', type:'pattern', marks:3.5,
+      title:'ما النمط الكتابي الغالب في هذا النّصّ؟ برهن بمؤشّرَين مع شاهدَين لكلٍّ منهما',
+      placeholder:'النمط الغالب هو: ...\nالمؤشّر الأوّل: ... الشاهد الأوّل: ... الشاهد الثاني: ...\nالمؤشّر الثاني: ... الشاهد الأوّل: ... الشاهد الثاني: ...'
+    },
+    {
+      id:'v3q10', type:'expression', marks:3,
+      title:'كأنّك في السوق القديمة في صيدا. اكتب فقرة (3–4 أسطر) تصف ما ترى وتسمع وتشمّ، مستخدماً جملاً إنشائيّة وصوراً بيانيّة',
+      placeholder:'اكتب تعبيرك هنا...',
+      rows:5
+    },
+    {
+      id:'v3q11', type:'active_passive', marks:2,
+      title:'حوّل من المعلوم إلى المجهول',
+      sentences:[
+        {q:'نادانا المعلمون', id:'v3q11a'},
+        {q:'تُغطّي الأشجارُ السهلَ بالأخضر', id:'v3q11b'}
+      ]
+    },
+    {
+      id:'v3q12', type:'faail', marks:3,
+      title:'دلّ على الفاعل وحدِّدْ نوعه وعلامة رفعه',
+      sentences:[
+        {q:'تُغطّي أشجارُ الموز السهلَ', id:'v3q12a'},
+        {q:'انطلقت بنا السيارةُ', id:'v3q12b'}
+      ]
+    },
+    {
+      id:'v3q13', type:'mafoul', marks:3,
+      title:'دلّ على المفعول به وحدِّدْ نوعه وعلامة نصبه',
+      sentences:[
+        {q:'نتبادل الأحاديثَ', id:'v3q13a'},
+        {q:'تركنا القلعةَ البحريّة', id:'v3q13b'}
+      ]
+    },
+    {
+      id:'v3q14', type:'iraab', marks:4.5,
+      title:'أعرِبْ الكلمات المسطَّر تحتها',
+      words:[
+        {sentence:'انطلقت ـ<u>بنا</u>ـ السيارة', word:'بنا', id:'v3q14a'},
+        {sentence:'ـ<u>انطلقت</u>ـ بنا السيارةُ', word:'انطلقت', id:'v3q14b'},
+        {sentence:'تُغطّي السهلَ ـ<u>بالأخضرِ</u>ـ', word:'بالأخضرِ', id:'v3q14c'},
+        {sentence:'ـ<u>السيارةُ</u>ـ انطلقت بنا', word:'السيارةُ', id:'v3q14d'}
+      ]
+    }
+  ],
+
+  // ─────────────── VERSION 4 ───────────────
+  4: [
+    {
+      id:'v4q1', type:'fill_header', marks:3,
+      title:'في الفهم والتّحليل — استناداً إلى الحواشي أجب',
+      fields:[
+        {label:'عنوان هذا النّصّ:', id:'v4q1a'},
+        {label:'كاتبه:', id:'v4q1b'},
+        {label:'المرجع:', id:'v4q1c'}
+      ]
+    },
+    {
+      id:'v4q2', type:'short', marks:1,
+      title:'ما دلالة كلمة «بتصرُّف» حين تُذكر مع اسم مؤلِّف؟',
+      placeholder:'أجب بجملة واحدة...'
+    },
+    {
+      id:'v4q3', type:'mcq_group', marks:4,
+      title:'حدِّدْ الإجابة الصّحيحة',
+      questions:[
+        {
+          q:'صيدا في النّصّ وصفت بأنّها عاصمة:',
+          opts:['لبنان','الشمال','الجنوب','البقاع'],
+          id:'v4q3a'
+        },
+        {
+          q:'«آيةٌ في الجمال» تعني:',
+          opts:['قليلة الجمال','عادية المظهر','بالغة الجمال وعجيبته','بعيدة عن الجمال'],
+          id:'v4q3b'
+        },
+        {
+          q:'مضادّ «تتابع» في «الحياة تتابع واستمرار» هو:',
+          opts:['الانقطاع','الاستمرار','التجدّد','النموّ'],
+          id:'v4q3c'
+        },
+        {
+          q:'جملة «ليتك تزورُهُ» هي:',
+          opts:['خبريّة مثبتة','إنشائيّة تمنّيّة','إنشائيّة تعجّبيّة','خبريّة منفيّة'],
+          id:'v4q3d'
+        }
+      ]
+    },
+    {
+      id:'v4q4', type:'reorder', marks:1.5,
+      title:'رتّب محطّات الرحلة من الأولى إلى الأخيرة',
+      items:['العودة إلى بيروت','متحف الصابون','سهل الدامور','السوق القديمة','القلعة البحرية'],
+      id:'v4q4'
+    },
+    {
+      id:'v4q5', type:'senses_table', marks:3,
+      title:'في الفقرتَين السابعة والثامنة، وظّف الكاتب حاستَين. حدِّدهما مع شاهدَين لكلٍّ منهما',
+      rows:2, id:'v4q5'
+    },
+    {
+      id:'v4q6', type:'conjugation', marks:3,
+      title:'صرّف الجملة مع الضمائر الآتية',
+      base:'أنا: غادرتُ المتحفَ وبدأتُ أتجوّل في السوق.',
+      pronouns:['أنتِ','هم','أنتما'],
+      id:'v4q6'
+    },
+    {
+      id:'v4q7', type:'match', marks:2.5,
+      title:'صِلْ كلّ جملة بالصّورة البيانيّة المناسبة',
+      colA:[
+        {letter:'أ', text:'البحر يدعو لنا بالتوفيق'},
+        {letter:'ب', text:'موجاته اللطيفة تبدو كقطعة قماش بيضاء'},
+        {letter:'ج', text:'هل رأيتَ مدينةً أجمل من صيدا؟'},
+        {letter:'د', text:'لقد زرنا القلعة وشعرنا بالعظمة والصغر في آنٍ'},
+        {letter:'هـ', text:'لقد غادرنا الآن ولن نعود اليوم'}
+      ],
+      colB:['تشبيه','طباق','جملة إنشائية استفهامية','جملة خبرية مؤكّدة','استعارة'],
+      id:'v4q7'
+    },
+    {
+      id:'v4q8', type:'long', marks:3,
+      title:'«أشجار النخيل تُلقي علينا السلام» — حدِّدْ نوع هذه الصورة البيانيّة وبيّن أركانها وأثرها في التعبير عن الوداع',
+      placeholder:'نوع الصورة: ...\nأركانها: ...\nأثرها: ...'
+    },
+    {
+      id:'v4q9', type:'pattern', marks:3.5,
+      title:'ميّز النمط الكتابيّ الغالب في النّصّ بمؤشّرَين وشاهدَين على كلّ مؤشّر',
+      placeholder:'النمط الغالب هو: ...\nالمؤشّر الأوّل: ... الشاهد الأوّل: ... الشاهد الثاني: ...\nالمؤشّر الثاني: ... الشاهد الأوّل: ... الشاهد الثاني: ...'
+    },
+    {
+      id:'v4q10', type:'expression', marks:3,
+      title:'كأنّك تودّع صيدا وتعود إلى بيروت. اكتب فقرة (3–4 أسطر) تعبّر عن مشاعرك مستخدماً جملاً إنشائيّة وصوراً بيانيّة',
+      placeholder:'اكتب تعبيرك هنا...',
+      rows:5
+    },
+    {
+      id:'v4q11', type:'active_passive', marks:2,
+      title:'حوّل الجملتَين من المعلوم إلى المجهول',
+      sentences:[
+        {q:'تُغطّي الأشجارُ السهلَ بالأخضر', id:'v4q11a'},
+        {q:'افتتح المسؤولون المتحفَ عام ألفين', id:'v4q11b'}
+      ]
+    },
+    {
+      id:'v4q12', type:'faail', marks:3,
+      title:'دلّ على الفاعل وحدِّدْ نوعه وعلامة رفعه',
+      sentences:[
+        {q:'ينشرُ الصباحُ الباكرُ نسيمَهُ', id:'v4q12a'},
+        {q:'تُلقي علينا أشجارُ النخيل السلامَ', id:'v4q12b'}
+      ]
+    },
+    {
+      id:'v4q13', type:'mafoul', marks:3,
+      title:'دلّ على المفعول به وعيِّنْ نوعه وعلامة نصبه',
+      sentences:[
+        {q:'قصدنا متحفَ الصابون', id:'v4q13a'},
+        {q:'توشوش أباها', id:'v4q13b'}
+      ]
+    },
+    {
+      id:'v4q14', type:'iraab', marks:4.5,
+      title:'أعرِبْ الكلمات المسطَّر تحتها إعرابَ مفرداتٍ',
+      words:[
+        {sentence:'ـ<u>وقفنا</u>ـ على سطح القلعة', word:'وقفنا', id:'v4q14a'},
+        {sentence:'وقفنا على ـ<u>سطحِ</u>ـ القلعة', word:'سطحِ', id:'v4q14b'},
+        {sentence:'وقفنا على سطح ـ<u>القلعةِ</u>ـ', word:'القلعةِ', id:'v4q14c'},
+        {sentence:'ـ<u>أمامنا</u>ـ البحرُ الأزرق', word:'أمامنا', id:'v4q14d'}
+      ]
+    }
+  ],
+
+  // ─────────────── VERSION 5 ───────────────
+  5: [
+    {
+      id:'v5q1', type:'fill_header', marks:3,
+      title:'في الفهم والتّحليل — أعدْ كتابة المعلومات الآتية بالاستناد إلى الحواشي',
+      fields:[
+        {label:'عنوان النّصّ:', id:'v5q1a'},
+        {label:'الكاتب:', id:'v5q1b'},
+        {label:'المصدر:', id:'v5q1c'}
+      ]
+    },
+    {
+      id:'v5q2', type:'short', marks:1,
+      title:'اشرح معنى «بتصرُّف» في سياق الاقتباس الأدبيّ',
+      placeholder:'المعنى هو...'
+    },
+    {
+      id:'v5q3', type:'mcq_group', marks:4,
+      title:'اختر الإجابة الصّحيحة',
+      questions:[
+        {
+          q:'افتُتح متحف الصابون عام:',
+          opts:['ألف وتسعمئة','ألفين','ألفين وعشرة','ألف وتسعمئة وخمسين'],
+          id:'v5q3a'
+        },
+        {
+          q:'معنى «نضر» في «الأخضر النضر» هو:',
+          opts:['الجافّ','الباهت','الغضّ الطريّ','القاتم'],
+          id:'v5q3b'
+        },
+        {
+          q:'«قناطر من حجر صخريّ» تصف:',
+          opts:['أسواراً عالية','أعمدة متصلة بأقواس حجريّة','أبواباً خشبيّة','نوافذ واسعة'],
+          id:'v5q3c'
+        },
+        {
+          q:'جملة «أنا لا أدري لماذا أحبّ الأشجار؟!» هي:',
+          opts:['خبريّة بسيطة','إنشائيّة تعجّبيّة ـ استفهاميّة','إنشائيّة تمنّيّة','خبريّة مؤكّدة'],
+          id:'v5q3d'
+        }
+      ]
+    },
+    {
+      id:'v5q4', type:'reorder', marks:1.5,
+      title:'رتِّبْ هذه الأماكن والأحداث وفق تسلسلها الزمنيّ في الرحلة',
+      items:['العودة إلى بيروت','الوصول إلى صيدا ورؤية النخيل','زيارة متحف الصابون','العبور في سهل الدامور','الجولة في السوق القديمة'],
+      id:'v5q4'
+    },
+    {
+      id:'v5q5', type:'senses_table', marks:3,
+      title:'في الفقرتَين الثالثة والرابعة، وظّف الكاتب حاستَين. حدِّدهما وأعطِ شاهدَين لكلٍّ منهما',
+      rows:2, id:'v5q5'
+    },
+    {
+      id:'v5q6', type:'conjugation', marks:3,
+      title:'صرّف الجملة الآتية مع الضمائر المطلوبة',
+      base:'أنا: بدأتُ أتجوّلُ في السوق وأشتري ما أريد.',
+      pronouns:['أنتم','هي','نحن'],
+      id:'v5q6'
+    },
+    {
+      id:'v5q7', type:'match', marks:2.5,
+      title:'وصِّل كلّ جملة بالأسلوب أو الصورة الأدبيّة المناسبة',
+      colA:[
+        {letter:'أ', text:'تحملني القناطر إلى عالم جميل'},
+        {letter:'ب', text:'زبدها كأنّه ثلج متحرّك'},
+        {letter:'ج', text:'ليتك تزوره!'},
+        {letter:'د', text:'لا يأس ولا قنوط'},
+        {letter:'هـ', text:'لقد زرنا القلعة وشعرنا بعظمتها وصغرنا'}
+      ],
+      colB:['تشبيه','طباق','جملة إنشائيّة تمنّيّة','جملة خبريّة مؤكّدة','استعارة'],
+      id:'v5q7'
+    },
+    {
+      id:'v5q8', type:'long', marks:3,
+      title:'«كأني بالموجة الأخيرة توشوش أباها» — حدِّدْ الصورة البيانيّة في هذه الجملة وبيِّنْ أركانها وأثرها في إظهار جمال البحر',
+      placeholder:'نوع الصورة: ...\nأركانها: ...\nأثرها الجماليّ: ...'
+    },
+    {
+      id:'v5q9', type:'pattern', marks:3.5,
+      title:'حدِّدْ النمط الكتابيّ الغالب في النّصّ، ثمّ استشهد بمؤشّرَين مع شاهدَين على كلٍّ منهما',
+      placeholder:'النمط الغالب هو: ...\nالمؤشّر الأوّل: ... الشاهد الأوّل: ... الشاهد الثاني: ...\nالمؤشّر الثاني: ... الشاهد الأوّل: ... الشاهد الثاني: ...'
+    },
+    {
+      id:'v5q10', type:'expression', marks:3,
+      title:'أنت واقف على سطح القلعة البحريّة. اكتب فقرة (3–4 أسطر) تصف ما حولك وما تشعر به، مستخدماً جملاً إنشائيّة وصوراً بيانيّة',
+      placeholder:'اكتب تعبيرك هنا...',
+      rows:5
+    },
+    {
+      id:'v5q11', type:'active_passive', marks:2,
+      title:'حوّل الجملتَين الآتيتَين من المعلوم إلى المجهول',
+      sentences:[
+        {q:'أطلّت علينا صيدا من بعيد', id:'v5q11a'},
+        {q:'يحوك المنجّدُ لحافاً', id:'v5q11b'}
+      ]
+    },
+    {
+      id:'v5q12', type:'faail', marks:3,
+      title:'دلّ على الفاعل محدِّداً نوعه وعلامة رفعه',
+      sentences:[
+        {q:'اشترينا من السوق', id:'v5q12a'},
+        {q:'تُلقي أشجارُ النخيل علينا السلام', id:'v5q12b'}
+      ]
+    },
+    {
+      id:'v5q13', type:'mafoul', marks:3,
+      title:'دلّ على المفعول به وعيِّنْ نوعه وعلامة نصبه',
+      sentences:[
+        {q:'غادرنا المتحفَ', id:'v5q13a'},
+        {q:'تُغطّي الأشجار السهلَ', id:'v5q13b'}
+      ]
+    },
+    {
+      id:'v5q14', type:'iraab', marks:4.5,
+      title:'أعرِبْ الكلمات المسطَّر تحتها إعرابَ مفرداتٍ',
+      words:[
+        {sentence:'تركنا ـ<u>القلعةَ</u>ـ وقصدنا المتحف', word:'القلعةَ', id:'v5q14a'},
+        {sentence:'ـ<u>غادرنا</u>ـ المتحفَ', word:'غادرنا', id:'v5q14b'},
+        {sentence:'تجوّلنا في ـ<u>السوقِ</u>ـ القديمة', word:'السوقِ', id:'v5q14c'},
+        {sentence:'تجوّلنا في السوق ـ<u>القديمةِ</u>ـ', word:'القديمةِ', id:'v5q14d'}
+      ]
+    }
+  ],
+
+  // ─────────────── VERSION 6 (Special Cases) ───────────────
+  6: [
+    {
+      id:'v6q1', type:'fill_header', marks:3,
+      title:'في الفهم والتّحليل — استناداً إلى الحواشي أعدْ كتابة ما يأتي',
+      note:'هذه نسخة خاصة للحالات الاستثنائية (غياب أو مشاكل اتصال). الوقت: 90 دقيقة.',
+      fields:[
+        {label:'عنوان النّصّ:', id:'v6q1a'},
+        {label:'الكاتب:', id:'v6q1b'},
+        {label:'المصدر:', id:'v6q1c'}
+      ]
+    },
+    {
+      id:'v6q2', type:'short', marks:1,
+      title:'ما معنى كلمة «بتصرُّف» الواردة في نهاية النّصّ؟',
+      placeholder:'المعنى هو...'
+    },
+    {
+      id:'v6q3', type:'mcq_group', marks:4,
+      title:'اختر الإجابة الصّحيحة',
+      questions:[
+        {
+          q:'ينتمي هذا النّصّ إلى:',
+          opts:['أدب الرّحلة','الشّعر','القصّة','المسرحيّة'],
+          id:'v6q3a'
+        },
+        {
+          q:'يتألّف متحف الصابون من:',
+          opts:['طابقين','ثلاث طبقات','أربع طبقات','طابق واحد'],
+          id:'v6q3b'
+        },
+        {
+          q:'ضدّ «العراقة» في عنوان النّصّ هو:',
+          opts:['القِدَم','الأصالة','الحداثة','الجمال'],
+          id:'v6q3c'
+        },
+        {
+          q:'الفعل في «ركبنا السيارةَ» هو:',
+          opts:['ماضٍ معلوم','مضارع','مجهول','أمر'],
+          id:'v6q3d'
+        }
+      ]
+    },
+    {
+      id:'v6q4', type:'reorder', marks:1.5,
+      title:'رتِّبْ الأماكن التالية حسب زيارة الرحلة لها من الأوّل للأخير',
+      items:['متحف الصابون','القلعة البحرية','سهل الدامور','السوق القديمة','مدخل صيدا'],
+      id:'v6q4'
+    },
+    {
+      id:'v6q5', type:'senses_table', marks:3,
+      title:'في الفقرة الثانية، وظّف الكاتب حاستَين. اذكرهما مع شاهدَين لكلّ حاسّة',
+      rows:2, id:'v6q5'
+    },
+    {
+      id:'v6q6', type:'conjugation', marks:3,
+      title:'صرّف الجملة التالية مع الضمائر المطلوبة',
+      base:'أنا: وقفتُ على سطح القلعة وأغمضتُ عينيَّ.',
+      pronouns:['أنتم','هي','هما (مذكّر)'],
+      id:'v6q6'
+    },
+    {
+      id:'v6q7', type:'match', marks:2.5,
+      title:'وصِّل الجملة بالصورة البيانيّة المناسبة',
+      colA:[
+        {letter:'أ', text:'موجاتُهُ كأنّها ثلج متحرّك'},
+        {letter:'ب', text:'النخيل يُلقي السلام'},
+        {letter:'ج', text:'ليتك تزوره!'},
+        {letter:'د', text:'لقد أراح عيني وأنعش قلبي'},
+        {letter:'هـ', text:'فلا يأس ولا قنوط'}
+      ],
+      colB:['تشبيه','طباق','جملة إنشائيّة تمنّيّة','جملة خبريّة مؤكّدة','استعارة'],
+      id:'v6q7'
+    },
+    {
+      id:'v6q8', type:'long', marks:3,
+      title:'«زبدُها الأبيضُ كأنّه ثلجٌ متحركٌ» — حدِّدْ أركان هذا التشبيه وبيِّنْ أثره في إظهار جمال البحر',
+      placeholder:'المشبَّه: ...\nالمشبَّه به: ...\nوجه الشَّبه: ...\nأداة التشبيه: ...\nأثره: ...'
+    },
+    {
+      id:'v6q9', type:'pattern', marks:3.5,
+      title:'ما النمط الغالب في النّصّ؟ اذكر مؤشّرَين واستشهد بشاهدَين لكلٍّ منهما',
+      placeholder:'النمط: ...\nمؤشّر 1: ...\nشاهد 1: ...\nشاهد 2: ...\nمؤشّر 2: ...\nشاهد 1: ...\nشاهد 2: ...'
+    },
+    {
+      id:'v6q10', type:'expression', marks:3,
+      title:'عبِّرْ عمّا تراه في القلعة البحريّة مخاطِباً إيّاها ومادحاً صمودها (3–4 أسطر) مستخدماً جملاً إنشائيّة وصوراً بيانيّة',
+      placeholder:'اكتب تعبيرك هنا...',
+      rows:5
+    },
+    {
+      id:'v6q11', type:'active_passive', marks:2,
+      title:'حوّل الجملتَين من المعلوم إلى المجهول',
+      sentences:[
+        {q:'ركبْنَا السيارةَ', id:'v6q11a'},
+        {q:'يحوك المنجّدُ لحافاً', id:'v6q11b'}
+      ]
+    },
+    {
+      id:'v6q12', type:'faail', marks:3,
+      title:'دلّ على الفاعل وحدِّدْ نوعه وعلامة رفعه',
+      sentences:[
+        {q:'قصدْنَا متحفَ الصّابون', id:'v6q12a'},
+        {q:'نادانا المعلمون', id:'v6q12b'}
+      ]
+    },
+    {
+      id:'v6q13', type:'mafoul', marks:3,
+      title:'دلّ على المفعول به وحدِّدْ نوعه وعلامة نصبه',
+      sentences:[
+        {q:'توشوش أباها', id:'v6q13a'},
+        {q:'تركنا القلعةَ البحريّة', id:'v6q13b'}
+      ]
+    },
+    {
+      id:'v6q14', type:'iraab', marks:4.5,
+      title:'أعرِبْ الكلمات المسطَّر تحتها إعرابَ مفرداتٍ',
+      words:[
+        {sentence:'نتبادلُ ـ<u>الأحاديثَ</u>ـ', word:'الأحاديثَ', id:'v6q14a'},
+        {sentence:'ـ<u>نتبادلُ</u>ـ الأحاديث', word:'نتبادلُ', id:'v6q14b'},
+        {sentence:'تركنا ـ<u>القلعةَ</u>ـ البحريّة', word:'القلعةَ', id:'v6q14c'},
+        {sentence:'تركنا القلعةَ ـ<u>البحريّةَ</u>ـ', word:'البحريّةَ', id:'v6q14d'}
+      ]
+    }
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════════════
+//  GLOBAL STATE
+// ══════════════════════════════════════════════════════════════════════
+const EXAM_DURATION = 90 * 60; // 90 minutes in seconds
+let currentVersion = 1;
+let currentName = '';
+let currentClass = '';
+let timerInterval = null;
+let secondsLeft = EXAM_DURATION;
+let examSubmitted = false;
+let mediaRecorder = null;
+let audioChunks = [];
+let audioBlob = null;
+let audioURL = null;
+
+const APPS_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_URL/exec';
+
+// ══════════════════════════════════════════════════════════════════════
+//  ACCESS LOCK — localStorage per student
+// ══════════════════════════════════════════════════════════════════════
+function getLockKey(name, cls) {
+  return 'exam_lock_' + cls + '_' + name.replace(/\s/g,'_').replace(/"/g,'');
+}
+function isLocked(name, cls) {
+  return localStorage.getItem(getLockKey(name, cls)) === 'submitted';
+}
+function setLock(name, cls) {
+  localStorage.setItem(getLockKey(name, cls), 'submitted');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  PICKER
+// ══════════════════════════════════════════════════════════════════════
+function onClassChange() {
+  const cls = document.getElementById('selClass').value;
+  currentClass = cls;
+  const sel = document.getElementById('selName');
+  sel.innerHTML = '<option value="">— اختر اسمك —</option>';
+  sel.disabled = !cls;
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('versionInfo').style.display = 'none';
+  if (!cls) return;
+  const list = (STUDENTS[cls] || []).slice().sort((a,b) => a.localeCompare(b,'ar'));
+  list.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n; o.textContent = n; sel.appendChild(o);
+  });
+}
+
+function onNameChange() {
+  const name = document.getElementById('selName').value;
+  currentName = name;
+  document.getElementById('startBtn').disabled = !name;
+  if (!name) { document.getElementById('versionInfo').style.display='none'; return; }
+  const v = getVersion(name, currentClass);
+  currentVersion = v;
+  document.getElementById('vBadge').textContent = '📄 النسخة ' + VERSION_LABELS[v];
+  document.getElementById('vDesc').textContent = VERSION_DESCS[v];
+  document.getElementById('versionInfo').style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  START EXAM
+// ══════════════════════════════════════════════════════════════════════
+function startExam() {
+  if (!currentName || !currentClass) return;
+
+  // Check lock
+  if (isLocked(currentName, currentClass)) {
+    document.getElementById('pickerCard').style.display = 'none';
+    document.getElementById('blockedScreen').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('pickerCard').style.display = 'none';
+  document.getElementById('timerBar').style.display = 'flex';
+  document.getElementById('examBody').style.display = 'block';
+  document.getElementById('versionLabel').textContent = VERSION_LABELS[currentVersion];
+
+  renderQuestions(currentVersion);
+  startTimer();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  RENDER QUESTIONS
+// ══════════════════════════════════════════════════════════════════════
+function renderQuestions(v) {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  const questions = EXAM_VERSIONS[v] || [];
+  let qNum = 0;
+
+  questions.forEach(q => {
+    qNum++;
+    const sec = document.createElement('div');
+    sec.className = 'q-section';
+    sec.innerHTML = buildQuestion(q, qNum);
+    container.appendChild(sec);
+    // Init drag-to-reorder after DOM insertion
+    if (q.type === 'reorder') initDragOrder(q.id, q.items);
+  });
+}
+
+function buildQuestion(q, num) {
+  const header = `
+    <div class="q-section-header">
+      <div class="q-section-title">السؤال ${toArabicNum(num)} — ${q.title}</div>
+      <div class="marks-badge">${q.marks} علامة${q.marks === 1 ? '' : q.marks <= 10 ? 'ات' : ''}</div>
+    </div>
+    ${q.note ? `<div class="q-note">${q.note}</div>` : ''}
+  `;
+
+  let body = '';
+
+  if (q.type === 'fill_header') {
+    body = q.fields.map(f => `
+      <div class="fill-row">
+        <span style="font-family:'Amiri',serif;font-size:1rem;">${f.label}</span>
+        <input class="answer-input" id="${f.id}" type="text" placeholder="..." style="flex:1;min-width:200px;">
+      </div>
+    `).join('');
+  }
+
+  else if (q.type === 'short') {
+    body = `<textarea class="answer-input" id="${q.id}_ans" rows="2" placeholder="${q.placeholder||''}"></textarea>`;
+  }
+
+  else if (q.type === 'mcq_group') {
+    body = q.questions.map((mq, i) => `
+      <div class="mcq-block">
+        <div class="mcq-q-text">${toArabicNum(i+1)}. ${mq.q}</div>
+        <div class="mcq-opts">
+          ${mq.opts.map((opt,j) => `
+            <label class="mcq-opt">
+              <input type="radio" name="${mq.id}" value="${opt}" onchange="markSelected(this)">
+              <span>${opt}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  else if (q.type === 'reorder') {
+    body = `
+      <div class="q-note">📌 اسحب العناصر لإعادة ترتيبها حسب تسلسل الرحلة</div>
+      <ol class="order-list" id="olist_${q.id}">
+        ${q.items.map((item,i) => `
+          <li class="order-item" draggable="true" data-idx="${i}">
+            <span class="drag-handle">⠿</span>
+            <span class="order-num">${toArabicNum(i+1)}</span>
+            <span>${item}</span>
+          </li>
+        `).join('')}
+      </ol>
+    `;
+  }
+
+  else if (q.type === 'senses_table') {
+    body = `
+      <table class="arab-table">
+        <thead>
+          <tr>
+            <th>الحاسّة</th>
+            <th>الشاهد الأوّل</th>
+            <th>الشاهد الثاني</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${Array.from({length:q.rows||2}).map((_,i) => `
+            <tr>
+              <td><input id="${q.id}_s${i}_name" placeholder="الحاسّة..."></td>
+              <td><input id="${q.id}_s${i}_w1" placeholder="الشاهد الأوّل..."></td>
+              <td><input id="${q.id}_s${i}_w2" placeholder="الشاهد الثاني..."></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  else if (q.type === 'conjugation') {
+    body = `
+      <div style="font-family:'Amiri',serif;font-size:1rem;padding:.5rem;background:var(--bg2);border-radius:6px;margin-bottom:.6rem;">
+        <strong>الجملة الأصليّة:</strong> ${q.base}
+      </div>
+      ${q.pronouns.map((pr,i) => `
+        <div class="fill-row">
+          <span style="font-family:'Amiri',serif;font-size:1rem;min-width:110px;font-weight:600;">${pr}:</span>
+          <input class="answer-input" id="${q.id}_pr${i}" type="text" placeholder="..." style="flex:1;">
+        </div>
+      `).join('')}
+    `;
+  }
+
+  else if (q.type === 'match') {
+    const opts = ['— اختر —', ...q.colB];
+    body = `
+      <div class="match-grid">
+        <div>
+          <div class="match-col-title">العمود الأوّل</div>
+          ${q.colA.map((item,i) => `
+            <div class="match-item col-a">
+              <strong>(${item.letter})</strong> ${item.text}
+              <br>
+              <select class="match-select" id="${q.id}_m${i}">
+                ${opts.map(o=>`<option value="${o==='— اختر —'?'':o}">${o}</option>`).join('')}
+              </select>
+            </div>
+          `).join('')}
+        </div>
+        <div>
+          <div class="match-col-title">العمود الثاني</div>
+          ${q.colB.map(b => `
+            <div class="match-item col-b">${b}</div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  else if (q.type === 'long' || q.type === 'pattern') {
+    body = `<textarea class="answer-input" id="${q.id}_ans" rows="${q.rows||5}" placeholder="${q.placeholder||''}"></textarea>`;
+  }
+
+  else if (q.type === 'expression') {
+    body = `<textarea class="answer-input" id="${q.id}_ans" rows="${q.rows||5}" placeholder="${q.placeholder||''}"></textarea>`;
+  }
+
+  else if (q.type === 'active_passive') {
+    body = q.sentences.map((s,i) => `
+      <div style="margin-bottom:.7rem;">
+        <div class="inline-q"><strong>${toArabicNum(i+1)}.</strong> حوّل إلى المجهول: <em style="font-family:'Amiri',serif;">«${s.q}»</em></div>
+        <input class="answer-input" id="${s.id}" type="text" placeholder="المجهول: ...">
+      </div>
+    `).join('');
+  }
+
+  else if (q.type === 'faail') {
+    body = `
+      <table class="arab-table">
+        <thead><tr><th>الجملة</th><th>الفاعل</th><th>نوعه</th><th>علامة رفعه</th></tr></thead>
+        <tbody>
+          ${q.sentences.map((s,i) => `
+            <tr>
+              <td style="font-family:'Amiri',serif;font-size:.95rem;">${s.q}</td>
+              <td><input id="${s.id}_f" placeholder="الفاعل..."></td>
+              <td><input id="${s.id}_t" placeholder="النوع..."></td>
+              <td><input id="${s.id}_e" placeholder="علامة الرفع..."></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  else if (q.type === 'mafoul') {
+    body = `
+      <table class="arab-table">
+        <thead><tr><th>الجملة</th><th>المفعول به</th><th>نوعه</th><th>علامة نصبه</th></tr></thead>
+        <tbody>
+          ${q.sentences.map((s,i) => `
+            <tr>
+              <td style="font-family:'Amiri',serif;font-size:.95rem;">${s.q}</td>
+              <td><input id="${s.id}_m" placeholder="المفعول به..."></td>
+              <td><input id="${s.id}_t" placeholder="النوع..."></td>
+              <td><input id="${s.id}_e" placeholder="علامة النصب..."></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  else if (q.type === 'iraab') {
+    body = `
+      <table class="arab-table">
+        <thead><tr><th>الكلمة</th><th>إعرابها</th></tr></thead>
+        <tbody>
+          ${q.words.map(w => `
+            <tr>
+              <td style="font-family:'Amiri',serif;font-size:.95rem;direction:rtl;" title="${w.sentence.replace(/<[^>]+>/g,'')}">${w.word}</td>
+              <td><input id="${w.id}" placeholder="الإعراب..."></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <div class="q-note" style="margin-top:.4rem;">💡 مثال على الإعراب: اسم مجرور بحرف الجر، وعلامة جرّه الكسرة الظاهرة على آخره.</div>
+    `;
+  }
+
+  return header + body;
+}
+
+function markSelected(radio) {
+  // Toggle selected class on parent label
+  const siblings = radio.closest('.mcq-opts').querySelectorAll('.mcq-opt');
+  siblings.forEach(s => s.classList.remove('selected'));
+  radio.closest('.mcq-opt').classList.add('selected');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  DRAG TO REORDER
+// ══════════════════════════════════════════════════════════════════════
+function initDragOrder(qid, items) {
+  const list = document.getElementById('olist_' + qid);
+  if (!list) return;
+  let dragSrc = null;
+
+  list.querySelectorAll('.order-item').forEach(item => {
+    item.addEventListener('dragstart', function(e) {
+      dragSrc = this; this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragover', function(e) {
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      if (this !== dragSrc) {
+        const rect = this.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        if (e.clientY < mid) list.insertBefore(dragSrc, this);
+        else list.insertBefore(dragSrc, this.nextSibling);
+      }
+    });
+    item.addEventListener('dragend', function() {
+      this.classList.remove('dragging');
+      // Update order numbers
+      list.querySelectorAll('.order-item').forEach((it, i) => {
+        it.querySelector('.order-num').textContent = toArabicNum(i+1);
+      });
+    });
+    // Touch support
+    item.addEventListener('touchstart', handleTouchStart, {passive:true});
+    item.addEventListener('touchmove', handleTouchMove, {passive:false});
+    item.addEventListener('touchend', handleTouchEnd);
+  });
+}
+
+let touchItem = null, touchClone = null, touchStartY = 0;
+function handleTouchStart(e) {
+  touchItem = this; touchStartY = e.touches[0].clientY;
+  touchClone = this.cloneNode(true);
+  touchClone.style.cssText = `position:fixed;opacity:.8;pointer-events:none;z-index:999;width:${this.offsetWidth}px;`;
+  document.body.appendChild(touchClone);
+}
+function handleTouchMove(e) {
+  if (!touchItem) return; e.preventDefault();
+  const y = e.touches[0].clientY;
+  touchClone.style.top = (y - 20) + 'px';
+  touchClone.style.right = '16px';
+  const list = touchItem.closest('.order-list');
+  const items = [...list.querySelectorAll('.order-item')];
+  items.forEach(it => {
+    if (it === touchItem) return;
+    const rect = it.getBoundingClientRect();
+    if (y > rect.top && y < rect.bottom) {
+      if (y < rect.top + rect.height/2) list.insertBefore(touchItem, it);
+      else list.insertBefore(touchItem, it.nextSibling);
+    }
+  });
+}
+function handleTouchEnd() {
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+  if (touchItem) {
+    const list = touchItem.closest('.order-list');
+    list.querySelectorAll('.order-item').forEach((it, i) => {
+      it.querySelector('.order-num').textContent = toArabicNum(i+1);
+    });
+    touchItem = null;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════════════════
+function startTimer() {
+  secondsLeft = EXAM_DURATION;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      autoSubmit();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const display = document.getElementById('timerDisp');
+  const fill = document.getElementById('timerFill');
+  display.textContent = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+  const pct = (secondsLeft / EXAM_DURATION) * 100;
+  fill.style.width = pct + '%';
+  display.className = 'timer-display';
+  fill.className = 'timer-fill';
+  if (secondsLeft <= 600) { // last 10 min
+    display.classList.add('warn'); fill.classList.add('warn');
+  }
+  if (secondsLeft <= 120) { // last 2 min
+    display.classList.add('critical'); fill.classList.add('critical');
+  }
+}
+
+function autoSubmit() {
+  if (!examSubmitted) submitExam(true);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  VOICE RECORDER
+// ══════════════════════════════════════════════════════════════════════
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      audioURL = URL.createObjectURL(audioBlob);
+      document.getElementById('btnPlay').style.display = 'inline-flex';
+      document.getElementById('voiceStatus').textContent = '✓ تمّ التسجيل — يمكنك الاستماع إليه';
+    };
+    mediaRecorder.start();
+    document.getElementById('btnRecord').style.display = 'none';
+    document.getElementById('btnStop').style.display = 'inline-flex';
+    document.getElementById('recIndicator').style.display = 'inline-block';
+    document.getElementById('voiceStatus').textContent = '🔴 جارٍ التسجيل...';
+  } catch(err) {
+    document.getElementById('voiceStatus').textContent = '⚠️ تعذّر الوصول إلى الميكروفون. تأكّد من السماح للمتصفّح.';
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+  }
+  document.getElementById('btnRecord').style.display = 'inline-flex';
+  document.getElementById('btnStop').style.display = 'none';
+  document.getElementById('recIndicator').style.display = 'none';
+}
+
+function playRecording() {
+  if (audioURL) {
+    const audio = new Audio(audioURL);
+    audio.play();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  COLLECT ANSWERS
+// ══════════════════════════════════════════════════════════════════════
+function collectAnswers() {
+  const answers = {};
+  const version = currentVersion;
+  const questions = EXAM_VERSIONS[version] || [];
+
+  questions.forEach(q => {
+    if (q.type === 'fill_header') {
+      q.fields.forEach(f => {
+        answers[f.id] = (document.getElementById(f.id)||{}).value || '';
+      });
+    }
+    else if (q.type === 'short' || q.type === 'long' || q.type === 'pattern' || q.type === 'expression') {
+      answers[q.id] = (document.getElementById(q.id+'_ans')||{}).value || '';
+    }
+    else if (q.type === 'mcq_group') {
+      q.questions.forEach(mq => {
+        const sel = document.querySelector(`input[name="${mq.id}"]:checked`);
+        answers[mq.id] = sel ? sel.value : '';
+      });
+    }
+    else if (q.type === 'reorder') {
+      const list = document.getElementById('olist_' + q.id);
+      if (list) {
+        answers[q.id] = [...list.querySelectorAll('.order-item')]
+          .map(li => li.querySelector('span:last-child').textContent).join(' / ');
+      }
+    }
+    else if (q.type === 'senses_table') {
+      Array.from({length:q.rows||2}).forEach((_,i) => {
+        answers[q.id+'_s'+i+'_name'] = (document.getElementById(q.id+'_s'+i+'_name')||{}).value || '';
+        answers[q.id+'_s'+i+'_w1'] = (document.getElementById(q.id+'_s'+i+'_w1')||{}).value || '';
+        answers[q.id+'_s'+i+'_w2'] = (document.getElementById(q.id+'_s'+i+'_w2')||{}).value || '';
+      });
+    }
+    else if (q.type === 'conjugation') {
+      q.pronouns.forEach((_,i) => {
+        answers[q.id+'_pr'+i] = (document.getElementById(q.id+'_pr'+i)||{}).value || '';
+      });
+    }
+    else if (q.type === 'match') {
+      q.colA.forEach((_,i) => {
+        answers[q.id+'_m'+i] = (document.getElementById(q.id+'_m'+i)||{}).value || '';
+      });
+    }
+    else if (q.type === 'active_passive') {
+      q.sentences.forEach(s => {
+        answers[s.id] = (document.getElementById(s.id)||{}).value || '';
+      });
+    }
+    else if (q.type === 'faail') {
+      q.sentences.forEach(s => {
+        answers[s.id+'_f'] = (document.getElementById(s.id+'_f')||{}).value || '';
+        answers[s.id+'_t'] = (document.getElementById(s.id+'_t')||{}).value || '';
+        answers[s.id+'_e'] = (document.getElementById(s.id+'_e')||{}).value || '';
+      });
+    }
+    else if (q.type === 'mafoul') {
+      q.sentences.forEach(s => {
+        answers[s.id+'_m'] = (document.getElementById(s.id+'_m')||{}).value || '';
+        answers[s.id+'_t'] = (document.getElementById(s.id+'_t')||{}).value || '';
+        answers[s.id+'_e'] = (document.getElementById(s.id+'_e')||{}).value || '';
+      });
+    }
+    else if (q.type === 'iraab') {
+      q.words.forEach(w => {
+        answers[w.id] = (document.getElementById(w.id)||{}).value || '';
+      });
+    }
+  });
+  return answers;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════════════════════════════════════
+async function submitExam(isAuto = false) {
+  if (examSubmitted) return;
+  examSubmitted = true;
+  clearInterval(timerInterval);
+
+  if (!isAuto) {
+    const confirm = window.confirm('هل أنت متأكّد من تسليم الامتحان؟ لا يمكن التراجع بعد الضغط.');
+    if (!confirm) { examSubmitted = false; startTimer(); return; }
+  }
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '⏳ جارٍ التسليم...';
+
+  const answers = collectAnswers();
+  const timeSpent = Math.round((EXAM_DURATION - secondsLeft) / 60);
+  const tzDate = new Date().toLocaleString('ar-LB', {timeZone:'Asia/Beirut'});
+
+  const payload = {
+    sheet: 'ArabicExamG7',
+    name: currentName,
+    class: currentClass,
+    version: currentVersion,
+    version_label: VERSION_LABELS[currentVersion],
+    time_spent_min: timeSpent,
+    submitted_at: tzDate,
+    auto_submit: isAuto,
+    has_recording: !!audioBlob,
+    ...answers
+  };
+
+  setLock(currentName, currentClass);
+
+  try {
+    await fetch(APPS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.log('Submit note:', e);
+  }
+
+  // Show success
+  document.getElementById('examBody').style.display = 'none';
+  document.getElementById('timerBar').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+  document.getElementById('receiptBox').innerHTML = `
+    الاسم: ${currentName}<br>
+    الشعبة: ${currentClass}<br>
+    النسخة: ${VERSION_LABELS[currentVersion]}<br>
+    وقت التسليم: ${tzDate}<br>
+    المدة المستغرقة: ${timeSpent} دقيقة<br>
+    ${isAuto ? '⏱ تمّ التسليم تلقائياً عند انتهاء الوقت' : '✅ تمّ التسليم بواسطة الطالب'}
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════════════
+function toArabicNum(n) {
+  return n.toString().replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Nothing to pre-init; exam starts on student action
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APPS SCRIPT CODE — Add this to your Google Apps Script
+     ═══════════════════════════════════════════════════════════
+
+=== PASTE INTO YOUR APPS SCRIPT (doPost function) ===
+
+Add these 3 entries to your existing script:
+
+1. In SHEET_HEADERS:
+SHEET_HEADERS['ArabicExamG7'] = [
+  'Timestamp','Name','Class','Version','Version_Label',
+  'Time_Spent_Min','Submitted_At','Auto_Submit','Has_Recording',
+  // Version 1
+  'v1q1a_title','v1q1b_author','v1q1c_source',
+  'v1q2_batasarruf',
+  'v1q3a_genre','v1q3b_araaqa','v1q3c_ant_samida','v1q3d_verb',
+  'v1q4_order',
+  'v1q5_s0_name','v1q5_s0_w1','v1q5_s0_w2','v1q5_s1_name','v1q5_s1_w1','v1q5_s1_w2',
+  'v1q6_pr0','v1q6_pr1','v1q6_pr2',
+  'v1q7_m0','v1q7_m1','v1q7_m2','v1q7_m3','v1q7_m4',
+  'v1q8_tashbih','v1q9_pattern','v1q10_expression',
+  'v1q11a_passive','v1q11b_passive',
+  'v1q12a_f','v1q12a_t','v1q12a_e','v1q12b_f','v1q12b_t','v1q12b_e',
+  'v1q13a_m','v1q13a_t','v1q13a_e','v1q13b_m','v1q13b_t','v1q13b_e',
+  'v1q14a_iraab','v1q14b_iraab','v1q14c_iraab','v1q14d_iraab',
+  // Versions 2-6 follow same pattern with v2q1a...v6q14d
+  'raw_answers_json'
+];
+
+2. In HEADER_COLORS:
+HEADER_COLORS['ArabicExamG7'] = '#d4a853';
+
+3. In buildRow() — BEFORE closing }:
+if(sheetName === 'ArabicExamG7'){
+  const d = data;
+  return [
+    tzDate,
+    d.name, d.class, d.version, d.version_label,
+    d.time_spent_min, d.submitted_at, d.auto_submit, d.has_recording,
+    // Version 1 fields
+    d.v1q1a||'', d.v1q1b||'', d.v1q1c||'',
+    d.v1q2_ans||'',
+    d.v1q3a||'', d.v1q3b||'', d.v1q3c||'', d.v1q3d||'',
+    d.v1q4||'',
+    d.v1q5_s0_name||'', d.v1q5_s0_w1||'', d.v1q5_s0_w2||'',
+    d.v1q5_s1_name||'', d.v1q5_s1_w1||'', d.v1q5_s1_w2||'',
+    d.v1q6_pr0||'', d.v1q6_pr1||'', d.v1q6_pr2||'',
+    d.v1q7_m0||'', d.v1q7_m1||'', d.v1q7_m2||'', d.v1q7_m3||'', d.v1q7_m4||'',
+    d.v1q8_ans||'', d.v1q9_ans||'', d.v1q10_ans||'',
+    d.v1q11a||'', d.v1q11b||'',
+    d.v1q12a_f||'', d.v1q12a_t||'', d.v1q12a_e||'',
+    d.v1q12b_f||'', d.v1q12b_t||'', d.v1q12b_e||'',
+    d.v1q13a_m||'', d.v1q13a_t||'', d.v1q13a_e||'',
+    d.v1q13b_m||'', d.v1q13b_t||'', d.v1q13b_e||'',
+    d.v1q14a||'', d.v1q14b||'', d.v1q14c||'', d.v1q14d||'',
+    JSON.stringify(d)  // full backup of all answers
+  ];
+}
+
+NOTE: Since all 6 versions share the same column IDs (v1q..., v2q..., etc.),
+each row will have answers in the columns matching its version,
+and empty strings in all other version columns.
+The final column 'raw_answers_json' stores ALL answers as JSON for reference.
+
+==================================================== -->
+</body>
+</html>
