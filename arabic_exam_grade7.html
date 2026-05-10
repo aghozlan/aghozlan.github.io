@@ -1250,6 +1250,27 @@ async function submitExam(auto = false) {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = '... جارٍ الإرسال';
+
+  // ── Step 1: stop any active recording first ───────────────
+  for (const key of ['pre', 'exam']) {
+    if (recorders[key] && recorders[key].state === 'recording') {
+      recorders[key].stop();
+      // give MediaRecorder 400 ms to fire onstop and build the blob
+      await new Promise(r => setTimeout(r, 400));
+    }
+  }
+
+  // ── Step 2: upload audio to Drive (if any recording exists) ─
+  // We prefer 'exam' recording; fall back to 'pre' if only that exists.
+  let voiceLink = '';
+  const audioBlob = recBlobs['exam'] || recBlobs['pre'] || null;
+  if (audioBlob) {
+    btn.textContent = '... جارٍ رفع التسجيل';
+    voiceLink = await uploadAudioToDrive(audioBlob);
+  }
+
+  // ── Step 3: submit answers + voice link ──────────────────
+  btn.textContent = '... جارٍ الإرسال';
   const time_min = Math.round((Date.now() - LAB_START) / 60000);
   const answers = collectAnswers();
   const payload = {
@@ -1260,6 +1281,7 @@ async function submitExam(auto = false) {
     time_min,
     auto_submit: auto ? 'نعم' : 'لا',
     self_rating: selfRateVal,
+    voice_link: voiceLink,
     raw_answers_json: JSON.stringify(answers),
     ...answers
   };
@@ -1271,13 +1293,54 @@ async function submitExam(auto = false) {
       body: JSON.stringify(payload)
     });
   } catch(e) {}
-  // Lock this student
+
+  // ── Step 4: lock + show confirmation ─────────────────────
   const lockKey = 'exam_lock_' + currentCls + '_' + currentName;
   try { localStorage.setItem(lockKey, 'locked'); } catch(e) {}
   document.getElementById('submitOk').style.display = 'block';
   btn.style.display = 'none';
   if (auto) {
     document.getElementById('submitOk').textContent = '⏱ انتهى الوقت — تمّ التسليم التلقائي.';
+  }
+}
+
+// ── Upload audio blob → Google Drive → return shareable link ─
+// Uses the existing uploadToDrive action already in Apps Script.
+// Returns the Drive URL string, or '' on failure (never blocks submission).
+async function uploadAudioToDrive(blob) {
+  try {
+    // Convert blob to base64
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload  = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = () => reject(new Error('FileReader failed'));
+      reader.readAsDataURL(blob);
+    });
+
+    // Build a filename: class_name_timestamp.webm
+    const safeName = (currentCls + '_' + currentName)
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_\u0600-\u06ff]/g, '')
+      .substring(0, 60);
+    const filename = safeName + '_' + Date.now() + '.webm';
+
+    // POST to Apps Script — note: NO no-cors here, we need the response URL
+    const resp = await fetch(APPS_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        action: 'uploadAudio',
+        filename,
+        mimeType: 'audio/webm',
+        data: base64
+      })
+    });
+    const json = await resp.json();
+    return json.url || '';
+  } catch(e) {
+    // Never fail silently — just log and return empty; answers still submit
+    console.warn('Audio upload failed:', e);
+    return '';
   }
 }
 
