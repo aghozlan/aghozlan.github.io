@@ -1309,51 +1309,40 @@ async function submitExam(auto = false) {
 // Returns the Drive URL string, or '' on failure (never blocks submission).
 async function uploadAudioToDrive(blob) {
   try {
-    // Convert blob to clean base64 (no JSON wrapper — sent as raw POST body)
+    // Convert blob to base64
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result;
         const commaIdx = result.indexOf(',');
-        if (commaIdx === -1) { reject(new Error('No comma in data URL')); return; }
-        resolve(result.substring(commaIdx + 1));
+        resolve(commaIdx === -1 ? result : result.substring(commaIdx + 1));
       };
       reader.onerror = () => reject(new Error('FileReader failed'));
       reader.readAsDataURL(blob);
     });
 
-    if (!base64 || base64.length < 100) {
-      console.warn('Audio base64 too short — skipping upload.');
-      return '';
-    }
+    if (!base64 || base64.length < 100) return '';
 
-    // Build filename
     const safeName = (currentCls + '_' + currentName)
       .replace(/\s+/g, '_')
       .replace(/[^a-zA-Z0-9_\u0600-\u06ff]/g, '')
       .substring(0, 60);
     const filename = safeName + '_' + Date.now() + '.webm';
 
-    // POST raw base64 as body — action + metadata go in URL query string
-    // This avoids wrapping a large binary blob inside JSON (which breaks parsing)
-    const uploadURL = APPS_URL
-      + '?action=uploadAudio'
-      + '&filename=' + encodeURIComponent(filename)
-      + '&mimeType=audio%2Fwebm';
+    // Send as pipe-delimited plain text — NO JSON wrapper (JSON.parse fails on large payloads)
+    // Format: uploadAudio|filename|mimeType|base64data
+    const body = 'uploadAudio|' + filename + '|audio/webm|' + base64;
 
-    const resp = await fetch(uploadURL, {
+    const resp = await fetch(APPS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: base64   // raw base64 string — no JSON wrapper
+      body: body
     });
-
     const json = await resp.json();
-    console.log('Audio upload response:', json);
     return json.url || '';
-
   } catch(e) {
     console.warn('Audio upload failed:', e);
-    return '';  // never block exam submission
+    return '';
   }
 }
 
