@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflection of Light &middot; Grade 8 Physics Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#030509;--bg2:#070b14;--bg3:#0c1221;
+  --sky:#38bdf8;--sky2:rgba(56,189,248,.65);
+  --gold:#fbbf24;--normal:#f472b6;--mirror:#94a3b8;
+  --ok:#4ade80;--err:#f87171;
+  --text:#e2e8f0;--muted:rgba(226,232,240,.45);
+  --panel:rgba(56,189,248,.04);--panel2:rgba(56,189,248,.08);
+  --border:rgba(56,189,248,.14);--border2:rgba(56,189,248,.28);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(56,189,248,.011) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.011) 1px,transparent 1px);
+  background-size:42px 42px;}
+#chapterBreak{position:fixed;inset:0;z-index:9999;background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .4s;}
+#chapterBreak.show{opacity:1;pointer-events:all;}
+.cb-beam{position:absolute;width:2px;height:0;top:0;
+  background:linear-gradient(transparent,var(--sky),transparent);transform-origin:top center;}
+#chapterBreak.show .cb-beam{animation:beamGrow 1.4s ease forwards;}
+@keyframes beamGrow{to{height:100vh;}}
+.cb-shard{position:absolute;border:1px solid rgba(56,189,248,.3);background:rgba(56,189,248,.05);animation:shardFloat 3s ease-in-out infinite;}
+@keyframes shardFloat{0%,100%{transform:rotate(var(--r)) translateY(0);}50%{transform:rotate(calc(var(--r) + 6deg)) translateY(-10px);}}
+.cb-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,7vw,5.5rem);letter-spacing:.15em;
+  color:var(--sky);text-shadow:0 0 40px var(--sky),0 0 80px rgba(56,189,248,.5);
+  opacity:0;transform:translateY(24px);transition:opacity .9s .9s,transform .9s .9s;}
+#chapterBreak.show .cb-title{opacity:1;transform:none;}
+.cb-sub{margin-top:.75rem;font-size:1rem;color:var(--muted);letter-spacing:.35em;text-transform:uppercase;
+  opacity:0;transition:opacity .9s 1.3s;}
+#chapterBreak.show .cb-sub{opacity:1;}
+.cb-divider{width:80px;height:2px;background:var(--sky);margin:1.5rem auto;opacity:0;transition:opacity .9s 1.5s;}
+#chapterBreak.show .cb-divider{opacity:1;}
+.cb-btn{margin-top:2rem;padding:.85rem 3rem;background:transparent;border:1px solid var(--sky);
+  color:var(--sky);font-family:'DM Mono',monospace;font-size:.95rem;letter-spacing:.12em;
+  cursor:pointer;opacity:0;transition:opacity .9s 1.8s,background .2s,transform .2s;}
+#chapterBreak.show .cb-btn{opacity:1;}
+.cb-btn:hover{background:rgba(56,189,248,.12);transform:translateY(-2px);}
+.layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+.sidebar{width:210px;min-height:100vh;position:sticky;top:0;align-self:flex-start;
+  padding:1.4rem .9rem;background:rgba(7,11,20,.94);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:1.4rem;backdrop-filter:blur(14px);flex-shrink:0;}
+.lab-brand{text-align:center;}
+.lab-icon{width:46px;height:46px;margin:0 auto .4rem;display:flex;align-items:center;
+  justify-content:center;font-size:1.7rem;border:1px solid var(--border);
+  border-radius:12px;background:var(--panel2);}
+.lab-name{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.1em;color:var(--sky);line-height:1.25;}
+.lab-meta{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+.timer-block{text-align:center;font-family:'DM Mono',monospace;}
+.timer-label{font-size:.62rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+.timer-val{font-size:1.75rem;color:var(--gold);margin-top:.15rem;}
+.score-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:.25rem;}
+.score-num{font-family:'DM Mono',monospace;font-size:1.35rem;color:var(--sky);}
+.score-label{font-size:.62rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;}
+.prog-dots{display:flex;justify-content:center;gap:.35rem;flex-wrap:wrap;}
+.prog-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:background .3s,box-shadow .3s;}
+.prog-dot.done{background:var(--ok);box-shadow:0 0 6px var(--ok);border-color:var(--ok);}
+.prog-dot.active{background:var(--sky);box-shadow:0 0 8px var(--sky);border-color:var(--sky);}
+.side-nav{display:flex;flex-direction:column;gap:.25rem;margin-top:auto;}
+.side-nav a{font-size:.73rem;color:var(--muted);padding:.32rem .45rem;border-radius:6px;
+  text-decoration:none;letter-spacing:.04em;transition:color .2s,background .2s;}
+.side-nav a:hover,.side-nav a.active{color:var(--sky);background:var(--panel2);}
+.content{flex:1;padding:2rem;max-width:calc(100% - 210px);}
+.picker-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:2rem;margin-bottom:2rem;max-width:680px;}
+.picker-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.08em;color:var(--sky);margin-bottom:.5rem;}
+.sec-btns{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.9rem;}
+.sec-btn{padding:.38rem 1.1rem;border:1px solid var(--border2);background:transparent;
+  color:var(--muted);border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;
+  font-size:.88rem;transition:all .2s;}
+.sec-btn.on,.sec-btn:hover{background:var(--sky);color:#000;border-color:var(--sky);}
+.picker-row{display:flex;gap:.9rem;align-items:center;flex-wrap:wrap;}
+.picker-row label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.picker-row select{flex:1;padding:.55rem .75rem;background:var(--bg3);
+  border:1px solid var(--border2);color:var(--text);border-radius:8px;font-size:.92rem;font-family:'DM Sans',sans-serif;}
+.start-btn{width:100%;margin-top:.9rem;padding:.75rem;background:var(--sky);color:#000;
+  border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;
+  font-weight:600;cursor:pointer;letter-spacing:.04em;transition:transform .15s,box-shadow .15s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(56,189,248,.3);}
+.start-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.lab-section{display:none;margin-bottom:3rem;animation:secIn .5s ease;}
+.lab-section.visible{display:block;}
+@keyframes secIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.sec-hdr{display:flex;align-items:center;gap:.9rem;margin-bottom:1.4rem;
+  padding-bottom:.7rem;border-bottom:1px solid var(--border);}
+.sec-badge{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.12em;
+  padding:.25rem .75rem;border-radius:6px;flex-shrink:0;}
+.badge-recap{background:rgba(148,163,184,.12);color:var(--mirror);border:1px solid rgba(148,163,184,.3);}
+.badge-e1{background:rgba(251,191,36,.08);color:var(--gold);border:1px solid rgba(251,191,36,.35);}
+.badge-e2{background:rgba(56,189,248,.08);color:var(--sky);border:1px solid var(--border2);}
+.badge-e3{background:rgba(244,114,182,.08);color:var(--normal);border:1px solid rgba(244,114,182,.35);}
+.badge-e4{background:rgba(74,222,128,.08);color:var(--ok);border:1px solid rgba(74,222,128,.35);}
+.badge-e5{background:rgba(251,191,36,.08);color:var(--gold);border:1px solid rgba(251,191,36,.35);}
+.sec-tag{margin-left:auto;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.22em;
+  color:var(--muted);text-transform:uppercase;padding:.18rem .55rem;border:1px solid var(--border);border-radius:4px;}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--text);}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.1rem;}
+.card-title{font-weight:600;font-size:.98rem;margin-bottom:.7rem;color:var(--sky);display:flex;align-items:center;gap:.45rem;}
+.objectives{background:rgba(56,189,248,.03);border:1px solid var(--border);
+  border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin-bottom:1.4rem;}
+.objectives h4{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.objectives ol{padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem;}
+.objectives li{font-size:.92rem;}
+.info-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:.9rem 1.1rem;margin:.65rem 0;font-size:.88rem;line-height:1.65;}
+.info-box.hl{border-left:3px solid var(--sky);}
+.info-box.warn{border-left:3px solid var(--gold);}
+.info-box.succ{border-left:3px solid var(--ok);border-color:rgba(74,222,128,.25);}
+.formula{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gold);
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  border-radius:8px;padding:.45rem .9rem;display:inline-block;margin:.45rem 0;}
+.pts-badge{font-family:'DM Mono',monospace;font-size:.68rem;padding:.12rem .48rem;
+  border-radius:4px;background:var(--panel2);border:1px solid var(--border);color:var(--gold);margin-left:.4rem;}
+.mcq-opts{display:flex;flex-direction:column;gap:.45rem;margin:.7rem 0;}
+.mcq-opt{padding:.65rem .9rem;border:1px solid var(--border);border-radius:8px;
+  cursor:pointer;font-size:.92rem;transition:all .2s;background:transparent;text-align:left;color:var(--text);}
+.mcq-opt:hover{border-color:var(--sky);background:var(--panel);}
+.mcq-opt.correct{border-color:var(--ok)!important;background:rgba(74,222,128,.1);color:var(--ok);}
+.mcq-opt.wrong{border-color:var(--err)!important;background:rgba(248,113,113,.1);color:var(--err);}
+.ex-fb{font-size:.88rem;margin-top:.38rem;font-family:'DM Mono',monospace;font-weight:500;}
+.ex-fb.correct{color:var(--ok);}
+.ex-fb.wrong{color:var(--err);}
+.ex-input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);
+  border-radius:8px;padding:.55rem .85rem;font-family:'DM Mono',monospace;font-size:.98rem;width:130px;}
+.ex-btn{padding:.55rem 1.3rem;border-radius:8px;background:var(--sky);color:#000;
+  border:none;font-weight:600;cursor:pointer;font-size:.88rem;transition:transform .15s;}
+.ex-btn:hover{transform:translateY(-1px);}
+.hint-btn{font-size:.78rem;color:var(--gold);background:transparent;
+  border:1px solid rgba(251,191,36,.28);border-radius:6px;padding:.28rem .75rem;cursor:pointer;transition:background .2s;}
+.hint-btn:hover{background:rgba(251,191,36,.07);}
+.hint-box{display:none;margin-top:.45rem;padding:.55rem .85rem;
+  background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.18);
+  border-radius:8px;font-size:.86rem;color:var(--gold);font-style:italic;}
+.self-assess{display:flex;align-items:center;gap:.55rem;margin-top:.75rem;}
+.self-label{font-size:.78rem;color:var(--muted);}
+.emoji-btns{display:flex;gap:.3rem;}
+.emoji-btn{font-size:1.3rem;background:transparent;border:1px solid var(--border);
+  border-radius:8px;padding:.22rem .42rem;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;}
+.emoji-btn:hover{transform:scale(1.2);}
+.emoji-btn.sel{background:var(--panel2);border-color:var(--sky);transform:scale(1.15);}
+.canvas-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  background:var(--bg3);margin:.8rem 0;position:relative;}
+.canvas-wrap canvas{display:block;width:100%;height:auto;}
+.ctrl-row{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin:.45rem 0;}
+.ctrl-btn{padding:.45rem 1rem;border-radius:8px;border:1px solid var(--border2);
+  background:transparent;color:var(--text);font-size:.83rem;cursor:pointer;transition:all .2s;}
+.ctrl-btn:hover{border-color:var(--sky);color:var(--sky);background:var(--panel);}
+.ctrl-btn.primary{background:var(--sky);color:#000;border-color:var(--sky);font-weight:600;}
+.ctrl-btn.active{background:var(--panel2);border-color:var(--sky);color:var(--sky);}
+.range-wrap{display:flex;align-items:center;gap:.7rem;}
+.range-wrap label{font-size:.78rem;color:var(--muted);white-space:nowrap;}
+input[type=range]{-webkit-appearance:none;height:4px;border-radius:4px;
+  background:var(--border2);outline:none;cursor:pointer;width:160px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--sky);box-shadow:0 0 8px var(--sky);cursor:pointer;}
+.range-val{font-family:'DM Mono',monospace;font-size:.9rem;color:var(--sky);min-width:2.5rem;}
+.game-hud{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;}
+.game-stat{font-family:'DM Mono',monospace;font-size:.83rem;color:var(--muted);}
+.game-stat span{color:var(--sky);}
+.upload-zone{border:2px dashed var(--border2);border-radius:12px;padding:2rem;
+  text-align:center;cursor:pointer;transition:border-color .2s,background .2s;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--sky);background:var(--panel);}
+.upload-zone input{display:none;}
+.upload-icon{font-size:2.4rem;margin-bottom:.4rem;}
+.upload-txt{color:var(--muted);font-size:.88rem;}
+.upload-preview{max-width:100%;border-radius:8px;margin-top:.9rem;display:none;border:1px solid var(--border);}
+.journal-textarea{width:100%;min-height:78px;background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text);border-radius:8px;padding:.7rem;font-family:'DM Sans',sans-serif;
+  font-size:.88rem;resize:vertical;line-height:1.5;}
+.journal-textarea:focus{outline:none;border-color:var(--sky);}
+.submit-btn{width:100%;padding:1rem;background:linear-gradient(135deg,var(--sky),#7dd3fc);
+  color:#000;border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;
+  font-size:1.35rem;letter-spacing:.1em;cursor:pointer;transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 20px rgba(56,189,248,.25);}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(56,189,248,.4);}
+.score-table{width:100%;border-collapse:collapse;margin:.9rem 0;}
+.score-table th,.score-table td{padding:.45rem .7rem;text-align:left;font-size:.83rem;}
+.score-table th{color:var(--muted);font-weight:400;letter-spacing:.08em;
+  text-transform:uppercase;font-size:.68rem;border-bottom:1px solid var(--border);}
+.score-table td{border-bottom:1px solid rgba(255,255,255,.04);}
+.total-row td{color:var(--sky);font-weight:600;border-top:1px solid var(--border);font-family:'DM Mono',monospace;}
+.grade-display{text-align:center;padding:1.4rem;}
+.grade-letter{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--sky);line-height:1;}
+.grade-20{font-family:'DM Mono',monospace;font-size:1.4rem;color:var(--text);margin-top:.2rem;}
+.grade-msg{color:var(--muted);font-size:.88rem;margin-top:.4rem;}
+.next-btn{margin-top:1.4rem;padding:.65rem 1.8rem;background:var(--panel2);
+  border:1px solid var(--border2);color:var(--sky);border-radius:8px;cursor:pointer;
+  font-size:.92rem;font-weight:500;transition:all .2s;}
+.next-btn:hover{background:var(--sky);color:#000;border-color:var(--sky);}
+.uv-text{color:transparent;background:linear-gradient(135deg,#a855f7,var(--sky));
+  -webkit-background-clip:text;background-clip:text;filter:blur(5px);transition:filter 1s;}
+.uv-text.revealed{filter:blur(0);}
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;
+  pointer-events:none;z-index:99999;animation:cfFall 2s ease-in forwards;}
+@keyframes cfFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+.lamp-effect{position:relative;overflow:hidden;}
+.lamp-effect::after{content:'';position:absolute;top:0;left:-60%;width:30%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(56,189,248,.04),transparent);
+  animation:lampSwp 5s ease-in-out infinite;}
+@keyframes lampSwp{0%{left:-60%;}100%{left:160%;}}
+.val-box{display:flex;gap:1rem;margin:.5rem 0;flex-wrap:wrap;}
+.val-box .vb{flex:1;min-width:100px;background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:.7rem;text-align:center;}
+.val-box .vb .vb-num{font-family:'DM Mono',monospace;font-size:1.8rem;color:var(--sky);}
+.val-box .vb .vb-lbl{font-size:.72rem;color:var(--muted);}
+@media(max-width:768px){
+  .sidebar{width:58px;padding:.7rem .28rem;}
+  .lab-name,.timer-val,.score-num,.side-nav,.lab-meta{display:none;}
+  .content{max-width:100%;padding:.9rem;}
+}
+
+</style>
+</head>
+<body>
+
+<div id="chapterBreak">
+  <div class="cb-beam" style="left:20%;animation-delay:.1s"></div>
+  <div class="cb-beam" style="left:50%;animation-delay:.35s"></div>
+  <div class="cb-beam" style="left:80%;animation-delay:.6s"></div>
+  <div class="cb-shard" style="width:55px;height:75px;top:12%;left:14%;--r:-22deg;clip-path:polygon(50% 0%,100% 60%,20% 100%,0% 30%)"></div>
+  <div class="cb-shard" style="width:38px;height:58px;top:18%;right:18%;--r:16deg;clip-path:polygon(30% 0%,100% 25%,80% 100%,0% 70%)"></div>
+  <div class="cb-shard" style="width:48px;height:68px;bottom:22%;left:22%;--r:28deg;clip-path:polygon(60% 0%,100% 45%,40% 100%,0% 55%)"></div>
+  <div class="cb-shard" style="width:32px;height:52px;bottom:28%;right:14%;--r:-12deg;clip-path:polygon(20% 0%,100% 32%,70% 100%,0% 62%)"></div>
+  <div class="cb-shard" style="width:44px;height:62px;top:55%;left:8%;--r:40deg;clip-path:polygon(40% 0%,100% 20%,90% 100%,0% 80%)"></div>
+  <div class="cb-title">Chapter: Reflection of Light</div>
+  <div class="cb-sub">Grade 8 &middot; Physics &middot; Light &amp; Optics</div>
+  <div class="cb-divider"></div>
+  <button class="cb-btn" onclick="closeChapterBreak()">Enter the Optics Lab &rarr;</button>
+</div>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="lab-brand">
+    <div class="lab-icon">&#x1F52D;</div>
+    <div class="lab-name">REFLECTION<br>OF LIGHT</div>
+    <div class="lab-meta">Grade 8 &bull; Physics</div>
+  </div>
+  <div class="timer-block">
+    <div class="timer-label">Time</div>
+    <div class="timer-val" id="timerDisplay">00:00</div>
+  </div>
+  <div class="score-ring-wrap">
+    <svg width="76" height="76" viewBox="-38 -38 76 76">
+      <circle r="28" fill="none" stroke="rgba(56,189,248,.12)" stroke-width="5"/>
+      <circle id="scoreRing" r="28" fill="none" stroke="#38bdf8" stroke-width="5"
+        stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9"
+        transform="rotate(-90)" style="transition:stroke-dashoffset .6s ease"/>
+    </svg>
+    <div class="score-num" id="sideScore">0.0</div>
+    <div class="score-label">/20</div>
+  </div>
+  <div class="prog-dots" id="progDots"></div>
+  <nav class="side-nav">
+    <a href="#" onclick="showSection('s0');return false;">&#x1F4D0; Recap</a>
+    <a href="#" onclick="showSection('s1');return false;">&#x1F4A1; Engage</a>
+    <a href="#" onclick="showSection('s2');return false;">&#x1F52C; Explore</a>
+    <a href="#" onclick="showSection('s3');return false;">&#x1F4D6; Explain</a>
+    <a href="#" onclick="showSection('s4');return false;">&#x270F;&#xFE0F; Elaborate</a>
+    <a href="#" onclick="showSection('s5');return false;">&#x1F4DD; Evaluate</a>
+    <a href="#" onclick="showSection('s6');return false;">&#x1F4E4; Submit</a>
+  </nav>
+</aside>
+
+<main class="content">
+
+<!-- PICKER -->
+<section id="picker">
+  <div class="picker-card">
+    <div class="picker-title">&#x1F52D; Reflection of Light Lab</div>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:1.1rem;">
+      Select your class section and name to begin your personalised session.
+    </p>
+    <div class="sec-btns" id="secBtns">
+      <button class="sec-btn" onclick="setSection('8A')">8A</button>
+      <button class="sec-btn" onclick="setSection('8B')">8B</button>
+      <button class="sec-btn" onclick="setSection('8C')">8C</button>
+      <button class="sec-btn" onclick="setSection('8D')">8D</button>
+    </div>
+    <div class="picker-row" id="nameDropdownRow" style="display:none;">
+      <label>Name</label>
+      <select id="stuName">
+        <option value="">-- Choose your name --</option>
+      </select>
+    </div>
+    <div class="picker-row" id="nameTextRow" style="display:none;">
+      <label>Name</label>
+      <input type="text" id="stuNameText"
+        style="flex:1;padding:.55rem .75rem;background:var(--bg3);border:1px solid var(--border2);
+               color:var(--text);border-radius:8px;font-size:.92rem;font-family:DM Sans,sans-serif;"
+        placeholder="Type your full name..."
+        oninput="document.getElementById('startBtn').disabled = this.value.trim().length < 2;">
+    </div>
+    <div id="noNamesWarning" style="display:none;font-size:.78rem;color:var(--gold);
+         background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);
+         border-radius:8px;padding:.5rem .8rem;margin-top:.4rem;">
+      &#x26A0;&#xFE0F; Names for this section are not yet in the file.
+      Type your name above to continue, or ask your teacher to add names from the grade book.
+    </div>
+    <button class="start-btn" id="startBtn" disabled onclick="startLab()">
+      &#x26A1; Launch Lab
+    </button>
+  </div>
+</section>
+
+<!-- S0: RECAP -->
+<section class="lab-section" id="s0">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-recap">RECAP</div>
+    <div class="sec-title">Light Travels in Straight Lines &amp; Shadows</div>
+    <div class="sec-tag">PREREQUISITE</div>
+  </div>
+  <div class="card lamp-effect">
+    <div class="card-title">&#x1F4A1; Rectilinear Propagation of Light</div>
+    <p style="line-height:1.72;font-size:.93rem;">
+      Light energy travels outward from its source in <strong style="color:var(--sky)">straight lines called rays</strong>.
+      This property is called <em>rectilinear propagation</em>. It explains why shadows have crisp edges
+      and why a small hole can project an inverted image like a pinhole camera.
+    </p>
+    <div class="info-box hl" style="margin-top:.7rem;">
+      <strong>Key consequence:</strong> Because light cannot bend around objects under normal conditions,
+      opaque objects block light and cast shadows &mdash; regions where light cannot reach.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x2600;&#xFE0F; The Shadow Sundial &mdash; Interactive Animation</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:.7rem;">
+      Move the sun across the sky and watch how the shadow changes direction and length.
+      Toggle <em>Construction Lines</em> to see how a shadow is drawn in 2D.
+    </p>
+    <div class="canvas-wrap">
+      <canvas id="shadowCanvas" width="600" height="280"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <div class="range-wrap">
+        <label>&#x2600;&#xFE0F; Sun position:</label>
+        <input type="range" id="sunSlider" min="5" max="175" value="90" oninput="updateShadow(this.value)">
+        <div class="range-val" id="sunAngleVal">90&#xB0;</div>
+      </div>
+      <button class="ctrl-btn" id="animBtn" onclick="toggleShadowAnim()">&#x25B6; Animate Day</button>
+      <button class="ctrl-btn" id="constructBtn" onclick="toggleConstruct()">&#x1F4D0; Construction Lines</button>
+    </div>
+    <div class="info-box warn">
+      <strong>&#x1F550; Shadow tells the time!</strong>
+      At solar noon the sun is highest &rarr; shadow is shortest and points North.
+      Morning sun (East) &rarr; long shadow pointing West.
+      Afternoon sun (West) &rarr; long shadow pointing East.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x2705; Quick Check <span class="pts-badge">2 pts</span></div>
+    <div style="margin-bottom:1.1rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q1.</strong> Why does a flagpole cast a shadow on a sunny day?</p>
+      <div class="mcq-opts" id="recapQ1opts">
+        <button class="mcq-opt" onclick="checkMCQ('recapQ1',this)">A) Light bends around the pole</button>
+        <button class="mcq-opt" onclick="checkMCQ('recapQ1',this)">B) Light travels in straight lines and is blocked by the opaque pole</button>
+        <button class="mcq-opt" onclick="checkMCQ('recapQ1',this)">C) The pole produces its own darkness</button>
+        <button class="mcq-opt" onclick="checkMCQ('recapQ1',this)">D) Shadows are caused by gravity pulling light down</button>
+      </div>
+      <div class="ex-fb" id="recapQ1fb"></div>
+    </div>
+    <div>
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q2.</strong> At which time of day is a person's shadow the shortest?</p>
+      <div class="mcq-opts" id="recapQ2opts">
+        <button class="mcq-opt" onclick="checkMCQ('recapQ2',this)">A) At sunrise</button>
+        <button class="mcq-opt" onclick="checkMCQ('recapQ2',this)">B) In early morning</button>
+        <button class="mcq-opt" onclick="checkMCQ('recapQ2',this)">C) At solar noon (sun highest in sky)</button>
+        <button class="mcq-opt" onclick="checkMCQ('recapQ2',this)">D) At sunset</button>
+      </div>
+      <div class="ex-fb" id="recapQ2fb"></div>
+    </div>
+  </div>
+  <div class="self-assess">
+    <span class="self-label">Confidence with shadows &amp; propagation:</span>
+    <div class="emoji-btns">
+      <button class="emoji-btn" onclick="selfRate('s0',this)">&#x1F615;</button>
+      <button class="emoji-btn" onclick="selfRate('s0',this)">&#x1F914;</button>
+      <button class="emoji-btn" onclick="selfRate('s0',this)">&#x1F60A;</button>
+      <button class="emoji-btn" onclick="selfRate('s0',this)">&#x1F3AF;</button>
+    </div>
+  </div>
+  <button class="next-btn" onclick="triggerChapterBreak()">Continue to Chapter: Reflection of Light &rarr;</button>
+</section>
+
+<!-- S1: ENGAGE -->
+<section class="lab-section" id="s1">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-e1">E1</div>
+    <div class="sec-title">Engage &mdash; The Mirror Mystery</div>
+    <div class="sec-tag">ENGAGE</div>
+  </div>
+  <div class="card" style="border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.03);">
+    <div class="card-title" style="color:var(--gold);">&#x1FA9E; The Great Mirror Riddle</div>
+    <p style="font-size:.98rem;line-height:1.72;margin-bottom:.9rem;">
+      You walk into a room with a <strong style="color:var(--sky);">perfectly polished mirror</strong> on one wall
+      and a <strong style="color:var(--normal);">painted white wall</strong> on the other.
+      Both surfaces are bright white and lit by the same lamp.
+    </p>
+    <p style="font-size:1.05rem;font-weight:600;color:var(--gold);text-align:center;
+      padding:.9rem;border:1px dashed rgba(251,191,36,.4);border-radius:8px;">
+      &ldquo;You can clearly see your face in the mirror &mdash; but NOT in the white wall. Why?&rdquo;
+    </p>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F526; Shine a Torch on Different Surfaces</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:.7rem;">
+      Click each surface to see what happens when light hits it. Observe the difference!
+    </p>
+    <div class="canvas-wrap">
+      <canvas id="surfaceCanvas" width="600" height="220"></canvas>
+    </div>
+    <div class="ctrl-row" style="flex-wrap:wrap;gap:.4rem;">
+      <button class="ctrl-btn" onclick="shineTorch('mirror')">&#x1FA9E; Mirror</button>
+      <button class="ctrl-btn" onclick="shineTorch('matte')">&#x1F9F1; Matte Wall</button>
+      <button class="ctrl-btn" onclick="shineTorch('water')">&#x1F4A7; Still Water</button>
+      <button class="ctrl-btn" onclick="shineTorch('paper')">&#x1F4C4; Paper</button>
+      <button class="ctrl-btn" onclick="shineTorch('metal')">&#x2699;&#xFE0F; Polished Metal</button>
+    </div>
+    <div id="surfaceResult" class="info-box" style="display:none;margin-top:.4rem;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F4DA; What You Need to Know First</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.9rem;margin-top:.4rem;">
+      <div class="info-box hl"><strong style="color:var(--sky);">Polished surface + light = image</strong><br>
+        <span style="font-size:.84rem;">Smooth surfaces bounce light in one organised direction &rarr; a clear image forms.</span></div>
+      <div class="info-box hl"><strong style="color:var(--sky);">Image in a plane mirror</strong><br>
+        <span style="font-size:.84rem;">Virtual image: same size, same distance behind mirror, laterally inverted.</span></div>
+      <div class="info-box hl"><strong style="color:var(--sky);">Rough surfaces scatter light</strong><br>
+        <span style="font-size:.84rem;">Microscopic bumps send reflected rays in random directions &rarr; no image.</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F3AF; Think About It <span class="pts-badge">2 pts</span></div>
+    <div style="margin-bottom:1.1rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q1.</strong> Why can you see your reflection in a mirror but NOT in a piece of paper?</p>
+      <div class="mcq-opts" id="e1Q1opts">
+        <button class="mcq-opt" onclick="checkMCQ('e1Q1',this)">A) Mirrors are transparent; paper is not</button>
+        <button class="mcq-opt" onclick="checkMCQ('e1Q1',this)">B) Mirrors are smooth so all rays reflect in one direction; paper is rough and scatters them</button>
+        <button class="mcq-opt" onclick="checkMCQ('e1Q1',this)">C) Paper absorbs all light</button>
+        <button class="mcq-opt" onclick="checkMCQ('e1Q1',this)">D) Mirrors generate their own light</button>
+      </div>
+      <div class="ex-fb" id="e1Q1fb"></div>
+    </div>
+    <div>
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q2.</strong> The image seen in a flat (plane) mirror is best described as:</p>
+      <div class="mcq-opts" id="e1Q2opts">
+        <button class="mcq-opt" onclick="checkMCQ('e1Q2',this)">A) Real &mdash; light actually converges at that point</button>
+        <button class="mcq-opt" onclick="checkMCQ('e1Q2',this)">B) Virtual &mdash; light only appears to come from that point behind the mirror</button>
+        <button class="mcq-opt" onclick="checkMCQ('e1Q2',this)">C) Magnified &mdash; always larger than the object</button>
+        <button class="mcq-opt" onclick="checkMCQ('e1Q2',this)">D) Inverted &mdash; always upside down</button>
+      </div>
+      <div class="ex-fb" id="e1Q2fb"></div>
+    </div>
+  </div>
+  <div class="self-assess">
+    <span class="self-label">How well did you engage?</span>
+    <div class="emoji-btns">
+      <button class="emoji-btn" onclick="selfRate('s1',this)">&#x1F615;</button>
+      <button class="emoji-btn" onclick="selfRate('s1',this)">&#x1F914;</button>
+      <button class="emoji-btn" onclick="selfRate('s1',this)">&#x1F60A;</button>
+      <button class="emoji-btn" onclick="selfRate('s1',this)">&#x1F3AF;</button>
+    </div>
+  </div>
+  <button class="next-btn" onclick="showSection('s2')">Continue to Explore &rarr;</button>
+</section>
+
+<!-- S2: EXPLORE -->
+<section class="lab-section" id="s2">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-e2">E2</div>
+    <div class="sec-title">Explore &mdash; Discovering the Law of Reflection</div>
+    <div class="sec-tag">EXPLORE</div>
+  </div>
+  <div class="objectives">
+    <h4>Learning Objectives</h4>
+    <ol>
+      <li>Distinguish between <strong>regular reflection</strong> and <strong>diffuse scattering</strong> of light</li>
+      <li>State the <strong>conditions necessary</strong> for regular reflection to occur</li>
+      <li>Construct the path of a reflected ray using <strong>angles and a protractor</strong></li>
+    </ol>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F52C; Angle Explorer &mdash; Discover i = r Yourself</div>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:.7rem;">
+      Drag the slider to change the angle of incidence. Watch the reflected ray respond. What pattern do you discover?
+    </p>
+    <div class="canvas-wrap">
+      <canvas id="angleCanvas" width="600" height="300"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <div class="range-wrap">
+        <label>Angle of Incidence (i):</label>
+        <input type="range" id="angleSlider" min="5" max="85" value="40" oninput="updateAngle(this.value)">
+        <div class="range-val" id="angleVal">40&#xB0;</div>
+      </div>
+    </div>
+    <div class="val-box">
+      <div class="vb"><div class="vb-num" id="iDisplay">40&#xB0;</div><div class="vb-lbl">Angle of Incidence (i)</div></div>
+      <div class="vb"><div class="vb-num" style="font-size:1.5rem;">=</div><div class="vb-lbl">Always Equal</div></div>
+      <div class="vb"><div class="vb-num" id="rDisplay" style="color:var(--ok);">40&#xB0;</div><div class="vb-lbl">Angle of Reflection (r)</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F4D3; Discovery Journal</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:.55rem;">
+      After experimenting with several different angles, describe what you discovered in your own words:
+    </p>
+    <textarea class="journal-textarea" id="discoveryJournal"
+      placeholder="Write what you noticed... (e.g. When I increased the angle of incidence, the reflected ray...)"></textarea>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F9EE; Exercises <span class="pts-badge">4 pts</span></div>
+    <div style="margin-bottom:1.4rem;">
+      <p style="font-size:.92rem;margin-bottom:.28rem;">
+        <strong>Exercise 1:</strong> A light ray hits a mirror at an angle of incidence of
+        <span id="ex1Angle" style="color:var(--gold);font-family:'DM Mono',monospace;font-weight:600;"></span>&#xB0;.
+        What is the angle of reflection?
+      </p>
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:.45rem;">(values personalised for <span id="ex1Name"></span>)</p>
+      <div style="display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;">
+        <input type="number" class="ex-input" id="ex1" placeholder="r = ?" min="0" max="90">
+        <button class="ex-btn" onclick="checkEx1()">Check</button>
+        <button class="hint-btn" onclick="showHint(1)">&#x1F4A1; Hint</button>
+      </div>
+      <div class="hint-box" id="hint1"></div>
+      <div class="ex-fb" id="ex1fb"></div>
+      <div style="font-size:.73rem;color:var(--muted);margin-top:.28rem;">Attempts: <span id="ex1att">0</span></div>
+    </div>
+    <div>
+      <p style="font-size:.92rem;margin-bottom:.45rem;">
+        <strong>Exercise 2:</strong> Both angles of incidence and reflection are always measured from:
+      </p>
+      <div class="mcq-opts" id="e2Q2opts">
+        <button class="mcq-opt" onclick="checkMCQ('e2Q2',this)">A) The surface of the mirror</button>
+        <button class="mcq-opt" onclick="checkMCQ('e2Q2',this)">B) The normal line (a line perpendicular to the mirror at the point of incidence)</button>
+        <button class="mcq-opt" onclick="checkMCQ('e2Q2',this)">C) The horizontal ground beneath the mirror</button>
+        <button class="mcq-opt" onclick="checkMCQ('e2Q2',this)">D) The reflected ray itself</button>
+      </div>
+      <div class="ex-fb" id="e2Q2fb"></div>
+    </div>
+  </div>
+  <div class="self-assess">
+    <span class="self-label">How well did you explore?</span>
+    <div class="emoji-btns">
+      <button class="emoji-btn" onclick="selfRate('s2',this)">&#x1F615;</button>
+      <button class="emoji-btn" onclick="selfRate('s2',this)">&#x1F914;</button>
+      <button class="emoji-btn" onclick="selfRate('s2',this)">&#x1F60A;</button>
+      <button class="emoji-btn" onclick="selfRate('s2',this)">&#x1F3AF;</button>
+    </div>
+  </div>
+  <button class="next-btn" onclick="showSection('s3')">Continue to Explain &rarr;</button>
+</section>
+
+<!-- S3: EXPLAIN -->
+<section class="lab-section" id="s3">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-e3">E3</div>
+    <div class="sec-title">Explain &mdash; The Laws of Reflection</div>
+    <div class="sec-tag">EXPLAIN</div>
+  </div>
+  <div class="card" style="border-color:rgba(168,85,247,.28);background:rgba(168,85,247,.03);">
+    <div class="card-title" style="color:#a855f7;">&#x1F52E; Secret Physics: Use the UV Torch to Reveal</div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:.7rem;">
+      The laws of reflection have been known since ancient times. Shine the UV torch to unveil them!
+    </p>
+    <button class="ctrl-btn" onclick="revealUV()" style="border-color:#a855f7;color:#a855f7;">
+      &#x1F526; Shine UV Torch
+    </button>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.55rem;">
+      <div class="uv-text" id="uvLine1" style="font-size:.98rem;font-family:'DM Mono',monospace;padding:.45rem;">
+        LAW 1 &mdash; Angle of Incidence (i) = Angle of Reflection (r)
+      </div>
+      <div class="uv-text" id="uvLine2" style="font-size:.98rem;font-family:'DM Mono',monospace;padding:.45rem;">
+        LAW 2 &mdash; The incident ray, normal, and reflected ray all lie in the same plane
+      </div>
+      <div class="uv-text" id="uvLine3" style="font-size:.9rem;padding:.45rem;">
+        LAW 3 &mdash; All angles are measured from the NORMAL (not from the mirror surface)
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F3AF; Objective 1 &mdash; Regular Reflection vs. Diffuse Scattering</div>
+    <div class="canvas-wrap">
+      <canvas id="scatterCanvas" width="600" height="220"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn active" id="btnReflection" onclick="showScatter('reflection')">&#x1FA9E; Regular Reflection</button>
+      <button class="ctrl-btn" id="btnScatter" onclick="showScatter('scatter')">&#x1F9F1; Diffuse Scattering</button>
+    </div>
+    <div id="scatterInfo" class="info-box hl" style="margin-top:.4rem;">
+      <strong>Regular (Specular) Reflection:</strong> Occurs on smooth, polished surfaces. All reflected rays are parallel
+      &rarr; a clear image is formed. Examples: mirror, still water, polished metal.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F3AF; Objective 2 &mdash; Conditions for Regular Reflection</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:.8rem;margin-top:.4rem;">
+      <div class="info-box hl"><div style="font-size:1.4rem;margin-bottom:.25rem;">1&#xFE0F;&#x20E3;</div>
+        <strong>Light must reach the surface</strong><br><span style="font-size:.83rem;">An incident ray must strike the reflecting surface.</span></div>
+      <div class="info-box hl"><div style="font-size:1.4rem;margin-bottom:.25rem;">2&#xFE0F;&#x20E3;</div>
+        <strong>Surface must be opaque</strong><br><span style="font-size:.83rem;">Transparent objects allow light to pass through rather than reflecting it.</span></div>
+      <div class="info-box hl"><div style="font-size:1.4rem;margin-bottom:.25rem;">3&#xFE0F;&#x20E3;</div>
+        <strong>Surface must be smooth (polished)</strong><br><span style="font-size:.83rem;">Rough surfaces produce diffuse scattering instead.</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F3AF; Objective 3 &mdash; Constructing a Ray Diagram Step by Step</div>
+    <div style="display:flex;flex-direction:column;gap:.45rem;margin:.6rem 0;">
+      <div class="info-box" style="display:flex;gap:.65rem;align-items:flex-start;">
+        <div style="font-size:1.2rem;flex-shrink:0;">&#x1F4CF;</div>
+        <div><strong>Step 1:</strong> Draw the mirror as a straight horizontal line.</div>
+      </div>
+      <div class="info-box" style="display:flex;gap:.65rem;align-items:flex-start;">
+        <div style="font-size:1.2rem;flex-shrink:0;">&#x1F4D0;</div>
+        <div><strong>Step 2:</strong> At the point of incidence, draw the
+          <span style="color:var(--normal);font-weight:600;">NORMAL</span> &mdash;
+          a <em>dashed</em> line perpendicular (90&deg;) to the mirror.</div>
+      </div>
+      <div class="info-box" style="display:flex;gap:.65rem;align-items:flex-start;">
+        <div style="font-size:1.2rem;flex-shrink:0;">&#x2197;&#xFE0F;</div>
+        <div><strong>Step 3:</strong> Use your protractor to measure angle <em>i</em> between the
+          <span style="color:var(--gold);">incident ray</span> and the normal.</div>
+      </div>
+      <div class="info-box" style="display:flex;gap:.65rem;align-items:flex-start;">
+        <div style="font-size:1.2rem;flex-shrink:0;">&#x2705;</div>
+        <div><strong>Step 4:</strong> On the other side of the normal, draw the
+          <span style="color:var(--ok);">reflected ray</span> at the same angle: <em>r = i</em>. Add an arrow.</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin:.8rem 0;">
+      <div class="formula" style="font-size:1.2rem;">i = r &nbsp;&bull;&nbsp; Angle of Incidence = Angle of Reflection</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F4DD; Check Your Understanding <span class="pts-badge">3 pts</span></div>
+    <div style="margin-bottom:1.1rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q1.</strong> What is the key difference between regular reflection and diffuse scattering?</p>
+      <div class="mcq-opts" id="e3Q1opts">
+        <button class="mcq-opt" onclick="checkMCQ('e3Q1',this)">A) Regular reflection = random rays; Scattering = parallel rays</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q1',this)">B) Regular reflection from smooth surfaces gives parallel rays (clear image); Diffuse scattering from rough surfaces gives random rays (no image)</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q1',this)">C) They are the same phenomenon</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q1',this)">D) Scattering only happens with coloured light</button>
+      </div>
+      <div class="ex-fb" id="e3Q1fb"></div>
+    </div>
+    <div style="margin-bottom:1.1rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;">
+        <strong>Q2.</strong> A ray hits a mirror at 35&deg; <em>to the mirror surface</em> (not to the normal). What is the angle of reflection?
+      </p>
+      <p style="font-size:.78rem;color:var(--gold);margin-bottom:.45rem;">&#x26A0;&#xFE0F; Careful: the angle is from the mirror surface &mdash; you must convert to angle from normal first!</p>
+      <div class="mcq-opts" id="e3Q2opts">
+        <button class="mcq-opt" onclick="checkMCQ('e3Q2',this)">A) 35&deg;</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q2',this)">B) 70&deg;</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q2',this)">C) 55&deg;</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q2',this)">D) 90&deg;</button>
+      </div>
+      <div class="ex-fb" id="e3Q2fb" style="font-size:.82rem;"></div>
+    </div>
+    <div>
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q3.</strong> The normal line in a ray diagram is always drawn as:</p>
+      <div class="mcq-opts" id="e3Q3opts">
+        <button class="mcq-opt" onclick="checkMCQ('e3Q3',this)">A) A solid bold line parallel to the mirror</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q3',this)">B) A dashed line perpendicular to the mirror at the point of incidence</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q3',this)">C) A wavy coloured line through the mirror</button>
+        <button class="mcq-opt" onclick="checkMCQ('e3Q3',this)">D) A solid arrow pointing away from the light source</button>
+      </div>
+      <div class="ex-fb" id="e3Q3fb"></div>
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(74,222,128,.22);background:rgba(74,222,128,.02);">
+    <div class="card-title" style="color:var(--ok);">&#x1F3AE; GAME: Laser Redirect &mdash; Apply the Law! <span class="pts-badge">+1 bonus</span></div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:.7rem;">
+      Rotate the mirror to redirect the laser beam so it hits the target &#x2B50;.
+      Use what you know about i = r. <strong style="color:var(--ok);">5 levels</strong> &bull; <strong style="color:var(--err);">3 lives</strong>
+    </p>
+    <div class="game-hud">
+      <div class="game-stat">Level: <span id="gameLevel">1</span>/5</div>
+      <div class="game-stat" id="gameLivesDiv">&#x2764;&#xFE0F;&#x2764;&#xFE0F;&#x2764;&#xFE0F;</div>
+      <div class="game-stat">Score: <span id="gameScore">0</span></div>
+      <div class="game-stat">Mirror: <span id="mirrorAngleDisplay">45</span>&deg;</div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="600" height="320"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <div class="range-wrap">
+        <label>Rotate Mirror:</label>
+        <input type="range" id="mirrorSlider" min="0" max="180" value="45" oninput="rotateMirror(this.value)">
+      </div>
+      <button class="ctrl-btn primary" onclick="checkLaser()">&#x1F3AF; Fire Laser!</button>
+      <button class="ctrl-btn" onclick="resetGame()">&#x21BA; Reset</button>
+    </div>
+    <div id="gameFb" class="info-box" style="display:none;margin-top:.4rem;"></div>
+    <div id="gameHintBox" class="hint-box" style="display:none;margin-top:.4rem;"></div>
+    <button class="hint-btn" style="margin-top:.3rem;" onclick="showGameHint()">&#x1F4A1; Physics Hint</button>
+  </div>
+  <div class="self-assess">
+    <span class="self-label">Understanding of reflection laws:</span>
+    <div class="emoji-btns">
+      <button class="emoji-btn" onclick="selfRate('s3',this)">&#x1F615;</button>
+      <button class="emoji-btn" onclick="selfRate('s3',this)">&#x1F914;</button>
+      <button class="emoji-btn" onclick="selfRate('s3',this)">&#x1F60A;</button>
+      <button class="emoji-btn" onclick="selfRate('s3',this)">&#x1F3AF;</button>
+    </div>
+  </div>
+  <button class="next-btn" onclick="showSection('s4')">Continue to Elaborate &rarr;</button>
+</section>
+
+<!-- S4: ELABORATE -->
+<section class="lab-section" id="s4">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-e4">E4</div>
+    <div class="sec-title">Elaborate &mdash; Draw It Like a Physicist</div>
+    <div class="sec-tag">ELABORATE</div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F4D0; Interactive Ray Construction <span class="pts-badge">2 pts</span></div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:.7rem;">
+      The given angle of incidence is <strong style="color:var(--gold);font-family:'DM Mono',monospace;" id="protoAngleLbl"></strong>&deg;.
+      The <span style="color:var(--normal);">normal</span> and <span style="color:var(--gold);">incident ray</span> are drawn.
+      Adjust the slider to draw the correct <span style="color:var(--ok);">reflected ray</span>, then click Verify.
+    </p>
+    <div class="canvas-wrap">
+      <canvas id="protoCanvas" width="600" height="320"></canvas>
+    </div>
+    <div class="ctrl-row">
+      <div class="range-wrap">
+        <label>Your reflected ray (from normal):</label>
+        <input type="range" id="protoSlider" min="5" max="85" value="30" oninput="updateProto(this.value)">
+        <div class="range-val" id="protoVal">30&deg;</div>
+      </div>
+      <button class="ctrl-btn primary" onclick="verifyProto()">&#x2705; Verify</button>
+      <button class="ctrl-btn" onclick="resetProto()">&#x21BA; Reset</button>
+    </div>
+    <div id="protoFb" class="info-box" style="display:none;margin-top:.4rem;"></div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:.4rem;">Personalised for <span id="protoNameLbl"></span></p>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x270F;&#xFE0F; Your Hand-Drawn Ray Diagram <span class="pts-badge">2 pts teacher-graded</span></div>
+    <div class="info-box warn" style="margin-bottom:.9rem;">
+      <strong>&#x1F4CB; Drawing Task &mdash; on graph paper, draw:</strong>
+      <ul style="padding-left:1.1rem;margin-top:.35rem;display:flex;flex-direction:column;gap:.2rem;font-size:.85rem;">
+        <li>A horizontal <strong>plane mirror</strong></li>
+        <li>The <strong>point of incidence</strong> clearly marked</li>
+        <li>The <span style="color:var(--normal);font-weight:600;">NORMAL</span> as a <em>dashed</em> perpendicular line</li>
+        <li>The <span style="color:var(--gold);font-weight:600;">incident ray</span> at <strong style="font-family:'DM Mono',monospace;" id="drawAngleLbl"></strong>&deg; to the normal, with arrow</li>
+        <li>The <span style="color:var(--ok);font-weight:600;">reflected ray</span> at the same angle, with arrow</li>
+        <li>Both angles labelled: <em>i =</em>&deg; and <em>r =</em>&deg;</li>
+      </ul>
+    </div>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click();">
+      <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">
+      <div class="upload-icon">&#x1F4F8;</div>
+      <div class="upload-txt">Click to upload a photo of your drawing</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:.2rem;">JPG, PNG, HEIC supported</div>
+      <img id="uploadPreview" class="upload-preview" src="" alt="Your drawing preview">
+    </div>
+    <div style="margin-top:.9rem;">
+      <label style="font-size:.83rem;color:var(--muted);display:block;margin-bottom:.28rem;">
+        &#x270D;&#xFE0F; Notes about your drawing:
+      </label>
+      <textarea class="journal-textarea" id="drawingNotes" style="min-height:60px;"
+        placeholder="Describe what you drew, any challenges, or what you learned..."></textarea>
+    </div>
+  </div>
+  <div class="self-assess">
+    <span class="self-label">Confidence with ray construction:</span>
+    <div class="emoji-btns">
+      <button class="emoji-btn" onclick="selfRate('s4',this)">&#x1F615;</button>
+      <button class="emoji-btn" onclick="selfRate('s4',this)">&#x1F914;</button>
+      <button class="emoji-btn" onclick="selfRate('s4',this)">&#x1F60A;</button>
+      <button class="emoji-btn" onclick="selfRate('s4',this)">&#x1F3AF;</button>
+    </div>
+  </div>
+  <button class="next-btn" onclick="showSection('s5')">Continue to Evaluate &rarr;</button>
+</section>
+
+<!-- S5: EVALUATE -->
+<section class="lab-section" id="s5">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-e5">E5</div>
+    <div class="sec-title">Evaluate &mdash; Final Assessment</div>
+    <div class="sec-tag">EVALUATE</div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F3C6; Final Quiz <span class="pts-badge">4 pts</span></div>
+    <div style="margin-bottom:1.2rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q1.</strong> Which surface produces regular (specular) reflection?</p>
+      <div class="mcq-opts" id="e5Q1opts">
+        <button class="mcq-opt" onclick="checkMCQ('e5Q1',this)">A) A rough brick wall</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q1',this)">B) A crumpled piece of aluminium foil</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q1',this)">C) A polished stainless steel plate</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q1',this)">D) A sandy beach surface</button>
+      </div>
+      <div class="ex-fb" id="e5Q1fb"></div>
+    </div>
+    <div style="margin-bottom:1.2rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;">
+        <strong>Q2.</strong> The angle between the incident ray and the reflected ray is 80&deg;. What is the angle of incidence?
+      </p>
+      <div class="mcq-opts" id="e5Q2opts">
+        <button class="mcq-opt" onclick="checkMCQ('e5Q2',this)">A) 80&deg;</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q2',this)">B) 40&deg;</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q2',this)">C) 20&deg;</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q2',this)">D) 160&deg;</button>
+      </div>
+      <div class="ex-fb" id="e5Q2fb" style="font-size:.82rem;"></div>
+    </div>
+    <div style="margin-bottom:1.2rem;">
+      <p style="font-size:.92rem;margin-bottom:.45rem;">
+        <strong>Q3.</strong> Why is diffuse reflection useful in everyday life even though it produces no image?
+      </p>
+      <div class="mcq-opts" id="e5Q3opts">
+        <button class="mcq-opt" onclick="checkMCQ('e5Q3',this)">A) It allows us to see objects from any direction, not just one angle</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q3',this)">B) It only works in darkness</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q3',this)">C) It creates multiple images simultaneously</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q3',this)">D) It travels faster than regular reflection</button>
+      </div>
+      <div class="ex-fb" id="e5Q3fb"></div>
+    </div>
+    <div>
+      <p style="font-size:.92rem;margin-bottom:.45rem;"><strong>Q4.</strong> Which is <em>NOT</em> required for the law of reflection to apply?</p>
+      <div class="mcq-opts" id="e5Q4opts">
+        <button class="mcq-opt" onclick="checkMCQ('e5Q4',this)">A) An incident ray of light striking the surface</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q4',this)">B) A normal drawn perpendicular to the surface</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q4',this)">C) The condition that i = r</button>
+        <button class="mcq-opt" onclick="checkMCQ('e5Q4',this)">D) The mirror must be concave (curved inward)</button>
+      </div>
+      <div class="ex-fb" id="e5Q4fb"></div>
+    </div>
+  </div>
+  <div class="self-assess">
+    <span class="self-label">Overall confidence today:</span>
+    <div class="emoji-btns">
+      <button class="emoji-btn" onclick="selfRate('s5',this)">&#x1F615;</button>
+      <button class="emoji-btn" onclick="selfRate('s5',this)">&#x1F914;</button>
+      <button class="emoji-btn" onclick="selfRate('s5',this)">&#x1F60A;</button>
+      <button class="emoji-btn" onclick="selfRate('s5',this)">&#x1F3AF;</button>
+    </div>
+  </div>
+  <button class="next-btn" onclick="showSection('s6')">Continue to Submit &rarr;</button>
+</section>
+
+<!-- S6: SUBMIT -->
+<section class="lab-section" id="s6">
+  <div class="sec-hdr">
+    <div class="sec-badge badge-e5">SUBMIT</div>
+    <div class="sec-title">Submit Your Work</div>
+    <div class="sec-tag">COMPLETE</div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F4CA; Score Breakdown</div>
+    <table class="score-table" id="scoreTable">
+      <thead><tr><th>Section</th><th>Component</th><th>Score</th><th>Max</th></tr></thead>
+      <tbody id="scoreBody"></tbody>
+      <tfoot>
+        <tr class="total-row"><td colspan="2">Auto-graded total</td><td id="totalAuto">--</td><td>15</td></tr>
+        <tr class="total-row"><td colspan="2">Game Bonus</td><td id="totalBonus">0</td><td>1</td></tr>
+        <tr class="total-row"><td colspan="2">Drawing (teacher-graded)</td><td id="totalTeacher">pending</td><td>4</td></tr>
+        <tr class="total-row" style="font-size:1.05rem;"><td colspan="2"><strong>Scaled Score /20</strong></td>
+          <td id="totalScore20" style="color:var(--sky);">--</td><td><strong>20</strong></td></tr>
+      </tfoot>
+    </table>
+    <div class="grade-display" id="gradeDisplay" style="display:none;">
+      <div class="grade-letter" id="gradeLetter">A</div>
+      <div class="grade-20" id="grade20txt">--/20</div>
+      <div class="grade-msg" id="gradeMsg"></div>
+    </div>
+  </div>
+  <button class="submit-btn" id="submitBtn" onclick="submitLab()">&#x1F4E4; Submit Lab to Teacher</button>
+  <div id="submitFb" style="margin-top:.9rem;font-family:'DM Mono',monospace;font-size:.88rem;text-align:center;"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+
+/* ================================================================
+   LAB_START must be the very first JS statement
+   ================================================================ */
+const LAB_START = Date.now();
+
+/* ================================================================
+   APPS SCRIPT URL - Replace with your actual deployment URL
+   ================================================================ */
+const APPS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
+
+/* ================================================================
+   STUDENTS
+   TEACHER ACTION: Populate these arrays from your grade book xlsx.
+   Pattern: same as grade 7D in the project best-practices file.
+   Arabic names in straight quotes (no curly quotes).
+   ================================================================ */
+const STUDENTS = {
+  '8A': [
+    'أسماء هيثم علي ندوه',
+    'ابراهيم طارق صلاح معروف',
+    'ابراهيم محمد رفعت ابو حميد',
+    'احسان "محمد وليد" الشحبري',
+    'ادم وليد توفيق الخطيب',
+    'الين رشيد محمد احمد',
+    'تالا "محمد عدنان" العمري',
+    'تيا احمد محمد الركن',
+    'جنى ماهر غالب الدالي',
+    'جنى "محي الدين"  فاعور',
+    'جود محمد مروان الشامي',
+    'حسين احمد محمود اسماعيل',
+    'حنين علي ابراهيم ميعاد',
+    'راما احمد توفيق الزقه',
+    'رهف سعيد شحادة فلاح',
+    'زينب محمد رياض حماده',
+    'سعاد مازن محمد الشامي',
+    'سمر محمد صابر ظاهر',
+    'سيلين منصور عبد شحاده',
+    'عادل محمد عادل أبو عرب',
+    'عبد الرحمن وليد محمد',
+    'علي مصطفى حسن سالم',
+    'علي ياسر نمر فاعور',
+    'عمران مازن صالح مرعي',
+    'فاطمه محمد خالد قاسم',
+    'قمر حسين عمر حمزة',
+    'كريم محمود عبد الحفيظ',
+    'ليا محمد عمر عباس',
+    'لين رشدي موسى الصالح',
+    'لين ماهر احمد العيسى',
+    'لين وسام احمد حسين',
+    'ماريا طلعت احمد مراد',
+    'محمد احمد محمد الصعيدي',
+    'محمد سامر محمد الصالح',
+    'محمد علي محمد ابو شقير',
+    'محمد علي محمد عبد الجليل',
+    'محمد قاسم عادل عفيفي',
+    'محمود شادي محمود شحادة',
+    'مرام احمد كايد خضره',
+    'نرجس هاني احمد عقلة',
+    'نور محمد علي علي',
+    'هلا شفيق علي فلوس',
+    'يارا محمود السيد السعدني',
+  ],
+  '8B': [
+    'أسينات احمد فريد العلي',
+    'اسامة بسام عبد الرحمن حمو',
+    'امال ساري علي زيداني',
+    'امنة محمد كمال قدورة',
+    'امير هشام مصطفى كروم',
+    'ايمان بسام خالد محمد',
+    'بيسان بسام عبد الرحمن حمو',
+    'تاليا انس ابراهيم المنديل',
+    'حبيبة عوني علي الزبيدات',
+    'حلا اشرف احمد الحاج علي',
+    'حنين فتحي علي حميد',
+    'راما خالد محمد عطعوط',
+    'رضوان جهاد رضوان ديب',
+    'رواد مروان ابراهيم العبدالله',
+    'زهراء عماد وليد شيخه',
+    'سارة فادي عدنان فارس',
+    'سامي يسار سامي معروف',
+    'سعيد ماهر سعيد سعيد',
+    'سهى عامر احمد عطية',
+    '"صلاح الدين" مصطفى  بللي',
+    'علي مصطفى علي سريس',
+    'عمر حسام حسين الموسى',
+    'فاطمه جمال احمد المحمود',
+    'فضل احمد محمد حسين',
+    'كريم رائد محمد دلاشي',
+    'لارا محمد خالد عبد الغني',
+    'ليلاس وسيم شحادة شحاده',
+    'ماريه يحيى محمد ابو هموس',
+    'محمد احمد محمد شريده',
+    'محمد حسام عاطف أبو شباب',
+    'محمد حكمت غاندي عبدالله',
+    '"محمد علي" محمود  احمد',
+    'محمد هشام احمد مره',
+    'محمود نايف مصطفى قاسميه',
+    'مريم محمود "محي الدين" مرّه',
+    'ملاك يونس محمد رحال',
+    'ميريانا احمد مصطفى  عيتاني',
+    'هدى محمود محمد الركن',
+    'وسيله سعدو درويش ششنيه',
+    'يحيى زكريا سميح حمو',
+  ],
+  '8C': [
+    'آلاء رباح محمود شراب',
+    'آلاء محمود صالح أدلبي',
+    'ابراهيم محمد إبراهيم عزيز',
+    'امير ماجد احمد اسماعيل',
+    'بتول فايز محمد حمود',
+    'بهاء الدين بلال "بهاء الدين" رشيد',
+    'بيان كمال احمد ابو سويد',
+    'تبارك محمد "محمد السيد" يوسف',
+    'تغريد خالد عزات يحيى',
+    'جمال محمد جمال حوحو',
+    'جنى حسن محمد الظريف',
+    'جهاد فادي حسن سالم',
+    'حلا محمد حسن ابو شنار',
+    'حلا مصطفى "محمد خير" بللي',
+    'خالد وسيم خالد حسن',
+    'راما زياد علي الحاج علي',
+    'راما عبد المجيد محمد سالم',
+    'راما محمد يوسف العلي',
+    'رزان زياد عبد الناصر اصمهان',
+    'روان عماد فوزي ابراهيم',
+    'ريم اديب احمد حسين',
+    'ريم ماهر عطا الخطيب',
+    'ريم "نور الدين" فايز عبد الرازق',
+    'سلام عصام حمودة ناجي',
+    'سلام "محمد بديع" فيصل العلي',
+    'سيلا هشام امين الطه',
+    'شهد صالح احمد مطر',
+    'صالح محمد سامي الشورى',
+    'عبد الله حسن سعيد سليمان',
+    'علي محمد ابراهيم صالح',
+    'علي ناصر علي حماده',
+    'عمر عصام  الصادق',
+    'فرح وائل باسل غزلان',
+    'لانا باسم امين صيداوي',
+    'لين احمد عيسى قاسم',
+    'لين وائل زياد الهبطه',
+    'ماسة عمار علي علي',
+    'محمد حسين احمد ندوه',
+    'محمود محمد سالم نجمي',
+    'ملكه "سعد الدين"  برجاوي',
+    'نور الهدى جهاد عزات عليان',
+  ],
+  '8D': [
+    'إسراء ايمن محمد قدسيه' ,
+    'احمد زاهر جهاد قدورة' ,
+    'احمد علاء احمد اسماعيل' ,
+    'احمد محمد رياض الخطيب' ,
+    'ادم خالد محمود قدورة' ,
+    'اسراء احمد داري نوفل' ,
+    'الما محمد جمال ششنيه' ,
+    'اياد احمد حسين محمود' ,
+    'اياد احمد سمير قدوره' ,
+    'بيسان علي احمد قاسم' ,
+    'تقى احمد موسى عبدالله' ,
+    'حسن علي حسن حبقزي' ,
+    'حمزة عاطف محمد الحاج محمد' ,
+    'دانا نبيل "نور الدين" الهندي' ,
+    'راما فادي علي سليم' ,
+    'رهف خليل عبدالله شاهين' ,
+    'روزا محمود علي عودي' ,
+    'ريتال نضال موسى مناد' ,
+    'زهراء محمد حسن بركات' ,
+    'زينب محمد عبد غنام' ,
+    'سالي فادي عثمان عباس' ,
+    'سماح احمد عطا أبو عنزه' ,
+    'علا محمد زيد عثمان' ,
+    'علي كمال علي سعد' ,
+    'عمر محمود عباس الحايك' ,
+    'غزل محمد خليل ابو عرب' ,
+    'غفران محمد يوسف داوود' ,
+    'كريم عوني خالد عبد الغني' ,
+    'لين علي نايف حميد' ,
+    'ماريا ابراهيم درويش خزعل' ,
+    'محمد براء محمود  حسن' ,
+    'محمد بهاء ابراهيم العيسى' ,
+    'محمد خالد محمود مطر' ,
+    'محمد ربيع محمد هنداوي' ,
+    'محمود علي محمود يوسف' ,
+    'مصطفى "عماد الدين" تراوي' ,
+    'ميار سعيد محمد حسن' ,
+    'نور عباس محمد عمر' ,
+    'هبة يحيى عيسى ابو مايهه' ,
+    'هيلين فيصل "فضل الله" الراشد' ,
+    'يوسف عامر محمد مصريه' ,
+    'يوسف هيثم فايز بركة' ,
+  ]
+};
+
+/* ================================================================
+   MCQ CORRECT ANSWERS  (0-based index of correct option)
+   ================================================================ */
+const MCQ_CORRECT = {
+  recapQ1: 1,
+  recapQ2: 2,
+  e1Q1:    1,
+  e1Q2:    1,
+  e2Q2:    1,
+  e3Q1:    1,
+  e3Q2:    2,   /* 35deg from surface = 55deg from normal */
+  e3Q3:    1,
+  e5Q1:    2,
+  e5Q2:    1,   /* i+r=80, i=r, i=40 */
+  e5Q3:    0,
+  e5Q4:    3
+};
+
+/* ================================================================
+   STATE
+   ================================================================ */
+let studentName = '', studentClass = '';
+let currentSection = '';
+let scores = {};
+let mcqAnswered = {};
+let exAttempts = { 1: 0 };
+let selfRatings = {};
+let ex1AngleVal = 40;
+let protoAngleVal = 35;
+let drawAngleVal = 50;
+let protoUserAngle = 30;
+let protoVerified = false;
+let imageb64 = '';
+let shadowAnimId = null;
+let shadowAnimAngle = 5;
+let constructMode = false;
+let scatterMode = 'reflection';
+let mirrorAngleDeg = 45;
+let gameLevel = 1;
+let gameLives = 3;
+let gameScoreVal = 0;
+let gameDone = false;
+let gameBonus = 0;
+const SECTION_ORDER = ['s0','s1','s2','s3','s4','s5','s6'];
+
+/* ================================================================
+   GAME LEVELS
+   All levels: horizontal laser (laserY === mirrorY).
+   Reflected direction = (cos2theta, sin2theta) for mirror angle theta.
+   Answers verified mathematically.
+   ================================================================ */
+const LEVELS = [
+  { laserX:40, laserY:200, mirrorX:300, mirrorY:200,
+    targetX:360, targetY:96, targetR:24, answer:150,
+    hint:'Try around 150\u00b0 \u2014 the beam needs to go upward and to the right.' },
+  { laserX:40, laserY:210, mirrorX:300, mirrorY:210,
+    targetX:300, targetY:50, targetR:24, answer:135,
+    hint:'At 135\u00b0 a horizontal beam reflects straight upward. Try that!' },
+  { laserX:40, laserY:130, mirrorX:300, mirrorY:130,
+    targetX:450, targetY:260, targetR:26, answer:20,
+    hint:'A small angle (~20\u00b0) deflects the beam down and to the right.' },
+  { laserX:40, laserY:200, mirrorX:260, mirrorY:200,
+    targetX:410, targetY:70, targetR:24, answer:160,
+    hint:'Try around 160\u00b0 to send the beam steeply upward to the right.' },
+  { laserX:40, laserY:200, mirrorX:300, mirrorY:200,
+    targetX:340, targetY:80, targetR:18, answer:145,
+    hint:'Precision challenge! About 145\u00b0 sends the beam to this tight target.' }
+];
+
+/* ================================================================
+   SEED VALUES FROM NAME
+   ================================================================ */
+function seedValues(name) {
+  if (!name) return;
+  const seed = name.split('').reduce(function(a,c){ return a + c.charCodeAt(0); }, 0);
+  const angles = [25,30,35,40,45,50,55,60,65,70];
+  ex1AngleVal   = angles[seed % angles.length];
+  protoAngleVal = angles[(seed + 3) % angles.length];
+  drawAngleVal  = angles[(seed + 7) % angles.length];
+  const first = name.split(' ')[0];
+  const el1 = document.getElementById('ex1Angle');
+  const el2 = document.getElementById('ex1Name');
+  const el3 = document.getElementById('protoAngleLbl');
+  const el4 = document.getElementById('drawAngleLbl');
+  const el5 = document.getElementById('protoNameLbl');
+  if (el1) el1.textContent = ex1AngleVal;
+  if (el2) el2.textContent = first;
+  if (el3) el3.textContent = protoAngleVal;
+  if (el4) el4.textContent = drawAngleVal;
+  if (el5) el5.textContent = first;
+  resetProto();
+}
+
+/* ================================================================
+   STUDENT PICKER
+   ================================================================ */
+function setSection(cls) {
+  studentClass = cls;
+  document.querySelectorAll('.sec-btn').forEach(function(b){
+    b.classList.toggle('on', b.textContent.trim() === cls);
+  });
+  var names = STUDENTS[cls] || [];
+  var dropRow  = document.getElementById('nameDropdownRow');
+  var textRow  = document.getElementById('nameTextRow');
+  var warning  = document.getElementById('noNamesWarning');
+  var startBtn = document.getElementById('startBtn');
+  var sel      = document.getElementById('stuName');
+  var txt      = document.getElementById('stuNameText');
+
+  if (names.length === 0) {
+    /* No names loaded: show text input fallback */
+    if (dropRow)  dropRow.style.display  = 'none';
+    if (textRow)  textRow.style.display  = 'flex';
+    if (warning)  warning.style.display  = 'block';
+    if (txt)      txt.value = '';
+    startBtn.disabled = true;
+  } else {
+    /* Names available: show the dropdown */
+    if (dropRow)  dropRow.style.display  = 'flex';
+    if (textRow)  textRow.style.display  = 'none';
+    if (warning)  warning.style.display  = 'none';
+    sel.innerHTML = '<option value="">-- Choose your name --</option>';
+    names.slice().sort(function(a,b){ return a.localeCompare(b,'ar'); }).forEach(function(n){
+      var o = document.createElement('option');
+      o.value = n; o.textContent = n; sel.appendChild(o);
+    });
+    startBtn.disabled = true;
+  }
+}
+
+document.getElementById('stuName').addEventListener('change', function(){
+  studentName = this.value;
+  document.getElementById('startBtn').disabled = !studentName;
+});
+
+function startLab() {
+  var txtEl = document.getElementById('stuNameText');
+  var selEl = document.getElementById('stuName');
+  studentName = (txtEl && txtEl.offsetParent !== null && txtEl.value.trim())
+                ? txtEl.value.trim()
+                : selEl.value;
+  if (!studentName || !studentClass) return;
+  document.getElementById('picker').style.display = 'none';
+  seedValues(studentName);
+  initSidebar();
+  showSection('s0');
+  startTimer();
+  initShadowCanvas();
+  initSurfaceCanvas();
+  initAngleCanvas();
+  initScatterCanvas();
+  initGameCanvas();
+  initProtoCanvas();
+}
+
+/* ================================================================
+   TIMER
+   ================================================================ */
+function startTimer() {
+  setInterval(function(){
+    var e = Math.floor((Date.now() - LAB_START) / 1000);
+    var m = String(Math.floor(e/60)).padStart(2,'0');
+    var s = String(e%60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = m+':'+s;
+  }, 1000);
+}
+
+/* ================================================================
+   SIDEBAR & SECTION NAV
+   ================================================================ */
+function initSidebar() {
+  var dots = document.getElementById('progDots');
+  dots.innerHTML = '';
+  SECTION_ORDER.slice(0,-1).forEach(function(id,i){
+    var d = document.createElement('div');
+    d.className = 'prog-dot'; d.id = 'dot_'+id;
+    d.title = 'Section '+(i+1);
+    d.onclick = function(){ showSection(id); };
+    dots.appendChild(d);
+  });
+}
+
+function showSection(id) {
+  var prev = currentSection;
+  if (prev && prev !== id && SECTION_ORDER.indexOf(prev) < SECTION_ORDER.indexOf(id)) {
+    var dot = document.getElementById('dot_'+prev);
+    if (dot) { dot.classList.remove('active'); dot.classList.add('done'); }
+  }
+  if (id === 's6') buildScoreTable();
+  document.querySelectorAll('.lab-section').forEach(function(s){ s.classList.remove('visible'); });
+  var el = document.getElementById(id);
+  if (el) { el.classList.add('visible'); el.scrollIntoView({ behavior:'smooth', block:'start' }); }
+  currentSection = id;
+  document.querySelectorAll('.side-nav a').forEach(function(a){
+    a.classList.toggle('active', a.textContent.indexOf(
+      id==='s0'?'Recap':id==='s1'?'Engage':id==='s2'?'Explore':
+      id==='s3'?'Explain':id==='s4'?'Elaborate':id==='s5'?'Evaluate':'Submit') > -1);
+  });
+  var dot2 = document.getElementById('dot_'+id);
+  if (dot2 && !dot2.classList.contains('done')) {
+    document.querySelectorAll('.prog-dot').forEach(function(d){ d.classList.remove('active'); });
+    dot2.classList.add('active');
+  }
+  if (id==='s2') { initAngleCanvas(); }
+  if (id==='s3') { initScatterCanvas(); drawGame(); }
+  if (id==='s4') { initProtoCanvas(); }
+}
+
+/* ================================================================
+   SCORE DISPLAY
+   ================================================================ */
+function updateScoreDisplay() {
+  var raw = Object.keys(scores).filter(function(k){ return k!=='gameBonus'; })
+    .reduce(function(a,k){ return a + (scores[k]||0); }, 0);
+  raw = Math.min(raw, 15);
+  var bonus = scores['gameBonus'] || 0;
+  var scaled = Math.round(((raw+bonus)/16)*200)/10;
+  scaled = Math.min(scaled, 20);
+  document.getElementById('sideScore').textContent = scaled.toFixed(1);
+  var offset = 175.9 * (1 - (raw+bonus)/16);
+  document.getElementById('scoreRing').style.strokeDashoffset = offset;
+}
+
+/* ================================================================
+   MCQ ENGINE
+   ================================================================ */
+function checkMCQ(qid, btn) {
+  if (mcqAnswered[qid]) return;
+  mcqAnswered[qid] = true;
+  var correct = MCQ_CORRECT[qid];
+  var opts = document.querySelectorAll('#'+qid+'opts .mcq-opt');
+  var idx = Array.prototype.indexOf.call(opts, btn);
+  var isRight = (idx === correct);
+  opts.forEach(function(o,i){
+    o.disabled = true;
+    if (i === correct) o.classList.add('correct');
+  });
+  if (!isRight) btn.classList.add('wrong');
+  var fb = document.getElementById(qid+'fb');
+  if (fb) {
+    fb.textContent = isRight ? '\u2713 Correct!' : '\u2717 Incorrect \u2014 see the highlighted correct answer.';
+    fb.className = 'ex-fb '+(isRight?'correct':'wrong');
+    if (qid==='e3Q2' && !isRight) {
+      fb.textContent += ' Explanation: 35\u00b0 from surface \u2192 angle from normal = 90\u00b0 \u2212 35\u00b0 = 55\u00b0. So i = r = 55\u00b0.';
+    }
+    if (qid==='e5Q2' && !isRight) {
+      fb.textContent += ' Explanation: i + r = 80\u00b0, and since i = r, we get 2i = 80\u00b0 \u2192 i = 40\u00b0.';
+    }
+  }
+  scores[qid] = isRight ? 1 : 0;
+  if (isRight) playSuccess(); else playWrong();
+  updateScoreDisplay();
+}
+
+/* ================================================================
+   EXERCISE 1
+   ================================================================ */
+var hintLevel1 = 0;
+function showHint(num) {
+  var hints = [
+    'Hint 1: Think about the law of reflection \u2014 what does it say about i and r?',
+    'Hint 2: The law states: angle of reflection = angle of incidence. What is i here?',
+    'Hint 3: i = '+ex1AngleVal+'\u00b0, so r = '+ex1AngleVal+'\u00b0. They are always equal!'
+  ];
+  var box = document.getElementById('hint1');
+  if (hintLevel1 < hints.length) {
+    box.textContent = hints[hintLevel1++];
+    box.style.display = 'block';
+  }
+}
+
+function checkEx1() {
+  var val = parseFloat(document.getElementById('ex1').value);
+  exAttempts[1] = (exAttempts[1]||0)+1;
+  document.getElementById('ex1att').textContent = exAttempts[1];
+  var ok = !isNaN(val) && Math.abs(val - ex1AngleVal) <= 0.5;
+  var fb = document.getElementById('ex1fb');
+  fb.textContent = ok ? '\u2713 Correct! r = '+ex1AngleVal+'\u00b0 = i \u2714' :
+    '\u2717 Not quite. Remember: angle of incidence = angle of reflection.';
+  fb.className = 'ex-fb '+(ok?'correct':'wrong');
+  scores['ex1'] = ok ? 2 : 0;
+  if (ok) playSuccess(); else playWrong();
+  updateScoreDisplay();
+}
+
+/* ================================================================
+   SHADOW CANVAS
+   ================================================================ */
+function initShadowCanvas() { updateShadow(90); }
+
+function updateShadow(deg) {
+  document.getElementById('sunAngleVal').textContent = deg+'\u00b0';
+  var c = document.getElementById('shadowCanvas');
+  if (!c) return;
+  drawShadowScene(c.getContext('2d'), c.width, c.height, parseFloat(deg), constructMode);
+}
+
+function drawShadowScene(ctx, W, H, sunDeg, showConstruct) {
+  ctx.clearRect(0,0,W,H);
+  var groundY = H*0.72;
+  /* Sky */
+  var t = sunDeg/180;
+  var skyG = ctx.createLinearGradient(0,0,0,groundY);
+  if (t < 0.14 || t > 0.86) {
+    skyG.addColorStop(0,'#0d1b2a'); skyG.addColorStop(1,'#ff6b35');
+  } else {
+    skyG.addColorStop(0,'#0369a1'); skyG.addColorStop(1,'#38bdf8');
+  }
+  ctx.fillStyle = skyG; ctx.fillRect(0,0,W,groundY);
+  /* Ground */
+  var gG = ctx.createLinearGradient(0,groundY,0,H);
+  gG.addColorStop(0,'#2d4a1e'); gG.addColorStop(1,'#1a2e10');
+  ctx.fillStyle = gG; ctx.fillRect(0,groundY,W,H-groundY);
+
+  var poleX = W*0.5, poleH = 88, poleBase = groundY;
+  var sunRad = sunDeg*Math.PI/180;
+  var arcR = Math.min(W,H)*0.4;
+  var sunX = poleX - arcR*Math.cos(sunRad);
+  var sunY = groundY - arcR*Math.sin(sunRad);
+
+  /* Sun arc */
+  ctx.beginPath();
+  ctx.arc(poleX,groundY,arcR,Math.PI,0,true);
+  ctx.strokeStyle='rgba(255,200,50,.13)'; ctx.lineWidth=1; ctx.setLineDash([4,8]);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  /* Sun glow */
+  var sg = ctx.createRadialGradient(sunX,sunY,0,sunX,sunY,34);
+  sg.addColorStop(0,'rgba(255,220,50,1)');
+  sg.addColorStop(0.4,'rgba(255,180,30,.6)');
+  sg.addColorStop(1,'rgba(255,150,0,0)');
+  ctx.fillStyle=sg;
+  ctx.beginPath(); ctx.arc(sunX,sunY,34,0,Math.PI*2); ctx.fill();
+
+  /* Shadow */
+  var elev = Math.sin(sunRad);
+  var shadowLen = elev>0.01 ? poleH/Math.tan(sunRad) : 0;
+  var shadowDir = sunX > poleX ? 1 : -1;
+  var shadowEnd = poleX + shadowDir*Math.min(Math.abs(shadowLen),W*0.58);
+  ctx.beginPath();
+  ctx.moveTo(poleX-5,poleBase); ctx.lineTo(poleX+5,poleBase);
+  ctx.lineTo(shadowEnd+shadowDir*3,poleBase-1); ctx.lineTo(shadowEnd-shadowDir*2,poleBase+1);
+  ctx.closePath();
+  var sha = Math.max(0,0.72-Math.abs(elev-0.5)*0.5);
+  ctx.fillStyle='rgba(0,0,0,'+sha+')'; ctx.fill();
+
+  /* Construction lines */
+  if (showConstruct) {
+    ctx.setLineDash([6,5]);
+    ctx.strokeStyle='rgba(255,240,80,.8)'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(sunX,sunY); ctx.lineTo(shadowEnd,poleBase); ctx.stroke();
+    /* Label distance */
+    ctx.fillStyle='rgba(255,240,80,.7)'; ctx.font='11px DM Mono,monospace';
+    ctx.textAlign='center';
+    ctx.fillText('ray path',( sunX+shadowEnd)/2-20,(sunY+poleBase)/2-12);
+    /* Normal at pole */
+    ctx.strokeStyle='rgba(244,114,182,.85)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(poleX,poleBase-poleH-18); ctx.lineTo(poleX,poleBase); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(244,114,182,.8)';
+    ctx.fillText('normal',poleX+6,poleBase-poleH-22);
+    ctx.textAlign='left';
+  }
+
+  /* Pole figure */
+  ctx.fillStyle='#1e3a5f'; ctx.fillRect(poleX-5,poleBase-poleH+20,10,poleH-20);
+  ctx.fillStyle='#d4a76a';
+  ctx.beginPath(); ctx.arc(poleX,poleBase-poleH+14,11,0,Math.PI*2); ctx.fill();
+
+  /* Shadow length label */
+  if (Math.abs(shadowLen)>15) {
+    ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='10px DM Sans,sans-serif';
+    ctx.textAlign='center';
+    var midX=(poleX+shadowEnd)/2;
+    ctx.fillText('shadow \u2248 '+Math.round(Math.abs(shadowLen))+'cm',midX,poleBase+14);
+  }
+
+  /* Time indicator */
+  var th = Math.round(6+(sunDeg/180)*12);
+  var ts = th<12 ? th+':00 AM' : (th===12?'12:00 PM':(th-12)+':00 PM');
+  ctx.fillStyle='rgba(255,255,255,.82)'; ctx.font='bold 12px DM Mono,monospace';
+  ctx.textAlign='right';
+  ctx.fillText('\u2248 '+ts,W-10,20);
+  ctx.textAlign='left';
+}
+
+function toggleShadowAnim() {
+  var btn = document.getElementById('animBtn');
+  if (shadowAnimId) {
+    cancelAnimationFrame(shadowAnimId); shadowAnimId=null;
+    btn.textContent='\u25B6 Animate Day'; btn.classList.remove('active');
+  } else {
+    btn.textContent='\u23F8 Pause'; btn.classList.add('active');
+    shadowAnimAngle=5;
+    function step(){
+      shadowAnimAngle+=0.45;
+      if (shadowAnimAngle>175) shadowAnimAngle=5;
+      document.getElementById('sunSlider').value=shadowAnimAngle;
+      updateShadow(shadowAnimAngle);
+      shadowAnimId=requestAnimationFrame(step);
+    }
+    shadowAnimId=requestAnimationFrame(step);
+  }
+}
+
+function toggleConstruct() {
+  constructMode=!constructMode;
+  var btn=document.getElementById('constructBtn');
+  btn.classList.toggle('active',constructMode);
+  btn.textContent=constructMode?'Hide Construction':'Show Construction';
+  updateShadow(document.getElementById('sunSlider').value);
+}
+
+/* ================================================================
+   SURFACE CANVAS
+   ================================================================ */
+var surfaceInfo = {
+  mirror:{ label:'Mirror (Polished Glass)', type:'regular', color:'#94a3b8',
+    desc:'&#x1FA9E; <strong>Regular reflection!</strong> The perfectly smooth glass surface reflects all rays in one parallel direction \u2192 you see a clear image of yourself.' },
+  matte:{ label:'Matte White Wall', type:'diffuse', color:'#d1d5db',
+    desc:'&#x1F9F1; <strong>Diffuse (scattered) reflection!</strong> The wall surface is microscopically rough. Rays scatter in all random directions \u2192 no image, just brightness.' },
+  water:{ label:'Still Water', type:'regular', color:'#0ea5e9',
+    desc:'&#x1F4A7; <strong>Regular reflection!</strong> Calm water is nearly perfectly smooth \u2192 acts like a mirror and produces a clear reflection.' },
+  paper:{ label:'White Paper', type:'diffuse', color:'#f5f5f4',
+    desc:'&#x1F4C4; <strong>Diffuse reflection!</strong> Paper fibres create a microscopically rough surface. Light scatters everywhere \u2192 readable from any angle, but no image.' },
+  metal:{ label:'Polished Metal', type:'regular', color:'#b8c5d1',
+    desc:'\u2699\uFE0F <strong>Regular reflection!</strong> Polished metal has an extremely smooth surface \u2192 reflects light in one organised direction like a mirror.' }
+};
+
+function initSurfaceCanvas() {
+  var c=document.getElementById('surfaceCanvas');
+  if (!c) return;
+  var ctx=c.getContext('2d'); var W=c.width,H=c.height;
+  ctx.fillStyle='#07090f'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(56,189,248,.35)'; ctx.font='14px DM Sans,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('Select a surface below to shine your virtual torch \u2193',W/2,H/2);
+  ctx.textAlign='left';
+}
+
+function shineTorch(type) {
+  var c=document.getElementById('surfaceCanvas');
+  if (!c) return;
+  var ctx=c.getContext('2d'); var W=c.width,H=c.height;
+  var data=surfaceInfo[type];
+  ctx.fillStyle='#07090f'; ctx.fillRect(0,0,W,H);
+  var surfY=H*0.70;
+  /* surface */
+  ctx.fillStyle=data.color; ctx.fillRect(60,surfY,W-120,18);
+  ctx.fillStyle='rgba(255,255,255,.12)'; ctx.font='10px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText(data.label,W/2,surfY+32);
+  /* torch */
+  var torchX=90,torchY=55,hitX=220,hitY=surfY;
+  /* incident ray */
+  var ig=ctx.createLinearGradient(torchX,torchY,hitX,hitY);
+  ig.addColorStop(0,'rgba(255,235,50,.95)'); ig.addColorStop(1,'rgba(255,235,50,.35)');
+  ctx.strokeStyle=ig; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(torchX,torchY); ctx.lineTo(hitX,hitY); ctx.stroke();
+  ctx.font='22px serif'; ctx.textAlign='left';
+  ctx.fillText('torch',torchX-20,torchY-8);
+  /* normal */
+  ctx.setLineDash([5,5]); ctx.strokeStyle='rgba(244,114,182,.8)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(hitX,hitY-65); ctx.lineTo(hitX,hitY+15); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(244,114,182,.7)'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='left';
+  ctx.fillText('Normal',hitX+4,hitY-55);
+  /* reflected */
+  if (data.type==='regular') {
+    ctx.strokeStyle='rgba(56,189,248,.92)'; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(hitX,hitY); ctx.lineTo(360,55); ctx.stroke();
+    drawArrow(ctx,360,55,hitX,hitY,'rgba(56,189,248,.92)',9);
+    ctx.font='20px serif'; ctx.fillText('\uD83D\uDC41\uFE0F',378,48);
+    ctx.fillStyle='#4ade80'; ctx.font='bold 12px DM Sans,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('\u2705 REGULAR REFLECTION \u2014 Clear image formed!',W/2,surfY+52);
+  } else {
+    var rAngles=[-72,-44,-18,8,34,58,82];
+    rAngles.forEach(function(a){
+      var r=a*Math.PI/180;
+      var ex=hitX+Math.sin(r)*80,ey=hitY-Math.cos(r)*80;
+      ctx.strokeStyle='rgba(56,189,248,'+(0.25+Math.abs(a/180)*0.5)+')';
+      ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(hitX,hitY); ctx.lineTo(ex,ey); ctx.stroke();
+    });
+    ctx.fillStyle='#fbbf24'; ctx.font='bold 12px DM Sans,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('\u26A1 DIFFUSE REFLECTION \u2014 No image, rays scatter everywhere!',W/2,surfY+52);
+  }
+  ctx.textAlign='left';
+  /* show result */
+  var res=document.getElementById('surfaceResult');
+  res.style.display='block';
+  res.innerHTML=data.desc;
+  res.className='info-box '+(data.type==='regular'?'succ':'warn');
+}
+
+/* ================================================================
+   ANGLE EXPLORER CANVAS
+   ================================================================ */
+function initAngleCanvas() { drawAngleScene(40); }
+
+function updateAngle(val) {
+  var deg=parseInt(val);
+  document.getElementById('angleVal').textContent=deg+'\u00b0';
+  document.getElementById('iDisplay').textContent=deg+'\u00b0';
+  document.getElementById('rDisplay').textContent=deg+'\u00b0';
+  drawAngleScene(deg);
+}
+
+function drawAngleScene(incDeg) {
+  var c=document.getElementById('angleCanvas'); if (!c) return;
+  var ctx=c.getContext('2d'); var W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#070b14'; ctx.fillRect(0,0,W,H);
+  var mY=H*0.66, cx=W/2, rLen=165;
+  /* Mirror */
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(45,mY); ctx.lineTo(W-45,mY); ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(45,mY-3); ctx.lineTo(W-45,mY-3); ctx.stroke();
+  ctx.fillStyle='rgba(148,163,184,.4)'; ctx.font='11px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText('PLANE MIRROR',cx,mY+17);
+  /* Normal */
+  ctx.setLineDash([7,5]); ctx.strokeStyle='#f472b6'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx,mY-140); ctx.lineTo(cx,mY+38); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f472b6'; ctx.font='10px DM Mono,monospace';
+  ctx.textAlign='left'; ctx.fillText('NORMAL',cx+5,mY-132);
+  /* Incident ray */
+  var iRad=incDeg*Math.PI/180;
+  var iSX=cx-Math.sin(iRad)*rLen, iSY=mY-Math.cos(iRad)*rLen;
+  ctx.strokeStyle='#fbbf24'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(iSX,iSY); ctx.lineTo(cx,mY); ctx.stroke();
+  drawArrow(ctx,cx,mY,iSX,iSY,'#fbbf24',10);
+  /* Reflected ray */
+  var rEX=cx+Math.sin(iRad)*rLen, rEY=mY-Math.cos(iRad)*rLen;
+  ctx.strokeStyle='#38bdf8'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(cx,mY); ctx.lineTo(rEX,rEY); ctx.stroke();
+  drawArrow(ctx,rEX,rEY,cx,mY,'#38bdf8',10);
+  /* Angle arcs */
+  ctx.strokeStyle='#fbbf24'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,mY,52,-Math.PI/2,-Math.PI/2-iRad,true); ctx.stroke();
+  var iLA=-Math.PI/2-iRad/2;
+  ctx.fillStyle='#fbbf24'; ctx.font='bold 13px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('i='+incDeg+'\u00b0',cx+Math.cos(iLA)*76,mY+Math.sin(iLA)*76);
+  ctx.strokeStyle='#38bdf8'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,mY,52,-Math.PI/2,-Math.PI/2+iRad,false); ctx.stroke();
+  var rLA=-Math.PI/2+iRad/2;
+  ctx.fillStyle='#38bdf8';
+  ctx.fillText('r='+incDeg+'\u00b0',cx+Math.cos(rLA)*76,mY+Math.sin(rLA)*76);
+  /* Labels */
+  ctx.fillStyle='#fbbf24'; ctx.font='11px DM Sans,sans-serif';
+  ctx.fillText('incident ray',(cx+iSX)/2-22,(mY+iSY)/2-8);
+  ctx.fillStyle='#38bdf8';
+  ctx.fillText('reflected ray',(cx+rEX)/2+12,(mY+rEY)/2-8);
+  /* Hit dot */
+  ctx.fillStyle='#fff';
+  ctx.beginPath(); ctx.arc(cx,mY,5,0,Math.PI*2); ctx.fill();
+  ctx.textAlign='left';
+}
+
+/* ================================================================
+   SCATTER CANVAS
+   ================================================================ */
+function initScatterCanvas() { drawScatterScene('reflection'); }
+
+function showScatter(mode) {
+  scatterMode=mode;
+  document.getElementById('btnReflection').classList.toggle('active',mode==='reflection');
+  document.getElementById('btnScatter').classList.toggle('active',mode==='scatter');
+  var info=document.getElementById('scatterInfo');
+  if (mode==='reflection') {
+    info.innerHTML='<strong>Regular (Specular) Reflection:</strong> Occurs on smooth, polished surfaces. All reflected rays are parallel \u2192 a clear image is formed. Examples: mirror, still water, polished metal.';
+    info.className='info-box hl';
+  } else {
+    info.innerHTML='<strong>Diffuse (Scattered) Reflection:</strong> Occurs on rough surfaces. Reflected rays go in random directions \u2192 no image forms, but the object is visible from any angle. Examples: wall, paper, sand.';
+    info.className='info-box warn';
+  }
+  drawScatterScene(mode);
+}
+
+function drawScatterScene(mode) {
+  var c=document.getElementById('scatterCanvas'); if (!c) return;
+  var ctx=c.getContext('2d'); var W=c.width,H=c.height;
+  ctx.fillStyle='#070b14'; ctx.fillRect(0,0,W,H);
+  var surfY=H*0.72, numR=5, sp=80, sX=W/2-(numR-1)*sp/2;
+  if (mode==='reflection') {
+    ctx.strokeStyle='#94a3b8'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(40,surfY); ctx.lineTo(W-40,surfY); ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(40,surfY-2); ctx.lineTo(W-40,surfY-2); ctx.stroke();
+    ctx.fillStyle='rgba(148,163,184,.38)'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText('SMOOTH SURFACE (polished mirror)',W/2,surfY+14);
+    for (var i=0;i<numR;i++){
+      var x=sX+i*sp;
+      ctx.strokeStyle='#fbbf24'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x-38,surfY-85); ctx.lineTo(x,surfY); ctx.stroke();
+      drawArrow(ctx,x,surfY,x-38,surfY-85,'#fbbf24',7);
+      ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(244,114,182,.35)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x,surfY-50); ctx.lineTo(x,surfY); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle='#38bdf8'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x,surfY); ctx.lineTo(x+38,surfY-85); ctx.stroke();
+      drawArrow(ctx,x+38,surfY-85,x,surfY,'#38bdf8',7);
+    }
+    ctx.fillStyle='#4ade80'; ctx.font='bold 12px DM Sans,sans-serif';
+    ctx.fillText('All reflected rays PARALLEL \u2192 Clear image!',W/2,18);
+  } else {
+    /* rough surface */
+    ctx.strokeStyle='#78716c'; ctx.lineWidth=2;
+    var px=40,py=surfY;
+    for (var j=55;j<W-40;j+=14){
+      var py2=surfY+(Math.random()-0.5)*10;
+      ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(j,py2); ctx.stroke();
+      px=j; py=py2;
+    }
+    ctx.fillStyle='rgba(120,113,108,.38)'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText('ROUGH SURFACE (paper / wall)',W/2,surfY+14);
+    for (var k=0;k<numR;k++){
+      var xk=sX+k*sp;
+      ctx.strokeStyle='#fbbf24'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(xk-38,surfY-85); ctx.lineTo(xk,surfY); ctx.stroke();
+      drawArrow(ctx,xk,surfY,xk-38,surfY-85,'#fbbf24',7);
+      var rAng=[-80,-45,-15,15,50,85];
+      rAng.forEach(function(a){
+        var r2=a*Math.PI/180;
+        ctx.strokeStyle='rgba(56,189,248,'+(0.22+Math.abs(a/200))+')'; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(xk,surfY); ctx.lineTo(xk+Math.sin(r2)*72,surfY-Math.cos(r2)*72); ctx.stroke();
+      });
+    }
+    ctx.fillStyle='#fbbf24'; ctx.font='bold 12px DM Sans,sans-serif';
+    ctx.fillText('Rays scatter in ALL directions \u2192 No image, visible from everywhere!',W/2,18);
+  }
+  ctx.textAlign='left';
+}
+
+/* ================================================================
+   UV REVEAL
+   ================================================================ */
+function revealUV() {
+  ['uvLine1','uvLine2','uvLine3'].forEach(function(id,i){
+    setTimeout(function(){ document.getElementById(id).classList.add('revealed'); }, i*420);
+  });
+  playBonus();
+}
+
+/* ================================================================
+   LASER GAME
+   ================================================================ */
+function initGameCanvas() { drawGame(); }
+
+function rotateMirror(val) {
+  mirrorAngleDeg=parseInt(val);
+  document.getElementById('mirrorAngleDisplay').textContent=mirrorAngleDeg;
+  drawGame();
+}
+
+function getReflected(mRad) {
+  /* Horizontal incident ray d=(1,0) reflected about mirror at angle mRad */
+  var nx=-Math.sin(mRad), ny=Math.cos(mRad);
+  var dot=nx; /* d.n = 1*nx + 0*ny = nx */
+  return { x:1-2*dot*nx, y:0-2*dot*ny };
+}
+
+function drawGame() {
+  var c=document.getElementById('gameCanvas'); if (!c) return;
+  var ctx=c.getContext('2d'); var W=c.width,H=c.height;
+  var lv=LEVELS[gameLevel-1];
+  ctx.fillStyle='#040810'; ctx.fillRect(0,0,W,H);
+  /* Grid */
+  ctx.strokeStyle='rgba(56,189,248,.045)'; ctx.lineWidth=1;
+  for (var x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for (var y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.strokeStyle='rgba(148,163,184,.22)'; ctx.lineWidth=1.5;
+  ctx.strokeRect(1,1,W-2,H-2);
+  /* Mirror */
+  var mRad=mirrorAngleDeg*Math.PI/180;
+  var mLen=55, mx=lv.mirrorX, my=lv.mirrorY;
+  var m1x=mx-Math.cos(mRad)*mLen,m1y=my-Math.sin(mRad)*mLen;
+  var m2x=mx+Math.cos(mRad)*mLen,m2y=my+Math.sin(mRad)*mLen;
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(m1x,m1y); ctx.lineTo(m2x,m2y); ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.22)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(m1x,m1y-1); ctx.lineTo(m2x,m2y-1); ctx.stroke();
+  /* Normal */
+  var nx2=-Math.sin(mRad), ny2=Math.cos(mRad);
+  ctx.setLineDash([5,5]); ctx.strokeStyle='rgba(244,114,182,.6)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(mx-nx2*52,my-ny2*52); ctx.lineTo(mx+nx2*52,my+ny2*52); ctx.stroke();
+  ctx.setLineDash([]);
+  /* Laser source */
+  ctx.shadowColor='#4ade80'; ctx.shadowBlur=14;
+  ctx.fillStyle='#4ade80';
+  ctx.beginPath(); ctx.arc(lv.laserX,lv.laserY,8,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle='#4ade80'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('LASER',lv.laserX,lv.laserY-14);
+  /* Incident ray (horizontal from source to mirror) */
+  var laserG=ctx.createLinearGradient(lv.laserX,lv.laserY,mx,my);
+  laserG.addColorStop(0,'rgba(74,222,128,.95)'); laserG.addColorStop(1,'rgba(74,222,128,.55)');
+  ctx.strokeStyle=laserG; ctx.lineWidth=3; ctx.lineCap='butt';
+  ctx.shadowColor='#4ade80'; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.moveTo(lv.laserX,lv.laserY); ctx.lineTo(mx,my); ctx.stroke();
+  ctx.shadowBlur=0;
+  /* Reflected ray */
+  var r=getReflected(mRad);
+  var ext=700;
+  var rfEx=mx+r.x*ext, rfEy=my+r.y*ext;
+  var refG=ctx.createLinearGradient(mx,my,rfEx,rfEy);
+  refG.addColorStop(0,'rgba(56,189,248,.95)'); refG.addColorStop(1,'rgba(56,189,248,.08)');
+  ctx.strokeStyle=refG; ctx.lineWidth=2;
+  ctx.shadowColor='#38bdf8'; ctx.shadowBlur=6;
+  ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(rfEx,rfEy); ctx.stroke();
+  ctx.shadowBlur=0;
+  /* Angle labels */
+  var incAngle=Math.round(Math.acos(Math.min(1,Math.abs(-nx2)))*180/Math.PI);
+  ctx.fillStyle='rgba(251,191,36,.75)'; ctx.font='11px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('i='+incAngle+'\u00b0',mx-28,my-28);
+  ctx.fillStyle='rgba(56,189,248,.75)';
+  ctx.fillText('r='+incAngle+'\u00b0',mx+32,my-28);
+  /* Target */
+  var tx=lv.targetX,ty=lv.targetY;
+  ctx.shadowColor='#fbbf24'; ctx.shadowBlur=14;
+  ctx.fillStyle='#fbbf24'; ctx.beginPath(); ctx.arc(tx,ty,16,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#ef4444'; ctx.beginPath(); ctx.arc(tx,ty,10,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(tx,ty,4,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle='#fbbf24'; ctx.font='10px DM Mono,monospace';
+  ctx.fillText('TARGET',tx,ty-22);
+  ctx.textAlign='left';
+}
+
+function checkLaser() {
+  if (gameDone) return;
+  var lv=LEVELS[gameLevel-1];
+  var mRad=mirrorAngleDeg*Math.PI/180;
+  var r=getReflected(mRad);
+  var mx=lv.mirrorX,my=lv.mirrorY;
+  /* Closest point on reflected ray to target */
+  var dx=lv.targetX-mx, dy=lv.targetY-my;
+  var t=dx*r.x+dy*r.y;
+  var closestX=mx+t*r.x, closestY=my+t*r.y;
+  var dist=Math.sqrt(Math.pow(closestX-lv.targetX,2)+Math.pow(closestY-lv.targetY,2));
+  var tol=lv.targetR||22;
+  var fb=document.getElementById('gameFb');
+  fb.style.display='block';
+  if (dist<tol && t>0) {
+    /* HIT */
+    gameScoreVal+=100;
+    document.getElementById('gameScore').textContent=gameScoreVal;
+    playBonus();
+    if (gameLevel>=5) {
+      gameDone=true; gameBonus=1; scores['gameBonus']=1;
+      fb.innerHTML='\uD83C\uDF89 PERFECT! All 5 levels complete! <strong>+1 bonus point earned!</strong>';
+      fb.className='info-box succ';
+      celebrate();
+    } else {
+      gameLevel++;
+      document.getElementById('gameLevel').textContent=gameLevel;
+      mirrorAngleDeg=45;
+      document.getElementById('mirrorSlider').value=45;
+      document.getElementById('mirrorAngleDisplay').textContent=45;
+      fb.innerHTML='\u2B50 HIT! Level '+(gameLevel-1)+' complete! Next level loaded.';
+      fb.className='info-box succ';
+      drawGame();
+    }
+  } else {
+    gameLives--;
+    updateGameLives();
+    playWrong();
+    if (gameLives<=0) {
+      gameDone=true;
+      fb.innerHTML='\uD83D\uDCA5 Out of lives! Final score: '+gameScoreVal+'.';
+      fb.className='info-box';
+    } else {
+      fb.innerHTML='\u274C Missed! '+gameLives+' lives left.';
+      fb.className='info-box warn';
+    }
+  }
+  updateScoreDisplay();
+}
+
+function showGameHint() {
+  var lv=LEVELS[gameLevel-1];
+  var hb=document.getElementById('gameHintBox');
+  hb.textContent=lv.hint;
+  hb.style.display='block';
+}
+
+function updateGameLives() {
+  var h='\u2764\uFE0F'.repeat(Math.max(0,gameLives))+'\uD83D\uDDA4'.repeat(Math.max(0,3-gameLives));
+  document.getElementById('gameLivesDiv').textContent=h;
+}
+
+function resetGame() {
+  gameLevel=1; gameLives=3; gameScoreVal=0; gameDone=false; gameBonus=0;
+  scores['gameBonus']=0;
+  document.getElementById('gameLevel').textContent=1;
+  document.getElementById('gameScore').textContent=0;
+  updateGameLives();
+  document.getElementById('gameFb').style.display='none';
+  document.getElementById('gameHintBox').style.display='none';
+  mirrorAngleDeg=45;
+  document.getElementById('mirrorSlider').value=45;
+  document.getElementById('mirrorAngleDisplay').textContent=45;
+  drawGame();
+  updateScoreDisplay();
+}
+
+/* ================================================================
+   PROTRACTOR EXERCISE
+   ================================================================ */
+function initProtoCanvas() { drawProto(protoUserAngle); }
+
+function updateProto(val) {
+  protoUserAngle=parseInt(val);
+  document.getElementById('protoVal').textContent=protoUserAngle+'\u00b0';
+  drawProto(protoUserAngle);
+}
+
+function drawProto(userAngle) {
+  var c=document.getElementById('protoCanvas'); if (!c) return;
+  var ctx=c.getContext('2d'); var W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#070b14'; ctx.fillRect(0,0,W,H);
+  var mY=H*0.7, cx=W/2, rLen=155;
+  /* Mirror */
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(40,mY); ctx.lineTo(W-40,mY); ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(40,mY-2); ctx.lineTo(W-40,mY-2); ctx.stroke();
+  ctx.fillStyle='rgba(148,163,184,.38)'; ctx.font='11px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText('PLANE MIRROR',cx,mY+17);
+  /* Normal */
+  ctx.setLineDash([7,5]); ctx.strokeStyle='#f472b6'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx,mY-145); ctx.lineTo(cx,mY+32); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f472b6'; ctx.font='10px DM Mono,monospace';
+  ctx.textAlign='left'; ctx.fillText('Normal',cx+5,mY-138);
+  /* Given incident ray */
+  var iRad=protoAngleVal*Math.PI/180;
+  var iSX=cx-Math.sin(iRad)*rLen, iSY=mY-Math.cos(iRad)*rLen;
+  ctx.strokeStyle='#fbbf24'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(iSX,iSY); ctx.lineTo(cx,mY); ctx.stroke();
+  drawArrow(ctx,cx,mY,iSX,iSY,'#fbbf24',10);
+  /* Incident angle arc */
+  ctx.strokeStyle='#fbbf24'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,mY,52,-Math.PI/2,-Math.PI/2-iRad,true); ctx.stroke();
+  var iLA=-Math.PI/2-iRad/2;
+  ctx.fillStyle='#fbbf24'; ctx.font='bold 13px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('i='+protoAngleVal+'\u00b0',cx+Math.cos(iLA)*74,mY+Math.sin(iLA)*74);
+  /* User reflected ray */
+  var uRad=userAngle*Math.PI/180;
+  var rEX=cx+Math.sin(uRad)*rLen, rEY=mY-Math.cos(uRad)*rLen;
+  var isCorrect=Math.abs(userAngle-protoAngleVal)<=3;
+  var refColor=protoVerified?(isCorrect?'#4ade80':'#f87171'):'#38bdf8';
+  ctx.strokeStyle=refColor; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(cx,mY); ctx.lineTo(rEX,rEY); ctx.stroke();
+  drawArrow(ctx,rEX,rEY,cx,mY,refColor,10);
+  /* Reflected angle arc */
+  ctx.strokeStyle=refColor; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,mY,52,-Math.PI/2,-Math.PI/2+uRad,false); ctx.stroke();
+  var rLA=-Math.PI/2+uRad/2;
+  ctx.fillStyle=refColor; ctx.font='bold 13px DM Mono,monospace';
+  ctx.fillText('r='+userAngle+'\u00b0',cx+Math.cos(rLA)*74,mY+Math.sin(rLA)*74);
+  /* Protractor overlay */
+  ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,mY,105,-Math.PI,0); ctx.stroke();
+  for (var a=0;a<=180;a+=15){
+    var ra2=a*Math.PI/180;
+    var tickLen=a%90===0?14:a%30===0?10:6;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(Math.PI-ra2)*(105-tickLen),mY-Math.sin(Math.PI-ra2)*(105-tickLen));
+    ctx.lineTo(cx+Math.cos(Math.PI-ra2)*105,mY-Math.sin(Math.PI-ra2)*105);
+    ctx.stroke();
+    if (a%30===0){
+      ctx.fillStyle='rgba(255,255,255,.2)'; ctx.font='9px DM Mono,monospace';
+      ctx.fillText(a,cx+Math.cos(Math.PI-ra2)*118-4,mY-Math.sin(Math.PI-ra2)*118+4);
+    }
+  }
+  /* Hit point */
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(cx,mY,5,0,Math.PI*2); ctx.fill();
+  ctx.textAlign='left';
+}
+
+function verifyProto() {
+  protoVerified=true;
+  var ok=Math.abs(protoUserAngle-protoAngleVal)<=3;
+  scores['proto']=ok?2:0;
+  var fb=document.getElementById('protoFb');
+  fb.style.display='block';
+  if (ok){
+    fb.innerHTML='\u2705 Excellent! r='+protoUserAngle+'\u00b0 matches i='+protoAngleVal+'\u00b0. The law of reflection holds! i = r \u2714';
+    fb.className='info-box succ'; playSuccess();
+  } else {
+    fb.innerHTML='\u274C Not quite. You set r='+protoUserAngle+'\u00b0 but i='+protoAngleVal+'\u00b0. Remember: r must equal i exactly. Adjust the slider.';
+    fb.className='info-box'; playWrong();
+  }
+  drawProto(protoUserAngle);
+  updateScoreDisplay();
+}
+
+function resetProto() {
+  protoVerified=false; scores['proto']=0; protoUserAngle=30;
+  var s=document.getElementById('protoSlider');
+  if(s){ s.value=30; }
+  var v=document.getElementById('protoVal');
+  if(v){ v.textContent='30\u00b0'; }
+  var fb=document.getElementById('protoFb');
+  if(fb){ fb.style.display='none'; }
+  drawProto(30);
+  updateScoreDisplay();
+}
+
+/* ================================================================
+   IMAGE UPLOAD
+   ================================================================ */
+function handleUpload(event) {
+  var file=event.target.files[0]; if (!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    imageb64=e.target.result;
+    var prev=document.getElementById('uploadPreview');
+    prev.src=imageb64; prev.style.display='block';
+    var zone=document.getElementById('uploadZone');
+    zone.querySelector('.upload-icon').textContent='\u2705';
+    zone.querySelector('.upload-txt').textContent='Drawing uploaded! ('+file.name+')';
+    playSuccess();
+  };
+  reader.readAsDataURL(file);
+}
+(function(){
+  var uz=document.getElementById('uploadZone');
+  if (!uz) return;
+  uz.addEventListener('dragover',function(e){e.preventDefault();uz.classList.add('drag-over');});
+  uz.addEventListener('dragleave',function(){uz.classList.remove('drag-over');});
+  uz.addEventListener('drop',function(e){
+    e.preventDefault(); uz.classList.remove('drag-over');
+    var files=e.dataTransfer.files;
+    if (files[0]){
+      document.getElementById('fileInput').files=files;
+      handleUpload({target:{files:files}});
+    }
+  });
+})();
+
+/* ================================================================
+   CHAPTER BREAK
+   ================================================================ */
+function triggerChapterBreak() {
+  var el=document.getElementById('chapterBreak');
+  el.classList.add('show');
+}
+function closeChapterBreak() {
+  document.getElementById('chapterBreak').classList.remove('show');
+  showSection('s1');
+}
+
+/* ================================================================
+   SELF-ASSESSMENT
+   ================================================================ */
+function selfRate(section, btn) {
+  selfRatings[section]=btn.textContent;
+  var parent=btn.parentElement;
+  parent.querySelectorAll('.emoji-btn').forEach(function(b){ b.classList.remove('sel'); });
+  btn.classList.add('sel');
+}
+
+/* ================================================================
+   SOUND
+   ================================================================ */
+var audioCtx=null;
+function getAC(){
+  if (!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freq,dur,type){
+  try{
+    var ctx=getAC(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type=type||'sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.14,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    o.start(); o.stop(ctx.currentTime+dur);
+  }catch(e){}
+}
+function playSuccess(){playTone(880,.08);setTimeout(function(){playTone(1100,.15);},90);}
+function playWrong(){playTone(180,.3,'sawtooth');}
+function playBonus(){[880,1100,1320,1760].forEach(function(f,i){setTimeout(function(){playTone(f,.12);},i*80);});}
+
+/* ================================================================
+   CONFETTI
+   ================================================================ */
+function celebrate(){
+  var cols=['#38bdf8','#4ade80','#fbbf24','#f472b6','#a78bfa','#f87171'];
+  for (var i=0;i<70;i++){
+    var el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText='left:'+Math.random()*100+'vw;top:-10px;background:'+
+      cols[Math.floor(Math.random()*cols.length)]+';animation-delay:'+
+      Math.random()+'s;animation-duration:'+(1.5+Math.random())+'s;';
+    document.body.appendChild(el);
+    setTimeout(function(){ if(el.parentNode)el.parentNode.removeChild(el); },3500);
+  }
+  playBonus();
+}
+
+/* ================================================================
+   ARROW HELPER
+   ================================================================ */
+function drawArrow(ctx,toX,toY,fromX,fromY,color,size){
+  var angle=Math.atan2(toY-fromY,toX-fromX);
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(toX,toY);
+  ctx.lineTo(toX-size*Math.cos(angle-Math.PI/6),toY-size*Math.sin(angle-Math.PI/6));
+  ctx.lineTo(toX-size*Math.cos(angle+Math.PI/6),toY-size*Math.sin(angle+Math.PI/6));
+  ctx.closePath(); ctx.fill();
+}
+
+/* ================================================================
+   SCORE BREAKDOWN
+   ================================================================ */
+function gradeFromScore(s,max){
+  var p=s/max;
+  if(p>=0.85)return 'A';
+  if(p>=0.70)return 'B';
+  if(p>=0.55)return 'C';
+  return 'D';
+}
+
+function buildScoreTable(){
+  var rows=[
+    ['Recap','Q1 \u2014 Rectilinear propagation','recapQ1',1],
+    ['Recap','Q2 \u2014 Shadow length at noon','recapQ2',1],
+    ['E1 Engage','Q1 \u2014 Mirror vs paper','e1Q1',1],
+    ['E1 Engage','Q2 \u2014 Virtual image','e1Q2',1],
+    ['E2 Explore','Exercise 1 \u2014 Angle of reflection','ex1',2],
+    ['E2 Explore','Q2 \u2014 Measuring from normal','e2Q2',1],
+    ['E3 Explain','Q1 \u2014 Reflection vs scattering','e3Q1',1],
+    ['E3 Explain','Q2 \u2014 Angle from surface (convert)','e3Q2',1],
+    ['E3 Explain','Q3 \u2014 Normal line style','e3Q3',1],
+    ['E4 Elaborate','Interactive protractor exercise','proto',2],
+    ['E5 Evaluate','Q1 \u2014 Specular surface','e5Q1',1],
+    ['E5 Evaluate','Q2 \u2014 Angle between rays (80\u00b0)','e5Q2',1],
+    ['E5 Evaluate','Q3 \u2014 Why diffuse is useful','e5Q3',1],
+    ['E5 Evaluate','Q4 \u2014 NOT required for reflection','e5Q4',1]
+  ];
+  var tbody=document.getElementById('scoreBody');
+  tbody.innerHTML='';
+  var totalAuto=0, maxAuto=15;
+  rows.forEach(function(r){
+    var s=scores[r[2]]||0; totalAuto+=s;
+    var tr=document.createElement('tr');
+    var col=s===r[3]?'var(--ok)':s>0?'var(--gold)':'var(--muted)';
+    tr.innerHTML='<td>'+r[0]+'</td><td>'+r[1]+'</td>'+
+      '<td style="color:'+col+'">'+s+'</td>'+
+      '<td style="color:var(--muted)">'+r[3]+'</td>';
+    tbody.appendChild(tr);
+  });
+  var bonus=scores['gameBonus']||0;
+  var total=Math.min(totalAuto+bonus,16);
+  var s20=Math.round((total/16)*200)/10;
+  document.getElementById('totalAuto').textContent=totalAuto+'/'+maxAuto;
+  document.getElementById('totalBonus').textContent=bonus;
+  document.getElementById('totalScore20').textContent=s20+'/20 (auto \u2014 drawing grade pending)';
+  var grade=gradeFromScore(total,16);
+  var gd=document.getElementById('gradeDisplay');
+  gd.style.display='block';
+  document.getElementById('gradeLetter').textContent=grade;
+  document.getElementById('grade20txt').textContent=s20+' / 20';
+  var msgs={A:'\uD83C\uDF1F Outstanding \u2014 excellent work!',B:'\uD83D\uDC4D Great job, keep it up!',
+    C:'\uD83D\uDCAA Good effort \u2014 review the lesson!',D:'\uD83D\uDCDA Study the material and try again.'};
+  document.getElementById('gradeMsg').textContent=msgs[grade]||'';
+  if (grade==='A'||total>=13) celebrate();
+  return {totalAuto:totalAuto,bonus:bonus,total:total,s20:s20,grade:grade};
+}
+
+/* ================================================================
+   SUBMIT
+   ================================================================ */
+async function submitLab(){
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='\u23F3 Submitting...';
+  var result=buildScoreTable();
+  var timeMins=Math.round((Date.now()-LAB_START)/60000);
+  var payload={
+    sheet:'LightReflection8',
+    name:studentName, class:studentClass, time_min:timeMins,
+    recap_q1_ok:scores['recapQ1']||0,
+    recap_q2_ok:scores['recapQ2']||0,
+    e1_q1_ok:scores['e1Q1']||0,
+    e1_q2_ok:scores['e1Q2']||0,
+    e2_ex1_val:document.getElementById('ex1').value,
+    e2_ex1_ok:scores['ex1']||0,
+    e2_ex1_attempts:exAttempts[1]||0,
+    e2_q2_ok:scores['e2Q2']||0,
+    e2_discovery:document.getElementById('discoveryJournal').value,
+    e3_q1_ok:scores['e3Q1']||0,
+    e3_q2_ok:scores['e3Q2']||0,
+    e3_q3_ok:scores['e3Q3']||0,
+    game_score:gameScoreVal,
+    game_bonus:gameBonus,
+    game_levels_reached:gameLevel,
+    e4_proto_ok:scores['proto']||0,
+    e4_drawing_uploaded:imageb64?'yes':'no',
+    e4_drawing_notes:document.getElementById('drawingNotes').value,
+    e5_q1_ok:scores['e5Q1']||0,
+    e5_q2_ok:scores['e5Q2']||0,
+    e5_q3_ok:scores['e5Q3']||0,
+    e5_q4_ok:scores['e5Q4']||0,
+    self_s0:selfRatings['s0']||'',
+    self_s1:selfRatings['s1']||'',
+    self_s2:selfRatings['s2']||'',
+    self_s3:selfRatings['s3']||'',
+    self_s4:selfRatings['s4']||'',
+    self_s5:selfRatings['s5']||'',
+    personalised_ex1_angle:ex1AngleVal,
+    personalised_proto_angle:protoAngleVal,
+    personalised_draw_angle:drawAngleVal,
+    raw_auto:result.totalAuto,
+    total_with_bonus:result.total,
+    score_20:result.s20,
+    grade_letter:result.grade,
+    image_b64_truncated:imageb64?imageb64.substring(0,800):''
+  };
+  try{
+    await fetch(APPS_URL,{
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)
+    });
+    document.getElementById('submitFb').innerHTML=
+      '<span style="color:var(--ok)">\u2705 Submitted successfully! Your teacher will see your results. Well done, '+
+      studentName.split(' ')[0]+'!</span>';
+    btn.textContent='\u2705 Submitted';
+    btn.style.background='#4ade80';
+  }catch(err){
+    document.getElementById('submitFb').innerHTML=
+      '<span style="color:var(--err)">\u26A0\uFE0F Could not submit. Please inform your teacher of any network issues.</span>';
+    btn.disabled=false; btn.textContent='\uD83D\uDCE4 Submit Lab to Teacher';
+  }
+}
+
+/* ================================================================
+   APPS SCRIPT NOTE (for teacher)
+   Add to your Apps Script in 3 places:
+
+   1. SHEET_HEADERS['LightReflection8'] = [
+        'Timestamp','Name','Class','Time_min',
+        'recap_q1_ok','recap_q2_ok',
+        'e1_q1_ok','e1_q2_ok',
+        'e2_ex1_val','e2_ex1_ok','e2_ex1_attempts','e2_q2_ok','e2_discovery',
+        'e3_q1_ok','e3_q2_ok','e3_q3_ok',
+        'game_score','game_bonus','game_levels_reached',
+        'e4_proto_ok','e4_drawing_uploaded','e4_drawing_notes',
+        'e5_q1_ok','e5_q2_ok','e5_q3_ok','e5_q4_ok',
+        'self_s0','self_s1','self_s2','self_s3','self_s4','self_s5',
+        'ex1_angle','proto_angle','draw_angle',
+        'raw_auto','total_with_bonus','score_20','grade_letter'
+      ];
+   2. HEADER_COLORS['LightReflection8'] = '#0369a1';
+   3. Inside buildRow(): if(sheetName==='LightReflection8'){
+        return [tzDate, data.name, data.class, data.time_min,
+          data.recap_q1_ok, data.recap_q2_ok,
+          data.e1_q1_ok, data.e1_q2_ok,
+          data.e2_ex1_val, data.e2_ex1_ok, data.e2_ex1_attempts, data.e2_q2_ok, data.e2_discovery,
+          data.e3_q1_ok, data.e3_q2_ok, data.e3_q3_ok,
+          data.game_score, data.game_bonus, data.game_levels_reached,
+          data.e4_proto_ok, data.e4_drawing_uploaded, data.e4_drawing_notes,
+          data.e5_q1_ok, data.e5_q2_ok, data.e5_q3_ok, data.e5_q4_ok,
+          data.self_s0, data.self_s1, data.self_s2, data.self_s3, data.self_s4, data.self_s5,
+          data.personalised_ex1_angle, data.personalised_proto_angle, data.personalised_draw_angle,
+          data.raw_auto, data.total_with_bonus, data.score_20, data.grade_letter
+        ]; }
+   ================================================================ */
+
+</script>
+</body>
+</html>
