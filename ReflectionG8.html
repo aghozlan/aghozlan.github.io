@@ -896,7 +896,7 @@ const LAB_START = Date.now();
 /* ================================================================
    APPS SCRIPT URL - Replace with your actual deployment URL
    ================================================================ */
-const APPS_URL = 'https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+const APPS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
 
 /* ================================================================
    STUDENTS
@@ -2163,6 +2163,34 @@ async function submitLab(){
   btn.disabled=true; btn.textContent='\u23F3 Submitting...';
   var result=buildScoreTable();
   var timeMins=Math.round((Date.now()-LAB_START)/60000);
+
+  /* ── Step 1: Upload drawing to Google Drive (if student uploaded one) ── */
+  var drawingLink='';
+  if(imageb64){
+    btn.textContent='\u23F3 Uploading drawing...';
+    try{
+      var safeName=(studentClass+'_'+studentName).replace(/[\s"']/g,'_');
+      var upResp=await fetch(APPS_URL,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({
+          action:'uploadImage',
+          folder:'ReflectionLab_Drawings',
+          filename:safeName+'_drawing.jpg',
+          mimeType:'image/jpeg',
+          data:imageb64
+        })
+      });
+      var upJson=await upResp.json();
+      if(upJson.url) drawingLink=upJson.url;
+    }catch(e){
+      /* Drive upload failed — we still submit the rest */
+      drawingLink='upload_failed';
+    }
+    btn.textContent='\u23F3 Submitting results...';
+  }
+
+  /* ── Step 2: Submit all scored data with the Drive link ── */
   var payload={
     sheet:'LightReflection8',
     name:studentName, class:studentClass, time_min:timeMins,
@@ -2184,6 +2212,7 @@ async function submitLab(){
     e4_proto_ok:scores['proto']||0,
     e4_drawing_uploaded:imageb64?'yes':'no',
     e4_drawing_notes:document.getElementById('drawingNotes').value,
+    e4_drawing_link:drawingLink,
     e5_q1_ok:scores['e5Q1']||0,
     e5_q2_ok:scores['e5Q2']||0,
     e5_q3_ok:scores['e5Q3']||0,
@@ -2200,8 +2229,7 @@ async function submitLab(){
     raw_auto:result.totalAuto,
     total_with_bonus:result.total,
     score_20:result.s20,
-    grade_letter:result.grade,
-    image_b64_truncated:imageb64?imageb64.substring(0,800):''
+    grade_letter:result.grade
   };
   try{
     await fetch(APPS_URL,{
@@ -2211,7 +2239,10 @@ async function submitLab(){
     });
     document.getElementById('submitFb').innerHTML=
       '<span style="color:var(--ok)">\u2705 Submitted successfully! Your teacher will see your results. Well done, '+
-      studentName.split(' ')[0]+'!</span>';
+      studentName.split(' ')[0]+'!</span>'+
+      (drawingLink && drawingLink!=='upload_failed'
+        ? '<br><span style="font-size:.8rem;color:var(--muted)">\uD83D\uDDBC Drawing saved to Drive \u2714</span>'
+        : '');
     btn.textContent='\u2705 Submitted';
     btn.style.background='#4ade80';
   }catch(err){
