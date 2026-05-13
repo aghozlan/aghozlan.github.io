@@ -15,11 +15,11 @@
             overflow: hidden;
         }
         .accordion-content.expanded {
-            max-height: 1000px;
+            max-height: 1500px;
             opacity: 1;
         }
         /* SVG Circuit styling */
-        .wire { stroke: #1f2937; stroke-width: 2.5; fill: none; }
+        .wire { stroke: #1f2937; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .component { stroke: #1f2937; stroke-width: 2.5; fill: white; }
         .node { fill: #1f2937; }
         .label { font-family: sans-serif; font-size: 14px; font-weight: bold; fill: #111827; }
@@ -44,9 +44,9 @@
             
             <div class="p-6">
                 <div class="flex flex-col md:flex-row gap-8 items-center mb-6">
-                    <div class="flex-1 w-full flex justify-center">
+                    <div class="flex-1 w-full flex justify-center overflow-x-auto">
                         <!-- SVG Diagram: Series Circuit -->
-                        <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" class="max-w-full h-auto">
                             <!-- Wires -->
                             <polyline class="wire" points="50,70 50,50 350,50 350,150 50,150 50,110"/>
                             
@@ -147,14 +147,14 @@
         <!-- Sample 2: Parallel Circuit & Measuring Devices -->
         <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
             <div class="bg-slate-800 px-6 py-4">
-                <h2 class="text-xl font-bold text-white">Sample 2: Mixed Circuit & Oscillograms</h2>
+                <h2 class="text-xl font-bold text-white">Sample 2: Basic Mixed Circuit & Oscillograms</h2>
             </div>
             
             <div class="p-6">
                 <div class="flex flex-col md:flex-row gap-8 items-center mb-6">
-                    <div class="flex-1 w-full flex justify-center">
+                    <div class="flex-1 w-full flex justify-center overflow-x-auto">
                         <!-- SVG Diagram: Parallel-Series Circuit -->
-                        <svg width="400" height="250" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="400" height="250" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" class="max-w-full h-auto">
                             <!-- Main Circuit Wires -->
                             <polyline class="wire" points="50,125 50,50 150,50"/>
                             <polyline class="wire" points="50,175 50,220 300,220 300,140"/>
@@ -266,6 +266,194 @@
                                 <li>The <strong>V terminal</strong> must be connected to the point of higher potential, which is <strong>C</strong> (closer to the positive pole P) <strong>(0.5 pt)</strong>.</li>
                                 <li>The <strong>COM terminal</strong> must be connected to point <strong>D</strong> <strong>(0.25 pt)</strong>.</li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sample 3: Advanced 8-Lamp Mixed Circuit -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div class="bg-slate-900 px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white">Sample 3: Advanced Mixed Circuit Analysis (8 Lamps)</h2>
+                <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">Challenging</span>
+            </div>
+            
+            <div class="p-6">
+                <div class="flex flex-col gap-6 mb-6">
+                    <div class="w-full flex justify-center overflow-x-auto bg-slate-100 rounded-lg p-4">
+                        <!-- SVG Diagram: Advanced 8-Lamp Circuit -->
+                        <svg width="750" height="350" viewBox="0 0 750 350" xmlns="http://www.w3.org/2000/svg" class="max-w-full h-auto">
+                            
+                            <!-- Battery P, N -->
+                            <line class="wire" x1="30" y1="180" x2="70" y2="180" stroke-width="4"/> <!-- Positive -->
+                            <line class="wire" x1="40" y1="220" x2="60" y2="220" stroke-width="6"/> <!-- Negative -->
+                            <text x="15" y="175" class="label">+</text>
+                            <text x="20" y="235" class="label">-</text>
+
+                            <circle class="node" cx="50" cy="150" r="4"/>
+                            <text x="30" y="155" class="label">P</text>
+                            <circle class="node" cx="50" cy="250" r="4"/>
+                            <text x="30" y="255" class="label">N</text>
+
+                            <!-- Wires from Battery -->
+                            <line class="wire" x1="50" y1="180" x2="50" y2="100"/>
+                            <line class="wire" x1="50" y1="220" x2="50" y2="300"/>
+
+                            <!-- Main Wire to L1 -->
+                            <line class="wire" x1="50" y1="100" x2="134" y2="100"/>
+                            <!-- L1 -->
+                            <circle class="component" cx="150" cy="100" r="16"/>
+                            <line class="wire" x1="139" y1="89" x2="161" y2="111"/>
+                            <line class="wire" x1="139" y1="111" x2="161" y2="89"/>
+                            <text x="145" y="75" class="label">L₁</text>
+
+                            <!-- L1 to Split A -->
+                            <line class="wire" x1="166" y1="100" x2="200" y2="100"/>
+                            <circle class="node" cx="200" cy="100" r="4"/>
+                            <text x="195" y="90" class="label">A</text>
+
+                            <!-- Split A vertical -->
+                            <line class="wire" x1="200" y1="50" x2="200" y2="150"/>
+
+                            <!-- Top Branch A to B (y=50) -->
+                            <line class="wire" x1="200" y1="50" x2="284" y2="50"/>
+                            <!-- L2 -->
+                            <circle class="component" cx="300" cy="50" r="16"/>
+                            <line class="wire" x1="289" y1="39" x2="311" y2="61"/>
+                            <line class="wire" x1="289" y1="61" x2="311" y2="39"/>
+                            <text x="292" y="30" class="label">L₂</text>
+                            <line class="wire" x1="316" y1="50" x2="384" y2="50"/>
+                            <!-- L3 -->
+                            <circle class="component" cx="400" cy="50" r="16"/>
+                            <line class="wire" x1="389" y1="39" x2="411" y2="61"/>
+                            <line class="wire" x1="389" y1="61" x2="411" y2="39"/>
+                            <text x="392" y="30" class="label">L₃</text>
+                            <line class="wire" x1="416" y1="50" x2="520" y2="50"/>
+
+                            <!-- Bottom Branch A to B (y=150) -->
+                            <line class="wire" x1="200" y1="150" x2="259" y2="150"/>
+                            <!-- L4 -->
+                            <circle class="component" cx="275" cy="150" r="16"/>
+                            <line class="wire" x1="264" y1="139" x2="286" y2="161"/>
+                            <line class="wire" x1="264" y1="161" x2="286" y2="139"/>
+                            <text x="267" y="130" class="label">L₄</text>
+                            <line class="wire" x1="291" y1="150" x2="334" y2="150"/>
+                            <!-- L5 -->
+                            <circle class="component" cx="350" cy="150" r="16"/>
+                            <line class="wire" x1="339" y1="139" x2="361" y2="161"/>
+                            <line class="wire" x1="339" y1="161" x2="361" y2="139"/>
+                            <text x="342" y="130" class="label">L₅</text>
+                            <line class="wire" x1="366" y1="150" x2="409" y2="150"/>
+                            <!-- L6 -->
+                            <circle class="component" cx="425" cy="150" r="16"/>
+                            <line class="wire" x1="414" y1="139" x2="436" y2="161"/>
+                            <line class="wire" x1="414" y1="161" x2="436" y2="139"/>
+                            <text x="417" y="130" class="label">L₆</text>
+                            <line class="wire" x1="441" y1="150" x2="520" y2="150"/>
+
+                            <!-- Merge B vertical -->
+                            <line class="wire" x1="520" y1="50" x2="520" y2="150"/>
+                            <circle class="node" cx="520" cy="100" r="4"/>
+                            <text x="505" y="90" class="label">B</text>
+
+                            <!-- L7 & L8 Parallel branches -->
+                            <line class="wire" x1="520" y1="100" x2="540" y2="100"/>
+                            <line class="wire" x1="540" y1="70" x2="540" y2="130"/>
+                            <!-- Top L7 -->
+                            <line class="wire" x1="540" y1="70" x2="564" y2="70"/>
+                            <circle class="component" cx="580" cy="70" r="16"/>
+                            <line class="wire" x1="569" y1="59" x2="591" y2="81"/>
+                            <line class="wire" x1="569" y1="81" x2="591" y2="59"/>
+                            <text x="572" y="50" class="label">L₇</text>
+                            <line class="wire" x1="596" y1="70" x2="620" y2="70"/>
+                            <!-- Bottom L8 -->
+                            <line class="wire" x1="540" y1="130" x2="564" y2="130"/>
+                            <circle class="component" cx="580" cy="130" r="16"/>
+                            <line class="wire" x1="569" y1="119" x2="591" y2="141"/>
+                            <line class="wire" x1="569" y1="141" x2="591" y2="119"/>
+                            <text x="572" y="110" class="label">L₈</text>
+                            <line class="wire" x1="596" y1="130" x2="620" y2="130"/>
+
+                            <!-- Merge C -->
+                            <line class="wire" x1="620" y1="70" x2="620" y2="130"/>
+                            <line class="wire" x1="620" y1="100" x2="640" y2="100"/>
+                            <circle class="node" cx="640" cy="100" r="4"/>
+                            <text x="645" y="90" class="label">C</text>
+
+                            <!-- C to Negative -->
+                            <line class="wire" x1="640" y1="100" x2="700" y2="100"/>
+                            <line class="wire" x1="700" y1="100" x2="700" y2="300"/>
+                            <line class="wire" x1="700" y1="300" x2="50" y2="300"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="text-slate-700 space-y-3">
+                        <p>The complex circuit shown above consists of a dry cell and 8 incandescent lamps (\( L_1 \) to \( L_8 \)). The dry cell supplies a constant voltage \( U_{PN} = 24 \text{ V} \). The connecting wires are considered ideal.</p>
+                        <p>Several measurements have been recorded across the circuit components:</p>
+                        <ul class="list-disc list-inside pl-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <li>Voltage across \( L_1 \): \( U_{PA} = 4 \text{ V} \)</li>
+                            <li>Voltage across \( L_2 \): \( U_{L2} = 6 \text{ V} \)</li>
+                            <li>Voltage across \( L_5 \): \( U_{L5} = 7 \text{ V} \)</li>
+                            <li>Voltage across \( L_6 \): \( U_{L6} = 5 \text{ V} \)</li>
+                            <li>Voltage across \( L_7 \): \( U_{L7} = 5 \text{ V} \)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-slate-800 border-t border-slate-200 pt-6">
+                    <p class="font-semibold text-lg text-slate-900">Contextual Questions:</p>
+                    <ol class="list-decimal list-inside space-y-3 pl-2">
+                        <li>Determine the potential difference \( U_{BC} \) across lamp \( L_8 \). Justify your answer using the appropriate physical law.</li>
+                        <li>Apply the law of addition of voltages to calculate the potential difference \( U_{AB} \) across the parallel block section bounded by nodes A and B.</li>
+                        <li>Deduce the voltage \( U_{L3} \) across lamp \( L_3 \).</li>
+                        <li>Calculate the voltage \( U_{L4} \) across lamp \( L_4 \).</li>
+                        <li>If Node N is grounded, determine the electric potential at Node B (\( V_B \)).</li>
+                    </ol>
+                </div>
+
+                <!-- Toggle Button for Marking Scheme -->
+                <button class="mt-8 w-full flex justify-between items-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-3 px-4 rounded transition-colors duration-200 focus:outline-none" onclick="toggleAccordion('ms3', this)">
+                    <span>View Marking Scheme & Justifications</span>
+                    <svg class="w-5 h-5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <!-- Marking Scheme Content -->
+                <div id="ms3" class="accordion-content bg-slate-50 border-x border-b border-slate-200 rounded-b px-6">
+                    <div class="py-4 space-y-5 text-sm text-slate-700">
+                        <div class="border-l-4 border-emerald-500 pl-4">
+                            <p class="font-bold text-emerald-700 mb-1">1. Law of Uniqueness in Parallel [1.0 pt]</p>
+                            <p>Lamps \( L_7 \) and \( L_8 \) are connected in parallel between nodes B and C. According to the <strong>law of uniqueness of voltages in a parallel circuit</strong> <strong>(0.5 pt)</strong>, the voltage is the same across branches connected in parallel.</p>
+                            <p>\( U_{BC} = U_{L7} = U_{L8} = 5 \text{ V} \) <strong>(0.5 pt)</strong>.</p>
+                        </div>
+                        <div class="border-l-4 border-emerald-500 pl-4">
+                            <p class="font-bold text-emerald-700 mb-1">2. Law of Addition of Voltages (Main Circuit) [1.5 pts]</p>
+                            <p>For the entire main line traversing from P to N, we apply the <strong>law of addition of voltages</strong>: <br>
+                               \( U_{PN} = U_{PA} + U_{AB} + U_{BC} + U_{CN} \) <strong>(0.5 pt)</strong>.</p>
+                            <p>Since the connecting wires are ideal, \( U_{CN} = 0 \text{ V} \) <strong>(0.25 pt)</strong>.</p>
+                            <p>Substituting the values: <br>
+                               \( 24 = 4 + U_{AB} + 5 + 0 \) <strong>(0.25 pt)</strong> <br>
+                               \( 24 = 9 + U_{AB} \implies U_{AB} = 24 - 9 = 15 \text{ V} \) <strong>(0.5 pt)</strong>.</p>
+                        </div>
+                        <div class="border-l-4 border-emerald-500 pl-4">
+                            <p class="font-bold text-emerald-700 mb-1">3. Voltage across L₃ [1.0 pt]</p>
+                            <p>In the upper branch between A and B, lamps \( L_2 \) and \( L_3 \) are connected in series. Applying the law of addition of voltages: <br>
+                               \( U_{AB} = U_{L2} + U_{L3} \) <strong>(0.5 pt)</strong>.</p>
+                            <p>\( 15 = 6 + U_{L3} \implies U_{L3} = 15 - 6 = 9 \text{ V} \) <strong>(0.5 pt)</strong>.</p>
+                        </div>
+                        <div class="border-l-4 border-emerald-500 pl-4">
+                            <p class="font-bold text-emerald-700 mb-1">4. Voltage across L₄ [1.0 pt]</p>
+                            <p>In the lower branch between A and B, lamps \( L_4 \), \( L_5 \), and \( L_6 \) are connected in series. Applying the law of addition of voltages: <br>
+                               \( U_{AB} = U_{L4} + U_{L5} + U_{L6} \) <strong>(0.5 pt)</strong>.</p>
+                            <p>\( 15 = U_{L4} + 7 + 5 \) <br>
+                               \( 15 = U_{L4} + 12 \implies U_{L4} = 3 \text{ V} \) <strong>(0.5 pt)</strong>.</p>
+                        </div>
+                        <div class="border-l-4 border-emerald-500 pl-4">
+                            <p class="font-bold text-emerald-700 mb-1">5. Electric Potential at Node B [1.0 pt]</p>
+                            <p>If node N is grounded, its electric potential is \( V_N = 0 \text{ V} \) <strong>(0.25 pt)</strong>.</p>
+                            <p>We know that \( U_{CN} = V_C - V_N = 0 \text{ V} \) (ideal wire), which implies \( V_C = 0 \text{ V} \) <strong>(0.25 pt)</strong>.</p>
+                            <p>By definition, the potential difference across BC is: \( U_{BC} = V_B - V_C \) <strong>(0.25 pt)</strong>.</p>
+                            <p>\( 5 = V_B - 0 \implies V_B = 5 \text{ V} \) <strong>(0.25 pt)</strong>.</p>
                         </div>
                     </div>
                 </div>
