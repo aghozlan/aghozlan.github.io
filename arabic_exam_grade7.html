@@ -897,7 +897,7 @@ function setSection(cls) {
   document.getElementById('versionPreview').style.display = 'none';
 }
 
-function onStudentPicked() {
+async function onStudentPicked() {
   currentName = document.getElementById('stuName').value;
   if (!currentName) {
     document.getElementById('versionPreview').style.display = 'none';
@@ -910,15 +910,48 @@ function onStudentPicked() {
   document.getElementById('voiceSetup').style.display = 'block';
   document.getElementById('startBtn').disabled = false;
 
-  // Lock check
+  // ── Lock check ────────────────────────────────────────────────────────────
+  // 1. If this browser has no local lock, student is clear to proceed.
+  // 2. If locked locally, silently ask the server for a one-time unlock token
+  //    (teacher runs unlockStudent() in Apps Script → writes a row in
+  //    Arabic_Exam_Unlocks sheet with Used='no').
+  // 3. Server returns 'unlock' → remove local lock (token consumed, one-time).
+  //    Server returns 'no'    → show the lock screen as usual.
+  // 4. Network failure       → fail safe (keep the lock screen showing).
+  // ─────────────────────────────────────────────────────────────────────────
   const lockKey = 'exam_lock_' + currentCls + '_' + currentName;
   if (localStorage.getItem(lockKey) === 'locked') {
-    document.getElementById('lockScreen').style.display = 'flex';
+    try {
+      const url = APPS_URL
+        + '?action=checkUnlock'
+        + '&name='  + encodeURIComponent(currentName)
+        + '&class=' + encodeURIComponent(currentCls);
+      const resp = await fetch(url);
+      const txt  = (await resp.text()).trim();
+      if (txt === 'unlock') {
+        localStorage.removeItem(lockKey);          // token consumed — student is free
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        document.getElementById('lockScreen').style.display = 'flex';
+      }
+    } catch (e) {
+      // Network error: stay locked (safer than silently letting through)
+      document.getElementById('lockScreen').style.display = 'flex';
+    }
+  } else {
+    document.getElementById('lockScreen').style.display = 'none'; // ensure hidden
   }
 }
 
 function toggleSpecial() {
   specialMode = document.getElementById('specialOverride').checked;
+  if (specialMode && currentName) {
+    // Teacher override checkbox: immediately clear any local lock so the
+    // lock screen disappears without needing DevTools.
+    const lockKey = 'exam_lock_' + currentCls + '_' + currentName;
+    localStorage.removeItem(lockKey);
+    document.getElementById('lockScreen').style.display = 'none';
+  }
   if (currentName) onStudentPicked();
 }
 
