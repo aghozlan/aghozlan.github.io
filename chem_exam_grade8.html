@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemistry Exam — Grade 8 — Beit Jala Secondary</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080e1a;--bg2:#0d1829;--bg3:#112040;--teal:#00d4aa;--teal2:#00b894;--purple:#6c5ce7;--orange:#e17055;--red:#d63031;--text:#e8f4f8;--muted:#7a9bb5;--border:rgba(0,212,170,.15);--border2:rgba(0,212,170,.35);--card:#0d1829;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* PARTICLES */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;opacity:.05;animation:pfloat linear infinite;}
+@keyframes pfloat{0%{transform:translateY(110vh) rotate(0deg);opacity:0;}10%{opacity:.05;}90%{opacity:.05;}100%{transform:translateY(-100px) rotate(720deg);opacity:0;}}
+
+.app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:1rem;}
+
+/* LOCK */
+#lockScreen{display:none;position:fixed;inset:0;z-index:9999;background:#030609;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.2rem;padding:2rem;}
+#lockScreen .li{font-size:4rem;}
+#lockScreen h1{font-size:1.7rem;color:#e17055;}
+#lockScreen p{font-size:.95rem;color:var(--muted);max-width:360px;line-height:1.6;}
+
+/* SCORE OVERLAY */
+#scoreOverlay{display:none;position:fixed;inset:0;z-index:8888;background:rgba(3,6,9,.97);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;gap:.9rem;}
+.sco-icon{font-size:3.5rem;animation:bounce .6s ease;}
+@keyframes bounce{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+.sco-title{font-size:1.25rem;color:var(--muted);font-weight:600;}
+.sco-name{font-size:.95rem;color:var(--muted);font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;}
+.grade-boxes{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin:.4rem 0;}
+.gbox{background:var(--bg2);border:2px solid var(--border2);border-radius:14px;padding:1rem 1.8rem;min-width:130px;}
+.gbox-label{font-size:.72rem;color:var(--muted);font-weight:700;letter-spacing:.05em;margin-bottom:.2rem;}
+.gbox-num{font-size:2.8rem;font-weight:700;color:var(--teal);font-family:'Share Tech Mono',monospace;line-height:1;}
+.gbox-denom{font-size:.95rem;color:var(--muted);}
+.gbox-letter{font-size:1.1rem;font-weight:700;margin-top:.2rem;}
+.gbox-letter.A{color:#00d4aa;}.gbox-letter.B{color:#74b9ff;}.gbox-letter.C{color:#fdcb6e;}.gbox-letter.D{color:#e17055;}
+.sco-msg{font-size:.92rem;color:var(--muted);max-width:360px;line-height:1.5;}
+.sco-close{background:var(--teal);color:var(--bg);border:none;border-radius:8px;padding:.55rem 1.4rem;font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:.3rem;}
+.confetti-p{position:fixed;width:8px;height:8px;border-radius:2px;animation:cfall linear forwards;pointer-events:none;z-index:9999;}
+@keyframes cfall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+
+/* HEADER */
+.exam-header{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border2);border-radius:16px;padding:1.4rem 1.8rem;margin-bottom:1rem;position:relative;overflow:hidden;}
+.exam-header::before{content:'⚗️';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:4rem;opacity:.08;}
+.school-name{font-family:'Noto Kufi Arabic',sans-serif;font-size:.75rem;color:var(--teal);font-weight:700;letter-spacing:.06em;margin-bottom:.3rem;text-transform:uppercase;}
+.exam-title{font-size:1.55rem;font-weight:700;margin-bottom:.4rem;line-height:1.25;}
+.exam-title span{color:var(--teal);}
+.exam-meta{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);}
+.mbadge{background:rgba(0,212,170,.1);border:1px solid var(--border2);border-radius:4px;padding:.1rem .45rem;font-size:.72rem;color:var(--teal);font-weight:700;}
+
+/* TIMER */
+.timer-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:.75rem 1.2rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.timer-display{font-family:'Share Tech Mono',monospace;font-size:2.1rem;font-weight:700;color:var(--teal);letter-spacing:.1em;min-width:95px;}
+.timer-display.warn{color:var(--orange);}
+.timer-display.danger{color:var(--red);animation:blink .8s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+.timer-bar-wrap{flex:1;min-width:140px;}
+.tbl-label{font-size:.68rem;color:var(--muted);margin-bottom:.25rem;display:flex;justify-content:space-between;}
+.tbl-bg{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;border:1px solid var(--border);}
+.tbl-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--purple));border-radius:5px;transition:width 1s linear;}
+.tbl-fill.warn{background:linear-gradient(90deg,var(--orange),var(--red));}
+.timer-info{font-size:.75rem;color:var(--muted);line-height:1.4;white-space:nowrap;}
+.prog-info{font-size:.78rem;color:var(--muted);white-space:nowrap;}
+.prog-num{color:var(--teal);font-weight:700;}
+
+/* SETUP */
+.setup-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.4rem;margin-bottom:1rem;}
+.setup-title{font-size:1.05rem;font-weight:700;color:var(--teal);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.setup-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:.75rem;align-items:center;}
+.setup-label{font-size:.78rem;color:var(--muted);font-weight:600;min-width:55px;}
+.sec-btns{display:flex;gap:.4rem;flex-wrap:wrap;}
+.sec-btn{padding:.32rem .75rem;border:1.5px solid var(--border2);border-radius:6px;background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .15s;}
+.sec-btn.on{background:var(--teal);color:var(--bg);border-color:var(--teal);}
+.stu-sel{padding:.42rem .75rem;border:1.5px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);font-family:'Noto Kufi Arabic',sans-serif;font-size:.88rem;min-width:210px;}
+.ver-prev{font-size:.8rem;color:var(--muted);padding:.35rem 0;display:none;}
+.ver-badge{background:rgba(108,92,231,.18);border:1px solid rgba(108,92,231,.45);border-radius:4px;padding:.1rem .45rem;font-size:.78rem;font-weight:700;color:var(--purple);}
+.spec-label{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.35rem;cursor:pointer;}
+.start-btn{background:linear-gradient(135deg,var(--teal),var(--teal2));color:var(--bg);border:none;border-radius:8px;padding:.65rem 1.6rem;font-family:'Rajdhani',sans-serif;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(0,212,170,.3);letter-spacing:.05em;margin-top:.3rem;}
+.start-btn:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(0,212,170,.5);}
+.start-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* SECTION HDR */
+.sec-hdr{display:flex;align-items:center;gap:.7rem;margin:1.5rem 0 .75rem;padding:.55rem 1rem;border-radius:8px;background:var(--bg2);border-left:4px solid var(--teal);}
+.sec-badge{border-radius:5px;padding:.12rem .55rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--bg);}
+.sec-name{font-size:.9rem;font-weight:700;}
+.sec-pts{margin-left:auto;font-size:.72rem;color:var(--muted);}
+
+/* Q CARD */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.15rem 1.35rem;margin-bottom:.75rem;transition:border-color .2s;position:relative;}
+.q-card.answered{border-color:rgba(0,212,170,.3);}
+.q-check{position:absolute;top:.75rem;right:.75rem;width:21px;height:21px;background:var(--teal);color:var(--bg);border-radius:50%;font-size:.7rem;font-weight:700;align-items:center;justify-content:center;display:none;}
+.q-card.answered .q-check{display:flex;}
+.q-top{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.85rem;}
+.q-num-badge{min-width:42px;height:42px;background:linear-gradient(135deg,#0a1628,#0f2040);border:1.5px solid var(--border2);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.qnb-top{font-size:.5rem;color:var(--teal);font-weight:700;letter-spacing:.05em;line-height:1;}
+.qnb-num{font-size:1.15rem;font-weight:700;line-height:1;}
+.q-text{font-size:.96rem;line-height:1.65;flex:1;}
+.q-text sub,.q-text sup{font-size:.68em;}
+
+/* OPTIONS */
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+@media(max-width:540px){.opts-grid{grid-template-columns:1fr;}}
+.opt-btn{display:flex;align-items:center;gap:.55rem;padding:.58rem .85rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.92rem;font-weight:500;cursor:pointer;text-align:left;transition:all .15s;width:100%;}
+.opt-btn:hover{border-color:var(--teal);background:rgba(0,212,170,.05);}
+.opt-btn.selected{border-color:var(--teal);background:rgba(0,212,170,.11);color:var(--teal);}
+.opt-btn:disabled{cursor:not-allowed;}
+.opt-lbl{width:23px;height:23px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:700;flex-shrink:0;}
+.opt-btn.selected .opt-lbl{background:var(--teal);border-color:var(--teal);color:var(--bg);}
+.opt-text sub,.opt-text sup{font-size:.68em;}
+
+/* SUBMIT AREA */
+.submit-area{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.4rem;margin-top:1.5rem;text-align:center;display:none;}
+.unans-warn{background:rgba(225,112,85,.1);border:1px solid rgba(225,112,85,.3);border-radius:8px;padding:.55rem .9rem;font-size:.82rem;color:var(--orange);margin-bottom:.9rem;display:none;}
+.submit-btn{background:linear-gradient(135deg,#00b894,#00cec9);color:var(--bg);border:none;border-radius:10px;padding:.8rem 2.2rem;font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(0,184,148,.3);letter-spacing:.07em;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(0,184,148,.5);}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+.submit-ok{color:var(--teal);font-size:1.05rem;font-weight:700;margin-top:.8rem;display:none;}
+
+#questionsWrap{display:none;}
+.hidden{display:none!important;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particlesContainer"></div>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="display:none;flex-direction:column;align-items:center;justify-content:center;">
+  <div class="li">🔒</div>
+  <h1>Exam Already Submitted</h1>
+  <p>You have already submitted this exam. Each student may only access it once.<br><br>
+  <span style="font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;display:block;margin-top:.5rem;">لقد سبق وأرسلت إجاباتك. يُسمح بمحاولة واحدة فقط.</span></p>
+  <p style="font-size:.8rem;margin-top:.5rem;">If you believe this is an error, please contact your teacher.</p>
+</div>
+
+<!-- SCORE OVERLAY -->
+<div id="scoreOverlay" style="display:none;flex-direction:column;">
+  <div class="sco-icon" id="scoIcon">⚗️</div>
+  <div class="sco-title">Exam Complete!</div>
+  <div class="sco-name" id="scoName"></div>
+  <div class="grade-boxes">
+    <div class="gbox">
+      <div class="gbox-label">SCORE / 30</div>
+      <div class="gbox-num" id="scoNum30">0</div>
+      <div class="gbox-denom">out of 30</div>
+      <div class="gbox-letter" id="scoLetterA"></div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-label">SCORE / 12</div>
+      <div class="gbox-num" id="scoNum12">0</div>
+      <div class="gbox-denom">out of 12</div>
+      <div class="gbox-letter" id="scoLetterB"></div>
+    </div>
+  </div>
+  <div class="sco-msg" id="scoMsg"></div>
+  <button class="sco-close" onclick="document.getElementById('scoreOverlay').style.display='none'">Close ✕</button>
+</div>
+
+<!-- MAIN APP -->
+<div class="app">
+
+<!-- HEADER -->
+<div class="exam-header">
+  <div class="school-name">🏫 Beit Jala Secondary School &nbsp;|&nbsp; Science Department</div>
+  <div class="exam-title">Grade 8 <span>Chemistry</span> Exam</div>
+  <div class="exam-meta">
+    <span><span class="mbadge">30 Questions</span></span>
+    <span><span class="mbadge">30 Minutes</span></span>
+    <span><span class="mbadge">1 Attempt Only</span></span>
+    <span><span class="mbadge">Academic Year 2025–2026</span></span>
+  </div>
+</div>
+
+<!-- TIMER (hidden until exam starts) -->
+<div class="timer-panel hidden" id="timerPanel">
+  <div>
+    <div id="timerDisp" class="timer-display">30:00</div>
+    <div class="timer-info">Time remaining</div>
+  </div>
+  <div class="timer-bar-wrap">
+    <div class="tbl-label"><span>Time used</span><span id="tblPct">0%</span></div>
+    <div class="tbl-bg"><div class="tbl-fill" id="tblFill" style="width:0%"></div></div>
+  </div>
+  <div class="prog-info">Answered: <span class="prog-num" id="progAnswered">0</span> / <span class="prog-num">30</span></div>
+</div>
+
+<!-- SETUP PANEL -->
+<div class="setup-panel" id="setupPanel">
+  <div class="setup-title">🧪 Student Setup</div>
+  <div class="setup-row">
+    <div class="setup-label">Class:</div>
+    <div class="sec-btns">
+      <button class="sec-btn" onclick="setSection('8A')">8A</button>
+      <button class="sec-btn" onclick="setSection('8B')">8B</button>
+      <button class="sec-btn" onclick="setSection('8C')">8C</button>
+      <button class="sec-btn" onclick="setSection('8D')">8D</button>
+    </div>
+  </div>
+  <div class="setup-row">
+    <div class="setup-label">Name:</div>
+    <select class="stu-sel" id="stuName" disabled onchange="onStudentPicked()">
+      <option value="">— Select your name —</option>
+    </select>
+  </div>
+  <div class="ver-prev" id="verPrev">
+    Your exam version: <span class="ver-badge" id="verBadge"></span>
+  </div>
+  <div class="setup-row">
+    <label class="spec-label">
+      <input type="checkbox" id="specialChk" onchange="toggleSpecial()"> Special version (exceptional cases only)
+    </label>
+  </div>
+  <button class="start-btn" id="startBtn" onclick="startExam()" disabled>Start Exam →</button>
+</div>
+
+<!-- QUESTIONS -->
+<div id="questionsWrap">
+  <div id="questionsArea"></div>
+  <div class="submit-area" id="submitArea">
+    <div class="unans-warn" id="unansWarn"></div>
+    <button class="submit-btn" id="submitBtn" onclick="checkAndSubmit()">✔ Submit Exam</button>
+    <div class="submit-ok" id="submitOk">✅ Your answers have been submitted successfully. Good luck!</div>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<script>
+'use strict';
+const LAB_START = Date.now();
+const APPS_URL = 'https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+const EXAM_DURATION = 30 * 60;
+const LOCK_KEY_PREFIX = 'chemExam8_';
+
+// ══════════════════════════════════════════
+//  STUDENTS
+// ══════════════════════════════════════════
+const STUDENTS = {
+  '8A': [
+    'أسماء هيثم علي ندوه','ابراهيم طارق صلاح معروف','ابراهيم محمد رفعت ابو حميد',
+    'احسان "محمد وليد" الشحبري','ادم وليد توفيق الخطيب','الين رشيد محمد احمد',
+    'تالا "محمد عدنان" العمري','تيا احمد محمد الركن','جنى ماهر غالب الدالي',
+    'جنى "محي الدين" فاعور','جود محمد مروان الشامي','حسين احمد محمود اسماعيل',
+    'حنين علي ابراهيم ميعاد','راما احمد توفيق الزقه','رهف سعيد شحادة فلاح',
+    'زينب محمد رياض حماده','سعاد مازن محمد الشامي','سمر محمد صابر ظاهر',
+    'سيلين منصور عبد شحاده','عادل محمد عادل أبو عرب','عبد الرحمن وليد محمد',
+    'علي مصطفى حسن سالم','علي ياسر نمر فاعور','عمران مازن صالح مرعي',
+    'فاطمه محمد خالد قاسم','قمر حسين عمر حمزة','كريم محمود عبد الحفيظ',
+    'ليا محمد عمر عباس','لين رشدي موسى الصالح','لين ماهر احمد العيسى',
+    'لين وسام احمد حسين','ماريا طلعت احمد مراد','محمد احمد محمد الصعيدي',
+    'محمد سامر محمد الصالح','محمد علي محمد ابو شقير','محمد علي محمد عبد الجليل',
+    'محمد قاسم عادل عفيفي','محمود شادي محمود شحادة','مرام احمد كايد خضره',
+    'نرجس هاني احمد عقلة','نور محمد علي علي','هلا شفيق علي فلوس',
+    'يارا محمود السيد السعدني'
+  ],
+  '8B': [
+    'أسينات احمد فريد العلي','اسامة بسام عبد الرحمن حمو','امال ساري علي زيداني',
+    'امنة محمد كمال قدورة','امير هشام مصطفى كروم','ايمان بسام خالد محمد',
+    'بيسان بسام عبد الرحمن حمو','تاليا انس ابراهيم المنديل','حبيبة عوني علي الزبيدات',
+    'حلا اشرف احمد الحاج علي','حنين فتحي علي حميد','راما خالد محمد عطعوط',
+    'رضوان جهاد رضوان ديب','رواد مروان ابراهيم العبدالله','زهراء عماد وليد شيخه',
+    'سارة فادي عدنان فارس','سامي يسار سامي معروف','سعيد ماهر سعيد سعيد',
+    'سهى عامر احمد عطية','"صلاح الدين" مصطفى بللي','علي مصطفى علي سريس',
+    'عمر حسام حسين الموسى','فاطمه جمال احمد المحمود','فضل احمد محمد حسين',
+    'كريم رائد محمد دلاشي','لارا محمد خالد عبد الغني','ليلاس وسيم شحادة شحاده',
+    'ماريه يحيى محمد ابو هموس','محمد احمد محمد شريده','محمد حسام عاطف أبو شباب',
+    'محمد حكمت غاندي عبدالله','"محمد علي" محمود احمد','محمد هشام احمد مره',
+    'محمود نايف مصطفى قاسميه','مريم محمود "محي الدين" مره','ملاك يونس محمد رحال',
+    'ميريانا احمد مصطفى عيتاني','هدى محمود محمد الركن','وسيله سعدو درويش ششنيه',
+    'يحيى زكريا سميح حمو'
+  ],
+  '8C': [
+    'آلاء رباح محمود شراب','آلاء محمود صالح أدلبي','ابراهيم محمد إبراهيم عزيز',
+    'امير ماجد احمد اسماعيل','بتول فايز محمد حمود','بهاء الدين بلال "بهاء الدين" رشيد',
+    'بيان كمال احمد ابو سويد','تبارك محمد "محمد السيد" يوسف','تغريد خالد عزات يحيى',
+    'جمال محمد جمال حوحو','جنى حسن محمد الظريف','جهاد فادي حسن سالم',
+    'حلا محمد حسن ابو شنار','حلا مصطفى "محمد خير" بللي','خالد وسيم خالد حسن',
+    'راما زياد علي الحاج علي','راما عبد المجيد محمد سالم','راما محمد يوسف العلي',
+    'رزان زياد عبد الناصر اصمهان','روان عماد فوزي ابراهيم','ريم اديب احمد حسين',
+    'ريم ماهر عطا الخطيب','ريم "نور الدين" فايز عبد الرازق','سلام عصام حمودة ناجي',
+    'سلام "محمد بديع" فيصل العلي','سيلا هشام امين الطه','شهد صالح احمد مطر',
+    'صالح محمد سامي الشورى','عبد الله حسن سعيد سليمان','علي محمد ابراهيم صالح',
+    'علي ناصر علي حماده','عمر عصام الصادق','فرح وائل باسل غزلان',
+    'لانا باسم امين صيداوي','لين احمد عيسى قاسم','لين وائل زياد الهبطه',
+    'ماسة عمار علي علي','محمد حسين احمد ندوه','محمود محمد سالم نجمي',
+    'ملكه "سعد الدين" برجاوي','نور الهدى جهاد عزات عليان'
+  ],
+  '8D': [
+    'إسراء ايمن محمد قدسيه','احمد زاهر جهاد قدورة','احمد علاء احمد اسماعيل',
+    'احمد محمد رياض الخطيب','ادم خالد محمود قدورة','اسراء احمد داري نوفل',
+    'الما محمد جمال ششنيه','اياد احمد حسين محمود','اياد احمد سمير قدوره',
+    'بيسان علي احمد قاسم','تقى احمد موسى عبدالله','حسن علي حسن حبقزي',
+    'حمزة عاطف محمد الحاج محمد','دانا نبيل "نور الدين" الهندي','راما فادي علي سليم',
+    'رهف خليل عبدالله شاهين','روزا محمود علي عودي','ريتال نضال موسى مناد',
+    'زهراء محمد حسن بركات','زينب محمد عبد غنام','سالي فادي عثمان عباس',
+    'سماح احمد عطا أبو عنزه','علا محمد زيد عثمان','علي كمال علي سعد',
+    'عمر محمود عباس الحايك','غزل محمد خليل ابو عرب','غفران محمد يوسف داوود',
+    'كريم عوني خالد عبد الغني','لين علي نايف حميد','ماريا ابراهيم درويش خزعل',
+    'محمد براء محمود حسن','محمد بهاء ابراهيم العيسى','محمد خالد محمود مطر',
+    'محمد ربيع محمد هنداوي','محمود علي محمود يوسف','مصطفى "عماد الدين" تراوي',
+    'ميار سعيد محمد حسن','نور عباس محمد عمر','هبة يحيى عيسى ابو مايهه',
+    'هيلين فيصل "فضل الله" الراشد','يوسف عامر محمد مصريه','يوسف هيثم فايز بركة'
+  ]
+};
+
+// ══════════════════════════════════════════
+//  VERSION LOGIC
+// ══════════════════════════════════════════
+function getVersion(name, cls) {
+  const list = STUDENTS[cls] || [];
+  const idx = list.indexOf(name);
+  if (idx === -1) return 1;
+  return (idx % 5) + 1;
+}
+const V_LABELS = {1:'A',2:'B',3:'C',4:'D',5:'E',6:'F (Special)'};
+
+// Correct answer position (0=A,1=B,2=C,3=D) for each question (0-indexed) & version (1-6)
+function getCorrectPos(qIdx, ver) {
+  if (ver <= 4) return (qIdx + ver - 1) % 4;  // V1-V4: rotation
+  if (ver === 5) return (qIdx * 3 + 1) % 4;   // V5: different stride
+  return (qIdx * 3 + 2) % 4;                   // V6: another stride
+}
+
+function buildOpts(qIdx, ver, opts) {
+  // opts[0] is always correct
+  const cp = getCorrectPos(qIdx, ver);
+  const result = new Array(4);
+  result[cp] = opts[0];
+  const others = [opts[1], opts[2], opts[3]];
+  let oi = 0;
+  for (let i = 0; i < 4; i++) {
+    if (i !== cp) result[i] = others[oi++];
+  }
+  return { opts: result, correctIdx: cp };
+}
+
+// ══════════════════════════════════════════
+//  QUESTION BANK (30 questions)
+//  opts[0] = ALWAYS the correct answer
+// ══════════════════════════════════════════
+const SECTIONS = [
+  { id:'A', title:'Counting Atoms in Molecules', color:'#00d4aa', pts:'5 pts' },
+  { id:'B', title:'Writing Chemical Formulas', color:'#6c5ce7', pts:'5 pts' },
+  { id:'C', title:'Word Equations', color:'#e17055', pts:'5 pts' },
+  { id:'D', title:'Naming Ionic Compounds', color:'#74b9ff', pts:'5 pts' },
+  { id:'E', title:'Correcting Chemical Formulas', color:'#fd79a8', pts:'5 pts' },
+  { id:'F', title:'Balancing Chemical Equations', color:'#00b894', pts:'5 pts' }
+];
+
+const Q_BANK = [
+  // ── SECTION A: Counting Atoms ──
+  {
+    sec:'A',
+    q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Ca(OH)<sub>2</sub>?',
+    opts: ['15','5','10','3']
+  },{
+    sec:'A',
+    q: 'How many <strong>hydrogen atoms</strong> are present in <strong>5</strong> molecules of C<sub>2</sub>H<sub>5</sub>OH?',
+    opts: ['30','6','10','18']
+  },{
+    sec:'A',
+    q: 'What is the <strong>total number of atoms</strong> in <strong>2</strong> molecules of Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?',
+    opts: ['34','17','14','7']
+  },{
+    sec:'A',
+    q: 'How many <strong>oxygen atoms</strong> are in <strong>10</strong> molecules of NH<sub>4</sub>NO<sub>3</sub>?',
+    opts: ['30','3','9','90']
+  },{
+    sec:'A',
+    q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Ca(HCO<sub>3</sub>)<sub>2</sub>?',
+    opts: ['33','11','22','6']
+  },
+  // ── SECTION B: Writing Formulas ──
+  {
+    sec:'B',
+    q: 'Ammonia is used in fertilizers and cleaners. It consists of <strong>one nitrogen</strong> atom and <strong>three hydrogen</strong> atoms. What is its molecular formula?',
+    opts: ['NH<sub>3</sub>','N<sub>3</sub>H','N<sub>2</sub>H<sub>3</sub>','NH<sub>4</sub>']
+  },{
+    sec:'B',
+    q: 'Dinitrogen pentoxide is an atmospheric pollutant composed of <strong>two nitrogen</strong> atoms and <strong>five oxygen</strong> atoms. Its formula is:',
+    opts: ['N<sub>2</sub>O<sub>5</sub>','NO<sub>2</sub>','N<sub>2</sub>O','N<sub>2</sub>O<sub>3</sub>']
+  },{
+    sec:'B',
+    q: 'Acetic acid (ethanoic acid), the main constituent of vinegar, is composed of <strong>two carbon</strong>, <strong>four hydrogen</strong>, and <strong>two oxygen</strong> atoms. Its formula is:',
+    opts: ['C<sub>2</sub>H<sub>4</sub>O<sub>2</sub>','C<sub>2</sub>H<sub>4</sub>O','CH<sub>2</sub>O','C<sub>4</sub>H<sub>8</sub>O<sub>2</sub>']
+  },{
+    sec:'B',
+    q: 'Baking soda consists of <strong>one sodium</strong>, <strong>one hydrogen</strong>, <strong>one carbon</strong>, and <strong>three oxygen</strong> atoms. Its formula is:',
+    opts: ['NaHCO<sub>3</sub>','NaOH','Na<sub>2</sub>CO<sub>3</sub>','Na<sub>2</sub>O']
+  },{
+    sec:'B',
+    q: 'Decane is composed of <strong>ten carbon</strong> atoms and <strong>twenty-two hydrogen</strong> atoms. Its molecular formula is:',
+    opts: ['C<sub>10</sub>H<sub>22</sub>','C<sub>12</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>20</sub>','C<sub>8</sub>H<sub>18</sub>']
+  },
+  // ── SECTION C: Word Equations ──
+  {
+    sec:'C',
+    q: 'At high temperature, carbon monoxide reacts with ferric oxide. What are the <strong>products</strong>?',
+    opts: ['Carbon dioxide + Iron','Carbon + Iron oxide','Iron + Carbon monoxide','Ferric carbonate']
+  },{
+    sec:'C',
+    q: 'Sulfur burns with oxygen. What is the product?',
+    opts: ['Sulfur dioxide','Sulfuric acid','Sulfur trioxide','Sulfur monoxide']
+  },{
+    sec:'C',
+    q: 'Upon heating (&#9651;), potassium chlorate decomposes into:',
+    opts: ['Potassium chloride + Oxygen','Potassium + Chlorine + Oxygen','Potassium oxide + Chlorine','Potassium + Oxygen']
+  },{
+    sec:'C',
+    q: 'Sodium metal reacts vigorously with hydrobromic acid. The products are:',
+    opts: ['Sodium bromide + Hydrogen','Sodium hydride + Bromine','Sodium + Bromine + Hydrogen','Sodium chloride + Hydrogen']
+  },{
+    sec:'C',
+    q: 'Sucrose decomposes by extreme heat (&#9651;). The products are:',
+    opts: ['Carbon + Water','Glucose + Fructose','Carbon dioxide + Water','Carbon monoxide + Water']
+  },
+  // ── SECTION D: Naming Ionic Compounds ──
+  {
+    sec:'D',
+    q: 'What is the correct <strong>name</strong> of AgNO<sub>3</sub>?',
+    opts: ['Silver nitrate','Silver nitrite','Argentum nitrate','Silver oxide']
+  },{
+    sec:'D',
+    q: 'What is the correct <strong>name</strong> of Fe(OH)<sub>3</sub>?',
+    opts: ['Ferric hydroxide','Iron hydroxide','Ferrous hydroxide','Iron III oxide']
+  },{
+    sec:'D',
+    q: 'What is the correct <strong>name</strong> of MgSO<sub>4</sub>?',
+    opts: ['Magnesium sulfate','Magnesium sulfite','Magnesium sulfide','Manganese sulfate']
+  },{
+    sec:'D',
+    q: 'What is the correct <strong>name</strong> of Ca(HCO<sub>3</sub>)<sub>2</sub>?',
+    opts: ['Calcium bicarbonate','Calcium carbonate','Calcium hydrogen oxide','Calcium chlorate']
+  },{
+    sec:'D',
+    q: 'What is the correct <strong>name</strong> of Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?',
+    opts: ['Aluminium sulfate','Aluminium sulfide','Aluminium sulfite','Aluminium carbonate']
+  },
+  // ── SECTION E: Formula Correction ──
+  {
+    sec:'E',
+    q: 'Zinc chloride is formed from Zn<sup>2+</sup> and Cl<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
+    opts: ['ZnCl<sub>2</sub>','ZnCl','Zn<sub>2</sub>Cl','ZnCl<sub>3</sub>']
+  },{
+    sec:'E',
+    q: 'Ammonium nitrate is formed from NH<sub>4</sub><sup>+</sup> and NO<sub>3</sub><sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
+    opts: ['NH<sub>4</sub>NO<sub>3</sub>','NH<sub>4</sub>(NO<sub>3</sub>)<sub>2</sub>','(NH<sub>4</sub>)<sub>2</sub>NO<sub>3</sub>','NH<sub>4</sub>N']
+  },{
+    sec:'E',
+    q: 'Aluminium sulfide is formed from Al<sup>3+</sup> and S<sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
+    opts: ['Al<sub>2</sub>S<sub>3</sub>','AlS','Al<sub>3</sub>S<sub>2</sub>','Al<sub>2</sub>S']
+  },{
+    sec:'E',
+    q: 'Potassium hydroxide is formed from K<sup>+</sup> and OH<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
+    opts: ['KOH','K(OH)<sub>2</sub>','K<sub>2</sub>OH','K<sub>2</sub>O']
+  },{
+    sec:'E',
+    q: 'Sodium carbonate is formed from Na<sup>+</sup> and CO<sub>3</sub><sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
+    opts: ['Na<sub>2</sub>CO<sub>3</sub>','Na(CO<sub>3</sub>)<sub>2</sub>','NaCO<sub>3</sub>','Na<sub>3</sub>CO']
+  },
+  // ── SECTION F: Balancing ──
+  {
+    sec:'F',
+    q: 'Balance the equation: 2H<sub>2</sub> + O<sub>2</sub> &rarr; __ H<sub>2</sub>O<br><small style="color:var(--muted);">What is the missing coefficient?</small>',
+    opts: ['2','1','3','4']
+  },{
+    sec:'F',
+    q: 'Balance the equation: __ Na + Cl<sub>2</sub> &rarr; 2NaCl<br><small style="color:var(--muted);">What is the coefficient of Na?</small>',
+    opts: ['2','1','3','4']
+  },{
+    sec:'F',
+    q: 'Balance the equation: 4Fe + __ O<sub>2</sub> &rarr; 2Fe<sub>2</sub>O<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>',
+    opts: ['3','2','4','6']
+  },{
+    sec:'F',
+    q: 'Balance the equation: __ Al + 3Cl<sub>2</sub> &rarr; 2AlCl<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of Al?</small>',
+    opts: ['2','1','3','4']
+  },{
+    sec:'F',
+    q: 'Balance the equation: CH<sub>4</sub> + __ O<sub>2</sub> &rarr; CO<sub>2</sub> + 2H<sub>2</sub>O<br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>',
+    opts: ['2','1','3','4']
+  }
+];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentCls = '', currentName = '', currentVersion = 0;
+let specialMode = false;
+let timerInt = null, secondsLeft = EXAM_DURATION;
+let examStarted = false, examSubmitted = false;
+let builtOpts = []; // per question: {opts, correctIdx}
+const answers = new Array(30).fill(null); // 0=A,1=B,2=C,3=D
+
+// ══════════════════════════════════════════
+//  PARTICLES
+// ══════════════════════════════════════════
+(function spawnParticles(){
+  const container = document.getElementById('particlesContainer');
+  const colors = ['#00d4aa','#6c5ce7','#74b9ff','#00b894','#fd79a8'];
+  for(let i=0;i<25;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 20 + Math.random()*60;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[i%colors.length]};animation-duration:${12+Math.random()*20}s;animation-delay:${-Math.random()*20}s;border:${Math.random()>.5?2:0}px solid ${colors[i%colors.length]};background:transparent;border-color:${colors[i%colors.length]};`;
+    container.appendChild(p);
+  }
+})();
+
+// ══════════════════════════════════════════
+//  STUDENT PICKER
+// ══════════════════════════════════════════
+function setSection(cls) {
+  currentCls = cls;
+  document.querySelectorAll('.sec-btn').forEach(b =>
+    b.classList.toggle('on', b.textContent.trim() === cls));
+  const sel = document.getElementById('stuName');
+  sel.innerHTML = '<option value="">— Select your name —</option>';
+  sel.disabled = false;
+  (STUDENTS[cls] || []).slice()
+    .sort((a,b) => a.localeCompare(b,'ar'))
+    .forEach(n => {
+      const o = document.createElement('option');
+      o.value = n; o.textContent = n; sel.appendChild(o);
+    });
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('verPrev').style.display = 'none';
+}
+
+function onStudentPicked() {
+  currentName = document.getElementById('stuName').value;
+  if (!currentName) {
+    document.getElementById('verPrev').style.display = 'none';
+    document.getElementById('startBtn').disabled = true;
+    return;
+  }
+  currentVersion = specialMode ? 6 : getVersion(currentName, currentCls);
+  document.getElementById('verBadge').textContent = 'Version ' + V_LABELS[currentVersion];
+  document.getElementById('verPrev').style.display = 'block';
+  document.getElementById('startBtn').disabled = false;
+}
+
+function toggleSpecial() {
+  specialMode = document.getElementById('specialChk').checked;
+  if (currentName) onStudentPicked();
+}
+
+// ══════════════════════════════════════════
+//  LOCK CHECK
+// ══════════════════════════════════════════
+function checkLock() {
+  const key = LOCK_KEY_PREFIX + currentName + '_' + currentCls;
+  return localStorage.getItem(key) === 'done';
+}
+function setLock() {
+  const key = LOCK_KEY_PREFIX + currentName + '_' + currentCls;
+  localStorage.setItem(key, 'done');
+}
+
+// ══════════════════════════════════════════
+//  BUILD QUESTIONS
+// ══════════════════════════════════════════
+function buildQuestions() {
+  const area = document.getElementById('questionsArea');
+  area.innerHTML = '';
+  builtOpts = [];
+  let lastSec = '';
+
+  Q_BANK.forEach((q, idx) => {
+    // Section header
+    if (q.sec !== lastSec) {
+      lastSec = q.sec;
+      const secDef = SECTIONS.find(s => s.id === q.sec);
+      const hdr = document.createElement('div');
+      hdr.className = 'sec-hdr';
+      hdr.style.borderLeftColor = secDef.color;
+      hdr.innerHTML = `
+        <span class="sec-badge" style="background:${secDef.color}">SECTION ${secDef.id}</span>
+        <span class="sec-name">${secDef.title}</span>
+        <span class="sec-pts">${secDef.pts}</span>
+      `;
+      area.appendChild(hdr);
+    }
+
+    // Build opts for this version
+    const built = buildOpts(idx, currentVersion, q.opts);
+    builtOpts.push(built);
+
+    // Card
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard_' + idx;
+
+    const labels = ['A','B','C','D'];
+    const optsHtml = built.opts.map((opt, oi) => `
+      <button class="opt-btn" id="opt_${idx}_${oi}" onclick="selectOpt(${idx},${oi})">
+        <span class="opt-lbl">${labels[oi]}</span>
+        <span class="opt-text">${opt}</span>
+      </button>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="q-check">✓</div>
+      <div class="q-top">
+        <div class="q-num-badge">
+          <div class="qnb-top">Q</div>
+          <div class="qnb-num">${idx+1}</div>
+        </div>
+        <div class="q-text">${q.q}</div>
+      </div>
+      <div class="opts-grid">${optsHtml}</div>
+    `;
+    area.appendChild(card);
+  });
+
+  document.getElementById('submitArea').style.display = 'block';
+}
+
+function selectOpt(qIdx, optIdx) {
+  if (examSubmitted) return;
+  answers[qIdx] = optIdx;
+  // Update UI
+  for (let i = 0; i < 4; i++) {
+    const btn = document.getElementById('opt_' + qIdx + '_' + i);
+    if (btn) btn.classList.toggle('selected', i === optIdx);
+  }
+  document.getElementById('qcard_' + qIdx).classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress() {
+  const ans = answers.filter(a => a !== null).length;
+  document.getElementById('progAnswered').textContent = ans;
+}
+
+// ══════════════════════════════════════════
+//  START EXAM
+// ══════════════════════════════════════════
+async function startExam() {
+  if (!currentName || !currentCls) return;
+
+  // If locked, try server-side unlock first (teacher may have granted re-attempt)
+  if (checkLock()) {
+    try {
+      const resp = await fetch(APPS_URL + '?action=checkUnlockChem&name=' +
+        encodeURIComponent(currentName) + '&class=' + encodeURIComponent(currentCls));
+      const text = await resp.text();
+      if (text.trim() === 'unlock') {
+        // Clear the local lock — teacher granted a re-attempt
+        localStorage.removeItem(LOCK_KEY_PREFIX + currentName + '_' + currentCls);
+      } else {
+        document.getElementById('lockScreen').style.display = 'flex';
+        return;
+      }
+    } catch(e) {
+      document.getElementById('lockScreen').style.display = 'flex';
+      return;
+    }
+  }
+
+  // Hide setup, show exam
+  document.getElementById('setupPanel').style.display = 'none';
+  document.getElementById('timerPanel').classList.remove('hidden');
+  document.getElementById('questionsWrap').style.display = 'block';
+  buildQuestions();
+  startTimer();
+  examStarted = true;
+}
+
+// ══════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════
+function startTimer() {
+  secondsLeft = EXAM_DURATION;
+  updateTimerDisplay();
+  timerInt = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInt);
+      submitExam(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60);
+  const s = secondsLeft % 60;
+  const disp = document.getElementById('timerDisp');
+  const fill = document.getElementById('tblFill');
+  const pct = document.getElementById('tblPct');
+
+  disp.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  const used = EXAM_DURATION - secondsLeft;
+  const usedPct = Math.round(used / EXAM_DURATION * 100);
+  fill.style.width = usedPct + '%';
+  pct.textContent = usedPct + '%';
+
+  disp.className = 'timer-display';
+  fill.className = 'tbl-fill';
+  if (secondsLeft <= 300 && secondsLeft > 60) {
+    disp.classList.add('warn');
+    fill.classList.add('warn');
+  } else if (secondsLeft <= 60) {
+    disp.classList.add('danger');
+    fill.classList.add('warn');
+  }
+}
+
+// ══════════════════════════════════════════
+//  SCORING
+// ══════════════════════════════════════════
+function computeScore() {
+  let score = 0;
+  const answerLetters = ['A','B','C','D'];
+  const studentAnswers = [];
+  const correctAnswers = [];
+  const okFlags = [];
+  const reportParts = [];
+
+  answers.forEach((ans, idx) => {
+    const ci = builtOpts[idx].correctIdx;
+    const ok = (ans !== null && ans === ci) ? 1 : 0;
+    score += ok;
+    const sa = ans !== null ? answerLetters[ans] : '-';
+    const ca = answerLetters[ci];
+    studentAnswers.push(sa);
+    correctAnswers.push(ca);
+    okFlags.push(ok);
+    reportParts.push('Q' + (idx+1) + ':' + sa + '/' + ca + (ok?'✓':'✗'));
+  });
+
+  return {
+    score30: score,
+    score12: parseFloat((score * 12 / 30).toFixed(2)),
+    answers: studentAnswers.join('|'),
+    correct: correctAnswers.join('|'),
+    oks: okFlags.join('|'),
+    report: reportParts.join(' | ')
+  };
+}
+
+function gradeFromScore(score30) {
+  const pct = score30 / 30;
+  if (pct >= 0.85) return 'A';
+  if (pct >= 0.70) return 'B';
+  if (pct >= 0.55) return 'C';
+  return 'D';
+}
+
+// ══════════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════════
+function checkAndSubmit() {
+  const unanswered = answers.filter(a => a === null).length;
+  const warn = document.getElementById('unansWarn');
+  if (unanswered > 0) {
+    warn.style.display = 'block';
+    warn.textContent = '⚠️ You have ' + unanswered + ' unanswered question' + (unanswered>1?'s':'') + '. You may still submit, but unanswered questions will count as wrong.';
+  }
+  submitExam(false);
+}
+
+async function submitExam(autoSubmit = false) {
+  if (examSubmitted) return;
+  examSubmitted = true;
+  clearInterval(timerInt);
+
+  // Disable all option buttons
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  document.getElementById('submitBtn').disabled = true;
+
+  const result = computeScore();
+  const grade = gradeFromScore(result.score30);
+  const time_min = Math.round((Date.now() - LAB_START) / 60000);
+
+  // Lock localStorage
+  setLock();
+
+  // Submit to sheet
+  try {
+    await fetch(APPS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        sheet: 'ChemExam_G8',
+        name: currentName,
+        class: currentCls,
+        version: 'V' + currentVersion + ' (' + V_LABELS[currentVersion] + ')',
+        time_min,
+        auto_submit: autoSubmit ? 'Yes' : 'No',
+        answers: result.answers,
+        correct_answers: result.correct,
+        oks: result.oks,
+        report: result.report,
+        score_30: result.score30,
+        score_12: result.score12,
+        grade
+      })
+    });
+  } catch(e) {}
+
+  document.getElementById('submitOk').style.display = 'block';
+  showScore(result.score30, result.score12, grade);
+}
+
+// ══════════════════════════════════════════
+//  SCORE REVEAL
+// ══════════════════════════════════════════
+function showScore(s30, s12, grade) {
+  const msgs = {
+    A: '🎉 Outstanding! You are a chemistry star!',
+    B: '👏 Well done! Solid chemistry knowledge.',
+    C: '💪 Keep going! Review your weak areas.',
+    D: '📖 Keep studying — every scientist starts somewhere!'
+  };
+  const icons = {A:'🏆',B:'⭐',C:'🔬',D:'📚'};
+
+  document.getElementById('scoIcon').textContent = icons[grade];
+  document.getElementById('scoName').textContent = currentName + ' — Class ' + currentCls;
+  document.getElementById('scoMsg').textContent = msgs[grade];
+
+  // Animate numbers
+  animateNum('scoNum30', 0, s30, 1200);
+  animateNum('scoNum12', 0, s12, 1400);
+
+  const la = document.getElementById('scoLetterA');
+  const lb = document.getElementById('scoLetterB');
+  la.textContent = lb.textContent = 'Grade ' + grade;
+  la.className = lb.className = 'gbox-letter ' + grade;
+
+  const ov = document.getElementById('scoreOverlay');
+  ov.style.display = 'flex';
+
+  if (grade === 'A' || grade === 'B') launchConfetti();
+}
+
+function animateNum(id, from, to, duration) {
+  const el = document.getElementById(id);
+  const start = Date.now();
+  const isDecimal = (to % 1 !== 0);
+  function tick() {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const cur = from + (to - from) * eased;
+    el.textContent = isDecimal ? cur.toFixed(2) : Math.round(cur);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function launchConfetti() {
+  const colors = ['#00d4aa','#6c5ce7','#74b9ff','#fd79a8','#fdcb6e','#00b894'];
+  for (let i = 0; i < 80; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.className = 'confetti-p';
+      p.style.cssText = `left:${Math.random()*100}%;top:0;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;transform:rotate(${Math.random()*360}deg);`;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 3500);
+    }, i * 25);
+  }
+}
+</script>
+</body>
+</html>
