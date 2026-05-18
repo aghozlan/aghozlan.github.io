@@ -88,6 +88,15 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 .sec-name{font-size:.9rem;font-weight:700;}
 .sec-pts{margin-left:auto;font-size:.72rem;color:var(--muted);}
 
+/* INTERACTIVE TOOL */
+.interactive-tool { background: var(--bg3); border: 1px dashed var(--teal); border-radius: 8px; padding: 1.2rem; margin: 1rem 0; text-align: center; }
+.tool-title { color: var(--teal); font-weight: 700; margin-bottom: 0.5rem; }
+.tool-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
+.ion-btn { background: var(--bg2); color: var(--text); border: 1px solid var(--teal2); padding: 0.4rem 0.8rem; margin: 0.3rem; border-radius: 4px; cursor: pointer; font-family: 'Share Tech Mono', monospace; font-size: 1rem; transition: all 0.2s; }
+.ion-btn.active-cat { background: var(--teal); color: var(--bg); }
+.ion-btn.active-an { background: var(--purple); color: var(--bg); border-color: var(--purple); }
+.combo-display { font-size: 1.8rem; margin-top: 1rem; color: var(--text); font-weight: bold; font-family: 'Share Tech Mono', monospace; min-height: 2.5rem; letter-spacing: 2px;}
+
 /* Q CARD */
 .q-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.15rem 1.35rem;margin-bottom:.75rem;transition:border-color .2s;position:relative;}
 .q-card.answered{border-color:rgba(0,212,170,.3);}
@@ -99,6 +108,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 .qnb-num{font-size:1.15rem;font-weight:700;line-height:1;}
 .q-text{font-size:.96rem;line-height:1.65;flex:1;}
 .q-text sub,.q-text sup{font-size:.68em;}
+.context-box { background: rgba(0,212,170,.05); border-left: 3px solid var(--orange); padding: 0.8rem; margin-bottom: 1rem; font-size: 0.9rem; font-style: italic; border-radius: 0 4px 4px 0;}
 
 /* OPTIONS */
 .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
@@ -126,10 +136,8 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 </head>
 <body>
 
-<!-- PARTICLES -->
 <div class="particles" id="particlesContainer"></div>
 
-<!-- LOCK SCREEN -->
 <div id="lockScreen" style="display:none;flex-direction:column;align-items:center;justify-content:center;">
   <div class="li">🔒</div>
   <h1>Exam Already Submitted</h1>
@@ -138,7 +146,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
   <p style="font-size:.8rem;margin-top:.5rem;">If you believe this is an error, please contact your teacher.</p>
 </div>
 
-<!-- SCORE OVERLAY -->
 <div id="scoreOverlay" style="display:none;flex-direction:column;">
   <div class="sco-icon" id="scoIcon">⚗️</div>
   <div class="sco-title">Exam Complete!</div>
@@ -161,10 +168,8 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
   <button class="sco-close" onclick="document.getElementById('scoreOverlay').style.display='none'">Close ✕</button>
 </div>
 
-<!-- MAIN APP -->
 <div class="app">
 
-<!-- HEADER -->
 <div class="exam-header">
   <div class="school-name">🏫 Beit Jala Secondary School &nbsp;|&nbsp; Science Department</div>
   <div class="exam-title">Grade 8 <span>Chemistry</span> Exam</div>
@@ -176,7 +181,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
   </div>
 </div>
 
-<!-- TIMER (hidden until exam starts) -->
 <div class="timer-panel hidden" id="timerPanel">
   <div>
     <div id="timerDisp" class="timer-display">30:00</div>
@@ -189,7 +193,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
   <div class="prog-info">Answered: <span class="prog-num" id="progAnswered">0</span> / <span class="prog-num">30</span></div>
 </div>
 
-<!-- SETUP PANEL -->
 <div class="setup-panel" id="setupPanel">
   <div class="setup-title">🧪 Student Setup</div>
   <div class="setup-row">
@@ -218,7 +221,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
   <button class="start-btn" id="startBtn" onclick="startExam()" disabled>Start Exam →</button>
 </div>
 
-<!-- QUESTIONS -->
 <div id="questionsWrap">
   <div id="questionsArea"></div>
   <div class="submit-area" id="submitArea">
@@ -228,9 +230,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
   </div>
 </div>
 
-</div><!-- .app -->
-
-<script>
+</div><script>
 'use strict';
 const LAB_START = Date.now();
 const APPS_URL = 'https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
@@ -238,7 +238,7 @@ const EXAM_DURATION = 30 * 60;
 const LOCK_KEY_PREFIX = 'chemExam8_';
 
 // ══════════════════════════════════════════
-//  STUDENTS
+//  STUDENTS (PRESERVED FULL LIST)
 // ══════════════════════════════════════════
 const STUDENTS = {
   '8A': [
@@ -319,18 +319,17 @@ function getVersion(name, cls) {
 }
 const V_LABELS = {1:'A',2:'B',3:'C',4:'D',5:'E',6:'F (Special)'};
 
-// Correct answer position (0=A,1=B,2=C,3=D) for each question (0-indexed) & version (1-6)
+// Correct answer position
 function getCorrectPos(qIdx, ver) {
-  if (ver <= 4) return (qIdx + ver - 1) % 4;  // V1-V4: rotation
-  if (ver === 5) return (qIdx * 3 + 1) % 4;   // V5: different stride
-  return (qIdx * 3 + 2) % 4;                   // V6: another stride
+  if (ver <= 4) return (qIdx + ver - 1) % 4; 
+  if (ver === 5) return (qIdx * 3 + 1) % 4; 
+  return (qIdx * 3 + 2) % 4;
 }
 
 function buildOpts(qIdx, ver, opts) {
-  // opts[0] is always correct
   const cp = getCorrectPos(qIdx, ver);
   const result = new Array(4);
-  result[cp] = opts[0];
+  result[cp] = opts[0]; // opts[0] is always correct
   const others = [opts[1], opts[2], opts[3]];
   let oi = 0;
   for (let i = 0; i < 4; i++) {
@@ -340,151 +339,127 @@ function buildOpts(qIdx, ver, opts) {
 }
 
 // ══════════════════════════════════════════
-//  QUESTION BANK (30 questions)
+//  QUESTION BANK (30 questions w/ dynamic Variants)
 //  opts[0] = ALWAYS the correct answer
 // ══════════════════════════════════════════
 const SECTIONS = [
   { id:'A', title:'Counting Atoms in Molecules', color:'#00d4aa', pts:'5 pts' },
   { id:'B', title:'Writing Chemical Formulas', color:'#6c5ce7', pts:'5 pts' },
-  { id:'C', title:'Word Equations', color:'#e17055', pts:'5 pts' },
+  { id:'C', title:'Contextual Word Equations', color:'#e17055', pts:'5 pts' },
   { id:'D', title:'Naming Ionic Compounds', color:'#74b9ff', pts:'5 pts' },
   { id:'E', title:'Correcting Chemical Formulas', color:'#fd79a8', pts:'5 pts' },
   { id:'F', title:'Balancing Chemical Equations', color:'#00b894', pts:'5 pts' }
 ];
 
+// Replaced rigid strings with Variants to dynamically change the compounds per version.
 const Q_BANK = [
   // ── SECTION A: Counting Atoms ──
-  {
-    sec:'A',
-    q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Ca(OH)<sub>2</sub>?',
-    opts: ['15','5','10','3']
-  },{
-    sec:'A',
-    q: 'How many <strong>hydrogen atoms</strong> are present in <strong>5</strong> molecules of C<sub>2</sub>H<sub>5</sub>OH?',
-    opts: ['30','6','10','18']
-  },{
-    sec:'A',
-    q: 'What is the <strong>total number of atoms</strong> in <strong>2</strong> molecules of Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?',
-    opts: ['34','17','14','7']
-  },{
-    sec:'A',
-    q: 'How many <strong>oxygen atoms</strong> are in <strong>10</strong> molecules of NH<sub>4</sub>NO<sub>3</sub>?',
-    opts: ['30','3','9','90']
-  },{
-    sec:'A',
-    q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Ca(HCO<sub>3</sub>)<sub>2</sub>?',
-    opts: ['33','11','22','6']
-  },
+  { sec:'A', variants: [
+    { q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Ca(OH)<sub>2</sub>?', opts: ['15','5','10','3'] },
+    { q: 'What is the <strong>total number of atoms</strong> in <strong>2</strong> molecules of Mg(OH)<sub>2</sub>?', opts: ['10','5','15','2'] }
+  ]},{ sec:'A', variants: [
+    { q: 'How many <strong>hydrogen atoms</strong> are present in <strong>5</strong> molecules of C<sub>2</sub>H<sub>5</sub>OH?', opts: ['30','6','10','18'] },
+    { q: 'How many <strong>hydrogen atoms</strong> are present in <strong>4</strong> molecules of CH<sub>3</sub>OH?', opts: ['16','4','12','8'] }
+  ]},{ sec:'A', variants: [
+    { q: 'What is the <strong>total number of atoms</strong> in <strong>2</strong> molecules of Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?', opts: ['34','17','14','7'] },
+    { q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?', opts: ['51','17','34','14'] }
+  ]},{ sec:'A', variants: [
+    { q: 'How many <strong>oxygen atoms</strong> are in <strong>10</strong> molecules of NH<sub>4</sub>NO<sub>3</sub>?', opts: ['30','3','9','90'] },
+    { q: 'How many <strong>oxygen atoms</strong> are in <strong>5</strong> molecules of KNO<sub>3</sub>?', opts: ['15','3','5','10'] }
+  ]},{ sec:'A', variants: [
+    { q: 'What is the <strong>total number of atoms</strong> in <strong>3</strong> molecules of Ca(HCO<sub>3</sub>)<sub>2</sub>?', opts: ['33','11','22','6'] },
+    { q: 'What is the <strong>total number of atoms</strong> in <strong>2</strong> molecules of Mg(HCO<sub>3</sub>)<sub>2</sub>?', opts: ['22','11','33','4'] }
+  ]},
+  
   // ── SECTION B: Writing Formulas ──
-  {
-    sec:'B',
-    q: 'Ammonia is used in fertilizers and cleaners. It consists of <strong>one nitrogen</strong> atom and <strong>three hydrogen</strong> atoms. What is its molecular formula?',
-    opts: ['NH<sub>3</sub>','N<sub>3</sub>H','N<sub>2</sub>H<sub>3</sub>','NH<sub>4</sub>']
-  },{
-    sec:'B',
-    q: 'Dinitrogen pentoxide is an atmospheric pollutant composed of <strong>two nitrogen</strong> atoms and <strong>five oxygen</strong> atoms. Its formula is:',
-    opts: ['N<sub>2</sub>O<sub>5</sub>','NO<sub>2</sub>','N<sub>2</sub>O','N<sub>2</sub>O<sub>3</sub>']
-  },{
-    sec:'B',
-    q: 'Acetic acid (ethanoic acid), the main constituent of vinegar, is composed of <strong>two carbon</strong>, <strong>four hydrogen</strong>, and <strong>two oxygen</strong> atoms. Its formula is:',
-    opts: ['C<sub>2</sub>H<sub>4</sub>O<sub>2</sub>','C<sub>2</sub>H<sub>4</sub>O','CH<sub>2</sub>O','C<sub>4</sub>H<sub>8</sub>O<sub>2</sub>']
-  },{
-    sec:'B',
-    q: 'Baking soda consists of <strong>one sodium</strong>, <strong>one hydrogen</strong>, <strong>one carbon</strong>, and <strong>three oxygen</strong> atoms. Its formula is:',
-    opts: ['NaHCO<sub>3</sub>','NaOH','Na<sub>2</sub>CO<sub>3</sub>','Na<sub>2</sub>O']
-  },{
-    sec:'B',
-    q: 'Decane is composed of <strong>ten carbon</strong> atoms and <strong>twenty-two hydrogen</strong> atoms. Its molecular formula is:',
-    opts: ['C<sub>10</sub>H<sub>22</sub>','C<sub>12</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>20</sub>','C<sub>8</sub>H<sub>18</sub>']
-  },
-  // ── SECTION C: Word Equations ──
-  {
-    sec:'C',
-    q: 'At high temperature, carbon monoxide reacts with ferric oxide. What are the <strong>products</strong>?',
-    opts: ['Carbon dioxide + Iron','Carbon + Iron oxide','Iron + Carbon monoxide','Ferric carbonate']
-  },{
-    sec:'C',
-    q: 'Sulfur burns with oxygen. What is the product?',
-    opts: ['Sulfur dioxide','Sulfuric acid','Sulfur trioxide','Sulfur monoxide']
-  },{
-    sec:'C',
-    q: 'Upon heating (&#9651;), potassium chlorate decomposes into:',
-    opts: ['Potassium chloride + Oxygen','Potassium + Chlorine + Oxygen','Potassium oxide + Chlorine','Potassium + Oxygen']
-  },{
-    sec:'C',
-    q: 'Sodium metal reacts vigorously with hydrobromic acid. The products are:',
-    opts: ['Sodium bromide + Hydrogen','Sodium hydride + Bromine','Sodium + Bromine + Hydrogen','Sodium chloride + Hydrogen']
-  },{
-    sec:'C',
-    q: 'Sucrose decomposes by extreme heat (&#9651;). The products are:',
-    opts: ['Carbon + Water','Glucose + Fructose','Carbon dioxide + Water','Carbon monoxide + Water']
-  },
+  { sec:'B', variants: [
+    { q: 'Ammonia is used in fertilizers. It consists of <strong>one nitrogen</strong> atom and <strong>three hydrogen</strong> atoms. What is its molecular formula?', opts: ['NH<sub>3</sub>','N<sub>3</sub>H','N<sub>2</sub>H<sub>3</sub>','NH<sub>4</sub>'] },
+    { q: 'Methane is a natural gas. It consists of <strong>one carbon</strong> atom and <strong>four hydrogen</strong> atoms. What is its molecular formula?', opts: ['CH<sub>4</sub>','C<sub>4</sub>H','C<sub>2</sub>H<sub>4</sub>','CH<sub>3</sub>'] }
+  ]},{ sec:'B', variants: [
+    { q: 'Dinitrogen pentoxide is an atmospheric pollutant composed of <strong>two nitrogen</strong> atoms and <strong>five oxygen</strong> atoms. Its formula is:', opts: ['N<sub>2</sub>O<sub>5</sub>','NO<sub>2</sub>','N<sub>2</sub>O','N<sub>2</sub>O<sub>3</sub>'] },
+    { q: 'Diphosphorus pentoxide is a drying agent composed of <strong>two phosphorus</strong> atoms and <strong>five oxygen</strong> atoms. Its formula is:', opts: ['P<sub>2</sub>O<sub>5</sub>','PO<sub>2</sub>','P<sub>2</sub>O','P<sub>2</sub>O<sub>3</sub>'] }
+  ]},{ sec:'B', variants: [
+    { q: 'Acetic acid (ethanoic acid) is composed of <strong>two carbon</strong>, <strong>four hydrogen</strong>, and <strong>two oxygen</strong> atoms. Its formula is:', opts: ['C<sub>2</sub>H<sub>4</sub>O<sub>2</sub>','C<sub>2</sub>H<sub>4</sub>O','CH<sub>2</sub>O','C<sub>4</sub>H<sub>8</sub>O<sub>2</sub>'] },
+    { q: 'Lactic acid is composed of <strong>three carbon</strong>, <strong>six hydrogen</strong>, and <strong>three oxygen</strong> atoms. Its formula is:', opts: ['C<sub>3</sub>H<sub>6</sub>O<sub>3</sub>','C<sub>3</sub>H<sub>6</sub>O','CH<sub>2</sub>O','C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>'] }
+  ]},{ sec:'B', variants: [
+    { q: 'Baking soda consists of <strong>one sodium</strong>, <strong>one hydrogen</strong>, <strong>one carbon</strong>, and <strong>three oxygen</strong> atoms. Its formula is:', opts: ['NaHCO<sub>3</sub>','NaOH','Na<sub>2</sub>CO<sub>3</sub>','Na<sub>2</sub>O'] },
+    { q: 'Potassium bicarbonate consists of <strong>one potassium</strong>, <strong>one hydrogen</strong>, <strong>one carbon</strong>, and <strong>three oxygen</strong> atoms. Its formula is:', opts: ['KHCO<sub>3</sub>','KOH','K<sub>2</sub>CO<sub>3</sub>','K<sub>2</sub>O'] }
+  ]},{ sec:'B', variants: [
+    { q: 'Decane is composed of <strong>ten carbon</strong> atoms and <strong>twenty-two hydrogen</strong> atoms. Its molecular formula is:', opts: ['C<sub>10</sub>H<sub>22</sub>','C<sub>12</sub>H<sub>22</sub>','C<sub>10</sub>H<sub>20</sub>','C<sub>8</sub>H<sub>18</sub>'] },
+    { q: 'Octane is composed of <strong>eight carbon</strong> atoms and <strong>eighteen hydrogen</strong> atoms. Its molecular formula is:', opts: ['C<sub>8</sub>H<sub>18</sub>','C<sub>10</sub>H<sub>22</sub>','C<sub>8</sub>H<sub>16</sub>','C<sub>6</sub>H<sub>14</sub>'] }
+  ]},
+
+  // ── SECTION C: Contextual Word Equations ──
+  { sec:'C', variants: [
+    { q: '<div class="context-box">During a metallurgy demonstration, carbon monoxide gas is passed over heated ferric oxide powder.</div> Based on this context, what are the <strong>products</strong>?', opts: ['Carbon dioxide + Iron','Carbon + Iron oxide','Iron + Carbon monoxide','Ferric carbonate'] },
+    { q: '<div class="context-box">In an industrial furnace, hydrogen gas is passed over heated copper(II) oxide.</div> Based on this context, what are the <strong>products</strong>?', opts: ['Water + Copper','Hydrogen + Copper oxide','Copper + Hydrogen peroxide','Copper(I) oxide + Water'] }
+  ]},{ sec:'C', variants: [
+    { q: '<div class="context-box">A piece of yellow sulfur is ignited and burns brightly in a flask filled with pure oxygen gas.</div> What is the product of this combustion?', opts: ['Sulfur dioxide','Sulfuric acid','Sulfur trioxide','Sulfur monoxide'] },
+    { q: '<div class="context-box">A strip of solid magnesium ribbon is ignited, burning with a blinding white light in the presence of oxygen.</div> What is the product of this combustion?', opts: ['Magnesium oxide','Magnesium dioxide','Magnesium hydroxide','Magnesium'] }
+  ]},{ sec:'C', variants: [
+    { q: '<div class="context-box">A test tube containing solid potassium chlorate is heated vigorously over a Bunsen burner, causing it to break down.</div> This decomposition yields:', opts: ['Potassium chloride + Oxygen','Potassium + Chlorine + Oxygen','Potassium oxide + Chlorine','Potassium + Oxygen'] },
+    { q: '<div class="context-box">Solid calcium carbonate (limestone) is heated in a kiln until it breaks down completely.</div> This decomposition yields:', opts: ['Calcium oxide + Carbon dioxide','Calcium + Carbon + Oxygen','Calcium carbide + Oxygen','Calcium + Carbon dioxide'] }
+  ]},{ sec:'C', variants: [
+    { q: '<div class="context-box">A small piece of sodium metal is carefully dropped into a beaker containing hydrobromic acid. The mixture fizzes rapidly.</div> The products are:', opts: ['Sodium bromide + Hydrogen','Sodium hydride + Bromine','Sodium + Bromine + Hydrogen','Sodium chloride + Hydrogen'] },
+    { q: '<div class="context-box">A small piece of potassium metal is dropped into a beaker containing hydrochloric acid. The mixture fizzes violently.</div> The products are:', opts: ['Potassium chloride + Hydrogen','Potassium hydride + Chlorine','Potassium + Chlorine + Hydrogen','Potassium bromide + Hydrogen'] }
+  ]},{ sec:'C', variants: [
+    { q: '<div class="context-box">Sucrose (table sugar) is placed in a crucible and subjected to extreme heat until only a black solid and vapor remain.</div> The products of this decomposition are:', opts: ['Carbon + Water','Glucose + Fructose','Carbon dioxide + Water','Carbon monoxide + Water'] },
+    { q: '<div class="context-box">Glucose powder is strongly heated in a test tube without oxygen until completely charred.</div> The products of this decomposition are:', opts: ['Carbon + Water','Sucrose + Fructose','Carbon dioxide + Water','Carbon monoxide + Water'] }
+  ]},
+
   // ── SECTION D: Naming Ionic Compounds ──
-  {
-    sec:'D',
-    q: 'What is the correct <strong>name</strong> of AgNO<sub>3</sub>?',
-    opts: ['Silver nitrate','Silver nitrite','Argentum nitrate','Silver oxide']
-  },{
-    sec:'D',
-    q: 'What is the correct <strong>name</strong> of Fe(OH)<sub>3</sub>?',
-    opts: ['Ferric hydroxide','Iron hydroxide','Ferrous hydroxide','Iron III oxide']
-  },{
-    sec:'D',
-    q: 'What is the correct <strong>name</strong> of MgSO<sub>4</sub>?',
-    opts: ['Magnesium sulfate','Magnesium sulfite','Magnesium sulfide','Manganese sulfate']
-  },{
-    sec:'D',
-    q: 'What is the correct <strong>name</strong> of Ca(HCO<sub>3</sub>)<sub>2</sub>?',
-    opts: ['Calcium bicarbonate','Calcium carbonate','Calcium hydrogen oxide','Calcium chlorate']
-  },{
-    sec:'D',
-    q: 'What is the correct <strong>name</strong> of Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?',
-    opts: ['Aluminium sulfate','Aluminium sulfide','Aluminium sulfite','Aluminium carbonate']
-  },
+  { sec:'D', variants: [
+    { q: 'What is the correct <strong>name</strong> of AgNO<sub>3</sub>?', opts: ['Silver nitrate','Silver nitrite','Argentum nitrate','Silver oxide'] },
+    { q: 'What is the correct <strong>name</strong> of CuNO<sub>3</sub>?', opts: ['Copper(I) nitrate','Copper(II) nitrate','Copper nitrite','Copper oxide'] }
+  ]},{ sec:'D', variants: [
+    { q: 'What is the correct <strong>name</strong> of Fe(OH)<sub>3</sub>?', opts: ['Iron(III) hydroxide','Iron hydroxide','Iron(II) hydroxide','Iron III oxide'] },
+    { q: 'What is the correct <strong>name</strong> of Fe(OH)<sub>2</sub>?', opts: ['Iron(II) hydroxide','Iron hydroxide','Iron(III) hydroxide','Iron II oxide'] }
+  ]},{ sec:'D', variants: [
+    { q: 'What is the correct <strong>name</strong> of MgSO<sub>4</sub>?', opts: ['Magnesium sulfate','Magnesium sulfite','Magnesium sulfide','Manganese sulfate'] },
+    { q: 'What is the correct <strong>name</strong> of CaSO<sub>4</sub>?', opts: ['Calcium sulfate','Calcium sulfite','Calcium sulfide','Carbon sulfate'] }
+  ]},{ sec:'D', variants: [
+    { q: 'What is the correct <strong>name</strong> of Ca(HCO<sub>3</sub>)<sub>2</sub>?', opts: ['Calcium bicarbonate','Calcium carbonate','Calcium hydrogen oxide','Calcium chlorate'] },
+    { q: 'What is the correct <strong>name</strong> of NaHCO<sub>3</sub>?', opts: ['Sodium bicarbonate','Sodium carbonate','Sodium hydrogen oxide','Sodium chlorate'] }
+  ]},{ sec:'D', variants: [
+    { q: 'What is the correct <strong>name</strong> of Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>?', opts: ['Aluminium sulfate','Aluminium sulfide','Aluminium sulfite','Aluminium carbonate'] },
+    { q: 'What is the correct <strong>name</strong> of K<sub>2</sub>SO<sub>4</sub>?', opts: ['Potassium sulfate','Potassium sulfide','Potassium sulfite','Potassium carbonate'] }
+  ]},
+
   // ── SECTION E: Formula Correction ──
-  {
-    sec:'E',
-    q: 'Zinc chloride is formed from Zn<sup>2+</sup> and Cl<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
-    opts: ['ZnCl<sub>2</sub>','ZnCl','Zn<sub>2</sub>Cl','ZnCl<sub>3</sub>']
-  },{
-    sec:'E',
-    q: 'Ammonium nitrate is formed from NH<sub>4</sub><sup>+</sup> and NO<sub>3</sub><sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
-    opts: ['NH<sub>4</sub>NO<sub>3</sub>','NH<sub>4</sub>(NO<sub>3</sub>)<sub>2</sub>','(NH<sub>4</sub>)<sub>2</sub>NO<sub>3</sub>','NH<sub>4</sub>N']
-  },{
-    sec:'E',
-    q: 'Aluminium sulfide is formed from Al<sup>3+</sup> and S<sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
-    opts: ['Al<sub>2</sub>S<sub>3</sub>','AlS','Al<sub>3</sub>S<sub>2</sub>','Al<sub>2</sub>S']
-  },{
-    sec:'E',
-    q: 'Potassium hydroxide is formed from K<sup>+</sup> and OH<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
-    opts: ['KOH','K(OH)<sub>2</sub>','K<sub>2</sub>OH','K<sub>2</sub>O']
-  },{
-    sec:'E',
-    q: 'Sodium carbonate is formed from Na<sup>+</sup> and CO<sub>3</sub><sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?',
-    opts: ['Na<sub>2</sub>CO<sub>3</sub>','Na(CO<sub>3</sub>)<sub>2</sub>','NaCO<sub>3</sub>','Na<sub>3</sub>CO']
-  },
+  { sec:'E', variants: [
+    { q: 'Zinc chloride is formed from Zn<sup>2+</sup> and Cl<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['ZnCl<sub>2</sub>','ZnCl','Zn<sub>2</sub>Cl','ZnCl<sub>3</sub>'] },
+    { q: 'Calcium bromide is formed from Ca<sup>2+</sup> and Br<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['CaBr<sub>2</sub>','CaBr','Ca<sub>2</sub>Br','CaBr<sub>3</sub>'] }
+  ]},{ sec:'E', variants: [
+    { q: 'Ammonium nitrate is formed from NH<sub>4</sub><sup>+</sup> and NO<sub>3</sub><sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['NH<sub>4</sub>NO<sub>3</sub>','NH<sub>4</sub>(NO<sub>3</sub>)<sub>2</sub>','(NH<sub>4</sub>)<sub>2</sub>NO<sub>3</sub>','NH<sub>4</sub>N'] },
+    { q: 'Potassium nitrate is formed from K<sup>+</sup> and NO<sub>3</sub><sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['KNO<sub>3</sub>','K(NO<sub>3</sub>)<sub>2</sub>','K<sub>2</sub>NO<sub>3</sub>','KN'] }
+  ]},{ sec:'E', variants: [
+    { q: 'Aluminium sulfide is formed from Al<sup>3+</sup> and S<sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['Al<sub>2</sub>S<sub>3</sub>','AlS','Al<sub>3</sub>S<sub>2</sub>','Al<sub>2</sub>S'] },
+    { q: 'Aluminium oxide is formed from Al<sup>3+</sup> and O<sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['Al<sub>2</sub>O<sub>3</sub>','AlO','Al<sub>3</sub>O<sub>2</sub>','Al<sub>2</sub>O'] }
+  ]},{ sec:'E', variants: [
+    { q: 'Potassium hydroxide is formed from K<sup>+</sup> and OH<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['KOH','K(OH)<sub>2</sub>','K<sub>2</sub>OH','K<sub>2</sub>O'] },
+    { q: 'Sodium hydroxide is formed from Na<sup>+</sup> and OH<sup>&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['NaOH','Na(OH)<sub>2</sub>','Na<sub>2</sub>OH','Na<sub>2</sub>O'] }
+  ]},{ sec:'E', variants: [
+    { q: 'Sodium carbonate is formed from Na<sup>+</sup> and CO<sub>3</sub><sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['Na<sub>2</sub>CO<sub>3</sub>','Na(CO<sub>3</sub>)<sub>2</sub>','NaCO<sub>3</sub>','Na<sub>3</sub>CO'] },
+    { q: 'Lithium carbonate is formed from Li<sup>+</sup> and CO<sub>3</sub><sup>2&#8722;</sup> ions. Which formula is <strong>correct</strong>?', opts: ['Li<sub>2</sub>CO<sub>3</sub>','Li(CO<sub>3</sub>)<sub>2</sub>','LiCO<sub>3</sub>','Li<sub>3</sub>CO'] }
+  ]},
+
   // ── SECTION F: Balancing ──
-  {
-    sec:'F',
-    q: 'Balance the equation: 2H<sub>2</sub> + O<sub>2</sub> &rarr; __ H<sub>2</sub>O<br><small style="color:var(--muted);">What is the missing coefficient?</small>',
-    opts: ['2','1','3','4']
-  },{
-    sec:'F',
-    q: 'Balance the equation: __ Na + Cl<sub>2</sub> &rarr; 2NaCl<br><small style="color:var(--muted);">What is the coefficient of Na?</small>',
-    opts: ['2','1','3','4']
-  },{
-    sec:'F',
-    q: 'Balance the equation: 4Fe + __ O<sub>2</sub> &rarr; 2Fe<sub>2</sub>O<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>',
-    opts: ['3','2','4','6']
-  },{
-    sec:'F',
-    q: 'Balance the equation: __ Al + 3Cl<sub>2</sub> &rarr; 2AlCl<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of Al?</small>',
-    opts: ['2','1','3','4']
-  },{
-    sec:'F',
-    q: 'Balance the equation: CH<sub>4</sub> + __ O<sub>2</sub> &rarr; CO<sub>2</sub> + 2H<sub>2</sub>O<br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>',
-    opts: ['2','1','3','4']
-  }
+  { sec:'F', variants: [
+    { q: 'Balance the equation: 2H<sub>2</sub> + O<sub>2</sub> &rarr; __ H<sub>2</sub>O<br><small style="color:var(--muted);">What is the missing coefficient?</small>', opts: ['2','1','3','4'] },
+    { q: 'Balance the equation: N<sub>2</sub> + 3H<sub>2</sub> &rarr; __ NH<sub>3</sub><br><small style="color:var(--muted);">What is the missing coefficient?</small>', opts: ['2','1','3','4'] }
+  ]},{ sec:'F', variants: [
+    { q: 'Balance the equation: __ Na + Cl<sub>2</sub> &rarr; 2NaCl<br><small style="color:var(--muted);">What is the coefficient of Na?</small>', opts: ['2','1','3','4'] },
+    { q: 'Balance the equation: __ K + Br<sub>2</sub> &rarr; 2KBr<br><small style="color:var(--muted);">What is the coefficient of K?</small>', opts: ['2','1','3','4'] }
+  ]},{ sec:'F', variants: [
+    { q: 'Balance the equation: 4Fe + __ O<sub>2</sub> &rarr; 2Fe<sub>2</sub>O<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>', opts: ['3','2','4','6'] },
+    { q: 'Balance the equation: 4Al + __ O<sub>2</sub> &rarr; 2Al<sub>2</sub>O<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>', opts: ['3','2','4','6'] }
+  ]},{ sec:'F', variants: [
+    { q: 'Balance the equation: __ Al + 3Cl<sub>2</sub> &rarr; 2AlCl<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of Al?</small>', opts: ['2','1','3','4'] },
+    { q: 'Balance the equation: __ Fe + 3Cl<sub>2</sub> &rarr; 2FeCl<sub>3</sub><br><small style="color:var(--muted);">What is the coefficient of Fe?</small>', opts: ['2','1','3','4'] }
+  ]},{ sec:'F', variants: [
+    { q: 'Balance the equation: CH<sub>4</sub> + __ O<sub>2</sub> &rarr; CO<sub>2</sub> + 2H<sub>2</sub>O<br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>', opts: ['2','1','3','4'] },
+    { q: 'Balance the equation: C<sub>3</sub>H<sub>8</sub> + __ O<sub>2</sub> &rarr; 3CO<sub>2</sub> + 4H<sub>2</sub>O<br><small style="color:var(--muted);">What is the coefficient of O<sub>2</sub>?</small>', opts: ['5','3','4','6'] }
+  ]}
 ];
 
 // ══════════════════════════════════════════
@@ -495,7 +470,11 @@ let specialMode = false;
 let timerInt = null, secondsLeft = EXAM_DURATION;
 let examStarted = false, examSubmitted = false;
 let builtOpts = []; // per question: {opts, correctIdx}
-const answers = new Array(30).fill(null); // 0=A,1=B,2=C,3=D
+const answers = new Array(30).fill(null); 
+
+// Interactive Tool State
+let activeCation = null;
+let activeAnion = null;
 
 // ══════════════════════════════════════════
 //  PARTICLES
@@ -563,6 +542,83 @@ function setLock() {
 }
 
 // ══════════════════════════════════════════
+//  INTERACTIVE HELPER TOOL LOGIC
+// ══════════════════════════════════════════
+function buildInteractiveTool() {
+  const toolHtml = `
+    <div class="interactive-tool" id="ionTool">
+      <div class="tool-title">⚡ Interactive Ion Scratchpad</div>
+      <div class="tool-desc">Not sure about a formula below? Click a Cation and Anion to check the neutral compound!</div>
+      
+      <div>
+        <button class="ion-btn cat-btn" data-val="Na+" data-sym="Na" data-chg="1" onclick="selectToolIon('cat', this)">Na⁺</button>
+        <button class="ion-btn cat-btn" data-val="Ca2+" data-sym="Ca" data-chg="2" onclick="selectToolIon('cat', this)">Ca²⁺</button>
+        <button class="ion-btn cat-btn" data-val="Al3+" data-sym="Al" data-chg="3" onclick="selectToolIon('cat', this)">Al³⁺</button>
+        <button class="ion-btn cat-btn" data-val="Zn2+" data-sym="Zn" data-chg="2" onclick="selectToolIon('cat', this)">Zn²⁺</button>
+      </div>
+      <div>
+        <button class="ion-btn an-btn" data-val="Cl-" data-sym="Cl" data-chg="1" onclick="selectToolIon('an', this)">Cl⁻</button>
+        <button class="ion-btn an-btn" data-val="O2-" data-sym="O" data-chg="2" onclick="selectToolIon('an', this)">O²⁻</button>
+        <button class="ion-btn an-btn" data-val="NO3-" data-sym="(NO₃)" data-chg="1" onclick="selectToolIon('an', this)">NO₃⁻</button>
+        <button class="ion-btn an-btn" data-val="SO42-" data-sym="(SO₄)" data-chg="2" onclick="selectToolIon('an', this)">SO₄²⁻</button>
+      </div>
+      
+      <div class="combo-display" id="comboDisplay">?</div>
+      <button class="sec-btn" style="margin-top:0.5rem;" onclick="clearTool()">Clear Scratchpad</button>
+    </div>
+  `;
+  return toolHtml;
+}
+
+window.selectToolIon = function(type, btn) {
+  if(type === 'cat') {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active-cat'));
+    btn.classList.add('active-cat');
+    activeCation = { sym: btn.dataset.sym, chg: parseInt(btn.dataset.chg) };
+  } else {
+    document.querySelectorAll('.an-btn').forEach(b => b.classList.remove('active-an'));
+    btn.classList.add('active-an');
+    activeAnion = { sym: btn.dataset.sym, chg: parseInt(btn.dataset.chg) };
+  }
+  updateToolDisplay();
+}
+
+window.clearTool = function() {
+  activeCation = null; activeAnion = null;
+  document.querySelectorAll('.ion-btn').forEach(b => { b.classList.remove('active-cat'); b.classList.remove('active-an'); });
+  document.getElementById('comboDisplay').textContent = '?';
+}
+
+function updateToolDisplay() {
+  const disp = document.getElementById('comboDisplay');
+  if(activeCation && activeAnion) {
+    // Criss-cross logic
+    let cSub = activeAnion.chg;
+    let aSub = activeCation.chg;
+    
+    // Simplify ratio
+    if(cSub === aSub) { cSub = 1; aSub = 1; }
+    else if(cSub % 2 === 0 && aSub % 2 === 0) { cSub /= 2; aSub /= 2; }
+
+    let formula = activeCation.sym;
+    if(cSub > 1) formula += `<sub>${cSub}</sub>`;
+    
+    // Add anion (removing parentheses if subscript is 1)
+    let anStr = activeAnion.sym;
+    if(aSub === 1) anStr = anStr.replace(/\(|\)/g, ''); // remove parens
+    formula += anStr;
+    if(aSub > 1) formula += `<sub>${aSub}</sub>`;
+
+    disp.innerHTML = formula;
+    disp.style.color = "var(--teal)";
+  } else if (activeCation) {
+    disp.textContent = activeCation.sym + " + ?";
+  } else if (activeAnion) {
+    disp.textContent = "? + " + activeAnion.sym;
+  }
+}
+
+// ══════════════════════════════════════════
 //  BUILD QUESTIONS
 // ══════════════════════════════════════════
 function buildQuestions() {
@@ -585,10 +641,21 @@ function buildQuestions() {
         <span class="sec-pts">${secDef.pts}</span>
       `;
       area.appendChild(hdr);
+      
+      // Inject Interactive Tool before Section D (Naming) or E (Correcting Formula)
+      if(q.sec === 'E') {
+         const toolDiv = document.createElement('div');
+         toolDiv.innerHTML = buildInteractiveTool();
+         area.appendChild(toolDiv);
+      }
     }
 
-    // Build opts for this version
-    const built = buildOpts(idx, currentVersion, q.opts);
+    // Select the variant dynamically based on the student's assigned Version (1 to 6)
+    const variantIdx = (currentVersion - 1) % q.variants.length;
+    const vData = q.variants[variantIdx];
+
+    // Build opts for this version (scrambling the A, B, C, D order)
+    const built = buildOpts(idx, currentVersion, vData.opts);
     builtOpts.push(built);
 
     // Card
@@ -611,7 +678,7 @@ function buildQuestions() {
           <div class="qnb-top">Q</div>
           <div class="qnb-num">${idx+1}</div>
         </div>
-        <div class="q-text">${q.q}</div>
+        <div class="q-text">${vData.q}</div>
       </div>
       <div class="opts-grid">${optsHtml}</div>
     `;
@@ -624,7 +691,6 @@ function buildQuestions() {
 function selectOpt(qIdx, optIdx) {
   if (examSubmitted) return;
   answers[qIdx] = optIdx;
-  // Update UI
   for (let i = 0; i < 4; i++) {
     const btn = document.getElementById('opt_' + qIdx + '_' + i);
     if (btn) btn.classList.toggle('selected', i === optIdx);
@@ -644,14 +710,12 @@ function updateProgress() {
 async function startExam() {
   if (!currentName || !currentCls) return;
 
-  // If locked, try server-side unlock first (teacher may have granted re-attempt)
   if (checkLock()) {
     try {
       const resp = await fetch(APPS_URL + '?action=checkUnlockChem&name=' +
         encodeURIComponent(currentName) + '&class=' + encodeURIComponent(currentCls));
       const text = await resp.text();
       if (text.trim() === 'unlock') {
-        // Clear the local lock — teacher granted a re-attempt
         localStorage.removeItem(LOCK_KEY_PREFIX + currentName + '_' + currentCls);
       } else {
         document.getElementById('lockScreen').style.display = 'flex';
@@ -663,7 +727,6 @@ async function startExam() {
     }
   }
 
-  // Hide setup, show exam
   document.getElementById('setupPanel').style.display = 'none';
   document.getElementById('timerPanel').classList.remove('hidden');
   document.getElementById('questionsWrap').style.display = 'block';
@@ -771,7 +834,6 @@ async function submitExam(autoSubmit = false) {
   examSubmitted = true;
   clearInterval(timerInt);
 
-  // Disable all option buttons
   document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
   document.getElementById('submitBtn').disabled = true;
 
@@ -779,10 +841,8 @@ async function submitExam(autoSubmit = false) {
   const grade = gradeFromScore(result.score30);
   const time_min = Math.round((Date.now() - LAB_START) / 60000);
 
-  // Lock localStorage
   setLock();
 
-  // Submit to sheet
   try {
     await fetch(APPS_URL, {
       method: 'POST',
@@ -826,7 +886,6 @@ function showScore(s30, s12, grade) {
   document.getElementById('scoName').textContent = currentName + ' — Class ' + currentCls;
   document.getElementById('scoMsg').textContent = msgs[grade];
 
-  // Animate numbers
   animateNum('scoNum30', 0, s30, 1200);
   animateNum('scoNum12', 0, s12, 1400);
 
