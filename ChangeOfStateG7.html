@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7D: Change of State Interactive Lab</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D Molecular Simulation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Custom Tatreez-inspired decorative element */
+        .tatreez-border {
+            background-image: repeating-linear-gradient(45deg, #ef4444 0px, #ef4444 4px, transparent 4px, transparent 10px),
+                              repeating-linear-gradient(-45deg, #10b981 0px, #10b981 4px, transparent 4px, transparent 10px);
+            background-size: 20px 20px;
+            height: 6px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Molecule Canvas container styling */
+        #canvas3d {
+            width: 100%;
+            height: 320px;
+            background-color: #020617;
+            border-radius: 1rem;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- TOP BAR -->
+    <header class="bg-slate-900 border-b border-slate-800 shadow-xl relative overflow-hidden">
+        <div class="tatreez-border w-full"></div>
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/10">
+                    <svg class="w-6 h-6 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-emerald-400 tracking-wider uppercase">Science Lab • Grade 7D</span>
+                    <h1 class="text-xl font-extrabold text-slate-100 flex items-center gap-2">
+                        Matter & Heat Energy 
+                        <span class="text-xs bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-0.5 rounded-full">Chapter 8</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Header Status -->
+            <div class="flex items-center gap-4">
+                <div id="studentIndicator" class="hidden bg-slate-800 border border-slate-700 rounded-full px-4 py-1.5 text-sm font-medium flex items-center gap-2" dir="rtl">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span id="activeStudentName" class="text-slate-200 font-sans font-semibold">طالب</span>
+                    <button onclick="logoutStudent()" class="text-slate-400 hover:text-red-400 transition-colors mr-2 text-xs" dir="ltr">
+                        Change / تغيير
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN INTERACTIVE CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- STEP NAVIGATION MAP -->
+        <div id="learningPath" class="hidden mb-6 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
+            <div class="grid grid-cols-5 text-center relative">
+                <!-- Progress Line background -->
+                <div class="absolute top-1/2 left-[10%] right-[10%] h-1 bg-slate-800 -translate-y-1/2 z-0 rounded-full">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 transition-all duration-300 w-0"></div>
+                </div>
+                
+                <!-- Steps -->
+                <button onclick="goToStage('engage')" id="step-engage" class="relative z-10 flex flex-col items-center group transition-transform focus:outline-none">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-sm text-slate-400 transition-all duration-300 shadow-lg group-hover:scale-110">1</div>
+                    <span class="text-xs font-semibold mt-2 text-slate-400 group-hover:text-slate-200 transition-colors">ENGAGE</span>
+                    <span class="text-[10px] text-slate-500 hidden md:inline">Palestinian Sage Tea</span>
+                </button>
+                <button onclick="goToStage('explore')" id="step-explore" class="relative z-10 flex flex-col items-center group transition-transform focus:outline-none">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-sm text-slate-400 transition-all duration-300 shadow-lg group-hover:scale-110">2</div>
+                    <span class="text-xs font-semibold mt-2 text-slate-400 group-hover:text-slate-200 transition-colors">EXPLORE</span>
+                    <span class="text-[10px] text-slate-500 hidden md:inline">3D Molecular Lab</span>
+                </button>
+                <button onclick="goToStage('explain')" id="step-explain" class="relative z-10 flex flex-col items-center group transition-transform focus:outline-none">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-sm text-slate-400 transition-all duration-300 shadow-lg group-hover:scale-110">3</div>
+                    <span class="text-xs font-semibold mt-2 text-slate-400 group-hover:text-slate-200 transition-colors">EXPLAIN</span>
+                    <span class="text-[10px] text-slate-500 hidden md:inline">Thermodynamic Concepts</span>
+                </button>
+                <button onclick="goToStage('elaborate')" id="step-elaborate" class="relative z-10 flex flex-col items-center group transition-transform focus:outline-none">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-sm text-slate-400 transition-all duration-300 shadow-lg group-hover:scale-110">4</div>
+                    <span class="text-xs font-semibold mt-2 text-slate-400 group-hover:text-slate-200 transition-colors">ELABORATE</span>
+                    <span class="text-[10px] text-slate-500 hidden md:inline">Water & Citizenship</span>
+                </button>
+                <button onclick="goToStage('evaluate')" id="step-evaluate" class="relative z-10 flex flex-col items-center group transition-transform focus:outline-none">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center font-bold text-sm text-slate-400 transition-all duration-300 shadow-lg group-hover:scale-110">5</div>
+                    <span class="text-xs font-semibold mt-2 text-slate-400 group-hover:text-slate-200 transition-colors">EVALUATE</span>
+                    <span class="text-[10px] text-slate-500 hidden md:inline">Knowledge Assessment</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 1. STUDENT ENTRY STAGE -->
+        <section id="stage-login" class="max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <span class="bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-full font-bold border border-emerald-500/20">UNRWA Lebanon Education Programme</span>
+                <h2 class="text-2xl font-bold text-slate-100">Welcome, Science Explorer!</h2>
+                <p class="text-slate-400 text-sm">Please select your name from the Grade 7D roster to begin your Change of State scientific mission.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Student Name / اسم الطالب</label>
+                    <select id="studentSelect" class="w-full bg-slate-800 border border-slate-700 text-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all font-semibold" dir="rtl">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="bg-slate-950 rounded-xl p-4 border border-slate-800/80 space-y-3">
+                    <h4 class="text-xs font-bold text-amber-500 flex items-center gap-1.5 uppercase tracking-wide">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        Prerequisite Checklist:
+                    </h4>
+                    <ul class="text-xs text-slate-300 space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">✓</span>
+                            <span>We have heat exchange with our surroundings every day.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">✓</span>
+                            <span>Object temperature changes based on heat energy gain or loss.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <button onclick="loginAndStart()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold py-3.5 rounded-xl transition-all hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-500/10 flex justify-center items-center gap-2 text-base">
+                    Enter Laboratory Space
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                </button>
+
+                <!-- Teacher Quick Setup -->
+                <div class="pt-4 mt-4 border-t border-slate-800">
+                    <button onclick="document.getElementById('quickRosterSetup').classList.toggle('hidden')" class="text-[11px] text-slate-500 hover:text-emerald-400 transition-colors flex items-center gap-1 justify-center w-full">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        Teacher: Click here to paste all 33 names
+                    </button>
+                    <div id="quickRosterSetup" class="hidden mt-3 space-y-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <p class="text-[10px] text-slate-400 text-center">Paste the full column of 33 names from Excel here to instantly update the list.</p>
+                        <textarea id="quickRosterInput" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500" dir="rtl"></textarea>
+                        <button onclick="saveQuickRoster()" class="w-full bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-[11px] py-1.5 rounded-lg font-bold transition-all">
+                            Save 33 Names
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ENGAGE STAGE (The Cultural & Physical Anchor) -->
+        <section id="stage-engage" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 flex flex-col justify-between space-y-6">
+                <div class="space-y-4">
+                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950 border border-emerald-900/50 px-3 py-1 rounded-full">Phase 1: ENGAGE</span>
+                    <h3 class="text-3xl font-extrabold text-slate-100 leading-tight">Boiling Water for Authentic Miramiyyeh (Sage Tea)</h3>
+                    
+                    <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                        In many houses throughout Palestine and the UNRWA camps in Lebanon, our mornings start with traditional **Miramiyyeh** (sage tea). When we light the burner under a pot of cold water, we are initiating a beautiful physical sequence. 
+                    </p>
+                    <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                        As energy passes from the flame into the kettle, the water temperature rises. Once it boils, we notice vigorous bubbles formed throughout the whole liquid, escaping as vapor. If we place a cool metal cover over the pot, we immediately see tiny droplets of liquid forming on the inside surface of the cover.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <span class="text-xs font-bold text-emerald-400 block mb-1">Evaporation vs Boiling</span>
+                            <p class="text-xs text-slate-400 leading-relaxed">The steam rising slowly is evaporation. The rapid bubbles throughout are boiling.</p>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <span class="text-xs font-bold text-teal-400 block mb-1">Condensation Action</span>
+                            <p class="text-xs text-slate-400 leading-relaxed">The hot steam hitting the cold metal lid loses energy, returning into sweet water drops.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800/80">
+                    <span class="text-xs text-slate-500 italic">Citizenship Connection: Conserving energy and resources in our community.</span>
+                    <button onclick="goToStage('explore')" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 border border-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all">
+                        Launch 3D Molecular Sandbox
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visualization column for Engage -->
+            <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -top-16 -right-16 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                <div class="space-y-4">
+                    <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Predictive Exploration</h4>
+                    <p class="text-xs text-slate-400">Answer this prompt based on your current knowledge before we enter the 3D molecular lab:</p>
+
+                    <!-- Engage Quick Question -->
+                    <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 space-y-3">
+                        <p class="text-xs font-semibold text-slate-200">When liquid water turns into vapor (gas), does the substance absorb heat from the surrounding environment or release heat to it?</p>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button id="btn-engage-a" onclick="answerEngage(true)" class="text-left text-xs bg-slate-800 hover:bg-slate-750 px-3 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-slate-300 transition-all flex items-center justify-between">
+                                <span>It absorbs (gains) heat energy</span>
+                                <span class="text-emerald-400 font-bold hidden" id="engage-correct">Selected ✓</span>
+                            </button>
+                            <button id="btn-engage-b" onclick="answerEngage(false)" class="text-left text-xs bg-slate-800 hover:bg-slate-750 px-3 py-2.5 rounded-lg border border-slate-700 hover:border-slate-600 text-slate-300 transition-all flex items-center justify-between">
+                                <span>It releases (loses) heat energy</span>
+                                <span class="text-red-400 font-bold hidden" id="engage-incorrect">Selected</span>
+                            </button>
+                        </div>
+                        <div id="engage-feedback" class="text-[11px] text-slate-400 hidden leading-relaxed pt-2 border-t border-slate-800">
+                            <strong>Excellent!</strong> Water molecules must absorb kinetic energy from the heat source to break free of liquid bonds and vaporize.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-950/30 rounded-xl p-3 border border-emerald-900/30 text-xs text-emerald-300 flex items-start gap-2.5 mt-4">
+                    <span class="text-base">💡</span>
+                    <span><strong>State changes</strong> are structural reorganizations caused purely by heat transfer with no changes to the actual water molecules!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. EXPLORE STAGE (3D Three.js Molecular Lab & Curve Synchronization) -->
+        <section id="stage-explore" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <!-- 3D分子交互 -->
+            <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between space-y-4">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-teal-400 uppercase tracking-widest bg-teal-950 border border-teal-900/50 px-3 py-1 rounded-full">Phase 2: EXPLORE</span>
+                        <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                            Live 3D Simulation
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100">Interactive Molecular Chamber</h3>
+                    <p class="text-xs text-slate-400">Use the temperature slider below to apply energy. Watch how molecules break alignment and state plateaus emerge on the chart.</p>
+                </div>
+
+                <!-- Three.js Canvas Container -->
+                <div class="relative">
+                    <div id="canvas3d"></div>
+                    <!-- Overlay information -->
+                    <div class="absolute top-4 left-4 bg-slate-950/80 border border-slate-800 px-3 py-2 rounded-lg backdrop-blur-sm pointer-events-none">
+                        <span class="text-[10px] text-slate-400 block uppercase font-bold">Substance State</span>
+                        <span id="currentPhaseLabel" class="text-sm font-extrabold text-emerald-400">Solid (Ice)</span>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-slate-950/80 border border-slate-800 px-3 py-2 rounded-lg backdrop-blur-sm pointer-events-none">
+                        <span class="text-[10px] text-slate-400 block uppercase font-bold">Temperature</span>
+                        <span id="currentTempLabel" class="text-sm font-extrabold text-teal-400">-15 °C</span>
+                    </div>
+                </div>
+
+                <!-- Simulation Controls -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between text-xs font-bold text-slate-300">
+                        <span>Heat Input Level</span>
+                        <span id="sliderValueText" class="text-teal-400">Melting Ice Stage</span>
+                    </div>
+                    <input type="range" id="tempSlider" min="-15" max="120" value="-15" class="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-500 font-medium">
+                        <span>-15°C (Solid Ice)</span>
+                        <span>0°C (Melting Point)</span>
+                        <span>100°C (Boiling Point)</span>
+                        <span>120°C (Gas Steam)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heating curve graph synchronization -->
+            <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between space-y-4">
+                <div class="space-y-2">
+                    <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        Objective 6: Synchronous Heating Curve Analyzer
+                    </h4>
+                    <p class="text-xs text-slate-400">Analyze the temperature-time graph of water. The blinking cursor traces your interactive slider changes in real-time.</p>
+                </div>
+
+                <!-- Chart container (Canvas) -->
+                <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 flex items-center justify-center">
+                    <canvas id="heatingCurveChart" width="450" height="260" class="w-full max-h-[260px]"></canvas>
+                </div>
+
+                <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-teal-500 rounded-sm"></span>
+                        <span class="text-slate-300 font-semibold">Plateau observations:</span>
+                    </div>
+                    <p class="text-slate-400 leading-relaxed text-[11px]">
+                        Notice how the temperature **stops rising** during melting (0°C) and boiling (100°C). This plateau is the phase change region, where absorbed heat energy goes entirely toward breaking intermolecular bonds instead of raising temperature!
+                    </p>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                    <button onclick="goToStage('explain')" class="bg-slate-800 hover:bg-slate-700 text-teal-400 border border-slate-700 px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all">
+                        Proceed to Explanations
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. EXPLAIN STAGE (Key Scientific Definitions & Comparative Diagrams) -->
+        <section id="stage-explain" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 space-y-4">
+                <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest bg-indigo-950 border border-indigo-900/50 px-3 py-1 rounded-full">Phase 3: EXPLAIN</span>
+                <h3 class="text-2xl font-extrabold text-slate-100">Terminology and Scientific Core</h3>
+                <p class="text-sm text-slate-300 max-w-3xl">Let us break down the transitions we observed in the lab. Heat energy determines the physical state of a pure substance by regulating molecular vibration speed.</p>
+            </div>
+
+            <!-- Transition Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Transition 1 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-pink-400 uppercase tracking-wider block">Solid ⇄ Liquid</span>
+                        <h4 class="text-lg font-bold text-slate-100">Fusion & Solidification</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            **Fusion (Melting)** occurs when a solid absorbs thermal energy, turning into a liquid at its characteristic <strong>Melting Point</strong> (0°C for water). 
+                            **Solidification (Freezing)** is the exact opposite—heat is released, causing the molecules to lock back into structural grids.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-805 text-center text-xs text-emerald-400 font-semibold">
+                        Pure water melting point = 0°C
+                    </div>
+                </div>
+
+                <!-- Transition 2 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">Liquid ⇄ Gas</span>
+                        <h4 class="text-lg font-bold text-slate-100">Boiling & Condensation</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            **Boiling** is a rapid state transition occurring throughout the entire volume of a liquid when heated to its <strong>Boiling Point</strong> (100°C for water). 
+                            **Condensation** occurs when gas cools down (releases energy) and returns to liquid state.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-805 text-center text-xs text-amber-400 font-semibold">
+                        Pure water boiling point = 100°C
+                    </div>
+                </div>
+
+                <!-- Transition 3 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-blue-400 uppercase tracking-wider block">Surface Transition</span>
+                        <h4 class="text-lg font-bold text-slate-100">Evaporation vs Boiling</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            While both represent liquid-to-gas transitions, **Evaporation** is a slow process that happens only at the surface of a liquid at any temperature. **Boiling** happens rapidly, throughout the liquid volume, and only at boiling point.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-805 text-[11px] text-slate-400 leading-relaxed">
+                        • Evaporation: Quiet, surface, all temps.<br>
+                        • Boiling: Bubbles everywhere, specific temp.
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col md:flex-row gap-6 items-center justify-between">
+                <div class="space-y-2 max-w-2xl">
+                    <h4 class="text-base font-bold text-slate-200">Are you ready to think critically?</h4>
+                    <p class="text-xs text-slate-400">Let's look at how water scarcity and thermodynamics intersect in our local community contexts (Lebanon & Palestine camps).</p>
+                </div>
+                <button onclick="goToStage('elaborate')" class="w-full md:w-auto bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-lg hover:shadow-indigo-500/15">
+                    Elaborate: Water & Citizenship
+                </button>
+            </div>
+        </section>
+
+        <!-- 5. ELABORATE STAGE (6Cs - Citizenship, Water Security & Resilience) -->
+        <section id="stage-elaborate" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 flex flex-col justify-between space-y-6">
+                <div class="space-y-4">
+                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950 border border-emerald-900/50 px-3 py-1 rounded-full">Phase 4: ELABORATE & CITIZENSHIP</span>
+                    <h3 class="text-2xl font-extrabold text-slate-100 leading-tight">Water Security, Distillation & Resourcefulness</h3>
+                    
+                    <p class="text-slate-300 leading-relaxed text-sm">
+                        In UNRWA schools and camps within Lebanon, we often face challenges with water supply and quality. Understanding **change of state** is not just an academic exercise—it is a tool for survival, adaptation, and engineering solutions.
+                    </p>
+                    <p class="text-slate-300 leading-relaxed text-sm font-semibold text-emerald-400">
+                        Did you know that pure water can be extracted from salty or contaminated water using simple solar distillation?
+                    </p>
+                    <p class="text-slate-300 leading-relaxed text-xs md:text-sm">
+                        By trapping water under a plastic sheet warmed by the sun, the liquid water absorbs heat energy and **evaporates** (leaving the salts and impurities behind). As the water vapor rises and hits the cooler plastic dome, it **condenses** into clean droplets. Those droplets run down into a cup, providing pure drinking water.
+                    </p>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-850 space-y-2">
+                        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Palestinian Resilience & Science Integration</span>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Our ancestors preserved food and water through extreme seasons using state-change principles (like drying fruit and vegetables using pure evaporation, or condensing floral waters like orange blossom water—"Mazaher"). Our resourcefulness is our identity!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-800 flex justify-end">
+                    <button onclick="goToStage('evaluate')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3 rounded-xl font-extrabold text-sm transition-all hover:scale-[1.02]">
+                        Take Final Evaluation Challenge
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Citizenship Prompt -->
+            <div class="lg:col-span-5 bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🌿</span>
+                        <h4 class="text-sm font-bold text-slate-200">Reflective Community Problem Solving</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Imagine there is an electrical power cut in Rashidieh Camp, and we cannot use refrigeration. To cool down a pot of fresh goat milk without ice, our grandmothers wrap the container in a wet cotton cloth and place it in the path of the wind. 
+                    </p>
+                    <p class="text-xs text-slate-300 italic">
+                        Why does wrapping a container in a wet cloth cool down the contents inside?
+                    </p>
+
+                    <!-- Interactive Elaborate Choice -->
+                    <div class="space-y-2.5">
+                        <button id="btn-elab-a" onclick="answerElaborate(true)" class="w-full text-left text-xs bg-slate-905 hover:bg-slate-800 p-3 rounded-xl border border-slate-800 hover:border-slate-700 text-slate-300 transition-all">
+                            <strong>A. Evaporation process:</strong> The water on the wet cloth evaporates. To do so, it must absorb heat from the warm container, cooling the milk inside.
+                        </button>
+                        <button id="btn-elab-b" onclick="answerElaborate(false)" class="w-full text-left text-xs bg-slate-905 hover:bg-slate-800 p-3 rounded-xl border border-slate-800 hover:border-slate-700 text-slate-300 transition-all">
+                            <strong>B. Condensation process:</strong> The moisture on the cloth condenses, which transfers cool particles directly into the container.
+                        </button>
+                    </div>
+
+                    <div id="elaborate-feedback" class="hidden text-[11px] p-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 leading-relaxed">
+                        <span class="text-emerald-400 font-bold block mb-1">That is correct!</span>
+                        Because evaporation is an endothermic change of state (requires heat absorption), as the water molecules in the wet cloth evaporate, they pull heat away from the milk, keeping it naturally cooler! This is a simple, ecological thermodynamics trick.
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-slate-500 mt-4 border-t border-slate-800/60 pt-3">
+                    Every observation we make connects us to the preservation of our environments.
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. EVALUATE STAGE (10 Complete Questions Assessment) -->
+        <section id="stage-evaluate" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 flex flex-col justify-between space-y-6">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-rose-400 uppercase tracking-widest bg-rose-950 border border-rose-900/50 px-3 py-1 rounded-full">Phase 5: EVALUATE</span>
+                        <div class="text-xs text-slate-400">
+                            Question <span id="currentQuestionNumber" class="text-slate-200 font-extrabold">1</span> of 10
+                        </div>
+                    </div>
+                    
+                    <div class="h-1 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="quizProgressBar" class="h-full bg-rose-500 w-10% transition-all duration-300"></div>
+                    </div>
+
+                    <!-- Question Core UI -->
+                    <div id="questionContainer" class="space-y-4 py-4">
+                        <h4 id="questionText" class="text-lg font-bold text-slate-100 leading-relaxed">Question text placeholder?</h4>
+                        <div id="optionsContainer" class="grid grid-cols-1 gap-3">
+                            <!-- Answer buttons dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls inside quiz -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                    <span class="text-xs text-slate-500 font-medium">Be sure to solve carefully to save your submission to Grade 7D records.</span>
+                    <button id="nextQuestionBtn" onclick="nextQuestion()" class="hidden bg-slate-800 hover:bg-slate-700 text-rose-400 border border-rose-700/80 hover:border-rose-600 px-6 py-2.5 rounded-xl text-sm font-bold items-center gap-2 transition-all">
+                        Next Question
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Performance & Telemetry Tracker during Quiz -->
+            <div class="lg:col-span-4 bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between">
+                <div class="space-y-4">
+                    <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
+                        Active Session Telemetry
+                    </h4>
+                    
+                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-800 space-y-3 text-xs">
+                        <div class="flex justify-between" dir="rtl">
+                            <span class="text-slate-400">الطالب:</span>
+                            <span id="telemetryName" class="text-slate-200 font-bold">Unregistered</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Current Phase:</span>
+                            <span class="text-emerald-400 font-bold">Evaluation Check</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Total Duration:</span>
+                            <span id="telemetryTimer" class="text-teal-400 font-bold">0m 0s</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Interactions Logged:</span>
+                            <span id="telemetryInteractions" class="text-indigo-400 font-bold">0 events</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-950/20 rounded-xl p-3 border border-rose-900/30 text-[11px] text-rose-300 flex items-start gap-2">
+                        <span>🎯</span>
+                        <span>These questions are fully mapped to the **Grade 7 Lebanese Curricular Goals for Chapter 8 (Change of State)**, verifying heat exchange, melting/boiling points, state determination, and curves.</span>
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-slate-500 pt-3 border-t border-slate-800/60 mt-4">
+                    Your response will sync live with the teacher's dashboard database.
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. COMPLETE LAB SUMMARY STAGE -->
+        <section id="stage-summary" class="hidden max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-center space-y-6">
+            <div class="inline-flex p-4 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-2xl font-bold text-slate-100">Lab Mission Accomplished!</h3>
+                <p class="text-sm text-slate-400">Excellent job, <span id="summaryStudentName" class="text-slate-200 font-semibold" dir="rtl">student</span>! Your interactive thermodynamics change of state lab answers have been securely submitted to your Grade 7D teacher.</p>
+            </div>
+
+            <!-- Score display -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 max-w-xs mx-auto space-y-1">
+                <span class="text-xs text-slate-500 uppercase font-bold block">Final Assessment Score</span>
+                <span id="finalScoreDisplay" class="text-3xl font-extrabold text-emerald-400">0/10 Correct</span>
+                <span id="finalPercentage" class="text-xs text-slate-400 block">(0% Success Rate)</span>
+            </div>
+
+            <div class="text-xs text-slate-500 space-y-1">
+                <p>Time Spent: <span id="summaryTimeSpent" class="font-bold text-slate-400">0 minutes</span></p>
+                <p>Telemetry Submission ID: <span id="submissionIdText" class="font-mono text-[10px]">Processing...</span></p>
+            </div>
+
+            <button onclick="logoutStudent()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 rounded-xl border border-slate-700 transition-all text-sm">
+                Log Out / Next Student Login
+            </button>
+        </section>
+
+    </main>
+
+    <!-- NOTIFICATION AND TOAST -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 border border-slate-800 text-slate-100 px-5 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300">
+        <span id="toastIcon" class="text-emerald-500 font-bold">✓</span>
+        <span id="toastMessage" class="text-xs font-medium">Message here</span>
+    </div>
+
+    <!-- BOTTOM CREDITS -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-4 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-1">
+            <p class="text-xs text-slate-500">Chapter 8: Change of State Interactive Laboratory App — Grade 7D</p>
+            <p class="text-[10px] text-slate-600">Built with honor for UNRWA students in Lebanon, fusing Physics, Chemistry, and Citizenship.</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPTS (Simulations, Graphs, Steps, Evaluation Data, Firestore) -->
+    <script>
+        // Exactly extracted list of Grade 7D students from your class roster sheet
+        const DEFAULT_ROSTER = [
+            '"أحمد عمر" حسين جعجع',
+            'أحمد محمد احمد ابو جاموس',
+            'ابراهيم سامي مروان حليحل',
+            'ابراهيم يونس محمد رحال',
+            'احمد علي احمد المحمود',
+            'احمد فؤاد احمد جمعة',
+            'اسيل احمد فريد العلي',
+            'ايلانا محمد ابراهيم الحلو',
+            'حلا فادي فايز معتوق',
+            'حمزة عفيف علي السيد',
+            'داني محمد محمود حسين',
+            'رؤى حسن احمد محمد',
+            'راما ابراهيم رشيد فارس',
+            'راما محمد علي الجعجع',
+            'زاهر محمد شحادة ديب',
+            'سالي احمد وليد كريديه',
+            '"سدرة المنتهى" احمد حسون',
+            'عبد الرحمن درويش محمد سلام',
+            'علي ابراهيم حسان الاشوح',
+            'علي مروان عدنان شحاده',
+            'علي وسيم علي مره',
+            'عيسى احمد محمود الحصري',
+            'غيداء مالك جمعة بلال',
+            'فرح محمود كامل الخطيب',
+            'ليمار هاني محمد جمعه',
+            'محمد مصطفى كمال الترك',
+            'محمد هاشم عادل المنسي',
+            'محمد يوسف محمد محمد',
+            'مصطفى كمال علي سعد',
+            'منى وسام عمر سلام',
+            'ندى علي احمد مطر',
+            'ولاء احمد فهد السعيد',
+            'يوسف "علاء الدين"  كرزون',
+            'يوسف علاء جهاد شحادة'
+        ];
+
+        let studentRoster = [...DEFAULT_ROSTER];
+        let currentStudent = "";
+        let currentStage = "login";
+        let interactionCount = 0;
+        let activeTimer = null;
+        let secondsElapsed = 0;
+        let currentTemp = -15;
+
+        // Quiz State
+        let currentQuizIndex = 0;
+        let studentAnswers = {};
+        
+        // Timer tracking per stage
+        let stageTimers = {
+            engage: 0,
+            explore: 0,
+            explain: 0,
+            elaborate: 0,
+            evaluate: 0
+        };
+
+        // Google Apps Script Web App URL
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywtU4P_GpPYuYWTqXdxUb_qhmjImBJpxb4Dixqft65KYx_HTuH5krXJLvGKbcw7wfbbg/exec";
+
+        // Evaluation Questions mapped to Grade 7 Objectives
+        const QUIZ_QUESTIONS = [
+            {
+                id: 1,
+                objective: "Objective 1: Heat exchange terms",
+                question: "When we take ice out of a glass of cold water at school and place it in the warm sun, which of the following describes the heat transfer?",
+                options: [
+                    "The ice absorbs (gains) heat energy from the surrounding warm air, initiating a change of state.",
+                    "The surrounding air absorbs cold particles from the ice.",
+                    "The ice releases heat energy to the surrounding air."
+                ],
+                correctIndex: 0
+            },
+            {
+                id: 2,
+                objective: "Objective 2: Define melting & boiling points",
+                question: "What is the scientific definition of the melting point of a substance?",
+                options: [
+                    "The temperature at which a liquid freezes into solid form.",
+                    "The specific temperature at which a solid absorbs thermal energy and turns entirely into a liquid.",
+                    "The temperature where bubbles form vigorously throughout the liquid."
+                ],
+                correctIndex: 1
+            },
+            {
+                id: 3,
+                objective: "Objective 3: Use correct terminology",
+                question: "While preparing Miramiyyeh tea, hot steam meets the cold metal cover of the kettle and forms liquid water drops. What is this process called?",
+                options: [
+                    "Fusion",
+                    "Boiling",
+                    "Condensation"
+                ],
+                correctIndex: 2
+            },
+            {
+                id: 4,
+                objective: "Objective 4: Differentiate boiling & evaporation",
+                question: "How does boiling differ from evaporation under standard conditions?",
+                options: [
+                    "Evaporation occurs throughout the entire liquid, while boiling only happens at the outer surface.",
+                    "Boiling occurs at a specific temperature (Boiling Point) throughout the liquid, while evaporation is slow, occurs only at the surface, and happens at any temperature.",
+                    "There is no thermodynamic difference; they are exactly identical."
+                ],
+                correctIndex: 1
+            },
+            {
+                id: 5,
+                objective: "Objective 5: Physical state change result",
+                question: "When heat exchange occurs between an object and its surroundings, what is the direct potential result regarding physical state?",
+                options: [
+                    "It changes its physical state (e.g., solid to liquid) because intermolecular forces are rearranged by kinetic changes.",
+                    "The molecules themselves split apart and form entirely new elements.",
+                    "The mass of the substance increases because heat has weight."
+                ],
+                correctIndex: 0
+            },
+            {
+                id: 6,
+                objective: "Objective 6: Analyze temperature-time graphs",
+                question: "During fusion (melting) or boiling of a pure substance, why does the temperature curve remain flat (plateau) even though we continue to apply heat?",
+                options: [
+                    "Because our thermometer stops working at those temperatures.",
+                    "Because the heat energy is being used to break intermolecular bonds to change state, instead of raising particle motion speeds.",
+                    "Because the substance is releasing heat back into the environment as quickly as it absorbs it."
+                ],
+                correctIndex: 1
+            },
+            {
+                id: 7,
+                objective: "Objective 7: Determine state by points",
+                question: "The melting point of pure olive oil is about 5°C, and its boiling point is 300°C. If the classroom temperature inside Shatila Camp is 22°C, what state is the olive oil in?",
+                options: [
+                    "Solid",
+                    "Liquid",
+                    "Gas"
+                ],
+                correctIndex: 1
+            },
+            {
+                id: 8,
+                objective: "Objective 7: State determination",
+                question: "A certain substance has a melting point of 80°C and a boiling point of 218°C. At a temperature of 25°C, what is its state?",
+                options: [
+                    "Solid (since 25°C is below its melting point)",
+                    "Liquid (since 25°C is between melting and boiling)",
+                    "Gas (since 25°C is lower than its boiling point)"
+                ],
+                correctIndex: 0
+            },
+            {
+                id: 9,
+                objective: "6th C: Citizenship & Resource Preservation",
+                question: "Why does understanding evaporation help us in camps in Lebanon during times of water supply limitations?",
+                options: [
+                    "It allows us to build simple solar distillers to evaporate clean water from salty water, condensing and collecting it for safe drinking.",
+                    "It teaches us that water will never disappear so we do not need to conserve it.",
+                    "It allows us to heat water with no fuel at all."
+                ],
+                correctIndex: 0
+            },
+            {
+                id: 10,
+                objective: "Objective 6: Interpret fusion curves",
+                question: "On a temperature-time curve for water, what would a negative slope represent?",
+                options: [
+                    "Heating up water vapor (gas)",
+                    "A cooling process (releasing heat energy to the surroundings, such as solidification)",
+                    "Boiling of water"
+                ],
+                correctIndex: 1
+            }
+        ];
+
+        // 3D SIMULATION INITIALIZATION (Three.js)
+        let scene, camera, renderer, moleculesGroup = [];
+        const moleculeCount = 48;
+        const containerSize = 12;
+
+        function init3D() {
+            const container = document.getElementById('canvas3d');
+            if (!container) return;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x020617);
+
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 0, 16);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0x00f5ff, 1.2, 50);
+            pointLight.position.set(5, 5, 10);
+            scene.add(pointLight);
+
+            const pointLight2 = new THREE.PointLight(0xff3e6c, 0.8, 50);
+            pointLight2.position.set(-5, -5, 10);
+            scene.add(pointLight2);
+
+            // Container Box Representation
+            const boxGeo = new THREE.BoxGeometry(containerSize, containerSize, containerSize);
+            const edges = new THREE.EdgesGeometry(boxGeo);
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x334155, linewidth: 2 });
+            const boxWireframe = new THREE.LineSegments(edges, lineMat);
+            scene.add(boxWireframe);
+
+            // Generate Molecules (Spheres)
+            const sphereGeo = new THREE.SphereGeometry(0.5, 16, 16);
+            
+            for (let i = 0; i < moleculeCount; i++) {
+                // Different color accents representing water (H2O, shades of blue)
+                const color = i % 3 === 0 ? 0x00d2ff : (i % 3 === 1 ? 0x00f5ff : 0x00ff87);
+                const mat = new THREE.MeshPhongMaterial({
+                    color: color,
+                    shininess: 80,
+                    specular: 0xffffff
+                });
+                const mesh = new THREE.Mesh(sphereGeo, mat);
+                
+                // Track molecule states, home positions, and velocities
+                mesh.userData = {
+                    homeX: ((i % 4) - 1.5) * 1.8,
+                    homeY: (Math.floor((i / 4) % 4) - 1.5) * 1.8,
+                    homeZ: (Math.floor(i / 16) - 1) * 1.8,
+                    vx: (Math.random() - 0.5) * 0.1,
+                    vy: (Math.random() - 0.5) * 0.1,
+                    vz: (Math.random() - 0.5) * 0.1
+                };
+
+                scene.add(mesh);
+                moleculesGroup.push(mesh);
+            }
+
+            // Window resize adjustment
+            window.addEventListener('resize', () => {
+                if (!renderer || !camera) return;
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                renderer.setSize(w, h);
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+            });
+
+            animateSimulation();
+        }
+
+        function animateSimulation() {
+            requestAnimationFrame(animateSimulation);
+
+            // Get current phase details based on slider currentTemp
+            let speedFactor = 0.01;
+            let bondingStrength = 1.0; // 1 = rigid solid, 0 = free gas
+
+            if (currentTemp < 0) {
+                // Solid: Vibration around home coordinates
+                speedFactor = 0.05 + (currentTemp + 15) * 0.01;
+                bondingStrength = 0.95;
+            } else if (currentTemp >= 0 && currentTemp < 100) {
+                // Liquid: Fluid motion restricted to lower container region
+                speedFactor = 0.2 + (currentTemp * 0.015);
+                bondingStrength = 0.3;
+            } else {
+                // Gas: Free rapid dispersion throughout full chamber
+                speedFactor = 1.2 + ((currentTemp - 100) * 0.05);
+                bondingStrength = 0.0;
+            }
+
+            moleculesGroup.forEach(m => {
+                if (bondingStrength > 0.8) {
+                    // SOLID (Vibration around original grid)
+                    m.position.x += (m.userData.homeX - m.position.x) * 0.3 + (Math.random() - 0.5) * speedFactor;
+                    m.position.y += (m.userData.homeY - m.position.y) * 0.3 + (Math.random() - 0.5) * speedFactor;
+                    m.position.z += (m.userData.homeZ - m.position.z) * 0.3 + (Math.random() - 0.5) * speedFactor;
+                } else if (bondingStrength > 0.1) {
+                    // LIQUID (Restricted flow & gravity pull)
+                    m.userData.vx += (Math.random() - 0.5) * speedFactor * 0.08;
+                    m.userData.vy += (Math.random() - 0.5) * speedFactor * 0.08 - 0.005; // gravity pull
+                    m.userData.vz += (Math.random() - 0.5) * speedFactor * 0.08;
+
+                    // Limit speed
+                    const maxSpd = speedFactor * 0.5;
+                    m.userData.vx = Math.max(-maxSpd, Math.min(maxSpd, m.userData.vx));
+                    m.userData.vy = Math.max(-maxSpd, Math.min(maxSpd, m.userData.vy));
+                    m.userData.vz = Math.max(-maxSpd, Math.min(maxSpd, m.userData.vz));
+
+                    m.position.x += m.userData.vx;
+                    m.position.y += m.userData.vy;
+                    m.position.z += m.userData.vz;
+
+                    // Beaker walls check (confined to lower half mostly)
+                    const limitX = containerSize / 2 - 0.6;
+                    const limitY = containerSize / 2 - 0.6;
+                    const floorY = -containerSize / 2 + 0.6;
+                    const liquidCeilingY = 1.0; // Stay in lower portion
+
+                    if (m.position.x > limitX || m.position.x < -limitX) { m.userData.vx *= -1; m.position.x = Math.max(-limitX, Math.min(limitX, m.position.x)); }
+                    if (m.position.y > liquidCeilingY || m.position.y < floorY) { m.userData.vy *= -1; m.position.y = Math.max(floorY, Math.min(liquidCeilingY, m.position.y)); }
+                    if (m.position.z > limitX || m.position.z < -limitX) { m.userData.vz *= -1; m.position.z = Math.max(-limitX, Math.min(limitX, m.position.z)); }
+                } else {
+                    // GAS (Violent rapid movement bouncing everywhere)
+                    m.position.x += m.userData.vx * speedFactor;
+                    m.position.y += m.userData.vy * speedFactor;
+                    m.position.z += m.userData.vz * speedFactor;
+
+                    const limit = containerSize / 2 - 0.6;
+                    if (Math.abs(m.position.x) > limit) { m.userData.vx *= -1; m.position.x = Math.sign(m.position.x) * limit; }
+                    if (Math.abs(m.position.y) > limit) { m.userData.vy *= -1; m.position.y = Math.sign(m.position.y) * limit; }
+                    if (Math.abs(m.position.z) > limit) { m.userData.vz *= -1; m.position.z = Math.sign(m.position.z) * limit; }
+                }
+            });
+
+            // Gentle camera rotation based on temperature activity
+            if (camera) {
+                const rotSpd = 0.002 + (currentTemp + 15) * 0.00005;
+                scene.rotation.y += rotSpd;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // HEATING CURVE 2D CANVAS DRAWING (Interactive Synchronized Graph)
+        const graphCanvas = document.getElementById('heatingCurveChart');
+        let graphCtx = graphCanvas ? graphCanvas.getContext('2d') : null;
+
+        const points = [
+            { x: 50, y: 220, temp: -15, label: "Solid (Ice)" },
+            { x: 120, y: 180, temp: 0, label: "Melting Point (0°C)" },
+            { x: 200, y: 180, temp: 0, label: "Melting Complete" },
+            { x: 280, y: 100, temp: 100, label: "Boiling Point (100°C)" },
+            { x: 360, y: 100, temp: 100, label: "Vaporization Complete" },
+            { x: 420, y: 40, temp: 120, label: "Gas (Steam)" }
+        ];
+
+        function drawHeatingCurve(highlightTemp) {
+            if (!graphCtx) return;
+            const ctx = graphCtx;
+            ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            
+            // X & Y axes
+            ctx.beginPath();
+            ctx.moveTo(40, 20);
+            ctx.lineTo(40, 230);
+            ctx.lineTo(440, 230);
+            ctx.stroke();
+
+            // Y-Axis Labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px monospace';
+            ctx.fillText("120°C", 5, 45);
+            ctx.fillText("100°C", 5, 105);
+            ctx.fillText("  0°C", 5, 185);
+            ctx.fillText("-15°C", 5, 225);
+
+            // X-Axis Title
+            ctx.fillText("Heat Added / Time ➔", 220, 250);
+
+            // Draw Curve Line segments
+            ctx.beginPath();
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 4;
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.stroke();
+
+            // Draw key segments in custom colors
+            // Solid (Ice) heating
+            ctx.beginPath();
+            ctx.strokeStyle = '#38bdf8'; // Sky blue
+            ctx.moveTo(points[0].x, points[0].y);
+            ctx.lineTo(points[1].x, points[1].y);
+            ctx.stroke();
+
+            // Melting Plateau
+            ctx.beginPath();
+            ctx.strokeStyle = '#34d399'; // Emerald
+            ctx.moveTo(points[1].x, points[1].y);
+            ctx.lineTo(points[2].x, points[2].y);
+            ctx.stroke();
+
+            // Liquid Heating
+            ctx.beginPath();
+            ctx.strokeStyle = '#22d3ee'; // Cyan
+            ctx.moveTo(points[2].x, points[2].y);
+            ctx.lineTo(points[3].x, points[3].y);
+            ctx.stroke();
+
+            // Boiling Plateau
+            ctx.beginPath();
+            ctx.strokeStyle = '#fbbf24'; // Amber
+            ctx.moveTo(points[3].x, points[3].y);
+            ctx.lineTo(points[4].x, points[4].y);
+            ctx.stroke();
+
+            // Gas Heating
+            ctx.beginPath();
+            ctx.strokeStyle = '#f87171'; // Red
+            ctx.moveTo(points[4].x, points[4].y);
+            ctx.lineTo(points[5].x, points[5].y);
+            ctx.stroke();
+
+            // Find current interpolated point on the curve according to slider temperature
+            let currentX = points[0].x;
+            let currentY = points[0].y;
+
+            if (highlightTemp <= 0) {
+                // Solid segment to Melting Point
+                const ratio = (highlightTemp - (-15)) / (0 - (-15));
+                // We map this ratio either solely across the slope, or part plateau.
+                // Let's keep it simple: map to the first slope
+                currentX = points[0].x + (points[1].x - points[0].x) * ratio;
+                currentY = points[0].y + (points[1].y - points[0].y) * ratio;
+            } else if (highlightTemp === 0) {
+                // Keep cursor on melting plateau
+                currentX = points[1].x + (points[2].x - points[1].x) * 0.5; // mid point for safety
+                currentY = points[1].y;
+            } else if (highlightTemp > 0 && highlightTemp < 100) {
+                // Liquid phase
+                const ratio = (highlightTemp - 0) / (100 - 0);
+                currentX = points[2].x + (points[3].x - points[2].x) * ratio;
+                currentY = points[2].y + (points[3].y - points[2].y) * ratio;
+            } else if (highlightTemp === 100) {
+                // Boiling plateau
+                currentX = points[3].x + (points[4].x - points[3].x) * 0.5;
+                currentY = points[3].y;
+            } else {
+                // Gas state
+                const ratio = (highlightTemp - 100) / (120 - 100);
+                currentX = points[4].x + (points[5].x - points[4].x) * ratio;
+                currentY = points[4].y + (points[5].y - points[4].y) * ratio;
+            }
+
+            // Draw glowing dynamic indicator cursor
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f43f5e'; // Rose pink pointer
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#f43f5e';
+            ctx.fill();
+            ctx.shadowBlur = 0; // reset shadow
+            
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+        }
+
+        // WEB APPLICATION LOGIC AND STATE ENGINE
+
+        window.onload = function() {
+            // Load custom roster from local storage if teacher saved it previously
+            try {
+                const savedRoster = localStorage.getItem('grade7d_custom_roster');
+                if (savedRoster) {
+                    studentRoster = JSON.parse(savedRoster);
+                }
+            } catch (e) {}
+
+            // Prepopulate student selection list
+            populateStudentDropdown();
+
+            // Initialize Three.js simulation
+            init3D();
+
+            // Initialize Interactive Heat Slider
+            const slider = document.getElementById('tempSlider');
+            if (slider) {
+                slider.addEventListener('input', (e) => {
+                    currentTemp = parseInt(e.target.value);
+                    updateLabStateText(currentTemp);
+                    drawHeatingCurve(currentTemp);
+                    logInteraction(`Scrubbed temperature to ${currentTemp}°C`);
+                });
+            }
+
+            // Draw default graph
+            drawHeatingCurve(-15);
+
+            // Start passive universal telemetry elapsed timer
+            setInterval(() => {
+                if (currentStudent) {
+                    secondsElapsed++;
+                    const mins = Math.floor(secondsElapsed / 60);
+                    const secs = secondsElapsed % 60;
+                    document.getElementById('telemetryTimer').innerText = `${mins}m ${secs}s`;
+                    
+                    // Add count to stage timers
+                    if (stageTimers[currentStage] !== undefined) {
+                        stageTimers[currentStage]++;
+                    }
+                }
+            }, 1000);
+        };
+
+        function populateStudentDropdown() {
+            const select = document.getElementById('studentSelect');
+            if (!select) return;
+            select.innerHTML = '<option value="" disabled selected>-- اختر اسمك من اللائحة --</option>';
+            studentRoster.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.innerText = name;
+                select.appendChild(opt);
+            });
+
+            // Sync with Dashboard settings roster input
+            const rosterInput = document.getElementById('rosterInput');
+            if (rosterInput) rosterInput.value = studentRoster.join('\n');
+            const quickRosterInput = document.getElementById('quickRosterInput');
+            if (quickRosterInput) quickRosterInput.value = studentRoster.join('\n');
+            
+            const activeCount = document.getElementById('activeRosterCount');
+            if (activeCount) activeCount.innerText = studentRoster.length;
+            const statTotal = document.getElementById('statTotalEnrolled');
+            if (statTotal) statTotal.innerText = studentRoster.length;
+        }
+
+        function loginAndStart() {
+            const select = document.getElementById('studentSelect');
+            if (!select.value) {
+                showToast("الرجاء اختيار اسمك للدخول إلى المختبر!", "✕");
+                return;
+            }
+
+            currentStudent = select.value;
+            
+            // UI state updates
+            document.getElementById('stage-login').classList.add('hidden');
+            document.getElementById('learningPath').classList.remove('hidden');
+            document.getElementById('studentIndicator').classList.remove('hidden');
+            document.getElementById('activeStudentName').innerText = currentStudent;
+            document.getElementById('telemetryName').innerText = currentStudent;
+
+            showToast(`أهلاً بك في المختبر العلمي، ${currentStudent}!`, "✓");
+            goToStage('engage');
+        }
+
+        function logoutStudent() {
+            // Reset state
+            currentStudent = "";
+            secondsElapsed = 0;
+            interactionCount = 0;
+            studentAnswers = {};
+            currentQuizIndex = 0;
+            stageTimers = { engage: 0, explore: 0, explain: 0, elaborate: 0, evaluate: 0 };
+
+            document.getElementById('studentIndicator').classList.add('hidden');
+            document.getElementById('learningPath').classList.add('hidden');
+            
+            // Hide all phases
+            document.querySelectorAll('main > section').forEach(sect => sect.classList.add('hidden'));
+            
+            // Show login screen
+            document.getElementById('stage-login').classList.remove('hidden');
+            
+            showToast("تم تسجيل الخروج بنجاح.", "✓");
+        }
+
+        function goToStage(stageId) {
+            if (!currentStudent) {
+                showToast("الرجاء تسجيل الدخول أولاً!", "✕");
+                return;
+            }
+
+            currentStage = stageId;
+
+            // Hide all active content sections
+            document.querySelectorAll('main > section').forEach(sect => sect.classList.add('hidden'));
+            
+            // Show target section
+            const targetSection = document.getElementById(`stage-${stageId}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Update Progress Bar visuals
+            const progressPercents = {
+                engage: 20,
+                explore: 40,
+                explain: 60,
+                elaborate: 80,
+                evaluate: 100
+            };
+            document.getElementById('progressBar').style.width = `${progressPercents[stageId]}%`;
+
+            // Reset navigation highlight rings
+            const steps = ['engage', 'explore', 'explain', 'elaborate', 'evaluate'];
+            steps.forEach(st => {
+                const btn = document.getElementById(`step-${st}`).firstElementChild;
+                if (st === stageId) {
+                    btn.classList.add('border-emerald-500', 'bg-emerald-950/40', 'text-emerald-400', 'scale-110');
+                    btn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-400');
+                } else {
+                    btn.classList.remove('border-emerald-500', 'bg-emerald-950/40', 'text-emerald-400', 'scale-110');
+                    btn.classList.add('border-slate-700', 'bg-slate-800', 'text-slate-400');
+                }
+            });
+
+            // Extra initialization details for specific stages
+            if (stageId === 'explore') {
+                // Force recalculation of 3D Canvas and Graph dimensions once they are unhidden
+                setTimeout(() => {
+                    const container = document.getElementById('canvas3d');
+                    if (renderer && camera && container) {
+                        const w = container.clientWidth;
+                        const h = container.clientHeight;
+                        renderer.setSize(w, h);
+                        camera.aspect = w / h;
+                        camera.updateProjectionMatrix();
+                    }
+                    
+                    const canvas = document.getElementById('heatingCurveChart');
+                    // Force refresh size
+                    if (canvas && scene) {
+                        drawHeatingCurve(currentTemp);
+                    }
+                }, 100);
+            } else if (stageId === 'evaluate') {
+                loadQuizQuestion(currentQuizIndex);
+            }
+
+            logInteraction(`Mapsd to phase: ${stageId.toUpperCase()}`);
+        }
+
+        function updateLabStateText(temp) {
+            const phaseLabel = document.getElementById('currentPhaseLabel');
+            const tempLabel = document.getElementById('currentTempLabel');
+            const sliderText = document.getElementById('sliderValueText');
+
+            tempLabel.innerText = `${temp} °C`;
+
+            if (temp < 0) {
+                phaseLabel.innerText = "Solid (Ice)";
+                phaseLabel.className = "text-sm font-extrabold text-sky-400";
+                sliderText.innerText = `Below Freezing - Rigid molecular grid structure`;
+            } else if (temp === 0) {
+                phaseLabel.innerText = "Fusion / Melting State";
+                phaseLabel.className = "text-sm font-extrabold text-emerald-400";
+                sliderText.innerText = `Plateau: Heat energy breaks hydrogen lattices`;
+            } else if (temp > 0 && temp < 100) {
+                phaseLabel.innerText = "Liquid (Water)";
+                phaseLabel.className = "text-sm font-extrabold text-cyan-400";
+                sliderText.innerText = `Moderate speed - Molecules slide and flow freely`;
+            } else if (temp === 100) {
+                phaseLabel.innerText = "Vaporization / Boiling State";
+                phaseLabel.className = "text-sm font-extrabold text-amber-400";
+                sliderText.innerText = `Plateau: Heat breaks all liquid molecular bounds`;
+            } else {
+                phaseLabel.innerText = "Gas (Steam)";
+                phaseLabel.className = "text-sm font-extrabold text-rose-400";
+                sliderText.innerText = `Above Boiling - High speed, wide dispersion`;
+            }
+        }
+
+        function logInteraction(desc) {
+            interactionCount++;
+            document.getElementById('telemetryInteractions').innerText = `${interactionCount} events`;
+            console.log(`[Interaction Logged]: ${desc}`);
+        }
+
+        // ENGAGE INTERACTION
+        function answerEngage(isCorrect) {
+            const correctBtn = document.getElementById('btn-engage-a');
+            const incorrectBtn = document.getElementById('btn-engage-b');
+            const feedback = document.getElementById('engage-feedback');
+
+            if (isCorrect) {
+                correctBtn.classList.add('border-emerald-500', 'bg-emerald-950/20');
+                document.getElementById('engage-correct').classList.remove('hidden');
+                feedback.classList.remove('hidden');
+                logInteraction("Engage Question: Correct option chosen");
+            } else {
+                incorrectBtn.classList.add('border-red-500', 'bg-red-950/20');
+                document.getElementById('engage-incorrect').classList.remove('hidden');
+                feedback.classList.remove('hidden');
+                logInteraction("Engage Question: Incorrect option chosen");
+            }
+        }
+
+        // ELABORATE INTERACTION
+        function answerElaborate(isCorrect) {
+            const correctBtn = document.getElementById('btn-elab-a');
+            const incorrectBtn = document.getElementById('btn-elab-b');
+            const feedback = document.getElementById('elaborate-feedback');
+
+            if (isCorrect) {
+                correctBtn.classList.add('border-emerald-500', 'bg-emerald-950/20');
+                feedback.classList.remove('hidden');
+                logInteraction("Elaborate Prompt: Correct thermal explanation chosen");
+            } else {
+                incorrectBtn.classList.add('border-red-500', 'bg-red-950/20');
+                feedback.classList.remove('hidden');
+                logInteraction("Elaborate Prompt: Distractor chosen");
+            }
+        }
+
+        // QUIZ EVALUATION CONTROLLERS
+
+        function loadQuizQuestion(index) {
+            if (index >= QUIZ_QUESTIONS.length) {
+                finishQuiz();
+                return;
+            }
+
+            document.getElementById('currentQuestionNumber').innerText = index + 1;
+            const progressPercent = ((index + 1) / QUIZ_QUESTIONS.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progressPercent}%`;
+
+            const q = QUIZ_QUESTIONS[index];
+            document.getElementById('questionText').innerHTML = `
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">${q.objective}</span>
+                ${q.question}
+            `;
+
+            // Clear previous options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "text-left w-full bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-slate-600 rounded-xl px-5 py-3 text-sm text-slate-200 transition-all flex justify-between items-center focus:outline-none";
+                btn.innerHTML = `<span>${opt}</span>`;
+                
+                // If already answered this question, show feedback highlights
+                if (studentAnswers[q.id] !== undefined) {
+                    if (idx === q.correctIndex) {
+                        btn.classList.add('border-emerald-500', 'bg-emerald-950/20');
+                        btn.innerHTML += '<span class="text-emerald-400 font-bold text-xs">✓ Correct</span>';
+                    } else if (idx === studentAnswers[q.id]) {
+                        btn.classList.add('border-red-500', 'bg-red-950/20');
+                        btn.innerHTML += '<span class="text-red-400 font-bold text-xs">✕ Your Choice</span>';
+                    }
+                } else {
+                    btn.onclick = () => selectOption(q.id, idx);
+                }
+
+                container.appendChild(btn);
+            });
+
+            // Toggle "Next" Button visibility
+            const nextBtn = document.getElementById('nextQuestionBtn');
+            if (studentAnswers[q.id] !== undefined) {
+                nextBtn.classList.remove('hidden');
+                nextBtn.classList.add('flex');
+            } else {
+                nextBtn.classList.add('hidden');
+                nextBtn.classList.remove('flex');
+            }
+        }
+
+        function selectOption(questionId, optionIndex) {
+            studentAnswers[questionId] = optionIndex;
+            logInteraction(`Answered Question ${questionId} with choice ${optionIndex}`);
+            
+            // Reload question state to display correction markers and render Next button
+            loadQuizQuestion(currentQuizIndex);
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            loadQuizQuestion(currentQuizIndex);
+        }
+
+        function calculateScore() {
+            let correctCount = 0;
+            QUIZ_QUESTIONS.forEach(q => {
+                if (studentAnswers[q.id] === q.correctIndex) {
+                    correctCount++;
+                }
+            });
+            return correctCount;
+        }
+
+        async function finishQuiz() {
+            const score = calculateScore();
+            const total = QUIZ_QUESTIONS.length;
+            const percentage = Math.round((score / total) * 100);
+
+            // Update UI Summary Screen
+            document.getElementById('summaryStudentName').innerText = currentStudent;
+            document.getElementById('finalScoreDisplay').innerText = `${score} / ${total} Correct`;
+            document.getElementById('finalPercentage').innerText = `(${percentage}% Accuracy)`;
+            
+            const mins = Math.floor(secondsElapsed / 60);
+            const secs = secondsElapsed % 60;
+            document.getElementById('summaryTimeSpent').innerText = `${mins} minutes and ${secs} seconds`;
+
+            // Prepare packet to save to Google Sheets
+            const submissionPayload = {
+                studentName: currentStudent,
+                score: score,
+                totalQuestions: total,
+                percentage: percentage,
+                durationSeconds: secondsElapsed,
+                interactionCount: interactionCount
+            };
+
+            // Transition to Summary Stage UI
+            goToStage('summary');
+            document.getElementById('stage-summary').classList.remove('hidden');
+            document.getElementById('learningPath').classList.add('hidden'); // Clean slate
+
+            // Push to Google Sheets via fetch
+            try {
+                document.getElementById('submissionIdText').innerText = "Uploading results to Google Sheets...";
+                
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Bypasses CORS blocking on the client
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(submissionPayload)
+                });
+
+                document.getElementById('submissionIdText').innerText = "Saved successfully!";
+                showToast("Your interactive lab results were successfully saved to the Teacher's Google Sheet!", "✓");
+            } catch (error) {
+                console.error("Upload error: ", error);
+                document.getElementById('submissionIdText').innerText = "Local Safe Mode Active";
+                showToast("Data saved locally. Network error.", "⚠️");
+            }
+        }
+
+        function saveQuickRoster() {
+            const rawText = document.getElementById('quickRosterInput').value;
+            processAndSaveRoster(rawText);
+            document.getElementById('quickRosterSetup').classList.add('hidden');
+        }
+
+        function processAndSaveRoster(rawText) {
+            if (!rawText.trim()) {
+                showToast("Name list cannot be empty!", "✕");
+                return;
+            }
+
+            // Split and trim newlines or commas
+            const parsed = rawText.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+            if (parsed.length === 0) {
+                showToast("No valid student names parsed.", "✕");
+                return;
+            }
+
+            studentRoster = parsed;
+            
+            // Save to browser storage so it persists when students reload the page
+            try {
+                localStorage.setItem('grade7d_custom_roster', JSON.stringify(studentRoster));
+            } catch (e) {
+                console.warn("Local storage unavailable");
+            }
+
+            populateStudentDropdown();
+            showToast(`Updated student roster list successfully! Added ${parsed.length} slots.`, "✓");
+        }
+
+        function exportScoresToCSV() {
+            // Read UI table contents and format as clean text copyable
+            let csvContent = "\ufeffStudent Name,Score,Percentage,Duration_Seconds,Interactions_Logged\n";
+            
+            // Generate locally inside iframe context using clipboard logic safely
+            const rows = document.querySelectorAll('#teacherLogsTableBody tr');
+            if (rows.length === 0 || rows[0].innerText.includes("No active student logs")) {
+                showToast("No student data available to export yet.", "✕");
+                return;
+            }
+
+            rows.forEach(r => {
+                const cols = r.querySelectorAll('td');
+                if (cols.length >= 4) {
+                    const name = cols[0].innerText;
+                    const score = cols[1].innerText.replace(/,/g, '');
+                    const duration = cols[2].innerText;
+                    const clicks = cols[3].innerText;
+                    csvContent += `"${name}","${score}","${duration}","${clicks}"\n`;
+                }
+            });
+
+            // Put in invisible element to run standard clipboard copy (Strict rule context fallback)
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = csvContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            showToast("Laboratory CSV exported and copied to clipboard successfully!", "✓");
+        }
+
+        // TOAST NOTIFICATIONS HELPER
+        function showToast(message, icon) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastIcon').innerText = icon;
+            document.getElementById('toastMessage').innerText = message;
+
+            // Transition slide up
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
