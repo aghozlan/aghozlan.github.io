@@ -675,7 +675,11 @@ ctx.stroke();
 
 // Reflected ray
 let reflectedEndX = canvas.width - 60;
-let reflectedEndY = flameY - 10;
+
+// symmetric reflection
+let reflectedSlope = (hitY - flameY) / (cx - flameX);
+
+let reflectedEndY = hitY - reflectedSlope * (reflectedEndX - cx);
 
 ctx.beginPath();
 ctx.moveTo(cx, hitY);
