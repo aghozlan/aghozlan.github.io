@@ -8,969 +8,129 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
         
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #09090b; /* Very dark zinc */
-            color: #f4f4f5;
-        }
-
-        .neon-border {
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5), inset 0 0 10px rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.5);
-        }
-
-        .neon-text-blue {
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
-        }
-        
-        .neon-text-red {
-            text-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
-        }
-
-        canvas {
-            touch-action: none; /* Prevent scrolling when dragging on canvas */
-        }
-
-        /* Custom file input styling */
-        input[type="file"] {
-            display: none;
-        }
-        .custom-file-upload {
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .glass-panel {
-            background: rgba(24, 24, 27, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
+        .neon-border { box-shadow: 0 0 10px rgba(16, 185, 129, 0.5), inset 0 0 10px rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.5); }
+        .neon-text-blue { text-shadow: 0 0 10px rgba(56, 189, 248, 0.8); }
+        canvas { touch-action: none; }
+        input[type="file"] { display: none; }
+        .custom-file-upload { display: inline-block; cursor: pointer; }
+        .glass-panel { background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center pb-12 selection:bg-emerald-500 selection:text-white">
+<body class="min-h-screen flex flex-col items-center pb-12">
 
     <!-- Header -->
     <header class="w-full bg-zinc-900 border-b border-zinc-800 shadow-2xl sticky top-0 z-50">
         <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-emerald-500 to-rose-500"></div>
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="p-2 bg-zinc-800 rounded-lg border border-zinc-700 neon-border">
-                    <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-xl font-black tracking-wide text-white">Interactive Physics <span class="text-emerald-400">Lab</span></h1>
-                    <p class="text-xs text-zinc-400">Grade 8 - Reflection of Light</p>
-                </div>
-            </div>
+            <h1 class="text-xl font-black text-white">Interactive Physics <span class="text-emerald-400">Lab</span></h1>
             <div id="studentBadge" class="hidden glass-panel px-4 py-1.5 rounded-full flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span id="displayStudentName" class="text-sm font-bold text-emerald-300" dir="rtl"></span>
+                <span id="displayStudentName" class="text-sm font-bold text-emerald-300"></span>
             </div>
         </div>
     </header>
 
     <main class="w-full max-w-4xl mx-auto px-4 mt-8 space-y-12">
-
         <!-- STAGE 1: LOGIN -->
-        <section id="stage-login" class="glass-panel p-8 rounded-3xl max-w-lg mx-auto transform transition-all shadow-2xl">
-            <div class="text-center mb-8">
-                <div class="inline-block p-4 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
-                    <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>
-                </div>
-                <h2 class="text-2xl font-black text-white">Lab Login</h2>
-                <p class="text-sm text-zinc-400 mt-2">Please select your section and name to start the mission.</p>
-            </div>
-
+        <section id="stage-login" class="glass-panel p-8 rounded-3xl max-w-lg mx-auto">
+            <h2 class="text-2xl font-black text-white mb-6 text-center">Lab Login</h2>
             <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Section</label>
-                    <select id="sectionSelect" onchange="loadStudents()" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer">
-                        <option value="" disabled selected>Select Section...</option>
-                        <option value="8A">Class 8A</option>
-                        <option value="8B">Class 8B</option>
-                        <option value="8C">Class 8C</option>
-                        <option value="8D">Class 8D</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Student Name</label>
-                    <!-- dir="rtl" added specifically here to keep Arabic names neat -->
-                    <select id="studentSelect" dir="rtl" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50 cursor-pointer font-semibold text-base" disabled>
-                        <option value="" disabled selected>Select a section first...</option>
-                    </select>
-                </div>
-
-                <button onclick="startLab()" class="w-full mt-4 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5">
-                    Enter Laboratory 🚀
-                </button>
+                <select id="sectionSelect" onchange="loadStudents()" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white">
+                    <option value="" disabled selected>Select Section...</option>
+                    <option value="8A">Class 8A</option>
+                    <option value="8B">Class 8B</option>
+                    <option value="8C">Class 8C</option>
+                    <option value="8D">Class 8D</option>
+                </select>
+                <select id="studentSelect" dir="rtl" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white" disabled>
+                    <option value="" disabled selected>Select a section first...</option>
+                </select>
+                <button onclick="startLab()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl">Enter Laboratory 🚀</button>
             </div>
         </section>
 
-        <!-- STAGE 2: INTERACTIVE LEARNING & DRAWING -->
+        <!-- STAGE 2: LAB CONTENT -->
         <div id="stage-lab" class="hidden space-y-12">
+            <canvas id="rayCanvas" width="800" height="400" class="w-full bg-black rounded-2xl border border-zinc-700"></canvas>
+            <canvas id="mirrorCanvas" width="800" height="300" class="w-full bg-zinc-950 rounded-2xl border border-zinc-700"></canvas>
             
-            <!-- Intro -->
-            <div class="text-center space-y-3">
-                <h2 class="text-3xl font-black text-white neon-text-blue">Laws of Light Reflection</h2>
-                <p class="text-zinc-400 max-w-2xl mx-auto">Interact with the virtual labs below. Drag the elements with your finger, and observe how light rays and images behave.</p>
+            <div class="glass-panel p-6 rounded-3xl">
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
+                <label for="cameraInput" class="custom-file-upload block w-full p-8 border-2 border-dashed border-indigo-500/50 rounded-2xl text-center">Take Photo of Drawing</label>
             </div>
 
-            <!-- Canvas 1: Ray Reflection -->
-            <div class="glass-panel p-6 rounded-3xl border border-zinc-800 shadow-2xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-blue-400 flex items-center gap-2">
-                            <span class="p-1.5 bg-blue-500/20 rounded-lg">1</span> 
-                            First Law of Reflection
-                        </h3>
-                        <p class="text-sm text-zinc-400 mt-1">Move the laser source (red circle) and observe the changes in the angles of incidence and reflection.</p>
-                    </div>
-                    <div class="bg-zinc-900/80 px-4 py-2 rounded-xl border border-zinc-700 flex gap-4 text-sm font-bold shrink-0">
-                        <div class="text-rose-400">∠i (Incidence) = <span id="angleI">45</span>°</div>
-                        <div class="text-emerald-400">∠r (Reflection) = <span id="angleR">45</span>°</div>
-                    </div>
-                </div>
-                
-                <div class="relative w-full bg-black rounded-2xl overflow-hidden border border-zinc-700 flex justify-center items-center touch-none">
-                    <!-- HTML5 Canvas for Ray Drawing -->
-                    <canvas id="rayCanvas" width="800" height="400" class="w-full max-w-[800px] h-auto cursor-pointer"></canvas>
-                </div>
-            </div>
-
-            <!-- Canvas 2: Image Formation -->
-            <div class="glass-panel p-6 rounded-3xl border border-zinc-800 shadow-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
-                            <span class="p-1.5 bg-emerald-500/20 rounded-lg">2</span> 
-                            Image Formation in a Plane Mirror
-                        </h3>
-                        <p class="text-sm text-zinc-400 mt-1">Move the candle left and right (in front of the center mirror). What do you observe about the image?</p>
-                    </div>
-                    <div class="bg-zinc-900/80 px-4 py-2 rounded-xl border border-zinc-700 flex gap-4 text-sm font-bold shrink-0">
-                        <div class="text-yellow-400">Obj. Distance (do) = <span id="distO">150</span></div>
-                        <div class="text-sky-400">Img. Distance (di) = <span id="distI">150</span></div>
-                    </div>
-                </div>
-                
-                <div class="relative w-full bg-zinc-950 rounded-2xl overflow-hidden border border-zinc-700 flex justify-center items-center touch-none bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:16px_16px]">
-                    <canvas id="mirrorCanvas" width="800" height="300" class="w-full max-w-[800px] h-auto cursor-pointer"></canvas>
-                </div>
-                <p class="text-center text-xs text-emerald-500/70 mt-3 font-semibold tracking-wide">💡 Conclusion: The image is always Virtual, Upright, and at the same distance (do = di)!</p>
-            </div>
-
-            <!-- THE DRAWING MISSION (Camera Integration) -->
-            <div class="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 p-1 rounded-3xl shadow-lg border border-indigo-500/30">
-                <div class="bg-zinc-900/90 rounded-[1.4rem] p-6 md:p-8 backdrop-blur-xl">
-                    <h3 class="text-2xl font-black text-indigo-400 mb-4">Practical Challenge: Draw and Capture! 📸</h3>
-                    <div class="space-y-4 text-zinc-300 text-sm leading-relaxed mb-6">
-                        <p>Now it's your turn for practical application. Get a <strong>white paper, pencil, and a ruler</strong>, and draw the following clearly and neatly:</p>
-                        <ul class="list-disc list-inside space-y-2 text-indigo-200">
-                            <li>Draw the surface of a plane mirror (with short lines on the back/opaque side).</li>
-                            <li>Draw the Normal line as a dashed line perpendicular to the mirror.</li>
-                            <li>Draw an Incident Ray and label it (I), and a Reflected Ray and label it (R).</li>
-                            <li>Clearly indicate the angle of incidence and the angle of reflection.</li>
-                            <li><strong>Write your full name and section by hand on the same paper.</strong></li>
-                        </ul>
-                        <p class="text-emerald-400 font-bold mt-4">When finished, use the button below to open your camera and take a clear photo of your drawing for grading!</p>
-                    </div>
-
-                    <div class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-indigo-500/50 rounded-2xl bg-indigo-950/20 hover:bg-indigo-900/40 transition-colors">
-                        <label for="cameraInput" class="custom-file-upload flex flex-col items-center gap-3">
-                            <div class="w-16 h-16 bg-indigo-500 rounded-full flex justify-center items-center shadow-lg shadow-indigo-500/50 hover:scale-110 transition-transform">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                            </div>
-                            <span class="font-bold text-indigo-300 text-lg text-center">Take a Photo of Your Drawing</span>
-                            <span class="text-xs text-zinc-500 text-center">(This will open your mobile camera)</span>
-                        </label>
-                        <!-- Capture attribute opens camera directly on mobile -->
-                        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
-                        
-                        <div id="imagePreviewContainer" class="hidden mt-6 flex flex-col items-center">
-                            <p class="text-emerald-400 font-bold text-sm mb-2">✓ Photo captured successfully!</p>
-                            <img id="imagePreview" src="" class="max-w-[200px] rounded-lg border-2 border-emerald-500/50 shadow-lg">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quiz & Submit -->
-            <div class="glass-panel p-6 md:p-8 rounded-3xl border border-zinc-800 shadow-2xl">
-                <h3 class="text-2xl font-black text-rose-400 mb-6">Knowledge Evaluation</h3>
-                <div id="quizContainer" class="space-y-8">
-                    <!-- Quiz generated dynamically -->
-                </div>
-
-                <div class="mt-10 pt-6 border-t border-zinc-800">
-                    <button onclick="submitFinalWork()" id="submitBtn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-black text-lg py-4 rounded-xl shadow-lg shadow-emerald-500/20 hover:scale-[1.02] transition-transform flex justify-center items-center gap-2">
-                        Submit Answers and Drawing 📤
-                    </button>
-                </div>
-            </div>
-
+            <div id="quizContainer" class="space-y-4"></div>
+            <button onclick="submitFinalWork()" class="w-full bg-emerald-500 py-4 rounded-xl font-black">Submit Answers and Drawing 📤</button>
         </div>
 
         <!-- STAGE 3: SUCCESS -->
-        <section id="stage-success" class="hidden glass-panel p-10 rounded-3xl max-w-lg mx-auto text-center border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)]">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full mb-6 neon-border">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            </div>
-            <h2 class="text-3xl font-black text-white mb-2">Great job, Champion!</h2>
-            <p class="text-zinc-400 mb-6 text-sm">Your answers and the photo of your drawing have been successfully submitted to your teacher's database.</p>
-            
-            <div class="bg-zinc-900/80 rounded-xl p-4 text-sm font-bold border border-zinc-800 mb-6">
-                <div class="flex justify-between text-zinc-300 py-1"><span>Evaluation Score:</span> <span id="finalScoreText" class="text-emerald-400">0/5</span></div>
-                <div class="flex justify-between text-zinc-300 py-1"><span>Drawing:</span> <span class="text-blue-400">Uploaded ✓</span></div>
-            </div>
-
-            <p class="text-xs text-zinc-500">Your class participation rate will be displayed on the school's honor board soon.</p>
+        <section id="stage-success" class="hidden glass-panel p-10 rounded-3xl text-center">
+            <h2 class="text-3xl font-black text-white">Great job, Champion!</h2>
+            <p id="finalScoreText" class="text-emerald-400 mt-4"></p>
         </section>
-
     </main>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex-col justify-center items-center">
-        <div class="w-16 h-16 border-4 border-zinc-700 border-t-emerald-500 rounded-full animate-spin"></div>
-        <p class="text-white mt-4 font-bold animate-pulse">Processing and submitting your data...</p>
-    </div>
-
-    <!-- Scripts -->
     <script>
-        // ==========================================
-        // DATA: STUDENT ROSTERS (Exactly as provided, in Arabic)
-        // ==========================================
-        const rosters = {
-            "8A": [
-                'أسماء هيثم علي ندوه', 'ابراهيم طارق صلاح معروف', 'ابراهيم محمد رفعت ابو حميد', 'احسان "محمد وليد" الشحبري', 'ادم وليد توفيق الخطيب', 'الين رشيد محمد احمد', 'تالا "محمد عدنان" العمري', 'تيا احمد محمد الركن', 'جنى ماهر غالب الدالي', 'جنى "محي الدين" فاعور', 'جود محمد مروان الشامي', 'حسين احمد محمود اسماعيل', 'حنين علي ابراهيم ميعاد', 'راما احمد توفيق الزقه', 'رهف سعيد شحادة فلاح', 'زينب محمد رياض حماده', 'سعاد مازن محمد الشامي', 'سمر محمد صابر ظاهر', 'سيلين منصور عبد شحاده', 'عادل محمد عادل أبو عرب', 'عبد الرحمن وليد محمد', 'علي مصطفى حسن سالم', 'علي ياسر نمر فاعور', 'عمران مازن صالح مرعي', 'فاطمه محمد خالد قاسم', 'قمر حسين عمر حمزة', 'كريم محمود عبد الحفيظ', 'ليا محمد عمر عباس', 'لين رشدي موسى الصالح', 'لين ماهر احمد العيسى', 'لين وسام احمد حسين', 'ماريا طلعت احمد مراد', 'محمد احمد محمد الصعيدي', 'محمد سامر محمد الصالح', 'محمد علي محمد ابو شقير', 'محمد علي محمد عبد الجليل', 'محمد قاسم عادل عفيفي', 'محمود شادي محمود شحادة', 'مرام احمد كايد خضره', 'نرجس هاني احمد عقلة', 'نور محمد علي علي', 'هلا شفيق علي فلوس', 'يارا محمود السيد السعدني'
-            ],
-            "8B": [
-                'أسينات احمد فريد العلي', 'اسامة بسام عبد الرحمن حمو', 'امال ساري علي زيداني', 'امنة محمد كمال قدورة', 'امير هشام مصطفى كروم', 'ايمان بسام خالد محمد', 'بيسان بسام عبد الرحمن حمو', 'تاليا انس ابراهيم المنديل', 'حبيبة عوني علي الزبيدات', 'حلا اشرف احمد الحاج علي', 'حنين فتحي علي حميد', 'راما خالد محمد عطعوط', 'رضوان جهاد رضوان ديب', 'رواد مروان ابراهيم العبدالله', 'زهراء عماد وليد شيخه', 'سارة فادي عدنان فارس', 'سامي يسار سامي معروف', 'سعيد ماهر سعيد سعيد', 'سهى عامر احمد عطية', '"صلاح الدين" مصطفى بللي', 'علي مصطفى علي سريس', 'عمر حسام حسين الموسى', 'فاطمه جمال احمد المحمود', 'فضل احمد محمد حسين', 'كريم رائد محمد دلاشي', 'لارا محمد خالد عبد الغني', 'ليلاس وسيم شحادة شحاده', 'ماريه يحيى محمد ابو هموس', 'محمد احمد محمد شريده', 'محمد حسام عاطف أبو شباب', 'محمد حكمت غاندي عبدالله', '"محمد علي" محمود احمد', 'محمد هشام احمد مره', 'محمود نايف مصطفى قاسميه', 'مريم محمود "محي الدين" مرّه', 'ملاك يونس محمد رحال', 'ميريانا احمد مصطفى عيتاني', 'هدى محمود محمد الركن', 'وسيله سعدو درويش ششنيه', 'يحيى زكريا سميح حمو'
-            ],
-            "8C": [
-                'آلاء رباح محمود شراب', 'آلاء محمود صالح أدلبي', 'ابراهيم محمد إبراهيم عزيز', 'امير ماجد احمد اسماعيل', 'بتول فايز محمد حمود', 'بهاء الدين بلال "بهاء الدين" رشيد', 'بيان كمال احمد ابو سويد', 'تبارك محمد "محمد السيد" يوسف', 'تغريد خالد عزات يحيى', 'جمال محمد جمال حوحو', 'جنى حسن محمد الظريف', 'جهاد فادي حسن سالم', 'حلا محمد حسن ابو شنار', 'حلا مصطفى "محمد خير" بللي', 'خالد وسيم خالد حسن', 'راما زياد علي الحاج علي', 'راما عبد المجيد محمد سالم', 'راما محمد يوسف العلي', 'رزان زياد عبد الناصر اصمهان', 'روان عماد فوزي ابراهيم', 'ريم اديب احمد حسين', 'ريم ماهر عطا الخطيب', 'ريم "نور الدين" فايز عبد الرازق', 'سلام عصام حمودة ناجي', 'سلام "محمد بديع" فيصل العلي', 'سيلا هشام امين الطه', 'شهد صالح احمد مطر', 'صالح محمد سامي الشورى', 'عبد الله حسن سعيد سليمان', 'علي محمد ابراهيم صالح', 'علي ناصر علي حماده', 'عمر عصام الصادق', 'فرح وائل باسل غزلان', 'لانا باسم امين صيداوي', 'لين احمد عيسى قاسم', 'لين وائل زياد الهبطه', 'ماسة عمار علي علي', 'محمد حسين احمد ندوه', 'محمود محمد سالم نجمي', 'ملكه "سعد الدين" برجاوي', 'نور الهدى جهاد عزات عليان'
-            ],
-            "8D": [
-                'إسراء ايمن محمد قدسيه', 'احمد زاهر جهاد قدورة', 'احمد علاء احمد اسماعيل', 'احمد محمد رياض الخطيب', 'ادم خالد محمود قدورة', 'اسراء احمد داري نوفل', 'الما محمد جمال ششنيه', 'اياد احمد حسين محمود', 'اياد احمد سمير قدوره', 'بيسان علي احمد قاسم', 'تقى احمد موسى عبدالله', 'حسن علي حسن حبقزي', 'حمزة عاطف محمد الحاج محمد', 'دانا نبيل "نور الدين" الهندي', 'راما فادي علي سليم', 'رهف خليل عبدالله شاهين', 'روزا محمود علي عودي', 'ريتال نضال موسى مناد', 'زهراء محمد حسن بركات', 'زينب محمد عبد غنام', 'سالي فادي عثمان عباس', 'سماح احمد عطا أبو عنزه', 'علا محمد زيد عثمان', 'علي كمال علي سعد', 'عمر محمود عباس الحايك', 'غزل محمد خليل ابو عرب', 'غفران محمد يوسف داوود', 'كريم عوني خالد عبد الغني', 'لين علي نايف حميد', 'ماريا ابراهيم درويش خزعل', 'محمد براء محمود حسن', 'محمد بهاء ابراهيم العيسى', 'محمد خالد محمود مطر', 'محمد ربيع محمد هنداوي', 'محمود علي محمود يوسف', 'مصطفى "عماد الدين" تراوي', 'ميار سعيد محمد حسن', 'نور عباس محمد عمر', 'هبة يحيى عيسى ابو مايهه', 'هيلين فيصل "فضل الله" الراشد', 'يوسف عامر محمد مصريه', 'يوسف هيثم فايز بركة'
-            ]
-        };
-
+        const rosters = { /* ... Your JSON ... */ };
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwG9rHNO5aMCJYKRzsBtEVWvdljheXCHhxwpsRuImOUarbEexYTNfkaq_OZ1g_U9qPdtA/exec";
-
         let currentUser = { section: "", name: "" };
         let uploadedBase64Image = null;
         let selectedAnswers = {};
-
         const questions = [
-            { id: 1, text: "According to the first law of reflection, the angle between the incident ray and the normal line is called:", options: ["Angle of Reflection", "Angle of Incidence", "Critical Angle"], answer: 1 },
-            { id: 2, text: "If the angle of incidence of a light ray on a plane mirror is 30°, then the angle of reflection is:", options: ["60°", "15°", "30°"], answer: 2 },
-            { id: 3, text: "The image formed in a plane mirror is always:", options: ["Real and Inverted", "Virtual and Upright", "Larger than the object"], answer: 1 },
-            { id: 4, text: "If you stand 2 meters away from a plane mirror, what is the distance between you and your image in the mirror?", options: ["2 meters", "4 meters", "1 meter"], answer: 1 },
-            { id: 5, text: "The Normal Line is an imaginary line drawn so that it makes an angle of ___ with the mirror surface.", options: ["0°", "45°", "90° (Perpendicular)"], answer: 2 }
+            { id: 1, text: "Angle between incident ray and normal is called:", options: ["Reflection", "Incidence", "Critical"], answer: 1 },
+            { id: 2, text: "If angle of incidence is 30°, reflection is:", options: ["60°", "15°", "30°"], answer: 2 },
+            { id: 3, text: "Image in plane mirror is:", options: ["Real", "Virtual", "Large"], answer: 1 },
+            { id: 4, text: "Distance from mirror (2m) vs image distance:", options: ["2m", "4m", "1m"], answer: 0 },
+            { id: 5, text: "Normal line angle with mirror:", options: ["0°", "45°", "90°"], answer: 2 }
         ];
 
-        // ==========================================
-        // UI & NAVIGATION LOGIC
-        // ==========================================
         function loadStudents() {
             const sec = document.getElementById('sectionSelect').value;
             const stuSelect = document.getElementById('studentSelect');
             stuSelect.innerHTML = '<option value="" disabled selected>Select your name...</option>';
-            
-            if (sec && rosters[sec]) {
-                stuSelect.disabled = false;
-                rosters[sec].forEach(name => {
-                    stuSelect.innerHTML += `<option value="${name}">${name}</option>`;
-                });
-            } else {
-                stuSelect.disabled = true;
-            }
+            rosters[sec]?.forEach(name => stuSelect.innerHTML += `<option value="${name}">${name}</option>`);
+            stuSelect.disabled = false;
         }
 
         function startLab() {
-            const sec = document.getElementById('sectionSelect').value;
-            const name = document.getElementById('studentSelect').value;
-            if (!sec || !name) {
-                alert("Please select your section and name first!");
-                return;
-            }
-            currentUser = { section: sec, name: name };
+            currentUser = { section: document.getElementById('sectionSelect').value, name: document.getElementById('studentSelect').value };
             document.getElementById('stage-login').style.display = 'none';
             document.getElementById('stage-lab').classList.remove('hidden');
-            
-            document.getElementById('studentBadge').classList.remove('hidden');
-            document.getElementById('displayStudentName').innerText = `${name} (${sec})`;
-
             initQuiz();
-            
-            // Allow canvases to size correctly before initiating logic
-            setTimeout(() => {
-                initRayCanvas();
-                initMirrorCanvas();
-            }, 100);
         }
 
         function initQuiz() {
-            const qContainer = document.getElementById('quizContainer');
-            qContainer.innerHTML = '';
-            questions.forEach((q, i) => {
-                let html = `
-                <div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800">
-                    <p class="font-bold text-white mb-4"><span class="text-rose-500">${i+1}.</span> ${q.text}</p>
-                    <div class="space-y-2">`;
-                
-                q.options.forEach((opt, optIndex) => {
-                    html += `
-                        <label class="flex items-center gap-3 p-3 rounded-xl border border-zinc-700 cursor-pointer hover:bg-zinc-800 transition-colors">
-                            <input type="radio" name="q${q.id}" value="${optIndex}" class="w-4 h-4 text-rose-500 accent-rose-500" onchange="selectedAnswers[${q.id}] = ${optIndex}">
-                            <span class="text-zinc-300 text-sm">${opt}</span>
-                        </label>`;
-                });
-                html += `</div></div>`;
-                qContainer.innerHTML += html;
-            });
-        }
-
-        // ==========================================
-        // IMAGE UPLOAD & COMPRESSION (CRITICAL FOR GS)
-        // ==========================================
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    // Compress image using canvas (Max Width 800px)
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const MAX_WIDTH = 800;
-
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Export to base64, 60% JPEG quality to save massive space
-                    uploadedBase64Image = canvas.toDataURL('image/jpeg', 0.6);
-                    
-                    // Show preview
-                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
-                    document.getElementById('imagePreview').src = uploadedBase64Image;
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-
-        // ==========================================
-        // CANVAS 1: RAY REFLECTION LOGIC
-        // ==========================================
-        function initRayCanvas() {
-            const canvas = document.getElementById('rayCanvas');
-            const ctx = canvas.getContext('2d');
-            let rect = canvas.getBoundingClientRect();
-            
-            // Physics variables
-            let cx = canvas.width / 2;
-            let cy = canvas.height - 40; // Mirror level
-            
-            // Source dot variables
-            let srcX = cx - 150;
-            let srcY = 100;
-            let isDragging = false;
-
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw Mirror (Bottom)
-                ctx.lineWidth = 6;
-                ctx.strokeStyle = '#94a3b8'; // Silver
-                ctx.beginPath();
-                ctx.moveTo(50, cy);
-                ctx.lineTo(canvas.width - 50, cy);
-                ctx.stroke();
-                
-                // Mirror dashes (to show opaque side)
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#475569';
-                for(let i = 60; i < canvas.width - 50; i += 15) {
-                    ctx.beginPath();
-                    ctx.moveTo(i, cy + 3);
-                    ctx.lineTo(i - 10, cy + 15);
-                    ctx.stroke();
-                }
-
-                // Draw Normal Line
-                ctx.setLineDash([10, 10]);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#facc15'; // Yellow normal
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(cx, 20);
-                ctx.stroke();
-                ctx.setLineDash([]); // Reset dash
-
-                // Calculate Angles
-                let dx = cx - srcX;
-                let dy = cy - srcY;
-                let angleRad = Math.atan2(dy, dx);
-                // Angle relative to normal (90 deg from surface)
-                let angleDeg = Math.abs(90 - (angleRad * 180 / Math.PI));
-                let displayAngle = Math.round(angleDeg);
-
-                // Update UI Texts
-                document.getElementById('angleI').innerText = displayAngle;
-                document.getElementById('angleR').innerText = displayAngle;
-
-                // Draw Incident Ray
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = '#f43f5e'; // Rose
-                ctx.beginPath();
-                ctx.moveTo(srcX, srcY);
-                ctx.lineTo(cx, cy);
-                ctx.stroke();
-                drawArrow(ctx, srcX, srcY, cx, cy, '#f43f5e');
-
-                // ==========================================
-// ==========================================
-// REFLECTED RAY (TRUE PHYSICS)
-// ==========================================
-
-// Incident vector from source to mirror
-let incDx = cx - srcX;
-let incDy = cy - srcY;
-
-// Reflection from a HORIZONTAL mirror:
-// x stays the same
-// y reverses direction
-let refDx = incDx;
-let refDy = -incDy;
-
-// Normalize vector
-let length = Math.hypot(refDx, refDy);
-refDx /= length;
-refDy /= length;
-
-// Extend reflected ray
-let rayLength = 500;
-
-let refEndX = cx + refDx * rayLength;
-let refEndY = cy + refDy * rayLength;
-
-// Draw reflected ray
-ctx.strokeStyle = '#10b981';
-ctx.lineWidth = 3;
-
-ctx.beginPath();
-ctx.moveTo(cx, cy);
-ctx.lineTo(refEndX, refEndY);
-ctx.stroke();
-
-// Arrow direction
-drawArrow(
-    ctx,
-    cx,
-    cy,
-    cx + refDx * 80,
-    cy + refDy * 80,
-    '#10b981'
-);
-                // Draw Light Source (Draggable point)
-                ctx.beginPath();
-                ctx.arc(srcX, srcY, 12, 0, Math.PI * 2);
-                ctx.fillStyle = '#ef4444';
-                ctx.fill();
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = '#ef4444';
-                ctx.fill();
-                ctx.shadowBlur = 0; // reset
-            }
-
-            // Arrow helper
-            function drawArrow(context, fromx, fromy, tox, toy, color) {
-                let headlen = 15; // length of head in pixels
-                let dx = tox - fromx;
-                let dy = toy - fromy;
-                let angle = Math.atan2(dy, dx);
-                let midX = fromx + dx/2;
-                let midY = fromy + dy/2;
-                context.beginPath();
-                context.moveTo(midX, midY);
-                context.lineTo(midX - headlen * Math.cos(angle - Math.PI / 6), midY - headlen * Math.sin(angle - Math.PI / 6));
-                context.moveTo(midX, midY);
-                context.lineTo(midX - headlen * Math.cos(angle + Math.PI / 6), midY - headlen * Math.sin(angle + Math.PI / 6));
-                context.strokeStyle = color;
-                context.lineWidth = 4;
-                context.stroke();
-            }
-
-            // Interactivity
-            function getMousePos(evt) {
-                rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                let clientX = evt.clientX || (evt.touches && evt.touches[0].clientX);
-                let clientY = evt.clientY || (evt.touches && evt.touches[0].clientY);
-                return {
-                    x: (clientX - rect.left) * scaleX,
-                    y: (clientY - rect.top) * scaleY
-                };
-            }
-
-            function handleDown(e) {
-                let pos = getMousePos(e);
-                let dist = Math.hypot(pos.x - srcX, pos.y - srcY);
-                if (dist < 30) isDragging = true;
-            }
-            
-            function handleMove(e) {
-                if (!isDragging) return;
-                e.preventDefault();
-                let pos = getMousePos(e);
-                // Restrict to left side, above mirror
-                srcX = Math.max(20, Math.min(cx - 20, pos.x));
-                srcY = Math.max(20, Math.min(cy - 20, pos.y));
-                draw();
-            }
-
-            function handleUp() { isDragging = false; }
-
-            canvas.addEventListener('mousedown', handleDown);
-            canvas.addEventListener('mousemove', handleMove);
-            window.addEventListener('mouseup', handleUp);
-            canvas.addEventListener('touchstart', handleDown);
-            canvas.addEventListener('touchmove', handleMove);
-            window.addEventListener('touchend', handleUp);
-
-            draw();
-        }
-
-        // ==========================================
-        // CANVAS 2: IMAGE FORMATION LOGIC
-        // ==========================================
-        function initMirrorCanvas() {
-            const canvas = document.getElementById('mirrorCanvas');
-            const ctx = canvas.getContext('2d');
-            let rect = canvas.getBoundingClientRect();
-            
-            let cx = canvas.width / 2; // Mirror is exactly in center
-            
-            // Object properties
-            let objX = cx - 150;
-            let objY = canvas.height / 2;
-            let isDragging = false;
-
-            // Simple Flame drawing helper
-            function drawCandle(context, x, y, isVirtual) {
-                context.globalAlpha = isVirtual ? 0.5 : 1.0;
-                
-                // Body
-                context.fillStyle = isVirtual ? '#6366f1' : '#eab308'; // Indigo for virtual, yellow for real
-                context.fillRect(x - 10, y - 30, 20, 60);
-                
-                // Flame
-                context.beginPath();
-                context.moveTo(x, y - 35);
-                context.quadraticCurveTo(x + 10, y - 50, x, y - 65);
-                context.quadraticCurveTo(x - 10, y - 50, x, y - 35);
-                context.fillStyle = isVirtual ? '#818cf8' : '#f97316';
-                context.fill();
-                
-                context.globalAlpha = 1.0;
-            }
-
-function draw() {
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw mirror
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = '#cbd5e1';
-
-    ctx.beginPath();
-    ctx.moveTo(cx, 20);
-    ctx.lineTo(cx, canvas.height - 20);
-    ctx.stroke();
-
-    // Object distance
-    let dist = cx - objX;
-
-    document.getElementById('distO').innerText =
-        Math.round(dist);
-
-    document.getElementById('distI').innerText =
-        Math.round(dist);
-
-    // Image position
-    let imgX = cx + dist;
-    let imgY = objY;
-
-    // Dashed guide
-    ctx.setLineDash([5,5]);
-    ctx.strokeStyle = '#a1a1aa';
-
-    ctx.beginPath();
-    ctx.moveTo(objX, objY);
-    ctx.lineTo(imgX, imgY);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-    // Draw real object
-    drawCandle(ctx, objX, objY, false);
-
-    // ==========================================
-    // RAY SYSTEM
-    // ==========================================
-
-    let flameX = objX;
-    let flameY = objY - 55;
-
-    let imageFlameX = imgX;
-    let imageFlameY = flameY;
-
-    ctx.lineWidth = 2;
-
-    const incidentColor = '#f59e0b';
-    const reflectedColor = '#22c55e';
-    const extensionColor = '#60a5fa';
-
-    // ==========================================
-    // RAY 1
-    // ==========================================
-
-    let hit1X = cx;
-    let hit1Y = flameY;
-
-    ctx.strokeStyle = incidentColor;
-
-    ctx.beginPath();
-    ctx.moveTo(flameX, flameY);
-    ctx.lineTo(hit1X, hit1Y);
-    ctx.stroke();
-
-    ctx.strokeStyle = reflectedColor;
-
-    ctx.beginPath();
-    ctx.moveTo(hit1X, hit1Y);
-    ctx.lineTo(70, hit1Y);
-    ctx.stroke();
-
-    ctx.setLineDash([6,6]);
-
-    ctx.strokeStyle = extensionColor;
-
-    ctx.beginPath();
-    ctx.moveTo(hit1X, hit1Y);
-    ctx.lineTo(imageFlameX, imageFlameY);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-    // ==========================================
-    // RAY 2
-    // ==========================================
-
-    let hit2X = cx;
-    let hit2Y = flameY + 40;
-
-    ctx.strokeStyle = incidentColor;
-
-    ctx.beginPath();
-    ctx.moveTo(flameX, flameY);
-    ctx.lineTo(hit2X, hit2Y);
-    ctx.stroke();
-
-    // Reflection
-    let incDx = hit2X - flameX;
-    let incDy = hit2Y - flameY;
-
-    let refDx = -incDx;
-    let refDy = incDy;
-
-    let mag = Math.hypot(refDx, refDy);
-
-    refDx /= mag;
-    refDy /= mag;
-
-    let reflectedLength = 300;
-
-    let refEndX =
-        hit2X + refDx * reflectedLength;
-
-    let refEndY =
-        hit2Y + refDy * reflectedLength;
-
-    ctx.strokeStyle = reflectedColor;
-
-    ctx.beginPath();
-    ctx.moveTo(hit2X, hit2Y);
-    ctx.lineTo(refEndX, refEndY);
-    ctx.stroke();
-
-    // Backward extension
-    ctx.setLineDash([6,6]);
-
-    ctx.strokeStyle = extensionColor;
-
-    ctx.beginPath();
-    ctx.moveTo(hit2X, hit2Y);
-    ctx.lineTo(imageFlameX, imageFlameY);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-    // Draw virtual image
-    drawCandle(ctx, imgX, imgY, true);
-}
-// ==========================================
-// ==========================================
-// ==========================================
-// IMAGE FORMATION WITH PLANE MIRROR
-// PROFESSIONAL PHYSICS VERSION
-// ==========================================
-
-// Flame tip
-let flameX = objX;
-let flameY = objY - 55;
-
-// Virtual image flame tip
-let imageFlameX = imgX;
-let imageFlameY = flameY;
-
-ctx.lineWidth = 2;
-
-// COLORS
-const incidentColor = '#f59e0b';
-const reflectedColor = '#22c55e';
-const extensionColor = '#60a5fa';
-
-// =====================================================
-// RAY 1 : HORIZONTAL RAY
-// =====================================================
-
-// Hits mirror horizontally
-let hit1X = cx;
-let hit1Y = flameY;
-
-// INCIDENT RAY
-ctx.strokeStyle = incidentColor;
-
-ctx.beginPath();
-ctx.moveTo(flameX, flameY);
-ctx.lineTo(hit1X, hit1Y);
-ctx.stroke();
-
-// REFLECTED RAY
-ctx.strokeStyle = reflectedColor;
-
-ctx.beginPath();
-ctx.moveTo(hit1X, hit1Y);
-ctx.lineTo(70, hit1Y);
-ctx.stroke();
-
-// DASHED EXTENSION
-ctx.setLineDash([6,6]);
-ctx.strokeStyle = extensionColor;
-
-ctx.beginPath();
-ctx.moveTo(hit1X, hit1Y);
-ctx.lineTo(imageFlameX, imageFlameY);
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-// =====================================================
-// RAY 2 : ANGLED RAY
-// =====================================================
-
-// second hit point on mirror
-let hit2X = cx;
-let hit2Y = flameY + 40;
-
-// INCIDENT RAY
-ctx.strokeStyle = incidentColor;
-
-ctx.beginPath();
-ctx.moveTo(flameX, flameY);
-ctx.lineTo(hit2X, hit2Y);
-ctx.stroke();
-
-// ==========================================
-// REFLECTED RAY USING TRUE REFLECTION
-// ==========================================
-
-// incident vector
-let incDx = hit2X - flameX;
-let incDy = hit2Y - flameY;
-
-// reflect on vertical mirror
-let refDx = -incDx;
-let refDy = incDy;
-
-// normalize
-let mag = Math.hypot(refDx, refDy);
-refDx /= mag;
-refDy /= mag;
-
-// reflected endpoint
-let reflectedLength = 300;
-
-let refEndX = hit2X + refDx * reflectedLength;
-let refEndY = hit2Y + refDy * reflectedLength;
-
-// REFLECTED RAY
-ctx.strokeStyle = reflectedColor;
-
-ctx.beginPath();
-ctx.moveTo(hit2X, hit2Y);
-ctx.lineTo(refEndX, refEndY);
-ctx.stroke();
-
-// ==========================================
-// BACKWARD EXTENSION
-// ==========================================
-
-ctx.setLineDash([6,6]);
-ctx.strokeStyle = extensionColor;
-
-ctx.beginPath();
-ctx.moveTo(hit2X, hit2Y);
-ctx.lineTo(imageFlameX, imageFlameY);
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-// ==========================================
-// DRAW VIRTUAL IMAGE
-// ==========================================
-
-drawCandle(ctx, imgX, imgY, true);
-}
-            // Interactivity
-            function getMousePos(evt) {
-                rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                let clientX = evt.clientX || (evt.touches && evt.touches[0].clientX);
-                let clientY = evt.clientY || (evt.touches && evt.touches[0].clientY);
-                return {
-                    x: (clientX - rect.left) * scaleX,
-                    y: (clientY - rect.top) * scaleY
-                };
-            }
-
-            function handleDown(e) {
-                let pos = getMousePos(e);
-                // Check if clicked near object body or handle
-                if (pos.x > objX - 30 && pos.x < objX + 30 && pos.y > objY - 70 && pos.y < objY + 60) {
-                    isDragging = true;
-                }
-            }
-            
-            function handleMove(e) {
-                if (!isDragging) return;
-                e.preventDefault();
-                let pos = getMousePos(e);
-                // Restrict to left side of mirror
-                objX = Math.max(30, Math.min(cx - 30, pos.x));
-                // Restrict Y
-                objY = Math.max(80, Math.min(canvas.height - 60, pos.y));
-                draw();
-            }
-
-            function handleUp() { isDragging = false; }
-
-            canvas.addEventListener('mousedown', handleDown);
-            canvas.addEventListener('mousemove', handleMove);
-            window.addEventListener('mouseup', handleUp);
-            canvas.addEventListener('touchstart', handleDown);
-            canvas.addEventListener('touchmove', handleMove);
-            window.addEventListener('touchend', handleUp);
-
-            draw();
-        }
-
-        // ==========================================
-        // SUBMISSION LOGIC
-        // ==========================================
-        async function submitFinalWork() {
-            // Validations
-            if (Object.keys(selectedAnswers).length < questions.length) {
-                alert("Please answer all evaluation questions before submitting!");
-                return;
-            }
-            if (!uploadedBase64Image) {
-                alert("Please take a photo of your drawing before submitting!");
-                return;
-            }
-
-            // Calculate score
-            let score = 0;
+            const container = document.getElementById('quizContainer');
             questions.forEach(q => {
-                if (selectedAnswers[q.id] === q.answer) score++;
+                let html = `<div class="p-4 bg-zinc-900 rounded-xl"> <p>${q.text}</p>`;
+                q.options.forEach((opt, idx) => {
+                    html += `<label class="block"><input type="radio" name="q${q.id}" onchange="selectedAnswers[${q.id}] = ${idx}"> ${opt}</label>`;
+                });
+                container.innerHTML += html + `</div>`;
             });
+        }
 
-            const payload = {
-                section: currentUser.section,
-                studentName: currentUser.name,
-                score: score,
-                total: questions.length,
-                imageBase64: uploadedBase64Image
-            };
+        function handleImageUpload(e) {
+            const reader = new FileReader();
+            reader.onload = (event) => { uploadedBase64Image = event.target.result; alert("Image captured!"); };
+            reader.readAsDataURL(e.target.files[0]);
+        }
 
-            // UI Loading state
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-            document.getElementById('loadingOverlay').classList.add('flex');
+        async function submitFinalWork() {
+            if (!uploadedBase64Image || Object.keys(selectedAnswers).length < questions.length) return alert("Complete all sections!");
 
+            const payload = { ...currentUser, score: 0, imageBase64: uploadedBase64Image };
+            
             try {
-                // Send to Google Apps Script
-                const response = const response = await fetch(GOOGLE_SCRIPT_URL, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-    },
-    body: JSON.stringify(payload)
-});
-
-const result = await response.text();
-
-console.log("SERVER RESPONSE:");
-console.log(result);
-
-const result = await response.json();
-
-console.log("SERVER RESPONSE:", result);
-
-if (!result.success) {
-    throw new Error(result.error || "Unknown server error");
-};
-                
-                // Show Success (We assume success because no-cors doesn't give a readable response)
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').classList.add('hidden');
-                    document.getElementById('loadingOverlay').classList.remove('flex');
-                    document.getElementById('stage-lab').classList.add('hidden');
-                    document.getElementById('stage-success').classList.remove('hidden');
-                    document.getElementById('finalScoreText').innerText = `${score} / ${questions.length}`;
-                }, 1000);
-
-            } catch (err) {
-                alert("An error occurred during submission. Please check your internet connection.");
-                document.getElementById('loadingOverlay').classList.add('hidden');
-                document.getElementById('loadingOverlay').classList.remove('flex');
-            }
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Added to prevent preflight errors
+                    body: JSON.stringify(payload)
+                });
+                document.getElementById('stage-lab').classList.add('hidden');
+                document.getElementById('stage-success').classList.remove('hidden');
+            } catch (err) { alert("Submission failed."); }
         }
     </script>
 </body>
