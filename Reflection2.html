@@ -590,39 +590,150 @@ drawArrow(
                 context.globalAlpha = 1.0;
             }
 
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw Mirror (Vertical center)
-                ctx.lineWidth = 6;
-                ctx.strokeStyle = '#cbd5e1'; 
-                ctx.beginPath();
-                ctx.moveTo(cx, 20);
-                ctx.lineTo(cx, canvas.height - 20);
-                ctx.stroke();
+function draw() {
 
-                // Object Distance (do)
-                let dist = cx - objX;
-                document.getElementById('distO').innerText = Math.round(dist);
-                document.getElementById('distI').innerText = Math.round(dist);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Image coordinates (Symmetrical)
-                let imgX = cx + dist;
-                let imgY = objY;
+    // Draw mirror
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#cbd5e1';
 
-                // Draw Connecting Line (d_o to d_i)
-                ctx.setLineDash([5, 5]);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#a1a1aa';
-                ctx.beginPath();
-                ctx.moveTo(objX, objY);
-                ctx.lineTo(imgX, imgY);
-                ctx.stroke();
-                ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(cx, 20);
+    ctx.lineTo(cx, canvas.height - 20);
+    ctx.stroke();
 
-                // Draw REAL Object
-drawCandle(ctx, objX, objY, false);
+    // Object distance
+    let dist = cx - objX;
 
+    document.getElementById('distO').innerText =
+        Math.round(dist);
+
+    document.getElementById('distI').innerText =
+        Math.round(dist);
+
+    // Image position
+    let imgX = cx + dist;
+    let imgY = objY;
+
+    // Dashed guide
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle = '#a1a1aa';
+
+    ctx.beginPath();
+    ctx.moveTo(objX, objY);
+    ctx.lineTo(imgX, imgY);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    // Draw real object
+    drawCandle(ctx, objX, objY, false);
+
+    // ==========================================
+    // RAY SYSTEM
+    // ==========================================
+
+    let flameX = objX;
+    let flameY = objY - 55;
+
+    let imageFlameX = imgX;
+    let imageFlameY = flameY;
+
+    ctx.lineWidth = 2;
+
+    const incidentColor = '#f59e0b';
+    const reflectedColor = '#22c55e';
+    const extensionColor = '#60a5fa';
+
+    // ==========================================
+    // RAY 1
+    // ==========================================
+
+    let hit1X = cx;
+    let hit1Y = flameY;
+
+    ctx.strokeStyle = incidentColor;
+
+    ctx.beginPath();
+    ctx.moveTo(flameX, flameY);
+    ctx.lineTo(hit1X, hit1Y);
+    ctx.stroke();
+
+    ctx.strokeStyle = reflectedColor;
+
+    ctx.beginPath();
+    ctx.moveTo(hit1X, hit1Y);
+    ctx.lineTo(70, hit1Y);
+    ctx.stroke();
+
+    ctx.setLineDash([6,6]);
+
+    ctx.strokeStyle = extensionColor;
+
+    ctx.beginPath();
+    ctx.moveTo(hit1X, hit1Y);
+    ctx.lineTo(imageFlameX, imageFlameY);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    // ==========================================
+    // RAY 2
+    // ==========================================
+
+    let hit2X = cx;
+    let hit2Y = flameY + 40;
+
+    ctx.strokeStyle = incidentColor;
+
+    ctx.beginPath();
+    ctx.moveTo(flameX, flameY);
+    ctx.lineTo(hit2X, hit2Y);
+    ctx.stroke();
+
+    // Reflection
+    let incDx = hit2X - flameX;
+    let incDy = hit2Y - flameY;
+
+    let refDx = -incDx;
+    let refDy = incDy;
+
+    let mag = Math.hypot(refDx, refDy);
+
+    refDx /= mag;
+    refDy /= mag;
+
+    let reflectedLength = 300;
+
+    let refEndX =
+        hit2X + refDx * reflectedLength;
+
+    let refEndY =
+        hit2Y + refDy * reflectedLength;
+
+    ctx.strokeStyle = reflectedColor;
+
+    ctx.beginPath();
+    ctx.moveTo(hit2X, hit2Y);
+    ctx.lineTo(refEndX, refEndY);
+    ctx.stroke();
+
+    // Backward extension
+    ctx.setLineDash([6,6]);
+
+    ctx.strokeStyle = extensionColor;
+
+    ctx.beginPath();
+    ctx.moveTo(hit2X, hit2Y);
+    ctx.lineTo(imageFlameX, imageFlameY);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    // Draw virtual image
+    drawCandle(ctx, imgX, imgY, true);
+}
 // ==========================================
 // ==========================================
 // ==========================================
