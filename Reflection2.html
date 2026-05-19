@@ -825,13 +825,18 @@ drawCandle(ctx, imgX, imgY, true);
 
             try {
                 // Send to Google Apps Script
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                const response = const response = await fetch(GOOGLE_SCRIPT_URL, {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'text/plain;charset=utf-8'
     },
     body: JSON.stringify(payload)
 });
+
+const result = await response.text();
+
+console.log("SERVER RESPONSE:");
+console.log(result);
 
 const result = await response.json();
 
