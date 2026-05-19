@@ -442,32 +442,48 @@
                 ctx.stroke();
                 drawArrow(ctx, srcX, srcY, cx, cy, '#f43f5e');
 
-                // Draw Reflected Ray
-// Reflection across the NORMAL line
-let refDx = dx;
-let refDy = -dy;
+                // ==========================================
+// REFLECTED RAY (Correct Physics)
+// ==========================================
 
-// Extend reflected ray upward
-let mult = 10;
-let refEndX = cx - (refDx * mult);
-let refEndY = cy - (refDy * mult);
+// Incident vector components
+let incDx = cx - srcX;
+let incDy = cy - srcY;
 
-ctx.strokeStyle = '#10b981'; // Emerald
+// Reflection across vertical normal:
+// x changes sign, y remains same
+let refDx = -incDx;
+let refDy = incDy;
+
+// Normalize direction
+let length = Math.hypot(refDx, refDy);
+refDx /= length;
+refDy /= length;
+
+// Extend reflected ray
+let rayLength = 500;
+
+let refEndX = cx + refDx * rayLength;
+let refEndY = cy - refDy * rayLength;
+
+// Draw reflected ray
+ctx.strokeStyle = '#10b981';
+ctx.lineWidth = 3;
+
 ctx.beginPath();
 ctx.moveTo(cx, cy);
 ctx.lineTo(refEndX, refEndY);
 ctx.stroke();
 
-// Arrow on reflected ray
+// Arrow
 drawArrow(
     ctx,
     cx,
     cy,
-    cx - (refDx * 0.5),
-    cy - (refDy * 0.5),
+    cx + refDx * 80,
+    cy - refDy * 80,
     '#10b981'
 );
-
                 // Draw Light Source (Draggable point)
                 ctx.beginPath();
                 ctx.arc(srcX, srcY, 12, 0, Math.PI * 2);
@@ -606,72 +622,82 @@ drawArrow(
 drawCandle(ctx, objX, objY, false);
 
 // ==========================================
-// LIGHT RAYS FOR IMAGE FORMATION
+// IMAGE FORMATION RAYS
 // ==========================================
 
-// Top of candle flame
+// Flame tip coordinates
+let flameX = objX;
 let flameY = objY - 55;
 
-// First incident ray
+// ------------------------------------------
+// RAY 1: NORMAL INCIDENT RAY
+// ------------------------------------------
+
+// Incident ray perpendicular to mirror
 ctx.strokeStyle = '#f59e0b';
 ctx.lineWidth = 2;
 
 ctx.beginPath();
-ctx.moveTo(objX, flameY);
-ctx.lineTo(cx, flameY - 20);
+ctx.moveTo(flameX, flameY);
+ctx.lineTo(cx, flameY);
 ctx.stroke();
 
-// Reflected ray
+// Reflected ray retraces path
 ctx.beginPath();
-ctx.moveTo(cx, flameY - 20);
-ctx.lineTo(canvas.width - 60, flameY + 30);
+ctx.moveTo(cx, flameY);
+ctx.lineTo(flameX + 180, flameY);
 ctx.stroke();
 
-// Back extension (virtual ray)
+// Dashed extension behind mirror
 ctx.setLineDash([6,6]);
 ctx.strokeStyle = '#60a5fa';
 
 ctx.beginPath();
-ctx.moveTo(cx, flameY - 20);
+ctx.moveTo(cx, flameY);
 ctx.lineTo(imgX, flameY);
 ctx.stroke();
 
 ctx.setLineDash([]);
 
-// Second ray
+// ------------------------------------------
+// RAY 2: ANGLED INCIDENT RAY
+// ------------------------------------------
+
+let hitY = flameY + 40;
+
+// Incident ray
 ctx.strokeStyle = '#f59e0b';
 
 ctx.beginPath();
-ctx.moveTo(objX, flameY);
-ctx.lineTo(cx, flameY + 25);
+ctx.moveTo(flameX, flameY);
+ctx.lineTo(cx, hitY);
 ctx.stroke();
+
+// Reflected ray
+let reflectedEndX = canvas.width - 60;
+let reflectedEndY = flameY - 10;
 
 ctx.beginPath();
-ctx.moveTo(cx, flameY + 25);
-ctx.lineTo(canvas.width - 60, flameY - 20);
+ctx.moveTo(cx, hitY);
+ctx.lineTo(reflectedEndX, reflectedEndY);
 ctx.stroke();
 
-// Second virtual extension
+// Dashed backward extension
 ctx.setLineDash([6,6]);
 ctx.strokeStyle = '#60a5fa';
 
 ctx.beginPath();
-ctx.moveTo(cx, flameY + 25);
+ctx.moveTo(cx, hitY);
 ctx.lineTo(imgX, flameY);
 ctx.stroke();
 
 ctx.setLineDash([]);
 
-// Draw VIRTUAL Image
+// ==========================================
+// DRAW IMAGE
+// ==========================================
+
 drawCandle(ctx, imgX, imgY, true);
-                // Drag handles
-                ctx.beginPath();
-                ctx.arc(objX, objY + 45, 12, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255,255,255,0.2)';
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.stroke();
-            }
 
             // Interactivity
             function getMousePos(evt) {
