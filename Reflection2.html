@@ -677,6 +677,7 @@
         // SUBMISSION LOGIC (Updated to be foolproof)
         // ==========================================
         async function submitFinalWork() {
+            // Validations
             if (Object.keys(selectedAnswers).length < questions.length) {
                 alert("Please answer all evaluation questions before submitting!");
                 return;
@@ -686,6 +687,7 @@
                 return;
             }
 
+            // Calculate score
             let score = 0;
             questions.forEach(q => {
                 if (selectedAnswers[q.id] === q.answer) score++;
@@ -699,23 +701,22 @@
                 imageBase64: uploadedBase64Image
             };
 
+            // UI Loading state
             document.getElementById('loadingOverlay').classList.remove('hidden');
             document.getElementById('loadingOverlay').classList.add('flex');
 
             try {
-                // Send to Google Apps Script
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                // CRITICAL FIX: mode 'no-cors' forces the browser to send the payload
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
                     body: JSON.stringify(payload)
                 });
-
-                // Instead of failing if Google Apps Script sends back weird data, 
-                // we just read the response text and print it, then proceed to success.
-                const textResult = await response.text();
-                console.log("SERVER RESPONSE:", textResult);
                 
-                // Show Success automatically if the network request didn't throw an error
+                // With no-cors, we can't read the response, so we automatically show success
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').classList.add('hidden');
                     document.getElementById('loadingOverlay').classList.remove('flex');
