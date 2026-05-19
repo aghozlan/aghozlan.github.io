@@ -825,12 +825,21 @@ drawCandle(ctx, imgX, imgY, true);
 
             try {
                 // Send to Google Apps Script
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Ignore CORS for silent push
-                    headers: { 'Content-Type': 'text/plain' }, // Avoid preflight errors
-                    body: JSON.stringify(payload)
-                });
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+});
+
+const result = await response.json();
+
+console.log("SERVER RESPONSE:", result);
+
+if (!result.success) {
+    throw new Error(result.error || "Unknown server error");
+};
                 
                 // Show Success (We assume success because no-cors doesn't give a readable response)
                 setTimeout(() => {
