@@ -624,33 +624,37 @@ drawArrow(
 drawCandle(ctx, objX, objY, false);
 
 // ==========================================
-// IMAGE FORMATION RAYS
+// ==========================================
+// IMAGE FORMATION RAYS (PHYSICALLY CORRECT)
 // ==========================================
 
 // Flame tip coordinates
 let flameX = objX;
 let flameY = objY - 55;
 
-// ------------------------------------------
-// RAY 1: NORMAL INCIDENT RAY
-// ------------------------------------------
-
-// Incident ray perpendicular to mirror
-ctx.strokeStyle = '#f59e0b';
 ctx.lineWidth = 2;
 
+// ==========================================
+// RAY 1 : PERPENDICULAR RAY
+// Passes through mirror normally
+// Reflects back on itself
+// ==========================================
+
+ctx.strokeStyle = '#f59e0b';
+
+// Incident ray
 ctx.beginPath();
 ctx.moveTo(flameX, flameY);
 ctx.lineTo(cx, flameY);
 ctx.stroke();
 
-// Reflected ray retraces path
+// Reflected ray returns backward
 ctx.beginPath();
 ctx.moveTo(cx, flameY);
-ctx.lineTo(flameX + 180, flameY);
+ctx.lineTo(flameX - 120, flameY);
 ctx.stroke();
 
-// Dashed extension behind mirror
+// Dashed virtual extension behind mirror
 ctx.setLineDash([6,6]);
 ctx.strokeStyle = '#60a5fa';
 
@@ -661,11 +665,13 @@ ctx.stroke();
 
 ctx.setLineDash([]);
 
-// ------------------------------------------
-// RAY 2: ANGLED INCIDENT RAY
-// ------------------------------------------
+// ==========================================
+// RAY 2 : ANGLED RAY
+// Proper reflection law
+// ==========================================
 
-let hitY = flameY + 40;
+// Point where ray hits mirror
+let hitY = flameY + 45;
 
 // Incident ray
 ctx.strokeStyle = '#f59e0b';
@@ -675,20 +681,37 @@ ctx.moveTo(flameX, flameY);
 ctx.lineTo(cx, hitY);
 ctx.stroke();
 
+// Compute reflected direction
+let dx = cx - flameX;
+let dy = hitY - flameY;
+
+// Reflection on vertical mirror:
+// horizontal changes sign
+let refDx = dx;
+let refDy = -dy;
+
+// Normalize
+let len = Math.hypot(refDx, refDy);
+refDx /= len;
+refDy /= len;
+
+// Extend reflected ray LEFTWARD
+let rayLen = 250;
+
+let endX = cx - refDx * rayLen;
+let endY = hitY + refDy * rayLen;
+
 // Reflected ray
-let reflectedEndX = canvas.width - 60;
-
-// symmetric reflection
-let reflectedSlope = (hitY - flameY) / (cx - flameX);
-
-let reflectedEndY = hitY - reflectedSlope * (reflectedEndX - cx);
-
 ctx.beginPath();
 ctx.moveTo(cx, hitY);
-ctx.lineTo(reflectedEndX, reflectedEndY);
+ctx.lineTo(endX, endY);
 ctx.stroke();
 
-// Dashed backward extension
+// ==========================================
+// VIRTUAL EXTENSION
+// Behind mirror
+// ==========================================
+
 ctx.setLineDash([6,6]);
 ctx.strokeStyle = '#60a5fa';
 
@@ -697,10 +720,12 @@ ctx.moveTo(cx, hitY);
 ctx.lineTo(imgX, flameY);
 ctx.stroke();
 
+ctx.stroke();
+
 ctx.setLineDash([]);
 
 // ==========================================
-// DRAW IMAGE
+// DRAW VIRTUAL IMAGE
 // ==========================================
 
 drawCandle(ctx, imgX, imgY, true);
