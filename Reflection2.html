@@ -443,19 +443,21 @@
                 drawArrow(ctx, srcX, srcY, cx, cy, '#f43f5e');
 
                 // ==========================================
-// REFLECTED RAY (Correct Physics)
+// ==========================================
+// REFLECTED RAY (TRUE PHYSICS)
 // ==========================================
 
-// Incident vector components
+// Incident vector from source to mirror
 let incDx = cx - srcX;
 let incDy = cy - srcY;
 
-// Reflection across vertical normal:
-// x changes sign, y remains same
-let refDx = -incDx;
-let refDy = incDy;
+// Reflection from a HORIZONTAL mirror:
+// x stays the same
+// y reverses direction
+let refDx = incDx;
+let refDy = -incDy;
 
-// Normalize direction
+// Normalize vector
 let length = Math.hypot(refDx, refDy);
 refDx /= length;
 refDy /= length;
@@ -464,7 +466,7 @@ refDy /= length;
 let rayLength = 500;
 
 let refEndX = cx + refDx * rayLength;
-let refEndY = cy - refDy * rayLength;
+let refEndY = cy + refDy * rayLength;
 
 // Draw reflected ray
 ctx.strokeStyle = '#10b981';
@@ -475,13 +477,13 @@ ctx.moveTo(cx, cy);
 ctx.lineTo(refEndX, refEndY);
 ctx.stroke();
 
-// Arrow
+// Arrow direction
 drawArrow(
     ctx,
     cx,
     cy,
     cx + refDx * 80,
-    cy - refDy * 80,
+    cy + refDy * 80,
     '#10b981'
 );
                 // Draw Light Source (Draggable point)
