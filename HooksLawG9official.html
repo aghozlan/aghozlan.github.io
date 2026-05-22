@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 9: Hooke's Law Interactive Exercises</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* High Contrast & Accessibility Base */
+        body { background-color: #f8fafc; color: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        
+        /* Math & Vector Styling - Projector & Mobile Size */
+        .math { font-family: 'Times New Roman', Times, serif; font-style: italic; font-weight: bold; }
+        .math-eq { font-family: 'Times New Roman', Times, serif; font-style: italic; font-weight: 900; }
+        .sub { vertical-align: sub; font-size: 0.6em; font-style: normal; font-weight: bold; }
+        
+        .vec { display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-end; vertical-align: bottom; line-height: 1; margin: 0 0.1em; }
+        .vec .arrow { font-size: 0.6em; margin-bottom: -0.1em; font-weight: 900; color: inherit; }
+        .vec .letter { font-family: 'Times New Roman', Times, serif; font-style: italic; font-weight: 900; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .spring-path { transition: d 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .mass-block { transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; md:width: 12px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 6px; }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white p-3 md:p-4 shadow-md flex justify-between items-center z-10 shrink-0">
+        <div class="flex items-center gap-2 md:gap-4">
+            <svg class="w-6 h-6 md:w-8 md:h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h1 class="text-lg md:text-3xl font-bold tracking-wide">Physics Lab: Hooke's Law</h1>
+        </div>
+        <div class="text-sm md:text-xl font-bold bg-slate-800 px-3 py-1 md:px-4 md:py-2 rounded-lg border border-slate-700 whitespace-nowrap">
+            Slide <span id="slide-counter" class="text-emerald-400">1</span> of <span id="slide-total">X</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex overflow-hidden relative">
+        <div id="slide-container" class="w-full h-full p-4 md:p-8 overflow-y-auto flex flex-col">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <!-- Footer Controls -->
+    <footer class="bg-slate-200 border-t-4 border-slate-300 p-2 md:p-4 flex justify-between items-center shrink-0 gap-2">
+        <button id="btn-prev" class="bg-slate-600 hover:bg-slate-700 text-white text-sm md:text-2xl font-bold py-3 px-4 md:py-4 md:px-10 rounded-xl shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 md:gap-2">
+            &larr; <span class="hidden sm:inline">Previous</span>
+        </button>
+        
+        <button id="btn-solution" class="bg-emerald-600 hover:bg-emerald-700 text-white text-base md:text-3xl font-bold py-3 px-4 md:py-4 md:px-12 rounded-xl shadow-lg transition-transform hover:scale-105 hidden flex-1 max-w-sm mx-2">
+            Reveal Solution
+        </button>
+
+        <button id="btn-next" class="bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-2xl font-bold py-3 px-4 md:py-4 md:px-10 rounded-xl shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 md:gap-2">
+            <span class="hidden sm:inline">Next</span> &rarr;
+        </button>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- CONTENT DATA ---
+        // 6 Official Exam Style Exercises
+        const slides = [
+            {
+                type: 'title',
+                title: 'Official Exam Revision:<br><span class="text-emerald-600 text-4xl md:text-6xl">Hooke\'s Law & Equilibrium</span>',
+                content: '<p class="text-xl md:text-3xl mt-4 md:mt-8 text-slate-600">Get your notebooks ready. We will solve 6 past official exam exercises step-by-step.</p>',
+                drawVisual: () => drawSpringVisual(40, 'Mass')
+            },
+            
+            // EXERCISE 1
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 1: Standard Equilibrium',
+                context: 'A spring of un-stretched length <span class="math">L<sub class="sub">0</sub> = 15 cm</span> is fixed to a support. A solid (S) of mass <span class="math">m = 200 g</span> is suspended from its free end. At equilibrium, the length of the spring becomes <span class="math">L = 20 cm</span>. <br><span class="text-lg md:text-2xl text-slate-500">Take g = 10 N/kg.</span>',
+                question: '1. Calculate the weight <span class="math">W</span> of the solid (S).',
+                solution: '<p>First, convert mass to kg: <span class="math-eq">m = 200 / 1000 = 0.2 kg</span></p><p class="mt-4 text-emerald-800"><span class="math-eq">W = m &times; g</span><br><span class="math-eq">W = 0.2 &times; 10 = 2 N</span></p>',
+                drawVisual: () => drawSpringVisual(40, '200g')
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 1: Standard Equilibrium',
+                context: 'Mass <span class="math">m = 0.2 kg</span>, <span class="math">W = 2 N</span>. The solid (S) is at rest (equilibrium).',
+                question: '2. Write the vector relation of equilibrium and deduce the magnitude of the tension <span class="math">T</span> of the spring.',
+                solution: '<p>At equilibrium, the sum of forces is zero:</p><p class="text-emerald-800 text-2xl md:text-4xl mt-2 mb-4"><span class="vec"><span class="arrow">&rarr;</span><span class="letter">W</span></span> + <span class="vec"><span class="arrow">&rarr;</span><span class="letter">T</span></span> = <span class="vec"><span class="arrow">&rarr;</span><span class="letter">0</span></span> &nbsp; &rArr; &nbsp; <span class="vec"><span class="arrow">&rarr;</span><span class="letter">T</span></span> = &ndash;<span class="vec"><span class="arrow">&rarr;</span><span class="letter">W</span></span></p><p>Therefore, the magnitudes are equal: <span class="math-eq text-emerald-800">T = W = 2 N</span>.</p>',
+                drawVisual: () => drawSpringVisual(40, '200g', true) 
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 1: Standard Equilibrium',
+                context: '<span class="math">L<sub class="sub">0</sub> = 15 cm</span> and <span class="math">L = 20 cm</span>. <span class="math">T = 2 N</span>.',
+                question: '3. Calculate the elongation <span class="math">&Delta;L</span> (or <span class="math">x</span>) of the spring in meters.<br>4. Apply Hooke\'s Law to calculate the stiffness <span class="math">k</span>.',
+                solution: '<p><strong>3. Elongation:</strong> <span class="math-eq">&Delta;L = L - L<sub class="sub">0</sub> = 20 - 15 = 5 cm</span>.<br>In meters: <span class="math-eq text-emerald-800">&Delta;L = 0.05 m</span></p><div class="h-1 bg-slate-300 my-4"></div><p><strong>4. Hooke\'s Law:</strong> <span class="math-eq">T = k &times; &Delta;L</span><br><span class="math-eq">k = T / &Delta;L = 2 / 0.05 = <span class="text-emerald-800">40 N/m</span></span></p>',
+                drawVisual: () => drawSpringVisual(40, '200g', false, true) 
+            },
+
+            // EXERCISE 2 (Graphical)
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 2: Graphical Analysis',
+                context: 'The graph on the right shows the variation of the tension <span class="math">T</span> of a spring as a function of its elongation <span class="math">x</span>.',
+                question: '1. What does the shape of the graph indicate about the relation between <span class="math">T</span> and <span class="math">x</span>?',
+                solution: '<p>The graph is a <strong>straight line passing through the origin (0,0)</strong>.</p><p class="text-emerald-800 mt-2">This indicates that the tension <span class="math">T</span> is <strong>directly proportional</strong> to the elongation <span class="math">x</span>.</p>',
+                drawVisual: () => drawGraphVisual()
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 2: Graphical Analysis',
+                context: 'We know <span class="math">T</span> is proportional to <span class="math">x</span>.',
+                question: '2. Determine the stiffness <span class="math">k</span> of the spring from the graph.',
+                solution: '<p>The stiffness <span class="math">k</span> is the slope of the line. Let\'s pick a point from the graph: <span class="math-eq">x = 10 cm = 0.1 m</span> and <span class="math-eq">T = 5 N</span>.</p><p class="text-emerald-800 text-2xl md:text-4xl mt-4"><span class="math-eq">k = T / x = 5 / 0.1 = 50 N/m</span></p>',
+                drawVisual: () => drawGraphVisual(true) 
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 2: Graphical Analysis',
+                context: 'The spring has <span class="math">k = 50 N/m</span>. An unknown object is suspended, and the spring stretches by <span class="math">x = 8 cm</span>. (Take <span class="math">g = 10 N/kg</span>).',
+                question: '3. Calculate the new tension <span class="math">T</span>.<br>4. Deduce the mass of the object.',
+                solution: '<p><strong>3. Tension:</strong> Convert <span class="math-eq">x = 8 cm = 0.08 m</span>.<br><span class="math-eq">T = k &times; x = 50 &times; 0.08 = <span class="text-emerald-800">4 N</span></span>.</p><div class="h-1 bg-slate-300 my-4"></div><p><strong>4. Mass:</strong> At equilibrium, <span class="math-eq">W = T = 4 N</span>.<br><span class="math-eq">W = m &times; g &nbsp;&rArr;&nbsp; m = W / g = 4 / 10 = <span class="text-emerald-800">0.4 kg</span> (or 400 g)</span>.</p>',
+                drawVisual: () => drawSpringVisual(60, '?', true)
+            },
+
+            // EXERCISE 3 (Unknown Object)
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 3: Unknown Object',
+                context: 'A spring has a known stiffness <span class="math">k = 25 N/m</span>. A solid (S<sub class="sub">1</sub>) of mass <span class="math">m<sub class="sub">1</sub> = 100 g</span> is hung from it. (<span class="math">g = 10 N/kg</span>).',
+                question: '1. Calculate the tension <span class="math">T<sub class="sub">1</sub></span> at equilibrium.<br>2. Calculate the elongation <span class="math">x<sub class="sub">1</sub></span> of the spring.',
+                solution: '<p><strong>1. Tension:</strong> <span class="math-eq">m<sub class="sub">1</sub> = 0.1 kg</span>. <br><span class="math-eq">W<sub class="sub">1</sub> = 0.1 &times; 10 = 1 N</span>. At equilibrium <span class="math-eq text-emerald-800">T<sub class="sub">1</sub> = W<sub class="sub">1</sub> = 1 N</span>.</p><div class="h-1 bg-slate-300 my-4"></div><p><strong>2. Elongation:</strong> <span class="math-eq">T<sub class="sub">1</sub> = k &times; x<sub class="sub">1</sub></span> <br><span class="math-eq">x<sub class="sub">1</sub> = T<sub class="sub">1</sub> / k = 1 / 25 = <span class="text-emerald-800">0.04 m</span> (or 4 cm)</span>.</p>',
+                drawVisual: () => drawSpringVisual(30, 'S1')
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 3: Unknown Object',
+                context: 'We remove S<sub class="sub">1</sub> and hang object (S<sub class="sub">2</sub>) of unknown mass <span class="math">m<sub class="sub">2</sub></span>. The new elongation is <span class="math">x<sub class="sub">2</sub> = 6 cm</span>. (<span class="math">k = 25 N/m</span>, <span class="math">g = 10 N/kg</span>).',
+                question: '3. Calculate the tension <span class="math">T<sub class="sub">2</sub></span>.<br>4. Deduce the mass <span class="math">m<sub class="sub">2</sub></span>.',
+                solution: '<p><strong>3. Tension:</strong> <span class="math-eq">x<sub class="sub">2</sub> = 0.06 m</span>.<br><span class="math-eq">T<sub class="sub">2</sub> = k &times; x<sub class="sub">2</sub> = 25 &times; 0.06 = <span class="text-emerald-800">1.5 N</span></span>.</p><div class="h-1 bg-slate-300 my-4"></div><p><strong>4. Mass:</strong> At equilibrium, <span class="math-eq">W<sub class="sub">2</sub> = T<sub class="sub">2</sub> = 1.5 N</span>.<br><span class="math-eq">W<sub class="sub">2</sub> = m<sub class="sub">2</sub> &times; g &nbsp;&rArr;&nbsp; m<sub class="sub">2</sub> = 1.5 / 10 = <span class="text-emerald-800">0.15 kg</span> (150 g)</span>.</p>',
+                drawVisual: () => drawSpringVisual(60, 'S2')
+            },
+
+            // EXERCISE 4 (Comparing Springs)
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 4: Comparing Stiffness',
+                context: 'A solid (S) of mass <span class="math">m = 400 g</span> is hung first from Spring 1 (<span class="math">k<sub class="sub">1</sub> = 40 N/m</span>), then from Spring 2 (<span class="math">k<sub class="sub">2</sub> = 80 N/m</span>). <br><span class="text-lg md:text-2xl text-slate-500">Take g = 10 N/kg.</span>',
+                question: '1. Calculate the weight <span class="math">W</span> of (S) and the equilibrium tension <span class="math">T</span>.',
+                solution: '<p><strong>Weight:</strong> <span class="math-eq">m = 0.4 kg</span>. <br><span class="math-eq">W = m &times; g = 0.4 &times; 10 = <span class="text-emerald-800">4 N</span></span>.</p><div class="h-1 bg-slate-300 my-4"></div><p>At equilibrium, tension equals weight: <span class="math-eq text-emerald-800">T = W = 4 N</span> for both springs.</p>',
+                drawVisual: () => drawSpringVisual(50, '400g')
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 4: Comparing Stiffness',
+                context: 'The tension applied to both springs is <span class="math">T = 4 N</span>. <br>Spring 1: <span class="math">k<sub class="sub">1</sub> = 40 N/m</span>. Spring 2: <span class="math">k<sub class="sub">2</sub> = 80 N/m</span>.',
+                question: '2. Calculate elongations <span class="math">x<sub class="sub">1</sub></span> and <span class="math">x<sub class="sub">2</sub></span>.<br>3. Does the stiffer spring elongate more or less?',
+                solution: '<p><strong>Spring 1:</strong> <span class="math-eq">x<sub class="sub">1</sub> = T / k<sub class="sub">1</sub> = 4 / 40 = <span class="text-emerald-800">0.1 m</span> (10 cm)</span>.</p><p><strong>Spring 2:</strong> <span class="math-eq">x<sub class="sub">2</sub> = T / k<sub class="sub">2</sub> = 4 / 80 = <span class="text-emerald-800">0.05 m</span> (5 cm)</span>.</p><div class="h-1 bg-slate-300 my-4"></div><p>Spring 2 has a higher stiffness (<span class="math-eq">k<sub class="sub">2</sub> > k<sub class="sub">1</sub></span>). It elongates <strong>less</strong> (<span class="math-eq">x<sub class="sub">2</sub> < x<sub class="sub">1</sub></span>).</p>',
+                drawVisual: () => drawSpringVisual(80, '400g') 
+            },
+
+            // EXERCISE 5 (Horizontal Compression)
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 5: Spring Compression',
+                context: 'A spring of stiffness <span class="math">k = 100 N/m</span> and uncompressed length <span class="math">L<sub class="sub">0</sub> = 30 cm</span> is placed horizontally. A hand pushes it with a force <span class="math">F = 5 N</span>.',
+                question: '1. Calculate the deformation (compression) <span class="math">x</span> of the spring in cm.',
+                solution: '<p>Applying Hooke\'s Law for compression:</p><p class="text-emerald-800 text-2xl md:text-4xl mt-4 mb-4"><span class="math-eq">F = k &times; x &nbsp;&rArr;&nbsp; x = F / k</span></p><p><span class="math-eq">x = 5 / 100 = 0.05 m = <span class="text-emerald-800">5 cm</span></span>.</p>',
+                drawVisual: () => drawHorizontalSpringVisual(50, 'F = 5N')
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 5: Spring Compression',
+                context: 'The spring is compressed by <span class="math">x = 5 cm</span>. Its original length is <span class="math">L<sub class="sub">0</sub> = 30 cm</span>.',
+                question: '2. Determine the new compressed length <span class="math">L</span> of the spring.',
+                solution: '<p>Since the spring is being compressed, its new length is shorter than its original length.</p><p class="text-emerald-800 text-2xl md:text-4xl mt-4 mb-4"><span class="math-eq">L = L<sub class="sub">0</sub> - x</span></p><p><span class="math-eq">L = 30 - 5 = <span class="text-emerald-800">25 cm</span></span>.</p>',
+                drawVisual: () => drawHorizontalSpringVisual(50, 'F = 5N', true) 
+            },
+
+            // EXERCISE 6 (Elastic Limit)
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 6: Elastic Limit',
+                context: 'A spring has a stiffness <span class="math">k = 50 N/m</span>. The maximum tension it can withstand before losing its elasticity is <span class="math">T<sub class="sub">max</sub> = 15 N</span>.',
+                question: '1. Calculate the maximum elongation <span class="math">x<sub class="sub">max</sub></span> before permanent deformation.',
+                solution: '<p>We apply Hooke\'s Law at the limit of elasticity:</p><p class="text-emerald-800 text-2xl md:text-4xl mt-4 mb-4"><span class="math-eq">x<sub class="sub">max</sub> = T<sub class="sub">max</sub> / k</span></p><p><span class="math-eq">x<sub class="sub">max</sub> = 15 / 50 = <span class="text-emerald-800">0.3 m</span> (or 30 cm)</span>.</p>',
+                drawVisual: () => drawSpringVisual(110, 'Max', false, false, true) 
+            },
+            {
+                type: 'exercise',
+                exTitle: 'Exercise 6: Elastic Limit',
+                context: 'Maximum tension <span class="math">T<sub class="sub">max</sub> = 15 N</span>. (<span class="math">g = 10 N/kg</span>).',
+                question: '2. Deduce the maximum mass <span class="math">m<sub class="sub">max</sub></span> that can be suspended without damaging the spring.',
+                solution: '<p>The maximum weight equals the maximum tension: <br><span class="math-eq text-emerald-800">W<sub class="sub">max</sub> = T<sub class="sub">max</sub> = 15 N</span>.</p><div class="h-1 bg-slate-300 my-4"></div><p><span class="math-eq">W<sub class="sub">max</sub> = m<sub class="sub">max</sub> &times; g &nbsp;&rArr;&nbsp; m<sub class="sub">max</sub> = W<sub class="sub">max</sub> / g</span></p><p class="text-emerald-800 text-2xl md:text-4xl mt-2"><span class="math-eq">m<sub class="sub">max</sub> = 15 / 10 = 1.5 kg</span>.</p>',
+                drawVisual: () => drawSpringVisual(110, '1.5 kg', true, false, true) 
+            }
+        ];
+
+        let currentSlide = 0;
+
+        // --- DOM ELEMENTS ---
+        const container = document.getElementById('slide-container');
+        const counter = document.getElementById('slide-counter');
+        const total = document.getElementById('slide-total');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnSolution = document.getElementById('btn-solution');
+
+        total.innerText = slides.length;
+
+        // --- RENDER LOGIC ---
+        function renderSlide() {
+            const slide = slides[currentSlide];
+            container.innerHTML = ''; 
+            btnSolution.classList.add('hidden');
+            
+            const grid = document.createElement('div');
+            // Changed from flex-row only to responsive flex-col md:flex-row
+            grid.className = 'w-full h-auto min-h-full flex flex-col md:flex-row gap-6 md:gap-8 items-stretch fade-in pb-10 md:pb-0';
+
+            const contentCol = document.createElement('div');
+            contentCol.className = 'flex-1 flex flex-col justify-center';
+
+            if (slide.type === 'title') {
+                contentCol.innerHTML = `
+                    <h2 class="text-4xl md:text-7xl font-bold leading-tight text-slate-800">${slide.title}</h2>
+                    ${slide.content}
+                `;
+            } else {
+                btnSolution.classList.remove('hidden');
+                btnSolution.innerText = 'Reveal Solution';
+                btnSolution.dataset.revealed = 'false';
+
+                contentCol.innerHTML = `
+                    <h2 class="text-2xl md:text-4xl font-bold text-slate-800 border-b-4 border-slate-300 pb-2 md:pb-4 mb-4 md:mb-6">${slide.exTitle}</h2>
+                    <div class="bg-blue-50 border-l-4 md:border-l-8 border-blue-500 p-4 md:p-6 rounded-r-xl mb-4 md:mb-8 shadow-sm">
+                        <p class="text-lg md:text-3xl leading-relaxed text-slate-800">${slide.context}</p>
+                    </div>
+                    <div class="bg-white border-2 border-slate-300 p-4 md:p-6 rounded-xl shadow-md">
+                        <p class="text-xl md:text-4xl font-bold text-slate-900 leading-snug">${slide.question}</p>
+                    </div>
+                    <div id="solution-box" class="mt-6 md:mt-8 bg-emerald-50 border-2 md:border-4 border-emerald-400 p-4 md:p-8 rounded-xl md:rounded-2xl shadow-lg hidden opacity-0 transition-opacity duration-500">
+                        <h3 class="text-xl md:text-2xl font-bold text-emerald-800 mb-2 md:mb-4 uppercase tracking-wider">Solution:</h3>
+                        <div class="text-lg md:text-4xl text-slate-900 leading-relaxed">${slide.solution}</div>
+                    </div>
+                `;
+            }
+
+            const visualCol = document.createElement('div');
+            // Fixed height/aspect ratio for mobile screens so SVGs display properly
+            visualCol.className = 'w-full md:w-1/3 min-h-[250px] md:min-h-0 bg-white border-2 md:border-4 border-slate-200 rounded-xl md:rounded-3xl shadow-inner flex items-center justify-center relative overflow-hidden shrink-0';
+            visualCol.innerHTML = slide.drawVisual();
+
+            grid.appendChild(contentCol);
+            grid.appendChild(visualCol);
+            container.appendChild(grid);
+
+            counter.innerText = currentSlide + 1;
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === slides.length - 1;
+            
+            container.scrollTop = 0; // Reset scroll on mobile
+            container.focus();
+        }
+
+        // --- INTERACTIVITY ---
+        btnSolution.addEventListener('click', () => {
+            const solBox = document.getElementById('solution-box');
+            if (btnSolution.dataset.revealed === 'false') {
+                solBox.classList.remove('hidden');
+                void solBox.offsetWidth; 
+                solBox.classList.remove('opacity-0');
+                btnSolution.innerText = 'Hide Solution';
+                btnSolution.dataset.revealed = 'true';
+                btnSolution.classList.replace('bg-emerald-600', 'bg-slate-600');
+                btnSolution.classList.replace('hover:bg-emerald-700', 'hover:bg-slate-700');
+                setTimeout(() => solBox.scrollIntoView({behavior: "smooth", block: "nearest"}), 100);
+            } else {
+                solBox.classList.add('opacity-0');
+                setTimeout(() => solBox.classList.add('hidden'), 500);
+                btnSolution.innerText = 'Reveal Solution';
+                btnSolution.dataset.revealed = 'false';
+                btnSolution.classList.replace('bg-slate-600', 'bg-emerald-600');
+                btnSolution.classList.replace('hover:bg-slate-700', 'hover:bg-emerald-700');
+            }
+        });
+
+        btnPrev.addEventListener('click', () => { if (currentSlide > 0) { currentSlide--; renderSlide(); } });
+        btnNext.addEventListener('click', () => { if (currentSlide < slides.length - 1) { currentSlide++; renderSlide(); } });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && !btnNext.disabled) { currentSlide++; renderSlide(); }
+            if (e.key === 'ArrowLeft' && !btnPrev.disabled) { currentSlide--; renderSlide(); }
+            if (e.key === ' ' || e.key === 'Enter') {
+                if(!btnSolution.classList.contains('hidden')) btnSolution.click();
+            }
+        });
+
+        // --- VISUAL GENERATORS ---
+        
+        // Vertical Spring Visual
+        function drawSpringVisual(elongation, massLabel, showVectors = false, showDelta = false, danger = false) {
+            const baseY = 50; 
+            const endY = baseY + 100 + elongation; 
+            const color = danger ? '#ef4444' : '#64748b'; // Red if danger
+            const blockStroke = danger ? '#ef4444' : '#334155';
+
+            let path = `M 150 20 L 150 ${baseY}`;
+            const coils = 8;
+            const coilHeight = (endY - baseY) / coils;
+            for(let i=0; i<coils; i++) {
+                const y = baseY + (i * coilHeight);
+                const nextY = baseY + ((i+1) * coilHeight);
+                const midY = (y + nextY) / 2;
+                path += ` L 180 ${midY} L 120 ${midY + (coilHeight/2)} L 150 ${nextY}`;
+            }
+
+            let svg = `
+                <svg viewBox="0 0 300 400" class="w-full h-full p-4">
+                    <rect x="50" y="10" width="200" height="10" fill="#475569" />
+                    <line x1="50" y1="150" x2="250" y2="150" stroke="#9ca3af" stroke-width="2" stroke-dasharray="8,8" />
+                    <text x="60" y="145" font-size="16" fill="#64748b" font-family="serif" font-style="italic" font-weight="bold">L<tspan dy="5" font-size="12">0</tspan></text>
+                    
+                    <path class="spring-path" d="${path}" fill="none" stroke="${color}" stroke-width="6" stroke-linejoin="round" />
+                    
+                    <g class="mass-block" transform="translate(0, ${elongation})">
+                        <rect x="110" y="150" width="80" height="80" rx="8" fill="#e2e8f0" stroke="${blockStroke}" stroke-width="4"/>
+                        <text x="150" y="200" font-size="24" font-weight="bold" fill="#0f172a" text-anchor="middle">${massLabel}</text>
+            `;
+
+            if (danger) {
+                // Warning icon
+                svg += `
+                    <polygon points="150,110 170,140 130,140" fill="#ef4444" />
+                    <text x="150" y="135" font-size="18" fill="white" font-weight="bold" text-anchor="middle">!</text>
+                `;
+            }
+
+            if (showVectors) {
+                svg += `
+                    <line x1="150" y1="150" x2="150" y2="70" stroke="#16a34a" stroke-width="6" />
+                    <polygon points="150,60 160,75 140,75" fill="#16a34a" />
+                    <text x="165" y="80" font-size="24" fill="#16a34a" font-weight="bold">T</text>
+                    
+                    <circle cx="150" cy="190" r="5" fill="#2563eb" />
+                    <line x1="150" y1="190" x2="150" y2="280" stroke="#2563eb" stroke-width="6" />
+                    <polygon points="150,290 140,275 160,275" fill="#2563eb" />
+                    <text x="165" y="280" font-size="24" fill="#2563eb" font-weight="bold">W</text>
+                `;
+            }
+
+            svg += `</g>`; 
+
+            if (showDelta) {
+                svg += `
+                    <line x1="250" y1="150" x2="250" y2="${150 + elongation}" stroke="#ef4444" stroke-width="4" />
+                    <polygon points="250,150 245,160 255,160" fill="#ef4444" />
+                    <polygon points="250,${150 + elongation} 245,${140 + elongation} 255,${140 + elongation}" fill="#ef4444" />
+                    <text x="260" y="${150 + (elongation/2)}" font-size="20" fill="#ef4444" font-weight="bold">&Delta;L</text>
+                    <line x1="50" y1="${150 + elongation}" x2="250" y2="${150 + elongation}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,8" />
+                `;
+            }
+
+            svg += `</svg>`;
+            return svg;
+        }
+
+        // Horizontal Spring Visual (Compression)
+        function drawHorizontalSpringVisual(compression, forceLabel, showLength = false) {
+            const wallX = 40;
+            const L0X = 260; // original end of spring
+            const blockWidth = 60;
+            const currentX = L0X - compression; // compressed end
+            
+            let path = `M ${wallX} 200 L ${wallX + 10} 200`;
+            const coils = 8;
+            const coilWidth = (currentX - wallX - 10) / coils;
+            for(let i=0; i<coils; i++) {
+                const x = wallX + 10 + (i * coilWidth);
+                const nextX = wallX + 10 + ((i+1) * coilWidth);
+                const midX = (x + nextX) / 2;
+                path += ` L ${midX} 170 L ${midX + (coilWidth/2)} 230 L ${nextX} 200`;
+            }
+
+            let svg = `
+                <svg viewBox="0 0 400 400" class="w-full h-full p-4">
+                    <!-- Floor & Wall -->
+                    <line x1="20" y1="235" x2="380" y2="235" stroke="#475569" stroke-width="6" />
+                    <line x1="40" y1="50" x2="40" y2="235" stroke="#475569" stroke-width="10" />
+
+                    <!-- Rest Length Line L0 -->
+                    <line x1="${L0X}" y1="240" x2="${L0X}" y2="100" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6,6" />
+                    <text x="${L0X - 10}" y="90" font-size="20" fill="#64748b" font-family="serif" font-style="italic" font-weight="bold">L<tspan dy="5" font-size="14">0</tspan></text>
+
+                    <!-- Spring -->
+                    <path class="spring-path" d="${path}" fill="none" stroke="#64748b" stroke-width="6" stroke-linejoin="round" />
+                    
+                    <!-- Pushing Block -->
+                    <g class="mass-block" transform="translate(${-compression}, 0)">
+                        <rect x="${L0X}" y="175" width="${blockWidth}" height="60" rx="4" fill="#e2e8f0" stroke="#334155" stroke-width="4" />
+                        
+                        <!-- Pushing Hand/Force Arrow -->
+                        <line x1="${L0X + blockWidth + 60}" y1="205" x2="${L0X + blockWidth + 10}" y2="205" stroke="#ef4444" stroke-width="6" />
+                        <polygon points="${L0X + blockWidth + 10},205 ${L0X + blockWidth + 25},195 ${L0X + blockWidth + 25},215" fill="#ef4444" />
+                        <text x="${L0X + blockWidth + 20}" y="190" font-size="20" fill="#ef4444" font-weight="bold">${forceLabel}</text>
+                    </g>
+            `;
+
+            if (showLength) {
+                // Delta x marker
+                svg += `
+                    <line x1="${L0X}" y1="260" x2="${currentX}" y2="260" stroke="#ef4444" stroke-width="4" />
+                    <polygon points="${L0X},260 ${L0X - 10},250 ${L0X - 10},270" fill="#ef4444" />
+                    <polygon points="${currentX},260 ${currentX + 10},250 ${currentX + 10},270" fill="#ef4444" />
+                    <text x="${currentX + (compression/2) - 5}" y="290" font-size="24" fill="#ef4444" font-weight="bold">x</text>
+
+                    <!-- New Length L marker -->
+                    <line x1="40" y1="130" x2="${currentX}" y2="130" stroke="#059669" stroke-width="4" />
+                    <polygon points="40,130 50,120 50,140" fill="#059669" />
+                    <polygon points="${currentX},130 ${currentX - 10},120 ${currentX - 10},140" fill="#059669" />
+                    <text x="${40 + (currentX - 40)/2 - 10}" y="120" font-size="24" fill="#059669" font-weight="bold">L</text>
+                    <line x1="${currentX}" y1="140" x2="${currentX}" y2="235" stroke="#059669" stroke-width="2" stroke-dasharray="6,6" />
+                `;
+            }
+
+            svg += `</svg>`;
+            return svg;
+        }
+
+        // Graphical Visual
+        function drawGraphVisual(highlightPoint = false) {
+            let svg = `
+                <svg viewBox="0 0 400 400" class="w-full h-full p-6">
+                    <g stroke="#e2e8f0" stroke-width="2">
+                        <line x1="50" y1="50" x2="350" y2="50"/> <line x1="50" y1="110" x2="350" y2="110"/>
+                        <line x1="50" y1="170" x2="350" y2="170"/> <line x1="50" y1="230" x2="350" y2="230"/>
+                        <line x1="50" y1="290" x2="350" y2="290"/>
+                        <line x1="110" y1="350" x2="110" y2="50"/> <line x1="170" y1="350" x2="170" y2="50"/>
+                        <line x1="230" y1="350" x2="230" y2="50"/> <line x1="290" y1="350" x2="290" y2="50"/>
+                    </g>
+                    
+                    <line x1="50" y1="350" x2="370" y2="350" stroke="#0f172a" stroke-width="4" />
+                    <polygon points="370,350 360,345 360,355" fill="#0f172a" />
+                    <text x="360" y="380" font-size="20" font-family="serif" font-style="italic" font-weight="bold">x (cm)</text>
+
+                    <line x1="50" y1="350" x2="50" y2="30" stroke="#0f172a" stroke-width="4" />
+                    <polygon points="50,30 45,40 55,40" fill="#0f172a" />
+                    <text x="10" y="30" font-size="20" font-family="serif" font-style="italic" font-weight="bold">T (N)</text>
+
+                    <text x="30" y="370" font-size="18" font-weight="bold">0</text>
+                    <text x="160" y="375" font-size="18" font-weight="bold">10</text>
+                    <text x="280" y="375" font-size="18" font-weight="bold">20</text>
+                    <text x="20" y="235" font-size="18" font-weight="bold">5</text>
+                    <text x="10" y="115" font-size="18" font-weight="bold">10</text>
+
+                    <line x1="50" y1="350" x2="290" y2="110" stroke="#059669" stroke-width="6" />
+            `;
+
+            if (highlightPoint) {
+                svg += `
+                    <line x1="170" y1="350" x2="170" y2="230" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,6" />
+                    <line x1="50" y1="230" x2="170" y2="230" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,6" />
+                    <circle cx="170" cy="230" r="8" fill="#ef4444" />
+                    <text x="185" y="225" font-size="20" fill="#ef4444" font-weight="bold">(10 cm, 5 N)</text>
+                `;
+            }
+
+            svg += `</svg>`;
+            return svg;
+        }
+
+        renderSlide();
+    </script>
+</body>
+</html>
