@@ -279,8 +279,8 @@ canvas#osc { display:block; border-radius:4px; }
         <div id="acCtrl" style="display:none;">
           <div class="knob-label">Frequency (Hz) <span class="knob-val" id="fVal">50</span></div>
           <input type="range" id="fSlider" min="10" max="500" value="50" oninput="Osc.setFreq(+this.value);document.getElementById('fVal').textContent=this.value;">
-          <div class="knob-label" style="margin-top:.5rem;">Um (V) <span class="knob-val" id="umVal">141</span></div>
-          <input type="range" id="umSlider" min="10" max="400" value="141" oninput="Osc.setUm(+this.value);document.getElementById('umVal').textContent=this.value;">
+          <div class="knob-label" style="margin-top:.5rem;">Um (V) <span class="knob-val" id="umVal">6</span></div>
+          <input type="range" id="umSlider" min="1" max="20" value="6" oninput="Osc.setUm(+this.value);document.getElementById('umVal').textContent=this.value;">
         </div>
       </div>
       <!-- Oscilloscope symbol diagram -->
@@ -589,7 +589,7 @@ function startLab() {
 
 function updateRing() {
   let raw = score.e1 + score.e2 + score.e3 + score.e4 + score.e5;
-  let s20 = Math.min(20, Math.round(raw / 16 * 20));
+  let s20 = Math.min(20, raw);
   let pct = s20 / 20;
   let circ = 2 * Math.PI * 28;
   let dash = circ * (1 - pct);
@@ -654,7 +654,7 @@ const Osc = (function() {
   let Sv = 2;
   let dcV = 0;
   let acF = 50;
-  let acUm = 141;
+  let acUm = 6;
   let yConnected = false;
   let gConnected = false;
   let t = 0;
@@ -1373,6 +1373,7 @@ function buildE4() {
   let wrongStreaks  = {ex1:0, ex2:0, ex3:0};
   let rightStreaks  = {ex1:0, ex2:0, ex3:0};
   let currentLevel  = {ex1:'standard', ex2:'standard', ex3:'standard'};
+  let e4Scored     = {ex1:false, ex2:false, ex3:false};
 
   function getLevelData(ex) {
     let lv = currentLevel[ex.id];
@@ -1453,7 +1454,7 @@ function buildE4() {
         fb.className='feedback ok'; fb.textContent='Correct! Well done.';
         playSound('correct');
         rightStreaks[ex.id]++; wrongStreaks[ex.id]=0;
-        score.e4 += ex.pts; updateRing();
+        if (!e4Scored[ex.id]) { e4Scored[ex.id]=true; score.e4+=ex.pts; updateRing(); }
         adaptLevel[ex.id] = currentLevel[ex.id];
         if (rightStreaks[ex.id]>=3 && currentLevel[ex.id]==='easy') {
           currentLevel[ex.id]='standard';
@@ -1490,7 +1491,7 @@ function buildE4() {
 
   let ex4 = document.createElement('div');
   ex4.style.cssText='padding:1rem;margin-bottom:1rem;background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;';
-  ex4.innerHTML='<div style="font-size:14px;font-weight:600;margin-bottom:.5rem;">Exercise 4: Identify the waveform <span class="pts-badge">1 pt</span></div>'
+  ex4.innerHTML='<div style="font-size:14px;font-weight:600;margin-bottom:.5rem;">Exercise 4: Identify the waveform <span class="pts-badge">2 pts</span></div>'
     +'<div style="font-size:13px;color:var(--muted);margin-bottom:.75rem;">Which waveform is described: "Voltage rises and falls linearly — no curves"?</div>';
   let ex4opts=['Sinusoidal','Square','Triangular','Bicycle Alternator'];
   ex4opts.forEach(function(o,i){
@@ -1498,7 +1499,7 @@ function buildE4() {
     b.onclick=function(){
       attempts.ex4=1;
       ex4.querySelectorAll('.mcq-opt').forEach(function(x){x.style.pointerEvents='none';});
-      if(i===2){b.classList.add('correct');score.e4+=1;updateRing();playSound('correct');}
+      if(i===2){b.classList.add('correct');score.e4+=2;updateRing();playSound('correct');}
       else{b.classList.add('wrong');ex4.querySelectorAll('.mcq-opt')[2].classList.add('correct');playSound('wrong');}
     };
     ex4.appendChild(b);
@@ -1563,7 +1564,7 @@ function buildE5() {
   subBtn.onclick=function(){
     score.e5=Math.round(e5score/questions.length*5);
     let raw=score.e1+score.e2+score.e3+score.e4+score.e5;
-    let s20=Math.min(20,Math.round(raw/16*20));
+    let s20=Math.min(20,raw);
     let pct=s20/20;
     let grade=pct>=0.85?'A':pct>=0.70?'B':pct>=0.55?'C':'D';
     let time_min=Math.round((Date.now()-LAB_START)/60000);
