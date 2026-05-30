@@ -60,11 +60,12 @@
         <button id="start-btn" onclick="startExam()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transform transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
             Start Exam
         </button>
+
         <!-- Added Teacher Reset Button -->
         <div class="mt-6 text-center">
-             <button onclick="adminReset()" class="text-xs text-gray-400 hover:text-gray-600 transition underline">
-                 Teacher: Reset Student Attempt
-             </button>
+            <button onclick="adminReset()" class="text-xs text-gray-400 hover:text-gray-600 transition underline">
+                Teacher: Reset Student Attempt
+            </button>
         </div>
     </div>
 
@@ -116,7 +117,7 @@
         // ==========================================
         
         // ⚠️ REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL ⚠️
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9xsguFR1rvmNVE8H0YvY-0Rl2f7X-Rm7EyBGeZOJd9XE167jEsLDmEmgP5ZJebnnH/exec";
+        const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE";
 
         const EXAM_TIME_MINUTES = 20;
 
@@ -130,12 +131,12 @@
         const examBanks = {
             "A": [
                 {
-                    q: "What is the primary difference between congenital and acquired immunodeficiencies?",
+                    q: "Chemotherapy in infectious diseases refers to:",
                     opts: [
-                        "Congenital immunodeficiency appears after birth, while acquired is present from birth.",
-                        "Congenital is present from birth, while acquired is contracted later (like AIDS).",
-                        "Both are strictly caused by viral infections.",
-                        "Both require immediate bone marrow grafts to survive."
+                        "Use of radiation to kill microbes",
+                        "Use of chemicals toxic to microbes",
+                        "Natural immune defense mechanisms",
+                        "Surgical removal of infection"
                     ], ans: 1
                 },
                 {
@@ -193,12 +194,12 @@
                     ], ans: 3
                 },
                 {
-                    q: "What is the main cause of Acquired Immunodeficiency Syndrome (AIDS)?",
+                    q: "The immunity obtained from serotherapy is temporary because:",
                     opts: [
-                        "A genetic defect present from birth.",
-                        "The HIV virus destroying the body's immune system.",
-                        "Bacterial infections that resist antibiotics.",
-                        "Lack of vaccines during early childhood."
+                        "The body destroys vaccines quickly",
+                        "No memory cells are formed",
+                        "Antibodies multiply rapidly",
+                        "The antibodies are gradually degraded in the body"
                     ], ans: 1
                 },
                 {
@@ -301,13 +302,13 @@
                     ], ans: 1
                 },
                 {
-                    q: "Why are antibiotics like Penicillin ineffective against the HIV virus?",
+                    q: "Why must wounds be covered after applying antiseptics?",
                     opts: [
-                        "Because HIV is a virus, and antibiotics are only effective against bacteria.",
-                        "Because Penicillin only works in sterile cabinets.",
-                        "Because the HIV virus multiplies too slowly.",
-                        "Because Penicillin is an antiseptic, not a drug."
-                    ], ans: 0
+                        "To increase temperature for healing",
+                        "To prevent recontamination by microbes",
+                        "To enhance immune response",
+                        "To absorb excess antiseptic"
+                    ], ans: 1
                 }
             ],
             "B": [
@@ -384,13 +385,13 @@
                     ], ans: 1
                 },
                 {
-                    q: "How does the HIV virus affect the human body to cause AIDS?",
+                    q: "Why is an antibiogram performed?",
                     opts: [
-                        "It destroys the immune system, leading to acquired immunodeficiency.",
-                        "It causes a congenital genetic defect.",
-                        "It triggers an allergic reaction to antibiotics.",
-                        "It multiplies rapidly but leaves immune cells intact."
-                    ], ans: 0
+                        "To identify the patient’s immune response",
+                        "To determine the most effective antibiotic",
+                        "To produce antibodies",
+                        "To sterilize bacterial cultures"
+                    ], ans: 1
                 },
                 {
                     q: "What was the crucial finding in Pasteur's 1880 chicken cholera experiment?",
@@ -502,8 +503,9 @@
         let timeLeft = EXAM_TIME_MINUTES * 60;
         let examActive = false;
         let selectedAnswers = [];
+
         // Add a secret PIN for the teacher to authorize resets
-        const TEACHER_PIN = "8899";
+        const TEACHER_PIN = "8899"; 
 
         // ==========================================
         // 3. INITIALIZATION & UI
@@ -635,6 +637,7 @@
                 }, 1000);
             }
         }
+
         // ==========================================
         // EXCEPTION HANDLING (TEACHER RESET)
         // ==========================================
@@ -648,14 +651,14 @@
             }
 
             const pin = prompt(`Enter Teacher PIN to allow a new attempt for:\n${student}`);
-    
+            
             if (pin === TEACHER_PIN) {
                 localStorage.removeItem(`exam_taken_${student}`);
                 alert(`Success! The block has been removed for ${student}. They can now click 'Start Exam'.`);
             } else if (pin !== null) {
                 alert("Incorrect PIN. Access denied.");
             }
-        } 
+        }
 
         // ==========================================
         // 5. SUBMISSION LOGIC
