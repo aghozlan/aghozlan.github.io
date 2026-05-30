@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beit Jala Physics Exam Bank 2026</title>
+    
+    <!-- MathJax for perfect LaTeX rendering of equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }
+        };
+    </script>
+
+    <style>
+        /* Base Styles simulating a printed exam document */
+        body {
+            background-color: #f3f4f6;
+            color: #000;
+            font-family: "Times New Roman", Times, serif; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls { margin-bottom: 20px; text-align: center; }
+        button {
+            background-color: #2563eb; color: white; border: none; padding: 10px 20px;
+            font-size: 16px; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:hover { background-color: #1d4ed8; }
+
+        .document-container {
+            background-color: white; width: 100%; max-width: 850px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 40px 60px; box-sizing: border-box;
+        }
+
+        /* Exam specific typography and layout */
+        .exam-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px; }
+        .exam-header h1 { font-size: 24px; margin: 0 0 5px 0; text-transform: uppercase; }
+        .exam-header h2 { font-size: 18px; margin: 0 0 10px 0; font-weight: normal; }
+        .exam-header p { margin: 5px 0; font-size: 14px; font-style: italic; }
+
+        .exercise { margin-bottom: 30px; page-break-inside: avoid; }
+        .exercise-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .content-row { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 15px; }
+        .text-content { flex: 1; font-size: 15px; line-height: 1.5; }
+
+        .figure-container {
+            flex-shrink: 0; border: 1px solid #ccc; padding: 10px; background: #fff;
+            text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .figure-caption { font-size: 12px; font-style: italic; margin-top: 8px; }
+
+        ol { margin-top: 10px; padding-left: 20px; }
+        li { margin-bottom: 8px; line-height: 1.4; }
+        ol[type="a"] { margin-top: 5px; margin-bottom: 10px; }
+
+        .page-break { page-break-before: always; margin-top: 60px; padding-top: 60px; border-top: 2px dashed #ccc; }
+        .marking-scheme { font-size: 14px; }
+        .marking-scheme h3 { color: #1e3a8a; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+
+        /* SVG Styles */
+        svg { max-width: 100%; height: auto; }
+        .wire { fill: none; stroke: black; stroke-width: 2; }
+        .component { fill: white; stroke: black; stroke-width: 2; }
+        .grid { stroke: #add8e6; stroke-width: 1; }
+        .axis { stroke: black; stroke-width: 1.5; }
+        .wave { fill: none; stroke: red; stroke-width: 2; }
+        .spring { fill: none; stroke: black; stroke-width: 2; }
+        .mass { fill: #ddd; stroke: black; stroke-width: 2; }
+        .force-vector { fill: none; stroke: blue; stroke-width: 2; marker-end: url(#arrow-blue); }
+        .force-vector-red { fill: none; stroke: red; stroke-width: 2; marker-end: url(#arrow-red); }
+
+        @media print {
+            body { background-color: white; padding: 0; }
+            .controls { display: none; }
+            .document-container { box-shadow: none; padding: 0; max-width: 100%; }
+            .page-break { border-top: none; margin-top: 0; padding-top: 0; }
+            @page { margin: 2cm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="window.print()">Print / Save as PDF</button>
+        <p style="font-size: 14px; margin-top: 10px; color: #555;">(Use Ctrl+P / Cmd+P to save as PDF. Auto-formats to separate pages.)</p>
+    </div>
+
+    <div class="document-container">
+        
+        <!-- SVGs Global Definitions -->
+        <svg style="display: none;">
+            <defs>
+                <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="blue" /></marker>
+                <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="red" /></marker>
+                <marker id="arrow-black" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="black" /></marker>
+                <marker id="arrow-blue-small" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="blue" /></marker>
+            </defs>
+        </svg>
+
+        <!-- ==================== VERSION A ==================== -->
+        <div class="exam-header">
+            <h1>Beit Jala Secondary School</h1>
+            <h2>Physics Final Exam - Version A</h2>
+            <p><strong>Date:</strong> June, 2026 | <strong>Duration:</strong> 60 minutes | <strong>Grade:</strong> 9 (Brevet)</p>
+            <p><em>Instructions: The use of non-programmable calculators is allowed. The exam consists of four mandatory exercises.</em></p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 1: Direct Current & Electric Power</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A lamp \((L)\) carries the inscriptions: \((12 \text{ V} ; 6 \text{ W})\). It is connected in series with an ohmic resistor \((R)\) of resistance \(R = 10 \ \Omega\), a closed switch \((K)\), and a DC generator \((G)\) maintaining a constant voltage \(U_G = 17 \text{ V}\).
+                    <ol>
+                        <li>Indicate the physical significance of the inscriptions \((12 \text{ V} ; 6 \text{ W})\) on the lamp.</li>
+                        <li>Calculate the nominal current \(I_n\) of the lamp.</li>
+                        <li>The current flowing in the circuit is \(I = 0.5 \text{ A}\).
+                            <ol type="a">
+                                <li>Calculate the voltage \(U_R\) across the resistor \((R)\).</li>
+                                <li>Deduce the voltage \(U_L\) across the lamp.</li>
+                                <li>Does the lamp function normally? Justify your answer.</li>
+                            </ol>
+                        </li>
+                        <li>Calculate the electric energy consumed by the lamp in \(30\) minutes. Express the result in Joules.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <path class="wire" d="M 90 120 L 40 120 L 40 90" />
+                        <line x1="40" y1="90" x2="30" y2="70" stroke="black" stroke-width="2" />
+                        <circle cx="40" cy="90" r="2" fill="black" />
+                        <circle cx="40" cy="70" r="2" fill="black" />
+                        <text x="15" y="85" font-family="Times New Roman">K</text>
+                        <path class="wire" d="M 40 70 L 40 40 L 80 40" />
+                        <rect x="80" y="30" width="40" height="20" class="component" />
+                        <text x="95" y="45" font-family="Times New Roman">R</text>
+                        <path class="wire" d="M 120 40 L 160 40 L 160 65" />
+                        <circle cx="160" cy="80" r="15" class="component" />
+                        <path class="wire" d="M 149 69 L 171 91 M 149 91 L 171 69" />
+                        <text x="180" y="85" font-family="Times New Roman">(L)</text>
+                        <path class="wire" d="M 160 95 L 160 120 L 110 120" />
+                        <line x1="90" y1="110" x2="90" y2="130" stroke="black" stroke-width="4" />
+                        <line x1="110" y1="105" x2="110" y2="135" stroke="black" stroke-width="2" />
+                        <text x="80" y="105" font-size="12" font-family="Times New Roman">-</text>
+                        <text x="115" y="105" font-size="12" font-family="Times New Roman">+</text>
+                        <text x="95" y="145" font-size="14" font-family="Times New Roman">(G)</text>
+                    </svg>
+                    <div class="figure-caption">Figure 1: Series Circuit</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 2: Alternating Voltage</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    An oscilloscope is used to visualize an alternating sinusoidal voltage. The vertical sensitivity is set to \(S_v = 5 \text{ V/div}\) and the horizontal sensitivity (time base) is set to \(S_h = 10 \text{ ms/div}\). The visualized waveform is shown in Figure 2.
+                    <ol>
+                        <li>Name the type of voltage measured.</li>
+                        <li>Determine the maximum voltage \(U_m\) of this source by reading the oscillogram.</li>
+                        <li>Calculate the effective voltage \(U_{eff}\). (Take \(\sqrt{2} \approx 1.4\))</li>
+                        <li>Determine the period \(T\) of this voltage in milliseconds, then convert it to seconds.</li>
+                        <li>Deduce the frequency \(f\) of this voltage.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="160" viewBox="0 0 200 160">
+                        <pattern id="gridA" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#add8e6" stroke-width="1"/>
+                        </pattern>
+                        <rect width="200" height="160" fill="url(#gridA)" stroke="black" stroke-width="2"/>
+                        <line x1="0" y1="80" x2="200" y2="80" class="axis" />
+                        <line x1="100" y1="0" x2="100" y2="160" class="axis" />
+                        <path class="wave" d="M 20 80 Q 40 20 60 80 T 100 80 Q 120 20 140 80 T 180 80" />
+                    </svg>
+                    <div class="figure-caption">Figure 2: Oscilloscope Screen</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 3: Hooke's Law & Equilibrium</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A solid \((S)\) of mass \(m = 200 \text{ g}\) is suspended from the free end of a vertical spring of un-stretched length \(L_0 = 15 \text{ cm}\) and stiffness \(k = 40 \text{ N/m}\). The solid is in equilibrium. (Take \(g = 10 \text{ N/kg}\)).
+                    <ol>
+                        <li>State the condition of equilibrium of a solid subjected to two forces.</li>
+                        <li>Name the two forces acting on \((S)\) and give their lines of action and directions.</li>
+                        <li>Calculate the weight \(W\) of the solid \((S)\).</li>
+                        <li>Deduce the magnitude of the tension \(T\) in the spring.</li>
+                        <li>Calculate the elongation \(\Delta L\) of the spring.</li>
+                        <li>Deduce the new length \(L\) of the spring at equilibrium.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="120" height="180" viewBox="0 0 120 180">
+                        <line x1="20" y1="10" x2="100" y2="10" stroke="black" stroke-width="4" />
+                        <path d="M 30 10 L 40 0 M 50 10 L 60 0 M 70 10 L 80 0 M 90 10 L 100 0" stroke="black" stroke-width="1" />
+                        <path class="spring" d="M 60 10 L 60 30 L 50 40 L 70 50 L 50 60 L 70 70 L 50 80 L 70 90 L 50 100 L 70 110 L 60 120 L 60 130" />
+                        <rect x="45" y="130" width="30" height="30" class="mass" />
+                        <text x="54" y="150" font-family="Times New Roman">S</text>
+                        <!-- Note: Force vectors T and W explicitly removed as requested -->
+                    </svg>
+                    <div class="figure-caption">Figure 3: Solid on Spring</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 4: Voltage of Mains & Principle of Interaction</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part A: Mains Voltage</strong><br>
+                    A household is supplied with the mains voltage \(U_{mains} = 220 \text{ V}\). An electric heater of power \(P = 2200 \text{ W}\) is connected to the mains in series with a fuse.
+                    <ol>
+                        <li>Is the mains voltage AC or DC?</li>
+                        <li>Calculate the effective current drawn by the heater.</li>
+                        <li>Which fuse is most suitable to protect this heater: 5A, 10A, or 15A? Justify.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part B: Principle of Interaction</strong><br>
+                    A magnet \((A)\) and an iron ball \((B)\) are placed near each other on a smooth horizontal table. They attract each other.
+                    <ol>
+                        <li>State the principle of interaction.</li>
+                        <li>Let \(\vec{F}_{A/B}\) be the force exerted by \((A)\) on \((B)\), and \(\vec{F}_{B/A}\) be the force exerted by \((B)\) on \((A)\). Write the vector relation between these two forces.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="90" viewBox="0 0 200 90">
+                        <line x1="10" y1="70" x2="190" y2="70" stroke="black" stroke-width="3" />
+                        <rect x="30" y="40" width="40" height="30" fill="#cc0000" stroke="black" />
+                        <rect x="70" y="40" width="10" height="30" fill="silver" stroke="black" />
+                        <text x="45" y="60" fill="white" font-weight="bold" font-family="Times New Roman">A</text>
+                        <circle cx="150" cy="55" r="15" fill="#888" stroke="black" />
+                        <text x="145" y="60" fill="white" font-weight="bold" font-family="Times New Roman">B</text>
+                        
+                        <!-- Force vectors -->
+                        <line x1="135" y1="55" x2="95" y2="55" class="force-vector" />
+                        <text x="95" y="45" font-size="12" fill="blue" font-family="Times New Roman">F<tspan dy="4" font-size="9">A/B</tspan></text>
+                        <line x1="95" y1="36" x2="112" y2="36" stroke="blue" stroke-width="1" marker-end="url(#arrow-blue-small)" />
+                        
+                        <line x1="80" y1="55" x2="120" y2="55" class="force-vector" />
+                        <text x="95" y="85" font-size="12" fill="blue" font-family="Times New Roman">F<tspan dy="4" font-size="9">B/A</tspan></text>
+                        <line x1="95" y1="76" x2="112" y2="76" stroke="blue" stroke-width="1" marker-end="url(#arrow-blue-small)" />
+                    </svg>
+                    <div class="figure-caption">Figure 4: Magnetic Interaction</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- ==================== VERSION B ==================== -->
+        <div class="exam-header">
+            <h1>Beit Jala Secondary School</h1>
+            <h2>Physics Final Exam - Version B</h2>
+            <p><strong>Date:</strong> June, 2026 | <strong>Duration:</strong> 60 minutes | <strong>Grade:</strong> 9 (Brevet)</p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 1: Resistors in the Circuit</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    Two ohmic resistors \(R_1 = 20 \ \Omega\) and \(R_2 = 30 \ \Omega\) are connected in parallel. This grouping is connected in series with an ammeter \((A)\) and a DC battery \((G)\) of constant voltage \(U_G = 12 \text{ V}\).
+                    <ol>
+                        <li>Calculate the equivalent resistance \(R_{eq}\) of this grouping.</li>
+                        <li>Determine the main current \(I\) delivered by the battery and measured by the ammeter.</li>
+                        <li>Calculate the current \(I_1\) passing through \(R_1\) and \(I_2\) passing through \(R_2\).</li>
+                        <li>Verify the law of addition of currents (KCL) for this circuit.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="220" height="160" viewBox="0 0 220 160">
+                        <path class="wire" d="M 110 140 L 40 140 L 40 100" />
+                        <line x1="110" y1="130" x2="110" y2="150" stroke="black" stroke-width="4" />
+                        <line x1="130" y1="125" x2="130" y2="155" stroke="black" stroke-width="2" />
+                        <text x="100" y="125" font-size="12">-</text><text x="135" y="125" font-size="12">+</text>
+                        <path class="wire" d="M 130 140 L 180 140 L 180 80" />
+                        <circle cx="40" cy="85" r="15" class="component" /><text x="35" y="90" font-family="Times New Roman">A</text>
+                        <path class="wire" d="M 40 70 L 40 40 L 80 40" />
+                        <circle cx="80" cy="40" r="3" fill="black" />
+                        <path class="wire" d="M 80 40 L 80 20 L 100 20" />
+                        <path class="wire" d="M 80 40 L 80 60 L 100 60" />
+                        <rect x="100" y="10" width="40" height="20" class="component" /><text x="108" y="25" font-size="12">R&#8321;</text>
+                        <rect x="100" y="50" width="40" height="20" class="component" /><text x="108" y="65" font-size="12">R&#8322;</text>
+                        <path class="wire" d="M 140 20 L 160 20 L 160 40" />
+                        <path class="wire" d="M 140 60 L 160 60 L 160 40" />
+                        <circle cx="160" cy="40" r="3" fill="black" />
+                        <path class="wire" d="M 160 40 L 180 40 L 180 80" /> 
+                    </svg>
+                    <div class="figure-caption">Figure 1: Parallel Circuit Diagram</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 2: AC Voltage & Mains</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    The voltage of the mains in Lebanon is characterized by an effective voltage \(U_{eff} = 220 \text{ V}\) and a frequency \(f = 50 \text{ Hz}\). A voltmeter is correctly connected to the mains to measure it.
+                    <ol>
+                        <li>Calculate the period \(T\) of the mains voltage in seconds.</li>
+                        <li>Calculate the maximum voltage \(U_m\) of the mains. (Take \(\sqrt{2} \approx 1.41\))</li>
+                        <li>A student uses a step-down transformer connected to the mains to obtain a safe, scaled-down alternating voltage. The maximum visualized voltage of this new source on an oscilloscope is \(6 \text{ V}\). If the vertical sensitivity is \(S_v = 2 \text{ V/div}\), calculate the number of vertical divisions \(Y\) corresponding to the amplitude.</li>
+                        <li>State how the voltmeter is connected (series or parallel) to measure the mains voltage and what value it displays.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="120" viewBox="0 0 200 120">
+                        <rect x="40" y="30" width="60" height="60" rx="10" fill="#f8f9fa" stroke="black" stroke-width="2"/>
+                        <circle cx="55" cy="60" r="4" fill="black" />
+                        <circle cx="85" cy="60" r="4" fill="black" />
+                        <text x="45" y="20" font-size="12" font-family="Times New Roman">220V Mains</text>
+                        <path class="wire" d="M 55 60 L 55 90 L 140 90 L 140 75" />
+                        <path class="wire" d="M 85 60 L 85 45 L 140 45 L 140 45" />
+                        <circle cx="140" cy="60" r="15" class="component" /><text x="135" y="65" font-family="Times New Roman">V</text>
+                    </svg>
+                    <div class="figure-caption">Figure 2: Voltmeter connected to Mains</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 3: Graphical Analysis of Hooke's Law</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    An experiment is conducted to study the elongation \(\Delta L\) of a spring as a function of the applied tension \(T\). The results yield the straight line shown in Figure 3. The coordinates of a point A on this line are \(\Delta L = 0.05 \text{ m}\) and \(T = 2.5 \text{ N}\).
+                    <ol>
+                        <li>What does the fact that the graph is a straight line passing through the origin indicate about the relationship between \(T\) and \(\Delta L\)?</li>
+                        <li>Write the mathematical expression of Hooke's Law.</li>
+                        <li>Using the coordinates of point A, calculate the stiffness \(k\) of the spring.</li>
+                        <li>Deduce the tension in the spring if the elongation is \(\Delta L = 0.1 \text{ m}\).</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="220" height="180" viewBox="0 0 220 180">
+                        <pattern id="gridB" width="35" height="30" patternUnits="userSpaceOnUse">
+                            <path d="M 35 0 L 0 0 0 30" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                        </pattern>
+                        <rect x="30" y="30" width="180" height="120" fill="url(#gridB)" />
+                        <!-- Axes -->
+                        <line x1="30" y1="150" x2="210" y2="150" class="axis" marker-end="url(#arrow-black)"/>
+                        <line x1="30" y1="150" x2="30" y2="10" class="axis" marker-end="url(#arrow-black)"/>
+                        <text x="5" y="15" font-size="12" font-family="Times New Roman">T (N)</text>
+                        <text x="170" y="170" font-size="12" font-family="Times New Roman">&Delta;L (m)</text>
+                        <text x="15" y="165" font-size="12" font-family="Times New Roman">0</text>
+                        <!-- Line segment (y axis = T, x axis = delta L) -->
+                        <line x1="30" y1="150" x2="170" y2="30" stroke="red" stroke-width="2" />
+                        <!-- Point A dashed lines: X=100 (0.05m), Y=90 (2.5N) -->
+                        <line x1="100" y1="150" x2="100" y2="90" stroke="blue" stroke-width="1" stroke-dasharray="4,4" />
+                        <line x1="30" y1="90" x2="100" y2="90" stroke="blue" stroke-width="1" stroke-dasharray="4,4" />
+                        <circle cx="100" cy="90" r="3" fill="blue" />
+                        <text x="105" y="85" font-size="12" font-family="Times New Roman">A</text>
+                        <!-- Labels -->
+                        <text x="85" y="165" font-size="12">0.05</text>
+                        <text x="5" y="95" font-size="12">2.5</text>
+                    </svg>
+                    <div class="figure-caption">Figure 3: Hooke's Law Graph</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 4: Equilibrium & Electric Energy</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part A: Equilibrium</strong><br>
+                    A wooden block of mass \(m = 500 \text{ g}\) rests in equilibrium on a horizontal table. (\(g = 10 \text{ N/kg}\))
+                    <ol>
+                        <li>Calculate the weight of the block.</li>
+                        <li>Name the forces acting on the block and draw them on a free-body diagram on your answer sheet.</li>
+                        <li>By applying the condition of equilibrium, determine the magnitude of the normal force exerted by the table on the block.</li>
+                    </ol>
+                    <br>
+                    <strong>Part B: Electric Energy</strong><br>
+                    An electric motor operates for 2 hours daily under a voltage of \(220 \text{ V}\) drawing a current of \(5 \text{ A}\).
+                    <ol>
+                        <li>Calculate the electric power of the motor.</li>
+                        <li>Calculate the electric energy consumed by the motor in one day in \(\text{kWh}\).</li>
+                        <li>If the cost of \(1 \text{ kWh}\) is \(1500 \text{ L.L.}\), calculate the daily cost of operating this motor.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="120" viewBox="0 0 200 120">
+                        <line x1="20" y1="90" x2="180" y2="90" stroke="black" stroke-width="4" />
+                        <line x1="40" y1="90" x2="40" y2="110" stroke="black" stroke-width="2" />
+                        <line x1="160" y1="90" x2="160" y2="110" stroke="black" stroke-width="2" />
+                        <rect x="70" y="50" width="60" height="40" fill="#d97706" stroke="black" stroke-width="2" />
+                        <text x="85" y="75" font-size="14" fill="white" font-family="Times New Roman">Block</text>
+                        <!-- Explicitly removed vectors W and N -->
+                    </svg>
+                    <div class="figure-caption">Figure 4: Block in Equilibrium</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- ==================== VERSION C ==================== -->
+        <div class="exam-header">
+            <h1>Beit Jala Secondary School</h1>
+            <h2>Physics Final Exam - Version C</h2>
+            <p><strong>Date:</strong> June, 2026 | <strong>Duration:</strong> 60 minutes | <strong>Grade:</strong> 9 (Brevet)</p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 1: Domestic Installations & Mains</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A house is supplied with a mains voltage of \(220 \text{ V}\). The following appliances are functioning at the same time:
+                    <ul>
+                        <li>A television \((220 \text{ V} ; 110 \text{ W})\)</li>
+                        <li>A washing machine \((220 \text{ V} ; 2200 \text{ W})\)</li>
+                        <li>Two identical lamps, each rated \((220 \text{ V} ; 22 \text{ W})\)</li>
+                    </ul>
+                    <ol>
+                        <li>Are these appliances connected in series or in parallel? Justify.</li>
+                        <li>Calculate the total power \(P_{total}\) consumed by these appliances.</li>
+                        <li>Calculate the total main current \(I_{total}\) drawn from the mains.</li>
+                        <li>The main circuit breaker of the house is rated at \(15 \text{ A}\). If a vacuum cleaner of \(1500 \text{ W}\) is turned on alongside the other appliances, will the circuit breaker trip? Justify with calculations.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="250" height="150" viewBox="0 0 250 150">
+                        <line x1="20" y1="30" x2="230" y2="30" stroke="red" stroke-width="2" />
+                        <text x="5" y="35" font-size="12" fill="red" font-weight="bold">L</text>
+                        <line x1="20" y1="120" x2="230" y2="120" stroke="blue" stroke-width="2" />
+                        <text x="5" y="125" font-size="12" fill="blue" font-weight="bold">N</text>
+                        
+                        <rect x="30" y="25" width="20" height="10" fill="white" stroke="black" />
+                        <text x="32" y="22" font-size="10">CB</text>
+                        
+                        <path class="wire" d="M 80 30 L 80 60" />
+                        <rect x="65" y="60" width="30" height="25" class="component" />
+                        <text x="72" y="75" font-size="10">TV</text>
+                        <path class="wire" d="M 80 85 L 80 120" />
+                        
+                        <path class="wire" d="M 130 30 L 130 60" />
+                        <rect x="115" y="60" width="30" height="25" class="component" />
+                        <text x="120" y="75" font-size="10">WM</text>
+                        <path class="wire" d="M 130 85 L 130 120" />
+                        
+                        <path class="wire" d="M 180 30 L 180 60" />
+                        <circle cx="180" cy="70" r="10" class="component" />
+                        <text x="175" y="74" font-size="10">L&#8321;</text>
+                        <path class="wire" d="M 180 80 L 180 120" />
+
+                        <path class="wire" d="M 215 30 L 215 60" />
+                        <circle cx="215" cy="70" r="10" class="component" />
+                        <text x="210" y="74" font-size="10">L&#8322;</text>
+                        <path class="wire" d="M 215 80 L 215 120" />
+                        
+                        <circle cx="80" cy="30" r="2" /><circle cx="80" cy="120" r="2" />
+                        <circle cx="130" cy="30" r="2" /><circle cx="130" cy="120" r="2" />
+                        <circle cx="180" cy="30" r="2" /><circle cx="180" cy="120" r="2" />
+                        <circle cx="215" cy="30" r="2" /><circle cx="215" cy="120" r="2" />
+                    </svg>
+                    <div class="figure-caption">Figure 1: Parallel Circuit Schematic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 2: Comparing AC and DC</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    Two voltages, \(U_1\) and \(U_2\), are visualized on the screen of the same oscilloscope as shown in Figure 2.
+                    <ul>
+                        <li>\(U_1\) appears as a horizontal straight line shifted 3 divisions above the central axis.</li>
+                        <li>\(U_2\) appears as a sinusoidal wave with an amplitude spanning 3 divisions from the central axis.</li>
+                    </ul>
+                    The vertical sensitivity is \(S_v = 3 \text{ V/div}\).
+                    <ol>
+                        <li>Identify the nature of \(U_1\) (DC or AC). Calculate its value.</li>
+                        <li>Identify the nature of \(U_2\).</li>
+                        <li>Calculate the maximum voltage \(U_m\) of \(U_2\).</li>
+                        <li>Can an ordinary voltmeter distinguish between the maximum voltage of \(U_2\) and the value of \(U_1\)? Explain what a voltmeter in DC mode would read for \(U_2\).</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="160" viewBox="0 0 200 160">
+                        <pattern id="gridC" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#add8e6" stroke-width="1"/>
+                        </pattern>
+                        <rect width="200" height="160" fill="url(#gridC)" stroke="black" stroke-width="2"/>
+                        <line x1="0" y1="80" x2="200" y2="80" class="axis" />
+                        <line x1="100" y1="0" x2="100" y2="160" class="axis" />
+                        
+                        <line x1="0" y1="20" x2="200" y2="20" stroke="green" stroke-width="2" />
+                        <text x="10" y="15" font-size="12" fill="green" font-family="Times New Roman">U&#8321;</text>
+                        <!-- Corrected Waveform -->
+                        <path class="wave" d="M 0 80 Q 25 20 50 80 T 100 80 Q 125 20 150 80 T 200 80" />
+                        <text x="10" y="75" font-size="12" fill="red" font-family="Times New Roman">U&#8322;</text>
+                    </svg>
+                    <div class="figure-caption">Figure 2: Oscilloscope Display</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 3: Principle of Interaction & Forces</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    Two astronauts, Ali and Sami, are floating in space facing each other. Ali pushes Sami with a force \(\vec{F}_{A/S}\) of magnitude \(50 \text{ N}\).
+                    <ol>
+                        <li>According to the principle of interaction (Newton's 3rd Law), what happens to Ali?</li>
+                        <li>Write the vector relationship between the force Ali exerts on Sami (\(\vec{F}_{A/S}\)) and the force Sami exerts on Ali (\(\vec{F}_{S/A}\)).</li>
+                        <li>State the magnitude and the direction of the force \(\vec{F}_{S/A}\).</li>
+                        <li>If Ali has a significantly larger mass than Sami, does the magnitude of the force Sami exerts on Ali change compared to the force Ali exerts on Sami? Justify.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="220" height="120" viewBox="0 0 220 120">
+                        <rect x="30" y="40" width="50" height="60" fill="#e2e8f0" stroke="black" rx="5" />
+                        <text x="45" y="75" font-size="14" font-family="Times New Roman">Ali</text>
+                        <rect x="140" y="40" width="50" height="60" fill="#cbd5e1" stroke="black" rx="5" />
+                        <text x="145" y="75" font-size="14" font-family="Times New Roman">Sami</text>
+                        
+                        <line x1="80" y1="60" x2="130" y2="60" class="force-vector" />
+                        <text x="95" y="48" font-size="12" fill="blue" font-family="Times New Roman">F<tspan dy="4" font-size="9">A/S</tspan></text>
+                        <line x1="95" y1="38" x2="110" y2="38" stroke="blue" stroke-width="1" marker-end="url(#arrow-blue-small)" />
+                        
+                        <line x1="140" y1="80" x2="90" y2="80" class="force-vector" />
+                        <text x="100" y="102" font-size="12" fill="blue" font-family="Times New Roman">F<tspan dy="4" font-size="9">S/A</tspan></text>
+                        <line x1="100" y1="92" x2="115" y2="92" stroke="blue" stroke-width="1" marker-end="url(#arrow-blue-small)" />
+                    </svg>
+                    <div class="figure-caption">Figure 3: Interaction in Space</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 4: Ohmic Resistor & Hooke's Law</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part A: Ohmic Resistor</strong><br>
+                    A student applies different voltages \(U\) across an ohmic resistor and measures the current \(I\). For \(U = 9 \text{ V}\), the current is \(I = 45 \text{ mA}\).
+                    <ol>
+                        <li>Convert \(I\) to Amperes.</li>
+                        <li>State Ohm's law.</li>
+                        <li>Calculate the resistance \(R\) of this resistor.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part B: Hooke's Law</strong><br>
+                    A spring of stiffness \(k = 100 \text{ N/m}\) is compressed by a pushing force \(F = 20 \text{ N}\) applied to its free end.
+                    <ol>
+                        <li>Calculate the change in length (compression) \(\Delta L\) of the spring.</li>
+                        <li>If the original length of the spring was \(L_0 = 30 \text{ cm}\), calculate its final length \(L\) after compression.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <line x1="20" y1="20" x2="20" y2="130" stroke="black" stroke-width="4" />
+                        <path d="M 20 30 L 10 20 M 20 50 L 10 40 M 20 70 L 10 60 M 20 90 L 10 80 M 20 110 L 10 100 M 20 130 L 10 120" stroke="black" stroke-width="1" />
+                        <path class="spring" d="M 20 75 L 30 65 L 40 85 L 50 65 L 60 85 L 70 65 L 80 85 L 90 75 L 100 75" />
+                        <rect x="100" y="60" width="10" height="30" fill="gray" stroke="black" />
+                        
+                        <line x1="160" y1="75" x2="120" y2="75" class="force-vector" />
+                        <text x="135" y="65" font-size="12" fill="blue" font-family="Times New Roman">F</text>
+                        <line x1="135" y1="55" x2="145" y2="55" stroke="blue" stroke-width="1" marker-end="url(#arrow-blue-small)" />
+                    </svg>
+                    <div class="figure-caption">Figure 4: Spring under Compression</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- ==================== VERSION D ==================== -->
+        <div class="exam-header">
+            <h1>Beit Jala Secondary School</h1>
+            <h2>Physics Final Exam - Version D</h2>
+            <p><strong>Date:</strong> June, 2026 | <strong>Duration:</strong> 60 minutes | <strong>Grade:</strong> 9 (Brevet)</p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 1: Series Circuit & Ohm's Law</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A circuit contains a battery of constant voltage \(U = 24 \text{ V}\), a resistor \(R_1 = 10 \ \Omega\), and an unknown resistor \(R_2\) connected in series. An ammeter placed in the circuit reads \(I = 0.8 \text{ A}\).
+                    <ol>
+                        <li>Draw the schematic diagram of this circuit including the battery, \(R_1\), \(R_2\), and the ammeter.</li>
+                        <li>Calculate the voltage \(U_1\) across the resistor \(R_1\).</li>
+                        <li>Deduce the voltage \(U_2\) across the resistor \(R_2\) using the law of addition of voltages.</li>
+                        <li>Calculate the value of the resistance \(R_2\).</li>
+                        <li>Calculate the total power dissipated as heat in both resistors combined.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="220" height="160" viewBox="0 0 220 160">
+                        <line x1="90" y1="130" x2="90" y2="150" stroke="black" stroke-width="2" />
+                        <line x1="110" y1="125" x2="110" y2="155" stroke="black" stroke-width="4" />
+                        <text x="85" y="125" font-size="12">+</text>
+                        <path class="wire" d="M 90 140 L 40 140 L 40 40 L 70 40" />
+                        <rect x="70" y="30" width="30" height="20" class="component" />
+                        <text x="75" y="45" font-size="12">R&#8321;</text>
+                        <path class="wire" d="M 100 40 L 130 40" />
+                        <rect x="130" y="30" width="30" height="20" class="component" />
+                        <text x="135" y="45" font-size="12">R&#8322;</text>
+                        <path class="wire" d="M 160 40 L 190 40 L 190 85" />
+                        <circle cx="190" cy="100" r="15" class="component" /><text x="185" y="105" font-family="Times New Roman">A</text>
+                        <path class="wire" d="M 190 115 L 190 140 L 110 140" />
+                    </svg>
+                    <div class="figure-caption">Figure 1: Series Circuit</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 2: Reading the Oscilloscope</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    The screen of an oscilloscope displays an alternating sinusoidal voltage. The horizontal sensitivity is \(S_h = 5 \text{ ms/div}\). The distance between two consecutive positive peaks covers 4 horizontal divisions.
+                    <ol>
+                        <li>What physical quantity is represented by the horizontal axis?</li>
+                        <li>Calculate the period \(T\) of this voltage.</li>
+                        <li>Deduce the frequency \(f\).</li>
+                        <li>If the effective voltage is \(U_{eff} = 12 \text{ V}\), calculate the maximum voltage \(U_m\). (Take \(\sqrt{2} \approx 1.4\))</li>
+                        <li>Deduce the vertical sensitivity \(S_v\) if the maximum height (amplitude) corresponds to 3 vertical divisions.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="160" viewBox="0 0 200 160">
+                        <pattern id="gridD" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#add8e6" stroke-width="1"/></pattern>
+                        <rect width="200" height="160" fill="url(#gridD)" stroke="black" stroke-width="2"/>
+                        <line x1="0" y1="80" x2="200" y2="80" class="axis" />
+                        <line x1="100" y1="0" x2="100" y2="160" class="axis" />
+                        <path class="wave" d="M 20 80 Q 40 20 60 80 T 100 80 Q 120 20 140 80 T 180 80" />
+                        <line x1="60" y1="20" x2="140" y2="20" stroke="blue" marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)" />
+                        <text x="80" y="15" font-size="10" fill="blue" font-family="Times New Roman">4 div</text>
+                    </svg>
+                    <div class="figure-caption">Figure 2: Peak to Peak Distance</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 3: Mechanics - Solid in Equilibrium</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A homogeneous solid \((S)\) of mass \(m = 400 \text{ g}\) is suspended from a vertical spring. The stiffness of the spring is \(k = 50 \text{ N/m}\). The system is in equilibrium. (\(g = 10 \text{ N/kg}\))
+                    <ol>
+                        <li>Name the instrument used to measure the mass of the solid.</li>
+                        <li>Calculate the weight \(W\) of the solid \((S)\).</li>
+                        <li>State the condition of equilibrium for solid \((S)\).</li>
+                        <li>Deduce the magnitude of the tension \(T\) in the spring.</li>
+                        <li>Determine the elongation \(\Delta L\) of the spring in cm.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="120" height="180" viewBox="0 0 120 180">
+                        <line x1="20" y1="10" x2="100" y2="10" stroke="black" stroke-width="4" />
+                        <path class="spring" d="M 60 10 L 60 30 L 50 40 L 70 50 L 50 60 L 70 70 L 50 80 L 70 90 L 50 100 L 70 110 L 60 120 L 60 130" />
+                        <circle cx="60" cy="145" r="15" class="mass" />
+                        <text x="56" y="150" font-family="Times New Roman">S</text>
+                    </svg>
+                    <div class="figure-caption">Figure 3: Solid \((S)\) in Equilibrium</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 4: Electric Energy and Interaction</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part A: Electric Energy</strong><br>
+                    An iron is rated \((220 \text{ V} ; 1000 \text{ W})\). It is used for 1 hour and 30 minutes.
+                    <ol>
+                        <li>Calculate the energy consumed by the iron in \(\text{Wh}\).</li>
+                        <li>Convert this energy to Joules.</li>
+                        <li>Calculate the nominal current of this iron.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="content-row">
+                <div class="text-content">
+                    <strong>Part B: Principle of Interaction</strong><br>
+                    A book of weight \(W\) rests on a table. The book exerts a force \(\vec{F}\) on the table.
+                    <ol>
+                        <li>Name the reaction force to \(\vec{F}\) according to the principle of interaction (Newton's Third Law).</li>
+                        <li>Compare the magnitude and line of action of \(\vec{F}\) and its reaction force.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <line x1="20" y1="100" x2="180" y2="100" stroke="black" stroke-width="4" />
+                        <line x1="40" y1="100" x2="40" y2="140" stroke="black" stroke-width="2" />
+                        <line x1="160" y1="100" x2="160" y2="140" stroke="black" stroke-width="2" />
+                        <rect x="60" y="70" width="80" height="30" fill="#facc15" stroke="black" stroke-width="2" />
+                        <text x="85" y="90" font-size="14" font-family="Times New Roman">Book</text>
+                        
+                        <line x1="100" y1="100" x2="100" y2="140" class="force-vector" />
+                        <text x="110" y="130" font-size="14" fill="blue" font-family="Times New Roman">F</text>
+                        <line x1="110" y1="115" x2="120" y2="115" stroke="blue" stroke-width="1" marker-end="url(#arrow-blue-small)" />
+                    </svg>
+                    <div class="figure-caption">Figure 4: Book on Table</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- ==================== VERSION E ==================== -->
+        <div class="exam-header">
+            <h1>Beit Jala Secondary School</h1>
+            <h2>Physics Final Exam - Version E</h2>
+            <p><strong>Date:</strong> June, 2026 | <strong>Duration:</strong> 60 minutes | <strong>Grade:</strong> 9 (Brevet)</p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 1: AC Voltage & Frequency</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A generator delivers an alternating sinusoidal voltage to a circuit. The frequency of the voltage is \(f = 100 \text{ Hz}\).
+                    <ol>
+                        <li>Calculate the period \(T\) of this voltage.</li>
+                        <li>The voltage is visualized on an oscilloscope. If one period occupies 5 horizontal divisions, determine the horizontal sensitivity \(S_h\) used.</li>
+                        <li>The peak-to-peak voltage (from crest to trough) measures \(6\) vertical divisions. The vertical sensitivity is \(S_v = 4 \text{ V/div}\). Calculate the maximum voltage \(U_m\).</li>
+                        <li>Calculate the effective voltage \(U_{eff}\) measured by a voltmeter. (Take \(\sqrt{2} \approx 1.4\))</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="160" viewBox="0 0 200 160">
+                        <pattern id="gridE" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#add8e6" stroke-width="1"/></pattern>
+                        <rect width="200" height="160" fill="url(#gridE)" stroke="black" stroke-width="2"/>
+                        <line x1="0" y1="80" x2="200" y2="80" class="axis" />
+                        <line x1="100" y1="0" x2="100" y2="160" class="axis" />
+                        <path class="wave" d="M 0 80 Q 25 20 50 80 T 100 80 Q 125 20 150 80 T 200 80" />
+                        <line x1="130" y1="20" x2="130" y2="140" stroke="green" stroke-dasharray="4" />
+                        <text x="135" y="135" font-size="10" fill="green" font-family="Times New Roman">Peak-to-Peak</text>
+                    </svg>
+                    <div class="figure-caption">Figure 1: Peak-to-Peak Voltage</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 2: Heating Appliance & Resistor</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    An electric water heater behaves as a pure ohmic resistor of resistance \(R\). It is connected to a \(220 \text{ V}\) mains supply and draws a current of \(10 \text{ A}\).
+                    <ol>
+                        <li>State Ohm's law.</li>
+                        <li>Calculate the resistance \(R\) of the heater.</li>
+                        <li>Calculate the electric power \(P\) consumed by the heater.</li>
+                        <li>The heater is used for 3 hours. Calculate the electric energy \(E\) converted into thermal energy, in \(\text{kWh}\).</li>
+                        <li>Explain why the metallic casings of such heating appliances are usually connected to the ground (Earth).</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="130" viewBox="0 0 200 130">
+                        <path class="wire" d="M 50 60 L 80 60" />
+                        <path class="wire" d="M 120 60 L 150 60 L 150 90 L 50 90 L 50 70" />
+                        
+                        <!-- Metallic Casing (dashed box around resistor) -->
+                        <rect x="70" y="40" width="60" height="40" fill="none" stroke="gray" stroke-dasharray="4" />
+                        <text x="75" y="35" font-size="10" fill="gray">Metallic Casing</text>
+
+                        <rect x="80" y="50" width="40" height="20" class="component" />
+                        <text x="95" y="40" font-size="14" font-family="Times New Roman">R</text>
+                        
+                        <circle cx="50" cy="60" r="10" class="component" />
+                        <text x="44" y="66" font-size="16">~</text>
+                        <text x="15" y="40" font-size="12" font-family="Times New Roman">220 V</text>
+                        
+                        <!-- Ground Wire connected to casing -->
+                        <line x1="100" y1="80" x2="100" y2="105" stroke="green" stroke-width="2" />
+                        <line x1="90" y1="105" x2="110" y2="105" stroke="green" stroke-width="2" />
+                        <line x1="94" y1="110" x2="106" y2="110" stroke="green" stroke-width="2" />
+                        <line x1="98" y1="115" x2="102" y2="115" stroke="green" stroke-width="2" />
+                    </svg>
+                    <div class="figure-caption">Figure 2: Heater Circuit Model & Ground</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 3: Hooke's Law & Mechanics</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A student wishes to determine the mass \(m\) of an object using a spring of known stiffness \(k = 25 \text{ N/m}\) and original length \(L_0 = 20 \text{ cm}\). When the object is hung from the spring, the new length of the spring becomes \(L = 28 \text{ cm}\). The object is in equilibrium. (\(g = 10 \text{ N/kg}\))
+                    <ol>
+                        <li>Calculate the elongation \(\Delta L\) of the spring in meters.</li>
+                        <li>Calculate the magnitude of the tension \(T\) exerted by the spring.</li>
+                        <li>Write the vector condition of equilibrium for the object.</li>
+                        <li>Deduce the weight \(W\) of the object.</li>
+                        <li>Calculate the mass \(m\) of the object in grams.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="220" height="180" viewBox="0 0 220 180">
+                        <line x1="20" y1="10" x2="180" y2="10" stroke="black" stroke-width="4" />
+                        <path class="spring" d="M 60 10 L 60 30 L 50 40 L 70 50 L 50 60 L 70 70 L 60 80 L 60 90" />
+                        <line x1="70" y1="90" x2="90" y2="90" stroke="black" stroke-dasharray="2,2" />
+                        <text x="85" y="55" font-size="12" font-family="Times New Roman">L&#8320;</text>
+                        <path class="spring" d="M 140 10 L 140 30 L 130 45 L 150 60 L 130 75 L 150 90 L 140 105 L 140 120" />
+                        <rect x="125" y="120" width="30" height="30" class="mass" />
+                        <text x="133" y="140" font-size="14" font-family="Times New Roman">m</text>
+                        <line x1="160" y1="120" x2="180" y2="120" stroke="black" stroke-dasharray="2,2" />
+                        <text x="175" y="70" font-size="12" font-family="Times New Roman">L</text>
+                        <line x1="100" y1="90" x2="100" y2="120" stroke="red" marker-end="url(#arrow-red)" marker-start="url(#arrow-red)" />
+                        <text x="105" y="110" font-size="12" fill="red" font-family="Times New Roman">&Delta;L</text>
+                    </svg>
+                    <div class="figure-caption">Figure 3: Hooke's Law Setup</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 4: DC Circuit Analysis</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    Examine a circuit comprising a DC generator of constant voltage \(U_G = 15 \text{ V}\), a lamp \((L)\) rated \((9 \text{ V} ; 4.5 \text{ W})\), and an ohmic resistor \((R)\). The lamp and the resistor are connected in series. The lamp functions normally.
+                    <ol>
+                        <li>What does "the lamp functions normally" imply about the voltage across it and the current through it?</li>
+                        <li>Calculate the current \(I\) passing through the circuit.</li>
+                        <li>Determine the voltage \(U_R\) across the resistor.</li>
+                        <li>Calculate the resistance \(R\) of the ohmic resistor.</li>
+                        <li>Calculate the total power delivered by the generator.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <path class="wire" d="M 40 120 L 40 40 L 80 40" />
+                        <circle cx="95" cy="40" r="15" class="component" />
+                        <path class="wire" d="M 84 29 L 106 51 M 84 51 L 106 29" />
+                        <text x="90" y="20" font-family="Times New Roman">(L)</text>
+                        <path class="wire" d="M 110 40 L 140 40" />
+                        <rect x="140" y="30" width="30" height="20" class="component" />
+                        <text x="145" y="45" font-family="Times New Roman">R</text>
+                        <path class="wire" d="M 170 40 L 170 120 L 120 120" />
+                        <line x1="80" y1="110" x2="80" y2="130" stroke="black" stroke-width="4" />
+                        <line x1="120" y1="105" x2="120" y2="135" stroke="black" stroke-width="2" />
+                        <path class="wire" d="M 80 120 L 40 120" />
+                        <text x="70" y="105" font-size="12">-</text>
+                        <text x="125" y="105" font-size="12">+</text>
+                        <!-- Fixed U_G subscript styling -->
+                        <text x="75" y="145" font-size="14" font-family="Times New Roman">U<tspan dy="4" font-size="10">G</tspan><tspan dy="-4"> = 15 V</tspan></text>
+                    </svg>
+                    <div class="figure-caption">Figure 4: Lamp and Resistor in Series</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- ==================== MARKING SCHEMES ==================== -->
+        <div class="exam-header">
+            <h1>Marking Schemes & Key Answers</h1>
+            <h2>Beit Jala Physics Exam Bank 2026</h2>
+        </div>
+
+        <div class="content-row">
+            <div class="text-content marking-scheme">
+                <h3>Version A</h3>
+                <p><strong>Ex 1:</strong> 1. 12V = Nominal Voltage, 6W = Nominal Power. 2. \(I_n = P/U = 0.5\text{A}\). 3a. \(U_R = R \times I = 5\text{V}\). 3b. \(U_L = U_G - U_R = 12\text{V}\). 3c. Yes, \(U_L = \text{Nominal Voltage}\) (or \(I = I_n\)). 4. \(E = P \times t = 6 \times 1800 = 10,800\text{J}\).</p>
+                <p><strong>Ex 2:</strong> 1. Alternating Sinusoidal. 2. \(U_m = 3 \text{ div} \times 5 \text{V/div} = 15\text{V}\). 3. \(U_{eff} = U_m / 1.4 = 10.7\text{V}\). 4. \(T = 4 \times 10 = 40\text{ms} = 0.04\text{s}\). 5. \(f = 1/T = 25\text{Hz}\).</p>
+                <p><strong>Ex 3:</strong> 1. Two forces must have same line of action, opposite directions, equal magnitudes. 2. Weight (vertical, down), Tension (vertical, up). 3. \(W = m \times g = 2\text{N}\). 4. \(T = W = 2\text{N}\) (equilibrium). 5. \(\Delta L = T/k = 0.05\text{m}\). 6. \(L = L_0 + \Delta L = 20\text{cm}\).</p>
+                <p><strong>Ex 4:</strong> Part A: 1. AC. 2. \(I = P/U = 10\text{A}\). 3. 15A fuse (safely above 10A). Part B: 1. Body A exerts force on B, B exerts equal/opposite force on A. 2. \(\vec{F}_{A/B} = -\vec{F}_{B/A}\).</p>
+
+                <h3>Version B</h3>
+                <p><strong>Ex 1:</strong> 1. [Diagram checked]. 2. \(R_{eq} = (20 \times 30)/(20+30) = 12\ \Omega\). 3. \(I = U/R_{eq} = 1\text{A}\). 4. \(I_1 = 12/20 = 0.6\text{A}\), \(I_2 = 12/30 = 0.4\text{A}\). 5. \(I = I_1 + I_2\) (\(1 = 0.6 + 0.4\)).</p>
+                <p><strong>Ex 2:</strong> 1. \(T = 1/f = 0.02\text{s}\). 2. \(U_m = 220 \times 1.41 = 310.2\text{V}\). 3. \(Y = U_m / S_v = 6 / 2 = 3 \text{ div}\). 4. Voltmeter in parallel, displays \(220\text{V}\).</p>
+                <p><strong>Ex 3:</strong> 1. Direct proportionality. 2. \(T = k \times \Delta L\). 3. \(k = 2.5 / 0.05 = 50\text{N/m}\). 4. \(T = 50 \times 0.1 = 5\text{N}\).</p>
+                <p><strong>Ex 4:</strong> Part A: 1. \(W = 5\text{N}\). 2. [Vector diagram drawn]. 3. \(\vec{N} + \vec{W} = \vec{0} \Rightarrow N = W = 5\text{N}\). Part B: 1. \(P = U \times I = 1100\text{W}\). 2. \(E = 1.1\text{kW} \times 2\text{h} = 2.2\text{kWh}\). 3. Cost = \(2.2 \times 1500 = 3300\text{ L.L.}\)</p>
+
+                <h3>Version C</h3>
+                <p><strong>Ex 1:</strong> 1. Parallel (same voltage \(220\text{V}\)). 2. \(P_{total} = 110 + 2200 + (2 \times 22) = 2354\text{W}\). 3. \(I_{total} = P/U = 10.7\text{A}\). 4. New \(P = 3854\text{W}\) \(\Rightarrow\) \(I = 17.5\text{A}\). The CB (15A) will trip.</p>
+                <p><strong>Ex 2:</strong> 1. DC, \(U_1 = 3 \times 3 = 9\text{V}\). 2. AC sinusoidal. 3. \(U_m = 3 \times 3 = 9\text{V}\). 4. No. DC voltmeter reads \(0\text{V}\) for AC.</p>
+                <p><strong>Ex 3:</strong> 1. Pushed backwards (reaction). 2. \(\vec{F}_{A/S} = -\vec{F}_{S/A}\). 3. \(50\text{N}\), opposite to Ali's push. 4. No, principle of interaction is independent of masses.</p>
+                <p><strong>Ex 4:</strong> Part A: 1. \(0.045\text{A}\). 2. \(U = R \times I\). 3. \(R = 9 / 0.045 = 200\ \Omega\). Part B: 1. \(\Delta L = F/k = 0.2\text{m} = 20\text{cm}\). 2. \(L = L_0 - \Delta L = 10\text{cm}\).</p>
+
+                <h3>Version D</h3>
+                <p><strong>Ex 1:</strong> 1. [Diagram checked]. 2. \(U_1 = 10 \times 0.8 = 8\text{V}\). 3. \(U_2 = 24 - 8 = 16\text{V}\). 4. \(R_2 = 16 / 0.8 = 20\ \Omega\). 5. \(P_{total} = U \times I = 24 \times 0.8 = 19.2\text{W}\).</p>
+                <p><strong>Ex 2:</strong> 1. Time. 2. \(T = 4 \times 5 = 20\text{ms} = 0.02\text{s}\). 3. \(f = 50\text{Hz}\). 4. \(U_m = 12 \times 1.4 = 16.8\text{V}\). 5. \(S_v = 16.8 / 3 = 5.6\text{V/div}\).</p>
+                <p><strong>Ex 3:</strong> 1. Balance. 2. \(W = 4\text{N}\). 3. \(\vec{W} + \vec{T} = \vec{0}\). 4. \(T = W = 4\text{N}\). 5. \(\Delta L = T/k = 0.08\text{m} = 8\text{cm}\).</p>
+                <p><strong>Ex 4:</strong> Part A: 1. \(E = 1000 \times 1.5 = 1500\text{Wh}\). 2. \(1500 \times 3600 = 5,400,000\text{J}\). 3. \(I = 1000 / 220 = 4.54\text{A}\). Part B: 1. Normal reaction of table on book. 2. Same magnitude, same line of action (but opposite direction).</p>
+
+                <h3>Version E</h3>
+                <p><strong>Ex 1:</strong> 1. \(T = 1/100 = 0.01\text{s} = 10\text{ms}\). 2. \(S_h = 10 / 5 = 2\text{ms/div}\). 3. Amp = 3 div. \(U_m = 3 \times 4 = 12\text{V}\). 4. \(U_{eff} = 12 / 1.4 = 8.57\text{V}\).</p>
+                <p><strong>Ex 2:</strong> 1. \(U = R \times I\). 2. \(R = 220 / 10 = 22\ \Omega\). 3. \(P = 220 \times 10 = 2200\text{W} = 2.2\text{kW}\). 4. \(E = 2.2 \times 3 = 6.6\text{kWh}\). 5. To prevent electrocution if a live wire touches the casing (current diverts to ground).</p>
+                <p><strong>Ex 3:</strong> 1. \(\Delta L = 28 - 20 = 8\text{cm} = 0.08\text{m}\). 2. \(T = k \times \Delta L = 25 \times 0.08 = 2\text{N}\). 3. \(\vec{W} + \vec{T} = \vec{0}\). 4. \(W = T = 2\text{N}\). 5. \(m = 2/10 = 0.2\text{kg} = 200\text{g}\).</p>
+                <p><strong>Ex 4:</strong> 1. \(U_L = 9\text{V}\), \(I_L = 4.5/9 = 0.5\text{A}\). 2. \(I = 0.5\text{A}\) (series). 3. \(U_R = 15 - 9 = 6\text{V}\). 4. \(R = 6 / 0.5 = 12\ \Omega\). 5. \(P_{total} = 15 \times 0.5 = 7.5\text{W}\).</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
