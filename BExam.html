@@ -60,6 +60,12 @@
         <button id="start-btn" onclick="startExam()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transform transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
             Start Exam
         </button>
+        <!-- Added Teacher Reset Button -->
+        <div class="mt-6 text-center">
+             <button onclick="adminReset()" class="text-xs text-gray-400 hover:text-gray-600 transition underline">
+                 Teacher: Reset Student Attempt
+             </button>
+        </div>
     </div>
 
     <!-- Exam Screen -->
@@ -496,6 +502,8 @@
         let timeLeft = EXAM_TIME_MINUTES * 60;
         let examActive = false;
         let selectedAnswers = [];
+        // Add a secret PIN for the teacher to authorize resets
+        const TEACHER_PIN = "8899";
 
         // ==========================================
         // 3. INITIALIZATION & UI
@@ -627,6 +635,27 @@
                 }, 1000);
             }
         }
+        // ==========================================
+        // EXCEPTION HANDLING (TEACHER RESET)
+        // ==========================================
+        function adminReset() {
+            const studentSelect = document.getElementById('student-select');
+            const student = studentSelect.value;
+
+            if (!student) {
+                alert("Please select a student name first to reset their attempt.");
+                return;
+            }
+
+            const pin = prompt(`Enter Teacher PIN to allow a new attempt for:\n${student}`);
+    
+            if (pin === TEACHER_PIN) {
+                localStorage.removeItem(`exam_taken_${student}`);
+                alert(`Success! The block has been removed for ${student}. They can now click 'Start Exam'.`);
+            } else if (pin !== null) {
+                alert("Incorrect PIN. Access denied.");
+            }
+        } 
 
         // ==========================================
         // 5. SUBMISSION LOGIC
