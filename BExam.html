@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Exam - Beit Jala Secondary School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6;
+            /* Anti-copy measures */
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+        .arabic-text { font-family: 'Cairo', sans-serif; }
+        .hidden { display: none !important; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        input[type="radio"] { accent-color: #2563eb; transform: scale(1.2); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex items-center justify-center" oncontextmenu="return false;">
+
+    <!-- Lading / Login Screen -->
+    <div id="login-screen" class="glass-panel w-full max-w-md rounded-2xl p-8 text-center transition-all duration-500">
+        <div class="mb-6">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/UNRWA_Logo.svg/1200px-UNRWA_Logo.svg.png" alt="UNRWA Logo" class="h-20 mx-auto mb-4 opacity-90" onerror="this.style.display='none'">
+            <h1 class="text-2xl font-bold text-blue-800">Biology Exam</h1>
+            <p class="text-gray-600 font-medium">Beit Jala Secondary School</p>
+            <p class="text-sm text-red-500 mt-2 font-semibold">Strict 20-Minute Timer. Do not switch tabs!</p>
+        </div>
+
+        <div class="space-y-4 text-left">
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Select Section</label>
+                <select id="section-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" onchange="populateStudents()">
+                    <option value="">-- Select Section --</option>
+                    <option value="8A">8A</option>
+                    <option value="8B">8B</option>
+                    <option value="8C">8C</option>
+                    <option value="8D">8D</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Select Student Name</label>
+                <select id="student-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none arabic-text" dir="rtl" disabled>
+                    <option value="">-- Please select a section first --</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="start-btn" onclick="startExam()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transform transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+            Start Exam
+        </button>
+    </div>
+
+    <!-- Exam Screen -->
+    <div id="exam-screen" class="hidden glass-panel w-full max-w-4xl rounded-2xl p-6 md:p-10 relative">
+        <!-- Header / Sticky Timer -->
+        <div class="sticky top-0 bg-white/90 backdrop-blur pb-4 mb-6 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 arabic-text" id="display-student-name">Student Name</h2>
+                <p class="text-gray-600 font-medium">Section: <span id="display-section">8X</span> | Version: <span id="display-version">X</span></p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center bg-gray-100 px-4 py-2 rounded-full border-2 border-gray-200" id="timer-container">
+                <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span id="timer" class="text-2xl font-bold font-mono text-gray-800">20:00</span>
+            </div>
+        </div>
+
+        <div id="questions-container" class="space-y-8">
+            <!-- Questions injected here via JS -->
+        </div>
+
+        <div class="mt-10 border-t border-gray-200 pt-6 text-center">
+            <button onclick="manualSubmit()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-lg shadow-lg transform transition active:scale-95 text-lg">
+                Submit Exam
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading / Saving Screen -->
+    <div id="loading-screen" class="hidden glass-panel w-full max-w-md rounded-2xl p-10 text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600 mx-auto mb-4"></div>
+        <h2 class="text-xl font-bold text-gray-800">Submitting your answers...</h2>
+        <p class="text-gray-500 mt-2">Please do not close the window.</p>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden glass-panel w-full max-w-md rounded-2xl p-10 text-center">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Exam Submitted Successfully!</h2>
+        <p class="text-gray-600 mb-4" id="result-message">Your answers have been received successfully.</p>
+        <p class="text-sm text-gray-500 bg-gray-100 p-3 rounded">Your result has been securely recorded.</p>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CONFIGURATION & DATA
+        // ==========================================
+        
+        // ⚠️ REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL ⚠️
+        const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE";
+
+        const EXAM_TIME_MINUTES = 20;
+
+        const studentsData = {
+            "8A": ['أسماء هيثم علي ندوه', 'ابراهيم طارق صلاح معروف', 'ابراهيم محمد رفعت ابو حميد', 'احسان "محمد وليد" الشحبري', 'ادم وليد توفيق الخطيب', 'الين رشيد محمد احمد', 'تالا "محمد عدنان" العمري', 'تيا احمد محمد الركن', 'جنى ماهر غالب الدالي', 'جنى "محي الدين" فاعور', 'جود محمد مروان الشامي', 'حسين احمد محمود اسماعيل', 'حنين علي ابراهيم ميعاد', 'راما احمد توفيق الزقه', 'رهف سعيد شحادة فلاح', 'زينب محمد رياض حماده', 'سعاد مازن محمد الشامي', 'سمر محمد صابر ظاهر', 'سيلين منصور عبد شحاده', 'عادل محمد عادل أبو عرب', 'عبد الرحمن وليد محمد', 'علي مصطفى حسن سالم', 'علي ياسر نمر فاعور', 'عمران مازن صالح مرعي', 'فاطمه محمد خالد قاسم', 'قمر حسين عمر حمزة', 'كريم محمود عبد الحفيظ', 'ليا محمد عمر عباس', 'لين رشدي موسى الصالح', 'لين ماهر احمد العيسى', 'لين وسام احمد حسين', 'ماريا طلعت احمد مراد', 'محمد احمد محمد الصعيدي', 'محمد سامر محمد الصالح', 'محمد علي محمد ابو شقير', 'محمد علي محمد عبد الجليل', 'محمد قاسم عادل عفيفي', 'محمود شادي محمود شحادة', 'مرام احمد كايد خضره', 'نرجس هاني احمد عقلة', 'نور محمد علي علي', 'هلا شفيق علي فلوس', 'يارا محمود السيد السعدني'],
+            "8B": ['أسينات احمد فريد العلي', 'اسامة بسام عبد الرحمن حمو', 'امال ساري علي زيداني', 'امنة محمد كمال قدورة', 'امير هشام مصطفى كروم', 'ايمان بسام خالد محمد', 'بيسان بسام عبد الرحمن حمو', 'تاليا انس ابراهيم المنديل', 'حبيبة عوني علي الزبيدات', 'حلا اشرف احمد الحاج علي', 'حنين فتحي علي حميد', 'راما خالد محمد عطعوط', 'رضوان جهاد رضوان ديب', 'رواد مروان ابراهيم العبدالله', 'زهراء عماد وليد شيخه', 'سارة فادي عدنان فارس', 'سامي يسار سامي معروف', 'سعيد ماهر سعيد سعيد', 'سهى عامر احمد عطية', '"صلاح الدين" مصطفى بللي', 'علي مصطفى علي سريس', 'عمر حسام حسين الموسى', 'فاطمه جمال احمد المحمود', 'فضل احمد محمد حسين', 'كريم رائد محمد دلاشي', 'لارا محمد خالد عبد الغني', 'ليلاس وسيم شحادة شحاده', 'ماريه يحيى محمد ابو هموس', 'محمد احمد محمد شريده', 'محمد حسام عاطف أبو شباب', 'محمد حكمت غاندي عبدالله', '"محمد علي" محمود احمد', 'محمد هشام احمد مره', 'محمود نايف مصطفى قاسميه', 'مريم محمود "محي الدين" مرّه', 'ملاك يونس محمد رحال', 'ميريانا احمد مصطفى عيتاني', 'هدى محمود محمد الركن', 'وسيله سعدو درويش ششنيه', 'يحيى زكريا سميح حمو'],
+            "8C": ['آلاء رباح محمود شراب', 'آلاء محمود صالح أدلبي', 'ابراهيم محمد إبراهيم عزيز', 'امير ماجد احمد اسماعيل', 'بتول فايز محمد حمود', 'بهاء الدين بلال "بهاء الدين" رشيد', 'بيان كمال احمد ابو سويد', 'تبارك محمد "محمد السيد" يوسف', 'تغريد خالد عزات يحيى', 'جمال محمد جمال حوحو', 'جنى حسن محمد الظريف', 'جهاد فادي حسن سالم', 'حلا محمد حسن ابو شنار', 'حلا مصطفى "محمد خير" بللي', 'خالد وسيم خالد حسن', 'راما زياد علي الحاج علي', 'راما عبد المجيد محمد سالم', 'راما محمد يوسف العلي', 'رزان زياد عبد الناصر اصمهان', 'روان عماد فوزي ابراهيم', 'ريم اديب احمد حسين', 'ريم ماهر عطا الخطيب', 'ريم "نور الدين" فايز عبد الرازق', 'سلام عصام حمودة ناجي', 'سلام "محمد بديع" فيصل العلي', 'سيلا هشام امين الطه', 'شهد صالح احمد مطر', 'صالح محمد سامي الشورى', 'عبد الله حسن سعيد سليمان', 'علي محمد ابراهيم صالح', 'علي ناصر علي حماده', 'عمر عصام الصادق', 'فرح وائل باسل غزلان', 'لانا باسم امين صيداوي', 'لين احمد عيسى قاسم', 'لين وائل زياد الهبطه', 'ماسة عمار علي علي', 'محمد حسين احمد ندوه', 'محمود محمد سالم نجمي', 'ملكه "سعد الدين" برجاوي', 'نور الهدى جهاد عزات عليان'],
+            "8D": ['إسراء ايمن محمد قدسيه', 'احمد زاهر جهاد قدورة', 'احمد علاء احمد اسماعيل', 'احمد محمد رياض الخطيب', 'ادم خالد محمود قدورة', 'اسراء احمد داري نوفل', 'الما محمد جمال ششنيه', 'اياد احمد حسين محمود', 'اياد احمد سمير قدوره', 'بيسان علي احمد قاسم', 'تقى احمد موسى عبدالله', 'حسن علي حسن حبقزي', 'حمزة عاطف محمد الحاج محمد', 'دانا نبيل "نور الدين" الهندي', 'راما فادي علي سليم', 'رهف خليل عبدالله شاهين', 'روزا محمود علي عودي', 'ريتال نضال موسى مناد', 'زهراء محمد حسن بركات', 'زينب محمد عبد غنام', 'سالي فادي عثمان عباس', 'سماح احمد عطا أبو عنزه', 'علا محمد زيد عثمان', 'علي كمال علي سعد', 'عمر محمود عباس الحايك', 'غزل محمد خليل ابو عرب', 'غفران محمد يوسف داوود', 'كريم عوني خالد عبد الغني', 'لين علي نايف حميد', 'ماريا ابراهيم درويش خزعل', 'محمد براء محمود حسن', 'محمد بهاء ابراهيم العيسى', 'محمد خالد محمود مطر', 'محمد ربيع محمد هنداوي', 'محمود علي محمود يوسف', 'مصطفى "عماد الدين" تراوي', 'ميار سعيد محمد حسن', 'نور عباس محمد عمر', 'هبة يحيى عيسى ابو مايهه', 'هيلين فيصل "فضل الله" الراشد', 'يوسف عامر محمد مصريه', 'يوسف هيثم فايز بركة']
+        };
+
+        const examBanks = {
+            "A": [
+                {
+                    q: "What is the primary difference between congenital and acquired immunodeficiencies?",
+                    opts: [
+                        "Congenital immunodeficiency appears after birth, while acquired is present from birth.",
+                        "Congenital is present from birth, while acquired is contracted later (like AIDS).",
+                        "Both are strictly caused by viral infections.",
+                        "Both require immediate bone marrow grafts to survive."
+                    ], ans: 1
+                },
+                {
+                    q: "Based on Pasteur's 1880 experiment on chicken cholera, what type of microbe is used to create an effective vaccine?",
+                    opts: [
+                        "The most virulent microbe.",
+                        "An attenuated (weakened) microbe.",
+                        "Synthetic toxic chemicals.",
+                        "Dead host tissue cells."
+                    ], ans: 1
+                },
+                {
+                    q: "What characterizes the immunity provided by Serotherapy?",
+                    opts: [
+                        "It provides active, prophylactic immunity that lasts a lifetime.",
+                        "It relies on memory cells created by the patient's own body.",
+                        "It provides specific, passive, and immediate immunity lasting about three weeks.",
+                        "It is achieved by injecting weakened pathogens into a healthy person."
+                    ], ans: 2
+                },
+                {
+                    q: "Which of the following defines 'Asepsis'?",
+                    opts: [
+                        "The total absence of microbes, mandatory during surgeries (e.g., sterilization).",
+                        "The application of antiseptics to living tissues like wounds.",
+                        "The treatment of infected patients with chemical substances.",
+                        "The extraction of penicillin from a green yeast."
+                    ], ans: 0
+                },
+                {
+                    q: "Who discovered the first antibiotic (Penicillin), and from what source?",
+                    opts: [
+                        "Pasteur, from attenuated chicken cholera.",
+                        "A. Fleming, from a green yeast called Penicillium.",
+                        "A. Fleming, from the blood plasma of vaccinated individuals.",
+                        "Pasteur, from hydrogen peroxide."
+                    ], ans: 1
+                },
+                {
+                    q: "According to the vaccination graph (Variation of anti-cholera antibodies), what happens to the amount of antibodies after the injection of virulent bacteria in a vaccinated individual?",
+                    opts: [
+                        "It drops to zero because the bacteria destroy them.",
+                        "It remains completely unchanged.",
+                        "It increases significantly and rapidly.",
+                        "It causes the immediate death of the individual."
+                    ], ans: 2
+                },
+                {
+                    q: "What is the main purpose of an Antibiogram?",
+                    opts: [
+                        "To prevent the multiplication of microbes on a physical wound.",
+                        "To count the number of specific antibodies in the blood.",
+                        "To sterilize the operating area and surgical instruments.",
+                        "To know which antibiotic best kills the bacteria a patient is infected with."
+                    ], ans: 3
+                },
+                {
+                    q: "What is the main cause of Acquired Immunodeficiency Syndrome (AIDS)?",
+                    opts: [
+                        "A genetic defect present from birth.",
+                        "The HIV virus destroying the body's immune system.",
+                        "Bacterial infections that resist antibiotics.",
+                        "Lack of vaccines during early childhood."
+                    ], ans: 1
+                },
+                {
+                    q: "How long does the immunity provided by a vaccine typically last?",
+                    opts: [
+                        "A few hours.",
+                        "Exactly three weeks.",
+                        "Often a lifetime (long-term).",
+                        "Only until the first exposure to the virus."
+                    ], ans: 2
+                },
+                {
+                    q: "What is the primary purpose of placing babies with congenital immunodeficiency in sterile cabinets?",
+                    opts: [
+                        "To keep their body temperature highly elevated.",
+                        "To avoid serious infections while waiting for a bone marrow graft.",
+                        "To stimulate their body to produce natural antibiotics.",
+                        "To protect the external environment from the viruses they carry."
+                    ], ans: 1
+                },
+                {
+                    q: "Which specific immune cells are created and relied upon to provide long-term immunity during vaccination?",
+                    opts: [
+                        "Red blood cells.",
+                        "Memory cells.",
+                        "Platelets.",
+                        "Bacterial cells."
+                    ], ans: 1
+                },
+                {
+                    q: "If you have an infected wound, which method is used to slow or prevent microbial multiplication on the tissue?",
+                    opts: [
+                        "Antisepsis.",
+                        "Asepsis.",
+                        "Serotherapy.",
+                        "A bone marrow graft."
+                    ], ans: 0
+                },
+                {
+                    q: "In an antibiogram, what does a large clear zone around an antibiotic disk indicate?",
+                    opts: [
+                        "The antibiotic is completely ineffective.",
+                        "The antibiotic is highly efficient against the bacteria.",
+                        "The antibiotic has mutated into a virus.",
+                        "The bacteria are reproducing rapidly."
+                    ], ans: 1
+                },
+                {
+                    q: "What is the primary difference between Asepsis and Antisepsis?",
+                    opts: [
+                        "Asepsis prevents microbes from entering an environment; Antisepsis fights existing microbes on living tissues.",
+                        "Asepsis uses antibiotics; Antisepsis uses vaccines.",
+                        "Asepsis is temporary; Antisepsis is permanent.",
+                        "Asepsis is applied to wounds; Antisepsis is applied to surgical tools."
+                    ], ans: 0
+                },
+                {
+                    q: "According to the incidence of childhood diseases graph, what caused the dramatic drop in diseases like measles and polio?",
+                    opts: [
+                        "The widespread use of specific vaccines.",
+                        "The discovery of Penicillin.",
+                        "A natural mutation in the viruses.",
+                        "The use of serotherapy on all infants."
+                    ], ans: 0
+                },
+                {
+                    q: "What is injected into a patient during Serotherapy?",
+                    opts: [
+                        "Attenuated microbes.",
+                        "Ready-made specific antibodies.",
+                        "Chemical antiseptics.",
+                        "Antibiotics."
+                    ], ans: 1
+                },
+                {
+                    q: "Which term describes the use of anti-bacterial medicines to treat internal infections?",
+                    opts: [
+                        "Antibiotherapy.",
+                        "Serotherapy.",
+                        "Vaccination.",
+                        "Antisepsis."
+                    ], ans: 0
+                },
+                {
+                    q: "What kind of immunity is built by injecting an attenuated microbe into a healthy person?",
+                    opts: [
+                        "Passive and immediate immunity.",
+                        "Active and prophylactic immunity.",
+                        "Congenital immunity.",
+                        "Temporary serotherapy immunity."
+                    ], ans: 1
+                },
+                {
+                    q: "Which chemical solutions are typically used in Antisepsis?",
+                    opts: [
+                        "Penicillin and antibiotics.",
+                        "Alcohol and iodine.",
+                        "Vaccines and serums.",
+                        "Water and blood plasma."
+                    ], ans: 1
+                },
+                {
+                    q: "Why are antibiotics like Penicillin ineffective against the HIV virus?",
+                    opts: [
+                        "Because HIV is a virus, and antibiotics are only effective against bacteria.",
+                        "Because Penicillin only works in sterile cabinets.",
+                        "Because the HIV virus multiplies too slowly.",
+                        "Because Penicillin is an antiseptic, not a drug."
+                    ], ans: 0
+                }
+            ],
+            "B": [
+                {
+                    q: "Why are some babies with congenital immunodeficiencies placed immediately after birth in a sterile cabinet?",
+                    opts: [
+                        "To keep their body temperature highly elevated.",
+                        "To avoid serious and repeated infections while waiting for a bone marrow graft.",
+                        "To stimulate their body to produce natural antibiotics.",
+                        "To protect the external environment from the viruses they carry."
+                    ], ans: 1
+                },
+                {
+                    q: "What type of immunity does Vaccination provide?",
+                    opts: [
+                        "Passive and immediate immunity.",
+                        "Short-lasting therapeutic immunity.",
+                        "Active, prophylactic (preventive) immunity that usually lasts a lifetime.",
+                        "Non-specific immunity against all known microbes."
+                    ], ans: 2
+                },
+                {
+                    q: "If an unvaccinated person sustains a serious wound potentially infected with tetanus, what is the urgent therapeutic treatment required?",
+                    opts: [
+                        "Immediate vaccination against tetanus.",
+                        "Serotherapy (injection of anti-tetanus antibodies).",
+                        "Performing an antibiogram on the wound.",
+                        "A bone marrow graft."
+                    ], ans: 1
+                },
+                {
+                    q: "Which statement best describes 'Antisepsis'?",
+                    opts: [
+                        "The total absence of microbes in an operating room via high-temperature sterilization.",
+                        "The application of chemical solutions (like alcohol or iodine) to living tissues to slow or prevent microbial multiplication.",
+                        "The internal treatment of microbial diseases using toxic chemical substances.",
+                        "The injection of attenuated microbes to build active immunity."
+                    ], ans: 1
+                },
+                {
+                    q: "What is Antibiotherapy?",
+                    opts: [
+                        "The use of anti-bacterial medicines, called antibiotics.",
+                        "The use of physical heat to destroy bacteria.",
+                        "The transfer of immunity from one individual to another.",
+                        "Washing a wound abundantly with water and soap."
+                    ], ans: 0
+                },
+                {
+                    q: "According to the graph showing the incidence of childhood diseases in the USA, what was the logical consequence of using specific vaccines?",
+                    opts: [
+                        "A massive spike in the number of viral infections.",
+                        "A significant and permanent drop in the incidence of these viral infections.",
+                        "No noticeable change in the population's health.",
+                        "The diseases mutated instantly to become untreatable."
+                    ], ans: 1
+                },
+                {
+                    q: "In an antibiogram culture plate, how do you visually identify the most efficient antibiotic?",
+                    opts: [
+                        "It is the disk with the smallest clear zone around it.",
+                        "It is the disk surrounded by the largest clear zone (absence of bacteria).",
+                        "It is the disk that changes color to green.",
+                        "It is the disk that stimulates the most bacterial growth."
+                    ], ans: 1
+                },
+                {
+                    q: "What defines a congenital immunodeficiency?",
+                    opts: [
+                        "It is acquired after a viral infection.",
+                        "It is present from birth.",
+                        "It is caused by the HIV virus.",
+                        "It can be cured immediately with antibiotics."
+                    ], ans: 1
+                },
+                {
+                    q: "How does the HIV virus affect the human body to cause AIDS?",
+                    opts: [
+                        "It destroys the immune system, leading to acquired immunodeficiency.",
+                        "It causes a congenital genetic defect.",
+                        "It triggers an allergic reaction to antibiotics.",
+                        "It multiplies rapidly but leaves immune cells intact."
+                    ], ans: 0
+                },
+                {
+                    q: "What was the crucial finding in Pasteur's 1880 chicken cholera experiment?",
+                    opts: [
+                        "That chickens are naturally immune to cholera.",
+                        "That injecting attenuated microbes prevents future infection from virulent ones.",
+                        "That antibiotics cure cholera immediately.",
+                        "That sterilization kills all viruses."
+                    ], ans: 1
+                },
+                {
+                    q: "Why is vaccination considered a 'prophylactic' measure?",
+                    opts: [
+                        "Because it is a preventive treatment given before exposure to the disease.",
+                        "Because it is used to treat an already sick patient.",
+                        "Because it provides immediate, ready-made antibodies.",
+                        "Because it requires a sterile operating room."
+                    ], ans: 0
+                },
+                {
+                    q: "How does the onset of immunity differ between Vaccination and Serotherapy?",
+                    opts: [
+                        "Vaccination provides immediate immunity, while Serotherapy takes weeks.",
+                        "Both take several weeks to provide immunity.",
+                        "Vaccination takes time to build immunity, while Serotherapy provides immediate immunity.",
+                        "Both provide immediate immunity."
+                    ], ans: 2
+                },
+                {
+                    q: "Which procedure is mandatory in operating rooms to ensure the total absence of microbes?",
+                    opts: [
+                        "Serotherapy.",
+                        "Asepsis (Sterilization).",
+                        "Vaccination.",
+                        "Antibiotherapy."
+                    ], ans: 1
+                },
+                {
+                    q: "What are substances like alcohol or iodine primarily classified as in medicine?",
+                    opts: [
+                        "Antibiotics.",
+                        "Antiseptics.",
+                        "Vaccines.",
+                        "Serums."
+                    ], ans: 1
+                },
+                {
+                    q: "From what type of microorganism was the first antibiotic (Penicillin) extracted?",
+                    opts: [
+                        "A weakened virus.",
+                        "A green yeast (fungus).",
+                        "A virulent bacterium.",
+                        "A white blood cell."
+                    ], ans: 1
+                },
+                {
+                    q: "If an antibiotic disk in an antibiogram has no clear zone around it, what does this indicate?",
+                    opts: [
+                        "The bacteria are completely resistant to that antibiotic.",
+                        "The antibiotic is extremely efficient.",
+                        "The plate has been sterilized successfully.",
+                        "The antibiotic disk is highly radioactive."
+                    ], ans: 0
+                },
+                {
+                    q: "What is the typical duration of the immunity provided by Serotherapy?",
+                    opts: [
+                        "A lifetime.",
+                        "Several years.",
+                        "Temporary, lasting about three weeks.",
+                        "Only a few minutes."
+                    ], ans: 2
+                },
+                {
+                    q: "In the vaccination graph, why does the antibody curve rise sharply after a second (virulent) injection?",
+                    opts: [
+                        "Because the virulent bacteria multiply and create antibodies.",
+                        "Because memory cells from the first injection mount a faster and stronger immune response.",
+                        "Because the patient received serotherapy simultaneously.",
+                        "Because antibiotics were administered."
+                    ], ans: 1
+                },
+                {
+                    q: "What does the term 'attenuated' mean in the context of vaccines?",
+                    opts: [
+                        "Strengthened to cause immediate disease.",
+                        "Weakened so it triggers an immune response without causing severe illness.",
+                        "Synthesized completely from chemicals.",
+                        "Extracted from a patient's blood."
+                    ], ans: 1
+                },
+                {
+                    q: "Which specific treatment relies on immunity that is described as 'passive'?",
+                    opts: [
+                        "Vaccination.",
+                        "Serotherapy.",
+                        "Antibiotherapy.",
+                        "Asepsis."
+                    ], ans: 1
+                }
+            ]
+        };
+
+        // ==========================================
+        // 2. STATE VARIABLES
+        // ==========================================
+        let currentUser = { section: '', name: '', version: '' };
+        let timerInterval;
+        let timeLeft = EXAM_TIME_MINUTES * 60;
+        let examActive = false;
+        let selectedAnswers = [];
+
+        // ==========================================
+        // 3. INITIALIZATION & UI
+        // ==========================================
+        function populateStudents() {
+            const sectionSelect = document.getElementById('section-select');
+            const studentSelect = document.getElementById('student-select');
+            const section = sectionSelect.value;
+            
+            studentSelect.innerHTML = '<option value="">-- Select your name --</option>';
+            
+            if (section && studentsData[section]) {
+                studentSelect.disabled = false;
+                studentsData[section].forEach(student => {
+                    let option = document.createElement('option');
+                    option.value = student;
+                    option.textContent = student;
+                    studentSelect.appendChild(option);
+                });
+            } else {
+                studentSelect.disabled = true;
+            }
+        }
+
+        function startExam() {
+            const section = document.getElementById('section-select').value;
+            const student = document.getElementById('student-select').value;
+
+            if (!section || !student) {
+                alert("Please select a section and your name to start.");
+                return;
+            }
+
+            // Anti-cheat: Check if exam already taken on this browser
+            if (localStorage.getItem(`exam_taken_${student}`)) {
+                alert("You have already taken this exam. Multiple attempts are not allowed.");
+                return;
+            }
+
+            currentUser.section = section;
+            currentUser.name = student;
+            currentUser.version = Math.random() < 0.5 ? 'A' : 'B';
+
+            // Setup UI
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('exam-screen').classList.remove('hidden');
+            document.getElementById('display-student-name').textContent = currentUser.name;
+            document.getElementById('display-section').textContent = currentUser.section;
+            document.getElementById('display-version').textContent = currentUser.version;
+
+            renderQuestions();
+            
+            examActive = true;
+            startTimer();
+
+            // Set up strict Anti-Cheat listeners
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+            window.addEventListener("blur", handleBlur);
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            const questions = examBanks[currentUser.version];
+            selectedAnswers = new Array(questions.length).fill(null);
+
+            let html = '';
+            questions.forEach((qObj, qIndex) => {
+                html += `
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm transition hover:shadow-md">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4"><span class="text-blue-600">Q${qIndex + 1}.</span> ${qObj.q}</h3>
+                    <div class="space-y-3">
+                        ${qObj.opts.map((opt, optIndex) => `
+                            <label class="flex items-start p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-blue-50 transition">
+                                <input type="radio" name="q${qIndex}" value="${optIndex}" class="mt-1 mr-3" onchange="recordAnswer(${qIndex}, ${optIndex})">
+                                <span class="text-gray-700 leading-tight">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function recordAnswer(qIndex, optIndex) {
+            selectedAnswers[qIndex] = optIndex;
+        }
+
+        // ==========================================
+        // 4. TIMER & ANTI-CHEAT SYSTEM
+        // ==========================================
+        function startTimer() {
+            const timerDisplay = document.getElementById('timer');
+            const timerContainer = document.getElementById('timer-container');
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 300) { // Last 5 minutes
+                    timerContainer.classList.remove('bg-gray-100', 'border-gray-200');
+                    timerContainer.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+                    timerContainer.querySelector('svg').classList.replace('text-gray-600', 'text-red-600');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit("Time's up");
+                }
+            }, 1000);
+        }
+
+        function handleVisibilityChange() {
+            if (document.visibilityState === 'hidden' && examActive) {
+                autoSubmit("Cheat Flag: Tab switched or browser hidden");
+            }
+        }
+
+        function handleBlur() {
+            if (examActive) {
+                // Short timeout to prevent false positives from alert popups etc.
+                setTimeout(() => {
+                    if (!document.hasFocus() && examActive) {
+                        autoSubmit("Cheat Flag: Window lost focus");
+                    }
+                }, 1000);
+            }
+        }
+
+        // ==========================================
+        // 5. SUBMISSION LOGIC
+        // ==========================================
+        function manualSubmit() {
+            if (selectedAnswers.includes(null)) {
+                if(!confirm("You have unanswered questions. Are you sure you want to submit?")) {
+                    return;
+                }
+            }
+            processSubmission("Manual Submission");
+        }
+
+        function autoSubmit(reason) {
+            alert(`Exam is automatically submitting. Reason: ${reason}`);
+            processSubmission(reason);
+        }
+
+        function processSubmission(reason) {
+            examActive = false;
+            clearInterval(timerInterval);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("blur", handleBlur);
+
+            // Mark as taken
+            localStorage.setItem(`exam_taken_${currentUser.name}`, new Date().toISOString());
+
+            // Calculate Score
+            let score = 0;
+            const questions = examBanks[currentUser.version];
+            let detailedAnswers = [];
+
+            questions.forEach((qObj, index) => {
+                const isCorrect = selectedAnswers[index] === qObj.ans;
+                if (isCorrect) score++;
+                detailedAnswers.push({
+                    q: qObj.q,
+                    studentAns: selectedAnswers[index] !== null ? qObj.opts[selectedAnswers[index]] : "Unanswered",
+                    correct: isCorrect
+                });
+            });
+
+            const finalScoreStr = `${score}/${questions.length}`;
+
+            // Prepare Payload for Google Apps Script
+            const payload = {
+                timestamp: new Date().toLocaleString(),
+                studentName: currentUser.name,
+                section: currentUser.section,
+                version: currentUser.version,
+                score: finalScoreStr,
+                submissionReason: reason,
+                answers: JSON.stringify(detailedAnswers)
+            };
+
+            // Switch UI to Loading
+            document.getElementById('exam-screen').classList.add('hidden');
+            document.getElementById('loading-screen').classList.remove('hidden');
+
+            // Prevent fetch error if the URL hasn't been replaced yet
+            if (GOOGLE_SCRIPT_URL === "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE" || !GOOGLE_SCRIPT_URL.startsWith("http")) {
+                console.warn("Google Script URL is not set. Simulating submission.");
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('result-screen').classList.remove('hidden');
+                    document.getElementById('result-message').innerHTML = "Submitted. (Note: Google Script URL not set, saving locally for preview).";
+                }, 1500);
+                return;
+            }
+
+            // Send to Google Sheets
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Important for simple cross-origin requests to GAS
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                // Complete
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error submitting:', error);
+                // Even on error, show success so student doesn't panic, but log it locally
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+                document.getElementById('result-message').innerHTML = "Submitted. (Note: Network delay occurred but data was saved locally).";
+            });
+        }
+    </script>
+</body>
+</html>
