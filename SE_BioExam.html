@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Mock Exam & Marking Scheme - SE - La Cite Nationale</title>
+    <style>
+        /* Base Styles and A4 Print Setup */
+        :root {
+            --primary-text: #000;
+            --bg-color: #fff;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary-text);
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20mm;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: transparent;
+                padding: 0;
+                display: block;
+            }
+            .a4-page {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+                min-height: 100%;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .btn-print {
+            background-color: #004085;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .btn-print:hover {
+            background-color: #002752;
+        }
+
+        /* Header Styles */
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+        .school-text {
+            font-size: 14pt;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+        .exam-meta {
+            text-align: right;
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+        .exam-title {
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+        .instructions {
+            border: 1px solid #000;
+            padding: 10px;
+            font-style: italic;
+            margin-bottom: 25px;
+            font-size: 12pt;
+        }
+
+        /* Content Styles */
+        h3 {
+            font-size: 14pt;
+            text-decoration: underline;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        p, li {
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        .document-box {
+            border: 1px dashed #000;
+            padding: 15px;
+            background-color: #fafafa;
+            margin-bottom: 15px;
+        }
+        .doc-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .q-number {
+            font-weight: bold;
+            min-width: 30px;
+        }
+        
+        /* Figures & SVGs */
+        .figure-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .figure-caption {
+            font-style: italic;
+            font-size: 11pt;
+            margin-top: 5px;
+        }
+        .chart-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Utility */
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Marking Scheme Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            vertical-align: top;
+            font-size: 12pt;
+        }
+        th {
+            background-color: #e9ecef;
+            text-align: center;
+            font-weight: bold;
+        }
+        .col-q {
+            width: 8%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .col-mark {
+            width: 10%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .scheme-title {
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 30px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px double #000;
+        }
+        
+        /* Data Tables for Biology */
+        .data-table {
+            width: 80%;
+            margin: 15px auto;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        .data-table th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Print Button -->
+    <div class="controls no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+
+    <!-- EXAM DOCUMENT (PAGE 1 & 2) -->
+    <div class="a4-page">
+        <!-- Header -->
+        <div class="exam-header">
+            <div class="school-info">
+                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale Logo" class="logo-img">
+                <div class="school-text">
+                    La Cité Nationale<br>
+                    High School Department<br>
+                    Academic Year 2025-2026
+                </div>
+            </div>
+            <div class="exam-meta">
+                <strong>Subject:</strong> Biology<br>
+                <strong>Class:</strong> Grade 12 - Sociology & Economics (SE)<br>
+                <strong>Duration:</strong> 60 minutes<br>
+                <strong>Date:</strong> _________
+            </div>
+        </div>
+
+        <div class="exam-title">Official Mock Exam - Biology (SE Track)</div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> This exam includes three compulsory exercises. Answer the questions in the provided sequence. The use of non-programmable calculators is allowed.
+        </div>
+
+        <!-- EXERCISE 1 -->
+        <h3>Exercise 1: Diet, Energy, and Health (7 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 1: Analysis of a Fast-Food Meal</div>
+            <p>A teenager frequently consumes a lunch consisting of a double cheeseburger, a large portion of French fries, and a regular soda. To evaluate the nutritional quality of this meal, a dietician calculates its macronutrient composition as shown in the table below. </p>
+            
+            <p><em>Note: The energy yield of macronutrients is 17 kJ per gram of carbohydrates, 17 kJ per gram of proteins, and 38 kJ per gram of lipids.</em></p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Nutrient</th>
+                    <th>Mass (g)</th>
+                </tr>
+                <tr>
+                    <td>Carbohydrates</td>
+                    <td>160</td>
+                </tr>
+                <tr>
+                    <td>Proteins</td>
+                    <td>30</td>
+                </tr>
+                <tr>
+                    <td>Lipids (Fats)</td>
+                    <td>50</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.1.</div>
+            <div>Calculate the total energy (in kJ) provided by this fast-food meal. <em>(Show your calculations)</em></div>
+        </div>
+        
+        <div class="question">
+            <div class="q-number">1.2.</div>
+            <div>According to health organizations, a diet is considered "balanced" if lipids provide approximately 30% of the total daily energy intake. Calculate the percentage of energy provided by lipids in this specific meal.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.3.</div>
+            <div>Based on your previous calculation, deduce whether this fast-food meal represents a balanced energy distribution.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.4.</div>
+            <div>An unbalanced diet characterized by a chronic excess of lipids and fast-absorbing carbohydrates can lead to severe health issues over time. Name <strong>two</strong> common nutritional diseases related to this type of diet.</div>
+        </div>
+
+
+        <!-- EXERCISE 2 -->
+        <h3>Exercise 2: The Nervous System and Communication (6 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 2: The Synapse</div>
+            <p>The nervous system coordinates the body's actions by transmitting signals to and from different parts of its body. The fundamental unit of this system is the neuron. Neurons communicate with each other at specialized junctions called synapses.</p>
+        </div>
+
+        <div class="figure-container">
+            <svg class="chart-svg" width="400" height="250" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Pre-synaptic neuron -->
+                <path d="M 150 20 L 150 80 Q 150 120 100 150 Q 200 180 300 150 Q 250 120 250 80 L 250 20" fill="#fcf8e3" stroke="#d58512" stroke-width="3"/>
+                <!-- Synaptic vesicles -->
+                <circle cx="170" cy="90" r="12" fill="#d9edf7" stroke="#31708f" stroke-width="2"/>
+                <circle cx="230" cy="110" r="12" fill="#d9edf7" stroke="#31708f" stroke-width="2"/>
+                <circle cx="190" cy="130" r="12" fill="#d9edf7" stroke="#31708f" stroke-width="2"/>
+                <!-- Exocytosis -->
+                <path d="M 210 162 A 12 12 0 0 0 234 162" fill="none" stroke="#31708f" stroke-width="2"/>
+                <!-- Neurotransmitters (dots) -->
+                <circle cx="170" cy="90" r="2" fill="red"/> <circle cx="174" cy="88" r="2" fill="red"/>
+                <circle cx="230" cy="110" r="2" fill="red"/> <circle cx="226" cy="112" r="2" fill="red"/>
+                <circle cx="190" cy="130" r="2" fill="red"/> <circle cx="194" cy="128" r="2" fill="red"/>
+                <!-- Dots in cleft -->
+                <circle cx="200" cy="180" r="3" fill="red"/>
+                <circle cx="220" cy="185" r="3" fill="red"/>
+                <circle cx="180" cy="190" r="3" fill="red"/>
+                <circle cx="240" cy="175" r="3" fill="red"/>
+                
+                <!-- Post-synaptic neuron -->
+                <path d="M 80 230 Q 200 200 320 230 L 320 250 L 80 250 Z" fill="#dff0d8" stroke="#3c763d" stroke-width="3"/>
+                <!-- Receptors -->
+                <path d="M 180 215 L 180 225 M 175 210 L 180 215 L 185 210" fill="none" stroke="#3c763d" stroke-width="3"/>
+                <path d="M 220 215 L 220 225 M 215 210 L 220 215 L 225 210" fill="none" stroke="#3c763d" stroke-width="3"/>
+
+                <!-- Labels & Pointers -->
+                <!-- Label 1: Vesicle -->
+                <line x1="160" y1="90" x2="80" y2="60" stroke="black" stroke-width="1"/>
+                <text x="65" y="65" font-family="Arial" font-size="14" font-weight="bold">1</text>
+                
+                <!-- Label 2: Neurotransmitter -->
+                <line x1="200" y1="180" x2="330" y2="180" stroke="black" stroke-width="1"/>
+                <text x="340" y="185" font-family="Arial" font-size="14" font-weight="bold">2</text>
+                
+                <!-- Label 3: Synaptic Cleft -->
+                <line x1="140" y1="185" x2="80" y2="185" stroke="black" stroke-width="1"/>
+                <text x="65" y="190" font-family="Arial" font-size="14" font-weight="bold">3</text>
+                
+                <!-- Label 4: Receptor -->
+                <line x1="225" y1="210" x2="330" y2="210" stroke="black" stroke-width="1"/>
+                <text x="340" y="215" font-family="Arial" font-size="14" font-weight="bold">4</text>
+            </svg>
+            <div class="figure-caption">Figure 1: Schematic representation of a Synapse</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.1.</div>
+            <div>Identify the structures labeled 1, 2, 3, and 4 in Figure 1.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.2.</div>
+            <div>The following steps represent the mechanism of synaptic transmission, but they are scrambled:</div>
+        </div>
+        <div style="margin-left: 40px; margin-bottom: 15px;">
+            a) Binding of neurotransmitters to specific receptors.<br>
+            b) Arrival of the nerve impulse at the pre-synaptic terminal.<br>
+            c) Generation of a new nerve impulse in the post-synaptic neuron.<br>
+            d) Release of neurotransmitters into the synaptic cleft by exocytosis.
+        </div>
+        <div style="margin-left: 40px; margin-bottom: 15px;">
+            Arrange these steps in their correct chronological order using their corresponding letters.
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.3.</div>
+            <div>Based on your knowledge, specify the exact role of the chemical substance labeled as "2" in this communication process.</div>
+        </div>
+
+        <!-- Page Break for Printing -->
+        <div class="page-break"></div>
+
+        <!-- EXERCISE 3 -->
+        <h3>Exercise 3: Drugs and Addiction (7 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 3: The Mechanism of Cocaine</div>
+            <p>Cocaine is a powerful nervous system stimulant drug. Under normal conditions in a healthy brain, a neurotransmitter called dopamine is released into the synaptic cleft to transmit signals associated with pleasure and reward. After the signal is transmitted, specialized "reuptake pumps" transport the dopamine back into the pre-synaptic neuron, clearing the cleft and terminating the signal.</p>
+            <p>When a person consumes cocaine, the drug molecules bind to these reuptake pumps and block them. As a result, dopamine cannot be removed from the synaptic cleft. It accumulates and continuously binds to the post-synaptic receptors, creating an amplified and prolonged feeling of euphoria. Over time, the brain adapts to this excess dopamine by reducing its own natural production and decreasing the number of active receptors. Consequently, the user requires larger and more frequent doses of the drug to achieve the same effect and to avoid severe withdrawal symptoms.</p>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.1.</div>
+            <div>Pick out from Document 3 the specific action of cocaine at the level of the synapse.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.2.</div>
+            <div>Explain the consequence of this drug's action on the post-synaptic neuron.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.3.</div>
+            <div>Document 3 states that "the user requires larger and more frequent doses of the drug to achieve the same effect". Name the scientific term that describes this physiological phenomenon.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.4.</div>
+            <div>Drug addiction does not only alter biological functions but also impacts the individual's life. State two negative social or behavioral consequences of severe drug dependence.</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; font-weight: bold; font-style: italic;">
+            --- End of Exam ---<br>Good Luck!
+        </div>
+
+    </div>
+
+    <!-- MARKING SCHEME DOCUMENT (PAGE 3) -->
+    <div class="a4-page page-break">
+        
+        <div class="exam-header">
+            <div class="school-info">
+                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale Logo" class="logo-img">
+                <div class="school-text">
+                    La Cité Nationale<br>
+                    High School Department<br>
+                    Academic Year 2025-2026
+                </div>
+            </div>
+            <div class="exam-meta">
+                <strong>Subject:</strong> Biology (Marking Scheme)<br>
+                <strong>Class:</strong> Grade 12 - SE
+            </div>
+        </div>
+
+        <div class="scheme-title">Official Marking Scheme</div>
+
+        <!-- Scheme Exercise 1 -->
+        <h3>Exercise 1: Diet, Energy, and Health (7 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">1.1</td>
+                <td><strong>Calculation:</strong><br>Energy = (Mass of Carbs &times; 17) + (Mass of Proteins &times; 17) + (Mass of Lipids &times; 38)<br>
+                Energy = (160 &times; 17) + (30 &times; 17) + (50 &times; 38)<br>
+                Energy = 2720 + 510 + 1900 = <strong>5130 kJ</strong>.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.2</td>
+                <td><strong>Percentage of Lipids:</strong><br>
+                Energy from Lipids = 50 &times; 38 = 1900 kJ.<br>
+                % Lipids = (1900 / 5130) &times; 100 &approx; <strong>37.03%</strong>.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.3</td>
+                <td><strong>Deduction:</strong> The percentage of energy provided by lipids (37.03%) is greater than the recommended balanced norm (30%). Therefore, this fast-food meal is <strong>unbalanced</strong>.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.4</td>
+                <td>Any two valid nutritional diseases: Obesity, Atherosclerosis (cardiovascular diseases), Type 2 Diabetes.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+        </table>
+
+        <!-- Scheme Exercise 2 -->
+        <h3>Exercise 2: The Nervous System and Communication (6 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">2.1</td>
+                <td>1: Synaptic Vesicle<br>2: Neurotransmitter<br>3: Synaptic Cleft<br>4: Receptor (or Post-synaptic Receptor)</td>
+                <td class="col-mark">2.0 (0.5 each)</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.2</td>
+                <td>The correct chronological order: <strong>b &rarr; d &rarr; a &rarr; c</strong></td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.3</td>
+                <td>Neurotransmitters are chemical messengers that cross the synaptic cleft to transmit the nervous message (signal) from the pre-synaptic neuron to the post-synaptic neuron by binding to specific receptors.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+        </table>
+
+        <!-- Scheme Exercise 3 -->
+        <h3>Exercise 3: Drugs and Addiction (7 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">3.1</td>
+                <td>Cocaine molecules bind to the reuptake pumps of dopamine and block them.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.2</td>
+                <td>Since dopamine cannot be removed and accumulates in the cleft, it continuously binds to the post-synaptic receptors, creating an amplified, prolonged stimulation (euphoria).</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.3</td>
+                <td><strong>Tolerance.</strong></td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.4</td>
+                <td>Any two valid consequences (e.g., social isolation, involvement in criminal activities, financial ruin, familial conflict, aggression).</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+        </table>
+
+    </div>
+
+</body>
+</html>
