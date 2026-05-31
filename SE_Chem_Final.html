@@ -1,0 +1,418 @@
+
+Conversation with Gemini
+As a chemistry pro instructor , expert in the Lebanese curriculum , based on the lebanese old official exams in Sociology and economics (SE) since 2019, also based on requirements all referred to the official websites MEHE and CRDP and any other relevant resource. Let us prepare our own exam , same standards, structure, topics, format and everything , just new story /context enough to create a brand new sample. Generate in the form of html file with a button allowing to print directly as A4 and to save PDF . The header of the exam is to show the class , school name : La Cite Nationale (add logo : https://www.facebook.com/lacite.nationale/) , duration as 60 minutes. Figures, diagrams , charts are a must exactly as the referenced official exams.
+
+Your HTML mock exam file is ready.
+HTML icon
+ Mock_Exam_..._Nationale 
+HTML
+
+The document has been strictly styled to match the official MEHE/CRDP formats for the Lebanese Grade 12 Sociology & Economics (SE) track. It includes:
+
+Official Header: School name (La Cité Nationale), SVG logo, class, and 60-minute duration.
+
+Authentic Structure: 3 compulsory exercises worth 20 points covering Medicinal Chemistry (Aspirin & Antacids), Materials (Polyethylene), and Chemistry & Hygiene (Saponification).
+
+Vector Figures (SVG): Inline diagrams corresponding to the pH evolution of antacids and the structural nature of a soap micelle, exactly as they appear in official exams.
+
+Print to PDF: A floating button is pinned to the top right to easily trigger Print / Save as PDF (with proper A4 print-media CSS sizing included in the code).
+
+
+
+
+Gemini is AI and can make mistakes.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Mock Exam - SE - La Cite Nationale</title>
+    <style>
+        /* Base Styles and A4 Print Setup */
+        :root {
+            --primary-text: #000;
+            --bg-color: #fff;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary-text);
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20mm;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: transparent;
+                padding: 0;
+            }
+            .a4-page {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+                min-height: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .btn-print {
+            background-color: #004085;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .btn-print:hover {
+            background-color: #002752;
+        }
+
+        /* Header Styles */
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-svg {
+            width: 70px;
+            height: 70px;
+        }
+        .school-text {
+            font-size: 14pt;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+        .exam-meta {
+            text-align: right;
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+        .exam-title {
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+        .instructions {
+            border: 1px solid #000;
+            padding: 10px;
+            font-style: italic;
+            margin-bottom: 25px;
+            font-size: 12pt;
+        }
+
+        /* Content Styles */
+        h3 {
+            font-size: 14pt;
+            text-decoration: underline;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        p, li {
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        .document-box {
+            border: 1px dashed #000;
+            padding: 15px;
+            background-color: #fafafa;
+            margin-bottom: 15px;
+        }
+        .doc-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .q-number {
+            font-weight: bold;
+            min-width: 30px;
+        }
+        
+        /* Figures & SVGs */
+        .figure-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .figure-caption {
+            font-style: italic;
+            font-size: 11pt;
+            margin-top: 5px;
+        }
+        .molecule-svg, .chart-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Utility */
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .chem-eq {
+            text-align: center;
+            font-size: 13pt;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Print Button -->
+    <div class="controls no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+
+    <!-- Exam Page -->
+    <div class="a4-page">
+        
+        <!-- Header -->
+        <div class="exam-header">
+            <div class="school-info">
+                <!-- Generic School Crest SVG to replace Facebook Image to guarantee rendering -->
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="48" fill="none" stroke="#004085" stroke-width="4"/>
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="#004085" stroke-width="1" stroke-dasharray="4 2"/>
+                    <path d="M 25 55 L 50 20 L 75 55 L 50 90 Z" fill="#e9ecef" stroke="#004085" stroke-width="2"/>
+                    <text x="50" y="55" font-family="Arial" font-size="24" font-weight="bold" fill="#004085" text-anchor="middle">LCN</text>
+                    <path d="M 20 60 Q 50 80 80 60" fill="none" stroke="#004085" stroke-width="3"/>
+                </svg>
+                <div class="school-text">
+                    La Cité Nationale<br>
+                    High School Department<br>
+                    Academic Year 2025-2026
+                </div>
+            </div>
+            <div class="exam-meta">
+                <strong>Subject:</strong> Chemistry<br>
+                <strong>Class:</strong> Grade 12 - Sociology & Economics (SE)<br>
+                <strong>Duration:</strong> 60 minutes<br>
+                <strong>Date:</strong> _________
+            </div>
+        </div>
+
+        <div class="exam-title">Mock Official Exam</div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> This exam includes three compulsory exercises. The use of non-programmable calculators is allowed. Answer the questions in the provided sequence.
+        </div>
+
+        <!-- EXERCISE 1 -->
+        <h3>Exercise 1: Chemistry and Health - Managing Pain and Digestion (7 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 1: Aspirin and the Stomach</div>
+            <p>Aspirin (acetylsalicylic acid) is one of the most widely used medications globally. It is commonly prescribed to relieve minor aches, reduce fever, and decrease inflammation. However, its acidic nature can irritate the gastric lining, sometimes leading to stomach ulcers if taken on an empty stomach. To mitigate this side effect, doctors often advise patients suffering from gastric hyperacidity to take an antacid, such as Maalox, alongside their medication. Maalox contains active ingredients like aluminum hydroxide <span class="math">Al(OH)<sub>3</sub></span> and magnesium hydroxide <span class="math">Mg(OH)<sub>2</sub></span>, which act locally in the stomach to neutralize excess hydrochloric acid <span class="math">(HCl)</span>.</p>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.1.</div>
+            <div>Referring to Document 1, pick out three therapeutic properties of Aspirin.</div>
+        </div>
+        
+        <div class="question">
+            <div class="q-number">1.2.</div>
+            <div>Aspirin contains a carboxylic acid functional group and an ester group. Provide the general formula of a carboxylic acid.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.3.</div>
+            <div>Identify the main reason why regular aspirin is not recommended for patients suffering from gastric ulcers.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.4.</div>
+            <div>The active ingredient in stomach acid is hydrochloric acid, which provides the <span class="math">H<sup>+</sup></span> ions. Write the balanced chemical equation for the neutralization reaction between the magnesium hydroxide <span class="math">Mg(OH)<sub>2</sub></span> in Maalox and the <span class="math">H<sup>+</sup></span> ions in the stomach.</div>
+        </div>
+
+        <div class="figure-container">
+            <svg class="chart-svg" width="400" height="250" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Axes -->
+                <line x1="50" y1="200" x2="380" y2="200" stroke="black" stroke-width="2"/>
+                <line x1="50" y1="200" x2="50" y2="20" stroke="black" stroke-width="2"/>
+                <!-- Labels -->
+                <text x="200" y="240" font-family="Arial" font-size="14" text-anchor="middle">Time after taking Maalox (min)</text>
+                <text x="20" y="110" font-family="Arial" font-size="14" transform="rotate(-90 20 110)" text-anchor="middle">Gastric pH</text>
+                <!-- Ticks & Grid -->
+                <line x1="45" y1="180" x2="55" y2="180" stroke="black"/> <text x="35" y="185" font-family="Arial" font-size="12">1</text>
+                <line x1="45" y1="140" x2="55" y2="140" stroke="black"/> <text x="35" y="145" font-family="Arial" font-size="12">2</text>
+                <line x1="45" y1="100" x2="55" y2="100" stroke="black"/> <text x="35" y="105" font-family="Arial" font-size="12">3</text>
+                <line x1="45" y1="60" x2="55" y2="60" stroke="black"/> <text x="35" y="65" font-family="Arial" font-size="12">4</text>
+                <line x1="45" y1="20" x2="55" y2="20" stroke="black"/> <text x="35" y="25" font-family="Arial" font-size="12">5</text>
+                <!-- Data Curve -->
+                <path d="M 50 160 Q 100 160 150 120 T 300 80 L 350 80" fill="none" stroke="#d9534f" stroke-width="3"/>
+                <!-- Points -->
+                <circle cx="50" cy="160" r="4" fill="black"/>
+                <circle cx="300" cy="80" r="4" fill="black"/>
+            </svg>
+            <div class="figure-caption">Figure 1: Evolution of gastric pH over time after taking Maalox.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.5.</div>
+            <div>Referring to Figure 1:</div>
+        </div>
+        <div class="question" style="margin-left: 20px;">
+            <div class="q-number">1.5.1.</div>
+            <div>Determine the pH value of the stomach before the intake of the antacid.</div>
+        </div>
+        <div class="question" style="margin-left: 20px;">
+            <div class="q-number">1.5.2.</div>
+            <div>Does the final pH attained indicate that the stomach has become a basic medium? Justify your answer.</div>
+        </div>
+
+        <!-- EXERCISE 2 -->
+        <h3>Exercise 2: Materials - The Journey of Plastics (6 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 2: The Environmental Impact of Polyethylene</div>
+            <p>Polyethylene (PE) is the most ubiquitous plastic globally, primarily used for packaging, plastic bags, and bottles. It is synthesized from ethene gas (<span class="math">C<sub>2</sub>H<sub>4</sub></span>) derived from petroleum refining. While PE has revolutionized industries due to its durability, low cost, and light weight, its resistance to chemical degradation has triggered a severe environmental crisis. In Lebanon, the mismanagement of plastic waste has led to the accumulation of PE in landfills and the Mediterranean Sea, threatening marine life. Recycling remains the most viable solution to mitigate this crisis.</p>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.1.</div>
+            <div>Indicate the name of the monomer used to synthesize Polyethylene (PE).</div>
+        </div>
+        
+        <div class="question">
+            <div class="q-number">2.2.</div>
+            <div>Write the structural formula of the monomer <span class="math">C<sub>2</sub>H<sub>4</sub></span>, and specify if it is a saturated or unsaturated hydrocarbon.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.3.</div>
+            <div>The synthesis of PE is an <em>addition</em> polymerization. Briefly explain what characterizes an addition polymerization reaction.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.4.</div>
+            <div>Draw the repeating unit of the Polyethylene (PE) polymer.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.5.</div>
+            <div>Based on Document 2, extract one advantage of using Polyethylene and one environmental problem caused by its disposal.</div>
+        </div>
+
+        <!-- Page Break for Printing -->
+        <div class="page-break"></div>
+
+        <!-- EXERCISE 3 -->
+        <h3>Exercise 3: Chemistry and Hygiene - Traditional Soap (7 points)</h3>
+        
+        <p>In Tripoli, Lebanon, traditional soap making is a historic craft. The process involves boiling olive oil with an aqueous solution of sodium hydroxide (caustic soda). Olive oil contains a high percentage of a triglyceride called olein.</p>
+        
+        <p>The chemical reaction for the preparation of soap is given by the following equation:</p>
+        
+        <div class="chem-eq">
+            Olein + 3 <span class="math">NaOH</span> &rarr; Glycerol + 3 Sodium Oleate (Soap)
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.1.</div>
+            <div>Name the chemical process represented by the above equation.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.2.</div>
+            <div>Is the reaction of saponification considered slow or fast? State one condition used in traditional factories to increase the rate of this reaction.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.3.</div>
+            <div>Olein is a triester. Name the functional group that characterizes an ester.</div>
+        </div>
+
+        <div class="figure-container">
+            <svg class="molecule-svg" width="300" height="100" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Hydrophobic Tail -->
+                <path d="M 10 50 L 30 30 L 50 50 L 70 30 L 90 50 L 110 30 L 130 50 L 150 30 L 170 50 L 190 30 L 210 50 L 230 30" fill="none" stroke="#333" stroke-width="4" stroke-linejoin="round"/>
+                <!-- Hydrophilic Head -->
+                <circle cx="250" cy="40" r="15" fill="#5cb85c" stroke="#4cae4c" stroke-width="2"/>
+                <text x="250" y="45" font-family="Arial" font-size="14" font-weight="bold" fill="white" text-anchor="middle">-</text>
+                <!-- Labels -->
+                <text x="120" y="80" font-family="Arial" font-size="14" text-anchor="middle">Part A</text>
+                <text x="250" y="80" font-family="Arial" font-size="14" text-anchor="middle">Part B</text>
+            </svg>
+            <div class="figure-caption">Figure 2: Simplified representation of a soap ion (Sodium Oleate).</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.4.</div>
+            <div>Referring to Figure 2:</div>
+        </div>
+        <div class="question" style="margin-left: 20px;">
+            <div class="q-number">3.4.1.</div>
+            <div>Identify which part (A or B) represents the lipophilic (hydrophobic) tail of the soap ion.</div>
+        </div>
+        <div class="question" style="margin-left: 20px;">
+            <div class="q-number">3.4.2.</div>
+            <div>Explain briefly how this dual structure allows soap to remove grease stains during washing.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.5.</div>
+            <div>A student uses this traditional soap in "hard water" (water rich in <span class="math">Ca<sup>2+</sup></span> and <span class="math">Mg<sup>2+</sup></span> ions). They notice that the soap does not lather well and forms a white scum.</div>
+        </div>
+        <div class="question" style="margin-left: 20px;">
+            <div class="q-number">3.5.1.</div>
+            <div>Explain the formation of the white scum in hard water.</div>
+        </div>
+        <div class="question" style="margin-left: 20px;">
+            <div class="q-number">3.5.2.</div>
+            <div>Suggest an alternative type of cleaning agent (other than soap) that works efficiently in hard water without forming scum.</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; font-weight: bold; font-style: italic;">
+            --- End of Exam ---<br>Good Luck!
+        </div>
+
+    </div>
+</body>
+</html>
+Mock_Exam_Chemistry_SE_La_Cite_Nationale.html
+Displaying Mock_Exam_Chemistry_SE_La_Cite_Nationale.html.
