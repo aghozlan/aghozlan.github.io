@@ -22,16 +22,50 @@
             gap: 20px;
         }
         .a4-page {
-            width: 210mm;
+            /* FIXED FOR MOBILE: Changed rigid width to 100% with a max-width */
+            width: 100%;
+            max-width: 210mm;
             min-height: 297mm;
             background-color: var(--bg-color);
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             padding: 20mm;
             box-sizing: border-box;
             position: relative;
+            overflow-x: hidden; /* Prevents horizontal scroll on small screens */
         }
         
-        /* Print Styles */
+        /* Mobile Viewing Styles (Triggers on phone screens) */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+                display: block; /* Removes flex centering which causes left-side cutoff */
+            }
+            .a4-page {
+                padding: 15px; /* Reduces massive print padding for screen reading */
+                min-height: auto;
+                box-shadow: none;
+            }
+            .exam-header {
+                flex-direction: column; /* Stack header elements vertically */
+                align-items: center;
+                text-align: center;
+            }
+            .exam-meta {
+                text-align: center;
+                margin-top: 15px;
+            }
+            .controls {
+                position: static; /* Un-pin the button on mobile so it doesn't block text */
+                background: #f0f0f0;
+                padding: 15px;
+                text-align: center;
+            }
+            .btn-print {
+                width: 100%; /* Make button easy to tap on phones */
+            }
+        }
+
+        /* Print Styles (Remains perfectly A4) */
         @media print {
             body {
                 background-color: transparent;
@@ -42,6 +76,7 @@
                 box-shadow: none;
                 padding: 0;
                 width: 100%;
+                max-width: none;
                 min-height: 100%;
                 margin: 0;
             }
@@ -215,7 +250,8 @@
         
         /* Data Tables for Biology */
         .data-table {
-            width: 80%;
+            width: 100%; /* Ensure table fits mobile */
+            max-width: 400px;
             margin: 15px auto;
             border-collapse: collapse;
         }
