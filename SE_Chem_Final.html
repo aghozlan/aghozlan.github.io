@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chemistry Mock Exam - SE - La Cite Nationale</title>
+    <title>Chemistry Mock Exam & Marking Scheme - SE</title>
     <style>
         /* Base Styles and A4 Print Setup */
         :root {
@@ -17,7 +17,9 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
         .a4-page {
             width: 210mm;
@@ -34,12 +36,14 @@
             body {
                 background-color: transparent;
                 padding: 0;
+                display: block;
             }
             .a4-page {
                 box-shadow: none;
                 padding: 0;
                 width: 100%;
                 min-height: 100%;
+                margin: 0;
             }
             .no-print {
                 display: none !important;
@@ -86,9 +90,10 @@
             align-items: center;
             gap: 15px;
         }
-        .logo-svg {
-            width: 70px;
-            height: 70px;
+        .logo-img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
         }
         .school-text {
             font-size: 14pt;
@@ -158,7 +163,7 @@
             font-size: 11pt;
             margin-top: 5px;
         }
-        .molecule-svg, .chart-svg {
+        .chart-svg {
             max-width: 100%;
             height: auto;
         }
@@ -169,10 +174,43 @@
             font-style: italic;
             font-weight: bold;
         }
-        .chem-eq {
+
+        /* Marking Scheme Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            vertical-align: top;
+            font-size: 12pt;
+        }
+        th {
+            background-color: #e9ecef;
             text-align: center;
-            font-size: 13pt;
-            margin: 15px 0;
+            font-weight: bold;
+        }
+        .col-q {
+            width: 8%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .col-mark {
+            width: 10%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .scheme-title {
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 30px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px double #000;
         }
     </style>
 </head>
@@ -183,14 +221,12 @@
         <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
     </div>
 
-    <!-- Exam Page -->
+    <!-- EXAM DOCUMENT (PAGE 1 & 2) -->
     <div class="a4-page">
-        
         <!-- Header -->
         <div class="exam-header">
             <div class="school-info">
-                <!-- Authentic Logo -->
-                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cite Nationale Logo" class="logo-svg" style="object-fit: contain;">
+                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale Logo" class="logo-img">
                 <div class="school-text">
                     La Cité Nationale<br>
                     High School Department<br>
@@ -289,9 +325,7 @@
                 <line x1="45" y1="30" x2="55" y2="30" stroke="black"/> <text x="20" y="34" font-family="Arial" font-size="10">100%</text>
                 
                 <!-- Curves -->
-                <!-- Vitamin D (Stable) -->
                 <path d="M 50 30 Q 200 35 350 45" fill="none" stroke="#2b5797" stroke-width="3" id="vitD"/>
-                <!-- Vitamin C (Unstable) -->
                 <path d="M 50 30 Q 150 90 350 150" fill="none" stroke="#b91d47" stroke-width="3" stroke-dasharray="4" id="vitC"/>
                 
                 <!-- Legend -->
@@ -344,15 +378,128 @@
             <div>Define the medical term <em>bacterial resistance</em> mentioned in Document 3, and state one human practice that accelerates this hazard.</div>
         </div>
 
-        <div class="question">
-            <div class="q-number">3.5.</div>
-            <div>In addition to the physical side effects, drugs can be classified into two operational categories regarding patient dependency. State these two broad types of dependency.</div>
-        </div>
-
         <div style="text-align: center; margin-top: 50px; font-weight: bold; font-style: italic;">
             --- End of Exam ---<br>Good Luck!
         </div>
 
     </div>
+
+    <!-- MARKING SCHEME DOCUMENT (PAGE 3) -->
+    <div class="a4-page page-break">
+        
+        <div class="exam-header">
+            <div class="school-info">
+                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale Logo" class="logo-img">
+                <div class="school-text">
+                    La Cité Nationale<br>
+                    High School Department<br>
+                    Academic Year 2025-2026
+                </div>
+            </div>
+            <div class="exam-meta">
+                <strong>Subject:</strong> Chemistry (Marking Scheme)<br>
+                <strong>Class:</strong> Grade 12 - SE
+            </div>
+        </div>
+
+        <div class="scheme-title">Official Marking Scheme</div>
+
+        <!-- Scheme Exercise 1 -->
+        <h3>Exercise 1: Nutrition - Carbohydrates, Proteins, and Minerals (7 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">1.1</td>
+                <td><strong>Starch:</strong> Polysaccharide.<br><strong>Lactose:</strong> Disaccharide.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.2</td>
+                <td>Glucose.</td>
+                <td class="col-mark">1.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.3</td>
+                <td>Peptide bond.</td>
+                <td class="col-mark">1.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.4</td>
+                <td>b) Amine and Carboxylic Acid.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.5</td>
+                <td><strong>Calcium:</strong> Optimize bone density.<br><strong>Iron:</strong> Assist oxygen transport in red blood cells.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+        </table>
+
+        <!-- Scheme Exercise 2 -->
+        <h3>Exercise 2: Lipids and Vitamins - Energy Bars and Nutrient Stability (6 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">2.1</td>
+                <td>A triglyceride is a lipid (or ester) formed by the reaction of one glycerol molecule with three fatty acid molecules.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.2</td>
+                <td>Saturated fatty acids contain only single carbon-carbon bonds, whereas unsaturated fatty acids contain one or more carbon-carbon double bonds.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.3</td>
+                <td><strong>Vitamin C:</strong> Hydrosoluble.<br><strong>Vitamin D:</strong> Liposoluble.</td>
+                <td class="col-mark">1.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.4</td>
+                <td>Based on Figure 1, the retention of Vitamin C decreases significantly over time (reaching ~50% at 6 months), while Vitamin D remains stable (close to 100%). Therefore, the <strong>hydrosoluble group (Vitamin C)</strong> shows lower stability.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+        </table>
+
+        <!-- Scheme Exercise 3 -->
+        <h3>Exercise 3: Medical Application - Classification and Safety of Drugs (7 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">3.1</td>
+                <td>Analgesic and Anti-inflammatory.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.2</td>
+                <td>Stomach irritation (or blocking protective gastric secretions).</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.3</td>
+                <td><strong>Target pathogens:</strong> Bacterial cells.<br><strong>Reason:</strong> Antibiotics are designed to target bacteria and are completely ineffective against viruses (like the viral flu).</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.4</td>
+                <td><strong>Definition:</strong> The ability of bacteria to mutate or adapt and survive the effects of an antibiotic.<br><strong>Human practice:</strong> Misuse of antibiotics (e.g., taking them without a medical prescription or for viral infections).</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+        </table>
+
+    </div>
+
 </body>
 </html>
