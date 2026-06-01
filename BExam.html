@@ -45,7 +45,7 @@
     <div id="login-screen" class="glass-panel w-full max-w-md rounded-2xl p-8 text-center transition-all duration-500">
         <div class="mb-6">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/UNRWA_Logo.svg/1200px-UNRWA_Logo.svg.png" alt="UNRWA Logo" class="h-20 mx-auto mb-4 opacity-90" onerror="this.style.display='none'">
-            <h1 class="text-2xl font-bold text-blue-800">Biology Exam</h1>
+            <h1 class="text-2xl font-bold text-blue-800">Official Biology Exam</h1>
             <p class="text-gray-600 font-medium">Beit Jala Secondary School</p>
             <p class="text-sm text-red-500 mt-2 font-semibold">Strict 20-Minute Timer. Do not switch tabs!</p>
         </div>
@@ -74,10 +74,13 @@
             Start Exam
         </button>
 
-        <!-- Added Teacher Reset Button -->
-        <div class="mt-6 text-center">
+        <!-- Added Teacher Reset & Recovery Buttons -->
+        <div class="mt-6 flex justify-center space-x-6">
             <button type="button" onclick="adminReset()" class="text-xs text-gray-400 hover:text-gray-600 transition underline">
-                Teacher: Reset Student Attempt
+                Teacher: Reset Attempt
+            </button>
+            <button type="button" onclick="adminRecover()" class="text-xs text-gray-400 hover:text-gray-600 transition underline">
+                Teacher: Recover Data
             </button>
         </div>
     </div>
@@ -130,8 +133,8 @@
         // ==========================================
         
         // ⚠️ INSTRUCTIONS: 
-        // DO NOT PASTE THE SPREADSHEET URL HERE.
-        // It must be the "Web App URL" from Google Apps Script that ends with "/exec"
+        // You do NOT need to re-deploy the Apps Script if you haven't changed the code in Google Sheets.
+        // Simply paste your existing Web App URL (the one ending in /exec) here:
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZ8jrKfQ8PE3ob5iEUBaJwor73-y9Dfz132MKBui4xMUYQ4T-JR9UwDKF1gN5DcC_q/exec";
 
         const EXAM_TIME_MINUTES = 20;
@@ -145,48 +148,48 @@
 
         const examBanks = {
             "A": [
-                { q: "Chemotherapy in infectious diseases refers to:", opts: ["Use of radiation to kill microbes", "Use of chemicals toxic to microbes", "Natural immune defense mechanisms", "Surgical removal of infection"], ans: 1 },
-                { q: "Based on Pasteur's 1880 experiment on chicken cholera, what type of microbe is used to create an effective vaccine?", opts: ["The most virulent microbe.", "An attenuated (weakened) microbe.", "Synthetic toxic chemicals.", "Dead host tissue cells."], ans: 1 },
-                { q: "What characterizes the immunity provided by Serotherapy?", opts: ["It provides active, prophylactic immunity that lasts a lifetime.", "It relies on memory cells created by the patient's own body.", "It provides specific, passive, and immediate immunity lasting about three weeks.", "It is achieved by injecting weakened pathogens into a healthy person."], ans: 2 },
-                { q: "Which of the following defines 'Asepsis'?", opts: ["The total absence of microbes, mandatory during surgeries (e.g., sterilization).", "The application of antiseptics to living tissues like wounds.", "The treatment of infected patients with chemical substances.", "The extraction of penicillin from a green yeast."], ans: 0 },
-                { q: "Who discovered the first antibiotic (Penicillin), and from what source?", opts: ["Pasteur, from attenuated chicken cholera.", "A. Fleming, from a green yeast called Penicillium.", "A. Fleming, from the blood plasma of vaccinated individuals.", "Pasteur, from hydrogen peroxide."], ans: 1 },
-                { q: "According to the vaccination graph (Variation of anti-cholera antibodies), what happens to the amount of antibodies after the injection of virulent bacteria in a vaccinated individual?", opts: ["It drops to zero because the bacteria destroy them.", "It remains completely unchanged.", "It increases significantly and rapidly.", "It causes the immediate death of the individual."], ans: 2 },
-                { q: "What is the main purpose of an Antibiogram?", opts: ["To prevent the multiplication of microbes on a physical wound.", "To count the number of specific antibodies in the blood.", "To sterilize the operating area and surgical instruments.", "To know which antibiotic best kills the bacteria a patient is infected with."], ans: 3 },
-                { q: "The immunity obtained from serotherapy is temporary because:", opts: ["The body destroys vaccines quickly", "No memory cells are formed", "Antibodies multiply rapidly", "The antibodies are gradually degraded in the body"], ans: 1 },
-                { q: "How long does the immunity provided by a vaccine typically last?", opts: ["A few hours.", "Exactly three weeks.", "Often a lifetime (long-term).", "Only until the first exposure to the virus."], ans: 2 },
-                { q: "What is the primary purpose of placing babies with congenital immunodeficiency in sterile cabinets?", opts: ["To keep their body temperature highly elevated.", "To avoid serious infections while waiting for a bone marrow graft.", "To stimulate their body to produce natural antibiotics.", "To protect the external environment from the viruses they carry."], ans: 1 },
-                { q: "Which specific immune cells are created and relied upon to provide long-term immunity during vaccination?", opts: ["Red blood cells.", "Memory cells.", "Platelets.", "Bacterial cells."], ans: 1 },
-                { q: "If you have an infected wound, which method is used to slow or prevent microbial multiplication on the tissue?", opts: ["Antisepsis.", "Asepsis.", "Serotherapy.", "A bone marrow graft."], ans: 0 },
-                { q: "In an antibiogram, what does a large clear zone around an antibiotic disk indicate?", opts: ["The antibiotic is completely ineffective.", "The antibiotic is highly efficient against the bacteria.", "The antibiotic has mutated into a virus.", "The bacteria are reproducing rapidly."], ans: 1 },
-                { q: "What is the primary difference between Asepsis and Antisepsis?", opts: ["Asepsis prevents microbes from entering an environment; Antisepsis fights existing microbes on living tissues.", "Asepsis uses antibiotics; Antisepsis uses vaccines.", "Asepsis is temporary; Antisepsis is permanent.", "Asepsis is applied to wounds; Antisepsis is applied to surgical tools."], ans: 0 },
-                { q: "According to the incidence of childhood diseases graph, what caused the dramatic drop in diseases like measles and polio?", opts: ["The widespread use of specific vaccines.", "The discovery of Penicillin.", "A natural mutation in the viruses.", "The use of serotherapy on all infants."], ans: 0 },
-                { q: "What is injected into a patient during Serotherapy?", opts: ["Attenuated microbes.", "Ready-made specific antibodies.", "Chemical antiseptics.", "Antibiotics."], ans: 1 },
-                { q: "Which term describes the use of anti-bacterial medicines to treat internal infections?", opts: ["Antibiotherapy.", "Serotherapy.", "Vaccination.", "Antisepsis."], ans: 0 },
-                { q: "What kind of immunity is built by injecting an attenuated microbe into a healthy person?", opts: ["Passive and immediate immunity.", "Active and prophylactic immunity.", "Congenital immunity.", "Temporary serotherapy immunity."], ans: 1 },
-                { q: "Which chemical solutions are typically used in Antisepsis?", opts: ["Penicillin and antibiotics.", "Alcohol and iodine.", "Vaccines and serums.", "Water and blood plasma."], ans: 1 },
-                { q: "Why must wounds be covered after applying antiseptics?", opts: ["To increase temperature for healing", "To prevent recontamination by microbes", "To enhance immune response", "To absorb excess antiseptic"], ans: 1 }
+                { q: "What is the main medical intervention required for a child born with congenital immunodeficiency to survive long-term?", opts: ["Daily serotherapy injections", "A bone marrow graft", "Continuous antibiotherapy", "Routine vaccination"], ans: 1 },
+                { q: "Which specific components of the human body does the HIV virus primarily target and destroy?", opts: ["Red blood cells carrying oxygen", "Cells of the immune system", "Nerve cells in the brain", "Muscle tissue cells"], ans: 1 },
+                { q: "Why is vaccination considered an 'active' form of immunity?", opts: ["Because it requires the patient to exercise daily.", "Because it forces the body's immune system to create its own memory cells.", "Because the injected antibodies actively hunt bacteria.", "Because it works immediately upon injection."], ans: 1 },
+                { q: "In Pasteur’s experiment on chicken cholera, what happened to the chickens injected with the 'attenuated' culture when they were later exposed to a highly virulent culture?", opts: ["They died immediately.", "They developed a severe fever but recovered.", "They survived because they had developed active immunity.", "Their immune system was destroyed."], ans: 2 },
+                { q: "If a person is bitten by a highly venomous snake and needs immediate, life-saving antibodies, which treatment must be administered?", opts: ["Vaccination", "Antibiotherapy", "Serotherapy", "Asepsis"], ans: 2 },
+                { q: "Where do the specific antibodies used in Serotherapy originally come from?", opts: ["They are produced by the patient's own memory cells.", "They are extracted from a green yeast called Penicillium.", "They are prepared outside the patient's body (often in other organisms) and injected.", "They are synthesized from iodine and alcohol."], ans: 2 },
+                { q: "Which of the following actions is a direct example of 'Asepsis'?", opts: ["Sterilizing surgical instruments with high heat to ensure the total absence of microbes.", "Applying iodine to a scraped knee.", "Taking a dose of Penicillin for an ear infection.", "Receiving an anti-tetanus serum."], ans: 0 },
+                { q: "What is the primary limitation of using antiseptics like alcohol or iodine?", opts: ["They cause congenital immunodeficiency.", "They can only be used externally on living tissues to slow microbial growth, not internally.", "They provide passive immunity that only lasts three weeks.", "They cause bacteria to mutate into viruses."], ans: 1 },
+                { q: "Why is an antibiotic like Penicillin completely ineffective against a disease like AIDS?", opts: ["Because Penicillin only works in a sterile cabinet.", "Because AIDS is caused by a virus (HIV), and antibiotics only destroy bacteria.", "Because Penicillin is an antiseptic, not an antibiotic.", "Because the HIV virus grows too rapidly."], ans: 1 },
+                { q: "In an antibiogram, if the bacterial culture grows directly up to the edge of an antibiotic disk with NO clear zone, what does this indicate?", opts: ["The bacteria are completely resistant to that antibiotic.", "The antibiotic is extremely efficient.", "The antibiotic has turned into a vaccine.", "The bacteria have been sterilized."], ans: 0 },
+                { q: "What does the term 'prophylactic' mean when discussing the benefits of vaccination?", opts: ["It means the treatment is preventive and given before exposure.", "It means the treatment is used to cure an existing infection.", "It means the immunity is short-lasting.", "It means the treatment is passive."], ans: 0 },
+                { q: "How is Acquired Immunodeficiency Syndrome (AIDS) typically contracted?", opts: ["By being born with a genetic defect in the bone marrow.", "Through infection by the HIV virus later in life.", "By failing to use antiseptics on a wound.", "By taking too many antibiotics."], ans: 1 },
+                { q: "What crucial role do 'memory cells' play after a person is vaccinated?", opts: ["They remember to produce antibiotics naturally.", "They recognize the specific pathogen and mount a rapid, massive defense upon future exposure.", "They destroy the attenuated microbes immediately.", "They repair damaged tissues at the injection site."], ans: 1 },
+                { q: "While Asepsis aims for the total absence of microbes, what is the primary goal of Antisepsis?", opts: ["To sterilize an entire operating room.", "To slow or prevent microbial multiplication on the surface of living tissues.", "To cure internal bacterial infections.", "To create lifelong active immunity."], ans: 1 },
+                { q: "From what specific type of organism was Penicillin, the first antibiotic, originally discovered by A. Fleming?", opts: ["A weakened virus", "A green yeast (fungus)", "A virulent bacterium", "A specialized white blood cell"], ans: 1 },
+                { q: "According to graphical data on vaccination, when a vaccinated individual is exposed to the real pathogen for a second time, how does the body's antibody production react?", opts: ["It stops completely to protect the organs.", "It produces exactly the same amount of antibodies as the first time.", "It is much faster and produces a significantly higher amount of antibodies.", "It relies on passive antibodies to take over."], ans: 2 },
+                { q: "Why does the immunity gained from Serotherapy disappear after just a few weeks?", opts: ["Because the injected antibodies are naturally degraded and the body formed no memory cells.", "Because the microbes eat the antibodies.", "Because the body turns the antibodies into antibiotics.", "Because the patient requires a bone marrow graft."], ans: 0 },
+                { q: "A patient sustains a deep cut from a rusty nail and has no prior vaccines against tetanus. What is the most critical first step to provide immediate protection?", opts: ["Administering a standard vaccination.", "Sterilizing the operating room.", "A Serotherapy injection of anti-tetanus antibodies.", "Applying Penicillin to the skin."], ans: 2 },
+                { q: "What specifically creates the 'clear zone' around an antibiotic disk in an antibiogram?", opts: ["The disk absorbing all the moisture from the plate.", "The antibiotic diffusing outward and killing/preventing the growth of the surrounding bacteria.", "A chemical reaction that bleaches the color of the plate.", "The bacteria consuming the antibiotic disk."], ans: 1 },
+                { q: "Which two methods are primarily used as preventive measures BEFORE a microbial infection occurs?", opts: ["Serotherapy and Antibiotherapy", "Asepsis and Vaccination", "Antisepsis and Serotherapy", "Bone Marrow Grafts and Antibiotics"], ans: 1 }
             ],
             "B": [
-                { q: "Why are some babies with congenital immunodeficiencies placed immediately after birth in a sterile cabinet?", opts: ["To keep their body temperature highly elevated.", "To avoid serious and repeated infections while waiting for a bone marrow graft.", "To stimulate their body to produce natural antibiotics.", "To protect the external environment from the viruses they carry."], ans: 1 },
-                { q: "What type of immunity does Vaccination provide?", opts: ["Passive and immediate immunity.", "Short-lasting therapeutic immunity.", "Active, prophylactic (preventive) immunity that usually lasts a lifetime.", "Non-specific immunity against all known microbes."], ans: 2 },
-                { q: "If an unvaccinated person sustains a serious wound potentially infected with tetanus, what is the urgent therapeutic treatment required?", opts: ["Immediate vaccination against tetanus.", "Serotherapy (injection of anti-tetanus antibodies).", "Performing an antibiogram on the wound.", "A bone marrow graft."], ans: 1 },
-                { q: "Which statement best describes 'Antisepsis'?", opts: ["The total absence of microbes in an operating room via high-temperature sterilization.", "The application of chemical solutions (like alcohol or iodine) to living tissues to slow or prevent microbial multiplication.", "The internal treatment of microbial diseases using toxic chemical substances.", "The injection of attenuated microbes to build active immunity."], ans: 1 },
-                { q: "What is Antibiotherapy?", opts: ["The use of anti-bacterial medicines, called antibiotics.", "The use of physical heat to destroy bacteria.", "The transfer of immunity from one individual to another.", "Washing a wound abundantly with water and soap."], ans: 0 },
-                { q: "According to the graph showing the incidence of childhood diseases in the USA, what was the logical consequence of using specific vaccines?", opts: ["A massive spike in the number of viral infections.", "A significant and permanent drop in the incidence of these viral infections.", "No noticeable change in the population's health.", "The diseases mutated instantly to become untreatable."], ans: 1 },
-                { q: "In an antibiogram culture plate, how do you visually identify the most efficient antibiotic?", opts: ["It is the disk with the smallest clear zone around it.", "It is the disk surrounded by the largest clear zone (absence of bacteria).", "It is the disk that changes color to green.", "It is the disk that stimulates the most bacterial growth."], ans: 1 },
-                { q: "What defines a congenital immunodeficiency?", opts: ["It is acquired after a viral infection.", "It is present from birth.", "It is caused by the HIV virus.", "It can be cured immediately with antibiotics."], ans: 1 },
-                { q: "Why is an antibiogram performed?", opts: ["To identify the patient’s immune response", "To determine the most effective antibiotic", "To produce antibodies", "To sterilize bacterial cultures"], ans: 1 },
-                { q: "What was the crucial finding in Pasteur's 1880 chicken cholera experiment?", opts: ["That chickens are naturally immune to cholera.", "That injecting attenuated microbes prevents future infection from virulent ones.", "That antibiotics cure cholera immediately.", "That sterilization kills all viruses."], ans: 1 },
-                { q: "Why is vaccination considered a 'prophylactic' measure?", opts: ["Because it is a preventive treatment given before exposure to the disease.", "Because it is used to treat an already sick patient.", "Because it provides immediate, ready-made antibodies.", "Because it requires a sterile operating room."], ans: 0 },
-                { q: "How does the onset of immunity differ between Vaccination and Serotherapy?", opts: ["Vaccination provides immediate immunity, while Serotherapy takes weeks.", "Both take several weeks to provide immunity.", "Vaccination takes time to build immunity, while Serotherapy provides immediate immunity.", "Both provide immediate immunity."], ans: 2 },
-                { q: "Which procedure is mandatory in operating rooms to ensure the total absence of microbes?", opts: ["Serotherapy.", "Asepsis (Sterilization).", "Vaccination.", "Antibiotherapy."], ans: 1 },
-                { q: "What are substances like alcohol or iodine primarily classified as in medicine?", opts: ["Antibiotics.", "Antiseptics.", "Vaccines.", "Serums."], ans: 1 },
-                { q: "From what type of microorganism was the first antibiotic (Penicillin) extracted?", opts: ["A weakened virus.", "A green yeast (fungus).", "A virulent bacterium.", "A white blood cell."], ans: 1 },
-                { q: "If an antibiotic disk in an antibiogram has no clear zone around it, what does this indicate?", opts: ["The bacteria are completely resistant to that antibiotic.", "The antibiotic is extremely efficient.", "The plate has been sterilized successfully.", "The antibiotic disk is highly radioactive."], ans: 0 },
-                { q: "What is the typical duration of the immunity provided by Serotherapy?", opts: ["A lifetime.", "Several years.", "Temporary, lasting about three weeks.", "Only a few minutes."], ans: 2 },
-                { q: "In the vaccination graph, why does the antibody curve rise sharply after a second (virulent) injection?", opts: ["Because the virulent bacteria multiply and create antibodies.", "Because memory cells from the first injection mount a faster and stronger immune response.", "Because the patient received serotherapy simultaneously.", "Because antibiotics were administered."], ans: 1 },
-                { q: "What does the term 'attenuated' mean in the context of vaccines?", opts: ["Strengthened to cause immediate disease.", "Weakened so it triggers an immune response without causing severe illness.", "Synthesized completely from chemicals.", "Extracted from a patient's blood."], ans: 1 },
-                { q: "Which specific treatment relies on immunity that is described as 'passive'?", opts: ["Vaccination.", "Serotherapy.", "Antibiotherapy.", "Asepsis."], ans: 1 }
+                { q: "Why cannot congenital immunodeficiency be cured with a simple course of antibiotics?", opts: ["Because antibiotics only work on viruses.", "Because it is a genetic defect present from birth causing an absence of immune cells, not a bacterial infection.", "Because the immune system rejects all antibiotics.", "Because the patient must be in a sterile cabinet for antibiotics to work."], ans: 1 },
+                { q: "What is the ultimate, fatal consequence of the HIV virus multiplying inside the human body?", opts: ["It leaves the body completely defenseless against opportunistic infections (Acquired Immunodeficiency).", "It causes a sudden, massive heart attack.", "It makes the body allergic to all vaccines.", "It forces the bone marrow to produce too many red blood cells."], ans: 0 },
+                { q: "What is the key biological ingredient used in a standard vaccine, as first demonstrated by Pasteur?", opts: ["Chemical antiseptics", "Microbes that have been intentionally weakened (attenuated)", "Ready-made antibodies extracted from an animal", "Pure Penicillin"], ans: 1 },
+                { q: "According to historical data graphs regarding childhood diseases in the USA, what occurred after the widespread introduction of the polio vaccine?", opts: ["The incidence of the disease dropped drastically to near zero.", "The virus mutated and the disease rate doubled.", "There was no significant change in infection rates.", "The population developed acquired immunodeficiency."], ans: 0 },
+                { q: "Which medical intervention is defined as providing specific, immediate, 'ready-made' passive defense to a patient?", opts: ["Vaccination", "Antibiotherapy", "Serotherapy", "Asepsis"], ans: 2 },
+                { q: "If a healthcare worker needs reliable, long-term protection against Hepatitis B before starting their job, which intervention is required?", opts: ["Serotherapy", "Vaccination", "Daily Antiseptics", "A prophylactic Antibiogram"], ans: 1 },
+                { q: "Why are operating rooms mandated to be kept under strict aseptic conditions?", opts: ["To keep the temperature low for the surgeons.", "To ensure the total absence of microbes, preventing any from entering the patient's surgical wounds.", "To allow bacteria to multiply safely.", "To test new types of antibiotics."], ans: 1 },
+                { q: "A nurse applies iodine solution to a patient's skin before making a surgical incision. This specific action is an example of:", opts: ["Serotherapy", "Antibiotherapy", "Antisepsis", "Vaccination"], ans: 2 },
+                { q: "Alexander Fleming is famous for discovering Penicillin. What specific type of microorganism does Penicillin actively destroy?", opts: ["Viruses", "Bacteria", "Fungi", "Protozoa"], ans: 1 },
+                { q: "How does a doctor practically use the visual results of an antibiogram to treat a sick patient?", opts: ["By selecting the antibiotic that produces the largest clear zone of no bacterial growth.", "By choosing the disk that the bacteria grew over completely.", "By measuring the heat produced by the disks.", "By giving the patient the bacteria from the clear zone."], ans: 0 },
+                { q: "Before a bone marrow graft can be successfully performed, how must a baby born with congenital immunodeficiency be protected from the environment?", opts: ["By receiving daily vaccines.", "By living inside a completely sterile cabinet/bubble to prevent any infection.", "By being coated in antiseptic solutions.", "By receiving continuous blood transfusions."], ans: 1 },
+                { q: "After receiving a vaccine, it typically takes the body a few weeks to become fully protected. Why is there a delay?", opts: ["Because the vaccine must travel to the brain first.", "Because the body's immune system needs time to actively recognize the microbe and produce antibodies/memory cells.", "Because the attenuated microbes must first multiply into virulent ones.", "Because the injection site must heal completely first."], ans: 1 },
+                { q: "Which of the following statements is TRUE regarding the specificity of Serotherapy?", opts: ["It protects against all known bacterial infections at once.", "It only protects against the specific disease for which those exact antibodies were designed.", "It changes its specificity depending on the patient's blood type.", "It provides general immunity against all viruses."], ans: 1 },
+                { q: "What happens to the microbes on a living tissue when a chemical antiseptic (like hydrogen peroxide) is applied?", opts: ["They are instantly transformed into memory cells.", "Their multiplication is severely slowed or completely prevented.", "They multiply twice as fast.", "They become completely immune to antibiotics."], ans: 1 },
+                { q: "What specific observation led A. Fleming to the discovery of the first antibiotic?", opts: ["He noticed that chickens injected with old cholera cultures survived.", "He observed that a green mold (Penicillium) was actively preventing the growth of surrounding bacteria on his petri dish.", "He found that heated instruments didn't carry microbes.", "He saw that HIV destroyed immune cells under a microscope."], ans: 1 },
+                { q: "Which medical procedure's entire success directly relies on the body's ability to create and store 'memory cells'?", opts: ["Serotherapy", "Vaccination", "Antisepsis", "Bone Marrow Grafting"], ans: 1 },
+                { q: "High-temperature steam sterilization is frequently used to treat surgical instruments. What is the main purpose of this?", opts: ["To achieve Asepsis by killing all microbes present.", "To apply an Antiseptic layer to the metal.", "To make the tools easier to handle.", "To create a clear zone around the tools."], ans: 0 },
+                { q: "Approximately how long does the passive immunity provided by a Serotherapy injection last in the human body?", opts: ["A lifetime", "Several years", "Only a few weeks", "Less than one hour"], ans: 2 },
+                { q: "What is the clinical purpose of placing multiple different paper disks on a single antibiogram culture plate?", opts: ["To test multiple different antibiotics simultaneously against the exact same bacterial strain.", "To feed the bacteria different nutrients.", "To see which disk absorbs the most water.", "To vaccinate the petri dish against different viruses."], ans: 0 },
+                { q: "If a patient is currently suffering from a severe internal bacterial infection (like bacterial pneumonia), which treatment is the most appropriate course of action?", opts: ["Vaccination", "Asepsis", "Antibiotherapy (taking antibiotics)", "Applying Antisepsis to the chest"], ans: 2 }
             ]
         };
 
@@ -204,7 +207,6 @@
         // ==========================================
         // 3. CUSTOM MODAL CONTROLLER 
         // ==========================================
-        // This replaces the blocked window.alert, window.prompt, and window.confirm
         function showModal({ title = 'Notice', message, type = 'alert', onConfirm = null }) {
             const modal = document.getElementById('custom-modal');
             const titleEl = document.getElementById('modal-title');
@@ -230,7 +232,6 @@
                 cancelBtn.classList.add('hidden');
             }
 
-            // Clear old event listeners by cloning
             const newConfirmBtn = confirmBtn.cloneNode(true);
             confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
             const newCancelBtn = cancelBtn.cloneNode(true);
@@ -370,7 +371,6 @@
         function handleBlur() {
             if (examActive) {
                 setTimeout(() => {
-                    // Check if a modal is currently open. If yes, it might have caused the blur.
                     const modal = document.getElementById('custom-modal');
                     if (!document.hasFocus() && examActive && modal.classList.contains('hidden')) {
                         autoSubmit("Cheat Flag: Window lost focus");
@@ -380,7 +380,7 @@
         }
 
         // ==========================================
-        // 6. EXCEPTION HANDLING (TEACHER RESET)
+        // 6. EXCEPTION HANDLING (TEACHER RESET & RECOVER)
         // ==========================================
         function adminReset() {
             const studentSelect = document.getElementById('student-select');
@@ -396,11 +396,50 @@
                 message: `Enter Teacher PIN to allow a new attempt for:\n${student}`,
                 type: 'prompt',
                 onConfirm: (pin) => {
-                    if (pin === TEACHER_PIN) {
+                    if (pin && pin.trim() === TEACHER_PIN) {
                         localStorage.removeItem(`exam_taken_${student}`);
-                        showModal({ title: 'Success', message: `The block has been removed for ${student}. They can now click 'Start Exam'.` });
+                        localStorage.removeItem(`exam_backup_${student}`);
+                        setTimeout(() => {
+                            showModal({ title: 'Success', message: `The block has been removed for ${student}. They can now click 'Start Exam'.` });
+                        }, 300);
                     } else if (pin !== null && pin !== '') {
-                        showModal({ title: 'Error', message: 'Incorrect PIN. Access denied.' });
+                        setTimeout(() => {
+                            showModal({ title: 'Error', message: 'Incorrect PIN. Access denied.' });
+                        }, 300);
+                    }
+                }
+            });
+        }
+
+        function adminRecover() {
+            const studentSelect = document.getElementById('student-select');
+            const student = studentSelect.value;
+
+            if (!student) {
+                showModal({ title: 'Error', message: 'Please select a student name first to recover their local data.'});
+                return;
+            }
+
+            showModal({
+                title: 'Recover Local Data',
+                message: `Enter Teacher PIN to download saved results for:\n${student}`,
+                type: 'prompt',
+                onConfirm: (pin) => {
+                    if (pin && pin.trim() === TEACHER_PIN) {
+                        const backup = localStorage.getItem(`exam_backup_${student}`);
+                        if (backup) {
+                            const blob = new Blob([backup], {type: 'application/json'});
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `Biology_Recovered_${student}.json`;
+                            a.click();
+                            setTimeout(() => showModal({ title: 'Success', message: 'Data recovered and downloaded to this device.' }), 300);
+                        } else {
+                            setTimeout(() => showModal({ title: 'Error', message: 'No local backup found for this student on this specific device.' }), 300);
+                        }
+                    } else if (pin !== null && pin !== '') {
+                        setTimeout(() => showModal({ title: 'Error', message: 'Incorrect PIN. Access denied.' }), 300);
                     }
                 }
             });
@@ -436,9 +475,6 @@
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("blur", handleBlur);
 
-            // Mark as taken
-            localStorage.setItem(`exam_taken_${currentUser.name}`, new Date().toISOString());
-
             // Calculate Score
             let score = 0;
             const questions = examBanks[currentUser.version];
@@ -466,10 +502,13 @@
                 answers: JSON.stringify(detailedAnswers)
             };
 
+            // Mark as taken AND securely backup the actual answers to the device's hard drive
+            localStorage.setItem(`exam_taken_${currentUser.name}`, new Date().toISOString());
+            localStorage.setItem(`exam_backup_${currentUser.name}`, JSON.stringify(payload, null, 2));
+
             document.getElementById('exam-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
 
-            // Prevent fetch error if the URL is a Spreadsheet URL instead of Web App URL
             if (GOOGLE_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE" || GOOGLE_SCRIPT_URL.includes("docs.google.com/spreadsheets")) {
                 console.warn("Google Script Web App URL is missing or incorrect.");
                 setTimeout(() => {
@@ -483,7 +522,7 @@
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             })
             .then(() => {
