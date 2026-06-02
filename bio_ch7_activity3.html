@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 7 – Activity 3: Carriers of Genetic Information</title>
+<style>
+/* ===== GOOGLE FONTS FALLBACK (embedded base64-safe system fonts) ===== */
+@import url('data:text/css,');
+
+:root {
+  --bg:       #0a0e1a;
+  --panel:    #111827;
+  --card:     #1a2236;
+  --border:   #2a3a5c;
+  --accent1:  #00d4ff;   /* cyan  */
+  --accent2:  #7c3aed;   /* violet */
+  --accent3:  #f59e0b;   /* amber */
+  --accent4:  #10b981;   /* emerald */
+  --danger:   #ef4444;
+  --text:     #e2e8f0;
+  --muted:    #94a3b8;
+  --white:    #ffffff;
+  --font-head: 'Georgia', 'Times New Roman', serif;
+  --font-body: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --font-mono: 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ===== SLIDE CONTAINER ===== */
+#deck {
+  width: 100vw; height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateX(60px);
+  padding: 48px 64px 36px;
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
+}
+
+.slide.exit {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+/* ===== GLOBAL DECORATIVE BG ===== */
+.dna-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ===== NAVIGATION ===== */
+#nav {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(17,24,39,0.9);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 10px 24px;
+  z-index: 9999;
+  backdrop-filter: blur(12px);
+}
+
+#nav button {
+  background: none; border: none;
+  color: var(--text); cursor: pointer;
+  font-size: 20px; padding: 4px 12px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+#nav button:hover { background: var(--border); }
+
+#slide-counter {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--muted);
+  min-width: 60px;
+  text-align: center;
+}
+
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  transition: width 0.4s ease;
+  z-index: 9999;
+}
+
+/* ===== SLIDE NUMBER BADGE ===== */
+.slide-badge {
+  position: absolute;
+  top: 20px; right: 28px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--muted);
+  letter-spacing: 2px;
+  z-index: 10;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.slide-tag {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent1);
+  margin-bottom: 12px;
+  font-weight: 600;
+  position: relative; z-index: 2;
+}
+
+h1 {
+  font-family: var(--font-head);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.15;
+  color: var(--white);
+  position: relative; z-index: 2;
+}
+
+h2 {
+  font-family: var(--font-head);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  color: var(--white);
+  position: relative; z-index: 2;
+}
+
+h3 {
+  font-family: var(--font-head);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  color: var(--accent1);
+  margin-bottom: 8px;
+  position: relative; z-index: 2;
+}
+
+p, li {
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
+  line-height: 1.7;
+  color: var(--text);
+  position: relative; z-index: 2;
+}
+
+.big-stat {
+  font-family: var(--font-head);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  position: relative; z-index: 2;
+}
+
+.highlight {
+  color: var(--accent1);
+  font-weight: 700;
+}
+
+.highlight-amber { color: var(--accent3); font-weight: 700; }
+.highlight-green { color: var(--accent4); font-weight: 700; }
+.highlight-violet { color: #a78bfa; font-weight: 700; }
+
+/* ===== LAYOUT HELPERS ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  flex: 1;
+  position: relative; z-index: 2;
+  align-items: start;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  flex: 1;
+  position: relative; z-index: 2;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative; z-index: 2;
+}
+
+.card-glow {
+  box-shadow: 0 0 24px rgba(0,212,255,0.15), 0 0 48px rgba(124,58,237,0.08);
+}
+
+.accent-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+/* ===== OBJECTIVES LIST ===== */
+.obj-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative; z-index: 2;
+}
+
+.obj-list li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+  transition: border-color 0.3s, transform 0.2s;
+  cursor: default;
+}
+
+.obj-list li:hover {
+  border-color: var(--accent1);
+  transform: translateX(6px);
+}
+
+.obj-num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent1);
+  min-width: 28px;
+  font-weight: 700;
+}
+
+/* ===== DNA SVG ILLUSTRATION (inline, offline-safe) ===== */
+.svg-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; z-index: 2;
+}
+
+/* ===== CELL DIAGRAM ===== */
+.cell-diagram {
+  width: 100%;
+  max-width: 380px;
+  margin: auto;
+}
+
+/* ===== CHROMOSOME CARDS ===== */
+.chrom-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  position: relative; z-index: 2;
+}
+
+.chrom-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.chrom-num {
+  font-size: 9px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+/* ===== QUIZ ELEMENTS ===== */
+.quiz-option {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  transition: all 0.25s ease;
+  position: relative; z-index: 2;
+  text-align: left;
+  width: 100%;
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+.quiz-option:hover {
+  border-color: var(--accent1);
+  background: rgba(0,212,255,0.05);
+  transform: translateX(4px);
+}
+
+.quiz-option.correct {
+  border-color: var(--accent4);
+  background: rgba(16,185,129,0.15);
+  color: var(--accent4);
+}
+
+.quiz-option.wrong {
+  border-color: var(--danger);
+  background: rgba(239,68,68,0.15);
+  color: var(--danger);
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative; z-index: 2;
+}
+
+.quiz-feedback {
+  margin-top: 16px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: none;
+  position: relative; z-index: 2;
+}
+
+/* ===== FORMULA BOX ===== */
+.formula-box {
+  background: var(--card);
+  border: 2px solid var(--accent3);
+  border-radius: 16px;
+  padding: 28px 36px;
+  text-align: center;
+  position: relative; z-index: 2;
+}
+
+.formula {
+  font-family: var(--font-mono);
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  color: var(--accent3);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* ===== DRAG & DROP ===== */
+.drag-zone {
+  min-height: 70px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  transition: border-color 0.3s;
+  position: relative; z-index: 2;
+}
+
+.drag-zone.over { border-color: var(--accent1); background: rgba(0,212,255,0.05); }
+
+.drag-chip {
+  background: var(--accent2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  cursor: grab;
+  transition: transform 0.15s;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.drag-chip:active { cursor: grabbing; transform: scale(1.06); }
+
+/* ===== COMPARISON TABLE ===== */
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  position: relative; z-index: 2;
+  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+}
+
+.compare-table th {
+  padding: 12px 20px;
+  text-align: left;
+  background: var(--accent2);
+  color: white;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.compare-table th:first-child { border-radius: 10px 0 0 10px; }
+.compare-table th:last-child  { border-radius: 0 10px 10px 0; }
+
+.compare-table td {
+  padding: 12px 20px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.compare-table td:first-child {
+  border-left: 1px solid var(--border);
+  border-radius: 10px 0 0 10px;
+  font-weight: 700;
+  color: var(--accent1);
+}
+
+.compare-table td:last-child {
+  border-right: 1px solid var(--border);
+  border-radius: 0 10px 10px 0;
+}
+
+/* ===== REVEAL ANIMATION ===== */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal.shown { opacity: 1; transform: translateY(0); }
+
+/* ===== KARYOTYPE SVG ===== */
+.kary-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  position: relative; z-index: 2;
+}
+
+/* ===== TOOLTIP ===== */
+.tooltip-container { position: relative; display: inline-block; }
+.tooltip-box {
+  position: absolute;
+  bottom: 110%; left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel);
+  border: 1px solid var(--accent1);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  display: none;
+  z-index: 100;
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.tooltip-container:hover .tooltip-box { display: block; }
+
+/* ===== SURPRISE OVERLAY ===== */
+#surprise-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,14,26,0.95);
+  z-index: 8888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+#surprise-overlay.show { opacity: 1; pointer-events: all; }
+
+/* ===== TIMER ===== */
+#think-timer {
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  color: var(--accent1);
+  text-align: center;
+  position: relative; z-index: 2;
+}
+
+/* ===== CHALLENGE BADGE ===== */
+.challenge-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent3), #f97316);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  position: relative; z-index: 2;
+}
+
+/* ===== SLIDE-SPECIFIC STYLES ===== */
+.cover-gradient {
+  background: radial-gradient(ellipse at 30% 50%, rgba(124,58,237,0.3) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.2) 0%, transparent 50%),
+              var(--bg);
+}
+
+.divider { height: 1px; background: var(--border); margin: 16px 0; position: relative; z-index: 2; }
+
+.pill {
+  display: inline-block;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid var(--accent1);
+  color: var(--accent1);
+  border-radius: 30px;
+  padding: 4px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  position: relative; z-index: 2;
+}
+
+.spacer { flex: 1; }
+
+.mt8 { margin-top: 8px; position: relative; z-index:2; }
+.mt16 { margin-top: 16px; position: relative; z-index:2; }
+.mt24 { margin-top: 24px; position: relative; z-index:2; }
+
+/* ===== FACT BOX ===== */
+.fact-box {
+  background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(0,212,255,0.1));
+  border-left: 4px solid var(--accent1);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  position: relative; z-index: 2;
+}
+
+/* ===== KARYOTYPE CRITERIA ===== */
+.criteria-step {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 2;
+}
+
+.criteria-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--accent2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  color: white;
+  font-weight: 700;
+}
+
+/* ===== HOVER CARDS ===== */
+.hover-reveal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  position: relative; z-index: 2;
+}
+
+.hover-reveal-card .answer {
+  display: none;
+  margin-top: 12px;
+  color: var(--accent4);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.hover-reveal-card.revealed .answer { display: block; }
+.hover-reveal-card.revealed { border-color: var(--accent4); }
+
+.hover-reveal-card::after {
+  content: '▶ Click to reveal';
+  position: absolute;
+  bottom: 12px; right: 16px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.hover-reveal-card.revealed::after { content: '✓'; color: var(--accent4); }
+
+/* ===== SCROLLABLE INNER ===== */
+.slide-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.slide-content::-webkit-scrollbar { width: 4px; }
+.slide-content::-webkit-scrollbar-track { background: transparent; }
+.slide-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ===== SECTION LABEL ===== */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  position: relative; z-index: 2;
+}
+
+.section-label .line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- ============================================================
+     SLIDE 1 — COVER / HOOK
+     ============================================================ -->
+<div class="slide cover-gradient active" id="s1">
+  <div class="dna-bg">
+    <svg width="100%" height="100%" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+      <!-- Animated DNA helix decorative -->
+      <defs>
+        <radialGradient id="bgGlow" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="blur4"><feGaussianBlur stdDeviation="4"/></filter>
+      </defs>
+      <ellipse cx="900" cy="350" rx="400" ry="320" fill="url(#bgGlow)"/>
+      <!-- DNA strand dots scattered -->
+      <g opacity="0.15" fill="#00d4ff">
+        <circle cx="80" cy="120" r="3"/><circle cx="140" cy="80" r="2"/><circle cx="60" cy="200" r="4"/>
+        <circle cx="200" cy="160" r="2"/><circle cx="1100" cy="100" r="3"/><circle cx="1050" cy="180" r="2"/>
+        <circle cx="1150" cy="240" r="4"/><circle cx="100" cy="580" r="3"/><circle cx="200" cy="620" r="2"/>
+      </g>
+      <!-- Helix lines -->
+      <g stroke="#7c3aed" stroke-width="1" opacity="0.2" fill="none">
+        <path d="M1000,0 Q1100,100 1000,200 Q900,300 1000,400 Q1100,500 1000,600 Q900,700 1000,800"/>
+        <path d="M1040,0 Q1140,100 1040,200 Q940,300 1040,400 Q1140,500 1040,600 Q940,700 1040,800"/>
+      </g>
+      <!-- Cross bars on helix -->
+      <g stroke="#00d4ff" stroke-width="1" opacity="0.15">
+        <line x1="1000" y1="50" x2="1040" y2="50"/>
+        <line x1="1000" y1="150" x2="1040" y2="150"/>
+        <line x1="1000" y1="250" x2="1040" y2="250"/>
+        <line x1="1000" y1="350" x2="1040" y2="350"/>
+        <line x1="1000" y1="450" x2="1040" y2="450"/>
+        <line x1="1000" y1="550" x2="1040" y2="550"/>
+        <line x1="1000" y1="650" x2="1040" y2="650"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="slide-badge">01 / 18</div>
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; position:relative; z-index:2;">
+    <div class="pill">Grade 9 · Lebanese Curriculum · Biology</div>
+    <div class="slide-tag">Chapter 7 — Activity 3</div>
+    <h1>The Carrier of<br><span style="background:linear-gradient(90deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Genetic Information</span></h1>
+    <div class="divider" style="margin:28px 0 24px;"></div>
+    <p style="color:var(--muted); max-width:680px; font-size:1.2rem;">
+      What makes you <span class="highlight">YOU</span>?  Why do you look like your parents?  
+      Where does the body's <span class="highlight-amber">instruction manual</span> live?
+    </p>
+    <p style="color:var(--muted); margin-top:12px; font-size:1rem;">
+      Press <strong>→</strong> or the arrow buttons below to begin the journey.
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 2 — HOOK: THE MYSTERY
+     ============================================================ -->
+<div class="slide" id="s2">
+  <div class="slide-badge">02 / 18</div>
+  <div class="slide-tag">Warm-Up Challenge</div>
+  <h2>🧩 Can you guess what this is?</h2>
+  <div class="divider" style="margin:16px 0 24px;"></div>
+
+  <div class="two-col" style="align-items:center; gap:48px;">
+    <div>
+      <!-- Abstract chromosome shape - students guess -->
+      <svg viewBox="0 0 300 420" width="100%" style="max-width:300px;display:block;margin:auto;">
+        <defs>
+          <radialGradient id="chromGrad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </radialGradient>
+          <filter id="glow3">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- chromosome body -->
+        <rect x="110" y="40" width="80" height="155" rx="40" fill="url(#chromGrad)" filter="url(#glow3)"/>
+        <rect x="110" y="225" width="80" height="155" rx="40" fill="url(#chromGrad)" filter="url(#glow3)"/>
+        <!-- centromere -->
+        <ellipse cx="150" cy="210" rx="32" ry="16" fill="#4c1d95" stroke="#a78bfa" stroke-width="2"/>
+        <ellipse cx="150" cy="210" rx="12" ry="6" fill="#7c3aed"/>
+        <!-- banding pattern -->
+        <rect x="110" y="80"  width="80" height="8"  rx="4" fill="#c4b5fd" opacity="0.6"/>
+        <rect x="110" y="110" width="80" height="12" rx="4" fill="#4c1d95" opacity="0.7"/>
+        <rect x="110" y="140" width="80" height="6"  rx="4" fill="#c4b5fd" opacity="0.5"/>
+        <rect x="110" y="270" width="80" height="8"  rx="4" fill="#c4b5fd" opacity="0.6"/>
+        <rect x="110" y="300" width="80" height="12" rx="4" fill="#4c1d95" opacity="0.7"/>
+        <rect x="110" y="330" width="80" height="6"  rx="4" fill="#c4b5fd" opacity="0.5"/>
+        <!-- label arrows -->
+        <line x1="200" y1="65"  x2="260" y2="40"  stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="200" y1="110" x2="260" y2="110" stroke="#f59e0b" stroke-width="1.5"/>
+        <line x1="200" y1="210" x2="260" y2="210" stroke="#10b981" stroke-width="1.5"/>
+        <text x="265" y="44"  fill="#00d4ff" font-size="13" font-family="Trebuchet MS,sans-serif">?</text>
+        <text x="265" y="114" fill="#f59e0b" font-size="13" font-family="Trebuchet MS,sans-serif">?</text>
+        <text x="265" y="214" fill="#10b981" font-size="13" font-family="Trebuchet MS,sans-serif">?</text>
+      </svg>
+      <p style="text-align:center; color:var(--muted); margin-top:12px; font-size:0.95rem;">🔬 Seen under an electron microscope</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+      <div class="challenge-badge">🎯 Think First</div>
+      <p style="font-size:1.3rem; color:var(--white);">What structure could this be?</p>
+      <p style="color:var(--muted); font-size:1.05rem;">Look at its shape carefully. It has two arms, a pinch in the middle, and dark bands...</p>
+
+      <div class="quiz-options" id="q2-opts">
+        <button class="quiz-option" onclick="checkQ(this,'wrong',2)">A) A protein molecule</button>
+        <button class="quiz-option" onclick="checkQ(this,'correct',2)">B) A chromosome</button>
+        <button class="quiz-option" onclick="checkQ(this,'wrong',2)">C) A cell membrane</button>
+        <button class="quiz-option" onclick="checkQ(this,'wrong',2)">D) A ribosome</button>
+      </div>
+      <div class="quiz-feedback" id="qf2"></div>
+
+      <div class="fact-box mt16">
+        <p style="font-size:0.95rem;">💡 <strong>Did you know?</strong> If you stretched out <em>all</em> the DNA in a single human cell, it would be about <span class="highlight">2 metres</span> long — yet it fits inside a nucleus just <span class="highlight">6 micrometres</span> wide!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 3 — OBJECTIVES
+     ============================================================ -->
+<div class="slide" id="s3">
+  <div class="slide-badge">03 / 18</div>
+  <div class="slide-tag">Learning Objectives</div>
+  <h2>By the end of today, you will be able to…</h2>
+  <div class="accent-bar" style="margin:16px 0 24px;"></div>
+
+  <div class="slide-content">
+    <ul class="obj-list">
+      <li><span class="obj-num">01</span> Locate where genetic information is found in the cell</li>
+      <li><span class="obj-num">02</span> Identify the genetic carriers</li>
+      <li><span class="obj-num">03</span> Define <span class="highlight">chromosomes</span></li>
+      <li><span class="obj-num">04</span> Define <span class="highlight">karyotype</span></li>
+      <li><span class="obj-num">05</span> Differentiate between <span class="highlight-amber">autosomal</span> and <span class="highlight-violet">gonosomal</span> chromosomes</li>
+      <li><span class="obj-num">06</span> Write the <span class="highlight-green">chromosomal formula</span></li>
+      <li><span class="obj-num">07</span> List the criteria for karyotype arrangement</li>
+      <li><span class="obj-num">08</span> Compare two different karyotypes</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 4 — WHERE IS GENETIC INFORMATION?
+     ============================================================ -->
+<div class="slide" id="s4">
+  <div class="slide-badge">04 / 18</div>
+  <div class="slide-tag">Objective 1 · Locating Genetic Information</div>
+  <h2>Where does the cell store its <span class="highlight">secrets</span>?</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="two-col" style="align-items:center;">
+    <!-- Cell diagram SVG -->
+    <div class="svg-wrapper">
+      <svg viewBox="0 0 340 340" width="100%" style="max-width:340px;">
+        <defs>
+          <radialGradient id="cellGrad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#0a1a2e" stop-opacity="0.9"/>
+          </radialGradient>
+          <radialGradient id="nucGrad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#4c1d95" stop-opacity="0.9"/>
+          </radialGradient>
+          <filter id="cellGlow">
+            <feGaussianBlur stdDeviation="8" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Cell wall -->
+        <ellipse cx="170" cy="170" rx="155" ry="140" fill="url(#cellGrad)" stroke="#2563eb" stroke-width="2.5"/>
+        <!-- Cytoplasm organelles -->
+        <ellipse cx="80" cy="90"  rx="20" ry="12" fill="#065f46" opacity="0.6"/><!-- mito -->
+        <ellipse cx="270" cy="240" rx="18" ry="10" fill="#065f46" opacity="0.5"/>
+        <circle cx="280" cy="130" r="8"  fill="#1e3a5f" stroke="#60a5fa" stroke-width="1" opacity="0.7"/><!-- ER -->
+        <circle cx="60"  cy="250" r="6"  fill="#1e3a5f" stroke="#60a5fa" stroke-width="1" opacity="0.6"/>
+        <!-- Nucleus glow -->
+        <ellipse cx="170" cy="170" rx="75" ry="65" fill="#4c1d95" opacity="0.3" filter="url(#cellGlow)"/>
+        <!-- Nucleus -->
+        <ellipse cx="170" cy="170" rx="75" ry="65" fill="url(#nucGrad)" stroke="#a78bfa" stroke-width="2.5"/>
+        <!-- Nuclear membrane dots -->
+        <circle cx="170" cy="106" r="4" fill="#c4b5fd" opacity="0.8"/>
+        <circle cx="240" cy="140" r="4" fill="#c4b5fd" opacity="0.8"/>
+        <circle cx="230" cy="210" r="4" fill="#c4b5fd" opacity="0.8"/>
+        <circle cx="110" cy="210" r="4" fill="#c4b5fd" opacity="0.8"/>
+        <circle cx="100" cy="145" r="4" fill="#c4b5fd" opacity="0.8"/>
+        <!-- Chromosomes inside nucleus -->
+        <rect x="145" y="148" width="18" height="38" rx="9" fill="#00d4ff" opacity="0.9"/>
+        <rect x="168" y="148" width="18" height="38" rx="9" fill="#f59e0b" opacity="0.9"/>
+        <rect x="191" y="148" width="18" height="38" rx="9" fill="#10b981" opacity="0.9"/>
+        <!-- Labels -->
+        <text x="170" y="292" text-anchor="middle" fill="#60a5fa" font-size="12" font-family="Trebuchet MS,sans-serif">Cell Membrane</text>
+        <text x="170" y="200" text-anchor="middle" fill="#c4b5fd" font-size="12" font-family="Trebuchet MS,sans-serif" font-weight="bold">NUCLEUS</text>
+        <text x="170" y="214" text-anchor="middle" fill="#00d4ff" font-size="10" font-family="Trebuchet MS,sans-serif">← chromosomes here →</text>
+        <text x="90" y="82"  fill="#6ee7b7" font-size="10" font-family="Trebuchet MS,sans-serif">Mitochondria</text>
+        <line x1="90" y1="88" x2="90" y2="95" stroke="#6ee7b7" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+      <div class="card card-glow">
+        <h3>📍 Location of Genetic Information</h3>
+        <p>Genetic information is located in the <span class="highlight">nucleus</span> of eukaryotic cells, carried by structures called <span class="highlight">chromosomes</span>.</p>
+      </div>
+
+      <div class="card" style="border-color:var(--accent3);">
+        <h3 style="color:var(--accent3);">🧪 Also found in…</h3>
+        <p>Small amounts of genetic information also exist in <span class="highlight-amber">mitochondria</span> (and chloroplasts in plants) — but the main store is always the nucleus.</p>
+      </div>
+
+      <div class="fact-box">
+        <p style="font-size:0.95rem;">🌟 <strong>Amazing fact:</strong> Every single cell of your body (except red blood cells) contains the <em>complete blueprint</em> for building YOU — all ~3 billion DNA base pairs!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 5 — GENETIC CARRIERS
+     ============================================================ -->
+<div class="slide" id="s5">
+  <div class="slide-badge">05 / 18</div>
+  <div class="slide-tag">Objective 2 · Genetic Carriers</div>
+  <h2>What <span class="highlight">carries</span> the genetic information?</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="slide-content">
+    <div class="three-col" style="margin-bottom:24px;">
+      <!-- Level 1: DNA -->
+      <div class="card card-glow" style="text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:8px;">🧬</div>
+        <h3>DNA</h3>
+        <p style="font-size:0.95rem;"><strong>Deoxyribonucleic acid</strong><br>The actual molecule that encodes instructions. A long double-helix polymer.</p>
+        <div style="margin-top:12px; font-size:0.85rem; color:var(--muted);">→ Organised into genes</div>
+      </div>
+      <!-- Level 2: Genes -->
+      <div class="card" style="text-align:center; border-color:var(--accent3);">
+        <div style="font-size:2.5rem; margin-bottom:8px;">🔑</div>
+        <h3 style="color:var(--accent3);">Genes</h3>
+        <p style="font-size:0.95rem;">Specific DNA segments that code for a <strong>trait</strong> (eye colour, blood type, height…). Humans have ~20,000 genes.</p>
+        <div style="margin-top:12px; font-size:0.85rem; color:var(--muted);">→ Located on chromosomes</div>
+      </div>
+      <!-- Level 3: Chromosomes -->
+      <div class="card" style="text-align:center; border-color:var(--accent4);">
+        <div style="font-size:2.5rem; margin-bottom:8px;">🗂️</div>
+        <h3 style="color:var(--accent4);">Chromosomes</h3>
+        <p style="font-size:0.95rem;">Tightly coiled DNA + proteins (<strong>histones</strong>). Each chromosome contains thousands of genes.</p>
+        <div style="margin-top:12px; font-size:0.85rem; color:var(--muted);">→ Visible during cell division</div>
+      </div>
+    </div>
+
+    <!-- Hierarchy diagram -->
+    <div class="card" style="padding:16px 24px;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; position:relative;z-index:2;">
+        <div style="background:var(--accent2);color:white;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.95rem;">Cell</div>
+        <div style="color:var(--muted);">⊃</div>
+        <div style="background:var(--accent1);color:#000;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.95rem;">Nucleus</div>
+        <div style="color:var(--muted);">⊃</div>
+        <div style="background:var(--accent4);color:white;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.95rem;">Chromosomes</div>
+        <div style="color:var(--muted);">⊃</div>
+        <div style="background:var(--accent3);color:#000;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.95rem;">Genes</div>
+        <div style="color:var(--muted);">⊃</div>
+        <div style="background:#ef4444;color:white;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.95rem;">DNA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 6 — WHAT IS A CHROMOSOME? (Definition)
+     ============================================================ -->
+<div class="slide" id="s6">
+  <div class="slide-badge">06 / 18</div>
+  <div class="slide-tag">Objective 3 · Definition</div>
+  <h2>What is a <span class="highlight">Chromosome</span>?</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="two-col" style="align-items:center;">
+    <!-- Annotated chromosome SVG -->
+    <div class="svg-wrapper">
+      <svg viewBox="0 0 320 480" width="100%" style="max-width:280px;">
+        <defs>
+          <linearGradient id="arm1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7c3aed"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+          <linearGradient id="arm2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4c1d95"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+        </defs>
+        <!-- Short arm (p) -->
+        <rect x="110" y="30" width="100" height="170" rx="50" fill="url(#arm1)" stroke="#c4b5fd" stroke-width="1.5"/>
+        <!-- Bands on short arm -->
+        <rect x="110" y="70"  width="100" height="10" rx="4" fill="#c4b5fd" opacity="0.5"/>
+        <rect x="110" y="100" width="100" height="16" rx="4" fill="#4c1d95" opacity="0.7"/>
+        <rect x="110" y="130" width="100" height="8"  rx="4" fill="#c4b5fd" opacity="0.5"/>
+        <!-- Centromere -->
+        <ellipse cx="160" cy="220" rx="38" ry="20" fill="#1e0a3c" stroke="#a78bfa" stroke-width="2"/>
+        <ellipse cx="160" cy="220" rx="14" ry="8" fill="#7c3aed"/>
+        <!-- Long arm (q) -->
+        <rect x="110" y="228" width="100" height="220" rx="50" fill="url(#arm2)" stroke="#c4b5fd" stroke-width="1.5"/>
+        <!-- Bands on long arm -->
+        <rect x="110" y="270" width="100" height="10" rx="4" fill="#c4b5fd" opacity="0.5"/>
+        <rect x="110" y="300" width="100" height="18" rx="4" fill="#1e0a3c" opacity="0.8"/>
+        <rect x="110" y="340" width="100" height="10" rx="4" fill="#c4b5fd" opacity="0.4"/>
+        <rect x="110" y="370" width="100" height="14" rx="4" fill="#4c1d95" opacity="0.6"/>
+        <!-- Telomeres -->
+        <ellipse cx="160" cy="40"  rx="40" ry="16" fill="#f59e0b" opacity="0.7" stroke="#fbbf24" stroke-width="1"/>
+        <ellipse cx="160" cy="438" rx="40" ry="16" fill="#f59e0b" opacity="0.7" stroke="#fbbf24" stroke-width="1"/>
+        <!-- Label lines -->
+        <line x1="210" y1="55"  x2="270" y2="40"  stroke="#f59e0b" stroke-width="1.5"/>
+        <line x1="210" y1="120" x2="270" y2="110" stroke="#00d4ff" stroke-width="1.5"/>
+        <line x1="210" y1="220" x2="270" y2="220" stroke="#10b981" stroke-width="1.5"/>
+        <line x1="210" y1="320" x2="270" y2="320" stroke="#a78bfa" stroke-width="1.5"/>
+        <line x1="210" y1="438" x2="270" y2="438" stroke="#f59e0b" stroke-width="1.5"/>
+        <!-- Label text -->
+        <text x="274" y="44"  fill="#f59e0b" font-size="11" font-family="Trebuchet MS,sans-serif">Telomere</text>
+        <text x="274" y="114" fill="#00d4ff" font-size="11" font-family="Trebuchet MS,sans-serif">Bands</text>
+        <text x="274" y="224" fill="#10b981" font-size="11" font-family="Trebuchet MS,sans-serif">Centromere</text>
+        <text x="274" y="324" fill="#a78bfa" font-size="11" font-family="Trebuchet MS,sans-serif">Chromatid</text>
+        <text x="274" y="442" fill="#f59e0b" font-size="11" font-family="Trebuchet MS,sans-serif">Telomere</text>
+        <!-- p and q labels -->
+        <text x="94" y="135" fill="#c4b5fd" font-size="13" font-family="Trebuchet MS,sans-serif" font-weight="bold">p</text>
+        <text x="94" y="330" fill="#c4b5fd" font-size="13" font-family="Trebuchet MS,sans-serif" font-weight="bold">q</text>
+      </svg>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+      <div class="card card-glow">
+        <h3>📖 Definition</h3>
+        <p>A <span class="highlight">chromosome</span> is a thread-like structure composed of <span class="highlight">DNA tightly coiled around proteins (histones)</span>, found in the nucleus of cells. It carries the cell's genetic information in the form of genes.</p>
+      </div>
+
+      <div class="card" style="border-color:var(--accent3);">
+        <h3 style="color:var(--accent3);">🔬 Key Parts</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+          <li>🟡 <strong>Telomeres</strong> — protective "caps" at both ends</li>
+          <li>🟢 <strong>Centromere</strong> — pinch point connecting two chromatids</li>
+          <li>🔵 <strong>Short arm (p)</strong> and <strong>Long arm (q)</strong></li>
+          <li>🟣 <strong>Bands</strong> — staining pattern unique to each chromosome</li>
+        </ul>
+      </div>
+
+      <div class="fact-box">
+        <p style="font-size:0.95rem;">⚡ A chromosome is only <em>visible</em> under a light microscope during <strong>cell division</strong> (mitosis/meiosis), when DNA is maximally condensed.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 7 — WHAT IS A KARYOTYPE?
+     ============================================================ -->
+<div class="slide" id="s7">
+  <div class="slide-badge">07 / 18</div>
+  <div class="slide-tag">Objective 4 · Karyotype</div>
+  <h2>What is a <span class="highlight">Karyotype</span>?</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="two-col" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+      <div class="card card-glow">
+        <h3>📖 Definition</h3>
+        <p>A <span class="highlight">karyotype</span> is the complete set of chromosomes in a cell, <strong>arranged by pairs</strong>, in order of decreasing size, as viewed during cell division (metaphase).</p>
+        <div style="margin-top:12px; padding:10px 14px; background:rgba(0,212,255,0.07); border-radius:8px; font-size:0.9rem; color:var(--muted);">
+          Literally means: <em>"karyon"</em> (nucleus) + <em>"typos"</em> (form) → The form of the nucleus
+        </div>
+      </div>
+
+      <div class="card" style="border-color:var(--accent4);">
+        <h3 style="color:var(--accent4);">🔬 How it's made</h3>
+        <ol style="list-style:decimal;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:1rem;">
+          <li>Blood sample taken from patient</li>
+          <li>White blood cells grown in lab</li>
+          <li>Cell division arrested at <strong>metaphase</strong></li>
+          <li>Chromosomes stained and photographed</li>
+          <li>Pairs arranged, numbered, and analysed</li>
+        </ol>
+      </div>
+
+      <div class="card" style="border-color:var(--accent3);">
+        <h3 style="color:var(--accent3);">🩺 Medical Uses</h3>
+        <p style="font-size:0.95rem;">Karyotype analysis detects chromosomal disorders such as <strong>Down syndrome</strong> (trisomy 21), Turner syndrome, and Klinefelter syndrome.</p>
+      </div>
+    </div>
+
+    <!-- Human karyotype simplified SVG -->
+    <div>
+      <div style="background:#f8f8f8;border-radius:12px;padding:16px;position:relative;z-index:2;">
+        <p style="color:#333;font-size:0.85rem;font-weight:700;margin-bottom:10px;font-family:Trebuchet MS,sans-serif;">Normal Human Karyotype (Male, 46, XY)</p>
+        <svg viewBox="0 0 480 310" width="100%" style="max-width:480px;">
+          <rect width="480" height="310" fill="#f0f4f8" rx="8"/>
+          <!-- simplified chromosomes as pairs - 23 pairs -->
+          <!-- Row 1: pairs 1-7 -->
+          <g id="karyotype-pairs" font-family="Trebuchet MS,sans-serif" font-size="8" fill="#333">
+            <!-- Pair 1 (largest) -->
+            <rect x="10"  y="20" width="14" height="62" rx="7" fill="#6d28d9"/>
+            <rect x="26"  y="20" width="14" height="62" rx="7" fill="#6d28d9"/>
+            <text x="23" y="92" text-anchor="middle" fill="#555">1</text>
+            <!-- Pair 2 -->
+            <rect x="48"  y="24" width="13" height="55" rx="6" fill="#7c3aed"/>
+            <rect x="63"  y="24" width="13" height="55" rx="6" fill="#7c3aed"/>
+            <text x="62" y="89" text-anchor="middle" fill="#555">2</text>
+            <!-- Pair 3 -->
+            <rect x="84"  y="27" width="12" height="50" rx="6" fill="#8b5cf6"/>
+            <rect x="98"  y="27" width="12" height="50" rx="6" fill="#8b5cf6"/>
+            <text x="97" y="87" text-anchor="middle" fill="#555">3</text>
+            <!-- Pair 4 -->
+            <rect x="118" y="28" width="12" height="47" rx="6" fill="#2563eb"/>
+            <rect x="132" y="28" width="12" height="47" rx="6" fill="#2563eb"/>
+            <text x="131" y="85" text-anchor="middle" fill="#555">4</text>
+            <!-- Pair 5 -->
+            <rect x="152" y="30" width="11" height="44" rx="5" fill="#2563eb"/>
+            <rect x="165" y="30" width="11" height="44" rx="5" fill="#2563eb"/>
+            <text x="163" y="84" text-anchor="middle" fill="#555">5</text>
+            <!-- Pair 6 -->
+            <rect x="184" y="32" width="11" height="40" rx="5" fill="#0284c7"/>
+            <rect x="197" y="32" width="11" height="40" rx="5" fill="#0284c7"/>
+            <text x="195" y="82" text-anchor="middle" fill="#555">6</text>
+            <!-- Pair 7 -->
+            <rect x="216" y="33" width="10" height="38" rx="5" fill="#0891b2"/>
+            <rect x="228" y="33" width="10" height="38" rx="5" fill="#0891b2"/>
+            <text x="225" y="81" text-anchor="middle" fill="#555">7</text>
+            <!-- Row separator -->
+            <line x1="10" y1="105" x2="470" y2="105" stroke="#ccc" stroke-width="0.5"/>
+            <!-- Pair 8 -->
+            <rect x="10"  y="115" width="10" height="35" rx="5" fill="#059669"/>
+            <rect x="22"  y="115" width="10" height="35" rx="5" fill="#059669"/>
+            <text x="18" y="160" text-anchor="middle" fill="#555">8</text>
+            <!-- Pair 9 -->
+            <rect x="40"  y="116" width="10" height="33" rx="5" fill="#059669"/>
+            <rect x="52"  y="116" width="10" height="33" rx="5" fill="#059669"/>
+            <text x="48" y="159" text-anchor="middle" fill="#555">9</text>
+            <!-- Pair 10 -->
+            <rect x="70"  y="118" width="10" height="31" rx="5" fill="#10b981"/>
+            <rect x="82"  y="118" width="10" height="31" rx="5" fill="#10b981"/>
+            <text x="78" y="159" text-anchor="middle" fill="#555">10</text>
+            <!-- Pair 11 -->
+            <rect x="100" y="119" width="10" height="29" rx="5" fill="#10b981"/>
+            <rect x="112" y="119" width="10" height="29" rx="5" fill="#10b981"/>
+            <text x="108" y="158" text-anchor="middle" fill="#555">11</text>
+            <!-- Pair 12 -->
+            <rect x="130" y="120" width="10" height="28" rx="5" fill="#65a30d"/>
+            <rect x="142" y="120" width="10" height="28" rx="5" fill="#65a30d"/>
+            <text x="138" y="158" text-anchor="middle" fill="#555">12</text>
+            <!-- Pair 13 -->
+            <rect x="160" y="122" width="9" height="25" rx="4" fill="#ca8a04"/>
+            <rect x="171" y="122" width="9" height="25" rx="4" fill="#ca8a04"/>
+            <text x="167" y="157" text-anchor="middle" fill="#555">13</text>
+            <!-- Pair 14 -->
+            <rect x="188" y="123" width="9" height="24" rx="4" fill="#d97706"/>
+            <rect x="199" y="123" width="9" height="24" rx="4" fill="#d97706"/>
+            <text x="195" y="157" text-anchor="middle" fill="#555">14</text>
+            <!-- Pair 15 -->
+            <rect x="216" y="124" width="9" height="23" rx="4" fill="#ea580c"/>
+            <rect x="227" y="124" width="9" height="23" rx="4" fill="#ea580c"/>
+            <text x="223" y="157" text-anchor="middle" fill="#555">15</text>
+            <!-- Row 3 separator -->
+            <line x1="10" y1="172" x2="470" y2="172" stroke="#ccc" stroke-width="0.5"/>
+            <!-- Pair 16 -->
+            <rect x="10"  y="180" width="9" height="21" rx="4" fill="#dc2626"/>
+            <rect x="21"  y="180" width="9" height="21" rx="4" fill="#dc2626"/>
+            <text x="17" y="212" text-anchor="middle" fill="#555">16</text>
+            <!-- Pair 17 -->
+            <rect x="38"  y="182" width="8" height="19" rx="4" fill="#e11d48"/>
+            <rect x="48"  y="182" width="8" height="19" rx="4" fill="#e11d48"/>
+            <text x="45" y="212" text-anchor="middle" fill="#555">17</text>
+            <!-- Pair 18 -->
+            <rect x="64"  y="183" width="8" height="18" rx="4" fill="#9f1239"/>
+            <rect x="74"  y="183" width="8" height="18" rx="4" fill="#9f1239"/>
+            <text x="71" y="212" text-anchor="middle" fill="#555">18</text>
+            <!-- Pair 19 -->
+            <rect x="90"  y="185" width="8" height="16" rx="4" fill="#7e22ce"/>
+            <rect x="100" y="185" width="8" height="16" rx="4" fill="#7e22ce"/>
+            <text x="97" y="212" text-anchor="middle" fill="#555">19</text>
+            <!-- Pair 20 -->
+            <rect x="116" y="185" width="8" height="16" rx="4" fill="#7e22ce"/>
+            <rect x="126" y="185" width="8" height="16" rx="4" fill="#7e22ce"/>
+            <text x="123" y="212" text-anchor="middle" fill="#555">20</text>
+            <!-- Pair 21 -->
+            <rect x="142" y="187" width="7" height="14" rx="3" fill="#be185d"/>
+            <rect x="151" y="187" width="7" height="14" rx="3" fill="#be185d"/>
+            <text x="149" y="212" text-anchor="middle" fill="#555">21</text>
+            <!-- Pair 22 -->
+            <rect x="166" y="187" width="7" height="14" rx="3" fill="#be185d"/>
+            <rect x="175" y="187" width="7" height="14" rx="3" fill="#be185d"/>
+            <text x="173" y="212" text-anchor="middle" fill="#555">22</text>
+            <!-- Sex chromosomes (XY) -->
+            <rect x="210" y="180" width="9" height="22" rx="4" fill="#0ea5e9" stroke="#38bdf8" stroke-width="1"/>
+            <rect x="225" y="185" width="7" height="14" rx="3" fill="#f97316" stroke="#fb923c" stroke-width="1"/>
+            <text x="213" y="213" text-anchor="middle" fill="#0ea5e9" font-weight="bold">X</text>
+            <text x="229" y="210" text-anchor="middle" fill="#f97316" font-weight="bold">Y</text>
+            <!-- Legend -->
+            <rect x="310" y="130" width="10" height="10" rx="2" fill="#0ea5e9"/>
+            <text x="325" y="140" fill="#0ea5e9" font-size="10" font-weight="bold">X chromosome</text>
+            <rect x="310" y="148" width="10" height="10" rx="2" fill="#f97316"/>
+            <text x="325" y="158" fill="#f97316" font-size="10" font-weight="bold">Y chromosome</text>
+            <rect x="310" y="166" width="10" height="10" rx="2" fill="#6d28d9"/>
+            <text x="325" y="176" fill="#555" font-size="10">Autosomes</text>
+          </g>
+        </svg>
+      </div>
+      <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-top:8px;position:relative;z-index:2;">Simplified human karyotype — 23 pairs, 46 chromosomes total</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 8 — AUTOSOMAL vs GONOSOMAL
+     ============================================================ -->
+<div class="slide" id="s8">
+  <div class="slide-badge">08 / 18</div>
+  <div class="slide-tag">Objective 5 · Two Types of Chromosomes</div>
+  <h2>Autosomal vs <span class="highlight-violet">Gonosomal</span></h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="two-col" style="align-items:start;">
+    <!-- Autosomal -->
+    <div class="card card-glow" style="border-color:var(--accent4); height:100%;">
+      <div style="font-size:2.2rem; margin-bottom:8px;">🧬</div>
+      <h3 style="color:var(--accent4); font-size:1.5rem;">Autosomes</h3>
+      <div class="accent-bar" style="background:var(--accent4);"></div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+        <li>📌 <strong>Pairs 1–22</strong> (22 pairs = 44 chromosomes)</li>
+        <li>🔄 Identical in males and females</li>
+        <li>🎯 Control <strong>body (somatic) traits</strong>: height, eye colour, blood type, etc.</li>
+        <li>👫 Both chromosomes in each pair have the same genes</li>
+      </ul>
+      <div style="margin-top:16px; padding:12px; background:rgba(16,185,129,0.1); border-radius:8px;">
+        <p style="font-size:0.9rem; color:var(--accent4);">Example: chromosome 1 carries genes for blood clotting, cholesterol metabolism, and much more.</p>
+      </div>
+    </div>
+
+    <!-- Gonosomal -->
+    <div class="card card-glow" style="border-color:var(--accent2); height:100%;">
+      <div style="font-size:2.2rem; margin-bottom:8px;">⚧️</div>
+      <h3 style="color:#a78bfa; font-size:1.5rem;">Gonosomes (Sex Chromosomes)</h3>
+      <div class="accent-bar" style="background:var(--accent2);"></div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+        <li>📌 <strong>Pair 23</strong> (1 pair = 2 chromosomes)</li>
+        <li>♀ Female: <span style="color:#0ea5e9; font-weight:700; font-size:1.1rem;">XX</span></li>
+        <li>♂ Male: <span style="color:#f97316; font-weight:700; font-size:1.1rem;">XY</span></li>
+        <li>🎯 Determine biological <strong>sex</strong> of the individual</li>
+        <li>🧬 X carries many genes; Y is smaller, carries fewer genes</li>
+      </ul>
+      <div style="margin-top:16px; padding:12px; background:rgba(124,58,237,0.1); border-radius:8px;">
+        <p style="font-size:0.9rem; color:#a78bfa;">The father always contributes either X or Y to the child — this determines the sex!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fact-box mt16">
+    <p style="font-size:1rem;">🤯 <strong>Surprise!</strong> The X chromosome carries about <strong>900 genes</strong>, while the Y chromosome carries only about <strong>55 genes</strong> — yet the Y is what makes someone biologically male!</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 9 — CHROMOSOMAL FORMULA
+     ============================================================ -->
+<div class="slide" id="s9">
+  <div class="slide-badge">09 / 18</div>
+  <div class="slide-tag">Objective 6 · Chromosomal Formula</div>
+  <h2>Writing the <span class="highlight-amber">Chromosomal Formula</span></h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="slide-content">
+    <div class="two-col" style="align-items:start; margin-bottom:20px;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card card-glow">
+          <h3>📐 The Formula Structure</h3>
+          <div class="formula-box" style="margin-top:12px;">
+            <div class="formula">2n = A + GS</div>
+            <p style="color:var(--muted); font-size:0.85rem; margin-top:8px;">Total chromosomes = Autosomes + Gonosomes</p>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:var(--accent3);">
+          <h3 style="color:var(--accent3);">🧩 Legend</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:1rem;">
+            <li><span class="highlight">2n</span> = total number of chromosomes (diploid)</li>
+            <li><span class="highlight-amber">A</span> = number of autosomes</li>
+            <li><span class="highlight-violet">GS</span> = gonosomes (sex chromosomes)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Human female formula -->
+        <div class="card" style="border-color:#0ea5e9;">
+          <h3 style="color:#0ea5e9;">♀ Human Female</h3>
+          <div class="formula-box" style="margin-top:10px; border-color:#0ea5e9;">
+            <div class="formula" style="color:#0ea5e9;">2n = 44A + XX</div>
+          </div>
+          <p style="font-size:0.9rem; margin-top:10px; color:var(--muted);">44 autosomes + 2 X chromosomes = 46 total</p>
+        </div>
+
+        <!-- Human male formula -->
+        <div class="card" style="border-color:#f97316;">
+          <h3 style="color:#f97316;">♂ Human Male</h3>
+          <div class="formula-box" style="margin-top:10px; border-color:#f97316;">
+            <div class="formula" style="color:#f97316;">2n = 44A + XY</div>
+          </div>
+          <p style="font-size:0.9rem; margin-top:10px; color:var(--muted);">44 autosomes + X + Y chromosomes = 46 total</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive: try to write it yourself -->
+    <div class="card card-glow" style="padding:20px;">
+      <h3>🧪 Quick Practice — Write the formula for a cat (2n = 38, female)</h3>
+      <div style="display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap; position:relative;z-index:2;">
+        <input type="text" id="formula-input" placeholder="Type formula here…" 
+          style="background:var(--bg); border:2px solid var(--border); color:var(--text); border-radius:10px; padding:10px 16px; font-family:var(--font-mono); font-size:1rem; width:260px; outline:none;">
+        <button onclick="checkFormula()" style="background:var(--accent1);color:#000;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:1rem;">Check ✓</button>
+        <span id="formula-result" style="font-size:1rem; font-weight:700;"></span>
+      </div>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:8px;">Hint: Total = 38, female has XX. Format: 2n = ??A + XX</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 10 — KARYOTYPE ARRANGEMENT CRITERIA
+     ============================================================ -->
+<div class="slide" id="s10">
+  <div class="slide-badge">10 / 18</div>
+  <div class="slide-tag">Objective 7 · Karyotype Criteria</div>
+  <h2>How are Chromosomes <span class="highlight">Arranged</span> in a Karyotype?</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="slide-content">
+    <p style="color:var(--muted); margin-bottom:20px;">Scientists follow strict international rules to arrange chromosomes. These are the <strong>Denver criteria</strong> (established 1960):</p>
+
+    <div style="display:flex;flex-direction:column;gap:0;position:relative;z-index:2;">
+      <div class="criteria-step">
+        <div class="criteria-icon">1</div>
+        <div>
+          <strong style="color:var(--white); font-size:1.1rem;">Decreasing Size</strong>
+          <p style="font-size:0.95rem; color:var(--muted);">Chromosomes are arranged from the <span class="highlight">largest (pair 1)</span> to the <span class="highlight">smallest (pair 22)</span>. Pair 23 (sex chromosomes) is placed separately at the end.</p>
+        </div>
+      </div>
+      <div class="criteria-step">
+        <div class="criteria-icon">2</div>
+        <div>
+          <strong style="color:var(--white); font-size:1.1rem;">Centromere Position</strong>
+          <p style="font-size:0.95rem; color:var(--muted);">Within size groups, chromosomes are ordered by position of the <span class="highlight">centromere</span>:
+          <br>• <strong>Metacentric</strong> — centromere in middle (p ≈ q)
+          <br>• <strong>Submetacentric</strong> — centromere slightly off-centre (p &lt; q)
+          <br>• <strong>Acrocentric</strong> — centromere near one end (p very short)
+          </p>
+        </div>
+      </div>
+      <div class="criteria-step">
+        <div class="criteria-icon">3</div>
+        <div>
+          <strong style="color:var(--white); font-size:1.1rem;">Banding Pattern</strong>
+          <p style="font-size:0.95rem; color:var(--muted);">Each chromosome has a unique <span class="highlight">G-band pattern</span> (dark and light bands after Giemsa staining), used to identify individual chromosomes precisely.</p>
+        </div>
+      </div>
+      <div class="criteria-step">
+        <div class="criteria-icon">4</div>
+        <div>
+          <strong style="color:var(--white); font-size:1.1rem;">Homologous Pairs</strong>
+          <p style="font-size:0.95rem; color:var(--muted);">Chromosomes are grouped in <span class="highlight">homologous pairs</span> — two chromosomes carrying the same genes (one from mother, one from father) placed side-by-side.</p>
+        </div>
+      </div>
+      <div class="criteria-step" style="border-bottom:none;">
+        <div class="criteria-icon" style="background:var(--accent3);">5</div>
+        <div>
+          <strong style="color:var(--white); font-size:1.1rem;">Sex Chromosomes Last</strong>
+          <p style="font-size:0.95rem; color:var(--muted);">The <span class="highlight-amber">gonosomes (X and Y)</span> are always placed as the last pair, regardless of their size, clearly separated from the autosomes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Centromere types visual -->
+    <div class="card" style="padding:16px 20px; margin-top:8px;">
+      <h3 style="margin-bottom:12px;">Centromere Positions — Visual Summary</h3>
+      <div style="display:flex;gap:32px;align-items:flex-end;justify-content:center;flex-wrap:wrap;position:relative;z-index:2;">
+        <!-- Metacentric -->
+        <div style="text-align:center;">
+          <svg viewBox="0 0 60 120" width="60">
+            <rect x="20" y="5"  width="20" height="47" rx="10" fill="#7c3aed"/>
+            <ellipse cx="30" cy="55" rx="12" ry="7" fill="#4c1d95" stroke="#a78bfa" stroke-width="1.5"/>
+            <rect x="20" y="62" width="20" height="47" rx="10" fill="#7c3aed"/>
+          </svg>
+          <p style="font-size:0.8rem; color:var(--accent4); font-weight:700;">Metacentric</p>
+          <p style="font-size:0.75rem; color:var(--muted);">p = q</p>
+        </div>
+        <!-- Submetacentric -->
+        <div style="text-align:center;">
+          <svg viewBox="0 0 60 130" width="60">
+            <rect x="20" y="5"  width="20" height="35" rx="10" fill="#2563eb"/>
+            <ellipse cx="30" cy="43" rx="12" ry="7" fill="#1e40af" stroke="#60a5fa" stroke-width="1.5"/>
+            <rect x="20" y="50" width="20" height="68" rx="10" fill="#2563eb"/>
+          </svg>
+          <p style="font-size:0.8rem; color:var(--accent1); font-weight:700;">Submetacentric</p>
+          <p style="font-size:0.75rem; color:var(--muted);">p &lt; q</p>
+        </div>
+        <!-- Acrocentric -->
+        <div style="text-align:center;">
+          <svg viewBox="0 0 60 130" width="60">
+            <rect x="20" y="5"  width="20" height="12" rx="6" fill="#f59e0b"/>
+            <ellipse cx="30" cy="20" rx="12" ry="7" fill="#b45309" stroke="#fbbf24" stroke-width="1.5"/>
+            <rect x="20" y="27" width="20" height="86" rx="10" fill="#f59e0b"/>
+          </svg>
+          <p style="font-size:0.8rem; color:var(--accent3); font-weight:700;">Acrocentric</p>
+          <p style="font-size:0.75rem; color:var(--muted);">p very short</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 11 — DRAG & DROP ACTIVITY (Arrange the karyotype)
+     ============================================================ -->
+<div class="slide" id="s11">
+  <div class="slide-badge">11 / 18</div>
+  <div class="challenge-badge">🎮 Interactive Challenge</div>
+  <h2>Sort the Chromosomes!</h2>
+  <div class="divider" style="margin:12px 0 16px;"></div>
+  <p style="position:relative;z-index:2;margin-bottom:16px;">Drag each chromosome chip into the correct category: <span class="highlight">Autosome</span> or <span class="highlight-violet">Gonosome</span>.</p>
+
+  <div class="two-col" style="align-items:start;">
+    <!-- Bank of chips -->
+    <div style="position:relative;z-index:2;">
+      <p style="font-size:0.9rem; color:var(--muted); margin-bottom:8px;">📦 Chromosome Bank — drag from here:</p>
+      <div id="chip-bank" style="display:flex;flex-wrap:wrap;gap:10px;min-height:60px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;">
+        <div class="drag-chip" draggable="true" data-type="auto"  ondragstart="drag(event)" id="c1" >Chr 1</div>
+        <div class="drag-chip" draggable="true" data-type="gono"  ondragstart="drag(event)" id="cX" style="background:#0ea5e9;">Chr X</div>
+        <div class="drag-chip" draggable="true" data-type="auto"  ondragstart="drag(event)" id="c7" >Chr 7</div>
+        <div class="drag-chip" draggable="true" data-type="gono"  ondragstart="drag(event)" id="cY" style="background:#f97316;">Chr Y</div>
+        <div class="drag-chip" draggable="true" data-type="auto"  ondragstart="drag(event)" id="c22">Chr 22</div>
+        <div class="drag-chip" draggable="true" data-type="auto"  ondragstart="drag(event)" id="c13">Chr 13</div>
+      </div>
+
+      <div class="fact-box" style="margin-top:16px;">
+        <p style="font-size:0.9rem;">💡 Remember: Autosomes = pairs 1–22; Gonosomes = pair 23 (X and Y)</p>
+      </div>
+    </div>
+
+    <!-- Drop zones -->
+    <div style="display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+      <div>
+        <p style="font-size:0.9rem; color:var(--accent4); font-weight:700; margin-bottom:6px;">🧬 Autosomes (drop here):</p>
+        <div class="drag-zone" id="drop-auto" ondragover="allowDrop(event)" ondrop="dropChip(event,'auto')" style="border-color:var(--accent4);min-height:80px;"></div>
+      </div>
+      <div>
+        <p style="font-size:0.9rem; color:#a78bfa; font-weight:700; margin-bottom:6px;">⚧️ Gonosomes (drop here):</p>
+        <div class="drag-zone" id="drop-gono" ondragover="allowDrop(event)" ondrop="dropChip(event,'gono')" style="border-color:var(--accent2);min-height:80px;"></div>
+      </div>
+      <button onclick="checkDrag()" style="background:var(--accent3);color:#000;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;font-size:1rem;position:relative;z-index:2;">Check My Answers ✓</button>
+      <div id="drag-result" style="font-size:1rem;font-weight:600;position:relative;z-index:2;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 12 — COMPARING KARYOTYPES (Normal vs Down)
+     ============================================================ -->
+<div class="slide" id="s12">
+  <div class="slide-badge">12 / 18</div>
+  <div class="slide-tag">Objective 8 · Karyotype Comparison</div>
+  <h2>Comparing <span class="highlight">Two Karyotypes</span></h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="slide-content">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Normal Karyotype</th>
+          <th>Down Syndrome Karyotype</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Total chromosomes</td>
+          <td>46</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>Chromosome formula</td>
+          <td>2n = 44A + XX (♀) / XY (♂)</td>
+          <td>2n = 44A + extra chr.21 + XX/XY</td>
+        </tr>
+        <tr>
+          <td>Pair 21</td>
+          <td>2 chromosomes (normal)</td>
+          <td><span style="color:var(--danger);font-weight:700;">3 chromosomes (trisomy 21)</span></td>
+        </tr>
+        <tr>
+          <td>Cause</td>
+          <td>Normal non-disjunction</td>
+          <td>Non-disjunction during meiosis</td>
+        </tr>
+        <tr>
+          <td>Sex chromosomes</td>
+          <td>Normal (XX or XY)</td>
+          <td>Normal (XX or XY)</td>
+        </tr>
+        <tr>
+          <td>Clinical features</td>
+          <td>None</td>
+          <td>Intellectual disability, distinct physical features</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Visual comparison of pair 21 -->
+    <div class="two-col" style="margin-top:20px;">
+      <div class="card" style="text-align:center; border-color:var(--accent4);">
+        <h3 style="color:var(--accent4); margin-bottom:12px;">Normal — Pair 21</h3>
+        <svg viewBox="0 0 120 80" width="120" style="display:block;margin:auto;">
+          <rect x="30" y="5"  width="18" height="55" rx="9" fill="#10b981"/>
+          <rect x="72" y="5"  width="18" height="55" rx="9" fill="#10b981"/>
+          <text x="38" y="72" text-anchor="middle" fill="#10b981" font-size="10" font-family="Trebuchet MS,sans-serif">21</text>
+          <text x="81" y="72" text-anchor="middle" fill="#10b981" font-size="10" font-family="Trebuchet MS,sans-serif">21</text>
+        </svg>
+        <p style="font-size:0.85rem; color:var(--accent4); margin-top:8px;">2 chromosomes ✓</p>
+      </div>
+
+      <div class="card" style="text-align:center; border-color:var(--danger);">
+        <h3 style="color:var(--danger); margin-bottom:12px;">Down Syndrome — Pair 21</h3>
+        <svg viewBox="0 0 160 80" width="160" style="display:block;margin:auto;">
+          <rect x="15"  y="5" width="18" height="55" rx="9" fill="#ef4444"/>
+          <rect x="57"  y="5" width="18" height="55" rx="9" fill="#ef4444"/>
+          <rect x="99"  y="5" width="18" height="55" rx="9" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>
+          <text x="24"  y="72" text-anchor="middle" fill="#ef4444" font-size="10" font-family="Trebuchet MS,sans-serif">21</text>
+          <text x="66"  y="72" text-anchor="middle" fill="#ef4444" font-size="10" font-family="Trebuchet MS,sans-serif">21</text>
+          <text x="108" y="72" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="Trebuchet MS,sans-serif">21</text>
+          <text x="108" y="10" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="Trebuchet MS,sans-serif">EXTRA!</text>
+        </svg>
+        <p style="font-size:0.85rem; color:var(--danger); margin-top:8px;">3 chromosomes — Trisomy 21 !</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 13 — COMPARISON: MALE vs FEMALE KARYOTYPE
+     ============================================================ -->
+<div class="slide" id="s13">
+  <div class="slide-badge">13 / 18</div>
+  <div class="slide-tag">Objective 8 · Compare Karyotypes</div>
+  <h2>Male ♂ vs Female ♀ Karyotype</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="two-col" style="align-items:start;">
+    <!-- Female -->
+    <div class="card card-glow" style="border-color:#0ea5e9;">
+      <h3 style="color:#0ea5e9; margin-bottom:12px;">♀ Female Karyotype</h3>
+      <div class="formula-box" style="border-color:#0ea5e9; margin-bottom:16px;">
+        <div class="formula" style="color:#0ea5e9; font-size:1.5rem;">2n = 44A + XX</div>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:0.95rem;">
+        <li>✅ 46 chromosomes total</li>
+        <li>✅ 22 pairs of autosomes</li>
+        <li>✅ Two identical X chromosomes</li>
+        <li>✅ Both X chromosomes similar in size</li>
+        <li>✅ No Y chromosome</li>
+      </ul>
+      <!-- XX visual -->
+      <div style="display:flex;gap:16px;justify-content:center;margin-top:16px;">
+        <svg viewBox="0 0 40 100" width="40">
+          <rect x="10" y="5"  width="20" height="40" rx="10" fill="#0ea5e9"/>
+          <ellipse cx="20" cy="48" rx="10" ry="6" fill="#075985" stroke="#38bdf8" stroke-width="1"/>
+          <rect x="10" y="54" width="20" height="40" rx="10" fill="#0ea5e9"/>
+          <text x="20" y="105" text-anchor="middle" fill="#0ea5e9" font-size="11" font-family="Trebuchet MS,sans-serif" font-weight="bold">X</text>
+        </svg>
+        <svg viewBox="0 0 40 100" width="40">
+          <rect x="10" y="5"  width="20" height="40" rx="10" fill="#0ea5e9"/>
+          <ellipse cx="20" cy="48" rx="10" ry="6" fill="#075985" stroke="#38bdf8" stroke-width="1"/>
+          <rect x="10" y="54" width="20" height="40" rx="10" fill="#0ea5e9"/>
+          <text x="20" y="105" text-anchor="middle" fill="#0ea5e9" font-size="11" font-family="Trebuchet MS,sans-serif" font-weight="bold">X</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Male -->
+    <div class="card card-glow" style="border-color:#f97316;">
+      <h3 style="color:#f97316; margin-bottom:12px;">♂ Male Karyotype</h3>
+      <div class="formula-box" style="border-color:#f97316; margin-bottom:16px;">
+        <div class="formula" style="color:#f97316; font-size:1.5rem;">2n = 44A + XY</div>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:0.95rem;">
+        <li>✅ 46 chromosomes total</li>
+        <li>✅ 22 pairs of autosomes</li>
+        <li>✅ One X chromosome (large)</li>
+        <li>✅ One Y chromosome (small)</li>
+        <li>⚡ X ≠ Y in size and gene content</li>
+      </ul>
+      <!-- XY visual -->
+      <div style="display:flex;gap:16px;justify-content:center;margin-top:16px;">
+        <svg viewBox="0 0 40 100" width="40">
+          <rect x="10" y="5"  width="20" height="40" rx="10" fill="#0ea5e9"/>
+          <ellipse cx="20" cy="48" rx="10" ry="6" fill="#075985" stroke="#38bdf8" stroke-width="1"/>
+          <rect x="10" y="54" width="20" height="40" rx="10" fill="#0ea5e9"/>
+          <text x="20" y="105" text-anchor="middle" fill="#0ea5e9" font-size="11" font-family="Trebuchet MS,sans-serif" font-weight="bold">X</text>
+        </svg>
+        <svg viewBox="0 0 40 100" width="40">
+          <rect x="12" y="20" width="16" height="10" rx="5"  fill="#f97316"/>
+          <ellipse cx="20" cy="33" rx="10" ry="6" fill="#c2410c" stroke="#fb923c" stroke-width="1"/>
+          <rect x="12" y="39" width="16" height="45" rx="8"  fill="#f97316"/>
+          <text x="20" y="105" text-anchor="middle" fill="#f97316" font-size="11" font-family="Trebuchet MS,sans-serif" font-weight="bold">Y</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="fact-box mt16">
+    <p>🔬 <strong>Key difference:</strong> Only the <strong>sex chromosomes</strong> differ between male and female karyotypes. All 44 autosomes are identical in both sexes!</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 14 — CHALLENGE QUIZ 1
+     ============================================================ -->
+<div class="slide" id="s14">
+  <div class="slide-badge">14 / 18</div>
+  <div class="challenge-badge">🧠 Brain Challenge</div>
+  <h2>Test Your Knowledge!</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="two-col" style="align-items:start;">
+    <!-- Q1 -->
+    <div style="display:flex;flex-direction:column;gap:20px;position:relative;z-index:2;">
+      <div class="card">
+        <p style="font-weight:700; font-size:1.1rem; margin-bottom:14px; color:var(--white);">Q1: A karyotype shows 2n = 44A + XY. This individual is:</p>
+        <div class="quiz-options" id="q14a-opts">
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14a')">A) Female, normal</button>
+          <button class="quiz-option" onclick="checkQ(this,'correct','14a')">B) Male, normal</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14a')">C) Female with Down syndrome</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14a')">D) Male with Turner syndrome</button>
+        </div>
+        <div class="quiz-feedback" id="qf14a"></div>
+      </div>
+
+      <div class="card">
+        <p style="font-weight:700; font-size:1.1rem; margin-bottom:14px; color:var(--white);">Q2: Which chromosome pair determines biological sex in humans?</p>
+        <div class="quiz-options" id="q14b-opts">
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14b')">A) Pair 1</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14b')">B) Pair 21</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14b')">C) Pair 22</button>
+          <button class="quiz-option" onclick="checkQ(this,'correct','14b')">D) Pair 23</button>
+        </div>
+        <div class="quiz-feedback" id="qf14b"></div>
+      </div>
+    </div>
+
+    <!-- Q3, Q4 -->
+    <div style="display:flex;flex-direction:column;gap:20px;position:relative;z-index:2;">
+      <div class="card">
+        <p style="font-weight:700; font-size:1.1rem; margin-bottom:14px; color:var(--white);">Q3: Autosomes are chromosome pairs:</p>
+        <div class="quiz-options" id="q14c-opts">
+          <button class="quiz-option" onclick="checkQ(this,'correct','14c')">A) 1 to 22</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14c')">B) 1 to 23</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14c')">C) Only pair 23</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14c')">D) Pairs 1 to 21</button>
+        </div>
+        <div class="quiz-feedback" id="qf14c"></div>
+      </div>
+
+      <div class="card">
+        <p style="font-weight:700; font-size:1.1rem; margin-bottom:14px; color:var(--white);">Q4: A chromosome is best described as:</p>
+        <div class="quiz-options" id="q14d-opts">
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14d')">A) A protein structure in the cytoplasm</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14d')">B) A membrane-bound organelle</button>
+          <button class="quiz-option" onclick="checkQ(this,'correct','14d')">C) Coiled DNA + histone proteins, carrying genes</button>
+          <button class="quiz-option" onclick="checkQ(this,'wrong','14d')">D) A segment of mRNA</button>
+        </div>
+        <div class="quiz-feedback" id="qf14d"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 15 — CLICK-TO-REVEAL (definitions review)
+     ============================================================ -->
+<div class="slide" id="s15">
+  <div class="slide-badge">15 / 18</div>
+  <div class="slide-tag">Review Activity</div>
+  <h2>Click & Reveal — <span class="highlight">Do You Know?</span></h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+  <p style="position:relative;z-index:2;margin-bottom:20px;color:var(--muted);">Click each card to reveal the answer. Test yourself first!</p>
+
+  <div class="slide-content">
+    <div class="three-col" style="gap:20px;">
+      <div class="hover-reveal-card" onclick="this.classList.toggle('revealed')">
+        <p style="font-weight:700; color:var(--white);">What is a karyotype?</p>
+        <div class="answer">The complete set of chromosomes in a cell, arranged in homologous pairs by decreasing size.</div>
+      </div>
+      <div class="hover-reveal-card" onclick="this.classList.toggle('revealed')">
+        <p style="font-weight:700; color:var(--white);">How many chromosome pairs do humans have?</p>
+        <div class="answer">23 pairs — 22 pairs of autosomes + 1 pair of gonosomes (sex chromosomes).</div>
+      </div>
+      <div class="hover-reveal-card" onclick="this.classList.toggle('revealed')">
+        <p style="font-weight:700; color:var(--white);">What are gonosomes?</p>
+        <div class="answer">The sex chromosomes (pair 23). XX in females, XY in males. They determine biological sex.</div>
+      </div>
+      <div class="hover-reveal-card" onclick="this.classList.toggle('revealed')">
+        <p style="font-weight:700; color:var(--white);">Write the chromosomal formula for a normal human female.</p>
+        <div class="answer">2n = 44A + XX (46 chromosomes total)</div>
+      </div>
+      <div class="hover-reveal-card" onclick="this.classList.toggle('revealed')">
+        <p style="font-weight:700; color:var(--white);">What is the centromere?</p>
+        <div class="answer">The constriction point on a chromosome that connects the two chromatids. Used to classify chromosome type.</div>
+      </div>
+      <div class="hover-reveal-card" onclick="this.classList.toggle('revealed')">
+        <p style="font-weight:700; color:var(--white);">What is trisomy 21?</p>
+        <div class="answer">An extra copy of chromosome 21 (3 instead of 2), causing Down syndrome. Formula: 2n = 47.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 16 — WOW FACTS / NUMBERS
+     ============================================================ -->
+<div class="slide" id="s16">
+  <div class="slide-badge">16 / 18</div>
+  <div class="slide-tag">Mind-Blowing Numbers</div>
+  <h2>The Numbers That Will <span class="highlight">Surprise You</span> 🤯</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="three-col" style="align-items:start; gap:20px;">
+    <div class="card card-glow" style="text-align:center;">
+      <div class="big-stat" style="font-size:3.5rem;">46</div>
+      <h3 style="text-align:center; margin:8px 0;">Chromosomes</h3>
+      <p style="font-size:0.9rem;">in every human cell (except gametes which have 23)</p>
+    </div>
+    <div class="card card-glow" style="text-align:center; border-color:var(--accent3);">
+      <div class="big-stat" style="font-size:3.5rem; background:linear-gradient(135deg,#f59e0b,#f97316);">2m</div>
+      <h3 style="text-align:center; margin:8px 0; color:var(--accent3);">DNA Length</h3>
+      <p style="font-size:0.9rem;">If uncoiled, the DNA in one cell would stretch 2 metres!</p>
+    </div>
+    <div class="card card-glow" style="text-align:center; border-color:var(--accent4);">
+      <div class="big-stat" style="font-size:3.5rem; background:linear-gradient(135deg,#10b981,#065f46);">~20k</div>
+      <h3 style="text-align:center; margin:8px 0; color:var(--accent4);">Genes</h3>
+      <p style="font-size:0.9rem;">Human genome contains about 20,000 protein-coding genes</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:#a78bfa;">
+      <div class="big-stat" style="font-size:3.5rem; background:linear-gradient(135deg,#7c3aed,#a78bfa);">37T</div>
+      <h3 style="text-align:center; margin:8px 0; color:#a78bfa;">Body Cells</h3>
+      <p style="font-size:0.9rem;">Your body has about 37 trillion cells, each with a full copy of your genome!</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:var(--accent1);">
+      <div class="big-stat" style="font-size:3.5rem;">99.9%</div>
+      <h3 style="text-align:center; margin:8px 0;">Shared DNA</h3>
+      <p style="font-size:0.9rem;">All humans share 99.9% of their DNA. Only 0.1% makes you unique!</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:var(--danger);">
+      <div class="big-stat" style="font-size:3.5rem; background:linear-gradient(135deg,#ef4444,#f97316);">48</div>
+      <h3 style="text-align:center; margin:8px 0; color:var(--danger);">Chimp Chromosomes</h3>
+      <p style="font-size:0.9rem;">Chimpanzees have 48 chromosomes (24 pairs) — we have 46 (23 pairs)!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 17 — THINK TIMER: OPEN QUESTION
+     ============================================================ -->
+<div class="slide" id="s17">
+  <div class="slide-badge">17 / 18</div>
+  <div class="challenge-badge">⏱️ Think & Discuss</div>
+  <h2 style="font-size:2rem;">A patient's karyotype shows <span class="highlight">47 chromosomes</span> with three copies of chromosome 21. <br><br>
+  <span style="font-size:1.5rem; color:var(--muted);">What is the chromosomal formula? What is the condition?</span></h2>
+  <div class="divider" style="margin:20px 0;"></div>
+
+  <div class="two-col" style="align-items:center;">
+    <div style="text-align:center; position:relative;z-index:2;">
+      <p style="color:var(--muted); margin-bottom:16px;">Think for 60 seconds, then discuss with a partner.</p>
+      <div id="think-timer">60</div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;">
+        <button onclick="startTimer()" style="background:var(--accent1);color:#000;border:none;padding:10px 24px;border-radius:10px;font-weight:700;cursor:pointer;">▶ Start</button>
+        <button onclick="resetTimer()" style="background:var(--card);color:var(--text);border:1px solid var(--border);padding:10px 24px;border-radius:10px;font-weight:700;cursor:pointer;">↺ Reset</button>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+      <div class="card card-glow" id="answer17" style="display:none;">
+        <h3 style="color:var(--accent4);">✅ Answer</h3>
+        <div class="formula-box" style="margin:12px 0;">
+          <div class="formula">2n = 47 = 44A + trisomy 21 + XX/XY</div>
+        </div>
+        <p><strong>Condition:</strong> <span class="highlight">Down Syndrome</span> (Trisomy 21)</p>
+        <p style="margin-top:8px; font-size:0.95rem; color:var(--muted);">Caused by non-disjunction of chromosome 21 during meiosis, resulting in an extra chromosome 21.</p>
+      </div>
+      <button onclick="document.getElementById('answer17').style.display='block'" style="background:var(--accent2);color:white;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;font-size:1rem;">Reveal Answer 👁️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 18 — SUMMARY
+     ============================================================ -->
+<div class="slide" id="s18">
+  <div class="slide-badge">18 / 18</div>
+  <div class="slide-tag">Session Summary</div>
+  <h2>What We Learned Today 🎓</h2>
+  <div class="divider" style="margin:14px 0 20px;"></div>
+
+  <div class="slide-content">
+    <div class="two-col" style="align-items:start; gap:20px;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card card-glow">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="criteria-icon" style="background:var(--accent1);color:#000;">✓</div>
+            <h3 style="margin:0;">Genetic Information Location</h3>
+          </div>
+          <p style="font-size:0.95rem;">Found in the <span class="highlight">nucleus</span>, carried by chromosomes made of DNA + proteins.</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="criteria-icon" style="background:var(--accent3);color:#000;">✓</div>
+            <h3 style="margin:0;color:var(--accent3);">Chromosome = DNA + Histones</h3>
+          </div>
+          <p style="font-size:0.95rem;">Thread-like structures visible during cell division. Each has centromere, arms (p, q), bands, telomeres.</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="criteria-icon" style="background:var(--accent4);color:white;">✓</div>
+            <h3 style="margin:0;color:var(--accent4);">Karyotype Arrangement</h3>
+          </div>
+          <p style="font-size:0.95rem;">Ordered by decreasing size, centromere position, banding, homologous pairs, sex chromosomes last.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="criteria-icon" style="background:#a78bfa;color:white;">✓</div>
+            <h3 style="margin:0;color:#a78bfa;">Autosomes vs Gonosomes</h3>
+          </div>
+          <p style="font-size:0.95rem;">Autosomes (pairs 1–22): body traits. Gonosomes (pair 23): biological sex — XX (♀) or XY (♂).</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="criteria-icon" style="background:var(--accent2);color:white;">✓</div>
+            <h3 style="margin:0;">Chromosomal Formula</h3>
+          </div>
+          <div class="formula" style="font-size:1.2rem; color:var(--accent3); margin:8px 0;">2n = 44A + XX/XY</div>
+          <p style="font-size:0.95rem;">Normal human: 46 chromosomes total.</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div class="criteria-icon" style="background:var(--danger);color:white;">✓</div>
+            <h3 style="margin:0;color:var(--danger);">Karyotype Comparison</h3>
+          </div>
+          <p style="font-size:0.95rem;">Abnormal karyotypes (e.g. trisomy 21 = Down syndrome) can be detected by counting and comparing chromosome pairs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:20px; position:relative;z-index:2;">
+      <div style="display:inline-block; background:linear-gradient(135deg,var(--accent2),var(--accent1)); border-radius:16px; padding:16px 32px;">
+        <p style="font-size:1.2rem; font-weight:700; color:white;">🧬 Every cell in your body carries the complete story of who you are. <br>That story is written in chromosomes!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<div id="nav">
+  <button onclick="prevSlide()" title="Previous">←</button>
+  <span id="slide-counter">1 / 18</span>
+  <button onclick="nextSlide()" title="Next">→</button>
+</div>
+
+<!-- KEYBOARD hint -->
+<div style="position:fixed;top:20px;left:24px;font-size:11px;color:var(--muted);font-family:var(--font-mono);z-index:9999;">
+  ← → Arrow keys or buttons to navigate
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ===== SLIDE NAVIGATION =====
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function showSlide(n) {
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  setTimeout(() => slides[current].classList.remove('exit'), 600);
+  current = (n + total) % total;
+  slides[current].classList.add('active');
+  document.getElementById('slide-counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${((current + 1) / total) * 100}%`;
+  // Trigger reveal animations
+  setTimeout(() => {
+    slides[current].querySelectorAll('.reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('shown'), i * 150);
+    });
+  }, 200);
+}
+
+function nextSlide() { showSlide(current + 1); }
+function prevSlide() { showSlide(current - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+});
+
+// Init
+document.getElementById('progress-bar').style.width = `${(1/total)*100}%`;
+
+// ===== QUIZ CHECKER =====
+function checkQ(btn, result, qid) {
+  const opts = document.querySelectorAll(`#q${qid}-opts .quiz-option`);
+  opts.forEach(o => o.disabled = true);
+  btn.classList.add(result);
+  const fb = document.getElementById(`qf${qid}`);
+  if (fb) {
+    fb.style.display = 'block';
+    if (result === 'correct') {
+      fb.style.background = 'rgba(16,185,129,0.15)';
+      fb.style.border = '1px solid var(--accent4)';
+      fb.style.color = 'var(--accent4)';
+      fb.textContent = '✅ Correct! Well done!';
+    } else {
+      fb.style.background = 'rgba(239,68,68,0.12)';
+      fb.style.border = '1px solid var(--danger)';
+      fb.style.color = 'var(--danger)';
+      fb.textContent = '❌ Not quite — look for the correct answer highlighted.';
+      // Show correct answer
+      opts.forEach(o => { if (o.onclick.toString().includes("'correct'")) o.classList.add('correct'); });
+    }
+  }
+}
+
+// ===== FORMULA CHECKER =====
+function checkFormula() {
+  const val = document.getElementById('formula-input').value.trim().replace(/\s+/g,'').toLowerCase();
+  const res = document.getElementById('formula-result');
+  // Accept variations
+  const accepted = ['2n=36a+xx','2n=36+xx','36a+xx'];
+  if (accepted.some(a => val.includes(a))) {
+    res.style.color = 'var(--accent4)';
+    res.textContent = '✅ Correct! 2n = 36A + XX';
+  } else {
+    res.style.color = 'var(--danger)';
+    res.textContent = '❌ Try again. Hint: 38 total − 2 sex chromosomes = 36 autosomes';
+  }
+}
+
+document.getElementById('formula-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') checkFormula();
+});
+
+// ===== DRAG AND DROP =====
+let draggedId = null;
+
+function drag(ev) {
+  draggedId = ev.target.id;
+  ev.dataTransfer.setData('text', ev.target.id);
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+  ev.currentTarget.classList.add('over');
+}
+
+function dropChip(ev, zone) {
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('over');
+  const chip = document.getElementById(draggedId);
+  if (!chip) return;
+  chip._droppedZone = zone;
+  ev.currentTarget.appendChild(chip);
+}
+
+document.querySelectorAll('.drag-zone').forEach(z => {
+  z.addEventListener('dragleave', () => z.classList.remove('over'));
+});
+
+function checkDrag() {
+  const autoZone = document.getElementById('drop-auto');
+  const gonoZone = document.getElementById('drop-gono');
+  let correct = 0, total = 0;
+  const allChips = [...autoZone.querySelectorAll('.drag-chip'), ...gonoZone.querySelectorAll('.drag-chip')];
+  allChips.forEach(chip => {
+    total++;
+    const expected = chip.getAttribute('data-type');
+    const placed = chip._droppedZone;
+    if (placed === expected) {
+      chip.style.outline = '3px solid var(--accent4)';
+      correct++;
+    } else {
+      chip.style.outline = '3px solid var(--danger)';
+    }
+  });
+  const res = document.getElementById('drag-result');
+  if (correct === total && total > 0) {
+    res.style.color = 'var(--accent4)';
+    res.textContent = `✅ Perfect! ${correct}/${total} correct!`;
+  } else {
+    res.style.color = 'var(--accent3)';
+    res.textContent = `${correct}/${total} correct. Check the highlighted chips.`;
+  }
+}
+
+// ===== COUNTDOWN TIMER =====
+let timerInterval = null;
+let timeLeft = 60;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  const el = document.getElementById('think-timer');
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    el.textContent = timeLeft;
+    if (timeLeft <= 10) el.style.color = 'var(--danger)';
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      el.textContent = '⏰';
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 60;
+  const el = document.getElementById('think-timer');
+  el.textContent = '60';
+  el.style.color = 'var(--accent1)';
+}
+</script>
+</body>
+</html>
