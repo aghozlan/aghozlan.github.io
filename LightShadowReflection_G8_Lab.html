@@ -149,12 +149,16 @@ canvas{border:2px solid #3a3a65;border-radius:8px;display:block;max-width:100%}
   </div>
   <div class="card">
     <div class="ctitle">📋 Student Information</div>
-    <div class="gap"><label>Full Name</label><input type="text" id="inp-name" placeholder="First Last" autocomplete="off"></div>
-    <div class="gap"><label>Class</label>
-      <select id="inp-class">
+    <div class="gap"><label>Class / الصف</label>
+      <select id="inp-class" onchange="populateNames()">
         <option value="">— select your class —</option>
         <option value="8A">8A</option><option value="8B">8B</option>
         <option value="8C">8C</option><option value="8D">8D</option>
+      </select>
+    </div>
+    <div class="gap"><label>Full Name / الاسم الكامل</label>
+      <select id="inp-name" dir="rtl" disabled style="opacity:.6">
+        <option value="">— اختر الصف أولاً —</option>
       </select>
     </div>
   </div>
@@ -633,7 +637,206 @@ canvas{border:2px solid #3a3a65;border-radius:8px;display:block;max-width:100%}
 // ═══════════════════════════════════════════════════════════════════════════
 //  CONFIG — paste your deployed Web App URL here
 // ═══════════════════════════════════════════════════════════════════════════
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxICAoax42ta8RP-ipsMf-BXWqjIgdWcxmb8Ho5L10imdGswGVvUyoQSNVM7g3KuSIJhA/exec';
+var SCRIPT_URL = 'PASTE_YOUR_WEB_APP_URL_HERE';
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  STUDENT ROSTER
+// ═══════════════════════════════════════════════════════════════════════════
+var STUDENTS = {
+  '8A': [
+    'أسماء هيثم علي ندوه',
+    'ابراهيم طارق صلاح معروف',
+    'ابراهيم محمد رفعت ابو حميد',
+    'احسان محمد وليد الشحبري',
+    'ادم وليد توفيق الخطيب',
+    'الين رشيد محمد احمد',
+    'تالا محمد عدنان العمري',
+    'تيا احمد محمد الركن',
+    'جنى ماهر غالب الدالي',
+    'جنى محي الدين فاعور',
+    'جود محمد مروان الشامي',
+    'حسين احمد محمود اسماعيل',
+    'حنين علي ابراهيم ميعاد',
+    'راما احمد توفيق الزقه',
+    'رهف سعيد شحادة فلاح',
+    'زينب محمد رياض حماده',
+    'سعاد مازن محمد الشامي',
+    'سمر محمد صابر ظاهر',
+    'سيلين منصور عبد شحاده',
+    'عادل محمد عادل أبو عرب',
+    'عبد الرحمن وليد محمد',
+    'علي مصطفى حسن سالم',
+    'علي ياسر نمر فاعور',
+    'عمران مازن صالح مرعي',
+    'فاطمه محمد خالد قاسم',
+    'قمر حسين عمر حمزة',
+    'كريم محمود عبد الحفيظ',
+    'ليا محمد عمر عباس',
+    'لين رشدي موسى الصالح',
+    'لين ماهر احمد العيسى',
+    'لين وسام احمد حسين',
+    'ماريا طلعت احمد مراد',
+    'محمد احمد محمد الصعيدي',
+    'محمد سامر محمد الصالح',
+    'محمد علي محمد ابو شقير',
+    'محمد علي محمد عبد الجليل',
+    'محمد قاسم عادل عفيفي',
+    'محمود شادي محمود شحادة',
+    'مرام احمد كايد خضره',
+    'نرجس هاني احمد عقلة',
+    'نور محمد علي علي',
+    'هلا شفيق علي فلوس',
+    'يارا محمود السيد السعدني'
+  ],
+  '8B': [
+    'أسينات احمد فريد العلي',
+    'اسامة بسام عبد الرحمن حمو',
+    'امال ساري علي زيداني',
+    'امنة محمد كمال قدورة',
+    'امير هشام مصطفى كروم',
+    'ايمان بسام خالد محمد',
+    'بيسان بسام عبد الرحمن حمو',
+    'تاليا انس ابراهيم المنديل',
+    'حبيبة عوني علي الزبيدات',
+    'حلا اشرف احمد الحاج علي',
+    'حنين فتحي علي حميد',
+    'راما خالد محمد عطعوط',
+    'رضوان جهاد رضوان ديب',
+    'رواد مروان ابراهيم العبدالله',
+    'زهراء عماد وليد شيخه',
+    'سارة فادي عدنان فارس',
+    'سامي يسار سامي معروف',
+    'سعيد ماهر سعيد سعيد',
+    'سهى عامر احمد عطية',
+    'صلاح الدين مصطفى بللي',
+    'علي مصطفى علي سريس',
+    'عمر حسام حسين الموسى',
+    'فاطمه جمال احمد المحمود',
+    'فضل احمد محمد حسين',
+    'كريم رائد محمد دلاشي',
+    'لارا محمد خالد عبد الغني',
+    'ليلاس وسيم شحادة شحاده',
+    'ماريه يحيى محمد ابو هموس',
+    'محمد احمد محمد شريده',
+    'محمد حسام عاطف أبو شباب',
+    'محمد حكمت غاندي عبدالله',
+    'محمد علي محمود احمد',
+    'محمد هشام احمد مره',
+    'محمود نايف مصطفى قاسميه',
+    'مريم محمود محي الدين مرّه',
+    'ملاك يونس محمد رحال',
+    'ميريانا احمد مصطفى عيتاني',
+    'هدى محمود محمد الركن',
+    'وسيله سعدو درويش ششنيه',
+    'يحيى زكريا سميح حمو'
+  ],
+  '8C': [
+    'آلاء رباح محمود شراب',
+    'آلاء محمود صالح أدلبي',
+    'ابراهيم محمد إبراهيم عزيز',
+    'امير ماجد احمد اسماعيل',
+    'بتول فايز محمد حمود',
+    'بهاء الدين بلال بهاء الدين رشيد',
+    'بيان كمال احمد ابو سويد',
+    'تبارك محمد محمد السيد يوسف',
+    'تغريد خالد عزات يحيى',
+    'جمال محمد جمال حوحو',
+    'جنى حسن محمد الظريف',
+    'جهاد فادي حسن سالم',
+    'حلا محمد حسن ابو شنار',
+    'حلا مصطفى محمد خير بللي',
+    'خالد وسيم خالد حسن',
+    'راما زياد علي الحاج علي',
+    'راما عبد المجيد محمد سالم',
+    'راما محمد يوسف العلي',
+    'رزان زياد عبد الناصر اصمهان',
+    'روان عماد فوزي ابراهيم',
+    'ريم اديب احمد حسين',
+    'ريم ماهر عطا الخطيب',
+    'ريم نور الدين فايز عبد الرازق',
+    'سلام عصام حمودة ناجي',
+    'سلام محمد بديع فيصل العلي',
+    'سيلا هشام امين الطه',
+    'شهد صالح احمد مطر',
+    'صالح محمد سامي الشورى',
+    'عبد الله حسن سعيد سليمان',
+    'علي محمد ابراهيم صالح',
+    'علي ناصر علي حماده',
+    'عمر عصام الصادق',
+    'فرح وائل باسل غزلان',
+    'لانا باسم امين صيداوي',
+    'لين احمد عيسى قاسم',
+    'لين وائل زياد الهبطه',
+    'ماسة عمار علي علي',
+    'محمد حسين احمد ندوه',
+    'محمود محمد سالم نجمي',
+    'ملكه سعد الدين برجاوي',
+    'نور الهدى جهاد عزات عليان'
+  ],
+  '8D': [
+    'إسراء ايمن محمد قدسيه',
+    'احمد زاهر جهاد قدورة',
+    'احمد علاء احمد اسماعيل',
+    'احمد محمد رياض الخطيب',
+    'ادم خالد محمود قدورة',
+    'اسراء احمد داري نوفل',
+    'الما محمد جمال ششنيه',
+    'اياد احمد حسين محمود',
+    'اياد احمد سمير قدوره',
+    'بيسان علي احمد قاسم',
+    'تقى احمد موسى عبدالله',
+    'حسن علي حسن حبقزي',
+    'حمزة عاطف محمد الحاج محمد',
+    'دانا نبيل نور الدين الهندي',
+    'راما فادي علي سليم',
+    'رهف خليل عبدالله شاهين',
+    'روزا محمود علي عودي',
+    'ريتال نضال موسى مناد',
+    'زهراء محمد حسن بركات',
+    'زينب محمد عبد غنام',
+    'سالي فادي عثمان عباس',
+    'سماح احمد عطا أبو عنزه',
+    'علا محمد زيد عثمان',
+    'علي كمال علي سعد',
+    'عمر محمود عباس الحايك',
+    'غزل محمد خليل ابو عرب',
+    'غفران محمد يوسف داوود',
+    'كريم عوني خالد عبد الغني',
+    'لين علي نايف حميد',
+    'ماريا ابراهيم درويش خزعل',
+    'محمد براء محمود حسن',
+    'محمد بهاء ابراهيم العيسى',
+    'محمد خالد محمود مطر',
+    'محمد ربيع محمد هنداوي',
+    'محمود علي محمود يوسف',
+    'مصطفى عماد الدين تراوي',
+    'ميار سعيد محمد حسن',
+    'نور عباس محمد عمر',
+    'هبة يحيى عيسى ابو مايهه',
+    'هيلين فيصل فضل الله الراشد',
+    'يوسف عامر محمد مصريه',
+    'يوسف هيثم فايز بركة'
+  ]
+};
+
+function populateNames() {
+  var cls = document.getElementById('inp-class').value;
+  var sel = document.getElementById('inp-name');
+  sel.innerHTML = '<option value="">— اختر اسمك —</option>';
+  if (!cls || !STUDENTS[cls]) {
+    sel.disabled = true;
+    sel.style.opacity = '.6';
+    return;
+  }
+  STUDENTS[cls].forEach(function(n) {
+    var opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n;
+    sel.appendChild(opt);
+  });
+  sel.disabled = false;
+  sel.style.opacity = '1';
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  STATE
@@ -832,18 +1035,71 @@ function initDrawCanvas() {
 
 function addCanvasListeners(cvs, ctx, colorFn, sizeFn, onChange) {
   var isDown = false;
-  var rect;
-  function pos(e) {
-    rect = cvs.getBoundingClientRect();
+  var pts = [];
+  var snapshot = null;
+
+  function getPos(e) {
+    var rect = cvs.getBoundingClientRect();
     var ex = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
     var ey = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-    var scaleX = cvs.width / rect.width;
-    var scaleY = cvs.height / rect.height;
-    return { x: ex * scaleX, y: ey * scaleY };
+    return { x: ex * (cvs.width / rect.width), y: ey * (cvs.height / rect.height) };
   }
-  function start(e) { e.preventDefault(); isDown=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
-  function move(e)  { e.preventDefault(); if(!isDown) return; var p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle=colorFn(); ctx.lineWidth=sizeFn(); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke(); if(onChange) onChange(); }
-  function end()    { isDown=false; }
+
+  function start(e) {
+    e.preventDefault();
+    isDown = true; pts = [];
+    var p = getPos(e); pts.push(p);
+    snapshot = ctx.getImageData(0, 0, cvs.width, cvs.height);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+  }
+
+  function move(e) {
+    e.preventDefault();
+    if (!isDown) return;
+    var p = getPos(e); pts.push(p);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = colorFn(); ctx.lineWidth = sizeFn();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+    if (onChange) onChange();
+  }
+
+  function end(e) {
+    if (!isDown) return;
+    isDown = false;
+    if (pts.length < 2) return;
+
+    var first = pts[0], last = pts[pts.length - 1];
+    var dx = last.x - first.x, dy = last.y - first.y;
+    var direct = Math.sqrt(dx*dx + dy*dy);
+
+    // measure total path length
+    var pathLen = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var px = pts[i].x - pts[i-1].x, py = pts[i].y - pts[i-1].y;
+      pathLen += Math.sqrt(px*px + py*py);
+    }
+
+    // if stroke is ≥88% straight and long enough → snap to clean line + arrowhead
+    if (direct > 25 && pathLen > 0 && (direct / pathLen) >= 0.88) {
+      ctx.putImageData(snapshot, 0, 0);           // restore pre-stroke canvas
+      var color = colorFn(), size = sizeFn();
+      ctx.strokeStyle = color; ctx.lineWidth = size;
+      ctx.lineCap = 'round'; ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(first.x, first.y); ctx.lineTo(last.x, last.y); ctx.stroke();
+
+      // arrowhead at endpoint
+      var angle = Math.atan2(dy, dx);
+      var alen  = Math.max(12, size * 3.5);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+      ctx.lineTo(last.x - alen*Math.cos(angle - 0.42), last.y - alen*Math.sin(angle - 0.42));
+      ctx.lineTo(last.x - alen*Math.cos(angle + 0.42), last.y - alen*Math.sin(angle + 0.42));
+      ctx.closePath(); ctx.fill();
+    }
+    pts = []; snapshot = null;
+  }
+
   cvs.addEventListener('mousedown', start); cvs.addEventListener('mousemove', move); cvs.addEventListener('mouseup', end);
   cvs.addEventListener('touchstart', start, {passive:false}); cvs.addEventListener('touchmove', move, {passive:false}); cvs.addEventListener('touchend', end);
 }
