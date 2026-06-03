@@ -383,11 +383,18 @@ function refreshLeaderboard(){
 }
 
 // ── OSCILLOSCOPE ENGINE ──
+// PHYSICS NOTE:
+// A real oscilloscope with triggering ON always shows a STABLE, STATIONARY wave.
+// The trigger circuit starts every sweep from the same point on the waveform → wave appears frozen.
+// "Free-run" (no trigger) causes the wave to scroll — this is the FAULT state, not normal.
+// Default here: TRIGGERED = stable wave. Free-run is a demo-only mode.
 let scopeState={
   freq:50, vmax:311, sh:5, sv:100,
-  sweep:true, trigger:0,
+  freeRun:false,   // false = triggered (stable) — the real default
+  trigger:0,
   ch1:'phase', ch2:'none',
-  animFrame:null, phase:0
+  animFrame:null,
+  freeRunPhase:0   // only used in free-run demo mode
 };
 
 function initScope(){
@@ -396,14 +403,40 @@ function initScope(){
   const ctx=canvas.getContext('2d');
   window._scopeCtx=ctx;
   window._scopeCanvas=canvas;
-  scopeLoop();
+  drawScope(); // draw once — stable, no animation needed in triggered mode
 }
 
-function scopeLoop(){
-  if(!scopeState.sweep){drawScope();return;}
-  scopeState.phase+=scopeState.freq*0.016*2*Math.PI;
+function scopeFreeRunLoop(){
+  // Only runs when student deliberately enables free-run demo
+  if(!scopeState.freeRun){drawScope();return;}
+  scopeState.freeRunPhase+=scopeState.freq*0.018*2*Math.PI;
   drawScope();
-  scopeState.animFrame=requestAnimationFrame(scopeLoop);
+  scopeState.animFrame=requestAnimationFrame(scopeFreeRunLoop);
+}
+
+function toggleFreeRun(){
+  scopeState.freeRun=!scopeState.freeRun;
+  cancelAnimationFrame(scopeState.animFrame);
+  const btn=document.getElementById('freerun-btn');
+  if(scopeState.freeRun){
+    // entering free-run demo
+    btn.textContent='🔴 FREE-RUN (untriggered — wave scrolls!)';
+    btn.style.background='rgba(255,71,87,0.3)';
+    btn.style.borderColor='#ff4757';
+    btn.style.color='#ff4757';
+    // show explanation
+    document.getElementById('trigger-explain').style.display='block';
+    scopeFreeRunLoop();
+  } else {
+    // back to triggered (normal stable mode)
+    scopeState.freeRunPhase=0;
+    btn.textContent='🟢 TRIGGERED (stable — normal mode)';
+    btn.style.background='rgba(0,255,136,0.1)';
+    btn.style.borderColor='#00ff88';
+    btn.style.color='#00ff88';
+    document.getElementById('trigger-explain').style.display='none';
+    drawScope();
+  }
 }
 
 function drawScope(){
@@ -418,33 +451,52 @@ function drawScope(){
   ctx.fillStyle='#001a00';
   ctx.fillRect(0,0,W,H);
 
-  // scanlines
+  // scanlines overlay
   ctx.fillStyle='rgba(0,0,0,0.08)';
   for(let y=0;y<H;y+=3){ctx.fillRect(0,y,W,1);}
 
-  // grid
-  ctx.strokeStyle='#003300';
-  ctx.lineWidth=1;
+  // grid lines
+  ctx.strokeStyle='#003300';ctx.lineWidth=1;
   for(let i=0;i<=cols;i++){ctx.beginPath();ctx.moveTo(i*dw,0);ctx.lineTo(i*dw,H);ctx.stroke();}
   for(let j=0;j<=rows;j++){ctx.beginPath();ctx.moveTo(0,j*dh);ctx.lineTo(W,j*dh);ctx.stroke();}
-  // center lines
+
+  // centre crosshairs (brighter)
   ctx.strokeStyle='#005500';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
   ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();
 
-  // trigger line
-  const trigPx=H/2-(scopeState.trigger/scopeState.vmax)*(H/2*0.9);
-  ctx.strokeStyle='rgba(255,213,79,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  // tick marks on centre lines (every div, 5px long)
+  ctx.strokeStyle='#004400';ctx.lineWidth=1;
+  for(let i=0;i<=cols;i++){ctx.beginPath();ctx.moveTo(i*dw,H/2-4);ctx.lineTo(i*dw,H/2+4);ctx.stroke();}
+  for(let j=0;j<=rows;j++){ctx.beginPath();ctx.moveTo(W/2-4,j*dh);ctx.lineTo(W/2+4,j*dh);ctx.stroke();}
+
+  // trigger level line (dashed gold)
+  const trigPx=H/2-(scopeState.trigger/Math.max(scopeState.vmax,1))*(H/2*0.88);
+  ctx.strokeStyle='rgba(255,213,79,0.55)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
   ctx.beginPath();ctx.moveTo(0,trigPx);ctx.lineTo(W,trigPx);ctx.stroke();
   ctx.setLineDash([]);
+  // trigger arrow marker left edge
+  ctx.fillStyle='rgba(255,213,79,0.7)';
+  ctx.beginPath();ctx.moveTo(0,trigPx);ctx.lineTo(10,trigPx-5);ctx.lineTo(10,trigPx+5);ctx.closePath();ctx.fill();
+
+  // Triggered mode label on screen
+  if(!scopeState.freeRun){
+    ctx.fillStyle='rgba(0,255,136,0.4)';
+    ctx.font='9px JetBrains Mono,monospace';
+    ctx.fillText('TRIG',W-36,12);
+  } else {
+    ctx.fillStyle='rgba(255,71,87,0.6)';
+    ctx.font='9px JetBrains Mono,monospace';
+    ctx.fillText('FREE',W-36,12);
+  }
 
   // CH1 wave
   if(scopeState.ch1!=='none'){
-    drawWave(ctx,W,H,scopeState.ch1==='phase'?1:0,'#00ff88',2);
+    drawWave(ctx,W,H,scopeState.ch1==='phase'?1:0,'#00ff88',2.5);
   }
-  // CH2 wave (slightly offset color)
+  // CH2 wave
   if(scopeState.ch2!=='none'){
-    drawWave(ctx,W,H,scopeState.ch2==='phase'?1:0,'#4fc3f7',1.5);
+    drawWave(ctx,W,H,scopeState.ch2==='phase'?1:0,'#4fc3f7',2);
   }
 
   updateReadouts();
@@ -452,18 +504,27 @@ function drawScope(){
 
 function drawWave(ctx,W,H,active,color,lw){
   const amplPx=(scopeState.vmax/scopeState.sv)*(H/8)*0.85;
-  const shSec=scopeState.sh/1000;
-  const T=1/scopeState.freq;
-  const pxPerSec=W/(shSec*10);
+  const shSec=scopeState.sh/1000;       // time shown per division in seconds
+  const totalTimeSec=shSec*10;          // total time across full screen (10 divisions)
+  const pxPerSec=W/totalTimeSec;
+
+  // TRIGGERED MODE: phase=0 always → wave always starts from same point → STATIONARY
+  // FREE-RUN MODE: phase increments each frame → wave scrolls (educational demo only)
+  const phase=scopeState.freeRun?scopeState.freeRunPhase:0;
+
   ctx.strokeStyle=color;ctx.lineWidth=lw;
+  ctx.shadowColor=color;ctx.shadowBlur=3;
   ctx.beginPath();
   for(let px=0;px<W;px++){
     const t=px/pxPerSec;
-    const y=active===0?H/2:H/2-amplPx*Math.sin(2*Math.PI*scopeState.freq*t+scopeState.phase);
+    const y=active===0
+      ? H/2
+      : H/2-amplPx*Math.sin(2*Math.PI*scopeState.freq*t+phase);
     if(px===0) ctx.moveTo(px,y);
     else ctx.lineTo(px,y);
   }
   ctx.stroke();
+  ctx.shadowBlur=0;
 }
 
 function updateReadouts(){
@@ -509,14 +570,7 @@ function setVmax(v){
   });
   drawScope();
 }
-function toggleSweep(){
-  scopeState.sweep=!scopeState.sweep;
-  const btn=document.getElementById('sweep-btn');
-  btn.textContent=scopeState.sweep?'SWEEP: ON':'SWEEP: OFF';
-  btn.classList.toggle('on',scopeState.sweep);
-  if(scopeState.sweep){cancelAnimationFrame(scopeState.animFrame);scopeLoop();}
-  else{cancelAnimationFrame(scopeState.animFrame);drawScope();}
-}
+// toggleSweep removed — replaced by toggleFreeRun (see oscilloscope engine above)
 function connectTerminal(ch,mode){
   scopeState[ch]=mode;
   ['phase','gnd','none'].forEach(m=>{
@@ -667,8 +721,7 @@ function connectTerminal(ch,mode){
                 id="trig-lbl">0 V</span>
             </div>
             <div class="ctrl-row">
-              <button id="sweep-btn" class="sweep-btn on" onclick="toggleSweep()">SWEEP: ON</button>
-              <span style="font-size:11px;color:var(--muted)">CH1=PHASE  CH2=NONE</span>
+              <button id="freerun-btn" class="sweep-btn on" style="background:rgba(0,255,136,0.1);border-color:#00ff88;color:#00ff88;font-size:11px" onclick="toggleFreeRun()">🟢 TRIGGERED (stable — normal mode)</button>
             </div>
           </div>
           <!-- TERMINALS -->
