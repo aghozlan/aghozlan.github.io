@@ -8,397 +8,82 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f7f6f2;
-    --surface: #ffffff;
-    --surface2: #f0ede6;
-    --border: rgba(0,0,0,0.08);
-    --border2: rgba(0,0,0,0.14);
-    --text: #1a1916;
-    --text2: #6b6760;
-    --text3: #a09d98;
-    --accent: #0f6e56;
-    --accent-light: #e1f5ee;
-    --accent-mid: #1d9e75;
-    --danger: #a32d2d;
-    --danger-light: #fcebeb;
-    --info: #185fa5;
-    --info-light: #e6f1fb;
-    --radius: 10px;
-    --radius-lg: 14px;
+    --bg:#f7f6f2;--surface:#fff;--surface2:#f0ede6;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);
+    --text:#1a1916;--text2:#6b6760;--text3:#a09d98;
+    --accent:#0f6e56;--accent-light:#e1f5ee;--accent-mid:#1d9e75;
+    --danger:#a32d2d;--danger-light:#fcebeb;--radius:10px;--radius-lg:14px;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  header {
-    background: var(--surface);
-    border-bottom: 0.5px solid var(--border2);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text);
-  }
-
-  .logo-icon {
-    width: 30px; height: 30px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .logo-icon svg { width: 16px; height: 16px; fill: white; }
-
-  .header-sub {
-    font-size: 12px;
-    color: var(--text3);
-    font-weight: 400;
-  }
-
-  main {
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .card-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .card-title svg { width: 14px; height: 14px; fill: none; stroke: var(--text3); stroke-width: 1.8; }
-
-  label.field-label {
-    font-size: 13px;
-    color: var(--text2);
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 400;
-  }
-
-  input[type="text"], input[type="date"], select {
-    width: 100%;
-    height: 38px;
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 0 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    background: var(--surface);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  input[type="text"]:focus, input[type="date"]:focus {
-    border-color: var(--accent-mid);
-    box-shadow: 0 0 0 3px rgba(29,158,117,0.08);
-  }
-
-  .col-headers {
-    display: grid;
-    grid-template-columns: 1fr 170px 36px;
-    gap: 8px;
-    margin-bottom: 5px;
-  }
-
-  .col-headers span {
-    font-size: 11px;
-    color: var(--text3);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding-left: 2px;
-  }
-
-  .link-row {
-    display: grid;
-    grid-template-columns: 1fr 170px 36px;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 8px;
-    animation: fadeIn 0.2s ease;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-
-  .remove-btn {
-    width: 36px; height: 38px;
-    background: none;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text3);
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-
-  .remove-btn:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
-  .remove-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
-
-  .add-link-btn {
-    background: none;
-    border: 0.5px dashed var(--border2);
-    border-radius: var(--radius);
-    color: var(--text2);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 8px 14px;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    margin-top: 4px;
-    transition: all 0.15s;
-  }
-
-  .add-link-btn:hover { background: var(--surface2); border-color: var(--accent-mid); color: var(--accent); }
-  .add-link-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
-
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
-
-  .tag-wrap {
-    display: flex; flex-wrap: wrap; gap: 5px;
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 5px 8px;
-    background: var(--surface);
-    min-height: 38px;
-    align-items: center;
-    cursor: text;
-    transition: border-color 0.15s;
-  }
-
-  .tag-wrap:focus-within { border-color: var(--accent-mid); box-shadow: 0 0 0 3px rgba(29,158,117,0.08); }
-
-  .tag {
-    background: var(--accent-light);
-    color: var(--accent);
-    border-radius: 6px;
-    padding: 2px 8px 2px 9px;
-    font-size: 13px;
-    font-weight: 500;
-    display: flex; align-items: center; gap: 4px;
-  }
-
-  .tag button {
-    background: none; border: none; cursor: pointer;
-    color: var(--accent-mid); font-size: 15px; padding: 0; line-height: 1;
-    opacity: 0.7;
-  }
-  .tag button:hover { opacity: 1; }
-
-  .tag-input-field {
-    border: none; outline: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px; background: transparent;
-    color: var(--text); min-width: 100px; flex: 1;
-  }
-
-  .hint { font-size: 12px; color: var(--text3); margin-top: 5px; }
-
-  .run-btn {
-    width: 100%;
-    height: 46px;
-    background: var(--accent);
-    border: none;
-    border-radius: var(--radius);
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all 0.15s;
-    letter-spacing: 0.01em;
-  }
-
-  .run-btn:hover:not(:disabled) { background: #0f6250; transform: translateY(-1px); }
-  .run-btn:active:not(:disabled) { transform: translateY(0); }
-  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .run-btn svg { width: 17px; height: 17px; fill: none; stroke: white; stroke-width: 2; }
-
-  .status {
-    font-size: 13px;
-    color: var(--text2);
-    min-height: 22px;
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 7px;
-  }
-
-  .status.error { color: var(--danger); }
-
-  .spinner {
-    width: 14px; height: 14px;
-    border: 2px solid var(--border2);
-    border-top-color: var(--accent-mid);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    flex-shrink: 0;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
-
-  .results { margin-top: 1.5rem; }
-
-  .class-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: 1.25rem;
-    animation: fadeIn 0.25s ease;
-  }
-
-  .class-card-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 1.25rem;
-    border-bottom: 0.5px solid var(--border);
-    background: var(--surface2);
-  }
-
-  .class-name {
-    font-size: 16px; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .subject-badge {
-    font-size: 11px; font-weight: 500;
-    background: var(--accent-light);
-    color: var(--accent);
-    border-radius: 20px;
-    padding: 2px 10px;
-    letter-spacing: 0.03em;
-  }
-
-  .export-csv-btn {
-    background: none;
-    border: 0.5px solid var(--border2);
-    border-radius: var(--radius);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    color: var(--text2);
-    padding: 5px 12px;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 5px;
-    transition: all 0.15s;
-  }
-
-  .export-csv-btn:hover { background: var(--surface); border-color: var(--accent-mid); color: var(--accent); }
-  .export-csv-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
-
-  .metrics-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-    border-bottom: 0.5px solid var(--border);
-  }
-
-  .metric {
-    padding: 0.85rem 1.25rem;
-    border-right: 0.5px solid var(--border);
-  }
-
-  .metric:last-child { border-right: none; }
-  .metric-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-  .metric-val { font-size: 22px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
-
-  table.att-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-  }
-
-  table.att-table th {
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 9px 14px;
-    border-bottom: 0.5px solid var(--border);
-    background: var(--surface);
-    white-space: nowrap;
-  }
-
-  table.att-table td {
-    padding: 9px 14px;
-    border-bottom: 0.5px solid var(--border);
-    color: var(--text);
-  }
-
-  table.att-table tr:last-child td { border-bottom: none; }
-  table.att-table tr:hover td { background: var(--surface2); }
-
-  .num { font-family: 'DM Mono', monospace; font-size: 13px; text-align: center; }
-  .zero { color: var(--text3); }
-  .bold-num { font-weight: 500; color: var(--accent); }
-
-  .bar-cell { min-width: 130px; }
-  .bar-wrap { display: flex; align-items: center; gap: 7px; }
-  .bar-track { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 60px; }
-  .bar-fill { height: 100%; border-radius: 3px; background: var(--accent-mid); transition: width 0.4s ease; }
-  .bar-fill.low { background: #d85a30; }
-  .bar-fill.mid { background: #ba7517; }
-  .pct-label { font-size: 12px; color: var(--text2); min-width: 30px; text-align: right; font-family: 'DM Mono', monospace; }
-
-  .idx { color: var(--text3); font-size: 12px; font-family: 'DM Mono', monospace; }
-
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text3);
-    font-size: 14px;
-  }
-
-  .empty-state svg { width: 40px; height: 40px; stroke: var(--border2); fill: none; stroke-width: 1.5; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; }
-
-  @media (max-width: 600px) {
-    .two-col { grid-template-columns: 1fr; }
-    .metrics-row { grid-template-columns: 1fr; }
-    .metric { border-right: none; border-bottom: 0.5px solid var(--border); }
-    .metric:last-child { border-bottom: none; }
-    .col-headers, .link-row { grid-template-columns: 1fr 130px 36px; }
-    main { padding: 1rem 1rem 3rem; }
-    header { padding: 0 1rem; }
-  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+  header{background:var(--surface);border-bottom:.5px solid var(--border2);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+  .logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .header-sub{font-size:12px;color:var(--text3)}
+  main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
+  .card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem}
+  .card-title{font-size:12px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem}
+  .field-label{font-size:13px;color:var(--text2);display:block;margin-bottom:5px}
+  input[type=text],input[type=date]{width:100%;height:38px;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 12px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s}
+  input[type=text]:focus,input[type=date]:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(29,158,117,.08)}
+  .col-headers{display:grid;grid-template-columns:1fr 160px 36px;gap:8px;margin-bottom:5px}
+  .col-headers span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding-left:2px}
+  .link-row{display:grid;grid-template-columns:1fr 160px 36px;gap:8px;align-items:center;margin-bottom:8px;animation:fadeIn .2s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+  .remove-btn{width:36px;height:38px;background:none;border:.5px solid var(--border);border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s;flex-shrink:0}
+  .remove-btn:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+  .remove-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+  .add-link-btn{background:none;border:.5px dashed var(--border2);border-radius:var(--radius);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:4px;transition:all .15s}
+  .add-link-btn:hover{background:var(--surface2);border-color:var(--accent-mid);color:var(--accent)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+  .tag-wrap{display:flex;flex-wrap:wrap;gap:5px;border:.5px solid var(--border2);border-radius:var(--radius);padding:5px 8px;background:var(--surface);min-height:38px;align-items:center;cursor:text;transition:border-color .15s}
+  .tag-wrap:focus-within{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(29,158,117,.08)}
+  .tag{background:var(--accent-light);color:var(--accent);border-radius:6px;padding:2px 8px 2px 9px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px}
+  .tag button{background:none;border:none;cursor:pointer;color:var(--accent-mid);font-size:15px;padding:0;line-height:1;opacity:.7}
+  .tag button:hover{opacity:1}
+  .tag-input-field{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;background:transparent;color:var(--text);min-width:120px;flex:1}
+  .hint{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
+  .divider{border:none;border-top:.5px solid var(--border);margin:1.25rem 0}
+  .run-btn{width:100%;height:46px;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+  .run-btn:hover:not(:disabled){background:#0a5240;transform:translateY(-1px)}
+  .run-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .status{font-size:13px;color:var(--text2);min-height:22px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .status.error{color:var(--danger)}
+  .spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent-mid);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .results{margin-top:1.5rem}
+  .class-card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;animation:fadeIn .25s ease}
+  .class-card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:.5px solid var(--border);background:var(--surface2)}
+  .class-name{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .subject-badge{font-size:11px;font-weight:500;background:var(--accent-light);color:var(--accent);border-radius:20px;padding:2px 10px}
+  .export-csv-btn{background:none;border:.5px solid var(--border2);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+  .export-csv-btn:hover{background:var(--surface);border-color:var(--accent-mid);color:var(--accent)}
+  .metrics-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:.5px solid var(--border)}
+  .metric{padding:.85rem 1.25rem;border-right:.5px solid var(--border)}
+  .metric:last-child{border-right:none}
+  .metric-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+  .metric-val{font-size:22px;font-weight:600;font-family:'DM Mono',monospace}
+  table.att{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.att th{text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:9px 14px;border-bottom:.5px solid var(--border);white-space:nowrap}
+  table.att td{padding:9px 14px;border-bottom:.5px solid var(--border)}
+  table.att tr:last-child td{border-bottom:none}
+  table.att tr:hover td{background:var(--surface2)}
+  .num{font-family:'DM Mono',monospace;font-size:13px;text-align:center}
+  .zero{color:var(--text3)}
+  .present-num{font-weight:600;color:var(--accent)}
+  .bar-wrap{display:flex;align-items:center;gap:7px}
+  .bar-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;min-width:60px}
+  .bar-fill{height:100%;border-radius:3px;background:var(--accent-mid)}
+  .bar-fill.low{background:#d85a30}
+  .bar-fill.mid{background:#ba7517}
+  .pct-lbl{font-size:12px;color:var(--text2);min-width:32px;text-align:right;font-family:'DM Mono',monospace}
+  .idx{color:var(--text3);font-size:12px;font-family:'DM Mono',monospace}
+  .empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+  .tab-list-box{background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px;margin-top:8px;font-size:13px;color:var(--text2);display:none}
+  .tab-pill{display:inline-block;background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:2px 9px;margin:2px;font-size:12px;cursor:pointer;transition:all .12s}
+  .tab-pill:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+  .scan-btn{background:none;border:.5px solid var(--border2);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);padding:4px 10px;cursor:pointer;transition:all .15s;vertical-align:middle;margin:0 3px}
+  .scan-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
+  @media(max-width:600px){.two-col{grid-template-columns:1fr}.metrics-row{grid-template-columns:1fr}.col-headers,.link-row{grid-template-columns:1fr 130px 36px}main{padding:1rem 1rem 3rem}header{padding:0 1rem}}
 </style>
 </head>
 <body>
@@ -406,338 +91,281 @@
 <header>
   <div class="logo">
     <div class="logo-icon">
-      <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h8M2 12h10" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+      <svg viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" width="16" height="16"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
     </div>
     Attendance Dashboard
   </div>
-  <span class="header-sub">Google Sheets → Class totals</span>
+  <span class="header-sub">Google Sheets &rarr; Class totals</span>
 </header>
 
 <main>
-
   <div class="card">
-    <div class="card-title">
-      <svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M1 5h12M5 5v8"/></svg>
-      Sheet links &amp; dates
-    </div>
+    <div class="card-title">Sheet links &amp; dates</div>
     <div class="col-headers">
-      <span>Google Sheet link</span>
-      <span>Date</span>
-      <span></span>
+      <span>Google Sheet link</span><span>Date (optional)</span><span></span>
     </div>
     <div id="links-container"></div>
     <button class="add-link-btn" onclick="addRow()">
-      <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10"/></svg>
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M7 2v10M2 7h10"/></svg>
       Add another day
     </button>
   </div>
 
   <div class="card">
-    <div class="card-title">
-      <svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 1.5"/></svg>
-      Analysis settings
-    </div>
-
+    <div class="card-title">Analysis settings</div>
     <div class="two-col">
       <div>
-        <label class="field-label">Subject to track <span style="color:var(--text3)">(column F, row 3 header)</span></label>
+        <label class="field-label">Subject to track</label>
         <input type="text" id="subject-input" placeholder="e.g. Physics" value="Physics">
       </div>
       <div>
-        <label class="field-label">Minimum sessions to show <span style="color:var(--text3)">(0 = show all)</span></label>
+        <label class="field-label">Minimum sessions filter (0 = show all)</label>
         <input type="text" id="min-sessions" placeholder="0" value="0">
       </div>
     </div>
-
-    <div style="margin-bottom:1rem">
-      <label class="field-label">Classes / tabs to include <span style="color:var(--text3)">(leave empty = all tabs)</span></label>
+    <div style="margin-bottom:.75rem">
+      <label class="field-label">Classes to include &mdash; exact tab names, press Enter to add <span style="color:var(--text3)">(leave empty = all tabs)</span></label>
       <div class="tag-wrap" id="tag-wrap" onclick="document.getElementById('tag-input').focus()">
-        <input id="tag-input" class="tag-input-field" placeholder="Type class e.g. 8A then press Enter">
+        <input id="tag-input" class="tag-input-field" placeholder="Type tab name then Enter&hellip;">
       </div>
-      <p class="hint">Type a class name and press Enter to add it as a filter. Leave empty to include all tabs automatically.</p>
+      <p class="hint">
+        Not sure of tab names? Paste a link above then click
+        <button class="scan-btn" onclick="scanTabs()">&#128269; Scan tab names</button>
+        to see all tabs and click to add them.
+      </p>
+      <div class="tab-list-box" id="tab-list-box"></div>
     </div>
-
     <hr class="divider">
     <div id="status" class="status"></div>
     <button class="run-btn" id="run-btn" onclick="runAnalysis()">
-      <svg viewBox="0 0 17 17"><path d="M3 3l11 5.5L3 14V3z"/></svg>
+      <svg viewBox="0 0 17 17" fill="none" stroke="white" stroke-width="2" width="16" height="16"><path d="M3 3l11 5.5L3 14V3z"/></svg>
       Analyse attendance
     </button>
   </div>
 
   <div id="results" class="results"></div>
-
 </main>
 
 <script>
-let rowId = 0;
-let classTags = [];
-let lastData = null;
-let lastSubject = '';
+var rowId=0, classTags=[], lastData=null, lastSubject='';
 
-function addRow(url='', date='') {
-  const id = rowId++;
-  const c = document.getElementById('links-container');
-  const d = document.createElement('div');
-  d.className = 'link-row';
-  d.id = 'row-' + id;
-  d.innerHTML = `
-    <input type="text" id="url-${id}" placeholder="https://docs.google.com/spreadsheets/d/..." value="${escHtml(url)}" style="font-size:13.5px;">
-    <input type="date" id="date-${id}" value="${escHtml(date)}" style="font-size:13.5px;">
-    <button class="remove-btn" onclick="removeRow(${id})" aria-label="Remove row">
-      <svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg>
-    </button>`;
-  c.appendChild(d);
+function addRow(u,d){
+  u=u||''; d=d||'';
+  var id=rowId++, c=document.getElementById('links-container'), el=document.createElement('div');
+  el.className='link-row'; el.id='row-'+id;
+  el.innerHTML='<input type="text" id="url-'+id+'" placeholder="https://docs.google.com/spreadsheets/d/\u2026" value="'+esc(u)+'" style="font-size:13.5px">'
+    +'<input type="date" id="date-'+id+'" value="'+esc(d)+'" style="font-size:13.5px">'
+    +'<button class="remove-btn" onclick="removeRow('+id+')" aria-label="Remove"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>';
+  c.appendChild(el);
 }
 
-function removeRow(id) {
-  const el = document.getElementById('row-' + id);
-  if (el) el.remove();
-}
+function removeRow(id){var el=document.getElementById('row-'+id);if(el)el.remove();}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-document.getElementById('tag-input').addEventListener('keydown', function(e) {
-  const val = this.value.trim().toUpperCase();
-  if ((e.key === 'Enter' || e.key === ',') && val) {
-    e.preventDefault();
-    if (!classTags.includes(val)) { classTags.push(val); renderTags(); }
-    this.value = '';
-  } else if (e.key === 'Backspace' && !this.value && classTags.length) {
-    classTags.pop(); renderTags();
-  }
+document.getElementById('tag-input').addEventListener('keydown',function(e){
+  var val=this.value.trim();
+  if((e.key==='Enter'||e.key===',')&&val){e.preventDefault();if(!classTags.includes(val)){classTags.push(val);renderTags();}this.value='';}
+  else if(e.key==='Backspace'&&!this.value&&classTags.length){classTags.pop();renderTags();}
 });
 
-function removeTag(tag) { classTags = classTags.filter(t => t !== tag); renderTags(); }
+function removeTag(i){classTags.splice(i,1);renderTags();}
+function addTag(name){if(!classTags.includes(name)){classTags.push(name);renderTags();}}
 
-function renderTags() {
-  const wrap = document.getElementById('tag-wrap');
-  const input = document.getElementById('tag-input');
-  wrap.querySelectorAll('.tag').forEach(el => el.remove());
-  classTags.forEach(tag => {
-    const s = document.createElement('span');
-    s.className = 'tag';
-    s.innerHTML = `${escHtml(tag)}<button onclick="removeTag('${escHtml(tag)}')" aria-label="Remove ${escHtml(tag)}">×</button>`;
-    wrap.insertBefore(s, input);
+function renderTags(){
+  var wrap=document.getElementById('tag-wrap'), input=document.getElementById('tag-input');
+  wrap.querySelectorAll('.tag').forEach(function(el){el.remove();});
+  classTags.forEach(function(tag,i){
+    var s=document.createElement('span');
+    s.className='tag';
+    s.innerHTML=esc(tag)+'<button onclick="removeTag('+i+')" aria-label="Remove">&times;</button>';
+    wrap.insertBefore(s,input);
   });
 }
 
-function extractId(url) {
-  const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  return m ? m[1] : null;
+function extractId(url){var m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);return m?m[1]:null;}
+function gvizUrl(id,tab){return 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(tab);}
+function gvizBaseUrl(id){return 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json';}
+
+function parseGviz(text){
+  var clean=text.replace(/^[^(]*\(/,'').replace(/\);\s*$/,'');
+  return JSON.parse(clean);
 }
 
-function csvUrl(id, tab) {
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
+async function getTabNames(sheetId){
+  var res=await fetch(gvizBaseUrl(sheetId));
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  var text=await res.text();
+  var matches=[...text.matchAll(/"name":"([^"]+)"/g)];
+  var skip=new Set(['label','id','pattern','type','cols','rows','table','version','reqId','status','sig','parsedNumHeaders']);
+  var names=[];
+  for(var m of matches){if(!skip.has(m[1])&&!names.includes(m[1]))names.push(m[1]);}
+  return names;
 }
 
-async function getTabNames(id) {
-  const res = await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json`);
-  const text = await res.text();
-  const matches = [...text.matchAll(/"name":"([^"]+)"/g)];
-  return matches.map(m => m[1]);
-}
-
-function parseCSV(text) {
-  const rows = []; let cur = '', inQ = false, row = [];
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (c === '"') { inQ = !inQ; }
-    else if (c === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
-    else if ((c === '\n' || c === '\r') && !inQ) {
-      if (cur || row.length) { row.push(cur.trim()); rows.push(row); cur = ''; row = []; }
-      if (c === '\r' && text[i+1] === '\n') i++;
-    } else { cur += c; }
-  }
-  if (cur || row.length) { row.push(cur.trim()); rows.push(row); }
-  return rows;
-}
-
-function isPresent(val) {
-  if (!val) return false;
-  const v = val.toLowerCase().trim().replace(/\s+/g,'');
-  return ['✓','✔','present','1','yes','p','true','x','حاضر','attended'].includes(v);
-}
-
-async function parseTab(sheetId, tabName, subject) {
-  const url = csvUrl(sheetId, tabName);
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const text = await res.text();
-  const rows = parseCSV(text);
-  if (rows.length < 4) return null;
-
-  const headerRow = rows[2] || [];
-  // Find subject col by name first, fallback col F (idx 5)
-  let subIdx = headerRow.findIndex(h => h.toLowerCase().trim() === subject.toLowerCase().trim());
-  if (subIdx === -1) subIdx = 5;
-
-  const students = [];
-  for (let i = 3; i < rows.length; i++) {
-    const row = rows[i];
-    const name = (row[1] || '').trim();
-    if (!name) continue;
-    const attended = subIdx >= 0 && subIdx < row.length ? isPresent(row[subIdx]) : false;
-    students.push({ name, attended });
+async function parseTab(sheetId,tabName,subject){
+  var res=await fetch(gvizUrl(sheetId,tabName));
+  if(!res.ok) return null;
+  var text=await res.text();
+  var data=parseGviz(text);
+  if(!data.table||!data.table.cols||!data.table.rows) return null;
+  var cols=data.table.cols, rows=data.table.rows;
+  var subLow=subject.toLowerCase().trim();
+  var subIdx=cols.findIndex(function(c){return c.label&&c.label.toLowerCase().trim()===subLow;});
+  if(subIdx===-1) subIdx=cols.findIndex(function(c){return c.label&&c.label.toLowerCase().includes(subLow);});
+  if(subIdx===-1) subIdx=5;
+  var students=[];
+  for(var row of rows){
+    if(!row||!row.c) continue;
+    var nc=row.c[1];
+    var name=nc&&nc.v?String(nc.v).trim():'';
+    if(!name||/total/i.test(name)) continue;
+    var sc=row.c[subIdx];
+    var attended=false;
+    if(sc&&sc.v!==null&&sc.v!==undefined){
+      var v=sc.v;
+      if(typeof v==='boolean') attended=v;
+      else if(typeof v==='string') attended=['true','1','yes','present','p','\u2713','\u2714','\u062d\u0627\u0636\u0631','x'].includes(v.toLowerCase().trim());
+      else if(typeof v==='number') attended=v===1;
+    }
+    students.push({name:name,attended:attended});
   }
   return students;
 }
 
-function setStatus(msg, error=false) {
-  const el = document.getElementById('status');
-  el.innerHTML = msg;
-  el.className = 'status' + (error ? ' error' : '');
+function setStatus(msg,err){
+  var el=document.getElementById('status');
+  el.innerHTML=msg; el.className='status'+(err?' error':'');
 }
 
-async function runAnalysis() {
-  const btn = document.getElementById('run-btn');
-  btn.disabled = true;
-  document.getElementById('results').innerHTML = '';
+async function scanTabs(){
+  var firstUrl=document.querySelector('.link-row input[type="text"]');
+  if(!firstUrl||!firstUrl.value.trim()){alert('Paste at least one sheet link first, then scan.');return;}
+  var sheetId=extractId(firstUrl.value.trim());
+  if(!sheetId){alert('Could not read Sheet ID from that link.');return;}
+  var box=document.getElementById('tab-list-box');
+  box.style.display='block';
+  box.innerHTML='<span style="color:var(--text3)">Scanning tabs\u2026</span>';
+  try{
+    var tabs=await getTabNames(sheetId);
+    if(!tabs.length){box.innerHTML='No tabs found.';return;}
+    box.innerHTML='<span style="font-size:12px;color:var(--text3);display:block;margin-bottom:6px">Click a tab name to add it as a filter:</span>'
+      +tabs.map(function(t){return '<span class="tab-pill" onclick="addTag(\''+esc(t)+'\')">'+esc(t)+'</span>';}).join('');
+  }catch(e){
+    box.innerHTML='<span style="color:var(--danger)">Could not read tabs. Make sure the sheet is set to "Anyone with the link can view".</span>';
+  }
+}
 
-  const subject = document.getElementById('subject-input').value.trim();
-  const minSessions = parseInt(document.getElementById('min-sessions').value) || 0;
-
-  if (!subject) { setStatus('Please enter a subject name.', true); btn.disabled = false; return; }
-
-  const entries = [];
-  document.querySelectorAll('.link-row').forEach(row => {
-    const id = row.id.replace('row-','');
-    const urlEl = document.getElementById('url-' + id);
-    const dateEl = document.getElementById('date-' + id);
-    if (!urlEl) return;
-    const url = urlEl.value.trim();
-    if (!url) return;
-    const sheetId = extractId(url);
-    if (!sheetId) return;
-    entries.push({ url, date: dateEl ? dateEl.value : '', sheetId });
+async function runAnalysis(){
+  var btn=document.getElementById('run-btn');
+  btn.disabled=true;
+  document.getElementById('results').innerHTML='';
+  var subject=document.getElementById('subject-input').value.trim();
+  var minSessions=parseInt(document.getElementById('min-sessions').value)||0;
+  if(!subject){setStatus('Please enter a subject name.',true);btn.disabled=false;return;}
+  var entries=[];
+  document.querySelectorAll('.link-row').forEach(function(row){
+    var id=row.id.replace('row-','');
+    var urlEl=document.getElementById('url-'+id);
+    var dateEl=document.getElementById('date-'+id);
+    if(!urlEl||!urlEl.value.trim()) return;
+    var sheetId=extractId(urlEl.value.trim());
+    if(!sheetId) return;
+    entries.push({sheetId:sheetId,date:dateEl?dateEl.value:''});
   });
-
-  if (!entries.length) { setStatus('Please add at least one sheet link.', true); btn.disabled = false; return; }
-
-  const filterClasses = classTags.map(t => t.toUpperCase());
-  const data = {};
-  let done = 0;
-
-  for (const entry of entries) {
-    setStatus(`<div class="spinner"></div> Fetching sheet ${++done} of ${entries.length}${entry.date ? ' — ' + entry.date : ''}...`);
-    let tabs = [];
-    try { tabs = await getTabNames(entry.sheetId); } catch(e) { continue; }
-    if (filterClasses.length) tabs = tabs.filter(t => filterClasses.includes(t.trim().toUpperCase()));
-
-    for (const tab of tabs) {
-      const cls = tab.trim().toUpperCase();
-      try {
-        const students = await parseTab(entry.sheetId, tab, subject);
-        if (!students) continue;
-        if (!data[cls]) data[cls] = {};
-        for (const s of students) {
-          if (!data[cls][s.name]) data[cls][s.name] = { count: 0, total: 0 };
-          data[cls][s.name].total++;
-          if (s.attended) data[cls][s.name].count++;
+  if(!entries.length){setStatus('Please add at least one sheet link.',true);btn.disabled=false;return;}
+  var filterTabs=classTags.slice();
+  var data={};
+  var done=0;
+  for(var entry of entries){
+    setStatus('<div class="spinner"></div>Fetching sheet '+(++done)+' of '+entries.length+(entry.date?' \u2014 '+entry.date:'')+'\u2026');
+    var tabs=[];
+    try{tabs=await getTabNames(entry.sheetId);}catch(e){continue;}
+    var targetTabs=filterTabs.length
+      ?tabs.filter(function(t){return filterTabs.some(function(f){return f.toLowerCase().trim()===t.toLowerCase().trim();});})
+      :tabs;
+    for(var tab of targetTabs){
+      try{
+        var students=await parseTab(entry.sheetId,tab,subject);
+        if(!students||!students.length) continue;
+        var key=tab.trim();
+        if(!data[key]) data[key]={};
+        for(var s of students){
+          if(!data[key][s.name]) data[key][s.name]={count:0,total:0};
+          data[key][s.name].total++;
+          if(s.attended) data[key][s.name].count++;
         }
-      } catch(e) {}
+      }catch(e){}
     }
   }
-
   setStatus('');
-  lastData = data;
-  lastSubject = subject;
-  renderResults(data, subject, minSessions);
-  btn.disabled = false;
+  lastData=data; lastSubject=subject;
+  renderResults(data,subject,minSessions);
+  btn.disabled=false;
 }
 
-function renderResults(data, subject, minSessions) {
-  const container = document.getElementById('results');
-  const classes = Object.keys(data).sort();
-
-  if (!classes.length) {
-    container.innerHTML = `<div class="empty-state">
-      <svg viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="4"/><path d="M13 20h14M13 14h8M13 26h10"/></svg>
-      No data found. Check your links, sheet access, class names, and subject spelling.
-    </div>`;
+function renderResults(data,subject,minSessions){
+  var container=document.getElementById('results');
+  var classes=Object.keys(data).sort();
+  if(!classes.length){
+    container.innerHTML='<div class="empty-state">No data found. Use the "Scan tab names" button to see exact tab names in your sheet, then add them as filters and try again.</div>';
     return;
   }
-
-  let html = '';
-  for (const cls of classes) {
-    const students = data[cls];
-    let names = Object.keys(students).sort();
-    if (minSessions > 0) names = names.filter(n => students[n].total >= minSessions);
-    if (!names.length) continue;
-
-    const maxSess = Math.max(...names.map(n => students[n].total));
-    const avgPct = Math.round(names.reduce((s,n) => s + (students[n].count / (students[n].total||1)), 0) / names.length * 100);
-    const totalPresent = names.reduce((s,n) => s + students[n].count, 0);
-
-    html += `<div class="class-card">
-      <div class="class-card-header">
-        <div class="class-name">
-          Class ${escHtml(cls)}
-          <span class="subject-badge">${escHtml(subject)}</span>
-        </div>
-        <button class="export-csv-btn" onclick="exportCSV('${escHtml(cls)}')">
-          <svg viewBox="0 0 12 12"><path d="M6 1v7M3 5l3 3 3-3M1 10h10"/></svg>
-          Export CSV
-        </button>
-      </div>
-      <div class="metrics-row">
-        <div class="metric"><div class="metric-label">Students</div><div class="metric-val">${names.length}</div></div>
-        <div class="metric"><div class="metric-label">Max sessions</div><div class="metric-val">${maxSess}</div></div>
-        <div class="metric"><div class="metric-label">Avg attendance</div><div class="metric-val">${avgPct}%</div></div>
-      </div>
-      <table class="att-table">
-        <thead>
-          <tr>
-            <th style="width:36px">#</th>
-            <th>Student name</th>
-            <th style="text-align:center;width:80px">Sessions</th>
-            <th style="text-align:center;width:70px">Present</th>
-            <th class="bar-cell">Attendance %</th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-    names.forEach((name, i) => {
-      const { count, total } = students[name];
-      const pct = total ? Math.round(count / total * 100) : 0;
-      const barClass = pct < 50 ? 'low' : pct < 75 ? 'mid' : '';
-      html += `<tr>
-        <td class="idx">${i+1}</td>
-        <td>${escHtml(name)}</td>
-        <td class="num ${total===0?'zero':''}">${total}</td>
-        <td class="num ${count===0?'zero':'bold-num'}">${count}</td>
-        <td class="bar-cell">
-          <div class="bar-wrap">
-            <div class="bar-track"><div class="bar-fill ${barClass}" style="width:${pct}%"></div></div>
-            <span class="pct-label">${pct}%</span>
-          </div>
-        </td>
-      </tr>`;
+  var html='';
+  for(var cls of classes){
+    var names=Object.keys(data[cls]);
+    if(minSessions>0) names=names.filter(function(n){return data[cls][n].total>=minSessions;});
+    if(!names.length) continue;
+    var maxSess=Math.max.apply(null,names.map(function(n){return data[cls][n].total;}));
+    var avgPct=Math.round(names.reduce(function(s,n){return s+(data[cls][n].count/(data[cls][n].total||1));},0)/names.length*100);
+    html+='<div class="class-card">'
+      +'<div class="class-card-header">'
+      +'<div class="class-name">'+esc(cls)+'<span class="subject-badge">'+esc(subject)+'</span></div>'
+      +'<button class="export-csv-btn" onclick="exportCSV(\''+esc(cls)+'\')">'
+      +'<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 1v7M3 5l3 3 3-3M1 10h10"/></svg>Export CSV</button>'
+      +'</div>'
+      +'<div class="metrics-row">'
+      +'<div class="metric"><div class="metric-label">Students</div><div class="metric-val">'+names.length+'</div></div>'
+      +'<div class="metric"><div class="metric-label">Max sessions</div><div class="metric-val">'+maxSess+'</div></div>'
+      +'<div class="metric"><div class="metric-label">Avg attendance</div><div class="metric-val">'+avgPct+'%</div></div>'
+      +'</div>'
+      +'<table class="att"><thead><tr>'
+      +'<th style="width:36px">#</th><th>Student name</th>'
+      +'<th style="text-align:center;width:80px">Sessions</th>'
+      +'<th style="text-align:center;width:75px">Present</th>'
+      +'<th style="min-width:130px">Attendance %</th>'
+      +'</tr></thead><tbody>';
+    names.forEach(function(name,i){
+      var c=data[cls][name].count, t=data[cls][name].total;
+      var pct=t?Math.round(c/t*100):0;
+      var bc=pct<50?'low':pct<75?'mid':'';
+      html+='<tr>'
+        +'<td class="idx">'+(i+1)+'</td>'
+        +'<td>'+esc(name)+'</td>'
+        +'<td class="num '+(t===0?'zero':'')+'">'+t+'</td>'
+        +'<td class="num '+(c===0?'zero':'present-num')+'">'+c+'</td>'
+        +'<td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill '+bc+'" style="width:'+pct+'%"></div></div>'
+        +'<span class="pct-lbl">'+pct+'%</span></div></td>'
+        +'</tr>';
     });
-
-    html += `</tbody></table></div>`;
+    html+='</tbody></table></div>';
   }
-
-  container.innerHTML = html || `<div class="empty-state">No students matched the minimum sessions filter.</div>`;
+  container.innerHTML=html||'<div class="empty-state">No students matched the filter.</div>';
 }
 
-function exportCSV(cls) {
-  if (!lastData || !lastData[cls]) return;
-  const names = Object.keys(lastData[cls]).sort();
-  let csv = `Student Name,Present (${lastData[cls] ? lastSubject : ''}),Total Sessions,Attendance %\n`;
-  names.forEach(name => {
-    const { count, total } = lastData[cls][name];
-    const pct = total ? Math.round(count/total*100) : 0;
-    csv += `"${name}",${count},${total},${pct}%\n`;
+function exportCSV(cls){
+  if(!lastData||!lastData[cls]) return;
+  var names=Object.keys(lastData[cls]);
+  var csv='Student Name,Present ('+lastSubject+'),Total Sessions,Attendance %\n';
+  names.forEach(function(name){
+    var c=lastData[cls][name].count, t=lastData[cls][name].total;
+    var pct=t?Math.round(c/t*100):0;
+    csv+='"'+name+'",'+c+','+t+','+pct+'%\n';
   });
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `Attendance_${cls}_${lastSubject}.csv`;
-  a.click();
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='Attendance_'+cls+'_'+lastSubject+'.csv'; a.click();
 }
 
-// Initialise with 3 blank rows
 addRow(); addRow(); addRow();
 </script>
 </body>
