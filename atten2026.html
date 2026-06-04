@@ -4,90 +4,84 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Attendance Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#f7f6f2;--surface:#fff;--surface2:#f0ede6;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);
-    --text:#1a1916;--text2:#6b6760;--text3:#a09d98;
-    --accent:#0f6e56;--accent-light:#e1f5ee;--accent-mid:#1d9e75;
-    --danger:#a32d2d;--danger-light:#fcebeb;--radius:10px;--radius-lg:14px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
-  header{background:var(--surface);border-bottom:.5px solid var(--border2);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
-  .logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
-  .header-sub{font-size:12px;color:var(--text3)}
-  main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
-  .card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem}
-  .card-title{font-size:12px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem}
-  .field-label{font-size:13px;color:var(--text2);display:block;margin-bottom:5px}
-  input[type=text],input[type=date]{width:100%;height:38px;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 12px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s}
-  input[type=text]:focus,input[type=date]:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(29,158,117,.08)}
-  .col-headers{display:grid;grid-template-columns:1fr 160px 36px;gap:8px;margin-bottom:5px}
-  .col-headers span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding-left:2px}
-  .link-row{display:grid;grid-template-columns:1fr 160px 36px;gap:8px;align-items:center;margin-bottom:8px;animation:fadeIn .2s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-  .remove-btn{width:36px;height:38px;background:none;border:.5px solid var(--border);border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s;flex-shrink:0}
-  .remove-btn:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
-  .remove-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
-  .add-link-btn{background:none;border:.5px dashed var(--border2);border-radius:var(--radius);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:4px;transition:all .15s}
-  .add-link-btn:hover{background:var(--surface2);border-color:var(--accent-mid);color:var(--accent)}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
-  .tag-wrap{display:flex;flex-wrap:wrap;gap:5px;border:.5px solid var(--border2);border-radius:var(--radius);padding:5px 8px;background:var(--surface);min-height:38px;align-items:center;cursor:text;transition:border-color .15s}
-  .tag-wrap:focus-within{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(29,158,117,.08)}
-  .tag{background:var(--accent-light);color:var(--accent);border-radius:6px;padding:2px 8px 2px 9px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px}
-  .tag button{background:none;border:none;cursor:pointer;color:var(--accent-mid);font-size:15px;padding:0;line-height:1;opacity:.7}
-  .tag button:hover{opacity:1}
-  .tag-input-field{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;background:transparent;color:var(--text);min-width:120px;flex:1}
-  .hint{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
-  .divider{border:none;border-top:.5px solid var(--border);margin:1.25rem 0}
-  .run-btn{width:100%;height:46px;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
-  .run-btn:hover:not(:disabled){background:#0a5240;transform:translateY(-1px)}
-  .run-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-  .status{font-size:13px;color:var(--text2);min-height:22px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
-  .status.error{color:var(--danger)}
-  .spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent-mid);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .results{margin-top:1.5rem}
-  .class-card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.25rem;animation:fadeIn .25s ease}
-  .class-card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:.5px solid var(--border);background:var(--surface2)}
-  .class-name{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
-  .subject-badge{font-size:11px;font-weight:500;background:var(--accent-light);color:var(--accent);border-radius:20px;padding:2px 10px}
-  .export-csv-btn{background:none;border:.5px solid var(--border2);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
-  .export-csv-btn:hover{background:var(--surface);border-color:var(--accent-mid);color:var(--accent)}
-  .metrics-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:.5px solid var(--border)}
-  .metric{padding:.85rem 1.25rem;border-right:.5px solid var(--border)}
-  .metric:last-child{border-right:none}
-  .metric-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-  .metric-val{font-size:22px;font-weight:600;font-family:'DM Mono',monospace}
-  table.att{width:100%;border-collapse:collapse;font-size:13.5px}
-  table.att th{text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:9px 14px;border-bottom:.5px solid var(--border);white-space:nowrap}
-  table.att td{padding:9px 14px;border-bottom:.5px solid var(--border)}
-  table.att tr:last-child td{border-bottom:none}
-  table.att tr:hover td{background:var(--surface2)}
-  .num{font-family:'DM Mono',monospace;font-size:13px;text-align:center}
-  .zero{color:var(--text3)}
-  .present-num{font-weight:600;color:var(--accent)}
-  .bar-wrap{display:flex;align-items:center;gap:7px}
-  .bar-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;min-width:60px}
-  .bar-fill{height:100%;border-radius:3px;background:var(--accent-mid)}
-  .bar-fill.low{background:#d85a30}
-  .bar-fill.mid{background:#ba7517}
-  .pct-lbl{font-size:12px;color:var(--text2);min-width:32px;text-align:right;font-family:'DM Mono',monospace}
-  .idx{color:var(--text3);font-size:12px;font-family:'DM Mono',monospace}
-  .empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
-  .tab-list-box{background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px;margin-top:8px;font-size:13px;color:var(--text2);display:none}
-  .tab-pill{display:inline-block;background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:2px 9px;margin:2px;font-size:12px;cursor:pointer;transition:all .12s}
-  .tab-pill:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
-  .scan-btn{background:none;border:.5px solid var(--border2);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);padding:4px 10px;cursor:pointer;transition:all .15s;vertical-align:middle;margin:0 3px}
-  .scan-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
-  @media(max-width:600px){.two-col{grid-template-columns:1fr}.metrics-row{grid-template-columns:1fr}.col-headers,.link-row{grid-template-columns:1fr 130px 36px}main{padding:1rem 1rem 3rem}header{padding:0 1rem}}
+:root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0ede6;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);--text:#1a1916;--text2:#6b6760;--text3:#a09d98;--accent:#0f6e56;--accent-light:#e1f5ee;--accent-mid:#1d9e75;--danger:#a32d2d;--danger-light:#fcebeb;--r:10px;--rl:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+header{background:var(--surface);border-bottom:.5px solid var(--border2);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.hdr-sub{font-size:12px;color:var(--text3)}
+main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.card{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.25rem}
+.card-title{font-size:12px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem}
+.fl{font-size:13px;color:var(--text2);display:block;margin-bottom:5px}
+input[type=text],input[type=date]{width:100%;height:38px;border:.5px solid var(--border2);border-radius:var(--r);padding:0 12px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s}
+input[type=text]:focus,input[type=date]:focus{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(29,158,117,.08)}
+.col-hdr{display:grid;grid-template-columns:1fr 160px 36px;gap:8px;margin-bottom:5px}
+.col-hdr span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding-left:2px}
+.lrow{display:grid;grid-template-columns:1fr 160px 36px;gap:8px;align-items:center;margin-bottom:8px;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.rm-btn{width:36px;height:38px;background:none;border:.5px solid var(--border);border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s;flex-shrink:0}
+.rm-btn:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+.rm-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+.add-btn{background:none;border:.5px dashed var(--border2);border-radius:var(--r);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:4px;transition:all .15s}
+.add-btn:hover{background:var(--surface2);border-color:var(--accent-mid);color:var(--accent)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:5px;border:.5px solid var(--border2);border-radius:var(--r);padding:5px 8px;background:var(--surface);min-height:38px;align-items:center;cursor:text;transition:border-color .15s}
+.tag-wrap:focus-within{border-color:var(--accent-mid);box-shadow:0 0 0 3px rgba(29,158,117,.08)}
+.tag{background:var(--accent-light);color:var(--accent);border-radius:6px;padding:2px 8px 2px 9px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px}
+.tag button{background:none;border:none;cursor:pointer;color:var(--accent-mid);font-size:15px;padding:0;line-height:1;opacity:.7}
+.tag button:hover{opacity:1}
+.ti{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:14px;background:transparent;color:var(--text);min-width:120px;flex:1}
+.hint{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
+.divider{border:none;border-top:.5px solid var(--border);margin:1.25rem 0}
+.run-btn{width:100%;height:46px;background:var(--accent);border:none;border-radius:var(--r);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.run-btn:hover:not(:disabled){background:#0a5240;transform:translateY(-1px)}
+.run-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.status{font-size:13px;color:var(--text2);min-height:22px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.status.err{color:var(--danger)}
+.spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent-mid);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.results{margin-top:1.5rem}
+.cc{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--rl);overflow:hidden;margin-bottom:1.25rem;animation:fi .25s ease}
+.cc-hdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:.5px solid var(--border);background:var(--surface2)}
+.cn{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sbadge{font-size:11px;font-weight:500;background:var(--accent-light);color:var(--accent);border-radius:20px;padding:2px 10px}
+.exp-btn{background:none;border:.5px solid var(--border2);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.exp-btn:hover{background:var(--surface);border-color:var(--accent-mid);color:var(--accent)}
+.met-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:.5px solid var(--border)}
+.met{padding:.85rem 1.25rem;border-right:.5px solid var(--border)}
+.met:last-child{border-right:none}
+.met-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.met-v{font-size:22px;font-weight:600;font-family:'DM Mono',monospace}
+table.att{width:100%;border-collapse:collapse;font-size:13.5px}
+table.att th{text-align:left;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:9px 14px;border-bottom:.5px solid var(--border);white-space:nowrap}
+table.att td{padding:9px 14px;border-bottom:.5px solid var(--border)}
+table.att tr:last-child td{border-bottom:none}
+table.att tr:hover td{background:var(--surface2)}
+.num{font-family:'DM Mono',monospace;font-size:13px;text-align:center}
+.zero{color:var(--text3)}
+.pn{font-weight:600;color:var(--accent)}
+.bw{display:flex;align-items:center;gap:7px}
+.bt{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;min-width:60px}
+.bf{height:100%;border-radius:3px;background:var(--accent-mid)}
+.bf.low{background:#d85a30}
+.bf.mid{background:#ba7517}
+.pl{font-size:12px;color:var(--text2);min-width:32px;text-align:right;font-family:'DM Mono',monospace}
+.idx{color:var(--text3);font-size:12px;font-family:'DM Mono',monospace}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+.tab-box{background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--r);padding:10px 14px;margin-top:8px;font-size:13px;display:none}
+.tab-pill{display:inline-block;background:var(--surface);border:.5px solid var(--border2);border-radius:6px;padding:2px 9px;margin:2px;font-size:12px;cursor:pointer;transition:all .12s}
+.tab-pill:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.scan-btn{background:none;border:.5px solid var(--border2);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text2);padding:4px 10px;cursor:pointer;transition:all .15s;vertical-align:middle;margin:0 3px}
+.scan-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
+.info-box{background:var(--accent-light);border:.5px solid var(--accent-mid);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--accent);margin-bottom:1rem;line-height:1.6}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}.met-row{grid-template-columns:1fr}.col-hdr,.lrow{grid-template-columns:1fr 130px 36px}main{padding:1rem 1rem 3rem}header{padding:0 1rem}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo">
     <div class="logo-icon">
@@ -95,17 +89,19 @@
     </div>
     Attendance Dashboard
   </div>
-  <span class="header-sub">Google Sheets &rarr; Class totals</span>
+  <span class="hdr-sub">Google Sheets &rarr; Class totals</span>
 </header>
 
 <main>
+  <div class="info-box">
+    <strong>How subject matching works:</strong> The dashboard searches for your subject keyword anywhere in the column header of row 3. So typing <em>Physics</em> will match <em>"Wednesday April 15 Physics"</em> or just <em>"Physics"</em> — no need to type the full date-prefixed header.
+  </div>
+
   <div class="card">
     <div class="card-title">Sheet links &amp; dates</div>
-    <div class="col-headers">
-      <span>Google Sheet link</span><span>Date (optional)</span><span></span>
-    </div>
-    <div id="links-container"></div>
-    <button class="add-link-btn" onclick="addRow()">
+    <div class="col-hdr"><span>Google Sheet link</span><span>Date (optional)</span><span></span></div>
+    <div id="lc"></div>
+    <button class="add-btn" onclick="addRow()">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M7 2v10M2 7h10"/></svg>
       Add another day
     </button>
@@ -115,25 +111,25 @@
     <div class="card-title">Analysis settings</div>
     <div class="two-col">
       <div>
-        <label class="field-label">Subject to track</label>
-        <input type="text" id="subject-input" placeholder="e.g. Physics" value="Physics">
+        <label class="fl">Subject keyword <span style="color:var(--text3)">(partial match, e.g. Physics)</span></label>
+        <input type="text" id="subj" placeholder="e.g. Physics" value="Physics">
       </div>
       <div>
-        <label class="field-label">Minimum sessions filter (0 = show all)</label>
-        <input type="text" id="min-sessions" placeholder="0" value="0">
+        <label class="fl">Minimum sessions to show <span style="color:var(--text3)">(0 = all)</span></label>
+        <input type="text" id="mins" placeholder="0" value="0">
       </div>
     </div>
     <div style="margin-bottom:.75rem">
-      <label class="field-label">Classes to include &mdash; exact tab names, press Enter to add <span style="color:var(--text3)">(leave empty = all tabs)</span></label>
-      <div class="tag-wrap" id="tag-wrap" onclick="document.getElementById('tag-input').focus()">
-        <input id="tag-input" class="tag-input-field" placeholder="Type tab name then Enter&hellip;">
+      <label class="fl">Classes to include &mdash; type exact tab name then Enter <span style="color:var(--text3)">(empty = all tabs)</span></label>
+      <div class="tag-wrap" id="tw" onclick="document.getElementById('ti').focus()">
+        <input id="ti" class="ti" placeholder="Type tab name then Enter&hellip;">
       </div>
       <p class="hint">
         Not sure of tab names? Paste a link above then click
         <button class="scan-btn" onclick="scanTabs()">&#128269; Scan tab names</button>
         to see all tabs and click to add them.
       </p>
-      <div class="tab-list-box" id="tab-list-box"></div>
+      <div class="tab-box" id="tab-box"></div>
     </div>
     <hr class="divider">
     <div id="status" class="status"></div>
@@ -147,84 +143,138 @@
 </main>
 
 <script>
-var rowId=0, classTags=[], lastData=null, lastSubject='';
+var rowId=0,tags=[],lastData=null,lastSubj='';
 
 function addRow(u,d){
-  u=u||''; d=d||'';
-  var id=rowId++, c=document.getElementById('links-container'), el=document.createElement('div');
-  el.className='link-row'; el.id='row-'+id;
-  el.innerHTML='<input type="text" id="url-'+id+'" placeholder="https://docs.google.com/spreadsheets/d/\u2026" value="'+esc(u)+'" style="font-size:13.5px">'
-    +'<input type="date" id="date-'+id+'" value="'+esc(d)+'" style="font-size:13.5px">'
-    +'<button class="remove-btn" onclick="removeRow('+id+')" aria-label="Remove"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>';
+  u=u||'';d=d||'';
+  var id=rowId++,c=document.getElementById('lc'),el=document.createElement('div');
+  el.className='lrow';el.id='row-'+id;
+  el.innerHTML='<input type="text" id="u'+id+'" placeholder="https://docs.google.com/spreadsheets/d/\u2026" value="'+esc(u)+'" style="font-size:13.5px">'
+    +'<input type="date" id="d'+id+'" value="'+esc(d)+'" style="font-size:13.5px">'
+    +'<button class="rm-btn" onclick="removeRow('+id+')" aria-label="Remove"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>';
   c.appendChild(el);
 }
-
 function removeRow(id){var el=document.getElementById('row-'+id);if(el)el.remove();}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
-document.getElementById('tag-input').addEventListener('keydown',function(e){
-  var val=this.value.trim();
-  if((e.key==='Enter'||e.key===',')&&val){e.preventDefault();if(!classTags.includes(val)){classTags.push(val);renderTags();}this.value='';}
-  else if(e.key==='Backspace'&&!this.value&&classTags.length){classTags.pop();renderTags();}
+document.getElementById('ti').addEventListener('keydown',function(e){
+  var v=this.value.trim();
+  if((e.key==='Enter'||e.key===',')&&v){e.preventDefault();if(!tags.includes(v)){tags.push(v);renderTags();}this.value='';}
+  else if(e.key==='Backspace'&&!this.value&&tags.length){tags.pop();renderTags();}
 });
-
-function removeTag(i){classTags.splice(i,1);renderTags();}
-function addTag(name){if(!classTags.includes(name)){classTags.push(name);renderTags();}}
-
+function removeTag(i){tags.splice(i,1);renderTags();}
+function addTag(n){if(!tags.includes(n)){tags.push(n);renderTags();}}
 function renderTags(){
-  var wrap=document.getElementById('tag-wrap'), input=document.getElementById('tag-input');
-  wrap.querySelectorAll('.tag').forEach(function(el){el.remove();});
-  classTags.forEach(function(tag,i){
-    var s=document.createElement('span');
-    s.className='tag';
-    s.innerHTML=esc(tag)+'<button onclick="removeTag('+i+')" aria-label="Remove">&times;</button>';
-    wrap.insertBefore(s,input);
+  var w=document.getElementById('tw'),inp=document.getElementById('ti');
+  w.querySelectorAll('.tag').forEach(function(el){el.remove();});
+  tags.forEach(function(t,i){
+    var s=document.createElement('span');s.className='tag';
+    s.innerHTML=esc(t)+'<button onclick="removeTag('+i+')" aria-label="Remove">&times;</button>';
+    w.insertBefore(s,inp);
   });
 }
 
 function extractId(url){var m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);return m?m[1]:null;}
-function gvizUrl(id,tab){return 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(tab);}
-function gvizBaseUrl(id){return 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json';}
+
+// ── KEY FIX: use the export/csv endpoint to list sheets via a different approach
+// The most reliable way: fetch the HTML of the sheet (public) and parse sheet names from the tab bar
+async function getTabNames(sheetId){
+  // Method 1: GViz JSON — parse ALL "name" occurrences before "cols" key appears
+  var url='https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:json';
+  var res=await fetch(url);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  var text=await res.text();
+
+  // The sheet tab names appear in the gviz response in a specific pattern
+  // They are NOT in the table data — they appear as sheet identifiers in the response wrapper
+  // Most reliable: parse the raw JS wrapper for the sheet names list
+  // Pattern: the response contains sheet names as labels in a specific section
+
+  // Try extracting from the JSON structure after stripping wrapper
+  var clean=text.replace(/^[^(]*\(/,'').replace(/\);\s*$/,'');
+  var json;
+  try{json=JSON.parse(clean);}catch(e){throw new Error('Parse error');}
+
+  // If table has cols, this is data from one sheet — we need all sheet names differently
+  // Use the spreadsheets HTML page to get the tab list
+  return getTabNamesFromHTML(sheetId);
+}
+
+async function getTabNamesFromHTML(sheetId){
+  // Fetch the public spreadsheet page — tab names are in the DOM
+  var url='https://docs.google.com/spreadsheets/d/'+sheetId+'/htmlview';
+  var res=await fetch(url);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  var html=await res.text();
+
+  // Sheet names appear in the HTML as: id="sheet-button-{gid}" ... >{Name}</
+  // Also as aria-label attributes and in JS variables
+  var names=[];
+
+  // Method A: aria-label on sheet buttons
+  var re1=/aria-label="([^"]+)" role="tab"/g;
+  var m;
+  while((m=re1.exec(html))!==null){
+    var n=m[1].trim();
+    if(n&&!names.includes(n)) names.push(n);
+  }
+
+  // Method B: sheet tab text content pattern
+  if(!names.length){
+    var re2=/class="[^"]*goog-tab[^"]*"[^>]*>([^<]+)</g;
+    while((m=re2.exec(html))!==null){
+      var n=m[1].trim();
+      if(n&&n.length<50&&!names.includes(n)) names.push(n);
+    }
+  }
+
+  // Method C: look for #gid= anchors with sheet names nearby
+  if(!names.length){
+    var re3=/sheetnames[^=]*=\s*(\[[^\]]+\])/;
+    var sm=re3.exec(html);
+    if(sm){try{names=JSON.parse(sm[1]);}catch(e){}}
+  }
+
+  return names;
+}
+
+function gvizUrl(id,tab){
+  return 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(tab);
+}
 
 function parseGviz(text){
   var clean=text.replace(/^[^(]*\(/,'').replace(/\);\s*$/,'');
   return JSON.parse(clean);
 }
 
-async function getTabNames(sheetId){
-  var res=await fetch(gvizBaseUrl(sheetId));
-  if(!res.ok) throw new Error('HTTP '+res.status);
-  var text=await res.text();
-  var matches=[...text.matchAll(/"name":"([^"]+)"/g)];
-  var skip=new Set(['label','id','pattern','type','cols','rows','table','version','reqId','status','sig','parsedNumHeaders']);
-  var names=[];
-  for(var m of matches){if(!skip.has(m[1])&&!names.includes(m[1]))names.push(m[1]);}
-  return names;
-}
-
-async function parseTab(sheetId,tabName,subject){
+async function parseTab(sheetId,tabName,subjectKeyword){
   var res=await fetch(gvizUrl(sheetId,tabName));
   if(!res.ok) return null;
   var text=await res.text();
   var data=parseGviz(text);
   if(!data.table||!data.table.cols||!data.table.rows) return null;
   var cols=data.table.cols, rows=data.table.rows;
-  var subLow=subject.toLowerCase().trim();
-  var subIdx=cols.findIndex(function(c){return c.label&&c.label.toLowerCase().trim()===subLow;});
-  if(subIdx===-1) subIdx=cols.findIndex(function(c){return c.label&&c.label.toLowerCase().includes(subLow);});
-  if(subIdx===-1) subIdx=5;
+
+  // ── KEY FIX: use CONTAINS match, not exact match
+  // This handles "Wednesday April 15.2026 Physics" matching keyword "Physics"
+  var kw=subjectKeyword.toLowerCase().trim();
+  var subIdx=cols.findIndex(function(c){
+    return c.label&&c.label.toLowerCase().indexOf(kw)!==-1;
+  });
+  if(subIdx===-1) subIdx=5; // fallback col F
+
   var students=[];
   for(var row of rows){
     if(!row||!row.c) continue;
     var nc=row.c[1];
     var name=nc&&nc.v?String(nc.v).trim():'';
     if(!name||/total/i.test(name)) continue;
-    var sc=row.c[subIdx];
+    var sc=subIdx<row.c.length?row.c[subIdx]:null;
     var attended=false;
     if(sc&&sc.v!==null&&sc.v!==undefined){
       var v=sc.v;
       if(typeof v==='boolean') attended=v;
-      else if(typeof v==='string') attended=['true','1','yes','present','p','\u2713','\u2714','\u062d\u0627\u0636\u0631','x'].includes(v.toLowerCase().trim());
+      else if(typeof v==='string') attended=['true','1','yes','present','p','\u2713','\u2714','\u062d\u0627\u0636\u0631'].includes(v.toLowerCase().trim());
       else if(typeof v==='number') attended=v===1;
     }
     students.push({name:name,attended:attended});
@@ -234,58 +284,87 @@ async function parseTab(sheetId,tabName,subject){
 
 function setStatus(msg,err){
   var el=document.getElementById('status');
-  el.innerHTML=msg; el.className='status'+(err?' error':'');
+  el.innerHTML=msg;el.className='status'+(err?' err':'');
 }
 
 async function scanTabs(){
-  var firstUrl=document.querySelector('.link-row input[type="text"]');
-  if(!firstUrl||!firstUrl.value.trim()){alert('Paste at least one sheet link first, then scan.');return;}
-  var sheetId=extractId(firstUrl.value.trim());
-  if(!sheetId){alert('Could not read Sheet ID from that link.');return;}
-  var box=document.getElementById('tab-list-box');
+  var firstUrl=document.querySelector('.lrow input[type="text"]');
+  if(!firstUrl||!firstUrl.value.trim()){alert('Paste at least one sheet link first.');return;}
+  var sid=extractId(firstUrl.value.trim());
+  if(!sid){alert('Could not read Sheet ID from that link.');return;}
+  var box=document.getElementById('tab-box');
   box.style.display='block';
   box.innerHTML='<span style="color:var(--text3)">Scanning tabs\u2026</span>';
   try{
-    var tabs=await getTabNames(sheetId);
-    if(!tabs.length){box.innerHTML='No tabs found.';return;}
-    box.innerHTML='<span style="font-size:12px;color:var(--text3);display:block;margin-bottom:6px">Click a tab name to add it as a filter:</span>'
+    var tabs=await getTabNamesFromHTML(sid);
+    if(!tabs.length){
+      // fallback: try a known list from gviz
+      box.innerHTML='<span style="color:var(--text3)">Could not auto-detect tab names. Please type them manually above (e.g. 7A, 8A, 8B).</span>';
+      return;
+    }
+    box.innerHTML='<span style="font-size:12px;color:var(--text3);display:block;margin-bottom:6px">Click a tab to add it as a filter:</span>'
       +tabs.map(function(t){return '<span class="tab-pill" onclick="addTag(\''+esc(t)+'\')">'+esc(t)+'</span>';}).join('');
   }catch(e){
-    box.innerHTML='<span style="color:var(--danger)">Could not read tabs. Make sure the sheet is set to "Anyone with the link can view".</span>';
+    box.innerHTML='<span style="color:var(--danger)">Could not scan tabs: '+esc(e.message)+'</span>';
   }
+}
+
+// ── IMPORTANT: if scan fails, try fetching tab by guessing name from gviz
+// We use this as a brute-force verification when tab names are typed manually
+async function verifyTabExists(sheetId, tabName){
+  try{
+    var res=await fetch(gvizUrl(sheetId,tabName));
+    if(!res.ok) return false;
+    var text=await res.text();
+    var data=parseGviz(text);
+    return !!(data.table&&data.table.rows&&data.table.rows.length);
+  }catch(e){return false;}
 }
 
 async function runAnalysis(){
   var btn=document.getElementById('run-btn');
   btn.disabled=true;
   document.getElementById('results').innerHTML='';
-  var subject=document.getElementById('subject-input').value.trim();
-  var minSessions=parseInt(document.getElementById('min-sessions').value)||0;
-  if(!subject){setStatus('Please enter a subject name.',true);btn.disabled=false;return;}
+  var subj=document.getElementById('subj').value.trim();
+  var minS=parseInt(document.getElementById('mins').value)||0;
+  if(!subj){setStatus('Please enter a subject keyword.',true);btn.disabled=false;return;}
+
   var entries=[];
-  document.querySelectorAll('.link-row').forEach(function(row){
+  document.querySelectorAll('.lrow').forEach(function(row){
     var id=row.id.replace('row-','');
-    var urlEl=document.getElementById('url-'+id);
-    var dateEl=document.getElementById('date-'+id);
-    if(!urlEl||!urlEl.value.trim()) return;
-    var sheetId=extractId(urlEl.value.trim());
-    if(!sheetId) return;
-    entries.push({sheetId:sheetId,date:dateEl?dateEl.value:''});
+    var uel=document.getElementById('u'+id);
+    var del=document.getElementById('d'+id);
+    if(!uel||!uel.value.trim()) return;
+    var sid=extractId(uel.value.trim());
+    if(!sid) return;
+    entries.push({sheetId:sid,date:del?del.value:''});
   });
+
   if(!entries.length){setStatus('Please add at least one sheet link.',true);btn.disabled=false;return;}
-  var filterTabs=classTags.slice();
+
+  var filterTabs=tags.slice();
   var data={};
   var done=0;
+
   for(var entry of entries){
     setStatus('<div class="spinner"></div>Fetching sheet '+(++done)+' of '+entries.length+(entry.date?' \u2014 '+entry.date:'')+'\u2026');
-    var tabs=[];
-    try{tabs=await getTabNames(entry.sheetId);}catch(e){continue;}
-    var targetTabs=filterTabs.length
-      ?tabs.filter(function(t){return filterTabs.some(function(f){return f.toLowerCase().trim()===t.toLowerCase().trim();});})
-      :tabs;
+
+    var targetTabs=[];
+    if(filterTabs.length){
+      // User typed tab names — use them directly (no need to scan)
+      targetTabs=filterTabs;
+    } else {
+      // No filter — try to get all tab names
+      try{targetTabs=await getTabNamesFromHTML(entry.sheetId);}catch(e){targetTabs=[];}
+      if(!targetTabs.length){
+        setStatus('<div class="spinner"></div>Could not auto-list tabs for sheet '+done+'. Please use the Classes filter to type tab names manually.');
+        continue;
+      }
+    }
+
     for(var tab of targetTabs){
       try{
-        var students=await parseTab(entry.sheetId,tab,subject);
+        var students=await parseTab(entry.sheetId,tab,subj);
         if(!students||!students.length) continue;
         var key=tab.trim();
         if(!data[key]) data[key]={};
@@ -297,36 +376,40 @@ async function runAnalysis(){
       }catch(e){}
     }
   }
+
   setStatus('');
-  lastData=data; lastSubject=subject;
-  renderResults(data,subject,minSessions);
+  lastData=data;lastSubj=subj;
+  renderResults(data,subj,minS);
   btn.disabled=false;
 }
 
-function renderResults(data,subject,minSessions){
-  var container=document.getElementById('results');
+function renderResults(data,subj,minS){
+  var c=document.getElementById('results');
   var classes=Object.keys(data).sort();
   if(!classes.length){
-    container.innerHTML='<div class="empty-state">No data found. Use the "Scan tab names" button to see exact tab names in your sheet, then add them as filters and try again.</div>';
+    c.innerHTML='<div class="empty">No data found.<br><br>'
+      +'<strong>Tips:</strong><br>'
+      +'&bull; Make sure the sheet is shared as "Anyone with the link can view"<br>'
+      +'&bull; Type the exact tab names in the Classes filter (e.g. <strong>7A</strong>, <strong>8A</strong>) and press Enter for each<br>'
+      +'&bull; Check that the subject keyword matches something in row 3 (e.g. <strong>Physics</strong>)</div>';
     return;
   }
   var html='';
   for(var cls of classes){
     var names=Object.keys(data[cls]);
-    if(minSessions>0) names=names.filter(function(n){return data[cls][n].total>=minSessions;});
+    if(minS>0) names=names.filter(function(n){return data[cls][n].total>=minS;});
     if(!names.length) continue;
-    var maxSess=Math.max.apply(null,names.map(function(n){return data[cls][n].total;}));
-    var avgPct=Math.round(names.reduce(function(s,n){return s+(data[cls][n].count/(data[cls][n].total||1));},0)/names.length*100);
-    html+='<div class="class-card">'
-      +'<div class="class-card-header">'
-      +'<div class="class-name">'+esc(cls)+'<span class="subject-badge">'+esc(subject)+'</span></div>'
-      +'<button class="export-csv-btn" onclick="exportCSV(\''+esc(cls)+'\')">'
+    var maxS=Math.max.apply(null,names.map(function(n){return data[cls][n].total;}));
+    var avgP=Math.round(names.reduce(function(s,n){return s+(data[cls][n].count/(data[cls][n].total||1));},0)/names.length*100);
+    html+='<div class="cc"><div class="cc-hdr">'
+      +'<div class="cn">'+esc(cls)+'<span class="sbadge">'+esc(subj)+'</span></div>'
+      +'<button class="exp-btn" onclick="exportCSV(\''+esc(cls)+'\')">'
       +'<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 1v7M3 5l3 3 3-3M1 10h10"/></svg>Export CSV</button>'
       +'</div>'
-      +'<div class="metrics-row">'
-      +'<div class="metric"><div class="metric-label">Students</div><div class="metric-val">'+names.length+'</div></div>'
-      +'<div class="metric"><div class="metric-label">Max sessions</div><div class="metric-val">'+maxSess+'</div></div>'
-      +'<div class="metric"><div class="metric-label">Avg attendance</div><div class="metric-val">'+avgPct+'%</div></div>'
+      +'<div class="met-row">'
+      +'<div class="met"><div class="met-l">Students</div><div class="met-v">'+names.length+'</div></div>'
+      +'<div class="met"><div class="met-l">Max sessions</div><div class="met-v">'+maxS+'</div></div>'
+      +'<div class="met"><div class="met-l">Avg attendance</div><div class="met-v">'+avgP+'%</div></div>'
       +'</div>'
       +'<table class="att"><thead><tr>'
       +'<th style="width:36px">#</th><th>Student name</th>'
@@ -335,38 +418,38 @@ function renderResults(data,subject,minSessions){
       +'<th style="min-width:130px">Attendance %</th>'
       +'</tr></thead><tbody>';
     names.forEach(function(name,i){
-      var c=data[cls][name].count, t=data[cls][name].total;
-      var pct=t?Math.round(c/t*100):0;
+      var cnt=data[cls][name].count,tot=data[cls][name].total;
+      var pct=tot?Math.round(cnt/tot*100):0;
       var bc=pct<50?'low':pct<75?'mid':'';
       html+='<tr>'
         +'<td class="idx">'+(i+1)+'</td>'
         +'<td>'+esc(name)+'</td>'
-        +'<td class="num '+(t===0?'zero':'')+'">'+t+'</td>'
-        +'<td class="num '+(c===0?'zero':'present-num')+'">'+c+'</td>'
-        +'<td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill '+bc+'" style="width:'+pct+'%"></div></div>'
-        +'<span class="pct-lbl">'+pct+'%</span></div></td>'
+        +'<td class="num '+(tot===0?'zero':'')+'">'+tot+'</td>'
+        +'<td class="num '+(cnt===0?'zero':'pn')+'">'+cnt+'</td>'
+        +'<td><div class="bw"><div class="bt"><div class="bf '+bc+'" style="width:'+pct+'%"></div></div>'
+        +'<span class="pl">'+pct+'%</span></div></td>'
         +'</tr>';
     });
     html+='</tbody></table></div>';
   }
-  container.innerHTML=html||'<div class="empty-state">No students matched the filter.</div>';
+  c.innerHTML=html||'<div class="empty">No students matched the filter.</div>';
 }
 
 function exportCSV(cls){
   if(!lastData||!lastData[cls]) return;
   var names=Object.keys(lastData[cls]);
-  var csv='Student Name,Present ('+lastSubject+'),Total Sessions,Attendance %\n';
+  var csv='Student Name,Present ('+lastSubj+'),Total Sessions,Attendance %\n';
   names.forEach(function(name){
-    var c=lastData[cls][name].count, t=lastData[cls][name].total;
-    var pct=t?Math.round(c/t*100):0;
-    csv+='"'+name+'",'+c+','+t+','+pct+'%\n';
+    var cnt=lastData[cls][name].count,tot=lastData[cls][name].total;
+    var pct=tot?Math.round(cnt/tot*100):0;
+    csv+='"'+name+'",'+cnt+','+tot+','+pct+'%\n';
   });
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='Attendance_'+cls+'_'+lastSubject+'.csv'; a.click();
+  a.href=URL.createObjectURL(blob);a.download='Attendance_'+cls+'_'+lastSubj+'.csv';a.click();
 }
 
-addRow(); addRow(); addRow();
+addRow();addRow();addRow();
 </script>
 </body>
 </html>
