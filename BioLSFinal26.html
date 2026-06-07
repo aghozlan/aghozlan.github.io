@@ -8,7 +8,7 @@
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt; /* Strict compact official size */
+            font-size: 14pt; /* Strict compact official size */
             line-height: 1.2;
             margin: 0;
             padding: 0;
@@ -26,8 +26,9 @@
             width: 100%;
             padding: 15px;
             /* Ensures visual separation in browser */
-            margin-bottom: 20px;
+            margin-bottom: 0;
             border-bottom: 2px dashed #ccc;
+            page-break-after: always;
         }
         .marking-scheme-page {
             width: 100%;
@@ -187,6 +188,16 @@
         /* Strict Print Rules */
        /* Strict Print Rules */
         @media print {
+            .exercise-page {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+                page-break-after: always;
+            }
+            /* This removes extra space between exercises */
+            .exam-wrapper > .exercise-page:not(:last-child) {
+                padding-bottom: 0;
+            }
+        }
             body { margin: 0; padding: 0; }
             .no-print { display: none !important; }
             .exam-wrapper { max-width: 100%; width: 100%; }
