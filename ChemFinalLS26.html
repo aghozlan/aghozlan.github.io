@@ -1,647 +1,588 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Grade 12 Life Sciences - Official Mock Examination (Chemistry)</title>
-    <style>
-        /* General Document Settings */
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt; /* Strict compact official size */
-            line-height: 1.25;
-            margin: 0;
-            padding: 0;
-            color: black;
-            background-color: white;
-        }
-        
-        /* Layout & Page Control */
-        .exam-wrapper {
-            width: 100%;
-            max-width: 850px;
-            margin: 0 auto;
-        }
-        .exercise-page {
-            width: 100%;
-            padding: 20px 15px;
-            margin-bottom: 20px;
-            border-bottom: 2px dashed #ccc;
-            break-after: page;
-        }
-        .marking-scheme-page {
-            width: 100%;
-            padding: 20px 15px;
-            break-after: page;
-        }
-        
-        /* Print Button Styles */
-        .no-print {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .print-btn {
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background-color 0.3s;
-        }
-        .print-btn:hover {
-            background-color: #1a252f;
-        }
+<meta charset="UTF-8">
+<title>Chemistry Final Practice Exam — La Cité Nationale</title>
+<style>
+@page { size: A4; margin: 11mm 13mm; }
+@media print { body{background:#fff!important;} .pb{page-break-before:always;} }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Times New Roman',Times,serif;font-size:14pt;line-height:1.52;color:#111;background:#ddd;}
+.sheet{width:210mm;background:#fff;margin:0 auto;padding:11mm 13mm 9mm;}
 
-        /* Header Formatting */
-        .header-table {
-            width: 100%;
-            border-bottom: 3px solid black;
-            margin-bottom: 12px;
-            padding-bottom: 5px;
-        }
-        .header-table td {
-            vertical-align: middle;
-            border: none;
-            padding: 0;
-        }
-        .school-info {
-            text-align: left;
-            font-weight: bold;
-            font-size: 12pt;
-            width: 35%;
-        }
-        .exam-info {
-            text-align: right;
-            font-weight: bold;
-            font-size: 12pt;
-            width: 35%;
-        }
-        .logo-container {
-            text-align: center;
-            width: 30%;
-        }
-        .logo {
-            max-height: 150px;
-            width: auto;
-        }
-        .exam-title {
-            text-align: center;
-            font-size: 14pt;
-            font-weight: bold;
-            margin: 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-decoration: underline;
-        }
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;gap:7px;border-top:3px solid #111;border-bottom:2.5px solid #111;padding:5px 0 6px;margin-bottom:7px;}
+.logo{width:64px;height:64px;object-fit:contain;flex-shrink:0;}
+.hdr-c{flex:1;text-align:center;}
+.hdr-rep{font-size:9.5pt;font-style:italic;color:#555;}
+.hdr-sch{font-size:14pt;font-weight:bold;}
+.hdr-ttl{font-size:15pt;font-weight:bold;margin:2px 0;}
+.hdr-meta{display:flex;justify-content:space-between;font-size:10.5pt;border-top:1px solid #777;padding-top:3px;margin-top:3px;}
 
-        /* Typography & Content Layout */
-        h3 {
-            font-size: 12.5pt;
-            font-weight: bold;
-            margin: 0 0 8px 0;
-            text-transform: uppercase;
-            border-bottom: 2px solid black;
-            padding-bottom: 3px;
-        }
-        h4 {
-            font-size: 11pt;
-            font-weight: bold;
-            margin: 8px 0 4px 0;
-            text-decoration: underline;
-        }
-        p {
-            margin: 5px 0;
-            text-align: justify;
-        }
-        .points {
-            float: right;
-            font-weight: bold;
-            font-size: 11pt;
-            text-transform: none;
-        }
-        .doc-title {
-            font-weight: bold;
-            font-style: italic;
-            text-align: center;
-            margin: 4px 0 10px 0;
-            font-size: 10pt;
-        }
-        
-        /* Lists */
-        .question-list {
-            list-style-type: decimal;
-            margin: 6px 0 10px 25px;
-            padding: 0;
-        }
-        .question-list li {
-            margin-bottom: 6px;
-            text-align: justify;
-            padding-left: 5px;
-        }
+/* ── STUDENT STRIP ── */
+.stu{display:flex;gap:8px;font-size:12pt;border-bottom:1px dashed #999;padding-bottom:4px;margin-bottom:7px;}
+.stu-f{display:flex;align-items:baseline;gap:4px;flex:1;}
+.stu-f label{font-weight:bold;white-space:nowrap;}
+.stu-line{flex:1;border-bottom:1px solid #444;height:15px;}
 
-        /* Tables */
-        table.data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 8px 0;
-            font-size: 10.5pt;
-            text-align: center;
-        }
-        table.data-table th, table.data-table td {
-            border: 1px solid black;
-            padding: 5px;
-            vertical-align: middle;
-        }
-        table.data-table th { background-color: #f5f5f5; }
+/* ── GIVEN BOX ── */
+.given{border:1.2px solid #888;background:#f6f6f6;padding:4px 10px;font-size:12pt;margin-bottom:7px;display:flex;flex-wrap:wrap;gap:3px 18px;}
 
-        /* SVG Containers */
-        .svg-container {
-            text-align: center;
-            margin: 10px 0;
-        }
-        svg text {
-            font-family: 'Times New Roman', Times, serif;
-        }
+/* ── EXERCISE ── */
+.ex{margin-bottom:9px;}
+.ex-hd{background:#111;color:#fff;padding:4px 10px;font-size:13.5pt;font-weight:bold;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.ex-hd .pts{background:#fff;color:#111;font-size:11.5pt;padding:1px 8px;border-radius:2px;font-weight:bold;}
+.ctx{text-align:justify;margin-bottom:5px;}
+.rxn{display:block;text-align:center;font-family:'Courier New',Courier,monospace;font-size:13pt;background:#f8f8f8;border:1px solid #ddd;padding:4px 10px;border-radius:3px;margin:4px auto 6px;}
+.doc-lbl{text-align:center;font-weight:bold;font-size:12.5pt;margin:2px 0 5px;}
 
-        /* Marking Scheme Tables */
-        .marking-scheme {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-            font-size: 10.5pt;
-        }
-        .marking-scheme th {
-            background-color: #e8e8e8;
-            border: 2px solid black;
-            padding: 6px;
-            text-align: center;
-        }
-        .marking-scheme td {
-            border: 1px solid black;
-            padding: 6px;
-            vertical-align: top;
-            text-align: justify;
-        }
-        .col-q { width: 5%; text-align: center; font-weight: bold; }
-        .col-ans { width: 85%; }
-        .col-pt { width: 10%; text-align: center; font-weight: bold; }
+/* ── TABLE ── */
+table{border-collapse:collapse;width:100%;font-size:12.5pt;margin:4px 0;}
+th{border:1.2px solid #222;padding:4px 7px;background:#ddd;font-weight:bold;text-align:center;}
+td{border:1.2px solid #222;padding:4px 7px;text-align:center;}
+td.l{text-align:left;}
+.ice-lbl{background:#e0e0e0;font-weight:bold;text-align:left;}
+.ice-cell{height:26px;} /* empty cell for students */
 
-        /* Strict Print Rules */
-        @media print {
-            body { margin: 0; padding: 0; }
-            .no-print { display: none !important; }
-            .exam-wrapper { max-width: 100%; width: 100%; }
-            .exercise-page {
-                border-bottom: none;
-                margin-bottom: 0;
-                padding: 0;
-            }
-            .marking-scheme-page {
-                padding: 0;
-            }
-            
-            @page { 
-                size: A4;
-                margin: 15mm 12mm; 
-                @bottom-center { 
-                    content: counter(page); 
-                    font-family: 'Times New Roman', Times, serif; 
-                    font-size: 10pt; 
-                }
-            }
-        }
-    </style>
+/* ── QUESTIONS ── */
+.q{margin-bottom:5px;overflow:hidden;}
+.q .qn{font-weight:bold;}
+.q .mk{float:right;font-size:12pt;color:#990000;font-weight:bold;}
+.sub{margin:2px 0 3px 20px;}
+
+/* ── TWO-COL ── */
+.tcol{display:flex;gap:10px;align-items:flex-start;margin:5px 0;}
+.tc-t{flex:1;min-width:0;}
+.tc-f{flex:0 0 auto;}
+
+/* ── MISC ── */
+.fig-wrap{display:flex;flex-direction:column;align-items:center;margin:4px 0;}
+.note{font-style:italic;font-size:12.5pt;color:#444;margin:2px 0;}
+.pb{page-break-before:always;}
+svg{display:block;max-width:100%;}
+p{margin-bottom:4px;}
+
+/* ══ MARKING SCHEME ══ */
+.ms-banner{background:#5c3200;color:#fff;text-align:center;padding:7px;font-size:16pt;font-weight:bold;letter-spacing:2px;margin-bottom:8px;border-radius:2px;}
+.ms-notice{background:#fef3c7;border-left:4px solid #d97706;padding:5px 10px;font-size:11.5pt;color:#5c3200;margin-bottom:8px;}
+.ms-ex{margin-bottom:10px;}
+.ms-ex-hd{background:#5c3200;color:#fff;padding:4px 10px;font-size:13.5pt;font-weight:bold;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.ms-ex-hd .pts{background:#fff;color:#5c3200;font-size:11.5pt;padding:1px 8px;border-radius:2px;font-weight:bold;}
+.ms-q{border-left:3px solid #d97706;padding-left:8px;margin-bottom:8px;overflow:hidden;}
+.ms-q .qn{font-weight:bold;color:#5c3200;}
+.ms-q .mk{float:right;font-size:11.5pt;background:#5c3200;color:#fff;padding:1px 7px;border-radius:10px;}
+.ms-ans{background:#fffbeb;border:1px solid #fcd34d;padding:6px 10px;margin-top:4px;border-radius:3px;font-size:12.5pt;line-height:1.55;}
+.ms-ans .ok{color:#166534;font-weight:bold;}
+.ms-ans .formula{font-family:'Courier New',Courier,monospace;background:#f0fdf4;padding:2px 7px;border-radius:2px;font-size:12pt;display:inline-block;}
+.ms-ans ul{margin:3px 0 0 18px;}
+.ms-ans li{margin-bottom:2px;}
+.award{font-size:11pt;color:#b45309;font-style:italic;margin-top:3px;}
+.ms-total{background:#5c3200;color:#fff;padding:5px 12px;font-weight:bold;font-size:12pt;text-align:right;border-radius:3px;margin-top:6px;}
+</style>
 </head>
 <body>
-
-<div class="no-print">
-    <button class="print-btn" onclick="window.print()">🖨️ Print or Save as PDF</button>
+<!-- ═══════════════════════════════════════
+     EXAM PAGES
+     ═══════════════════════════════════════ -->
+<div class="sheet">
+<div class="hdr">
+  <img class="logo" src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale">
+  <div class="hdr-c">
+    <div class="hdr-rep">Lebanese Republic — Ministry of Education and Higher Education</div>
+    <div class="hdr-sch">LA CITÉ NATIONALE SCHOOL</div>
+    <div class="hdr-ttl">Chemistry — Final Practice Exam &nbsp;|&nbsp; Grade 12 — Life Sciences</div>
+    <div class="hdr-meta">
+      <span>Academic Year: 2025–2026</span>
+      <span>Total: 28.75 points</span>
+      <span>Duration: 3 hours</span>
+    </div>
+  </div>
+  <img class="logo" src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale">
+</div>
+<div class="stu">
+  <div class="stu-f"><label>Name:</label><div class="stu-line"></div></div>
+  <div class="stu-f"><label>Section:</label><div class="stu-line"></div></div>
+  <div class="stu-f"><label>Date:</label><div class="stu-line"></div></div>
+</div>
+<div class="given">
+  <strong>Given data (all exercises):</strong>
+  <span>M(H)=1 ; M(C)=12 ; M(O)=16 ; M(Na)=23 g·mol<sup>−1</sup></span>
+  <span>K<sub>w</sub> = 10<sup>−14</sup> at 25°C</span>
+  <span>log 2 = 0.30 &nbsp; log 5 = 0.70</span>
+  <span>K<sub>eq</sub> (esterification) = 4</span>
 </div>
 
-<div class="exam-wrapper">
+<!-- ────────────────────────────────────────
+     EXERCISE I  (7 pts)
+     ─────────────────────────────────────── -->
+<div class="ex">
+<div class="ex-hd"><span>EXERCISE I — Chemical Equilibrium: Esterification of Propan-1-ol</span><span class="pts">7 pts</span></div>
+<p class="ctx">A student studies the esterification of ethanoic acid (CH<sub>3</sub>COOH) with propan-1-ol (CH<sub>3</sub>CH<sub>2</sub>CH<sub>2</sub>OH) at 25°C, using concentrated H<sub>2</sub>SO<sub>4</sub> as catalyst. The equilibrium constant is K<sub>eq</sub> = 4.</p>
+<span class="rxn">CH<sub>3</sub>COOH &nbsp;+&nbsp; C<sub>3</sub>H<sub>7</sub>OH &nbsp;⇌&nbsp; CH<sub>3</sub>COOC<sub>3</sub>H<sub>7</sub> &nbsp;+&nbsp; H<sub>2</sub>O</span>
 
-    <div class="exercise-page">
-        <table class="header-table">
-            <tr>
-                <td class="school-info">
-                    LA CITE NATIONALE SCHOOL<br>
-                    Secondary Education Cycle<br>
-                    Grade 12 - Life Sciences (LS)
-                </td>
-                <td class="logo-container">
-                    <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cite Nationale Logo" class="logo">
-                </td>
-                <td class="exam-info">
-                    Subject: Chemistry<br>
-                    Duration: 120 minutes<br>
-                    Academic Year 2025 - 2026
-                </td>
-            </tr>
-        </table>
-        <div class="exam-title">Official Mock Examination</div>
+<div class="q"><span class="qn">1.</span><span class="mk">1 pt</span>
+  Name the ester formed and write its condensed structural formula. Identify the functional group present in each reactant and in the ester.
+</div>
 
-        <h3>Exercise 1: Kinetics of Iodide Oxidation <span class="points">(5 points)</span></h3>
-        <p>Hydrogen peroxide (H<sub>2</sub>O<sub>2</sub>) slowly oxidizes iodide ions (I<sup>-</sup>) in an acidified aqueous medium to produce iodine (I<sub>2</sub>). This slow reaction allows for the continuous kinetic tracking of the system. At time t = 0, we mix a volume V<sub>1</sub> = 50.0 mL of potassium iodide solution (K<sup>+</sup> + I<sup>-</sup>) of concentration C<sub>1</sub> = 0.10 mol/L, a volume V<sub>2</sub> = 50.0 mL of hydrogen peroxide solution of concentration C<sub>2</sub> = 0.02 mol/L, and a few drops of concentrated sulfuric acid (acting as a catalyst and providing excess H<sup>+</sup> ions). The total volume is V<sub>T</sub> = 100.0 mL. The reaction occurs at a constant temperature T = 25°C.</p>
-        
-        <h4>Part A: Kinetic Analysis via Spectrophotometry</h4>
-        <p>Since aqueous iodine (I<sub>2</sub>) has a characteristic brown-yellow color, its formation is tracked using a spectrophotometer. The concentration of iodine formed over time, [I<sub>2</sub>] = f(t), is deduced and plotted in Document 1. The tangent (T) to the curve at t = 0 is also drawn.</p>
+<div class="q"><span class="qn">2.</span><span class="mk">2.5 pts</span>
+  An experiment uses n<sub>0</sub>(acid) = 1 mol and n<sub>0</sub>(alcohol) = 3 mol. Let <em>x</em> be the amount (mol) of ester formed at equilibrium.
+  <div class="sub">a. Complete the ICE table below: <em>(0.5 pt)</em></div>
+</div>
 
-        <div class="svg-container">
-            <svg viewBox="0 0 950 320" width="100%" height="320">
-                <rect x="100" y="20" width="750" height="250" fill="#fafafa" stroke="black" stroke-width="1"/>
-                
-                <line x1="100" y1="220" x2="850" y2="220" stroke="#eee" stroke-width="1"/>
-                <line x1="100" y1="170" x2="850" y2="170" stroke="#eee" stroke-width="1"/>
-                <line x1="100" y1="120" x2="850" y2="120" stroke="#eee" stroke-width="1"/>
-                <line x1="100" y1="70" x2="850" y2="70" stroke="#eee" stroke-width="1"/>
-                
-                <line x1="100" y1="270" x2="880" y2="270" stroke="black" stroke-width="2" marker-end="url(#arrow)"/> <line x1="100" y1="10" x2="100" y2="270" stroke="black" stroke-width="2" marker-end="url(#arrow)"/> <text x="100" y="295" font-size="12" text-anchor="middle">0</text>
-                <text x="250" y="295" font-size="12" text-anchor="middle">10</text>
-                <text x="400" y="295" font-size="12" text-anchor="middle">20</text>
-                <text x="550" y="295" font-size="12" text-anchor="middle">30</text>
-                <text x="700" y="295" font-size="12" text-anchor="middle">40</text>
-                <text x="850" y="295" font-size="12" text-anchor="middle">50</text>
-                <text x="880" y="295" font-size="12" font-weight="bold">t (min)</text>
-                
-                <text x="85" y="275" font-size="12" text-anchor="end">0.0</text>
-                <text x="85" y="225" font-size="12" text-anchor="end">2.0</text>
-                <text x="85" y="175" font-size="12" text-anchor="end">4.0</text>
-                <text x="85" y="125" font-size="12" text-anchor="end">6.0</text>
-                <text x="85" y="75" font-size="12" text-anchor="end">8.0</text>
-                <text x="85" y="25" font-size="12" text-anchor="end">10.0</text>
-                <text x="35" y="140" font-size="13" transform="rotate(-90 35 140)" text-anchor="middle" font-weight="bold">[I₂] (mmol/L)</text>
-                
-                <path d="M 100 270 Q 180 145 350 50 T 850 20" fill="none" stroke="blue" stroke-width="2.5"/>
-                <text x="810" y="40" font-size="12" fill="blue" font-weight="bold">Curve [I₂]</text>
-                
-                <line x1="100" y1="270" x2="250" y2="70" stroke="red" stroke-width="2" stroke-dasharray="6,4"/>
-                <text x="265" y="65" font-size="12" fill="red" font-weight="bold">(T)</text>
-                
-                <defs>
-                    <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="black"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-        <p class="doc-title">Document 1: Variation of [I<sub>2</sub>] as a function of time</p>
+<table class="ice">
+  <tr>
+    <th style="width:24%"></th>
+    <th>CH<sub>3</sub>COOH</th>
+    <th>C<sub>3</sub>H<sub>7</sub>OH</th>
+    <th>CH<sub>3</sub>COOC<sub>3</sub>H<sub>7</sub></th>
+    <th>H<sub>2</sub>O</th>
+  </tr>
+  <tr>
+    <td class="ice-lbl">n<sub>initial</sub> (mol)</td>
+    <td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td>
+  </tr>
+  <tr>
+    <td class="ice-lbl">Δn (mol)</td>
+    <td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td>
+  </tr>
+  <tr>
+    <td class="ice-lbl">n<sub>eq</sub> (mol)</td>
+    <td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td>
+  </tr>
+</table>
 
-        <ol class="question-list">
-            <li>Given the redox couples H<sub>2</sub>O<sub>2</sub>/H<sub>2</sub>O and I<sub>2</sub>/I<sup>-</sup>, <strong>write</strong> the two half-equations of oxidation and reduction, then <strong>deduce</strong> the overall equation of the reaction. <em>(1 pt)</em></li>
-            <li><strong>Show</strong>, by calculating the initial amounts of reactants, that H<sub>2</sub>O<sub>2</sub> is the limiting reactant in this specific mixture. <em>(1.5 pts)</em></li>
-            <li><strong>Define</strong> the half-life time (t<sub>1/2</sub>) of a reaction. Based on Document 1, <strong>determine</strong> its graphical value, explicitly showing your method. <em>(1 pt)</em></li>
-            <li><strong>Analyze</strong> the variation of the rate of formation of I<sub>2</sub> over time by observing the curve in Document 1. <strong>Explain</strong> this variation at the microscopic level using the collision theory. <em>(1.5 pts)</em></li>
-        </ol>
-    </div>
+<div class="sub">b. Write the expression for K<sub>eq</sub> in terms of x. By solving the resulting equation, show that x ≈ 0.90 mol. <em>(1.5 pts)</em></div>
+<div class="sub">c. Calculate the percentage yield of the ester based on the limiting reagent. <em>(0.5 pt)</em></div>
 
-    <div class="exercise-page">
-        <h3>Exercise 2: Influence of Kinetic Factors <span class="points">(5 points)</span></h3>
-        <p>To study the factors influencing the speed of a chemical transformation, we investigate the reaction between solid zinc and an aqueous solution of hydrochloric acid. The overall equation is given by: <br>
-        <span style="display:block; text-align:center; font-weight:bold; margin: 4px 0;">Zn<sub>(s)</sub> + 2 H<sub>3</sub>O<sup>+</sup><sub>(aq)</sub> &rarr; Zn<sup>2+</sup><sub>(aq)</sub> + H<sub>2(g)</sub> + 2 H<sub>2</sub>O<sub>(l)</sub></span>
-        Three independent experiments are conducted using varying initial states. In all three experiments, the hydrochloric acid is in excess. The volume of hydrogen gas produced, V(H<sub>2</sub>), is continuously collected and recorded over time.</p>
+<div class="q"><span class="qn">3.</span><span class="mk">1 pt</span>
+  When n<sub>0</sub>(acid) = n<sub>0</sub>(alcohol) = 1 mol, the yield at equilibrium is 66.7 %. Compare this to the yield found in question 2c. Explain the improvement using Le Chatelier's principle.
+</div>
 
-        <h4>Part A: Experimental Setups and Kinetic Curves</h4>
-        <p>Document 2 details the initial conditions of the three experiments. Document 3 displays the three corresponding kinetic curves, labeled (a), (b), and (c), representing the volume of hydrogen gas evolved.</p>
+<div class="q"><span class="qn">4.</span><span class="mk">1 pt</span>
+  A new mixture is prepared with: n<sub>0</sub>(acid) = 1 mol ; n<sub>0</sub>(alcohol) = 1 mol ; n<sub>0</sub>(ester) = 0.3 mol ; n<sub>0</sub>(water) = 0.3 mol. Calculate the reaction quotient Q<sub>c</sub> and compare it to K<sub>eq</sub>. Predict the direction in which the reaction will proceed.
+</div>
 
-        <table class="data-table">
-            <tr>
-                <th style="width: 20%;">Experiment</th>
-                <th style="width: 25%;">State of Zinc (m = 1.0 g)</th>
-                <th style="width: 30%;">Concentration of HCl [H<sub>3</sub>O<sup>+</sup>]</th>
-                <th style="width: 25%;">Temperature (T)</th>
-            </tr>
-            <tr>
-                <td><strong>Exp. 1</strong></td>
-                <td>Powder</td>
-                <td>0.10 mol/L</td>
-                <td>20 °C</td>
-            </tr>
-            <tr>
-                <td><strong>Exp. 2</strong></td>
-                <td>Powder</td>
-                <td>0.10 mol/L</td>
-                <td>40 °C</td>
-            </tr>
-            <tr>
-                <td><strong>Exp. 3</strong></td>
-                <td>Granules</td>
-                <td>0.10 mol/L</td>
-                <td>20 °C</td>
-            </tr>
-        </table>
-        <p class="doc-title">Document 2: Initial physical and chemical conditions of the experiments</p>
+<div class="q"><span class="qn">5.</span><span class="mk">1.5 pts</span>
+  Give <strong>two characteristics</strong> of the esterification reaction.
+</div>
+</div><!-- /ex I -->
 
-        <div class="svg-container">
-            <svg viewBox="0 0 950 320" width="100%" height="320">
-                <rect x="100" y="20" width="750" height="250" fill="#fafafa" stroke="black" stroke-width="1"/>
-                
-                <line x1="100" y1="270" x2="880" y2="270" stroke="black" stroke-width="2" marker-end="url(#arrow-ax)"/> <line x1="100" y1="10" x2="100" y2="270" stroke="black" stroke-width="2" marker-end="url(#arrow-ax)"/> <line x1="100" y1="60" x2="850" y2="60" stroke="#999" stroke-dasharray="4,4"/> <text x="100" y="295" font-size="12" text-anchor="middle">0</text>
-                <text x="850" y="295" font-size="12" text-anchor="middle">t (min)</text>
-                
-                <text x="85" y="275" font-size="12" text-anchor="end">0</text>
-                <text x="85" y="65" font-size="12" text-anchor="end" font-style="italic">V<sub>max</sub></text>
-                <text x="35" y="140" font-size="13" transform="rotate(-90 35 140)" text-anchor="middle" font-weight="bold">Volume of H₂ (mL)</text>
-                
-                <path d="M 100 270 Q 150 90 280 65 T 850 60" fill="none" stroke="red" stroke-width="2.5"/>
-                <text x="280" y="50" font-size="12" fill="red" font-weight="bold">Curve (a)</text>
-                
-                <path d="M 100 270 Q 250 160 450 75 T 850 60" fill="none" stroke="green" stroke-width="2.5"/>
-                <text x="450" y="90" font-size="12" fill="green" font-weight="bold">Curve (b)</text>
-                
-                <path d="M 100 270 Q 400 250 650 120 T 850 60" fill="none" stroke="blue" stroke-width="2.5"/>
-                <text x="650" y="140" font-size="12" fill="blue" font-weight="bold">Curve (c)</text>
-                
-                <defs>
-                    <marker id="arrow-ax" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="black"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-        <p class="doc-title">Document 3: Evolution of the volume of hydrogen produced over time</p>
+<!-- ────────────────────────────────────────
+     EXERCISE II  (8 pts)
+     ─────────────────────────────────────── -->
+<div class="ex">
+<div class="ex-hd"><span>EXERCISE II — Esterification Yield Optimization</span><span class="pts">8 pts</span></div>
+<p class="ctx">The esterification of propanoic acid (CH<sub>3</sub>CH<sub>2</sub>COOH) with ethanol (C<sub>2</sub>H<sub>5</sub>OH) is studied at 25°C with H<sub>2</sub>SO<sub>4</sub> as catalyst. K<sub>eq</sub> = 4.</p>
+<span class="rxn">CH<sub>3</sub>CH<sub>2</sub>COOH &nbsp;+&nbsp; C<sub>2</sub>H<sub>5</sub>OH &nbsp;⇌&nbsp; CH<sub>3</sub>CH<sub>2</sub>COOC<sub>2</sub>H<sub>5</sub> &nbsp;+&nbsp; H<sub>2</sub>O</span>
 
-        <ol class="question-list">
-            <li><strong>Pick out</strong> from Document 2 the two kinetic factors being investigated in this study. <em>(1 pt)</em></li>
-            <li><strong>Match</strong>, with precise <strong>justification</strong>, each curve (a, b, and c) to its corresponding experiment (1, 2, or 3). <em>(2 pts)</em></li>
-            <li><strong>Compare</strong> the final state (maximum volume V<sub>max</sub>) attained by all three curves. <strong>Justify</strong> this observation chemically based on the initial conditions. <em>(1 pt)</em></li>
-            <li>If Experiment 1 is repeated with an added catalyst (Cu<sup>2+</sup> ions), <strong>predict</strong> the relative position of the new curve compared to curve (b). <strong>State</strong> the role of a catalyst. <em>(1 pt)</em></li>
-        </ol>
-    </div>
+<div class="q"><span class="qn">1.</span><span class="mk">1 pt</span>
+  Name the ester formed. Write the expression for K<sub>eq</sub> using mole amounts at equilibrium.
+</div>
 
-    <div class="exercise-page">
-        <h3>Exercise 3: Methanol Synthesis and Chemical Equilibrium <span class="points">(5 points)</span></h3>
-        <p>Methanol (CH<sub>3</sub>OH) is synthesized industrially via a reversible gas-phase reaction between carbon monoxide (CO) and hydrogen gas (H<sub>2</sub>). The thermochemical equation for this synthesis is:</p>
-        <p style="text-align: center; font-weight: bold; font-size: 12pt;">CO<sub>(g)</sub> + 2 H<sub>2(g)</sub> &#rightleftharpoons; CH<sub>3</sub>OH<sub>(g)</sub> &nbsp;&nbsp;&nbsp; with &nbsp;&nbsp;&nbsp; &Delta;H &lt; 0</p>
+<div class="q"><span class="qn">2.</span><span class="mk">2.5 pts</span>
+  <strong>Part A:</strong> n<sub>0</sub>(acid) = 2 mol, n<sub>0</sub>(alcohol) = 2 mol. Let x = moles of ester at equilibrium.
+  <div class="sub">a. Show that K<sub>eq</sub> = x<sup>2</sup> / (2 − x)<sup>2</sup>. Solve to find x and calculate the percentage yield. <em>(2 pts)</em></div>
+  <div class="sub">b. Could the reaction reach completion (100 % yield)? Explain. <em>(0.5 pt)</em></div>
+</div>
 
-        <h4>Part A: Establishing the Equilibrium State</h4>
-        <p>Into a closed, rigid reactor of constant volume V = 2.0 L maintained at a high temperature T, we initially introduce 3.0 mol of CO and 6.0 mol of H<sub>2</sub>. Document 4 tracks the variations in the number of moles of the reactants and products as the system naturally evolves toward its final state.</p>
+<div class="q"><span class="qn">3.</span><span class="mk">2.5 pts</span>
+  <strong>Part B:</strong> n<sub>0</sub>(acid) = 2 mol, n<sub>0</sub>(alcohol) = 4 mol.
+  <div class="sub">a. Write the ICE table and show that K<sub>eq</sub> = x<sup>2</sup> / [(2 − x)(4 − x)]. <em>(1 pt)</em></div>
+</div>
 
-        <div class="svg-container">
-            <svg viewBox="0 0 950 330" width="100%" height="330">
-                <rect x="100" y="20" width="750" height="260" fill="#fafafa" stroke="black" stroke-width="1"/>
-                
-                <line x1="100" y1="240" x2="850" y2="240" stroke="#eee" stroke-width="1"/> <line x1="100" y1="200" x2="850" y2="200" stroke="#eee" stroke-width="1"/> <line x1="100" y1="160" x2="850" y2="160" stroke="#eee" stroke-width="1"/> <line x1="100" y1="120" x2="850" y2="120" stroke="#eee" stroke-width="1"/> <line x1="100" y1="80" x2="850" y2="80" stroke="#eee" stroke-width="1"/> <line x1="100" y1="280" x2="880" y2="280" stroke="black" stroke-width="2" marker-end="url(#arrow-ax2)"/> <line x1="100" y1="10" x2="100" y2="280" stroke="black" stroke-width="2" marker-end="url(#arrow-ax2)"/> <line x1="550" y1="10" x2="550" y2="280" stroke="gray" stroke-dasharray="6,4"/> <text x="550" y="305" font-size="12" text-anchor="middle" font-weight="bold" fill="gray">t<sub>e</sub></text>
-                
-                <text x="85" y="285" font-size="12" text-anchor="end">0.0</text>
-                <text x="85" y="205" font-size="12" text-anchor="end">2.0</text>
-                <text x="85" y="125" font-size="12" text-anchor="end">4.0</text>
-                <text x="85" y="45" font-size="12" text-anchor="end">6.0</text>
-                <text x="35" y="145" font-size="13" transform="rotate(-90 35 145)" text-anchor="middle" font-weight="bold">Amount of substance (mol)</text>
-                <text x="850" y="305" font-size="12" text-anchor="middle">t (hr)</text>
-                
-                <path d="M 100 40 Q 250 200 550 200 L 850 200" fill="none" stroke="blue" stroke-width="2.5"/>
-                <text x="860" y="205" font-size="12" fill="blue" font-weight="bold">H₂</text>
-                
-                <path d="M 100 160 Q 250 240 550 240 L 850 240" fill="none" stroke="green" stroke-width="2.5"/>
-                <text x="860" y="245" font-size="12" fill="green" font-weight="bold">CO</text>
-                
-                <path d="M 100 280 Q 250 200 550 200 L 850 200" fill="none" stroke="red" stroke-width="2.5" stroke-dasharray="8,4"/>
-                <text x="750" y="185" font-size="12" fill="red" font-weight="bold">CH₃OH</text>
-                
-                <defs>
-                    <marker id="arrow-ax2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="black"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-        <p class="doc-title">Document 4: Evolution of the quantities of reactants and products</p>
+<table class="ice">
+  <tr>
+    <th style="width:24%"></th>
+    <th>CH<sub>3</sub>CH<sub>2</sub>COOH</th>
+    <th>C<sub>2</sub>H<sub>5</sub>OH</th>
+    <th>CH<sub>3</sub>CH<sub>2</sub>COOC<sub>2</sub>H<sub>5</sub></th>
+    <th>H<sub>2</sub>O</th>
+  </tr>
+  <tr><td class="ice-lbl">n<sub>initial</sub> (mol)</td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td></tr>
+  <tr><td class="ice-lbl">Δn (mol)</td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td></tr>
+  <tr><td class="ice-lbl">n<sub>eq</sub> (mol)</td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td><td class="ice-cell"></td></tr>
+</table>
 
-        <ol class="question-list">
-            <li><strong>Analyze</strong> Document 4 to <strong>show</strong> that the system has strictly reached a state of dynamic chemical equilibrium starting from time t<sub>e</sub>. <em>(1 pt)</em></li>
-            <li>Using the stoichiometry of the reaction, set up an ICE (Initial, Change, Equilibrium) table. <strong>Show</strong>, based on the final amount of H<sub>2</sub> extracted from Document 4, that the extent of the reaction at equilibrium is x = 2.0 mol. <em>(1.5 pts)</em></li>
-            <li><strong>Calculate</strong> the value of the equilibrium constant K<sub>c</sub> of this reaction at temperature T. <em>(1.5 pts)</em></li>
-            <li>According to Le Chatelier’s Principle, <strong>deduce</strong> the shift direction of the equilibrium if the reactor is cooled (temperature decreases). <strong>Justify</strong> your answer. <em>(1 pt)</em></li>
-        </ol>
-    </div>
+<div class="sub">b. The resulting equation is 3x<sup>2</sup> − 24x + 32 = 0 (√192 ≈ 13.86). Find x and the percentage yield based on the acid. <em>(1 pt)</em></div>
+<div class="sub">c. Compare the yields of Parts A and B. Explain using Le Chatelier's principle. <em>(0.5 pt)</em></div>
 
-    <div class="exercise-page">
-        <h3>Exercise 4: Organic Chemistry - Esterification Reaction <span class="points">(5 points)</span></h3>
-        <p>Esters are organic compounds widely used in the fragrance and food industries for their fruity aromas. In a school chemistry laboratory, a group of students is tasked with synthesizing ethyl ethanoate (an ester) starting from ethanoic acid and ethanol. A few drops of concentrated sulfuric acid (H<sub>2</sub>SO<sub>4</sub>) are added to the reaction mixture.</p>
+<div class="q"><span class="qn">4.</span><span class="mk">2 pts</span>
+  The equilibrium mixture from Part A is modified by adding 0.5 mol of water.
+  <div class="sub">a. Calculate Q<sub>c</sub> immediately after adding the water. Compare to K<sub>eq</sub>. <em>(1 pt)</em></div>
+  <div class="sub">b. In which direction will the reaction proceed? What is the effect on the yield of the ester? <em>(1 pt)</em></div>
+</div>
+</div><!-- /ex II -->
+</div><!-- /sheet 1 -->
 
-        <h4>Part A: Experimental Setup and Optimization</h4>
-        <p>To safely carry out the synthesis and overcome the intrinsic kinetic limitations of organic reactions, the students employ the specific experimental setup illustrated in Document 5, operating it for 60 minutes.</p>
+<!-- PAGE BREAK — EXERCISE III onto new page -->
+<div class="sheet pb">
 
-        <div class="svg-container">
-            <svg viewBox="0 0 650 380" width="100%" height="380">
-                <rect x="275" y="300" width="100" height="40" fill="#f0f0f0" stroke="black" stroke-width="2"/>
-                <text x="325" y="325" font-size="12" text-anchor="middle" font-weight="bold">Heating Mantle</text>
-                
-                <circle cx="325" cy="250" r="40" fill="#e0f7fa" stroke="black" stroke-width="2"/>
-                <rect x="310" y="190" width="30" height="30" fill="#e0f7fa" stroke="black" stroke-width="2" stroke-dasharray="0, 30, 0, 0"/>
-                <path d="M 310 190 L 310 220 M 340 190 L 340 220" stroke="black" stroke-width="2"/>
-                <text x="210" y="255" font-size="11" text-anchor="end">Reaction Mixture + H₂SO₄</text>
-                <line x1="220" y1="250" x2="285" y2="250" stroke="black" stroke-width="1"/>
-                
-                <rect x="310" y="30" width="30" height="160" fill="none" stroke="black" stroke-width="2"/>
-                <path d="M 295 50 L 310 50 M 295 170 L 310 170 M 340 50 L 355 50 M 340 170 L 355 170" stroke="black" stroke-width="2"/>
-                <rect x="295" y="50" width="60" height="120" fill="rgba(0,0,255,0.05)" stroke="black" stroke-width="2"/>
-                
-                <path d="M 275 150 L 295 150" stroke="black" stroke-width="2"/>
-                <text x="230" y="155" font-size="11" text-anchor="end" fill="blue" font-weight="bold">Water IN</text>
-                <line x1="240" y1="150" x2="270" y2="150" stroke="blue" stroke-width="2" marker-end="url(#arrow-blue2)"/>
-                
-                <path d="M 355 70 L 375 70" stroke="black" stroke-width="2"/>
-                <text x="420" y="75" font-size="11" text-anchor="start" fill="blue" font-weight="bold">Water OUT</text>
-                <line x1="380" y1="70" x2="410" y2="70" stroke="blue" stroke-width="2" marker-end="url(#arrow-blue2)"/>
-                
-                <line x1="150" y1="340" x2="150" y2="20" stroke="black" stroke-width="4"/>
-                <line x1="100" y1="340" x2="200" y2="340" stroke="black" stroke-width="4"/>
-                <line x1="150" y1="110" x2="295" y2="110" stroke="gray" stroke-width="4"/> <defs>
-                    <marker id="arrow-blue2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-                        <polygon points="0 0, 6 3, 0 6" fill="blue"/>
-                    </marker>
-                </defs>
-            </svg>
-        </div>
-        <p class="doc-title">Document 5: Experimental synthesis apparatus</p>
+<!-- ────────────────────────────────────────
+     EXERCISE III  (6 pts)
+     ─────────────────────────────────────── -->
+<div class="ex">
+<div class="ex-hd"><span>EXERCISE III — Neutralization of a Strong Acid by a Strong Base</span><span class="pts">6 pts</span></div>
+<p class="ctx">Solution S<sub>1</sub> of nitric acid (HNO<sub>3</sub>): V<sub>1</sub> = 100 mL, C<sub>1</sub> = 0.02 mol·L<sup>−1</sup>. Solution S<sub>2</sub> of sodium hydroxide (NaOH) is prepared by dissolving 0.20 g of pure NaOH in water to a final volume V<sub>2</sub> = 250 mL. S<sub>2</sub> is added progressively to S<sub>1</sub>; the pH of the resulting mixture is measured after each addition. The pH curve is given in Document 1.</p>
 
-        <ol class="question-list">
-            <li><strong>Write</strong> the chemical equation for this esterification reaction using condensed structural formulas (semi-developed formulas). <em>(1 pt)</em></li>
-            <li><strong>Pick out</strong> the specific name of the experimental setup shown in Document 5. <strong>Justify</strong> its two primary purposes during this organic synthesis. <em>(1.5 pts)</em></li>
-            <li>Esterification is thermodynamically described as an athermic reaction. State <strong>two</strong> other main characteristics of this specific reaction. <em>(1 pt)</em></li>
-            <li>The students initially introduce 0.4 mol of ethanoic acid and 0.4 mol of ethanol. After reaching equilibrium, the isolated amount of ester is 0.264 mol. <strong>Calculate</strong> the experimental yield of this synthesis. <strong>Propose</strong> one practical method to increase this yield without changing the reagents. <em>(1.5 pts)</em></li>
-        </ol>
-    </div>
+<!-- pH neutralization curve SVG -->
+<div class="fig-wrap">
+<svg viewBox="0 0 530 310" width="100%" font-family="Times New Roman,serif">
+  <rect x="56" y="14" width="454" height="278" fill="#fcfcfc" stroke="#ccc" stroke-width="0.5"/>
+  <!-- vertical grid V=20,40,...200; x(V)=56+V*2.27 -->
+  <line x1="101" y1="14" x2="101" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="147" y1="14" x2="147" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="192" y1="14" x2="192" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="238" y1="14" x2="238" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="283" y1="14" x2="283" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="329" y1="14" x2="329" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="374" y1="14" x2="374" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="420" y1="14" x2="420" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="465" y1="14" x2="465" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="510" y1="14" x2="510" y2="292" stroke="#ddd" stroke-width="0.8"/>
+  <!-- horizontal grid pH=2,4,6,7,8,10,12,14; y(pH)=292-pH*19.86 -->
+  <line x1="56" y1="252" x2="510" y2="252" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="56" y1="213" x2="510" y2="213" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="56" y1="173" x2="510" y2="173" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="56" y1="153" x2="510" y2="153" stroke="#aaa" stroke-width="1.2" stroke-dasharray="5,3"/>
+  <line x1="56" y1="133" x2="510" y2="133" stroke="#ddd" stroke-width="0.8"/>
+  <line x1="56" y1="93"  x2="510" y2="93"  stroke="#ddd" stroke-width="0.8"/>
+  <line x1="56" y1="54"  x2="510" y2="54"  stroke="#ddd" stroke-width="0.8"/>
+  <line x1="56" y1="14"  x2="510" y2="14"  stroke="#ddd" stroke-width="0.8"/>
+  <!-- equivalence dashed vertical at V=100, x=283 -->
+  <line x1="283" y1="14" x2="283" y2="292" stroke="#999" stroke-width="1.3" stroke-dasharray="7,4"/>
+  <!-- axes -->
+  <line x1="56" y1="292" x2="510" y2="292" stroke="#111" stroke-width="1.8"/>
+  <line x1="56" y1="14"  x2="56"  y2="292" stroke="#111" stroke-width="1.8"/>
+  <!-- x ticks -->
+  <line x1="56"  y1="292" x2="56"  y2="298" stroke="#111" stroke-width="1"/><text x="56"  y="307" text-anchor="middle" font-size="10.5">0</text>
+  <line x1="101" y1="292" x2="101" y2="298" stroke="#111" stroke-width="1"/><text x="101" y="307" text-anchor="middle" font-size="10.5">20</text>
+  <line x1="147" y1="292" x2="147" y2="298" stroke="#111" stroke-width="1"/><text x="147" y="307" text-anchor="middle" font-size="10.5">40</text>
+  <line x1="192" y1="292" x2="192" y2="298" stroke="#111" stroke-width="1"/><text x="192" y="307" text-anchor="middle" font-size="10.5">60</text>
+  <line x1="238" y1="292" x2="238" y2="298" stroke="#111" stroke-width="1"/><text x="238" y="307" text-anchor="middle" font-size="10.5">80</text>
+  <line x1="283" y1="292" x2="283" y2="298" stroke="#111" stroke-width="1.5"/><text x="283" y="307" text-anchor="middle" font-size="10.5" font-weight="bold">100</text>
+  <line x1="329" y1="292" x2="329" y2="298" stroke="#111" stroke-width="1"/><text x="329" y="307" text-anchor="middle" font-size="10.5">120</text>
+  <line x1="374" y1="292" x2="374" y2="298" stroke="#111" stroke-width="1"/><text x="374" y="307" text-anchor="middle" font-size="10.5">140</text>
+  <line x1="420" y1="292" x2="420" y2="298" stroke="#111" stroke-width="1"/><text x="420" y="307" text-anchor="middle" font-size="10.5">160</text>
+  <line x1="465" y1="292" x2="465" y2="298" stroke="#111" stroke-width="1"/><text x="465" y="307" text-anchor="middle" font-size="10.5">180</text>
+  <line x1="510" y1="292" x2="510" y2="298" stroke="#111" stroke-width="1"/><text x="510" y="307" text-anchor="middle" font-size="10.5">200</text>
+  <text x="283" y="310" text-anchor="middle" font-size="12" font-weight="bold" font-style="italic">V(S&#x2082;) added (mL)</text>
+  <!-- y ticks -->
+  <line x1="50" y1="292" x2="56" y2="292" stroke="#111" stroke-width="1"/><text x="48" y="296" text-anchor="end" font-size="10.5">0</text>
+  <line x1="50" y1="252" x2="56" y2="252" stroke="#111" stroke-width="1"/><text x="48" y="256" text-anchor="end" font-size="10.5">2</text>
+  <line x1="50" y1="213" x2="56" y2="213" stroke="#111" stroke-width="1"/><text x="48" y="217" text-anchor="end" font-size="10.5">4</text>
+  <line x1="50" y1="173" x2="56" y2="173" stroke="#111" stroke-width="1"/><text x="48" y="177" text-anchor="end" font-size="10.5">6</text>
+  <line x1="50" y1="153" x2="56" y2="153" stroke="#111" stroke-width="1"/><text x="48" y="157" text-anchor="end" font-size="10.5" font-weight="bold">7</text>
+  <line x1="50" y1="133" x2="56" y2="133" stroke="#111" stroke-width="1"/><text x="48" y="137" text-anchor="end" font-size="10.5">8</text>
+  <line x1="50" y1="93"  x2="56" y2="93"  stroke="#111" stroke-width="1"/><text x="48" y="97"  text-anchor="end" font-size="10.5">10</text>
+  <line x1="50" y1="54"  x2="56" y2="54"  stroke="#111" stroke-width="1"/><text x="48" y="58"  text-anchor="end" font-size="10.5">12</text>
+  <line x1="50" y1="14"  x2="56" y2="14"  stroke="#111" stroke-width="1"/><text x="48" y="18"  text-anchor="end" font-size="10.5">14</text>
+  <text x="16" y="153" text-anchor="middle" font-size="12" font-weight="bold" transform="rotate(-90 16 153)">pH</text>
+  <!-- pH curve: C_A=C_B=0.02 mol/L, V_A=100mL, V_eq=100mL
+    y(pH)=292-pH*19.86
+    V=0,pH=1.70→(56,258); V=20,pH=1.88→(101,255); V=50,pH=2.18→(170,249);
+    V=80,pH=2.65→(238,239); V=90,pH=2.98→(260,233); V=95,pH=3.29→(272,227);
+    V=99,pH=4.00→(281,212); V=100,pH=7.00→(283,153)[jump]; V=101,pH=10→(285,94);
+    V=110,pH=11.0→(306,73); V=120,pH=11.26→(329,69); V=150,pH=11.60→(397,62); V=200,pH=11.82→(510,57) -->
+  <polyline points="56,258 101,255 170,249 238,239 260,233 272,227 281,212 283,153 285,94 306,73 329,69 397,62 510,57"
+    fill="none" stroke="#111" stroke-width="2.3"/>
+  <circle cx="283" cy="153" r="4.5" fill="none" stroke="#111" stroke-width="1.8"/>
+  <text x="291" y="147" font-size="11" font-style="italic">E — equivalence point</text>
+  <text x="58" y="148" font-size="10.5" fill="#666">‒‒ pH = 7</text>
+</svg>
+<p class="doc-lbl">Document 1 &nbsp;—&nbsp; pH = f(V(S<sub>2</sub>) added in mL)</p>
+</div>
 
-    <div class="marking-scheme-page">
-        <div class="exam-title">OFFICIAL MARKING SCHEME - CHEMISTRY</div>
+<div class="q"><span class="qn">1.</span><span class="mk">1.5 pt</span>
+  <div class="sub">a. Write the dissociation equation of HNO<sub>3</sub> in water. Calculate pH<sub>1</sub> of S<sub>1</sub>. <em>(0.5 pt)</em></div>
+  <div class="sub">b. Calculate n(NaOH) in S<sub>2</sub>. Verify that C<sub>2</sub> = 0.02 mol·L<sup>−1</sup>. Calculate [OH<sup>−</sup>] and pH<sub>2</sub> of S<sub>2</sub>. <em>(1 pt)</em></div>
+</div>
+<div class="q"><span class="qn">2.</span><span class="mk">2 pts</span>
+  From Document 1:
+  <div class="sub">a. Read the equivalence volume V<sub>eq</sub> and the pH at the equivalence point. Write the ionic equation for the neutralization reaction. Explain why pH = 7 at equivalence. <em>(1 pt)</em></div>
+  <div class="sub">b. Using V<sub>eq</sub>, verify C<sub>2</sub> = 0.02 mol·L<sup>−1</sup>. <em>(0.5 pt)</em></div>
+  <div class="sub">c. From the graph, estimate the pH when V(S<sub>2</sub>) = 150 mL. Then verify by calculation. <em>(0.5 pt)</em></div>
+</div>
+<div class="q"><span class="qn">3.</span><span class="mk">1 pt</span>
+  <div class="sub">a. What volume V of S<sub>2</sub> must be mixed with 100 mL of S<sub>1</sub> to obtain an acidic mixture whose [H<sub>3</sub>O<sup>+</sup>] = 5 × 10<sup>−3</sup> mol·L<sup>−1</sup>? <em>(0.5 pt)</em></div>
+  <div class="sub">b. What mass of solid NaOH must be dissolved in 100 mL of S<sub>1</sub> to produce a neutral solution? <em>(0.5 pt)</em></div>
+</div>
+<div class="q"><span class="qn">4.</span><span class="mk">1.5 pt</span>
+  A volume V<sub>A</sub> = 50 mL of S<sub>1</sub> is mixed with V<sub>B</sub> = 75 mL of S<sub>2</sub>.
+  <div class="sub">a. Identify the species in excess. Calculate its remaining amount after the neutralization reaction. <em>(1 pt)</em></div>
+  <div class="sub">b. Calculate the pH of the resulting mixture. <em>(0.5 pt)</em></div>
+</div>
+</div><!-- /ex III -->
 
-        <h3>Exercise 1: Kinetics of Iodide Oxidation (5 pts)</h3>
-        <table class="marking-scheme">
-            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
-            <tr>
-                <td class="col-q">1</td>
-                <td class="col-ans">
-                    <strong>Oxidation:</strong> 2 I<sup>-</sup> &rarr; I<sub>2</sub> + 2 e<sup>-</sup><br>
-                    <strong>Reduction:</strong> H<sub>2</sub>O<sub>2</sub> + 2 H<sup>+</sup> + 2 e<sup>-</sup> &rarr; 2 H<sub>2</sub>O<br>
-                    <strong>Overall:</strong> H<sub>2</sub>O<sub>2(aq)</sub> + 2 I<sup>-</sup><sub>(aq)</sub> + 2 H<sup>+</sup><sub>(aq)</sub> &rarr; I<sub>2(aq)</sub> + 2 H<sub>2</sub>O<sub>(l)</sub>
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">2</td>
-                <td class="col-ans">
-                    <strong>Initial amounts:</strong> <br>
-                    n<sub>0</sub>(H<sub>2</sub>O<sub>2</sub>) = C<sub>2</sub> &times; V<sub>2</sub> = 0.02 mol/L &times; 0.050 L = 0.001 mol = 1.0 mmol<br>
-                    n<sub>0</sub>(I<sup>-</sup>) = C<sub>1</sub> &times; V<sub>1</sub> = 0.10 mol/L &times; 0.050 L = 0.005 mol = 5.0 mmol<br>
-                    <strong>Stoichiometric ratios:</strong><br>
-                    n<sub>0</sub>(H<sub>2</sub>O<sub>2</sub>) / 1 = 1.0 mmol <br>
-                    n<sub>0</sub>(I<sup>-</sup>) / 2 = 5.0 / 2 = 2.5 mmol<br>
-                    Since 1.0 &lt; 2.5, the ratio for H<sub>2</sub>O<sub>2</sub> is smaller; therefore, <strong>H<sub>2</sub>O<sub>2</sub> is the limiting reactant</strong>.
-                </td>
-                <td class="col-q">1.5</td>
-            </tr>
-            <tr>
-                <td class="col-q">3</td>
-                <td class="col-ans">
-                    <strong>Definition:</strong> The half-life t<sub>1/2</sub> is the time required for the concentration of the limiting reactant to drop to half its initial value, which corresponds to the formation of half the maximum concentration of the product.<br>
-                    <strong>Graphical Determination:</strong> The maximum concentration is [I<sub>2</sub>]<sub>max</sub> = 10.0 mmol/L (asymptote).<br>
-                    At t = t<sub>1/2</sub>, [I<sub>2</sub>] = 10.0 / 2 = 5.0 mmol/L. Projecting 5.0 mmol/L onto the curve and down to the time axis gives <strong>t<sub>1/2</sub> = 10 min</strong>.
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">4</td>
-                <td class="col-ans">
-                    <strong>Analysis:</strong> The slope of the tangent to the curve represents the rate of formation of I<sub>2</sub>. Graphically, the slope of the tangent continuously decreases over time, indicating that the rate of formation decreases until it reaches zero at the plateau.<br>
-                    <strong>Microscopic Explanation:</strong> As the reaction proceeds, the reactants are consumed. The decrease in reactant concentrations lowers the probability of effective collisions between reactant molecules per unit volume and time, thereby decreasing the reaction rate.
-                </td>
-                <td class="col-q">1.5</td>
-            </tr>
-        </table>
+<!-- ────────────────────────────────────────
+     EXERCISE IV  (7.75 pts)
+     ─────────────────────────────────────── -->
+<div class="ex">
+<div class="ex-hd"><span>EXERCISE IV — Organic Compounds: Identification and Esterification</span><span class="pts">7.75 pts</span></div>
+<p class="ctx">
+  Analysis of an aliphatic, non-cyclic, saturated monoalcohol (A) shows that the percentage by mass
+  of carbon is equal to <strong>60.00 %</strong>.
+</p>
 
-        <h3>Exercise 2: Influence of Kinetic Factors (5 pts)</h3>
-        <table class="marking-scheme">
-            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
-            <tr>
-                <td class="col-q">1</td>
-                <td class="col-ans">
-                    The two kinetic factors investigated are <strong>Temperature</strong> (20&deg;C vs 40&deg;C) and the <strong>Surface Area of Contact</strong> (state of subdivision: Powder vs Granules).
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">2</td>
-                <td class="col-ans">
-                    <strong>Match & Justification:</strong><br>
-                    - <strong>Curve (a)</strong> is the fastest (steepest initial slope). Higher temperature and smaller particle size (powder) both increase rate. Exp 2 has powder and the highest temperature (40&deg;C), so it is the fastest: <strong>Curve (a) matches Exp 2</strong>.<br>
-                    - <strong>Curve (b)</strong> is intermediate. Comparing Exp 1 and 3 (both at 20&deg;C), Exp 1 uses powder (larger surface area) while Exp 3 uses granules. Therefore, Exp 1 is faster than Exp 3: <strong>Curve (b) matches Exp 1</strong>.<br>
-                    - <strong>Curve (c)</strong> is the slowest, corresponding to granules at lower temperature: <strong>Curve (c) matches Exp 3</strong>.
-                </td>
-                <td class="col-q">2</td>
-            </tr>
-            <tr>
-                <td class="col-q">3</td>
-                <td class="col-ans">
-                    <strong>Comparison:</strong> All three curves reach the exact same maximum volume asymptote V<sub>max</sub>.<br>
-                    <strong>Justification:</strong> The final volume of product depends strictly on the initial amount of the limiting reactant. In all three experiments, the mass of Zinc (1.0 g) and the concentration/volume of HCl are identical. Kinetic factors (temperature, surface area) only change how fast the final state is reached, not the theoretical final yield.
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">4</td>
-                <td class="col-ans">
-                    <strong>Prediction:</strong> The new curve would be situated <strong>above</strong> curve (b) and reach the same V<sub>max</sub> faster (steeper slope).<br>
-                    <strong>Role of Catalyst:</strong> A catalyst increases the rate of a chemical reaction by providing an alternative reaction pathway with a lower activation energy, without being consumed in the overall reaction.
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-        </table>
-    </div>
+<div class="q"><span class="qn">1.</span><span class="mk">2 pts</span>
+  <strong>Determination of the molecular formula of (A)</strong>
+  <div class="sub">1.1. Show that the molecular formula of (A) is <strong>C<sub>3</sub>H<sub>8</sub>O</strong>. <em>(1 pt)</em></div>
+  <div class="sub">1.2. Write the IUPAC names and condensed structural formulas of the two alcohol isomers of (A). <em>(1 pt)</em></div>
+</div>
 
-    <div class="marking-scheme-page">
-        <h3>Exercise 3: Methanol Synthesis and Chemical Equilibrium (5 pts)</h3>
-        <table class="marking-scheme">
-            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
-            <tr>
-                <td class="col-q">1</td>
-                <td class="col-ans">
-                    <strong>Analysis:</strong> From Document 4, the amounts of reactants (CO and H<sub>2</sub>) decrease while the product (CH<sub>3</sub>OH) increases initially. Starting from time t<sub>e</sub>, the curves become strictly horizontal (parallel to the time axis). The amounts stabilize at non-zero constant values (CO=1.0, H<sub>2</sub>=2.0, CH<sub>3</sub>OH=2.0).<br>
-                    <strong>Proof:</strong> The simultaneous presence of all reactants and products at constant, non-zero amounts after t<sub>e</sub> proves that the forward and reverse reaction rates are equal and not zero. The system has reached a dynamic chemical equilibrium.
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">2</td>
-                <td class="col-ans">
-                    <strong>ICE Table tracking:</strong><br>
-                    Initial (mol): n(CO) = 3.0, n(H<sub>2</sub>) = 6.0, n(CH<sub>3</sub>OH) = 0<br>
-                    Change (mol): -x, -2x, +x<br>
-                    Equilibrium (mol): 3.0 - x, 6.0 - 2x, x<br>
-                    <strong>Proof of x:</strong> From Doc 4, the equilibrium amount of H<sub>2</sub> is 2.0 mol. Therefore, 6.0 - 2x = 2.0 &Rightarrow; 2x = 4.0 &Rightarrow; <strong>x = 2.0 mol</strong>. (Alternatively using CO: 3.0 - x = 1.0 &Rightarrow; x = 2.0 mol).
-                </td>
-                <td class="col-q">1.5</td>
-            </tr>
-            <tr>
-                <td class="col-q">3</td>
-                <td class="col-ans">
-                    <strong>Calculation:</strong> At equilibrium, x = 2.0 mol.<br>
-                    Equilibrium amounts: n(CO) = 1.0 mol, n(H<sub>2</sub>) = 2.0 mol, n(CH<sub>3</sub>OH) = 2.0 mol.<br>
-                    Equilibrium concentrations (V = 2.0 L):<br>
-                    [CO] = 1.0 / 2.0 = 0.5 mol/L<br>
-                    [H<sub>2</sub>] = 2.0 / 2.0 = 1.0 mol/L<br>
-                    [CH<sub>3</sub>OH] = 2.0 / 2.0 = 1.0 mol/L<br>
-                    K<sub>c</sub> = [CH<sub>3</sub>OH] / ([CO][H<sub>2</sub>]<sup>2</sup>) = 1.0 / (0.5 &times; 1.0<sup>2</sup>) = 1.0 / 0.5 = <strong>2.0</strong>.
-                </td>
-                <td class="col-q">1.5</td>
-            </tr>
-            <tr>
-                <td class="col-q">4</td>
-                <td class="col-ans">
-                    <strong>Deduction:</strong> The equilibrium will shift in the <strong>forward direction</strong> (to the right).<br>
-                    <strong>Justification:</strong> According to Le Chatelier’s principle, a decrease in temperature forces the system to shift in the direction that releases heat to oppose the cooling. Since the forward synthesis reaction is exothermic (&Delta;H &lt; 0), the system shifts in the forward direction.
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-        </table>
+<div class="q"><span class="qn">2.</span><span class="mk">2.75 pts</span>
+  <strong>Identification of organic compounds</strong><br>
+  The mild oxidation of one isomer of (A) with acidified potassium dichromate solution yields a single organic product (X). The mild oxidation of the second isomer yields a mixture of two products, (Y) and (Z), depending on whether the oxidant is in deficit or in excess. Three chemical tests were performed (Document 1):
+</div>
 
-        <h3>Exercise 4: Organic Chemistry - Esterification Reaction (5 pts)</h3>
-        <table class="marking-scheme">
-            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
-            <tr>
-                <td class="col-q">1</td>
-                <td class="col-ans">
-                    <strong>Equation:</strong><br>
-                    CH<sub>3</sub>-COOH + CH<sub>3</sub>-CH<sub>2</sub>-OH &#rightleftharpoons; CH<sub>3</sub>-COO-CH<sub>2</sub>-CH<sub>3</sub> + H<sub>2</sub>O<br>
-                    <em>Note: The double arrow (&#rightleftharpoons;) is mandatory for full credit.</em>
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">2</td>
-                <td class="col-ans">
-                    <strong>Name:</strong> Heating under reflux apparatus (Montage à reflux).<br>
-                    <strong>Justifications:</strong> <br>
-                    1. <em>Heating:</em> Increases the temperature to accelerate the intrinsically slow reaction.<br>
-                    2. <em>Reflux (Condenser):</em> Condenses the vapors back into the flask to prevent the loss of volatile reactants (ethanol) and products (ester) to the atmosphere.
-                </td>
-                <td class="col-q">1.5</td>
-            </tr>
-            <tr>
-                <td class="col-q">3</td>
-                <td class="col-ans">
-                    In addition to being athermic, the esterification reaction is <strong>slow</strong> and <strong>limited</strong> (reversible, does not reach 100% completion).
-                </td>
-                <td class="col-q">1</td>
-            </tr>
-            <tr>
-                <td class="col-q">4</td>
-                <td class="col-ans">
-                    <strong>Calculation:</strong><br>
-                    The theoretical maximum amount of ester n<sub>th</sub> (if reaction were complete) equals the initial amount of the limiting reactant. Since the mixture is equimolar (0.4 mol of each), n<sub>th</sub> = 0.4 mol.<br>
-                    The actual experimental amount formed is n<sub>exp</sub> = 0.264 mol.<br>
-                    Yield percentage = (n<sub>exp</sub> / n<sub>th</sub>) &times; 100 = (0.264 / 0.4) &times; 100 = <strong>66%</strong>.<br>
-                    <strong>Method to increase yield:</strong> Continuously remove one of the products (e.g., extracting water using a Dean-Stark apparatus or distilling the ester) to shift the equilibrium in the forward direction according to Le Chatelier's principle.
-                </td>
-                <td class="col-q">1.5</td>
-            </tr>
-        </table>
-    </div>
+<table>
+  <tr>
+    <th>Compound</th>
+    <th>Test 1: 2,4-DNPH</th>
+    <th>Test 2: Tollens' Reagent</th>
+    <th>Test 3: NaHCO<sub>3</sub> solution</th>
+  </tr>
+  <tr><td><strong>X</strong></td><td>Positive (+)</td><td>Negative (−)</td><td>No gas evolution</td></tr>
+  <tr><td><strong>Y</strong></td><td>Positive (+)</td><td>Positive (+)</td><td>No gas evolution</td></tr>
+  <tr><td><strong>Z</strong></td><td>Negative (−)</td><td>Negative (−)</td><td>Gas evolution (CO<sub>2</sub>)</td></tr>
+</table>
+<p class="doc-lbl">Document 1</p>
+<p class="note">• 2,4-DNPH identifies the carbonyl group (C=O). &nbsp;• Tollens' reagent identifies aldehydes. &nbsp;• NaHCO<sub>3</sub> reacts with carboxylic acids releasing CO<sub>2</sub>.</p>
 
-</div> </body>
+<div class="sub" style="margin-top:5px;">2.1. Identify the chemical family of compound (Y) based on the test results. <em>(0.5 pt)</em></div>
+<div class="sub">2.2. Match each compound (X, Y, Z) with its correct IUPAC name from: <strong>Propanal / Propanone / Propanoic acid</strong>. Justify using Document 1. <em>(1.5 pts)</em></div>
+<div class="sub">2.3. Deduce which isomer of (A) undergoes mild oxidation to produce compound (X). <em>(0.75 pt)</em></div>
+
+<div class="q"><span class="qn">3.</span><span class="mk">3 pts</span>
+  <strong>Production of Ethyl Propanoate</strong><br>
+  Ethyl propanoate is prepared by reacting 0.6 mol of propanoic acid with 0.6 mol of ethanol in the presence of a few drops of H<sub>2</sub>SO<sub>4</sub>:
+  <span class="rxn">CH<sub>3</sub>CH<sub>2</sub>COOH &nbsp;+&nbsp; CH<sub>3</sub>CH<sub>2</sub>OH &nbsp;⇌&nbsp; CH<sub>3</sub>CH<sub>2</sub>COOCH<sub>2</sub>CH<sub>3</sub> &nbsp;+&nbsp; H<sub>2</sub>O &nbsp;&nbsp;(Reaction R')</span>
+  <div class="sub">3.1. Give the precise name of this reaction and state <strong>two</strong> of its main characteristics (one kinetic, one thermodynamic). <em>(0.75 pt)</em></div>
+  <div class="sub">3.2. Let α be the degree of conversion of the acid at equilibrium. Show that K<sub>c</sub> = α<sup>2</sup> / (1 − α)<sup>2</sup>. Then calculate α knowing K<sub>c</sub> = 4. <em>(1.5 pts)</em></div>
+  <div class="sub">3.3. State what happens to the value of the yield α if: <em>(0.75 pt)</em>
+    <div style="margin-left:14px;">a. A catalyst (H<sub>2</sub>SO<sub>4</sub>) is added.</div>
+    <div style="margin-left:14px;">b. Water is continuously removed from the reaction medium as it forms.</div>
+  </div>
+</div>
+</div><!-- /ex IV -->
+</div><!-- /sheet 2 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     MARKING SCHEME  (separate pages)
+     ═══════════════════════════════════════════════════════ -->
+<div class="sheet pb">
+<div class="ms-banner">✦ &nbsp; MARKING SCHEME — TEACHER COPY &nbsp; ✦</div>
+<div class="ms-notice">
+  <strong>Confidential — for teacher use only.</strong> Award marks as shown. Accept any equivalent correct form.
+  Apply ECF (error carried forward): if a wrong value is correctly used in a subsequent step, award method marks.
+</div>
+
+<!-- ── MS EXERCISE I ── -->
+<div class="ms-ex">
+<div class="ms-ex-hd"><span>EXERCISE I — Esterification of Propan-1-ol</span><span class="pts">7 pts</span></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q1.</span> Name + formula + functional groups
+<div class="ms-ans">
+  <span class="ok">Name:</span> propyl ethanoate (or propyl acetate)<br>
+  <span class="ok">Formula:</span> <span class="formula">CH₃COOC₃H₇</span><br>
+  <span class="ok">Functional groups:</span> Ethanoic acid → carboxyl (−COOH); Propanol → hydroxyl (−OH); Ester → ester linkage (−COO−)
+</div></div>
+
+<div class="ms-q"><span class="mk">2.5 pts</span><span class="qn">Q2.</span> ICE table + Kc + yield
+<div class="ms-ans">
+<strong>2a (0.5 pt) — ICE table:</strong>
+<table style="font-size:11.5pt;margin:4px 0;">
+  <tr><th></th><th>CH₃COOH</th><th>C₃H₇OH</th><th>CH₃COOC₃H₇</th><th>H₂O</th></tr>
+  <tr><td class="ice-lbl">n₀</td><td>1</td><td>3</td><td>0</td><td>0</td></tr>
+  <tr><td class="ice-lbl">Δn</td><td>−x</td><td>−x</td><td>+x</td><td>+x</td></tr>
+  <tr><td class="ice-lbl">n_eq</td><td>1−x</td><td>3−x</td><td>x</td><td>x</td></tr>
+</table>
+<strong>2b (1.5 pt):</strong><br>
+<span class="formula">K_eq = x² / [(1−x)(3−x)] = 4</span><br>
+→ x² = 4(3 − 4x + x²) → 3x² − 16x + 12 = 0<br>
+Discriminant = 256 − 144 = 112 &nbsp;→&nbsp; √112 ≈ 10.58<br>
+x = (16 − 10.58)/6 ≈ 0.90 mol &nbsp;(reject x = 4.43, exceeds limiting reagent) ✓<br>
+<strong>2c (0.5 pt):</strong> Yield = 0.90/1 × 100 = <span class="ok">90 %</span> (limiting reagent = acid = 1 mol)
+</div></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q3.</span> Compare yields — Le Chatelier
+<div class="ms-ans">
+66.7 % (1:1) &lt; 90 % (1:3). <span class="ok">Excess alcohol (3 mol vs 1 mol)</span> shifts the equilibrium to the right (Le Chatelier's principle: increasing a reactant's concentration favours the forward reaction), producing more ester and increasing the yield.
+</div></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q4.</span> Reaction quotient and direction
+<div class="ms-ans">
+<span class="formula">Q_c = n(ester)×n(water) / [n(acid)×n(alcohol)] = (0.3 × 0.3)/(1 × 1) = 0.09</span><br>
+Q<sub>c</sub> = 0.09 &lt; K<sub>eq</sub> = 4 → <span class="ok">Forward direction</span> (more ester and water will be produced until equilibrium is reached).
+</div></div>
+
+<div class="ms-q"><span class="mk">1.5 pt</span><span class="qn">Q5.</span> Two characteristics of esterification
+<div class="ms-ans">
+<ul>
+  <li><span class="ok">(i) Reversible (equilibrium) reaction</span> — the reaction does not go to completion; it reaches a state of dynamic equilibrium characterised by K<sub>eq</sub>.</li>
+  <li><span class="ok">(ii) Slow reaction</span> — even with a catalyst it requires several hours to reach equilibrium; without a catalyst it is extremely slow at room temperature.</li>
+</ul>
+<div class="award">Also accepted as second characteristic: athermal / ΔH ≈ 0 (the equilibrium position does not change significantly with temperature).</div>
+</div></div>
+<div class="ms-total">Exercise I Total: /7</div>
+</div><!-- /ms-ex I -->
+
+<!-- ── MS EXERCISE II ── -->
+<div class="ms-ex">
+<div class="ms-ex-hd"><span>EXERCISE II — Esterification Yield Optimization</span><span class="pts">8 pts</span></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q1.</span> Name + Kc expression
+<div class="ms-ans">
+<span class="ok">Name:</span> ethyl propanoate<br>
+<span class="formula">K_eq = n(ester) × n(water) / [n(acid) × n(alcohol)]</span>
+</div></div>
+
+<div class="ms-q"><span class="mk">2.5 pts</span><span class="qn">Q2.</span> Part A — 2+2 mol
+<div class="ms-ans">
+<strong>2a (2 pt):</strong><br>
+ICE: n₀=2,2,0,0 → n_eq = 2−x, 2−x, x, x<br>
+<span class="formula">K_eq = x²/(2−x)² = 4 → x/(2−x) = 2 → x = 4−2x → 3x = 4 → x = 4/3 ≈ 1.33 mol</span><br>
+<span class="ok">Yield = (4/3)/2 × 100 = 66.7 %</span><br>
+<strong>2b (0.5 pt):</strong> No — the reaction is <span class="ok">reversible (equilibrium)</span>; it cannot go to completion; yield is always less than 100 %.
+</div></div>
+
+<div class="ms-q"><span class="mk">2.5 pts</span><span class="qn">Q3.</span> Part B — 2+4 mol
+<div class="ms-ans">
+<strong>3a (1 pt) ICE:</strong> n₀=2,4,0,0 → n_eq=2−x, 4−x, x, x<br>
+<span class="formula">K_eq = x²/[(2−x)(4−x)] = 4</span> → x²=4(8−6x+x²) → 3x²−24x+32=0<br>
+<strong>3b (1 pt):</strong> x=(24−13.86)/6 ≈ <span class="ok">1.69 mol</span> &nbsp;(reject x=6.31 &gt; limiting 2 mol)<br>
+Yield = 1.69/2 × 100 = <span class="ok">84.5 %</span><br>
+<strong>3c (0.5 pt):</strong> 84.5 % &gt; 66.7 %. Excess alcohol shifts equilibrium to the right (Le Chatelier) → higher yield.
+</div></div>
+
+<div class="ms-q"><span class="mk">2 pts</span><span class="qn">Q4.</span> Adding 0.5 mol water to Part A equilibrium
+<div class="ms-ans">
+Part A equilibrium: n(ester)=4/3, n(water)=4/3, n(acid)=2/3, n(alcohol)=2/3<br>
+After adding 0.5 mol water: n(water)=4/3+1/2=11/6<br>
+<strong>4a (1 pt):</strong> <span class="formula">Q_c = (4/3 × 11/6) / [(2/3)²] = (44/18)/(4/9) = 44×9/(18×4) = 5.5</span><br>
+Q<sub>c</sub> = 5.5 &gt; K<sub>eq</sub> = 4<br>
+<strong>4b (1 pt):</strong> <span class="ok">Backward direction</span> (hydrolysis); equilibrium shifts left → yield of ester <span class="ok">decreases</span>.
+</div></div>
+<div class="ms-total">Exercise II Total: /8</div>
+</div><!-- /ms-ex II -->
+</div><!-- /sheet 3 -->
+
+<!-- Marking scheme continued -->
+<div class="sheet pb">
+<div class="ms-banner">✦ &nbsp; MARKING SCHEME — TEACHER COPY (continued) &nbsp; ✦</div>
+
+<!-- ── MS EXERCISE III ── -->
+<div class="ms-ex">
+<div class="ms-ex-hd"><span>EXERCISE III — Neutralization of HNO₃ by NaOH</span><span class="pts">6 pts</span></div>
+
+<div class="ms-q"><span class="mk">1.5 pt</span><span class="qn">Q1.</span> pH of S₁ and S₂
+<div class="ms-ans">
+<strong>1a (0.5 pt):</strong> HNO₃ + H₂O → H₃O⁺ + NO₃⁻<br>
+[H₃O⁺]₁ = C₁ = 0.02 mol/L &nbsp;→&nbsp; <span class="ok">pH₁ = −log(0.02) = 2−log2 = 1.70</span><br>
+<strong>1b (1 pt):</strong> n(NaOH) = 0.20/40 = 5×10⁻³ mol; C₂ = 5×10⁻³/0.250 = 0.02 mol/L ✓<br>
+[OH⁻] = 0.02 mol/L &nbsp;→&nbsp; [H₃O⁺] = 10⁻¹⁴/0.02 = 5×10⁻¹³ mol/L<br>
+<span class="ok">pH₂ = −log(5×10⁻¹³) = 13−log5 = 12.30</span>
+</div></div>
+
+<div class="ms-q"><span class="mk">2 pts</span><span class="qn">Q2.</span> Equivalence point + verification + pH at V=150 mL
+<div class="ms-ans">
+<strong>2a (1 pt):</strong> V_eq = 100 mL (read from graph), pH_eq = 7.<br>
+Ionic equation: <span class="formula">H₃O⁺ + OH⁻ → 2 H₂O</span><br>
+pH = 7 because at equivalence, H₃O⁺ and OH⁻ are completely consumed → only neutral salt + water remain → [H₃O⁺]=[OH⁻]=10⁻⁷ mol/L.<br>
+<strong>2b (0.5 pt):</strong> At equivalence: n(H₃O⁺)=n(OH⁻) → C₁×V₁=C₂×V_eq → C₂=0.1×0.02/0.1=<span class="ok">0.02 mol/L ✓</span><br>
+<strong>2c (0.5 pt):</strong> From graph: pH ≈ 11.6 at V=150 mL.<br>
+Verification: n(OH⁻)_excess=0.15×0.02−0.1×0.02=10⁻³ mol; V_tot=0.25L; [OH⁻]=4×10⁻³ mol/L<br>
+[H₃O⁺]=2.5×10⁻¹² mol/L; <span class="ok">pH=12−log2.5=12−0.40=11.60 ✓</span>
+</div></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q3.</span> Volume for given [H₃O⁺] + mass NaOH
+<div class="ms-ans">
+<strong>3a (0.5 pt):</strong> After mixing 100 mL S₁ + V mL S₂, if [H₃O⁺]=5×10⁻³, H₃O⁺ is in excess:<br>
+n(H₃O⁺)_excess = 5×10⁻³×(0.1+V/1000); n(H₃O⁺)_excess = n_acid−n_base = 0.1×0.02−(V/1000)×0.02<br>
+5×10⁻³×(0.1+V/1000)=2×10⁻³−0.02V/1000 → 5×10⁻⁴+5×10⁻³V/1000=2×10⁻³−2×10⁻⁵V<br>
+Solve: V/1000×(5×10⁻³+2×10⁻⁵)≈5×10⁻³×V/1000=1.5×10⁻³ → <span class="ok">V ≈ 25 mL</span><br>
+<span class="award">Accept: at [H₃O⁺]=5×10⁻³→ if V given as ~25 mL with correct working.</span><br>
+<strong>3b (0.5 pt):</strong> n(NaOH)=n(HNO₃)=0.1×0.02=2×10⁻³ mol; <span class="ok">m=2×10⁻³×40=0.08 g</span>
+</div></div>
+
+<div class="ms-q"><span class="mk">1.5 pt</span><span class="qn">Q4.</span> Mixing 50 mL S₁ + 75 mL S₂
+<div class="ms-ans">
+<strong>4a (1 pt):</strong><br>
+n(H₃O⁺)=0.05×0.02=10⁻³ mol<br>
+n(OH⁻)=0.075×0.02=1.5×10⁻³ mol<br>
+<span class="ok">OH⁻ is in excess</span>; n(OH⁻)_remaining = 1.5×10⁻³−10⁻³ = <span class="ok">5×10⁻⁴ mol</span><br>
+<strong>4b (0.5 pt):</strong> V_tot=0.125 L; [OH⁻]=5×10⁻⁴/0.125=4×10⁻³ mol/L<br>
+[H₃O⁺]=10⁻¹⁴/(4×10⁻³)=2.5×10⁻¹² mol/L<br>
+<span class="ok">pH=12−log2.5=12−0.40=11.60</span> — basic mixture.
+</div></div>
+<div class="ms-total">Exercise III Total: /6</div>
+</div><!-- /ms-ex III -->
+
+<!-- ── MS EXERCISE IV ── -->
+<div class="ms-ex">
+<div class="ms-ex-hd"><span>EXERCISE IV — Organic Compounds</span><span class="pts">7.75 pts</span></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q1.1.</span> Molecular formula of (A)
+<div class="ms-ans">
+General formula of saturated monoalcohol: C<sub>n</sub>H<sub>2n+2</sub>O<br>
+<span class="formula">%C = 12n/(12n+2n+2+16) × 100 = 12n/(14n+18) × 100 = 60</span><br>
+12n = 0.60(14n+18) = 8.4n+10.8 → 3.6n = 10.8 → <span class="ok">n = 3</span><br>
+Molecular formula: <span class="ok">C₃H₈O ✓</span>
+</div></div>
+
+<div class="ms-q"><span class="mk">1 pt</span><span class="qn">Q1.2.</span> Two alcohol isomers
+<div class="ms-ans">
+<ul>
+  <li><span class="ok">Propan-1-ol</span>: CH₃−CH₂−CH₂−OH &nbsp;(primary alcohol)</li>
+  <li><span class="ok">Propan-2-ol</span>: CH₃−CH(OH)−CH₃ &nbsp;(secondary alcohol)</li>
+</ul>
+</div></div>
+
+<div class="ms-q"><span class="mk">0.5 pt</span><span class="qn">Q2.1.</span> Chemical family of (Y)
+<div class="ms-ans">
+Y is positive to 2,4-DNPH (has C=O) AND positive to Tollens' → <span class="ok">Y is an aldehyde</span> (functional group: −CHO).
+</div></div>
+
+<div class="ms-q"><span class="mk">1.5 pt</span><span class="qn">Q2.2.</span> Match X, Y, Z
+<div class="ms-ans">
+<ul>
+  <li><span class="ok">X = Propanone</span> (CH₃−CO−CH₃): (+) 2,4-DNPH (has C=O) but (−) Tollens' (not an aldehyde, it's a ketone) → ketone.</li>
+  <li><span class="ok">Y = Propanal</span> (CH₃−CH₂−CHO): (+) both tests → aldehyde.</li>
+  <li><span class="ok">Z = Propanoic acid</span> (CH₃−CH₂−COOH): (−) both carbonyl tests (−COOH ≠ C=O in ketone/aldehyde sense for 2,4-DNPH under these conditions); releases CO₂ with NaHCO₃ → carboxylic acid.</li>
+</ul>
+</div></div>
+
+<div class="ms-q"><span class="mk">0.75 pt</span><span class="qn">Q2.3.</span> Isomer giving compound X
+<div class="ms-ans">
+X = propanone (a ketone). Ketones are formed by mild oxidation of <span class="ok">secondary alcohols</span>. Since propan-2-ol is the secondary isomer of C₃H₈O, it is <span class="ok">propan-2-ol</span> that gives X (propanone), as a single product regardless of oxidant quantity.
+</div></div>
+
+<div class="ms-q"><span class="mk">0.75 pt</span><span class="qn">Q3.1.</span> Name and characteristics of reaction R'
+<div class="ms-ans">
+<span class="ok">Name:</span> Esterification<br>
+<span class="ok">Kinetic characteristic:</span> slow reaction (requires acid catalyst and heating)<br>
+<span class="ok">Thermodynamic characteristic:</span> reversible (equilibrium) reaction / athermal (ΔH ≈ 0, equilibrium position barely changes with temperature)
+</div></div>
+
+<div class="ms-q"><span class="mk">1.5 pt</span><span class="qn">Q3.2.</span> Show K_c = α²/(1−α)² and calculate α
+<div class="ms-ans">
+n₀(acid)=n₀(alcohol)=0.6 mol; at equilibrium: n(ester)=n(water)=0.6α; n(acid)=n(alcohol)=0.6(1−α)<br>
+<span class="formula">K_c = (0.6α)²/[0.6(1−α)]² = α²/(1−α)²  ✓</span><br>
+K_c = 4 → α/(1−α)=2 → α=2−2α → 3α=2 → <span class="ok">α = 2/3 ≈ 0.667 (66.7 %)</span>
+</div></div>
+
+<div class="ms-q"><span class="mk">0.75 pt</span><span class="qn">Q3.3.</span> Effect on yield
+<div class="ms-ans">
+<strong>3.3a:</strong> Adding a catalyst: <span class="ok">No change in yield α</span>. The catalyst speeds up both forward and reverse reactions equally; it does not change the equilibrium position.<br>
+<strong>3.3b:</strong> Continuously removing water: <span class="ok">Yield α increases</span>. Removing a product shifts the equilibrium to the right (Le Chatelier's principle), producing more ester.
+</div></div>
+<div class="ms-total">Exercise IV Total: /7.75</div>
+</div><!-- /ms-ex IV -->
+
+<!-- Grand total -->
+<div style="background:#111;color:#fff;padding:8px 14px;font-size:14pt;font-weight:bold;text-align:right;border-radius:3px;margin-top:8px;">
+  GRAND TOTAL: &nbsp;&nbsp;/28.75
+</div>
+</div><!-- /sheet 4 -->
+
+</body>
 </html>
