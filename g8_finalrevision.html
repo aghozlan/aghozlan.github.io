@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Grade 8 · Physics Final Revision Lab · Ahmad Ghozlan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DEEP SPACE SPECTRUM — G8 Final Revision
+   Signature: animated prismatic spectrum stripe at page top
+   DM Serif Display × Inter × JetBrains Mono
+═══════════════════════════════════════════════════════════ */
+:root{
+  --bg:#050508;--bg2:#0a0a12;--bg3:#0e0e1a;--bg4:#13131f;
+  --panel:rgba(56,189,248,.04);--panel2:rgba(56,189,248,.09);
+  --border:rgba(56,189,248,.12);--border2:rgba(56,189,248,.26);
+  --text:#e2e8f8;--muted:rgba(226,232,248,.48);--muted2:rgba(226,232,248,.28);
+  --ice:#38bdf8;--violet:#a78bfa;--ember:#fb923c;--lime:#34d399;
+  --red:#f87171;--gold:#fbbf24;
+  --fh:'DM Serif Display',serif;
+  --fb:'Inter',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── Prismatic spectrum stripe (signature element) ── */
+.spectrum-stripe{
+  height:4px;width:100%;
+  background:linear-gradient(90deg,
+    #f87171 0%,#fb923c 14%,#fbbf24 28%,#34d399 42%,
+    #38bdf8 57%,#818cf8 71%,#a78bfa 85%,#f472b6 100%
+  );
+  background-size:200% 100%;
+  animation:spectrumShift 6s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spectrumShift{
+  0%{background-position:0% 0%}
+  100%{background-position:200% 0%}
+}
+
+/* ── Grid texture ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(56,189,248,.012) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,189,248,.012) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(167,139,250,.07),transparent 55%);
+}
+
+/* ── TOP BAR ── */
+#topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(5,5,8,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+#topbar-inner{
+  display:flex;align-items:center;gap:12px;padding:10px 20px;
+  flex-wrap:wrap;
+}
+#lab-brand{
+  font-family:var(--fh);font-size:1rem;color:var(--text);letter-spacing:-.01em;
+  white-space:nowrap;
+}
+#lab-brand span{color:var(--ice)}
+#pbg{flex:1;min-width:80px;height:6px;background:rgba(56,189,248,.08);border-radius:3px;overflow:hidden}
+#pf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--ice),var(--violet));transition:width .5s ease}
+#plabel{font-family:var(--fm);font-size:.65rem;color:var(--muted);white-space:nowrap}
+#timer{font-family:var(--fm);font-size:.78rem;color:var(--ice);letter-spacing:.06em;
+  background:rgba(56,189,248,.08);border:1px solid var(--border);
+  border-radius:6px;padding:3px 10px;white-space:nowrap}
+#lb-panel{
+  display:flex;gap:16px;align-items:center;padding:5px 20px 8px;
+  flex-wrap:wrap;
+}
+.lb-item{font-family:var(--fm);font-size:.62rem;color:var(--muted);display:flex;gap:5px;align-items:center}
+.lb-val{color:var(--ice);font-weight:700}
+
+/* ── SECTIONS ── */
+.sec{display:none;max-width:780px;margin:0 auto;padding:24px 16px 60px;position:relative;z-index:1}
+.sec.on{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADER ── */
+.shdr{
+  background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(167,139,250,.05));
+  border:1px solid var(--border2);border-radius:16px;
+  padding:24px 22px;margin-bottom:20px;
+}
+.stag{
+  font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;
+  padding:3px 10px;border-radius:5px;margin-bottom:10px;display:inline-block;
+}
+.stag-w{background:rgba(56,189,248,.1);color:var(--ice);border:1px solid rgba(56,189,248,.2)}
+.stag-em{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
+.stag-sh{background:rgba(251,146,60,.1);color:var(--ember);border:1px solid rgba(251,146,60,.2)}
+.stag-ref{background:rgba(167,139,250,.1);color:var(--violet);border:1px solid rgba(167,139,250,.2)}
+.stag-game{background:rgba(52,211,153,.1);color:var(--lime);border:1px solid rgba(52,211,153,.2)}
+.shdr h2{font-family:var(--fh);font-size:clamp(1.4rem,3vw,1.85rem);color:var(--text);margin-bottom:5px;letter-spacing:-.02em}
+.shdr p{font-size:.82rem;color:var(--muted);line-height:1.65}
+
+/* ── CARD ── */
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  border-radius:3px 0 0 3px;
+}
+.card.w-accent::before{background:var(--ice)}
+.card.em-accent::before{background:var(--gold)}
+.card.sh-accent::before{background:var(--ember)}
+.card.ref-accent::before{background:var(--violet)}
+.card.game-accent::before{background:var(--lime)}
+.card.neutral::before{background:transparent}
+.ctitle{
+  font-family:var(--fm);font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:12px;
+}
+.qtext{font-size:.9rem;color:var(--text);line-height:1.6;margin-bottom:12px}
+.pts{
+  font-family:var(--fm);font-size:.6rem;
+  background:rgba(251,191,36,.08);color:var(--gold);
+  border:1px solid rgba(251,191,36,.2);
+  padding:2px 7px;border-radius:4px;margin-left:6px;
+}
+
+/* ── MCQ ── */
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opt{
+  background:rgba(56,189,248,.03);border:1.5px solid var(--border);
+  border-radius:10px;padding:11px 15px;
+  color:var(--text);cursor:pointer;text-align:left;
+  font-size:.88rem;transition:all .15s;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.opt:hover:not(:disabled){border-color:var(--ice);background:rgba(56,189,248,.08)}
+.opt.ok{border-color:var(--lime);background:rgba(52,211,153,.1);color:#a7f3d0;pointer-events:none}
+.opt.bad{border-color:var(--red);background:rgba(248,113,113,.08);color:#fca5a5;pointer-events:none}
+.opt:disabled{pointer-events:none;opacity:.85}
+.oind{
+  width:22px;height:22px;border-radius:5px;
+  border:1.5px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:.65rem;flex-shrink:0;margin-top:1px;
+  color:var(--muted);
+}
+.feedback{
+  font-family:var(--fm);font-size:.72rem;margin-top:10px;
+  padding:8px 12px;border-radius:7px;display:none;line-height:1.5;
+}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(52,211,153,.08);color:var(--lime);border:1px solid rgba(52,211,153,.2)}
+.feedback.bad{background:rgba(248,113,113,.08);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+
+/* ── HINT TIERS ── */
+.hint-wrap{margin-top:8px;display:none}
+.hint-wrap.show{display:block}
+.hint-tier{font-family:var(--fm);font-size:.7rem;padding:7px 11px;border-radius:6px;margin-bottom:5px;border-left:3px solid}
+.h1{background:rgba(251,191,36,.06);border-color:var(--gold);color:var(--gold)}
+.h2{background:rgba(167,139,250,.06);border-color:var(--violet);color:var(--violet)}
+.h3{background:rgba(56,189,248,.06);border-color:var(--ice);color:var(--ice)}
+.hint-btn{
+  font-family:var(--fm);font-size:.65rem;color:var(--muted);
+  background:transparent;border:1px solid var(--border);
+  border-radius:5px;padding:4px 10px;cursor:pointer;margin-top:6px;
+  transition:all .15s;
+}
+.hint-btn:hover{border-color:var(--ice);color:var(--ice)}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 22px;border-radius:10px;border:none;
+  font-size:.88rem;font-weight:600;cursor:pointer;
+  transition:all .18s;font-family:var(--fb);letter-spacing:.01em;
+}
+.btn-p{background:linear-gradient(135deg,var(--ice),rgba(56,189,248,.7));color:#050508}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(56,189,248,.25)}
+.btn-s{background:rgba(56,189,248,.07);color:var(--ice);border:1px solid var(--border2)}
+.btn-s:hover{background:rgba(56,189,248,.14)}
+.btn-lime{background:linear-gradient(135deg,var(--lime),rgba(52,211,153,.7));color:#050508}
+.btn-lime:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(52,211,153,.25)}
+.btn-ember{background:linear-gradient(135deg,var(--ember),rgba(251,146,60,.7));color:#050508}
+.btn:disabled{opacity:.38;pointer-events:none;transform:none}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap}
+
+/* ── INPUT ── */
+.inp{
+  width:100%;background:var(--bg3);border:1.5px solid var(--border2);
+  color:var(--text);padding:10px 14px;border-radius:9px;
+  font-family:var(--fb);font-size:.88rem;outline:none;transition:border-color .2s;
+}
+.inp:focus{border-color:var(--ice)}
+textarea.inp{resize:vertical;min-height:80px}
+select.inp{cursor:pointer}
+select.inp option{background:var(--bg3)}
+.form-label{
+  font-family:var(--fm);font-size:.65rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:5px;display:block;
+}
+
+/* ── CLASS BUTTONS ── */
+.cls-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cls-btn{
+  padding:8px 18px;border-radius:8px;font-family:var(--fm);font-size:.75rem;
+  background:rgba(56,189,248,.05);border:1.5px solid var(--border);
+  color:var(--muted);cursor:pointer;transition:all .18s;letter-spacing:.05em;
+}
+.cls-btn.on{background:rgba(56,189,248,.14);border-color:var(--ice);color:var(--ice);font-weight:700}
+
+/* ── SELF ASSESSMENT ── */
+.self-row{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
+  padding:12px;background:var(--bg3);border-radius:9px;
+  border:1px solid var(--border);
+}
+.self-lbl{font-size:.82rem;color:var(--muted);flex:1}
+.emoji-btns{display:flex;gap:5px}
+.emj{font-size:1.3rem;cursor:pointer;opacity:.25;transition:all .15s;background:transparent;border:none}
+.emj.on{opacity:1;transform:scale(1.2)}
+
+/* ── CANVAS ── */
+canvas{border:1.5px solid var(--border2);border-radius:9px;display:block;max-width:100%}
+.ctbar{display:flex;gap:7px;margin:10px 0;flex-wrap:wrap;align-items:center;font-size:.78rem;color:var(--muted)}
+.cbtn{width:24px;height:24px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;transition:border-color .15s}
+.cbtn.on{border-color:#fff}
+
+/* ── SCORE DISPLAY ── */
+.score-big{
+  text-align:center;padding:32px;
+  background:linear-gradient(135deg,rgba(56,189,248,.06),rgba(167,139,250,.05));
+  border:1px solid var(--border2);border-radius:16px;margin-bottom:18px;
+}
+.snum{font-family:var(--fh);font-size:4rem;color:var(--ice);line-height:1;
+  filter:drop-shadow(0 0 16px rgba(56,189,248,.4))}
+.sdenom{font-family:var(--fm);font-size:1.2rem;color:var(--muted);margin-top:4px}
+.gbadge{
+  display:inline-block;padding:7px 24px;border-radius:40px;
+  font-family:var(--fh);font-size:2rem;margin-top:12px;
+}
+.gA{background:rgba(52,211,153,.12);color:var(--lime);border:2px solid var(--lime)}
+.gB{background:rgba(56,189,248,.12);color:var(--ice);border:2px solid var(--ice)}
+.gC{background:rgba(251,146,60,.12);color:var(--ember);border:2px solid var(--ember)}
+.gD{background:rgba(248,113,113,.1);color:var(--red);border:2px solid var(--red)}
+
+/* ── SCORE BREAKDOWN ── */
+.bkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}
+.bkcell{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:12px;text-align:center;
+}
+.bkpts{font-family:var(--fh);font-size:1.4rem;color:var(--ice)}
+.bklbl{font-family:var(--fm);font-size:.58rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── GAME ── */
+.hud{
+  display:flex;justify-content:space-around;padding:10px;
+  background:var(--bg3);border-radius:10px;margin-bottom:12px;
+  border:1px solid var(--border);
+}
+.hitem{text-align:center}
+.hval{font-family:var(--fh);font-size:1.2rem;color:var(--gold)}
+.hlbl{font-family:var(--fm);font-size:.58rem;color:var(--muted);text-transform:uppercase}
+.g-qtext{font-size:.92rem;color:var(--text);line-height:1.55;margin:12px 0 10px;font-weight:500}
+.g-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g-opt{
+  background:rgba(56,189,248,.04);border:1.5px solid var(--border);
+  border-radius:9px;padding:10px 14px;
+  color:var(--text);cursor:pointer;font-size:.85rem;font-weight:600;
+  transition:all .15s;text-align:center;
+}
+.g-opt:hover:not(:disabled){border-color:var(--ice);color:var(--ice);background:rgba(56,189,248,.1)}
+.g-opt.ok{border-color:var(--lime);color:var(--lime);background:rgba(52,211,153,.1)}
+.g-opt.bad{border-color:var(--red);color:var(--red);background:rgba(248,113,113,.08)}
+.g-opt:disabled{pointer-events:none}
+.g-explain{
+  font-family:var(--fm);font-size:.72rem;padding:8px 12px;border-radius:7px;
+  background:rgba(56,189,248,.06);border:1px solid var(--border);
+  color:var(--muted);margin-top:10px;display:none;line-height:1.5;
+}
+
+/* ── EM SPECTRUM DRAG ── */
+.spectrum-track{
+  display:flex;gap:5px;padding:12px;
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:10px;min-height:60px;flex-wrap:wrap;
+  align-items:center;margin-bottom:10px;
+}
+.sband{
+  padding:6px 12px;border-radius:7px;cursor:grab;
+  font-family:var(--fm);font-size:.7rem;font-weight:700;
+  border:1.5px solid transparent;user-select:none;
+  transition:transform .15s;
+}
+.sband:active{cursor:grabbing;transform:scale(1.08)}
+.sband.dragging{opacity:.5}
+.sband.placed{cursor:default}
+
+/* ── INFOBOX ── */
+.infobox{
+  background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);
+  border-radius:9px;padding:10px 14px;
+  font-family:var(--fm);font-size:.73rem;color:var(--ice);
+  margin-bottom:14px;line-height:1.55;
+}
+
+/* ── PROTRACTOR CONTAINER ── */
+#proto-cvs{background:#050510;cursor:crosshair}
+
+/* ── LOCKED SCREEN ── */
+#lock-screen{
+  max-width:500px;margin:80px auto;
+  background:rgba(248,113,113,.05);border:2px solid rgba(248,113,113,.25);
+  border-radius:20px;padding:40px;text-align:center;
+  position:relative;z-index:10;
+}
+#lock-screen h2{font-family:var(--fh);font-size:1.6rem;color:var(--red);margin-bottom:12px}
+#lock-screen p{font-size:.85rem;color:var(--muted);line-height:1.7}
+
+/* ── UPLOAD STATUS ── */
+#upload-status{font-family:var(--fm);font-size:.75rem;margin-top:8px;min-height:20px}
+#upload-link-wrap{display:none;margin-top:8px}
+#upload-link{color:var(--lime);font-family:var(--fm);font-size:.72rem}
+
+/* ── SUBMIT STATUS ── */
+#submit-status{font-family:var(--fm);font-size:.78rem;margin-top:10px;min-height:20px}
+
+/* ── CONFETTI ── */
+#confetti-cvs{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:24px;right:16px;z-index:8000;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:10px;padding:10px 16px;
+  font-family:var(--fm);font-size:.75rem;color:var(--text);
+  box-shadow:0 8px 28px rgba(0,0,0,.5);
+  transform:translateY(70px);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:280px;
+}
+#toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:580px){
+  .sec{padding:16px 10px 60px}
+  .card{padding:14px}
+  .g-opts{grid-template-columns:1fr}
+  .bkgrid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti-cvs"></canvas>
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     TOP BAR
+══════════════════════════════════════════ -->
+<div id="topbar">
+  <div class="spectrum-stripe"></div>
+  <div id="topbar-inner">
+    <div id="lab-brand">G8 <span>Physics</span> — Final Revision</div>
+    <div id="pbg"><div id="pf" style="width:0%"></div></div>
+    <span id="plabel">Welcome</span>
+    <span id="timer">0:00</span>
+  </div>
+  <div id="lb-panel">
+    <div class="lb-item">8A <span class="lb-val" id="lb8A">—</span></div>
+    <div class="lb-item">8B <span class="lb-val" id="lb8B">—</span></div>
+    <div class="lb-item">8C <span class="lb-val" id="lb8C">—</span></div>
+    <div class="lb-item">8D <span class="lb-val" id="lb8D">—</span></div>
+    <div class="lb-item">Total <span class="lb-val" id="lbTotal">—</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LOCK SCREEN (shown if already submitted)
+══════════════════════════════════════════ -->
+<div id="lock-screen" style="display:none">
+  <div style="font-size:3rem;margin-bottom:14px">🔒</div>
+  <h2>Already Submitted</h2>
+  <p>You have already completed and submitted this revision lab.<br><br>
+    If you believe this is an error, ask your teacher — <strong style="color:var(--ice)">Ahmad Ghozlan</strong> can unlock your attempt from his computer.</p>
+  <div style="margin-top:20px;font-family:var(--fm);font-size:.68rem;color:var(--muted)">
+    Submitted by: <span id="lock-name" style="color:var(--ice)"></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S0 — LOGIN
+══════════════════════════════════════════ -->
+<section id="sec0" class="sec on">
+  <div class="shdr">
+    <div style="font-size:2.2rem;margin-bottom:8px">🌌</div>
+    <h2>Grade 8 · Physics Final Revision</h2>
+    <p>Mechanical Waves · EM Waves · Light & Shadow · Reflection<br>
+    Complete all sections, draw your ray diagram, and submit. One attempt per student.</p>
+  </div>
+
+  <div class="card neutral">
+    <div class="ctitle">📋 Student Information</div>
+    <div style="margin-bottom:14px">
+      <span class="form-label">Your Class</span>
+      <div class="cls-btns">
+        <button class="cls-btn" onclick="setClass('8A',this)">8A</button>
+        <button class="cls-btn" onclick="setClass('8B',this)">8B</button>
+        <button class="cls-btn" onclick="setClass('8C',this)">8C</button>
+        <button class="cls-btn" onclick="setClass('8D',this)">8D</button>
+      </div>
+    </div>
+    <div>
+      <span class="form-label">اسمك الكامل / Your Full Name</span>
+      <select id="inp-name" class="inp" dir="rtl" disabled>
+        <option value="">— اختر الصف أولاً —</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="infobox">
+    ⏱ A timer starts when you begin. Work at your own pace — quality matters more than speed.<br>
+    🔒 This lab has a <strong>one-attempt lock</strong>. Your work is saved when you submit.
+  </div>
+  <div class="nav">
+    <div></div>
+    <button class="btn btn-p" onclick="startLab()">Begin Final Revision →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S1 — MECHANICAL WAVES
+══════════════════════════════════════════ -->
+<section id="sec1" class="sec">
+  <div class="shdr">
+    <div class="stag stag-w">Chapter 1 — Mechanical Waves</div>
+    <h2>Waves — Properties & Calculations</h2>
+    <p>Answer 3 MCQs, then complete the numeric exercises. (5 pts)</p>
+  </div>
+
+  <div class="card w-accent">
+    <div class="qtext">Q1 <span class="pts">1 pt</span> — A wave has frequency f = 4 Hz and wavelength λ = 0.5 m. What is its wave speed?</div>
+    <div class="opts" id="w-q1">
+      <button class="opt" onclick="mcq('w-q1',this,false,'fb-w-q1')"><span class="oind">A</span>0.5 m/s</button>
+      <button class="opt" onclick="mcq('w-q1',this,false,'fb-w-q1')"><span class="oind">B</span>8 m/s — v = f × λ = 4 × 0.5 = 2 m/s, so NO…</button>
+      <button class="opt" onclick="mcq('w-q1',this,true,'fb-w-q1')"><span class="oind">C</span>2 m/s — v = f × λ = 4 × 0.5</button>
+      <button class="opt" onclick="mcq('w-q1',this,false,'fb-w-q1')"><span class="oind">D</span>4.5 m/s</button>
+    </div>
+    <div id="fb-w-q1" class="feedback ok">✓ Correct! v = f × λ = 4 Hz × 0.5 m = 2 m/s. Always multiply frequency by wavelength.</div>
+    <button class="hint-btn" onclick="toggleHint('h-w-q1')">💡 Hint</button>
+    <div id="h-w-q1" class="hint-wrap">
+      <div class="hint-tier h1">🟡 Hint 1: The formula connecting wave speed, frequency and wavelength is v = f × λ</div>
+      <div class="hint-tier h2">🟣 Hint 2: f = 4 Hz means 4 waves per second; λ = 0.5 m is the length of each wave</div>
+      <div class="hint-tier h3">🔵 Hint 3: v = 4 × 0.5 = 2 m/s</div>
+    </div>
+  </div>
+
+  <div class="card w-accent">
+    <div class="qtext">Q2 <span class="pts">1 pt</span> — A transverse wave is one where the particles vibrate…</div>
+    <div class="opts" id="w-q2">
+      <button class="opt" onclick="mcq('w-q2',this,false,'fb-w-q2')"><span class="oind">A</span>In the same direction as the wave travels</button>
+      <button class="opt" onclick="mcq('w-q2',this,true,'fb-w-q2')"><span class="oind">B</span>Perpendicular (at right angles) to the wave's direction of travel</button>
+      <button class="opt" onclick="mcq('w-q2',this,false,'fb-w-q2')"><span class="oind">C</span>In circles around the wave direction</button>
+      <button class="opt" onclick="mcq('w-q2',this,false,'fb-w-q2')"><span class="oind">D</span>They do not vibrate at all</button>
+    </div>
+    <div id="fb-w-q2" class="feedback ok">✓ Transverse waves: particles oscillate perpendicular to energy flow. Example: light, water surface waves.</div>
+    <button class="hint-btn" onclick="toggleHint('h-w-q2')">💡 Hint</button>
+    <div id="h-w-q2" class="hint-wrap">
+      <div class="hint-tier h1">🟡 Hint 1: Compare longitudinal (particles ∥ direction) vs transverse (particles ⊥ direction)</div>
+      <div class="hint-tier h2">🟣 Hint 2: Sound is longitudinal. Light is transverse.</div>
+      <div class="hint-tier h3">🔵 Hint 3: "Perpendicular" = at right angles = 90°</div>
+    </div>
+  </div>
+
+  <div class="card w-accent">
+    <div class="qtext">Q3 <span class="pts">1 pt</span> — The period T of a wave with frequency f = 2 Hz is…</div>
+    <div class="opts" id="w-q3">
+      <button class="opt" onclick="mcq('w-q3',this,false,'fb-w-q3')"><span class="oind">A</span>2 s</button>
+      <button class="opt" onclick="mcq('w-q3',this,true,'fb-w-q3')"><span class="oind">B</span>0.5 s — T = 1/f = 1/2</button>
+      <button class="opt" onclick="mcq('w-q3',this,false,'fb-w-q3')"><span class="oind">C</span>4 s</button>
+      <button class="opt" onclick="mcq('w-q3',this,false,'fb-w-q3')"><span class="oind">D</span>1 s</button>
+    </div>
+    <div id="fb-w-q3" class="feedback ok">✓ T = 1/f = 1/2 = 0.5 s. Period and frequency are reciprocals.</div>
+  </div>
+
+  <!-- Numeric exercise -->
+  <div class="card w-accent">
+    <div class="ctitle">🔢 Numeric Exercise <span class="pts">2 pts</span></div>
+    <div class="qtext">A wave travels at v = 340 m/s with a wavelength of λ = 0.85 m.<br>
+      <strong style="color:var(--ice)">Calculate:</strong> (a) its frequency f, and (b) its period T.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div>
+        <span class="form-label">f = v ÷ λ = ? (Hz)</span>
+        <input type="number" step="any" class="inp" id="w-num-f" placeholder="e.g. 400">
+      </div>
+      <div>
+        <span class="form-label">T = 1/f = ? (s)</span>
+        <input type="number" step="any" class="inp" id="w-num-T" placeholder="e.g. 0.0025">
+      </div>
+    </div>
+    <button class="btn btn-s" style="margin-top:10px;font-size:.8rem" onclick="checkWaveNum()">Check →</button>
+    <div id="fb-w-num" class="feedback" style="margin-top:8px"></div>
+  </div>
+
+  <!-- Self-assess -->
+  <div class="card neutral">
+    <div class="ctitle">Self-Assessment — Mechanical Waves</div>
+    <div class="self-row">
+      <span class="self-lbl">How confident are you about waves?</span>
+      <div class="emoji-btns" id="self-w">
+        <button class="emj" onclick="selfRate(this,'self-w','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-w','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-w','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-w','🎯')">🎯</button>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="self-w-val" value="">
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(0)">← Back</button>
+    <button class="btn btn-p" id="btn1next" disabled onclick="go(2)">Next: EM Waves →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S2 — EM WAVES
+══════════════════════════════════════════ -->
+<section id="sec2" class="sec">
+  <div class="shdr">
+    <div class="stag stag-em">Chapter 2 — Electromagnetic Waves</div>
+    <h2>The EM Spectrum</h2>
+    <p>Order the spectrum, then answer 3 questions. (5 pts)</p>
+  </div>
+
+  <!-- Drag-sort spectrum -->
+  <div class="card em-accent">
+    <div class="ctitle">🎯 Drag-Sort: Arrange from lowest → highest frequency <span class="pts">2 pts</span></div>
+    <div class="infobox" style="margin-bottom:10px">Drag the bands into the correct order — Radio (lowest) to Gamma (highest)</div>
+    <div id="spectrum-sort" class="spectrum-track" ondragover="ev.preventDefault()" ondrop="dropBand(event)"></div>
+    <div id="spec-pool" style="display:flex;gap:5px;flex-wrap:wrap;padding:8px;background:var(--bg3);border-radius:8px;margin-bottom:10px;min-height:44px"></div>
+    <button class="btn btn-s" style="font-size:.8rem" onclick="checkSpectrum()">Check Order →</button>
+    <div id="fb-spec" class="feedback" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card em-accent">
+    <div class="qtext">Q1 <span class="pts">1 pt</span> — All EM waves travel in a vacuum at the speed of light. What is this speed?</div>
+    <div class="opts" id="em-q1">
+      <button class="opt" onclick="mcq('em-q1',this,false,'fb-em-q1')"><span class="oind">A</span>340 m/s</button>
+      <button class="opt" onclick="mcq('em-q1',this,false,'fb-em-q1')"><span class="oind">B</span>3 × 10⁶ m/s</button>
+      <button class="opt" onclick="mcq('em-q1',this,true,'fb-em-q1')"><span class="oind">C</span>3 × 10⁸ m/s</button>
+      <button class="opt" onclick="mcq('em-q1',this,false,'fb-em-q1')"><span class="oind">D</span>3 × 10¹⁰ m/s</button>
+    </div>
+    <div id="fb-em-q1" class="feedback ok">✓ All EM waves travel at c = 3 × 10⁸ m/s in a vacuum. This is a key constant to memorise!</div>
+  </div>
+
+  <div class="card em-accent">
+    <div class="qtext">Q2 <span class="pts">1 pt</span> — Which EM wave is used by doctors to see bones inside the human body?</div>
+    <div class="opts" id="em-q2">
+      <button class="opt" onclick="mcq('em-q2',this,false,'fb-em-q2')"><span class="oind">A</span>Radio waves</button>
+      <button class="opt" onclick="mcq('em-q2',this,false,'fb-em-q2')"><span class="oind">B</span>Microwaves</button>
+      <button class="opt" onclick="mcq('em-q2',this,false,'fb-em-q2')"><span class="oind">C</span>Infrared</button>
+      <button class="opt" onclick="mcq('em-q2',this,true,'fb-em-q2')"><span class="oind">D</span>X-rays</button>
+    </div>
+    <div id="fb-em-q2" class="feedback ok">✓ X-rays penetrate soft tissue but are absorbed by dense bone — producing medical images.</div>
+  </div>
+
+  <div class="card em-accent">
+    <div class="qtext">Q3 <span class="pts">1 pt</span> — An EM wave has frequency f = 6 × 10¹⁴ Hz. Using v = 3 × 10⁸ m/s, its wavelength λ is…</div>
+    <div class="opts" id="em-q3">
+      <button class="opt" onclick="mcq('em-q3',this,false,'fb-em-q3')"><span class="oind">A</span>6 × 10⁻⁶ m</button>
+      <button class="opt" onclick="mcq('em-q3',this,true,'fb-em-q3')"><span class="oind">B</span>5 × 10⁻⁷ m — λ = v/f = (3×10⁸)/(6×10¹⁴)</button>
+      <button class="opt" onclick="mcq('em-q3',this,false,'fb-em-q3')"><span class="oind">C</span>2 × 10⁻⁶ m</button>
+      <button class="opt" onclick="mcq('em-q3',this,false,'fb-em-q3')"><span class="oind">D</span>5 × 10⁻⁸ m</button>
+    </div>
+    <div id="fb-em-q3" class="feedback ok">✓ λ = v/f = (3×10⁸) ÷ (6×10¹⁴) = 5 × 10⁻⁷ m — visible light (green).</div>
+    <button class="hint-btn" onclick="toggleHint('h-em-q3')">💡 Hint</button>
+    <div id="h-em-q3" class="hint-wrap">
+      <div class="hint-tier h1">🟡 Hint 1: Rearrange v = f × λ → λ = v ÷ f</div>
+      <div class="hint-tier h2">🟣 Hint 2: (3 × 10⁸) ÷ (6 × 10¹⁴) = (3/6) × 10⁸⁻¹⁴ = 0.5 × 10⁻⁶</div>
+      <div class="hint-tier h3">🔵 Hint 3: 0.5 × 10⁻⁶ = 5 × 10⁻⁷ m</div>
+    </div>
+  </div>
+
+  <div class="card neutral">
+    <div class="ctitle">Self-Assessment — EM Waves</div>
+    <div class="self-row">
+      <span class="self-lbl">How well do you know the EM spectrum?</span>
+      <div class="emoji-btns" id="self-em">
+        <button class="emj" onclick="selfRate(this,'self-em','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-em','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-em','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-em','🎯')">🎯</button>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="self-em-val" value="">
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(1)">← Waves</button>
+    <button class="btn btn-p" id="btn2next" disabled onclick="go(3)">Next: Shadows →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S3 — LIGHT & SHADOW
+══════════════════════════════════════════ -->
+<section id="sec3" class="sec">
+  <div class="shdr">
+    <div class="stag stag-sh">Chapter 3 — Rectilinear Propagation & Shadow</div>
+    <h2>Light Sources, Shadows & Propagation</h2>
+    <p>Study the diagram, then answer 3 questions + journal. (4 pts)</p>
+  </div>
+
+  <!-- SVG Shadow Scene -->
+  <div class="card sh-accent">
+    <div class="ctitle">🖼 Shadow Diagram — Study carefully</div>
+    <svg viewBox="0 0 540 190" style="width:100%;border-radius:8px;background:#040410">
+      <!-- Light rays -->
+      <line x1="58" y1="50" x2="225" y2="95" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="7,3" opacity=".7"/>
+      <line x1="58" y1="95" x2="225" y2="95" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="7,3" opacity=".7"/>
+      <line x1="58" y1="140" x2="225" y2="95" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="7,3" opacity=".7"/>
+      <!-- Arrows on rays -->
+      <polygon points="222,93 214,89 214,97" fill="#fbbf24" opacity=".8"/>
+      <!-- Point source lamp -->
+      <circle cx="52" cy="95" r="25" fill="#fbbf24" opacity=".92" filter="url(#glow)"/>
+      <text x="52" y="100" text-anchor="middle" font-size="9" fill="#050508" font-weight="bold">LAMP</text>
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Opaque object -->
+      <rect x="210" y="58" width="28" height="74" rx="4" fill="#2a2a55"/>
+      <text x="224" y="152" text-anchor="middle" font-size="9" fill="#8080a8">Opaque Object</text>
+      <!-- Shadow (umbra) -->
+      <polygon points="238,58 480,12 480,178 238,132" fill="#0a0a1e" opacity=".9"/>
+      <text x="365" y="100" text-anchor="middle" font-size="11" fill="#a78bfa" font-weight="bold">UMBRA</text>
+      <!-- Screen -->
+      <rect x="478" y="10" width="7" height="170" fill="#3a3a80" rx="3"/>
+      <text x="530" y="100" text-anchor="middle" font-size="9" fill="#8080a8">Screen</text>
+      <!-- Labels: A, B, C points -->
+      <circle cx="52" cy="95" r="4" fill="#fb923c"/>
+      <text x="32" y="72" font-size="10" fill="#fb923c" font-weight="bold">A</text>
+      <circle cx="224" cy="95" r="4" fill="#fb923c"/>
+      <text x="230" y="90" font-size="10" fill="#fb923c" font-weight="bold">B</text>
+      <circle cx="479" cy="95" r="4" fill="#34d399"/>
+      <text x="485" y="90" font-size="10" fill="#34d399" font-weight="bold">C</text>
+    </svg>
+    <div style="font-family:var(--fm);font-size:.68rem;color:var(--muted);margin-top:8px">
+      A = Point light source &nbsp;·&nbsp; B = Opaque object &nbsp;·&nbsp; C = Screen &nbsp;·&nbsp; Dashed lines = light rays
+    </div>
+  </div>
+
+  <div class="card sh-accent">
+    <div class="qtext">Q1 <span class="pts">1 pt</span> — In the diagram, what is the dark region on the screen called?</div>
+    <div class="opts" id="sh-q1">
+      <button class="opt" onclick="mcq('sh-q1',this,false,'fb-sh-q1')"><span class="oind">A</span>Penumbra</button>
+      <button class="opt" onclick="mcq('sh-q1',this,true,'fb-sh-q1')"><span class="oind">B</span>Umbra — the region of total darkness</button>
+      <button class="opt" onclick="mcq('sh-q1',this,false,'fb-sh-q1')"><span class="oind">C</span>Spectrum</button>
+      <button class="opt" onclick="mcq('sh-q1',this,false,'fb-sh-q1')"><span class="oind">D</span>Reflection</button>
+    </div>
+    <div id="fb-sh-q1" class="feedback ok">✓ The umbra is the region of total darkness — no light reaches it at all from the source.</div>
+  </div>
+
+  <div class="card sh-accent">
+    <div class="qtext">Q2 <span class="pts">1 pt</span> — The diagram shows a <em>point</em> source lamp. Why is there NO penumbra (partial shadow) in this diagram?</div>
+    <div class="opts" id="sh-q2">
+      <button class="opt" onclick="mcq('sh-q2',this,false,'fb-sh-q2')"><span class="oind">A</span>Because the object is too small</button>
+      <button class="opt" onclick="mcq('sh-q2',this,true,'fb-sh-q2')"><span class="oind">B</span>A point source has no width — it produces only a sharp-edged umbra, no partial shadow</button>
+      <button class="opt" onclick="mcq('sh-q2',this,false,'fb-sh-q2')"><span class="oind">C</span>Because the screen is too far away</button>
+      <button class="opt" onclick="mcq('sh-q2',this,false,'fb-sh-q2')"><span class="oind">D</span>Because light is too bright</button>
+    </div>
+    <div id="fb-sh-q2" class="feedback ok">✓ A point source emits light from one exact spot. With no width, every ray either hits the object or misses it — giving a perfect sharp umbra and no penumbra.</div>
+    <button class="hint-btn" onclick="toggleHint('h-sh-q2')">💡 Hint</button>
+    <div id="h-sh-q2" class="hint-wrap">
+      <div class="hint-tier h1">🟡 Hint 1: Penumbra requires some rays to reach a spot from PART of the source — possible only if source has SIZE</div>
+      <div class="hint-tier h2">🟣 Hint 2: Point source = zero size → either a ray passes or it doesn't → only umbra</div>
+      <div class="hint-tier h3">🔵 Hint 3: Extended source (like the Sun) creates both umbra AND penumbra</div>
+    </div>
+  </div>
+
+  <div class="card sh-accent">
+    <div class="qtext">Q3 <span class="pts">1 pt</span> — Light travels in straight lines (rectilinear propagation). This is shown in the diagram by…</div>
+    <div class="opts" id="sh-q3">
+      <button class="opt" onclick="mcq('sh-q3',this,false,'fb-sh-q3')"><span class="oind">A</span>The dark colour of the shadow</button>
+      <button class="opt" onclick="mcq('sh-q3',this,true,'fb-sh-q3')"><span class="oind">B</span>The straight dashed lines (rays) going directly from the lamp to the object and screen</button>
+      <button class="opt" onclick="mcq('sh-q3',this,false,'fb-sh-q3')"><span class="oind">C</span>The distance between lamp and screen</button>
+    </div>
+    <div id="fb-sh-q3" class="feedback ok">✓ The straight rays in the diagram directly model rectilinear propagation — light never curves in a uniform medium.</div>
+  </div>
+
+  <!-- Journal -->
+  <div class="card neutral">
+    <div class="ctitle">📓 Lab Journal (teacher-read)</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">In 2–3 sentences: describe what would happen to the shadow size if you moved the lamp CLOSER to the opaque object. Explain your reasoning using ray diagrams.</p>
+    <textarea id="sh-journal" class="inp" placeholder="Write your observation…" oninput="labData.Shadow_journal=this.value"></textarea>
+  </div>
+
+  <div class="card neutral">
+    <div class="ctitle">Self-Assessment — Light & Shadow</div>
+    <div class="self-row">
+      <span class="self-lbl">How confident are you about shadow formation?</span>
+      <div class="emoji-btns" id="self-sh">
+        <button class="emj" onclick="selfRate(this,'self-sh','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-sh','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-sh','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-sh','🎯')">🎯</button>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="self-sh-val" value="">
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(2)">← EM Waves</button>
+    <button class="btn btn-p" id="btn3next" disabled onclick="go(4)">Next: Reflection →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S4 — REFLECTION OF LIGHT
+══════════════════════════════════════════ -->
+<section id="sec4" class="sec">
+  <div class="shdr">
+    <div class="stag stag-ref">Chapter 4 — Reflection of Light</div>
+    <h2>Law of Reflection — Interactive Protractor</h2>
+    <p>Use the protractor, then answer 3 questions. (5 pts)</p>
+  </div>
+
+  <!-- Interactive Protractor -->
+  <div class="card ref-accent">
+    <div class="ctitle">🎯 Interactive Protractor Exercise <span class="pts">1 pt</span></div>
+    <div class="infobox">The incident ray hits the mirror at <span id="proto-angle-display" style="color:var(--violet);font-weight:700">40°</span> from the normal.
+    Click ABOVE the mirror on the RIGHT side to draw your reflected ray. Then click Check.</div>
+    <canvas id="proto-cvs" width="640" height="280" style="width:100%;border-radius:9px"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-s" id="proto-check" disabled onclick="checkProto()" style="font-size:.82rem">Check Reflection →</button>
+      <button class="btn btn-s" onclick="resetProto()" style="font-size:.82rem">↺ Reset</button>
+      <span id="proto-attempts" style="font-family:var(--fm);font-size:.68rem;color:var(--muted)"></span>
+    </div>
+    <div id="proto-result" style="font-family:var(--fm);font-size:.78rem;margin-top:10px;min-height:20px"></div>
+    <div id="proto-hint" style="display:none;margin-top:8px">
+      <div class="hint-tier h1">🟡 Hint: The law of reflection says: angle of incidence = angle of reflection, both measured from the normal (dashed line)</div>
+      <div class="hint-tier h2">🟣 Hint: The incident ray is on the LEFT of the normal. Your reflected ray goes on the RIGHT at the SAME angle</div>
+    </div>
+  </div>
+
+  <div class="card ref-accent">
+    <div class="qtext">Q1 <span class="pts">1 pt</span> — The law of reflection states that the angle of incidence…</div>
+    <div class="opts" id="ref-q1">
+      <button class="opt" onclick="mcq('ref-q1',this,false,'fb-ref-q1')"><span class="oind">A</span>Is always larger than the angle of reflection</button>
+      <button class="opt" onclick="mcq('ref-q1',this,true,'fb-ref-q1')"><span class="oind">B</span>Equals the angle of reflection (both measured from the normal)</button>
+      <button class="opt" onclick="mcq('ref-q1',this,false,'fb-ref-q1')"><span class="oind">C</span>Plus the angle of reflection always equals 180°</button>
+      <button class="opt" onclick="mcq('ref-q1',this,false,'fb-ref-q1')"><span class="oind">D</span>Is always 90°</button>
+    </div>
+    <div id="fb-ref-q1" class="feedback ok">✓ i = r. Both angles are measured from the normal (perpendicular to the mirror surface).</div>
+  </div>
+
+  <div class="card ref-accent">
+    <div class="qtext">Q2 <span class="pts">1 pt</span> — A ray hits a mirror at 65° to the mirror surface. What is the angle of reflection (measured from the normal)?</div>
+    <div class="opts" id="ref-q2">
+      <button class="opt" onclick="mcq('ref-q2',this,false,'fb-ref-q2')"><span class="oind">A</span>65° — same as the surface angle</button>
+      <button class="opt" onclick="mcq('ref-q2',this,false,'fb-ref-q2')"><span class="oind">B</span>130°</button>
+      <button class="opt" onclick="mcq('ref-q2',this,true,'fb-ref-q2')"><span class="oind">C</span>25° — angle to normal = 90° − 65° = 25°, so reflection = 25°</button>
+      <button class="opt" onclick="mcq('ref-q2',this,false,'fb-ref-q2')"><span class="oind">D</span>45°</button>
+    </div>
+    <div id="fb-ref-q2" class="feedback ok">✓ Angle to surface = 65° → Angle to normal = 90° − 65° = 25°. Angle of reflection = 25°.</div>
+    <button class="hint-btn" onclick="toggleHint('h-ref-q2')">💡 Hint</button>
+    <div id="h-ref-q2" class="hint-wrap">
+      <div class="hint-tier h1">🟡 Hint 1: Angles of incidence and reflection are ALWAYS measured from the normal, not from the mirror surface</div>
+      <div class="hint-tier h2">🟣 Hint 2: Angle from surface + angle from normal = 90°</div>
+      <div class="hint-tier h3">🔵 Hint 3: 90° − 65° = 25° (angle from normal) → reflected at 25°</div>
+    </div>
+  </div>
+
+  <div class="card ref-accent">
+    <div class="qtext">Q3 <span class="pts">1 pt</span> — In reflection, the incident ray, reflected ray and normal all lie in…</div>
+    <div class="opts" id="ref-q3">
+      <button class="opt" onclick="mcq('ref-q3',this,false,'fb-ref-q3')"><span class="oind">A</span>Three different planes</button>
+      <button class="opt" onclick="mcq('ref-q3',this,true,'fb-ref-q3')"><span class="oind">B</span>The same plane (the plane of incidence)</button>
+      <button class="opt" onclick="mcq('ref-q3',this,false,'fb-ref-q3')"><span class="oind">C</span>The mirror surface</button>
+    </div>
+    <div id="fb-ref-q3" class="feedback ok">✓ All three lines lie in the same plane — this is the second law of reflection.</div>
+  </div>
+
+  <!-- Numeric: angle calculation -->
+  <div class="card ref-accent">
+    <div class="ctitle">🔢 Angle Calculation <span class="pts">1 pt</span></div>
+    <div class="qtext">A light ray hits a mirror. The angle of reflection is 38°. What is the total angle between the incident and reflected rays?</div>
+    <input type="number" step="any" class="inp" id="ref-num" placeholder="Your answer in degrees" style="margin-top:8px;max-width:200px">
+    <button class="btn btn-s" style="margin-top:8px;font-size:.8rem" onclick="checkRefNum()">Check →</button>
+    <div id="fb-ref-num" class="feedback" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card neutral">
+    <div class="ctitle">Self-Assessment — Reflection</div>
+    <div class="self-row">
+      <span class="self-lbl">How confident are you about reflection?</span>
+      <div class="emoji-btns" id="self-ref">
+        <button class="emj" onclick="selfRate(this,'self-ref','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-ref','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-ref','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-ref','🎯')">🎯</button>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="self-ref-val" value="">
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(3)">← Shadows</button>
+    <button class="btn btn-p" id="btn4next" disabled onclick="go(5)">Next: Your Ray Drawing →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S5 — DRAWING + UPLOAD
+══════════════════════════════════════════ -->
+<section id="sec5" class="sec">
+  <div class="shdr">
+    <div class="stag stag-ref">Drawing Task</div>
+    <h2>Draw Your Ray Diagram</h2>
+    <p>Draw a complete reflection diagram on the canvas below — mirror, normal, incident ray, reflected ray, and labels. Then upload it to your teacher. (1 pt)</p>
+  </div>
+
+  <div class="card ref-accent">
+    <div class="ctitle">✏️ Ray Diagram Canvas</div>
+    <div class="infobox" style="margin-bottom:10px">
+      Include: mirror surface (horizontal line) · normal (dashed perpendicular) ·
+      incident ray with arrow · reflected ray with arrow · labels: i = angle of incidence, r = angle of reflection
+    </div>
+    <div class="ctbar">
+      <span>Colour:</span>
+      <div class="cbtn on" style="background:#38bdf8" onclick="setUColor('#38bdf8',this)" title="Blue"></div>
+      <div class="cbtn" style="background:#fbbf24" onclick="setUColor('#fbbf24',this)" title="Gold"></div>
+      <div class="cbtn" style="background:#34d399" onclick="setUColor('#34d399',this)" title="Green"></div>
+      <div class="cbtn" style="background:#f87171" onclick="setUColor('#f87171',this)" title="Red"></div>
+      <div class="cbtn" style="background:#ffffff" onclick="setUColor('#ffffff',this)" title="White"></div>
+      <span style="margin-left:8px">Size:</span>
+      <input type="range" id="ubrush" min="1" max="10" value="3" style="width:70px">
+      <button class="btn btn-s" style="padding:5px 11px;font-size:.75rem" onclick="clearUpload()">Clear</button>
+    </div>
+    <canvas id="uploadCvs" width="700" height="280" style="width:100%;cursor:crosshair"></canvas>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-lime" id="uploadBtn" onclick="uploadDrawing()">⬆ Upload Drawing</button>
+      <div>
+        <div id="upload-status"></div>
+        <div id="upload-link-wrap">
+          <a id="upload-link" href="#" target="_blank">View your uploaded drawing ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(4)">← Reflection</button>
+    <button class="btn btn-p" onclick="go(6)">Next: Rapid Quiz →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S6 — RAPID MIXED QUIZ (GAME)
+══════════════════════════════════════════ -->
+<section id="sec6" class="sec">
+  <div class="shdr">
+    <div class="stag stag-game">Mixed Rapid Quiz — All Chapters</div>
+    <h2>🎮 Physics Rapid Fire</h2>
+    <p>10 questions · 8 seconds each · 3 lives · covers all 4 chapters (3 pts)</p>
+  </div>
+
+  <div class="card game-accent">
+    <div class="hud">
+      <div class="hitem"><div class="hval" id="g-score">0</div><div class="hlbl">Score</div></div>
+      <div class="hitem"><div class="hval" id="g-lives">❤️❤️❤️</div><div class="hlbl">Lives</div></div>
+      <div class="hitem"><div class="hval" id="g-timer">8</div><div class="hlbl">Seconds</div></div>
+      <div class="hitem"><div class="hval" id="g-round">0/10</div><div class="hlbl">Round</div></div>
+    </div>
+    <div id="g-start" style="text-align:center;padding:20px">
+      <button class="btn btn-lime" onclick="startGame()" style="font-size:1rem;padding:14px 32px">▶ Start Rapid Quiz</button>
+    </div>
+    <div id="g-qbox" style="display:none">
+      <div class="g-qtext" id="g-qtext"></div>
+      <div class="g-opts" id="g-opts"></div>
+      <div class="g-explain" id="g-explain"></div>
+    </div>
+    <div id="g-done" style="display:none;text-align:center;padding:16px">
+      <div style="font-family:var(--fh);font-size:1.4rem;color:var(--lime);margin-bottom:8px">Quiz Complete! 🏆</div>
+      <div id="g-result" style="font-family:var(--fm);font-size:.82rem;color:var(--muted)"></div>
+      <button class="btn btn-s" onclick="startGame()" style="margin-top:12px;font-size:.82rem">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(5)">← Drawing</button>
+    <button class="btn btn-p" id="btn6next" disabled onclick="go(7)">Next: Self Assessment →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S7 — SELF ASSESSMENT + WRITTEN SYNTHESIS
+══════════════════════════════════════════ -->
+<section id="sec7" class="sec">
+  <div class="shdr">
+    <div class="stag stag-game">Section 7 — Reflection & Synthesis</div>
+    <h2>Final Self-Assessment & Written Response</h2>
+    <p>Reflect on your understanding. (1 pt for written attempt)</p>
+  </div>
+
+  <div class="card neutral">
+    <div class="ctitle">⭐ Overall Self-Assessment per Chapter</div>
+    <div class="self-row"><span class="self-lbl">Mechanical Waves</span>
+      <div class="emoji-btns" id="self-ov-w">
+        <button class="emj" onclick="selfRate(this,'self-ov-w','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-w','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-w','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-w','🎯')">🎯</button>
+      </div>
+    </div>
+    <div class="self-row"><span class="self-lbl">EM Waves</span>
+      <div class="emoji-btns" id="self-ov-em">
+        <button class="emj" onclick="selfRate(this,'self-ov-em','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-em','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-em','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-em','🎯')">🎯</button>
+      </div>
+    </div>
+    <div class="self-row"><span class="self-lbl">Light & Shadow</span>
+      <div class="emoji-btns" id="self-ov-sh">
+        <button class="emj" onclick="selfRate(this,'self-ov-sh','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-sh','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-sh','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-sh','🎯')">🎯</button>
+      </div>
+    </div>
+    <div class="self-row"><span class="self-lbl">Reflection of Light</span>
+      <div class="emoji-btns" id="self-ov-ref">
+        <button class="emj" onclick="selfRate(this,'self-ov-ref','😕')">😕</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-ref','🤔')">🤔</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-ref','😊')">😊</button>
+        <button class="emj" onclick="selfRate(this,'self-ov-ref','🎯')">🎯</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card neutral">
+    <div class="ctitle">📝 Written Synthesis Question <span class="pts">1 pt</span></div>
+    <div class="qtext">Choose ONE of the 4 topics studied in this revision lab. In 3–4 sentences, explain the main concept and give one real-world example of where this physics is used in daily life in Shatila or Lebanon.</div>
+    <textarea id="written-synth" class="inp" placeholder="Write your response here…" style="min-height:100px" oninput="labData.Written_synthesis=this.value"></textarea>
+  </div>
+  <input type="hidden" id="self-ov-w-val" value="">
+  <input type="hidden" id="self-ov-em-val" value="">
+  <input type="hidden" id="self-ov-sh-val" value="">
+  <input type="hidden" id="self-ov-ref-val" value="">
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(6)">← Quiz</button>
+    <button class="btn btn-p" onclick="showSummary()">See My Results →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     S8 — SUMMARY + SUBMIT
+══════════════════════════════════════════ -->
+<section id="sec8" class="sec">
+  <div class="shdr">
+    <div class="stag stag-game">Section 8 — Results</div>
+    <h2>Your Final Score</h2>
+    <p id="sum-name-class" style="font-family:var(--fm);color:var(--ice)"></p>
+  </div>
+
+  <div class="score-big">
+    <div class="snum" id="sum-score">—</div>
+    <div class="sdenom">/ 20</div>
+    <div class="gbadge" id="sum-grade"></div>
+  </div>
+
+  <div class="bkgrid">
+    <div class="bkcell"><div class="bkpts" id="bk-w"></div><div class="bklbl">Waves /5</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-em"></div><div class="bklbl">EM Waves /5</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-sh"></div><div class="bklbl">Shadow /4</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-ref"></div><div class="bklbl">Reflection /5</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-game"></div><div class="bklbl">Quiz /3</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-draw"></div><div class="bklbl">Drawing /1</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-written"></div><div class="bklbl">Written /1</div></div>
+  </div>
+
+  <div class="card neutral" style="margin-bottom:16px">
+    <div class="ctitle">📤 Submit to Teacher</div>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">
+      Once you submit, your results are sent to Ahmad Ghozlan's grade sheet. This action locks your attempt.
+    </p>
+    <button class="btn btn-p" id="submitBtn" onclick="submitLab()" style="font-size:.92rem;padding:12px 28px">
+      📤 Submit Final Revision
+    </button>
+    <div id="submit-status"></div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(7)">← Back</button>
+    <div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+const LAB_START = Date.now();
+const SCRIPT_URL = 'PASTE_YOUR_WEB_APP_URL_HERE';
+
+// ── Student names ──────────────────────────────────────────────────────────
+var STUDENTS = {
+  '8A': [
+    'ابراهيم طارق صلاح معروف','ابراهيم محمد رفعت ابو حميد','احسان "محمد وليد" الشحبري',
+    'ادم وليد توفيق الخطيب','الين رشيد محمد احمد','اسماء هيثم علي ندوه',
+    'تالا "محمد عدنان" العمري','تيا احمد محمد الركن','جنى ماهر غالب الدالي',
+    'جنى "محي الدين" فاعور','جود محمد مروان الشامي','حسين احمد محمود اسماعيل',
+    'حنين علي ابراهيم ميعاد','راما احمد توفيق الزقه','رهف سعيد شحادة فلاح',
+    'زينب محمد رياض حماده','سعاد مازن محمد الشامي','سمر محمد صابر ظاهر',
+    'سيلين منصور عبد شحاده','عادل محمد عادل ابو عرب','عبد الرحمن وليد محمد',
+    'علي مصطفى حسن سالم','علي ياسر نمر فاعور','عمران مازن صالح مرعي',
+    'فاطمه محمد خالد قاسم','قمر حسين عمر حمزة','كريم محمود عبد الحفيظ',
+    'ليا محمد عمر عباس','لين رشدي موسى الصالح','لين ماهر احمد العيسى',
+    'لين وسام احمد حسين','ماريا طلعت احمد مراد','محمد احمد محمد الصعيدي',
+    'محمد سامر محمد الصالح','محمد علي محمد ابو شقير','محمد علي محمد عبد الجليل',
+    'محمد قاسم عادل عفيفي','محمود شادي محمود شحادة','مرام احمد كايد خضره',
+    'نرجس هاني احمد عقلة','نور محمد علي علي','هلا شفيق علي فلوس',
+    'يارا محمود السيد السعدني'
+  ],
+  '8B': [
+    'اسامة بسام عبد الرحمن حمو','اسينات احمد فريد العلي','امال ساري علي زيداني',
+    'امنة محمد كمال قدورة','امير هشام مصطفى كروم','ايمان بسام خالد محمد',
+    'بيسان بسام عبد الرحمن حمو','تاليا انس ابراهيم المنديل','حبيبة عوني علي الزبيدات',
+    'حلا اشرف احمد الحاج علي','حنين فتحي علي حميد','راما خالد محمد عطعوط',
+    'رضوان جهاد رضوان ديب','رواد مروان ابراهيم العبدالله','زهراء عماد وليد شيخه',
+    'سارة فادي عدنان فارس','سامي يسار سامي معروف','سعيد ماهر سعيد سعيد',
+    'سهى عامر احمد عطية','"صلاح الدين" مصطفى بللي','علي مصطفى علي سريس',
+    'عمر حسام حسين الموسى','فاطمه جمال احمد المحمود','فضل احمد محمد حسين',
+    'كريم رائد محمد دلاشي','لارا محمد خالد عبد الغني','ليلاس وسيم شحادة شحاده',
+    'ماريه يحيى محمد ابو هموس','محمد احمد محمد شريده','محمد حسام عاطف ابو شباب',
+    'محمد حكمت غاندي عبدالله','"محمد علي" محمود احمد','محمد هشام احمد مره',
+    'محمود نايف مصطفى قاسميه','مريم محمود "محي الدين" مره','ملاك يونس محمد رحال',
+    'ميريانا احمد مصطفى عيتاني','هدى محمود محمد الركن','وسيله سعدو درويش ششنيه',
+    'يحيى زكريا سميح حمو'
+  ],
+  '8C': [
+    'آلاء رباح محمود شراب','آلاء محمود صالح ادلبي','ابراهيم محمد ابراهيم عزيز',
+    'امير ماجد احمد اسماعيل','بتول فايز محمد حمود','بهاء الدين بلال "بهاء الدين" رشيد',
+    'بيان كمال احمد ابو سويد','تبارك محمد "محمد السيد" يوسف','تغريد خالد عزات يحيى',
+    'جمال محمد جمال حوحو','جنى حسن محمد الظريف','جهاد فادي حسن سالم',
+    'حلا محمد حسن ابو شنار','حلا مصطفى "محمد خير" بللي','خالد وسيم خالد حسن',
+    'راما زياد علي الحاج علي','راما عبد المجيد محمد سالم','راما محمد يوسف العلي',
+    'رزان زياد عبد الرحمن ابو عرب','روان عماد فوزي ابراهيم','ريم اديب احمد حسين',
+    'ريم ماهر عطا الخطيب','ريم "نور الدين" فايز عبد الرازق','سلام عصام حمودة ناجي',
+    'سلام "محمد بديع" فيصل العلي','سيلا هشام امين الطه','شهد صالح احمد مطر',
+    'صالح محمد سامي الشورى','عبد الله حسن سعيد سليمان','علي محمد ابراهيم صالح',
+    'علي ناصر علي حماده','عمر عصام الصادق','فرح وائل باسل غزلان',
+    'لانا باسم امين صيداوي','لين احمد عيسى قاسم','لين وائل زياد الهبطه',
+    'ماسة عمار علي علي','محمد حسين احمد ندوه','محمود محمد سالم نجمي',
+    'ملكه "سعد الدين" برجاوي','نور الهدى جهاد عزات عليان'
+  ],
+  '8D': [
+    'احمد زاهر جهاد قدورة','احمد علاء احمد اسماعيل','احمد محمد رياض الخطيب',
+    'ادم خالد محمود قدورة','اسراء احمد داري نوفل','اسراء ايمن محمد قدسيه',
+    'الما محمد جمال ششنيه','اياد احمد حسين محمود','اياد احمد سمير قدوره',
+    'بيسان علي احمد قاسم','تقى احمد موسى عبدالله','حسن علي حسن حبقزي',
+    'حمزة عاطف محمد الحاج محمد','دانا نبيل "نور الدين" الهندي','راما فادي علي سليم',
+    'رهف خليل عبدالله شاهين','روزا محمود علي عودي','ريتال نضال موسى مناد',
+    'زهراء محمد حسن بركات','زينب محمد عبد غنام','سالي فادي عثمان عباس',
+    'سماح احمد عطا ابو عنزه','علا محمد زيد عثمان','علي كمال علي سعد',
+    'عمر محمود عباس الحايك','غزل محمد خليل ابو عرب','غفران محمد يوسف داوود',
+    'كريم عوني خالد عبد الغني','لين علي نايف حميد','ماريا ابراهيم درويش خزعل',
+    'محمد براء محمود حسن','محمد بهاء ابراهيم العيسى','محمد خالد محمود مطر',
+    'محمد ربيع محمد هنداوي','محمود علي محمود يوسف','مصطفى "عماد الدين" تراوي',
+    'ميار سعيد محمد حسن','نور عباس محمد عمر','هبة يحيى عيسى ابو مايهه',
+    'هيلين فيصل "فضل الله" الراشد','يوسف عامر محمد مصريه','يوسف هيثم فايز بركة'
+  ]
+};
+
+// ── labData store ─────────────────────────────────────────────────────────
+var labData = {
+  sheet: 'G8_FinalRevision',
+  Name: '', Class: '', Time_min: 0,
+  // Waves
+  W_Q1:0, W_Q2:0, W_Q3:0, W_Num_pts:0, Self_waves:'',
+  // EM
+  EM_Spectrum_pts:0, EM_Q1:0, EM_Q2:0, EM_Q3:0, Self_em:'',
+  // Shadow
+  SH_Q1:0, SH_Q2:0, SH_Q3:0, Shadow_journal:'', Self_shadow:'',
+  // Reflection
+  Ref_Q1:0, Ref_Q2:0, Ref_Q3:0, Ref_Num_pts:0,
+  Ref_Proto_ok:0, Ref_Proto_attempts:0, Self_ref:'',
+  // Drawing
+  Drawing_uploaded:'no', Drawing_link:'',
+  // Game
+  Game_score:0, Game_lives:3, Game_correct:0,
+  // Self overall
+  Self_ov_w:'', Self_ov_em:'', Self_ov_sh:'', Self_ov_ref:'',
+  Written_synthesis:'',
+  // Totals
+  Raw_score:0, Score_20:0, Grade_letter:''
+};
+
+// ── Timer ─────────────────────────────────────────────────────────────────
+var timerSecs = 0, timerInt = null;
+function startTimer() {
+  timerInt = setInterval(function() {
+    timerSecs++;
+    var m = Math.floor(timerSecs/60), s = timerSecs%60;
+    document.getElementById('timer').textContent = m + ':' + (s<10?'0':'') + s;
+  }, 1000);
+}
+
+// ── Security: one-attempt lock ────────────────────────────────────────────
+function getKey(name, cls) { return 'g8rev_submitted_' + name + '_' + cls; }
+
+function checkLock(name, cls) {
+  var locked = localStorage.getItem(getKey(name, cls));
+  if (!locked) { checkUnlockServer(name, cls); return false; }
+  return true;
+}
+
+function checkUnlockServer(name, cls) {
+  if (SCRIPT_URL === 'PASTE_YOUR_WEB_APP_URL_HERE') return;
+  fetch(SCRIPT_URL + '?action=checkUnlock&name=' + encodeURIComponent(name) + '&class=' + encodeURIComponent(cls))
+    .then(function(r) { return r.text(); })
+    .then(function(t) {
+      if (t.trim() === 'unlock') {
+        localStorage.removeItem(getKey(name, cls));
+        showToast('Attempt reset by teacher. Refreshing…');
+        setTimeout(function() { location.reload(); }, 1500);
+      }
+    })
+    .catch(function() {});
+}
+
+function lockStudent(name, cls) {
+  localStorage.setItem(getKey(name, cls), '1');
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────
+var curSec = 0;
+var secNames = ['Welcome','Waves','EM Waves','Shadows','Reflection','Ray Drawing','Rapid Quiz','Self-Assessment','Results'];
+
+function go(n) {
+  document.querySelectorAll('.sec').forEach(function(s) { s.classList.remove('on'); });
+  var el = document.getElementById('sec'+n);
+  if (el) { el.classList.add('on'); curSec = n; }
+  document.getElementById('plabel').textContent = secNames[n] || '';
+  document.getElementById('pf').style.width = Math.round(n/8*100)+'%';
+  window.scrollTo(0,0);
+  if (n===4) { setTimeout(initProto, 120); }
+  if (n===5) { setTimeout(initUploadCanvas, 120); }
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────
+var selectedClass = '';
+function setClass(cls, btn) {
+  selectedClass = cls;
+  document.querySelectorAll('.cls-btn').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  var sel = document.getElementById('inp-name');
+  sel.innerHTML = '<option value="">— اختر اسمك —</option>';
+  sel.disabled = false;
+  var names = (STUDENTS[cls] || []).slice().sort(function(a,b) { return a.localeCompare(b,'ar'); });
+  names.forEach(function(n) {
+    var o = document.createElement('option');
+    o.value = n; o.textContent = n;
+    sel.appendChild(o);
+  });
+}
+
+function startLab() {
+  var name = document.getElementById('inp-name').value.trim();
+  if (!selectedClass) { showToast('Please select your class first'); return; }
+  if (!name) { showToast('Please select your name'); return; }
+
+  labData.Name = name;
+  labData.Class = selectedClass;
+
+  if (checkLock(name, selectedClass)) {
+    document.getElementById('loginWrap') && (document.getElementById('sec0').style.display='none');
+    document.getElementById('sec0').classList.remove('on');
+    var ls = document.getElementById('lock-screen');
+    ls.style.display = 'block';
+    document.getElementById('lock-name').textContent = name + ' · ' + selectedClass;
+    return;
+  }
+
+  startTimer();
+  fetchLeaderboard();
+  setInterval(fetchLeaderboard, 90000);
+  go(1);
+}
+
+// ── MCQ ───────────────────────────────────────────────────────────────────
+var mcqAnswered = {};
+
+function mcq(groupId, btn, correct, fbId) {
+  if (mcqAnswered[groupId]) return;
+  mcqAnswered[groupId] = true;
+  var grp = document.getElementById(groupId);
+  grp.querySelectorAll('.opt').forEach(function(b) {
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+  });
+  var fb = document.getElementById(fbId);
+  if (correct) {
+    btn.classList.add('ok');
+    if (fb) { fb.className='feedback ok show'; }
+    playSound('correct');
+    // score map
+    var scoreMap = {
+      'w-q1':'W_Q1','w-q2':'W_Q2','w-q3':'W_Q3',
+      'em-q1':'EM_Q1','em-q2':'EM_Q2','em-q3':'EM_Q3',
+      'sh-q1':'SH_Q1','sh-q2':'SH_Q2','sh-q3':'SH_Q3',
+      'ref-q1':'Ref_Q1','ref-q2':'Ref_Q2','ref-q3':'Ref_Q3'
+    };
+    if (scoreMap[groupId] !== undefined) labData[scoreMap[groupId]] = 1;
+  } else {
+    btn.classList.add('bad');
+    // highlight correct
+    grp.querySelectorAll('.opt').forEach(function(b) {
+      if (!b.classList.contains('bad')) b.classList.add('ok');
+    });
+    if (fb) {
+      var badText = fb.className; // unused
+      fb.className = 'feedback bad show';
+      var fbBad = document.getElementById(fbId.replace('-ok','-bad')) || fb;
+      // Keep the ok feedback text but red
+    }
+    playSound('wrong');
+  }
+  checkSectionReady(groupId);
+}
+
+function checkSectionReady(gid) {
+  // S1 (Waves) — Q1+Q2+Q3 answered
+  if (['w-q1','w-q2','w-q3'].indexOf(gid) !== -1) {
+    if (mcqAnswered['w-q1'] && mcqAnswered['w-q2'] && mcqAnswered['w-q3']) {
+      document.getElementById('btn1next').disabled = false;
+    }
+  }
+  // S2 (EM) — em-q1+em-q2+em-q3
+  if (['em-q1','em-q2','em-q3'].indexOf(gid) !== -1) {
+    if (mcqAnswered['em-q1'] && mcqAnswered['em-q2'] && mcqAnswered['em-q3']) {
+      document.getElementById('btn2next').disabled = false;
+    }
+  }
+  // S3 (Shadow) — sh-q1+sh-q2+sh-q3
+  if (['sh-q1','sh-q2','sh-q3'].indexOf(gid) !== -1) {
+    if (mcqAnswered['sh-q1'] && mcqAnswered['sh-q2'] && mcqAnswered['sh-q3']) {
+      document.getElementById('btn3next').disabled = false;
+    }
+  }
+  // S4 (Reflection) — ref-q1+ref-q2+ref-q3 + protractor attempted
+  if (['ref-q1','ref-q2','ref-q3'].indexOf(gid) !== -1) {
+    if (mcqAnswered['ref-q1'] && mcqAnswered['ref-q2'] && mcqAnswered['ref-q3'] && labData.Ref_Proto_attempts > 0) {
+      document.getElementById('btn4next').disabled = false;
+    }
+  }
+}
+
+// ── Hints ─────────────────────────────────────────────────────────────────
+function toggleHint(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('show');
+}
+
+// ── Self-assessment emoji ──────────────────────────────────────────────────
+function selfRate(btn, groupId, emoji) {
+  var wrap = document.getElementById(groupId);
+  wrap.querySelectorAll('.emj').forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  var keyMap = {
+    'self-w':'Self_waves','self-em':'Self_em','self-sh':'Self_shadow','self-ref':'Self_ref',
+    'self-ov-w':'Self_ov_w','self-ov-em':'Self_ov_em','self-ov-sh':'Self_ov_sh','self-ov-ref':'Self_ov_ref'
+  };
+  if (keyMap[groupId]) labData[keyMap[groupId]] = emoji;
+  var inp = document.getElementById(groupId+'-val');
+  if (inp) inp.value = emoji;
+}
+
+// ── Numeric Exercises ─────────────────────────────────────────────────────
+function checkWaveNum() {
+  var fAns = parseFloat(document.getElementById('w-num-f').value);
+  var TAns = parseFloat(document.getElementById('w-num-T').value);
+  var correctF = 400; // 340/0.85
+  var correctT = 1/400; // 0.0025
+  var pts = 0;
+  var msg = '';
+  if (Math.abs(fAns - correctF) < 2) pts++;
+  else msg += 'f should be 340 ÷ 0.85 = 400 Hz. ';
+  if (Math.abs(TAns - correctT) < 0.0001) pts++;
+  else msg += 'T = 1/400 = 0.0025 s. ';
+  labData.W_Num_pts = pts;
+  var fb = document.getElementById('fb-w-num');
+  fb.className = 'feedback show ' + (pts===2?'ok':'bad');
+  fb.textContent = pts===2 ? '✓ Both correct! f = 400 Hz · T = 0.0025 s' : ('✗ '+msg);
+  playSound(pts===2?'correct':'wrong');
+  if (mcqAnswered['w-q1'] && mcqAnswered['w-q2'] && mcqAnswered['w-q3']) {
+    document.getElementById('btn1next').disabled = false;
+  }
+}
+
+function checkRefNum() {
+  var ans = parseFloat(document.getElementById('ref-num').value);
+  var fb = document.getElementById('fb-ref-num');
+  // angle of incidence = 38° → angle of reflection = 38° → total = 76°
+  if (Math.abs(ans - 76) < 2) {
+    labData.Ref_Num_pts = 1;
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correct! i = r = 38° → total angle between rays = 38 + 38 = 76°';
+    playSound('correct');
+  } else {
+    fb.className = 'feedback show bad';
+    fb.textContent = '✗ Hint: angle of incidence = angle of reflection = 38°. Total = 38 + 38 = 76°.';
+    playSound('wrong');
+  }
+  if (mcqAnswered['ref-q1'] && mcqAnswered['ref-q2'] && mcqAnswered['ref-q3'] && labData.Ref_Proto_attempts > 0) {
+    document.getElementById('btn4next').disabled = false;
+  }
+}
+
+// ── EM Spectrum Drag-Sort ──────────────────────────────────────────────────
+var SPEC_ORDER = ['Radio','Microwave','Infrared','Visible','UV','X-ray','Gamma'];
+var SPEC_COLORS = ['#818cf8','#a78bfa','#fb923c','#fbbf24','#34d399','#38bdf8','#f87171'];
+var specPlaced = [];
+var dragSrc = null;
+
+function initSpectrum() {
+  var pool = document.getElementById('spec-pool');
+  var shuffled = SPEC_ORDER.slice().sort(function() { return Math.random()-0.5; });
+  pool.innerHTML = '';
+  shuffled.forEach(function(name, i) {
+    var div = document.createElement('div');
+    div.className = 'sband';
+    div.textContent = name;
+    div.draggable = true;
+    div.dataset.name = name;
+    div.style.background = SPEC_COLORS[SPEC_ORDER.indexOf(name)] + '22';
+    div.style.borderColor = SPEC_COLORS[SPEC_ORDER.indexOf(name)];
+    div.style.color = SPEC_COLORS[SPEC_ORDER.indexOf(name)];
+    div.addEventListener('dragstart', function(e) {
+      dragSrc = div; div.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', name);
+    });
+    div.addEventListener('dragend', function() { div.classList.remove('dragging'); });
+    // Touch drag simulation
+    div.addEventListener('touchstart', function(e) { dragSrc = div; }, {passive:true});
+    pool.appendChild(div);
+  });
+  var track = document.getElementById('spectrum-sort');
+  track.innerHTML = '<span style="font-family:var(--fm);font-size:.62rem;color:var(--muted)">Drop bands here in order →</span>';
+  track.addEventListener('dragover', function(e) { e.preventDefault(); });
+  track.addEventListener('drop', function(e) {
+    e.preventDefault();
+    var name = e.dataTransfer.getData('text/plain');
+    moveToTrack(name);
+  });
+}
+
+function moveToTrack(name) {
+  var pool = document.getElementById('spec-pool');
+  var src = pool.querySelector('[data-name="'+name+'"]');
+  if (!src) return;
+  var track = document.getElementById('spectrum-sort');
+  var placeholder = track.querySelector('span');
+  if (placeholder) placeholder.remove();
+  src.style.cursor = 'grab';
+  track.appendChild(src);
+  specPlaced.push(name);
+}
+
+function checkSpectrum() {
+  var track = document.getElementById('spectrum-sort');
+  var placed = Array.from(track.querySelectorAll('.sband')).map(function(b) { return b.dataset.name; });
+  var fb = document.getElementById('fb-spec');
+  var correct = true;
+  placed.forEach(function(name, i) {
+    if (name !== SPEC_ORDER[i]) correct = false;
+  });
+  if (placed.length < 7) {
+    fb.className = 'feedback show bad';
+    fb.textContent = 'Place all 7 bands before checking. Missing: ' + (7-placed.length) + ' bands.';
+    return;
+  }
+  if (correct) {
+    labData.EM_Spectrum_pts = 2;
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Perfect order! Radio → Microwave → Infrared → Visible → UV → X-ray → Gamma (increasing frequency)';
+    playSound('correct');
+    if (mcqAnswered['em-q1'] && mcqAnswered['em-q2'] && mcqAnswered['em-q3']) {
+      document.getElementById('btn2next').disabled = false;
+    }
+  } else {
+    labData.EM_Spectrum_pts = 0;
+    fb.className = 'feedback show bad';
+    fb.textContent = '✗ Not quite. Remember: Radio has LOWEST frequency, Gamma has HIGHEST. Try again!';
+    playSound('wrong');
+  }
+}
+
+// ── Protractor ────────────────────────────────────────────────────────────
+var protoCvs, protoCtx, protoReflPt = null, protoAttempts = 0, protoDone = false;
+var protoAngle = 40;
+
+function initProto() {
+  if (protoCvs) return;
+  protoCvs = document.getElementById('proto-cvs');
+  if (!protoCvs) return;
+  protoCtx = protoCvs.getContext('2d');
+  document.getElementById('proto-angle-display').textContent = protoAngle + '\u00b0';
+  drawProtoBase();
+  function handleProtoClick(e) {
+    if (protoDone) return;
+    e.preventDefault();
+    var rect = protoCvs.getBoundingClientRect();
+    var cx2 = e.touches ? e.touches[0].clientX : e.clientX;
+    var cy2 = e.touches ? e.touches[0].clientY : e.clientY;
+    var x = (cx2 - rect.left) * (protoCvs.width / rect.width);
+    var y = (cy2 - rect.top) * (protoCvs.height / rect.height);
+    var cx = protoCvs.width/2, cy = protoCvs.height * 0.72;
+    if (y >= cy) return;
+    if (x <= cx) return;
+    protoReflPt = {x:x, y:y};
+    drawProtoBase();
+    document.getElementById('proto-check').disabled = false;
+    protoCtx.strokeStyle = '#a78bfa'; protoCtx.lineWidth = 2.5;
+    protoCtx.beginPath(); protoCtx.moveTo(cx, cy); protoCtx.lineTo(x, y); protoCtx.stroke();
+    drawArrow(protoCtx, cx, cy, x, y, '#a78bfa');
+  }
+  protoCvs.addEventListener('click', handleProtoClick);
+  protoCvs.addEventListener('touchend', handleProtoClick, {passive:false});
+}
+
+function drawProtoBase() {
+  var w = protoCvs.width, h = protoCvs.height;
+  var cx = w/2, cy = h*0.72;
+  protoCtx.fillStyle = '#050510'; protoCtx.fillRect(0,0,w,h);
+  // Mirror
+  protoCtx.strokeStyle = '#4040a0'; protoCtx.lineWidth = 5; protoCtx.setLineDash([]);
+  protoCtx.beginPath(); protoCtx.moveTo(60,cy); protoCtx.lineTo(w-60,cy); protoCtx.stroke();
+  // Hatching
+  protoCtx.strokeStyle = '#1e1e44'; protoCtx.lineWidth = 1.5;
+  for (var hx=70; hx<w-60; hx+=22) {
+    protoCtx.beginPath(); protoCtx.moveTo(hx,cy); protoCtx.lineTo(hx-12,cy+13); protoCtx.stroke();
+  }
+  // Normal (dashed)
+  protoCtx.strokeStyle = 'rgba(226,232,248,.45)'; protoCtx.lineWidth = 1.5; protoCtx.setLineDash([7,5]);
+  protoCtx.beginPath(); protoCtx.moveTo(cx,cy-170); protoCtx.lineTo(cx,cy); protoCtx.stroke();
+  protoCtx.setLineDash([]);
+  // Incident ray
+  var rad = protoAngle * Math.PI/180;
+  var ix = cx - Math.sin(rad)*175, iy = cy - Math.cos(rad)*175;
+  protoCtx.strokeStyle = '#38bdf8'; protoCtx.lineWidth = 2.5;
+  protoCtx.beginPath(); protoCtx.moveTo(ix,iy); protoCtx.lineTo(cx,cy); protoCtx.stroke();
+  drawArrow(protoCtx, ix, iy, cx, cy, '#38bdf8');
+  // Labels
+  protoCtx.font = '13px JetBrains Mono, monospace';
+  protoCtx.fillStyle = '#38bdf8'; protoCtx.fillText(protoAngle+'°', cx-55, cy-30);
+  protoCtx.fillStyle = '#a78bfa'; protoCtx.fillText('? °', cx+16, cy-30);
+  protoCtx.fillStyle = 'rgba(226,232,248,.4)'; protoCtx.font = '11px Inter, sans-serif';
+  protoCtx.fillText('Normal', cx+6, cy-178);
+  protoCtx.fillStyle = '#38bdf8'; protoCtx.fillText('Incident ray', 16, 22);
+  protoCtx.fillStyle = '#a78bfa'; protoCtx.fillText('Click RIGHT side above mirror for reflected ray', 16, h-10);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color) {
+  var angle = Math.atan2(y2-y1, x2-x1), len = 12;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2-len*Math.cos(angle-0.4), y2-len*Math.sin(angle-0.4));
+  ctx.lineTo(x2-len*Math.cos(angle+0.4), y2-len*Math.sin(angle+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function checkProto() {
+  if (!protoReflPt) return;
+  protoAttempts++;
+  labData.Ref_Proto_attempts = protoAttempts;
+  var cx = protoCvs.width/2, cy = protoCvs.height*0.72;
+  var dx = protoReflPt.x - cx, dy = cy - protoReflPt.y;
+  var studentAngle = Math.atan2(dx,dy)*180/Math.PI;
+  var diff = Math.abs(studentAngle - protoAngle);
+  var res = document.getElementById('proto-result');
+  if (diff <= 7) {
+    labData.Ref_Proto_ok = 1;
+    protoDone = true;
+    res.style.color = '#34d399';
+    res.textContent = '✓ Correct! Your angle: '+Math.round(studentAngle)+'° ≈ '+protoAngle+'° ✓';
+    document.getElementById('proto-check').disabled = true;
+    playSound('correct');
+    checkRefComplete();
+  } else {
+    if (protoAttempts === 1) document.getElementById('proto-hint').style.display = 'block';
+    res.style.color = '#f87171';
+    res.textContent = '✗ Your angle: '+Math.round(studentAngle)+'° — expected '+protoAngle+'°. Try again.';
+    document.getElementById('proto-attempts').textContent = 'Attempts: '+protoAttempts;
+    if (protoAttempts >= 3) {
+      protoDone = true;
+      document.getElementById('proto-check').disabled = true;
+      res.textContent += ' (max attempts — moving on)';
+      checkRefComplete();
+    }
+  }
+}
+
+function resetProto() {
+  protoReflPt = null;
+  document.getElementById('proto-check').disabled = true;
+  document.getElementById('proto-result').textContent = '';
+  drawProtoBase();
+}
+
+function checkRefComplete() {
+  if (mcqAnswered['ref-q1'] && mcqAnswered['ref-q2'] && mcqAnswered['ref-q3']) {
+    document.getElementById('btn4next').disabled = false;
+  }
+}
+
+// ── Upload Canvas ──────────────────────────────────────────────────────────
+var uploadCvs, uploadCtx, uploadColor = '#38bdf8';
+
+function initUploadCanvas() {
+  uploadCvs = document.getElementById('uploadCvs');
+  if (!uploadCvs) return;
+  uploadCtx = uploadCvs.getContext('2d');
+  uploadCtx.fillStyle = '#050510'; uploadCtx.fillRect(0,0,uploadCvs.width,uploadCvs.height);
+  uploadCtx.fillStyle = '#1a1a30'; uploadCtx.font = '13px Inter, sans-serif';
+  uploadCtx.fillText('Draw your reflection diagram here — mirror, normal, incident ray, reflected ray, angle labels', 14, 26);
+  addCanvasListeners(uploadCvs, uploadCtx, function() { return uploadColor; }, function() { return +document.getElementById('ubrush').value; });
+}
+
+function addCanvasListeners(cvs, ctx, colorFn, sizeFn) {
+  var isDown = false, pts = [], snapshot = null;
+  function getPos(e) {
+    var rect = cvs.getBoundingClientRect();
+    var ex = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    var ey = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    return {x: ex*(cvs.width/rect.width), y: ey*(cvs.height/rect.height)};
+  }
+  function start(e) {
+    e.preventDefault(); isDown=true; pts=[];
+    var p = getPos(e); pts.push(p);
+    snapshot = ctx.getImageData(0,0,cvs.width,cvs.height);
+    ctx.beginPath(); ctx.moveTo(p.x,p.y);
+  }
+  function move(e) {
+    e.preventDefault();
+    if (!isDown) return;
+    var p = getPos(e); pts.push(p);
+    ctx.lineTo(p.x,p.y);
+    ctx.strokeStyle = colorFn(); ctx.lineWidth = sizeFn();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+  }
+  function end(e) {
+    if (!isDown) return;
+    isDown = false;
+    if (pts.length < 2) return;
+    var first = pts[0], last = pts[pts.length-1];
+    var dx = last.x-first.x, dy = last.y-first.y;
+    var direct = Math.sqrt(dx*dx+dy*dy);
+    var pathLen = 0;
+    for (var i=1;i<pts.length;i++) {
+      var px = pts[i].x-pts[i-1].x, py = pts[i].y-pts[i-1].y;
+      pathLen += Math.sqrt(px*px+py*py);
+    }
+    if (direct > 25 && pathLen > 0 && (direct/pathLen) >= 0.88) {
+      ctx.putImageData(snapshot,0,0);
+      var col = colorFn(), sz = sizeFn();
+      ctx.strokeStyle = col; ctx.lineWidth = sz;
+      ctx.lineCap = 'round'; ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(first.x,first.y); ctx.lineTo(last.x,last.y); ctx.stroke();
+      var angle = Math.atan2(dy,dx), alen = Math.max(12,sz*3.5);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.moveTo(last.x,last.y);
+      ctx.lineTo(last.x-alen*Math.cos(angle-0.42),last.y-alen*Math.sin(angle-0.42));
+      ctx.lineTo(last.x-alen*Math.cos(angle+0.42),last.y-alen*Math.sin(angle+0.42));
+      ctx.closePath(); ctx.fill();
+    }
+    pts=[]; snapshot=null;
+  }
+  cvs.addEventListener('mousedown',start);
+  cvs.addEventListener('mousemove',move);
+  cvs.addEventListener('mouseup',end);
+  cvs.addEventListener('touchstart',start,{passive:false});
+  cvs.addEventListener('touchmove',move,{passive:false});
+  cvs.addEventListener('touchend',end);
+}
+
+function setUColor(c, el) {
+  uploadColor = c;
+  document.querySelectorAll('#sec5 .cbtn').forEach(function(b) { b.classList.remove('on'); });
+  el.classList.add('on');
+}
+function clearUpload() {
+  uploadCtx.fillStyle = '#050510';
+  uploadCtx.fillRect(0,0,uploadCvs.width,uploadCvs.height);
+}
+
+function uploadDrawing() {
+  var btn = document.getElementById('uploadBtn');
+  var status = document.getElementById('upload-status');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  status.textContent = 'Compressing…'; status.style.color = 'var(--muted)';
+  var jpeg = uploadCvs.toDataURL('image/jpeg', 0.82);
+  var base64 = jpeg.replace(/^data:image\/jpeg;base64,/,'');
+  var payload = JSON.stringify({
+    action:'upload_drawing',
+    name: labData.Name, 'class': labData.Class,
+    base64: base64,
+    filename: labData.Name + '_' + labData.Class + '_G8Rev.jpg'
+  });
+  fetch(SCRIPT_URL, {method:'POST', body:payload})
+    .then(function(r) { return r.text(); })
+    .then(function(link) {
+      labData.Drawing_uploaded = 'yes';
+      labData.Drawing_link = link;
+      status.textContent = '✓ Uploaded successfully!';
+      status.style.color = '#34d399';
+      btn.textContent = '✓ Uploaded';
+      var wrap = document.getElementById('upload-link-wrap');
+      if (wrap) {
+        wrap.style.display = 'block';
+        document.getElementById('upload-link').href = link;
+      }
+      showToast('Drawing uploaded ✓');
+    })
+    .catch(function() {
+      labData.Drawing_uploaded = 'no';
+      status.textContent = 'Upload failed — continue anyway, then retry.';
+      status.style.color = '#fb923c';
+      btn.disabled = false; btn.textContent = '↺ Retry Upload';
+    });
+}
+
+// ── Rapid Quiz Game ────────────────────────────────────────────────────────
+var GAME_QS = [
+  {q:'A wave has v = 300 m/s and λ = 3 m. What is its frequency f?',
+   opts:['1000 Hz','100 Hz','90 Hz','300 Hz'],ans:1,
+   exp:'f = v/λ = 300/3 = 100 Hz',topic:'Waves'},
+  {q:'Which type of wave needs a medium (cannot travel through a vacuum)?',
+   opts:['Electromagnetic','Light','Mechanical (e.g. sound)','Radio'],ans:2,
+   exp:'Mechanical waves need matter to travel through — EM waves do not.',topic:'Waves'},
+  {q:'The period T of a 50 Hz wave is…',
+   opts:['50 s','2 s','0.02 s','0.05 s'],ans:2,
+   exp:'T = 1/f = 1/50 = 0.02 s',topic:'Waves'},
+  {q:'Which EM wave is used to heat food in a microwave oven?',
+   opts:['Infrared','Microwaves','UV','X-ray'],ans:1,
+   exp:'Microwaves have the right frequency to be absorbed by water molecules in food.',topic:'EM'},
+  {q:'Gamma rays have the ______ frequency in the EM spectrum.',
+   opts:['Lowest','Same as radio','Highest','Medium'],ans:2,
+   exp:'Gamma rays: highest frequency, most energy, most penetrating. Radio: lowest.',topic:'EM'},
+  {q:'Infrared radiation is detected as…',
+   opts:['Colour','X-rays','Heat','Sound'],ans:2,
+   exp:'IR radiation is detected as heat — our skin senses infrared from warm objects.',topic:'EM'},
+  {q:'Light travels in a straight line. This is called…',
+   opts:['Reflection','Rectilinear propagation','Refraction','Diffraction'],ans:1,
+   exp:'Rectilinear propagation: light travels in straight lines in a uniform medium.',topic:'Shadow'},
+  {q:'A point source of light produces a shadow with…',
+   opts:['Only a fuzzy penumbra','Umbra AND penumbra','Only a sharp umbra, no penumbra','No shadow'],ans:2,
+   exp:'A point source has no width → all rays either pass or are blocked → sharp umbra only.',topic:'Shadow'},
+  {q:'The angle of reflection is measured from…',
+   opts:['The mirror surface','The normal to the mirror','The incident ray','The screen'],ans:1,
+   exp:'Both i and r are ALWAYS measured from the normal — the perpendicular to the surface.',topic:'Reflection'},
+  {q:'A ray hits a mirror at 30° to the normal. At what angle does it reflect?',
+   opts:['60°','90°','30°','45°'],ans:2,
+   exp:'Law of reflection: angle of incidence = angle of reflection = 30°.',topic:'Reflection'}
+];
+
+var gScore2=0, gLives2=3, gQIdx=0, gInt=null, gTimeLeft=8, gCorrect2=0;
+
+function startGame() {
+  gScore2=0; gLives2=3; gQIdx=0; gCorrect2=0;
+  document.getElementById('g-start').style.display='none';
+  document.getElementById('g-done').style.display='none';
+  document.getElementById('g-qbox').style.display='block';
+  document.getElementById('btn6next').disabled = false; // allow skip
+  showGameQ();
+}
+
+function showGameQ() {
+  if (gQIdx >= GAME_QS.length || gLives2 <= 0) { endGame(); return; }
+  gTimeLeft = 8;
+  document.getElementById('g-score').textContent = gScore2;
+  document.getElementById('g-round').textContent = (gQIdx+1)+'/'+GAME_QS.length;
+  updateLivesDisp();
+  document.getElementById('g-timer').textContent = gTimeLeft;
+  var q = GAME_QS[gQIdx];
+  document.getElementById('g-qtext').innerHTML =
+    '<span style="font-family:var(--fm);font-size:.6rem;color:var(--muted);margin-right:6px">['+q.topic+']</span>' + q.q;
+  document.getElementById('g-explain').style.display = 'none';
+  var opts = document.getElementById('g-opts');
+  opts.innerHTML = '';
+  q.opts.forEach(function(o, i) {
+    var b = document.createElement('button');
+    b.className = 'g-opt'; b.textContent = o;
+    b.onclick = function() { gameAnswer(i, b, q); };
+    opts.appendChild(b);
+  });
+  clearInterval(gInt);
+  gInt = setInterval(function() {
+    gTimeLeft--;
+    document.getElementById('g-timer').textContent = gTimeLeft;
+    if (gTimeLeft <= 0) { clearInterval(gInt); gameAnswer(-1, null, q); }
+  }, 1000);
+}
+
+function gameAnswer(idx, btn, q) {
+  clearInterval(gInt);
+  document.getElementById('g-opts').querySelectorAll('.g-opt').forEach(function(b) { b.disabled=true; });
+  var expEl = document.getElementById('g-explain');
+  expEl.textContent = q.exp; expEl.style.display='block';
+  if (idx === q.ans) {
+    if (btn) btn.classList.add('ok');
+    gScore2 += 10; gCorrect2++;
+    playSound('correct');
+  } else {
+    if (btn) btn.classList.add('bad');
+    document.getElementById('g-opts').querySelectorAll('.g-opt')[q.ans].classList.add('ok');
+    gLives2 = Math.max(0, gLives2-1);
+    playSound('wrong');
+  }
+  document.getElementById('g-score').textContent = gScore2;
+  updateLivesDisp();
+  gQIdx++;
+  setTimeout(function() {
+    if (gLives2 > 0 && gQIdx < GAME_QS.length) showGameQ();
+    else endGame();
+  }, 1500);
+}
+
+function updateLivesDisp() {
+  var h=''; for(var i=0;i<gLives2;i++) h+='❤️'; for(var i=gLives2;i<3;i++) h+='🖤';
+  document.getElementById('g-lives').textContent=h;
+}
+
+function endGame() {
+  clearInterval(gInt);
+  labData.Game_score = gScore2;
+  labData.Game_lives = gLives2;
+  labData.Game_correct = gCorrect2;
+  document.getElementById('g-qbox').style.display='none';
+  document.getElementById('g-done').style.display='block';
+  document.getElementById('g-result').textContent =
+    'Score: '+gScore2+' pts | Correct: '+gCorrect2+'/'+GAME_QS.length+' | Lives left: '+gLives2;
+  if (gCorrect2 >= 8) playSound('fanfare');
+  document.getElementById('btn6next').disabled=false;
+}
+
+// ── Scoring ────────────────────────────────────────────────────────────────
+function calcScore() {
+  var w = labData.W_Q1 + labData.W_Q2 + labData.W_Q3 + labData.W_Num_pts; // max 5
+  var em = labData.EM_Spectrum_pts + labData.EM_Q1 + labData.EM_Q2 + labData.EM_Q3; // max 5
+  var sh = labData.SH_Q1 + labData.SH_Q2 + labData.SH_Q3; // max 3 + journal visual = 4 if attempted
+  if (labData.Shadow_journal && labData.Shadow_journal.length > 20) sh = Math.min(sh+1, 4);
+  var ref = labData.Ref_Proto_ok + labData.Ref_Q1 + labData.Ref_Q2 + labData.Ref_Q3 + labData.Ref_Num_pts; // max 5
+  var game = Math.min(3, Math.round(gCorrect2/GAME_QS.length*3)); // max 3
+  var draw = labData.Drawing_uploaded==='yes' ? 1 : 0;
+  var written = (labData.Written_synthesis && labData.Written_synthesis.length>30) ? 1 : 0;
+  var raw = w+em+sh+ref+game+draw+written; // max ~22 → scale to 20
+  var score20 = Math.min(20, Math.round(raw/22*20));
+  labData.Raw_score = raw;
+  labData.Score_20 = score20;
+  labData.Grade_letter = score20>=18?'A': score20>=14?'B': score20>=10?'C':'D';
+  labData.Time_min = Math.round(timerSecs/60*10)/10;
+  return {w:w,em:em,sh:sh,ref:ref,game:game,draw:draw,written:written,raw:raw,s20:score20};
+}
+
+function showSummary() {
+  var s = calcScore();
+  document.getElementById('sum-score').textContent = s.s20;
+  document.getElementById('sum-name-class').textContent = labData.Name + ' · ' + labData.Class;
+  var gl = labData.Grade_letter;
+  var gb = document.getElementById('sum-grade');
+  gb.textContent = gl; gb.className='gbadge g'+gl;
+  document.getElementById('bk-w').textContent   = s.w+'/5';
+  document.getElementById('bk-em').textContent  = s.em+'/5';
+  document.getElementById('bk-sh').textContent  = s.sh+'/4';
+  document.getElementById('bk-ref').textContent = s.ref+'/5';
+  document.getElementById('bk-game').textContent= s.game+'/3';
+  document.getElementById('bk-draw').textContent= s.draw+'/1';
+  document.getElementById('bk-written').textContent= s.written+'/1';
+  if (gl==='A') { playSound('fanfare'); launchConfetti(); }
+  go(8);
+}
+
+// ── Submit ─────────────────────────────────────────────────────────────────
+function submitLab() {
+  var btn = document.getElementById('submitBtn');
+  var status = document.getElementById('submit-status');
+  if (SCRIPT_URL === 'PASTE_YOUR_WEB_APP_URL_HERE') {
+    status.style.color = '#fb923c';
+    status.textContent = 'No web app URL configured. Ask your teacher.';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  status.textContent = '';
+  fetch(SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(labData)
+  })
+    .then(function() {
+      clearInterval(timerInt);
+      lockStudent(labData.Name, labData.Class);
+      status.style.color='#34d399';
+      status.innerHTML='✓ Submitted! Well done, <strong>'+labData.Name+'</strong>.<br>Grade: <strong>'+labData.Grade_letter+' ('+labData.Score_20+'/20)</strong>';
+      btn.textContent='✓ Submitted';
+      if (labData.Grade_letter==='A') { launchConfetti(); playSound('fanfare'); }
+      fetchLeaderboard();
+    })
+    .catch(function(err) {
+      btn.disabled=false; btn.textContent='↺ Retry Submit';
+      status.style.color='#f87171';
+      status.textContent='Submit failed. Check connection. ('+err.message+')';
+    });
+}
+
+// ── Leaderboard ────────────────────────────────────────────────────────────
+function fetchLeaderboard() {
+  if (SCRIPT_URL==='PASTE_YOUR_WEB_APP_URL_HERE') return;
+  fetch(SCRIPT_URL+'?action=leaderboard')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      document.getElementById('lb8A').textContent = d['8A']||0;
+      document.getElementById('lb8B').textContent = d['8B']||0;
+      document.getElementById('lb8C').textContent = d['8C']||0;
+      document.getElementById('lb8D').textContent = d['8D']||0;
+      document.getElementById('lbTotal').textContent = d.total||0;
+    })
+    .catch(function(){});
+}
+
+// ── Audio ──────────────────────────────────────────────────────────────────
+var audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playSound(type) {
+  try {
+    var ctx = getAudio();
+    var osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if (type==='correct') {
+      osc.frequency.value=880; osc.type='sine';
+      gain.gain.setValueAtTime(.15,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+    } else if (type==='wrong') {
+      osc.frequency.value=220; osc.type='sawtooth';
+      gain.gain.setValueAtTime(.1,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);
+    } else if (type==='fanfare') {
+      [523,659,784,1047].forEach(function(f,i){
+        var o2=ctx.createOscillator(), g2=ctx.createGain();
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.frequency.value=f; o2.type='sine';
+        g2.gain.setValueAtTime(0,ctx.currentTime+i*.12);
+        g2.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.12+.06);
+        g2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.12+.35);
+        o2.start(ctx.currentTime+i*.12);
+        o2.stop(ctx.currentTime+i*.12+.35);
+      }); return;
+    }
+    osc.start(); osc.stop(ctx.currentTime+.35);
+  } catch(e) {}
+}
+
+// ── Confetti ───────────────────────────────────────────────────────────────
+function launchConfetti() {
+  var cvs = document.getElementById('confetti-cvs');
+  if (!cvs) return;
+  var ctx2 = cvs.getContext('2d');
+  cvs.width=window.innerWidth; cvs.height=window.innerHeight;
+  var particles=[];
+  var cols=['#38bdf8','#a78bfa','#34d399','#fbbf24','#fb923c','#f87171'];
+  for (var i=0;i<80;i++) {
+    particles.push({
+      x:Math.random()*cvs.width, y:Math.random()*cvs.height-cvs.height,
+      w:Math.random()*8+4, h:Math.random()*10+6,
+      color:cols[Math.floor(Math.random()*cols.length)],
+      vx:(Math.random()-.5)*4, vy:Math.random()*4+2,
+      angle:Math.random()*360, spin:(Math.random()-.5)*8
+    });
+  }
+  var frame=0;
+  function draw() {
+    ctx2.clearRect(0,0,cvs.width,cvs.height);
+    particles.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy; p.angle+=p.spin;
+      ctx2.save(); ctx2.translate(p.x,p.y); ctx2.rotate(p.angle*Math.PI/180);
+      ctx2.fillStyle=p.color; ctx2.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx2.restore();
+    });
+    frame++;
+    if (frame<180) requestAnimationFrame(draw);
+    else ctx2.clearRect(0,0,cvs.width,cvs.height);
+  }
+  draw();
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+var toastTimer = null;
+function showToast(msg) {
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+// ── Init on load ───────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  initSpectrum();
+  fetchLeaderboard();
+});
+</script>
+</body>
+</html>
