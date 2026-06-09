@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grade 12 Life Sciences - Official Mock Examination</title>
+    <style>
+        /* General Document Settings */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 14pt; /* Strict compact official size */
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
+            color: black;
+            background-color: white;
+        }
+        
+        /* Layout & Page Control */
+        .exam-wrapper {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        .exercise-page {
+            width: 100%;
+            padding: 15px;
+            /* Ensures visual separation in browser */
+            margin-bottom: 0;
+            border-bottom: 2px dashed #ccc;
+            page-break-after: always;
+        }
+        .marking-scheme-page {
+            width: 100%;
+            padding: 15px;
+        }
+        
+        /* Header Formatting */
+        .header-table {
+            width: 100%;
+            border-bottom: 3px solid black;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+        .header-table td {
+            vertical-align: middle;
+            border: none;
+            padding: 0;
+        }
+        .school-info {
+            text-align: left;
+            font-weight: bold;
+            font-size: 12pt;
+            width: 35%;
+        }
+        .exam-info {
+            text-align: right;
+            font-weight: bold;
+            font-size: 12pt;
+            width: 35%;
+        }
+        .logo-container {
+            text-align: center;
+            width: 30%;
+        }
+        .logo {
+            max-height: 160px; /* Enhanced size as explicitly requested */
+            width: auto;
+        }
+        .exam-title {
+            text-align: center;
+            font-size: 15pt;
+            font-weight: bold;
+            margin: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Typography & Content Layout */
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            border-bottom: 2px solid black;
+            padding-bottom: 4px;
+        }
+        h4 {
+            font-size: 11.5pt;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            text-decoration: underline;
+        }
+        p {
+            margin: 6px 0;
+            text-align: justify;
+        }
+        .points {
+            float: right;
+            font-weight: bold;
+            font-size: 12pt;
+            text-transform: none;
+        }
+        .doc-title {
+            font-weight: bold;
+            font-style: italic;
+            text-align: center;
+            margin: 6px 0 12px 0;
+            font-size: 10.5pt;
+        }
+        
+        /* Lists */
+        .question-list {
+            list-style-type: decimal;
+            margin: 8px 0 12px 25px;
+            padding: 0;
+        }
+        .question-list li {
+            margin-bottom: 8px;
+            text-align: justify;
+            padding-left: 5px;
+        }
+
+        /* Tables */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10.5pt;
+            text-align: center;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid black;
+            padding: 6px;
+            vertical-align: middle;
+        }
+        table.data-table th { background-color: #f8f8f8; }
+
+        /* SVG Containers */
+        .svg-container {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Marking Scheme Tables */
+        .marking-scheme {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 10.5pt;
+        }
+        .marking-scheme th {
+            background-color: #eaeaea;
+            border: 2px solid black;
+            padding: 6px;
+            text-align: center;
+        }
+        .marking-scheme td {
+            border: 1px solid black;
+            padding: 8px;
+            vertical-align: top;
+            text-align: justify;
+        }
+        .col-q { width: 5%; text-align: center; font-weight: bold; }
+        .col-ans { width: 85%; }
+        .col-pt { width: 10%; text-align: center; font-weight: bold; }
+        /* Print Button Styles */
+        .no-print {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .print-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+        .print-btn:hover {
+            background-color: #1a252f;
+        }
+
+        /* Strict Print Rules */
+       /* Strict Print Rules */
+        @media print {
+    body { margin: 0; padding: 0; }
+    .no-print { display: none !important; }
+    
+    /* Remove the forced page break */
+    .exercise-page {
+        page-break-after: auto; 
+        break-after: auto;
+        border-bottom: none;
+        margin-bottom: 20px; /* Gives exercises a small separation */
+        padding: 0;
+    }
+
+    /* Force the Marking Scheme to ALWAYS start on a new page */
+    .marking-scheme-page {
+        page-break-before: always;
+        break-before: page;
+        padding: 0;
+    }
+
+    /* Keep all content cohesive */
+    h3, h4, p, .svg-container, table {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    @page { 
+        size: A4;
+        margin: 10mm 10mm; 
+        @bottom-center { 
+            content: counter(page); 
+            font-size: 10pt; 
+        }
+    }
+}
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <button class="print-btn" onclick="window.print()">🖨️ Print or Save as PDF</button>
+</div>
+
+<div class="exam-wrapper">
+    <div class="exercise-page">
+        <table class="header-table">
+            <tr>
+                <td class="school-info">
+                    LA CITE NATIONALE SCHOOL<br>
+                    Secondary Education Cycle<br>
+                    Grade 12 - Life Sciences (LS)
+                </td>
+                <td class="logo-container">
+                    <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cite Nationale Logo" class="logo">
+                </td>
+                <td class="exam-info">
+                    Subject: Biology<br>
+                    Duration: 180 minutes<br>
+                    Academic Year 2025 - 2026
+                </td>
+            </tr>
+        </table>
+        <div class="exam-title">Official Mock Examination</div>
+
+        <h3>Exercise 1: Regulation of Male Reproductive Function <span class="points">(5 points)</span></h3>
+        <p>The male reproductive function relies on two distinct but coordinated compartments within the testes. Document 1 represents a highly magnified cross-section of a testicular lobule showing these functional compartments.</p>
+        
+        <div class="svg-container">
+            <svg viewBox="0 0 600 220" width="100%" height="220">
+                <path d="M 50 200 A 250 250 0 0 1 350 200" fill="#fcfcfc" stroke="black" stroke-width="3"/>
+                <rect x="360" y="20" width="220" height="180" fill="none" stroke="black" stroke-width="1" stroke-dasharray="4,4"/>
+                <text x="470" y="40" font-weight="bold" text-anchor="middle">Interstitial Space</text>
+                
+                <circle cx="430" cy="100" r="15" fill="#eaeaea" stroke="black" stroke-width="1"/>
+                <circle cx="430" cy="100" r="3" fill="black"/>
+                <circle cx="470" cy="80" r="15" fill="#eaeaea" stroke="black" stroke-width="1"/>
+                <circle cx="470" cy="80" r="3" fill="black"/>
+                <circle cx="510" cy="120" r="15" fill="#eaeaea" stroke="black" stroke-width="1"/>
+                <circle cx="510" cy="120" r="3" fill="black"/>
+                <path d="M 400 160 Q 470 140 540 180" fill="none" stroke="#666" stroke-width="8"/>
+                <text x="470" y="195" font-size="10" text-anchor="middle">Blood Capillary</text>
+                <line x1="430" y1="115" x2="430" y2="150" stroke="black" stroke-width="1" marker-end="url(#arrow)"/>
+                <text x="430" y="160" font-size="10" text-anchor="middle">Leydig Cells</text>
+                
+                <text x="200" y="40" font-weight="bold" text-anchor="middle">Seminiferous Tubule</text>
+                <path d="M 120 198 L 140 80 L 160 80 L 180 198 Z" fill="#e0f0ff" stroke="black" stroke-width="1"/>
+                <circle cx="150" cy="170" r="8" fill="black"/>
+                <text x="150" y="70" font-size="10" text-anchor="middle">Sertoli Cell</text>
+                <circle cx="220" cy="180" r="12" fill="none" stroke="black" stroke-width="1"/>
+                <circle cx="220" cy="180" r="4" fill="black"/>
+                <text x="220" y="205" font-size="10" text-anchor="middle">Spermatogonia</text>
+                
+                <circle cx="260" cy="140" r="10" fill="none" stroke="black" stroke-width="1"/>
+                <circle cx="260" cy="140" r="3" fill="black"/>
+                <text x="280" y="145" font-size="10">Spermatocyte</text>
+                
+                <path d="M 280 90 Q 300 80 320 90 Q 300 100 280 90 Z" fill="none" stroke="black" stroke-width="1"/>
+                <text x="330" y="95" font-size="10">Spermatozoa</text>
+
+                <defs>
+                    <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                        <polygon points="0 0, 6 3, 0 6" fill="black"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+        <p class="doc-title">Document 1: Microscopic architecture of the testicular compartments</p>
+
+        <p>A clinical case involves a male patient suffering from severe oligospermia (very low sperm count). A testicular biopsy reveals that his Leydig cells are perfectly functional, but his Sertoli cells are severely degenerated due to a targeted autoimmune reaction. A complete blood hormone profile is conducted for this patient and compared to a healthy control. The profiles are shown in Document 2.</p>
+
+        <table class="data-table">
+            <tr>
+                <th style="width: 20%;">Subject</th>
+                <th>Testosterone (ng/mL)</th>
+                <th>GnRH (pg/mL)</th>
+                <th>LH (mIU/mL)</th>
+                <th>FSH (mIU/mL)</th>
+                <th>Inhibin (pg/mL)</th>
+            </tr>
+            <tr>
+                <td><strong>Healthy Control</strong></td>
+                <td>6.5</td>
+                <td>Normal pulsatile</td>
+                <td>5.2</td>
+                <td>4.8</td>
+                <td>Normal</td>
+            </tr>
+            <tr>
+                <td><strong>Patient</strong></td>
+                <td>6.4</td>
+                <td>Normal pulsatile</td>
+                <td>5.3</td>
+                <td><strong>18.5</strong></td>
+                <td><strong>Undetectable</strong></td>
+            </tr>
+        </table>
+        <p class="doc-title">Document 2: Comparative hormone profiles of the healthy control and the patient</p>
+
+        <ol class="question-list">
+            <li><strong>Name</strong> the two functional cells in the testes. <em>(1 pt)</em></li>
+            <li><strong>Analyze</strong> document 1, and then <strong>deduce</strong> the role of each cell. <em>(1.5 pts)</em></li>
+            <li><strong>Pick out</strong> the origin of oligospermia. <em>(0.5 pt)</em></li>
+            <li><strong>Compare</strong> the hormone profile of the patient to the healthy control. <em>(1 pt)</em></li>
+            <li><strong>Explain briefly</strong> the normal mechanism of production of sperms (spermatogenesis). <em>(1 pt)</em></li>
+        </ol>
+    </div>
+
+    <div class="exercise-page">
+        <h3>Exercise 2: Ovarian Function and Uterine Synchronization <span class="points">(5 points)</span></h3>
+        <p>The mammalian female reproductive system depends on a strict temporal synchronization between the ovaries and the uterus, governed by the hypothalamic-pituitary-ovarian axis. To study the impact of ovarian structures on hormonal profiles and uterine preparation, daily physiological monitoring is performed on two women (Woman X and Woman Y) over a 28-day cycle.</p>
+
+        <h4>Part A: Hormonal Profiles and Ovarian Evolution</h4>
+        <p>Woman X has a normal physiological cycle. Woman Y suffers from "Luteal Phase Defect", a condition where the corpus luteum undergoes premature regression almost immediately after ovulation. Document 1 displays the plasma concentrations of ovarian hormones (Estrogen and Progesterone) for both women.</p>
+
+        <div class="svg-container">
+            <svg viewBox="0 0 850 280" width="100%" height="280">
+                <rect x="50" y="10" width="340" height="260" fill="none" stroke="black" stroke-width="1"/>
+                <text x="220" y="25" font-weight="bold" text-anchor="middle">Woman X (Normal Cycle)</text>
+                <line x1="50" y1="220" x2="390" y2="220" stroke="black" stroke-width="2"/> <line x1="50" y1="40" x2="50" y2="220" stroke="black" stroke-width="2"/> <line x1="390" y1="40" x2="390" y2="220" stroke="black" stroke-width="2"/> <text x="220" y="250" font-size="11" text-anchor="middle">Time (Days)</text>
+                
+                <text x="50" y="235" font-size="10" text-anchor="middle">0</text>
+                <text x="135" y="235" font-size="10" text-anchor="middle">7</text>
+                <text x="220" y="235" font-size="10" text-anchor="middle">14</text>
+                <text x="305" y="235" font-size="10" text-anchor="middle">21</text>
+                <text x="390" y="235" font-size="10" text-anchor="middle">28</text>
+                <line x1="220" y1="40" x2="220" y2="220" stroke="gray" stroke-dasharray="4,4"/> <text x="45" y="224" font-size="9" text-anchor="end">0</text>
+                <text x="45" y="179" font-size="9" text-anchor="end">100</text>
+                <text x="45" y="134" font-size="9" text-anchor="end">200</text>
+                <text x="45" y="89" font-size="9" text-anchor="end">300</text>
+                <text x="45" y="44" font-size="9" text-anchor="end">400</text>
+                <text x="20" y="130" font-size="11" transform="rotate(-90 20 130)" text-anchor="middle" font-weight="bold">Estrogen (pg/mL)</text>
+
+                <text x="395" y="224" font-size="9">0</text>
+                <text x="395" y="179" font-size="9">5</text>
+                <text x="395" y="134" font-size="9">10</text>
+                <text x="395" y="89" font-size="9">15</text>
+                <text x="395" y="44" font-size="9">20</text>
+                <text x="425" y="130" font-size="11" transform="rotate(90 425 130)" text-anchor="middle" font-weight="bold">Progesterone (ng/mL)</text>
+
+                <polyline points="50,190 135,160 200,60 220,140 305,110 390,200" fill="none" stroke="black" stroke-width="2"/> <polyline points="50,215 220,215 260,150 305,80 370,160 390,215" fill="none" stroke="black" stroke-width="2" stroke-dasharray="6,3"/> <rect x="470" y="10" width="340" height="260" fill="none" stroke="black" stroke-width="1"/>
+                <text x="640" y="25" font-weight="bold" text-anchor="middle">Woman Y (Luteal Defect)</text>
+                <line x1="470" y1="220" x2="810" y2="220" stroke="black" stroke-width="2"/> <line x1="470" y1="40" x2="470" y2="220" stroke="black" stroke-width="2"/> <line x1="810" y1="40" x2="810" y2="220" stroke="black" stroke-width="2"/> <text x="640" y="250" font-size="11" text-anchor="middle">Time (Days)</text>
+                
+                <text x="470" y="235" font-size="10" text-anchor="middle">0</text>
+                <text x="555" y="235" font-size="10" text-anchor="middle">7</text>
+                <text x="640" y="235" font-size="10" text-anchor="middle">14</text>
+                <text x="725" y="235" font-size="10" text-anchor="middle">21</text>
+                <text x="810" y="235" font-size="10" text-anchor="middle">28</text>
+                <line x1="640" y1="40" x2="640" y2="220" stroke="gray" stroke-dasharray="4,4"/> <text x="465" y="224" font-size="9" text-anchor="end">0</text>
+                <text x="465" y="179" font-size="9" text-anchor="end">100</text>
+                <text x="465" y="134" font-size="9" text-anchor="end">200</text>
+                <text x="465" y="89" font-size="9" text-anchor="end">300</text>
+                <text x="465" y="44" font-size="9" text-anchor="end">400</text>
+
+                <text x="815" y="224" font-size="9">0</text>
+                <text x="815" y="179" font-size="9">5</text>
+                <text x="815" y="134" font-size="9">10</text>
+                <text x="815" y="89" font-size="9">15</text>
+                <text x="815" y="44" font-size="9">20</text>
+
+                <polyline points="470,190 555,160 620,60 640,160 725,200 810,210" fill="none" stroke="black" stroke-width="2"/> <polyline points="470,215 640,215 660,190 680,215 810,215" fill="none" stroke="black" stroke-width="2" stroke-dasharray="6,3"/> <rect x="360" y="255" width="140" height="20" fill="white" stroke="black"/>
+                <line x1="365" y1="265" x2="390" y2="265" stroke="black" stroke-width="2"/>
+                <text x="395" y="269" font-size="10">Estrogen</text>
+                <line x1="440" y1="265" x2="465" y2="265" stroke="black" stroke-width="2" stroke-dasharray="6,3"/>
+                <text x="470" y="269" font-size="10">Progesterone</text>
+            </svg>
+        </div>
+        <p class="doc-title">Document 1: Secretory profiles of ovarian hormones in Woman X and Woman Y</p>
+
+        <h4>Part B: Uterine Endometrium Evaluation</h4>
+        <p>A histological examination of the uterine endometrium (mucosa) is performed for both women on Day 23 of their respective cycles. The thickness of the endometrium and the development of the uterine glands are recorded in Document 2.</p>
+
+        <table class="data-table">
+            <tr>
+                <th style="width: 20%;">Subject</th>
+                <th style="width: 40%;">Endometrial Thickness (Day 23)</th>
+                <th style="width: 40%;">State of Uterine Glands & Blood Vessels</th>
+            </tr>
+            <tr>
+                <td><strong>Woman X</strong></td>
+                <td>7.5 mm (Thick and highly developed)</td>
+                <td>Tortuous "saw-tooth" glands; highly vascularized; rich in glycogen secretions.</td>
+            </tr>
+            <tr>
+                <td><strong>Woman Y</strong></td>
+                <td>2.0 mm (Thin and undeveloped)</td>
+                <td>Straight, sparse glands; poor vascularization; absence of secretions.</td>
+            </tr>
+        </table>
+        <p class="doc-title">Document 2: Histological state of the endometrium on Day 23</p>
+
+        <ol class="question-list">
+            <li>Based on Document 1, <strong>identify</strong> the event that occurs on day 14 for both women. <strong>Specify</strong> the ovarian structure responsible for the hormonal profile observed prior to this event (Days 1 to 13). <em>(1 pt)</em></li>
+            <li><strong>Analyze</strong> the variation of Progesterone from day 14 to day 28 in Woman X compared to Woman Y (Document 1). What do you <strong>deduce</strong> regarding the source of Progesterone? <em>(1.5 pts)</em></li>
+            <li>By integrating the data from Document 1 and Document 2, <strong>explain</strong> the histological differences observed in the endometrium of Woman X compared to Woman Y on Day 23. <em>(1.5 pts)</em></li>
+            <li>Woman Y consults a fertility clinic because she is unable to maintain a pregnancy despite successful fertilization. <strong>Show</strong> how the data presented in the documents justifies her clinical condition. <em>(1 pt)</em></li>
+        </ol>
+    </div>
+
+    <div class="exercise-page">
+        <h3>Exercise 3: Immune Responses and Diagnostic Methods <span class="points">(5 points)</span></h3>
+        <p>Hepatitis B Virus (HBV) is an intracellular pathogen that infects liver cells (hepatocytes). The eradication of this virus involves complex cellular collaborations. To study these mechanisms, scientists extract macrophages and lymphocytes from an individual who recently recovered from an HBV infection.</p>
+
+        <h4>Part A: Cellular Collaboration and Cytotoxicity</h4>
+        <p>The extracted macrophages are cultured in vitro with the HBV virus. After a few hours, specific CD8+ T Lymphocytes (extracted from the same individual) are added to the culture. The sequence of cellular interactions is visualized in Document 1.</p>
+
+        <div class="svg-container">
+            <svg viewBox="0 0 700 180" width="100%" height="160">
+                <text x="100" y="20" font-weight="bold" text-anchor="middle">Phase 1: Macrophage Activity</text>
+                <path d="M 50 100 C 50 50, 100 60, 120 40 C 150 60, 150 140, 100 150 C 70 150, 50 130, 50 100 Z" fill="#f0f0f0" stroke="black" stroke-width="1.5"/>
+                <circle cx="100" cy="100" r="15" fill="#ccc"/> <polygon points="160,80 170,90 160,100" fill="black"/> <text x="210" y="95" font-size="10">HBV Viral Particles</text>
+                
+                <line x1="250" y1="100" x2="300" y2="100" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+
+                <text x="450" y="20" font-weight="bold" text-anchor="middle">Phase 2: Interaction with T8 Cell</text>
+                <path d="M 330 100 C 330 50, 380 50, 400 100 C 380 150, 330 150, 330 100 Z" fill="#f0f0f0" stroke="black" stroke-width="1.5"/>
+                <rect x="400" y="95" width="15" height="10" fill="none" stroke="black" stroke-width="1.5"/>
+                <circle cx="415" cy="100" r="4" fill="black"/> <text x="360" y="165" font-size="10" text-anchor="middle">Antigen Presenting Cell</text>
+
+                <circle cx="500" cy="100" r="40" fill="none" stroke="black" stroke-width="1.5"/>
+                <text x="500" y="105" font-weight="bold" text-anchor="middle">T8 Lymphocyte</text>
+                <path d="M 460 95 L 430 95 L 430 85 L 420 100 L 430 115 L 430 105 L 460 105 Z" fill="none" stroke="black" stroke-width="1.5"/>
+                <path d="M 465 80 L 410 70" stroke="black" stroke-width="1.5"/>
+                <text x="430" y="65" font-size="10">CD8 Marker</text>
+                
+                <path d="M 390 60 Q 420 30 450 60" fill="none" stroke="#666" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+                <text x="420" y="45" font-size="10" text-anchor="middle">Interleukin-1</text>
+            </svg>
+        </div>
+        <p class="doc-title">Document 1: Sequential cellular interactions during the immune response to HBV</p>
+
+        <ol class="question-list">
+            <li>Based on Document 1, <strong>describe</strong> the two essential roles played by the macrophage (Antigen Presenting Cell) to ensure the activation of the T8 Lymphocyte. <em>(1 pt)</em></li>
+        </ol>
+
+        <p>Following this activation, the T8 lymphocytes differentiate into Effector Cytotoxic T Lymphocytes (CTLs). To prove the specificity of these CTLs, a Chromium-51 release assay is performed. Three lots of target cells are loaded with radioactive Chromium ($^{51}$Cr). When a target cell is destroyed (lysed), it releases $^{51}$Cr into the medium. The results are shown in Document 2.</p>
+
+        <table class="data-table">
+            <tr>
+                <th style="width: 15%;">Lot</th>
+                <th style="width: 45%;">Target Cells</th>
+                <th style="width: 25%;">Effector Cells Added</th>
+                <th style="width: 15%;">Lysis ($^{51}$Cr Release)</th>
+            </tr>
+            <tr>
+                <td><strong>A</strong></td>
+                <td>Patient's Hepatocytes + <strong>HBV Virus</strong></td>
+                <td>Patient's CTLs</td>
+                <td><strong>88 %</strong> (Massive)</td>
+            </tr>
+            <tr>
+                <td><strong>B</strong></td>
+                <td>Patient's Hepatocytes + <strong>HCV (Hepatitis C Virus)</strong></td>
+                <td>Patient's CTLs</td>
+                <td><strong>2 %</strong> (Negligible)</td>
+            </tr>
+            <tr>
+                <td><strong>C</strong></td>
+                <td><strong>Different Individual's</strong> Hepatocytes + <strong>HBV Virus</strong></td>
+                <td>Patient's CTLs</td>
+                <td><strong>3 %</strong> (Negligible)</td>
+            </tr>
+        </table>
+        <p class="doc-title">Document 2: In vitro cytotoxicity assay using Chromium-51 release</p>
+
+        <ol class="question-list" start="2">
+            <li><strong>Analyze</strong> the results of Lot A and Lot B in Document 2. <strong>Deduce</strong> a fundamental characteristic of the immune response mediated by CTLs. <em>(1.5 pts)</em></li>
+            <li><strong>Compare</strong> the conditions and results of Lot A to Lot C. What immunological concept is proven by this comparison? <strong>Explain</strong> the mechanism. <em>(1.5 pts)</em></li>
+        </ol>
+
+        <h4>Part B: Serum Diagnosis</h4>
+        <p>To verify if a new patient is currently infected with HBV, an Ouchterlony immunodiffusion test is performed. Soluble HBV antigens are placed in the central well (C). Serum from a known healthy individual is placed in Well 1, and the new patient's serum is placed in Well 2. Document 3 shows the result after 48 hours.</p>
+
+        <div class="svg-container">
+            <svg viewBox="0 0 300 140" width="350" height="130">
+                <rect x="50" y="10" width="200" height="120" fill="#fafafa" stroke="black" stroke-width="1"/>
+                <circle cx="150" cy="70" r="12" fill="none" stroke="black" stroke-width="2"/> <text x="150" y="75" font-weight="bold" font-size="12" text-anchor="middle">C</text>
+                
+                <circle cx="80" cy="70" r="12" fill="none" stroke="black" stroke-width="2"/> <text x="80" y="75" font-weight="bold" font-size="12" text-anchor="middle">1</text>
+                
+                <circle cx="220" cy="70" r="12" fill="none" stroke="black" stroke-width="2"/> <text x="220" y="75" font-weight="bold" font-size="12" text-anchor="middle">2</text>
+                
+                <path d="M 170 50 Q 185 70 170 90" fill="none" stroke="black" stroke-width="4"/>
+                <text x="210" y="30" font-size="10">Precipitation Arc</text>
+                <line x1="200" y1="35" x2="185" y2="55" stroke="black" stroke-width="1" marker-end="url(#arrow)"/>
+            </svg>
+        </div>
+        <p class="doc-title">Document 3: Ouchterlony immunodiffusion gel after 48 hours</p>
+
+        <ol class="question-list" start="4">
+            <li><strong>Interpret</strong> the observation in Document 3. <strong>Conclude</strong> regarding the diagnostic status of the new patient. <em>(1 pt)</em></li>
+        </ol>
+    </div>
+
+    <div class="exercise-page">
+        <h3>Exercise 4: Human Genetics and Molecular Diagnosis <span class="points">(5 points)</span></h3>
+        <p>Alport Syndrome is a severe hereditary disorder characterized by progressive kidney disease, hearing loss, and eye abnormalities. The disease is caused by mutations in the genes encoding type IV collagen. To determine the mode of transmission of this trait, a geneticist studies a family affected by this syndrome. Document 1 represents the pedigree of this family.</p>
+
+        <h4>Part A: Pedigree Analysis</h4>
+        <div class="svg-container">
+            <svg viewBox="0 0 600 250" width="100%" height="250">
+                <text x="30" y="50" font-weight="bold" font-size="14">I</text>
+                <text x="30" y="130" font-weight="bold" font-size="14">II</text>
+                <text x="30" y="210" font-weight="bold" font-size="14">III</text>
+
+                <rect x="200" y="30" width="24" height="24" fill="white" stroke="black" stroke-width="2"/> <text x="212" y="75" font-size="12" text-anchor="middle">1</text>
+                <circle cx="340" cy="42" r="12" fill="white" stroke="black" stroke-width="2"/> <text x="340" y="75" font-size="12" text-anchor="middle">2</text>
+                
+                <line x1="224" y1="42" x2="328" y2="42" stroke="black" stroke-width="2"/> <line x1="276" y1="42" x2="276" y2="80" stroke="black" stroke-width="2"/> <line x1="140" y1="80" x2="420" y2="80" stroke="black" stroke-width="2"/> <rect x="128" y="110" width="24" height="24" fill="black" stroke="black" stroke-width="2"/> 
+                <line x1="140" y1="80" x2="140" y2="110" stroke="black" stroke-width="2"/>
+                <text x="140" y="155" font-size="12" text-anchor="middle">1</text>
+
+                <circle cx="210" cy="122" r="12" fill="white" stroke="black" stroke-width="2"/> 
+                <line x1="210" y1="80" x2="210" y2="110" stroke="black" stroke-width="2"/>
+                <text x="210" y="155" font-size="12" text-anchor="middle">2</text>
+
+                <circle cx="340" cy="122" r="12" fill="white" stroke="black" stroke-width="2"/> 
+                <line x1="340" y1="80" x2="340" y2="110" stroke="black" stroke-width="2"/>
+                <text x="340" y="155" font-size="12" text-anchor="middle">3</text>
+
+                <rect x="408" y="110" width="24" height="24" fill="white" stroke="black" stroke-width="2"/> 
+                <line x1="420" y1="80" x2="420" y2="110" stroke="black" stroke-width="2"/>
+                <text x="420" y="155" font-size="12" text-anchor="middle">4</text>
+
+                <rect x="480" y="110" width="24" height="24" fill="white" stroke="black" stroke-width="2"/> <text x="492" y="155" font-size="12" text-anchor="middle">5</text>
+                <line x1="352" y1="122" x2="480" y2="122" stroke="black" stroke-width="2"/>
+                <line x1="416" y1="122" x2="416" y2="170" stroke="black" stroke-width="2"/>
+                <line x1="380" y1="170" x2="450" y2="170" stroke="black" stroke-width="2"/>
+
+                <rect x="368" y="190" width="24" height="24" fill="black" stroke="black" stroke-width="2"/>
+                <line x1="380" y1="170" x2="380" y2="190" stroke="black" stroke-width="2"/>
+                <text x="380" y="235" font-size="12" text-anchor="middle">1</text>
+
+                <circle cx="450" cy="202" r="12" fill="white" stroke="black" stroke-width="2"/>
+                <line x1="450" y1="170" x2="450" y2="190" stroke="black" stroke-width="2"/>
+                <text x="450" y="235" font-size="12" text-anchor="middle">2</text>
+
+                <rect x="60" y="160" width="180" height="70" fill="none" stroke="black" stroke-width="1"/>
+                <rect x="70" y="170" width="12" height="12" fill="white" stroke="black"/>
+                <text x="90" y="180" font-size="10">Normal Male</text>
+                <rect x="70" y="195" width="12" height="12" fill="black" stroke="black"/>
+                <text x="90" y="205" font-size="10">Affected Male</text>
+                <circle cx="170" cy="176" r="6" fill="white" stroke="black"/>
+                <text x="185" y="180" font-size="10">Normal Female</text>
+                <circle cx="170" cy="201" r="6" fill="black" stroke="black"/>
+                <text x="185" y="205" font-size="10">Affected Female</text>
+            </svg>
+        </div>
+        <p class="doc-title">Document 1: Pedigree of the family affected by Alport Syndrome</p>
+
+        <ol class="question-list">
+            <li>Based on Document 1 alone, <strong>show</strong> whether the allele responsible for Alport Syndrome is dominant or recessive. <em>(1 pt)</em></li>
+            <li><strong>Determine</strong> the location of the studied gene. <em>(1 pt)</em></li>
+        </ol>
+
+        <h4>Part B: Molecular Analysis via Electrophoresis</h4>
+        <p>To confirm the clinical diagnosis and definitively map the chromosomal location of the gene, a molecular technique (Southern Blot) is utilized. DNA is extracted from somatic cells of specific members of the family. The DNA sequences corresponding to the collagen gene are amplified using PCR and separated by gel electrophoresis. The resulting autoradiograph shows the presence of different alleles, denoted as Allele 1 ($A_1$) and Allele 2 ($A_2$). The results are presented in Document 2.</p>
+
+        <div class="svg-container">
+            <svg viewBox="0 0 500 180" width="100%" height="180">
+                <rect x="150" y="10" width="240" height="150" fill="#f4f4f4" stroke="black" stroke-width="2"/>
+                
+                <rect x="170" y="20" width="24" height="6" fill="#333"/>
+                <rect x="230" y="20" width="24" height="6" fill="#333"/>
+                <rect x="290" y="20" width="24" height="6" fill="#333"/>
+                <rect x="350" y="20" width="24" height="6" fill="#333"/>
+                
+                <text x="182" y="15" font-weight="bold" font-size="12" text-anchor="middle">I-1</text>
+                <text x="242" y="15" font-weight="bold" font-size="12" text-anchor="middle">I-2</text>
+                <text x="302" y="15" font-weight="bold" font-size="12" text-anchor="middle">II-1</text>
+                <text x="362" y="15" font-weight="bold" font-size="12" text-anchor="middle">II-3</text>
+                
+                <text x="80" y="75" font-size="12" font-weight="bold">Allele A₁</text>
+                <line x1="135" y1="70" x2="145" y2="70" stroke="black" stroke-width="2"/>
+                <rect x="170" y="68" width="24" height="4" fill="black"/> <rect x="230" y="68" width="24" height="4" fill="black"/> <rect x="350" y="68" width="24" height="4" fill="black"/> <text x="80" y="125" font-size="12" font-weight="bold">Allele A₂</text>
+                <line x1="135" y1="120" x2="145" y2="120" stroke="black" stroke-width="2"/>
+                <rect x="230" y="118" width="24" height="4" fill="black"/> <rect x="290" y="118" width="24" height="4" fill="black"/> <rect x="350" y="118" width="24" height="4" fill="black"/> <text x="420" y="90" font-size="11" transform="rotate(-90 420 90)" text-anchor="middle">Direction of Migration</text>
+                <line x1="400" y1="30" x2="400" y2="140" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+            </svg>
+        </div>
+        <p class="doc-title">Document 2: DNA Electrophoresis of the collagen gene for selected family members</p>
+
+        <ol class="question-list" start="3">
+            <li><strong>Analyze</strong> doc.2, <strong>Match</strong> alleles A1 and A2 to corresponding genes. <em>(1 pt)</em></li>
+            <li>Female II-2 is pregnant. An amniocentesis is performed to extract fetal DNA. The electrophoresis reveals that the fetus possesses only the $A_2$ band. <strong>Determine</strong> the sex of the fetus and its phenotype. <strong>Justify</strong> using the established genotypes. <em>(2 pts)</em></li>
+        </ol>
+    </div>
+
+    <div class="marking-scheme-page">
+        <div class="exam-title">OFFICIAL MARKING SCHEME</div>
+
+        <h3>Exercise 1: Regulation of Male Reproductive Function (5 pts)</h3>
+        <table class="marking-scheme">
+            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
+            <tr>
+                <td class="col-q">1</td>
+                <td class="col-ans">
+                    The two functional cells in the testes are the <strong>Leydig cells</strong> (interstitial cells) and the <strong>Sertoli cells</strong>.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">2</td>
+                <td class="col-ans">
+                    <strong>Analysis:</strong> Document 1 shows that Leydig cells are located in the interstitial space in close proximity to blood capillaries. In contrast, Sertoli cells are located inside the seminiferous tubule enveloping and in direct physical contact with the developing germ cells (from spermatogonia to spermatozoa).<br>
+                    <strong>Deduction:</strong> Because Leydig cells are near blood vessels, they play an <strong>endocrine role</strong> (secreting hormones like testosterone into the blood). Because Sertoli cells surround the germ cells inside the tubule, they play an <strong>exocrine/supportive role</strong> (nourishing and directly stimulating the differentiation of germ cells into sperm).
+                </td>
+                <td class="col-q">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">3</td>
+                <td class="col-ans">
+                    The origin of oligospermia in this patient is the <strong>severe degeneration of his Sertoli cells</strong> caused by a targeted autoimmune reaction.
+                </td>
+                <td class="col-q">0.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">4</td>
+                <td class="col-ans">
+                    <strong>Comparison:</strong> The patient has a normal pulsatile secretion of GnRH, a normal LH level (5.3 vs 5.2 mIU/mL), and a normal Testosterone level (6.4 vs 6.5 ng/mL) identical to the healthy control. However, the patient has an <strong>abnormally high FSH level</strong> (18.5 mIU/mL compared to 4.8 mIU/mL) and an <strong>undetectable level of Inhibin</strong> compared to normal in the control.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">5</td>
+                <td class="col-ans">
+                    <strong>Mechanism:</strong> The hypothalamus secretes GnRH, which stimulates the anterior pituitary to secrete LH and FSH. LH targets Leydig cells to stimulate the secretion of testosterone. FSH targets Sertoli cells. The combined and synergistic action of FSH and a high local concentration of testosterone stimulates the Sertoli cells to drive the multiplication and differentiation of germ cells into mature spermatozoa (spermatogenesis).
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+        </table>
+
+        <h3>Exercise 2: Ovarian Function and Uterine Synchronization (5 pts)</h3>
+        <table class="marking-scheme">
+            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
+            <tr>
+                <td class="col-q">1</td>
+                <td class="col-ans">
+                    <strong>Event:</strong> Ovulation. (Identified by the transition from the follicular phase to the luteal phase around day 14).<br>
+                    <strong>Ovarian Structure:</strong> The developing ovarian follicles (specifically the dominant Graafian follicle just before day 14) are responsible for the increasing secretion of Estrogen during the first 13 days.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">2</td>
+                <td class="col-ans">
+                    <strong>Analysis:</strong> In Woman X (normal cycle), Progesterone increases significantly after day 14, peaking around day 21, and then drops. In Woman Y, who suffers from premature regression of the corpus luteum, Progesterone remains at baseline levels (near zero) throughout the entire phase from day 14 to 28.<br>
+                    <strong>Deduction:</strong> The active Corpus Luteum is the exclusive biological source of Progesterone secretion during the post-ovulatory (luteal) phase.
+                </td>
+                <td class="col-q">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">3</td>
+                <td class="col-ans">
+                    <strong>Explanation:</strong> Woman X secretes high levels of Estrogen and Progesterone from her functional corpus luteum (Doc 1). These hormones synergistically act on the endometrium, causing it to thicken (7.5mm), vascularize, and develop tortuous secretory glands (Doc 2). Woman Y lacks Progesterone (Doc 1) due to the luteal defect. Without Progesterone, the endometrium cannot develop its secretory and vascular networks, remaining thin (2.0mm) and undeveloped with straight glands (Doc 2).
+                </td>
+                <td class="col-q">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">4</td>
+                <td class="col-ans">
+                    <strong>Justification:</strong> To maintain a pregnancy, the embryo must implant into a thick, highly vascularized, and secretory endometrium (the uterine lace). Because Woman Y cannot produce Progesterone, her endometrium remains thin and hostile (Doc 2). Thus, even if an egg is fertilized, the embryo cannot implant or survive, justifying her infertility/miscarriages.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="marking-scheme-page">
+        <h3>Exercise 3: Immune Responses and Diagnostic Methods (5 pts)</h3>
+        <table class="marking-scheme">
+            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
+            <tr>
+                <td class="col-q">1</td>
+                <td class="col-ans">
+                    <strong>Role 1:</strong> Phagocytosis of the virus, processing it, and <strong>Presenting the viral antigen</strong> on its surface associated with an MHC molecule to physically interact with the TCR of the T8 cell.<br>
+                    <strong>Role 2:</strong> Chemical stimulation via the <strong>secretion of Interleukin-1</strong>, which acts as a necessary co-signal to fully activate the T8 Lymphocyte.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">2</td>
+                <td class="col-ans">
+                    <strong>Analysis:</strong> In Lot A, patient's CTLs cause massive lysis (88%) of hepatocytes infected with HBV (the virus they were sensitized against). In Lot B, when the same CTLs are exposed to hepatocytes infected with a different virus (HCV), the lysis is negligible (2%).<br>
+                    <strong>Deduction:</strong> The cell-mediated immune response executed by CTLs is highly <strong>Specific</strong> to the antigen that triggered the initial activation.
+                </td>
+                <td class="col-q">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">3</td>
+                <td class="col-ans">
+                    <strong>Comparison:</strong> Both Lot A and Lot C contain hepatocytes infected with the correct target virus (HBV) and the patient's CTLs. However, Lot A (patient's own hepatocytes) shows 88% lysis, while Lot C (different individual's hepatocytes) shows only 3% lysis.<br>
+                    <strong>Concept Proven:</strong> <strong>Double Recognition</strong> (or MHC Restriction).<br>
+                    <strong>Mechanism:</strong> To induce cytolysis, the TCR of the CTL must simultaneously recognize the specific viral peptide AND the "Self" MHC Class I molecule. Since the different individual in Lot C has a different ("Non-Self") MHC, the TCR cannot bind, and no lysis occurs.
+                </td>
+                <td class="col-q">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">4</td>
+                <td class="col-ans">
+                    <strong>Interpretation:</strong> A precipitation arc forms between Well C (HBV antigens) and Well 2 (new patient's serum). This indicates a specific antigen-antibody immune complex formation, meaning the patient's serum contains anti-HBV antibodies.<br>
+                    <strong>Conclusion:</strong> The new patient is Seropositive and is currently infected (or has been infected) with the Hepatitis B Virus.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+        </table>
+
+        <h3>Exercise 4: Human Genetics and Molecular Diagnosis (5 pts)</h3>
+        <table class="marking-scheme">
+            <tr><th class="col-q">Q</th><th class="col-ans">Detailed Answer Key & Logical Steps</th><th class="col-pt">Pts</th></tr>
+            <tr>
+                <td class="col-q">1</td>
+                <td class="col-ans">
+                    Normal parents I-1 and I-2 have an affected son (II-1). This means that both parents carried the disease allele but it was masked by the normal trait. The disease skipped a generation. Therefore, the allele responsible for Alport Syndrome is <strong>Recessive</strong>.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">2</td>
+                <td class="col-ans">
+                    <strong>Location of the gene (based on Pedigree):</strong><br>
+                    - Hypothesis 1: Autosomal. If autosomal, normal parents I-1 (Nd) and I-2 (Nd) can have an affected son II-1 (dd). This is genetically possible.<br>
+                    - Hypothesis 2: X-linked. If X-linked, a normal father I-1 ($X^N Y$) and a carrier mother I-2 ($X^N X^d$) can have an affected son II-1 ($X^d Y$). This is also genetically possible.<br>
+                    <strong>Conclusion:</strong> The pedigree alone is insufficient to definitively determine the location; the studied gene could be located either on an autosome or on the X sex chromosome.
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">3</td>
+                <td class="col-ans">
+                    <strong>Analysis:</strong> Document 2 shows that individual I-1 (phenotypically normal) has only band A1. Individual II-1 (phenotypically affected) has only band A2. Individual I-2 (normal carrier) possesses both bands A1 and A2.<br>
+                    <strong>Match:</strong> Allele A1 corresponds to the Normal gene. Allele A2 corresponds to the Affected/disease gene (Alport Syndrome).
+                </td>
+                <td class="col-q">1</td>
+            </tr>
+            <tr>
+                <td class="col-q">4</td>
+                <td class="col-ans">
+                    <em>(Note: From Document 2, because normal male I-1 has only one band (A1), we now definitively know the gene is X-linked).</em><br>
+                    <strong>Sex:</strong> Male.<br>
+                    <strong>Phenotype:</strong> Affected with Alport Syndrome.<br>
+                    <strong>Justification:</strong> The fetus possesses ONLY the $A_2$ band. The mother II-2 is normal but could be a carrier ($X^N X^d$). If the fetus were female, she would necessarily inherit the normal $X^N$ allele from her normal father II-5 ($X^N Y$), resulting in an $X^N X^d$ genotype and displaying TWO bands on the gel. Because the fetus displays only ONE band ($A_2$), it must have inherited a Y chromosome from the father. Thus, the genotype is $X^d Y$ (Male, Affected).
+                </td>
+                <td class="col-q">2</td>
+            </tr>
+        </table>
+    </div>
+
+</div> </body>
+</html>

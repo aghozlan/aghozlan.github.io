@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔦 Light, Shadow & Reflection — Grade 8 Lab</title>
+<style>
+:root{--navy:#1a1a3e;--gold:#f5c518;--gold-d:#c9a200;--bg:#0d0d22;--card:#1a1a3a;--card2:#23234a;--text:#e8e8f4;--muted:#8080a8;--green:#4caf50;--red:#f44336;--blue:#2196f3;--orange:#ff9800;--r:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px}
+
+/* progress */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--navy);padding:8px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px #0008}
+#pbg{flex:1;height:9px;background:#2a2a50;border-radius:5px;overflow:hidden}
+#pf{height:100%;background:var(--gold);border-radius:5px;transition:width .4s}
+#plabel{color:var(--gold);font-size:.8rem;white-space:nowrap}
+#timer{color:var(--muted);font-size:.8rem;font-family:monospace;white-space:nowrap}
+
+/* sections */
+.sec{display:none;max-width:760px;margin:72px auto 0;padding:0 14px}
+.sec.on{display:block}
+
+/* cards */
+.card{background:var(--card);border-radius:var(--r);padding:22px;margin-bottom:18px;border:1px solid #ffffff0d;box-shadow:0 4px 20px #0005}
+.ctitle{color:var(--gold);font-weight:700;font-size:1.05rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.shdr{background:linear-gradient(135deg,var(--navy),#242460);border-radius:var(--r);padding:26px 22px;margin-bottom:20px;border-left:5px solid var(--gold);box-shadow:0 4px 20px #0005}
+.shdr h2{color:var(--gold);margin-bottom:6px;font-size:1.35rem}
+.shdr p{color:var(--muted);font-size:.88rem}
+
+/* form */
+label{display:block;margin-bottom:5px;font-size:.87rem;color:var(--muted)}
+input[type=text],select,textarea{width:100%;padding:11px 15px;background:var(--card2);border:1px solid #3a3a65;border-radius:8px;color:var(--text);font-size:.97rem;outline:none;transition:border-color .2s}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--gold)}
+select option{background:var(--card2)}
+textarea{resize:vertical;min-height:80px}
+.gap{margin-bottom:14px}
+
+/* MCQ */
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+.opt{background:var(--card2);border:2px solid #3a3a65;border-radius:9px;padding:11px 15px;color:var(--text);cursor:pointer;text-align:left;font-size:.93rem;transition:all .15s;display:flex;align-items:center;gap:10px}
+.opt:hover:not(:disabled){border-color:var(--gold);background:#2a2a55}
+.opt.ok{border-color:var(--green);background:rgba(76,175,80,.13);color:#a8e8aa}
+.opt.bad{border-color:var(--red);background:rgba(244,67,54,.13);color:#ffaaaa}
+.opt:disabled{cursor:default;opacity:.88}
+.oind{width:20px;height:20px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+
+/* feedback */
+.fb{margin-top:10px;padding:9px 13px;border-radius:7px;font-size:.88rem;display:none}
+.fb.ok{background:rgba(76,175,80,.13);color:#a8e8aa;border:1px solid var(--green);display:block}
+.fb.bad{background:rgba(244,67,54,.13);color:#ffaaaa;border:1px solid var(--red);display:block}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:9px;border:none;font-size:.97rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-p{background:var(--gold);color:var(--navy)}
+.btn-p:hover{background:var(--gold-d);transform:translateY(-1px)}
+.btn-s{background:var(--card2);color:var(--text);border:1px solid #3a3a65}
+.btn-s:hover{border-color:var(--gold)}
+.btn-g{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:10px}
+
+/* canvas */
+canvas{border:2px solid #3a3a65;border-radius:8px;display:block;max-width:100%}
+.ctbar{display:flex;gap:7px;margin:9px 0;flex-wrap:wrap;align-items:center}
+.cbtn{width:26px;height:26px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:border-color .15s}
+.cbtn.on{border-color:#fff}
+
+/* stars */
+.self-row{display:flex;align-items:center;gap:14px;margin-bottom:13px;padding:13px;background:var(--card2);border-radius:9px}
+.self-lbl{flex:1;font-size:.92rem}
+.stars{display:flex;gap:5px}
+.star{font-size:1.5rem;cursor:pointer;opacity:.25;transition:opacity .15s,transform .1s}
+.star.on{opacity:1}
+.star:hover{transform:scale(1.15)}
+
+/* score */
+.score-big{text-align:center;padding:28px;background:linear-gradient(135deg,var(--navy),#242460);border-radius:var(--r);margin-bottom:18px}
+.snum{font-size:3.8rem;font-weight:900;color:var(--gold);line-height:1}
+.sdenom{font-size:1.4rem;color:var(--muted)}
+.gbadge{display:inline-block;padding:7px 26px;border-radius:40px;font-size:2rem;font-weight:900;margin-top:10px}
+.gA{background:rgba(76,175,80,.18);color:#4caf50;border:2px solid #4caf50}
+.gB{background:rgba(33,150,243,.18);color:#2196f3;border:2px solid #2196f3}
+.gC{background:rgba(255,152,0,.18);color:#ff9800;border:2px solid #ff9800}
+.gD{background:rgba(244,67,54,.18);color:#f44336;border:2px solid #f44336}
+.bkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+.bkcell{background:var(--card2);border-radius:9px;padding:13px;text-align:center;border:1px solid #3a3a65}
+.bkpts{font-size:1.5rem;font-weight:700;color:var(--gold)}
+.bklbl{font-size:.72rem;color:var(--muted);margin-top:3px}
+
+/* game */
+#gcvs{background:#08081a;cursor:pointer}
+.hud{display:flex;justify-content:space-around;padding:9px;background:var(--card2);border-radius:8px;margin-bottom:9px}
+.hitem{text-align:center}
+.hval{font-size:1.3rem;font-weight:700;color:var(--gold)}
+.hlbl{font-size:.68rem;color:var(--muted)}
+#gqbox{margin-top:12px}
+
+/* protractor */
+#proto-cvs{background:#0a0a20;cursor:crosshair}
+.proto-hint{background:rgba(33,150,243,.12);border:1px solid var(--blue);border-radius:8px;padding:9px 13px;margin-top:9px;font-size:.87rem;color:#90caf9;display:none}
+
+/* E5 label */
+.label-area{position:relative;width:100%;height:280px;background:var(--card2);border-radius:9px;border:2px dashed #3a3a65;overflow:hidden;margin-bottom:12px}
+.dspot{position:absolute;width:30px;height:30px;border-radius:50%;border:2px solid var(--gold);background:rgba(245,197,24,.15);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:var(--gold);cursor:pointer;transition:all .2s}
+.dspot.picked{background:var(--gold);color:var(--navy)}
+.dspot.cok{border-color:var(--green);background:rgba(76,175,80,.25);color:#a8e8aa}
+.dspot.cwrong{border-color:var(--red);background:rgba(244,67,54,.2);color:#ffaaaa}
+.lchips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.lchip{padding:6px 14px;background:var(--gold);color:var(--navy);border-radius:20px;font-size:.83rem;font-weight:600;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.lchip.sel{border-color:var(--navy);transform:scale(.95);opacity:.8}
+.lchip.used{background:var(--card2);color:var(--muted);cursor:not-allowed;pointer-events:none}
+
+/* leaderboard */
+#lb{position:fixed;bottom:18px;right:18px;background:var(--navy);border:1px solid var(--gold);border-radius:var(--r);padding:13px 17px;min-width:190px;box-shadow:0 4px 20px #0008;z-index:99;font-size:.83rem}
+#lb h4{color:var(--gold);margin-bottom:7px;font-size:.88rem}
+.lbr{display:flex;justify-content:space-between;gap:14px;margin-bottom:3px}
+.lbc{color:var(--muted)}.lbn{font-weight:700}
+.infobox{background:rgba(33,150,243,.1);border:1px solid var(--blue);border-radius:7px;padding:10px 14px;margin-bottom:14px;font-size:.87rem;color:#90caf9}
+@media(max-width:580px){.sec{padding:0 8px}.card{padding:14px}#lb{display:none}}
+</style>
+</head>
+<body>
+
+<!-- top bar -->
+<div id="topbar">
+  <div id="pbg"><div id="pf" style="width:0%"></div></div>
+  <span id="plabel">Welcome</span>
+  <span id="timer">0:00</span>
+</div>
+
+<!-- leaderboard -->
+<div id="lb">
+  <h4>📊 Class Submissions</h4>
+  <div class="lbr"><span class="lbc">8A</span><span class="lbn" id="lb8A">—</span></div>
+  <div class="lbr"><span class="lbc">8B</span><span class="lbn" id="lb8B">—</span></div>
+  <div class="lbr"><span class="lbc">8C</span><span class="lbn" id="lb8C">—</span></div>
+  <div class="lbr"><span class="lbc">8D</span><span class="lbn" id="lb8D">—</span></div>
+  <div class="lbr" style="border-top:1px solid #3a3a65;margin-top:5px;padding-top:5px">
+    <span class="lbc">Total</span><span class="lbn" id="lbTotal">—</span>
+  </div>
+</div>
+
+<!-- ═══ SECTION 0: Welcome ═══════════════════════════════════════════════ -->
+<section id="sec0" class="sec on">
+  <div class="shdr">
+    <h2>🔦 Light, Shadow &amp; Reflection Lab</h2>
+    <p>Grade 8 Physics · Complete all 5 exercises, play the game, then submit your work.</p>
+  </div>
+  <div class="card">
+    <div class="ctitle">📋 Student Information</div>
+    <div class="gap"><label>Class / الصف</label>
+      <select id="inp-class" onchange="populateNames()">
+        <option value="">— select your class —</option>
+        <option value="8A">8A</option><option value="8B">8B</option>
+        <option value="8C">8C</option><option value="8D">8D</option>
+      </select>
+    </div>
+    <div class="gap"><label>Full Name / الاسم الكامل</label>
+      <select id="inp-name" dir="rtl" disabled style="opacity:.6">
+        <option value="">— اختر الصف أولاً —</option>
+      </select>
+    </div>
+  </div>
+  <div class="infobox">⏱ A timer starts when you begin. Work carefully — quality matters more than speed.</div>
+  <div class="nav"><div></div><button class="btn btn-p" onclick="startLab()">Begin Lab →</button></div>
+</section>
+
+<!-- ═══ SECTION 1: E1 — Light Sources ═══════════════════════════════════ -->
+<section id="sec1" class="sec">
+  <div class="shdr"><h2>Exercise 1 — Light Sources</h2><p>Identify luminous objects and properties of light. (2 pts)</p></div>
+
+  <div class="card">
+    <div class="ctitle">Q1 · Which object is a <em>luminous</em> source of light?</div>
+    <div class="opts" id="e1q1">
+      <button class="opt" onclick="mcq('e1q1',this,false)"><span class="oind">A</span>Moon</button>
+      <button class="opt" onclick="mcq('e1q1',this,true)"><span class="oind">B</span>The Sun</button>
+      <button class="opt" onclick="mcq('e1q1',this,false)"><span class="oind">C</span>Mirror</button>
+      <button class="opt" onclick="mcq('e1q1',this,false)"><span class="oind">D</span>Textbook</button>
+    </div>
+    <div class="fb" id="fb-e1q1-ok">✅ Correct! The Sun produces its own light — it is luminous.</div>
+    <div class="fb bad" id="fb-e1q1-bad">❌ The Moon and mirror only reflect light — they are non-luminous.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q2 · Light travels in…</div>
+    <div class="opts" id="e1q2">
+      <button class="opt" onclick="mcq('e1q2',this,false)"><span class="oind">A</span>Curved paths</button>
+      <button class="opt" onclick="mcq('e1q2',this,false)"><span class="oind">B</span>Circles</button>
+      <button class="opt" onclick="mcq('e1q2',this,true)"><span class="oind">C</span>Straight lines</button>
+      <button class="opt" onclick="mcq('e1q2',this,false)"><span class="oind">D</span>Wavy lines</button>
+    </div>
+    <div class="fb" id="fb-e1q2-ok">✅ Correct! Light travels in straight lines — this is called rectilinear propagation.</div>
+    <div class="fb bad" id="fb-e1q2-bad">❌ Light always travels in straight lines (rectilinear propagation) in a uniform medium.</div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(0)">← Back</button>
+    <button class="btn btn-p" id="btn1next" onclick="go(2)" disabled>Next: Shadows →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 2: E2 — Shadows ══════════════════════════════════════════ -->
+<section id="sec2" class="sec">
+  <div class="shdr"><h2>Exercise 2 — Shadow Formation</h2><p>Study the diagram below and answer the questions. (3 pts + journal)</p></div>
+
+  <!-- SVG shadow scene -->
+  <div class="card">
+    <div class="ctitle">🖼 Shadow Scene — Study this diagram</div>
+    <svg viewBox="0 0 520 180" style="width:100%;border-radius:8px;background:#0a0a1a">
+      <!-- light rays -->
+      <line x1="60" y1="50" x2="220" y2="90" stroke="#f5c518" stroke-width="1.5" stroke-dasharray="6,3" opacity=".6"/>
+      <line x1="60" y1="90" x2="220" y2="90" stroke="#f5c518" stroke-width="1.5" stroke-dasharray="6,3" opacity=".6"/>
+      <line x1="60" y1="130" x2="220" y2="90" stroke="#f5c518" stroke-width="1.5" stroke-dasharray="6,3" opacity=".6"/>
+      <!-- lamp -->
+      <circle cx="55" cy="90" r="22" fill="#f5c518" opacity=".9"/>
+      <text x="55" y="95" text-anchor="middle" font-size="10" fill="#1a1a3e" font-weight="bold">LAMP</text>
+      <!-- object -->
+      <ellipse cx="245" cy="90" rx="20" ry="35" fill="#444470"/>
+      <text x="245" y="155" text-anchor="middle" font-size="10" fill="#8080a8">Object</text>
+      <!-- shadow -->
+      <polygon points="265,55 460,15 460,165 265,125" fill="#1a1a3e" opacity=".85"/>
+      <text x="370" y="98" text-anchor="middle" font-size="10" fill="#8080a8">Shadow</text>
+      <!-- screen -->
+      <rect x="458" y="10" width="8" height="160" fill="#4040a0" rx="3"/>
+      <text x="466" y="98" font-size="10" fill="#8080a8"> Screen</text>
+      <!-- arrows on rays -->
+      <polygon points="218,88 212,84 212,92" fill="#f5c518" opacity=".7"/>
+      <polygon points="218,90 212,86 212,94" fill="#f5c518" opacity=".0"/>
+    </svg>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q1 · Where does the shadow form?</div>
+    <div class="opts" id="e2q1">
+      <button class="opt" onclick="mcq('e2q1',this,false)"><span class="oind">A</span>On the same side as the lamp</button>
+      <button class="opt" onclick="mcq('e2q1',this,true)"><span class="oind">B</span>Behind the object on the screen, opposite the lamp</button>
+      <button class="opt" onclick="mcq('e2q1',this,false)"><span class="oind">C</span>Directly around the object</button>
+      <button class="opt" onclick="mcq('e2q1',this,false)"><span class="oind">D</span>In front of the lamp</button>
+    </div>
+    <div class="fb" id="fb-e2q1-ok">✅ Correct! The shadow is a dark region on the screen where light is blocked by the opaque object.</div>
+    <div class="fb bad" id="fb-e2q1-bad">❌ The shadow always forms on the opposite side of the light source, behind the opaque object.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q2 · Which statement correctly describes the shadow diagram?</div>
+    <div class="opts" id="e2label">
+      <button class="opt" onclick="mcq('e2label',this,true)"><span class="oind">A</span>The dark region behind the object (where no light reaches) is the umbra</button>
+      <button class="opt" onclick="mcq('e2label',this,false)"><span class="oind">B</span>The dark region is where light is strongest</button>
+      <button class="opt" onclick="mcq('e2label',this,false)"><span class="oind">C</span>The bright region next to the shadow is itself a shadow</button>
+      <button class="opt" onclick="mcq('e2label',this,false)"><span class="oind">D</span>Shadows can only form with two light sources</button>
+    </div>
+    <div class="fb" id="fb-e2label-ok">✅ Correct! The umbra is the region of total darkness in a shadow.</div>
+    <div class="fb bad" id="fb-e2label-bad">❌ The umbra is the fully dark region of a shadow where no light reaches at all.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">📓 Lab Journal — Observation (teacher-read)</div>
+    <p style="font-size:.87rem;color:var(--muted);margin-bottom:10px">Describe in 2–3 sentences: what happens to the shadow's size when you move the light source <em>closer</em> to the object?</p>
+    <textarea id="e2journal" placeholder="Write your observation here…" oninput="labData.E2_journal=this.value"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q3 · A small point-source lamp creates a shadow. The shadow edge is…</div>
+    <div class="opts" id="e2s3">
+      <button class="opt" onclick="mcq('e2s3',this,false)"><span class="oind">A</span>Fuzzy, with a large penumbra</button>
+      <button class="opt" onclick="mcq('e2s3',this,true)"><span class="oind">B</span>Sharp — only a clear umbra, no penumbra</button>
+      <button class="opt" onclick="mcq('e2s3',this,false)"><span class="oind">C</span>No shadow forms at all</button>
+      <button class="opt" onclick="mcq('e2s3',this,false)"><span class="oind">D</span>Rainbow-coloured at the edge</button>
+    </div>
+    <div class="fb" id="fb-e2s3-ok">✅ Correct! A point source creates only a pure umbra — no partial shadow (penumbra).</div>
+    <div class="fb bad" id="fb-e2s3-bad">❌ A point source has no width, so it produces only a sharp-edged umbra, no penumbra.</div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(1)">← Back</button>
+    <button class="btn btn-p" id="btn2next" onclick="go(3)" disabled>Next: Ray Diagrams →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 3: E3 — Ray Diagrams ════════════════════════════════════ -->
+<section id="sec3" class="sec">
+  <div class="shdr"><h2>Exercise 3 — Ray Diagrams</h2><p>Draw light rays on the canvas, then answer three questions. (4 pts)</p></div>
+
+  <div class="card">
+    <div class="ctitle">✏️ Draw the ray diagram — show how light from the lamp casts a shadow</div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px">Draw at least 2 arrows showing rays from the lamp being blocked by the object to form a shadow on the screen.</p>
+    <div class="ctbar">
+      <span style="font-size:.8rem;color:var(--muted)">Colour:</span>
+      <div class="cbtn on" style="background:#f5c518" onclick="setColor('#f5c518',this)" title="Gold"></div>
+      <div class="cbtn" style="background:#ffffff" onclick="setColor('#ffffff',this)" title="White"></div>
+      <div class="cbtn" style="background:#4caf50" onclick="setColor('#4caf50',this)" title="Green"></div>
+      <div class="cbtn" style="background:#f44336" onclick="setColor('#f44336',this)" title="Red"></div>
+      <span style="font-size:.8rem;color:var(--muted);margin-left:8px">Size:</span>
+      <input type="range" id="brush" min="1" max="10" value="3" style="width:80px">
+      <button class="btn btn-s" style="padding:5px 12px;font-size:.8rem" onclick="clearDraw()">Clear</button>
+    </div>
+    <canvas id="drawCvs" width="700" height="220" style="width:100%"></canvas>
+    <div style="margin-top:10px">
+      <button class="btn btn-g" onclick="doneDrawing()">✅ Done Drawing (+1 pt)</button>
+      <span id="draw-badge" style="margin-left:10px;font-size:.85rem;color:var(--muted)"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q1 · What does an arrow on a light ray represent?</div>
+    <div class="opts" id="e3q1">
+      <button class="opt" onclick="mcq('e3q1',this,false)"><span class="oind">A</span>The speed of light</button>
+      <button class="opt" onclick="mcq('e3q1',this,true)"><span class="oind">B</span>The direction in which light is travelling</button>
+      <button class="opt" onclick="mcq('e3q1',this,false)"><span class="oind">C</span>The colour of the light</button>
+      <button class="opt" onclick="mcq('e3q1',this,false)"><span class="oind">D</span>The wavelength of light</button>
+    </div>
+    <div class="fb" id="fb-e3q1-ok">✅ Correct! Arrows on rays show the direction of light travel.</div>
+    <div class="fb bad" id="fb-e3q1-bad">❌ In ray diagrams, arrows always show the direction in which the light is travelling.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q2 · Why do we draw light as straight lines with arrows?</div>
+    <div class="opts" id="e3q2">
+      <button class="opt" onclick="mcq('e3q2',this,false)"><span class="oind">A</span>Because light bends in air</button>
+      <button class="opt" onclick="mcq('e3q2',this,false)"><span class="oind">B</span>To make the diagram look neat</button>
+      <button class="opt" onclick="mcq('e3q2',this,true)"><span class="oind">C</span>Because light travels in straight lines in a uniform medium</button>
+      <button class="opt" onclick="mcq('e3q2',this,false)"><span class="oind">D</span>Because light is a transverse wave</button>
+    </div>
+    <div class="fb" id="fb-e3q2-ok">✅ Correct! Straight lines reflect rectilinear propagation of light.</div>
+    <div class="fb bad" id="fb-e3q2-bad">❌ We draw straight lines because light propagates in straight lines through uniform media.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q3 · When a ray of light hits an opaque object, it…</div>
+    <div class="opts" id="e3q3">
+      <button class="opt" onclick="mcq('e3q3',this,false)"><span class="oind">A</span>Passes through unchanged</button>
+      <button class="opt" onclick="mcq('e3q3',this,false)"><span class="oind">B</span>Bends around the object</button>
+      <button class="opt" onclick="mcq('e3q3',this,true)"><span class="oind">C</span>Is blocked, creating a shadow region behind it</button>
+      <button class="opt" onclick="mcq('e3q3',this,false)"><span class="oind">D</span>Speeds up</button>
+    </div>
+    <div class="fb" id="fb-e3q3-ok">✅ Correct! Opaque objects block light, forming a shadow.</div>
+    <div class="fb bad" id="fb-e3q3-bad">❌ Opaque objects absorb or reflect light — rays cannot pass through, so a shadow forms behind.</div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(2)">← Back</button>
+    <button class="btn btn-p" id="btn3next" onclick="go(4)" disabled>Next: Game →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 4: GAME ═══════════════════════════════════════════════════ -->
+<section id="sec4" class="sec">
+  <div class="shdr"><h2>🎮 Shadow Quiz Game</h2><p>5 questions · 10 s each · 3 lives · Score adds bonus points to your grade!</p></div>
+
+  <div class="card">
+    <div class="hud">
+      <div class="hitem"><div class="hval" id="g-score">0</div><div class="hlbl">SCORE</div></div>
+      <div class="hitem"><div class="hval" id="g-lives">❤️❤️❤️</div><div class="hlbl">LIVES</div></div>
+      <div class="hitem"><div class="hval" id="g-timer">10</div><div class="hlbl">SECONDS</div></div>
+      <div class="hitem"><div class="hval" id="g-bonus">0</div><div class="hlbl">BONUS</div></div>
+    </div>
+
+    <div id="gqbox">
+      <div id="g-qtext" style="font-size:1.05rem;margin-bottom:14px;min-height:48px"></div>
+      <div class="opts" id="g-opts"></div>
+    </div>
+    <div id="g-done" style="display:none;text-align:center;padding:20px">
+      <div style="font-size:1.1rem;color:var(--gold);margin-bottom:8px">Game Over!</div>
+      <div id="g-result" style="font-size:.95rem;color:var(--muted)"></div>
+    </div>
+
+    <div style="margin-top:14px">
+      <button class="btn btn-p" id="g-start" onclick="startGame()">▶ Start Game</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(3)">← Back</button>
+    <button class="btn btn-p" id="btn4next" onclick="go(5)" disabled>Next: Reflection →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 5: E4 — Reflection ═══════════════════════════════════════ -->
+<section id="sec5" class="sec">
+  <div class="shdr"><h2>Exercise 4 — Reflection &amp; the Protractor</h2><p>Measure the angle of reflection, then answer questions. (4 pts)</p></div>
+
+  <div class="card">
+    <div class="ctitle">📐 Protractor Task — Click on the canvas to draw the reflected ray</div>
+    <div class="infobox">The mirror is the horizontal line. The <strong>normal</strong> is shown dashed vertically. The <strong>incident ray</strong> arrives from the upper-left. Click anywhere <em>above the mirror on the right side</em> to set your reflected ray, then click <strong>Check Angle</strong>.</div>
+    <canvas id="proto-cvs" width="680" height="280" style="width:100%"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-p" id="proto-check" onclick="checkProto()" disabled>Check My Angle</button>
+      <button class="btn btn-s" id="proto-retry" onclick="resetProto()" style="display:none">↺ Try Again</button>
+      <span id="proto-result" style="font-size:.9rem"></span>
+    </div>
+    <div class="proto-hint" id="proto-hint">💡 Hint: The law of reflection says angle of incidence = angle of reflection. Both angles are measured from the <strong>normal</strong> (the dashed vertical line), not from the mirror surface.</div>
+    <div id="proto-attempts" style="font-size:.8rem;color:var(--muted);margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q1 · The law of reflection states that the angle of incidence…</div>
+    <div class="opts" id="e4q1">
+      <button class="opt" onclick="mcq('e4q1',this,false)"><span class="oind">A</span>Is always exactly 90°</button>
+      <button class="opt" onclick="mcq('e4q1',this,true)"><span class="oind">B</span>Equals the angle of reflection</button>
+      <button class="opt" onclick="mcq('e4q1',this,false)"><span class="oind">C</span>Is always larger than the angle of reflection</button>
+      <button class="opt" onclick="mcq('e4q1',this,false)"><span class="oind">D</span>Has no relation to the angle of reflection</button>
+    </div>
+    <div class="fb" id="fb-e4q1-ok">✅ Correct! Angle of incidence = angle of reflection — this is the law of reflection.</div>
+    <div class="fb bad" id="fb-e4q1-bad">❌ The law of reflection: angle of incidence = angle of reflection (both measured from the normal).</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q2 · Angles of incidence and reflection are measured from…</div>
+    <div class="opts" id="e4q2">
+      <button class="opt" onclick="mcq('e4q2',this,false)"><span class="oind">A</span>The mirror surface itself</button>
+      <button class="opt" onclick="mcq('e4q2',this,false)"><span class="oind">B</span>The incident ray only</button>
+      <button class="opt" onclick="mcq('e4q2',this,true)"><span class="oind">C</span>The normal to the reflecting surface</button>
+      <button class="opt" onclick="mcq('e4q2',this,false)"><span class="oind">D</span>The horizontal ground</button>
+    </div>
+    <div class="fb" id="fb-e4q2-ok">✅ Correct! The normal is the reference line — always perpendicular to the mirror surface.</div>
+    <div class="fb bad" id="fb-e4q2-bad">❌ Both angles are measured from the <em>normal</em> — the imaginary line perpendicular to the mirror.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Q3 · A ray hits a flat mirror at 30° to the normal. The reflected ray makes an angle of ___ with the normal.</div>
+    <div class="opts" id="e4q3">
+      <button class="opt" onclick="mcq('e4q3',this,false)"><span class="oind">A</span>60°</button>
+      <button class="opt" onclick="mcq('e4q3',this,true)"><span class="oind">B</span>30°</button>
+      <button class="opt" onclick="mcq('e4q3',this,false)"><span class="oind">C</span>90°</button>
+      <button class="opt" onclick="mcq('e4q3',this,false)"><span class="oind">D</span>15°</button>
+    </div>
+    <div class="fb" id="fb-e4q3-ok">✅ Correct! 30° in = 30° out, by the law of reflection.</div>
+    <div class="fb bad" id="fb-e4q3-bad">❌ The angle of reflection equals the angle of incidence, so 30° → 30°.</div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(4)">← Back</button>
+    <button class="btn btn-p" id="btn5next" onclick="go(6)" disabled>Next: MCQ &amp; Label →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 6: E5 — MCQ + Labelling ════════════════════════════════ -->
+<section id="sec6" class="sec">
+  <div class="shdr"><h2>Exercise 5 — MCQ &amp; Reflection Labelling</h2><p>Three multiple-choice questions plus a diagram labelling task. (4 pts)</p></div>
+
+  <div class="card">
+    <div class="ctitle">MCQ 1 · Which surface reflects light most effectively?</div>
+    <div class="opts" id="e5m1">
+      <button class="opt" onclick="mcqPts('e5m1',this,false)"><span class="oind">A</span>Rough black surface</button>
+      <button class="opt" onclick="mcqPts('e5m1',this,false)"><span class="oind">B</span>Rough white surface</button>
+      <button class="opt" onclick="mcqPts('e5m1',this,true)"><span class="oind">C</span>Smooth, shiny (polished) surface</button>
+      <button class="opt" onclick="mcqPts('e5m1',this,false)"><span class="oind">D</span>Frosted transparent glass</button>
+    </div>
+    <div class="fb" id="fb-e5m1-ok">✅ Correct! Smooth, polished surfaces produce specular (regular) reflection.</div>
+    <div class="fb bad" id="fb-e5m1-bad">❌ Polished/smooth surfaces give specular reflection — the most effective type of reflection.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">MCQ 2 · Diffuse (scattered) reflection occurs on…</div>
+    <div class="opts" id="e5m2">
+      <button class="opt" onclick="mcqPts('e5m2',this,false)"><span class="oind">A</span>Flat mirrors</button>
+      <button class="opt" onclick="mcqPts('e5m2',this,false)"><span class="oind">B</span>Still water surface</button>
+      <button class="opt" onclick="mcqPts('e5m2',this,true)"><span class="oind">C</span>Rough or matte surfaces</button>
+      <button class="opt" onclick="mcqPts('e5m2',this,false)"><span class="oind">D</span>Polished metal</button>
+    </div>
+    <div class="fb" id="fb-e5m2-ok">✅ Correct! Rough surfaces scatter light in many directions — diffuse reflection.</div>
+    <div class="fb bad" id="fb-e5m2-bad">❌ Rough/matte surfaces scatter light in random directions — this is diffuse reflection.</div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">MCQ 3 · The image formed by a plane (flat) mirror is…</div>
+    <div class="opts" id="e5m3">
+      <button class="opt" onclick="mcqPts('e5m3',this,false)"><span class="oind">A</span>Inverted and real</button>
+      <button class="opt" onclick="mcqPts('e5m3',this,true)"><span class="oind">B</span>Upright, virtual, and the same size as the object</button>
+      <button class="opt" onclick="mcqPts('e5m3',this,false)"><span class="oind">C</span>Upright and real</button>
+      <button class="opt" onclick="mcqPts('e5m3',this,false)"><span class="oind">D</span>Inverted and virtual</button>
+    </div>
+    <div class="fb" id="fb-e5m3-ok">✅ Correct! A plane mirror produces an upright, virtual, laterally-inverted image the same size as the object.</div>
+    <div class="fb bad" id="fb-e5m3-bad">❌ A plane mirror gives an upright, virtual image — you cannot project it on a screen.</div>
+  </div>
+
+  <!-- Label task -->
+  <div class="card">
+    <div class="ctitle">🏷 Label the Reflection Diagram — drag each label to its correct spot</div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px">Click a label chip, then click the matching numbered spot on the diagram.</p>
+    <div class="lchips" id="lchips">
+      <div class="lchip" onclick="selectChip(this,'Normal')">Normal</div>
+      <div class="lchip" onclick="selectChip(this,'Incident Ray')">Incident Ray</div>
+      <div class="lchip" onclick="selectChip(this,'Reflected Ray')">Reflected Ray</div>
+      <div class="lchip" onclick="selectChip(this,'Mirror')">Mirror</div>
+    </div>
+    <!-- SVG diagram with clickable numbered spots -->
+    <div class="label-area" id="labelArea">
+      <svg viewBox="0 0 520 260" style="width:100%;height:100%">
+        <!-- mirror -->
+        <line x1="60" y1="200" x2="460" y2="200" stroke="#6060c0" stroke-width="4"/>
+        <!-- hatching -->
+        <line x1="60" y1="200" x2="60" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="100" y1="200" x2="100" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="140" y1="200" x2="140" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="180" y1="200" x2="180" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="220" y1="200" x2="220" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="260" y1="200" x2="260" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="300" y1="200" x2="300" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="340" y1="200" x2="340" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="380" y1="200" x2="380" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <line x1="420" y1="200" x2="420" y2="215" stroke="#3a3a65" stroke-width="2"/>
+        <!-- normal -->
+        <line x1="260" y1="50" x2="260" y2="200" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+        <!-- incident ray -->
+        <line x1="110" y1="50" x2="260" y2="200" stroke="#f5c518" stroke-width="2.5"/>
+        <polygon points="260,200 250,178 258,182" fill="#f5c518"/>
+        <!-- reflected ray -->
+        <line x1="260" y1="200" x2="415" y2="50" stroke="#4caf50" stroke-width="2.5"/>
+        <polygon points="415,50 408,72 413,65" fill="#4caf50"/>
+        <!-- spot markers -->
+        <circle cx="260" cy="115" r="14" fill="rgba(245,197,24,.15)" stroke="#f5c518" stroke-width="1.5"/>
+        <text x="260" y="120" text-anchor="middle" fill="#f5c518" font-size="12" font-weight="bold">1</text>
+        <circle cx="155" cy="105" r="14" fill="rgba(245,197,24,.15)" stroke="#f5c518" stroke-width="1.5"/>
+        <text x="155" y="110" text-anchor="middle" fill="#f5c518" font-size="12" font-weight="bold">2</text>
+        <circle cx="370" cy="105" r="14" fill="rgba(245,197,24,.15)" stroke="#f5c518" stroke-width="1.5"/>
+        <text x="370" y="110" text-anchor="middle" fill="#f5c518" font-size="12" font-weight="bold">3</text>
+        <circle cx="380" cy="195" r="14" fill="rgba(245,197,24,.15)" stroke="#f5c518" stroke-width="1.5"/>
+        <text x="380" y="200" text-anchor="middle" fill="#f5c518" font-size="12" font-weight="bold">4</text>
+      </svg>
+      <!-- overlay clickable divs -->
+      <div class="dspot" id="spot1" style="left:calc(260/520*100% - 15px);top:calc(115/260*100% - 15px)" onclick="assignSpot(this,'Normal')" data-ans="Normal" title="Spot 1"></div>
+      <div class="dspot" id="spot2" style="left:calc(155/520*100% - 15px);top:calc(105/260*100% - 15px)" onclick="assignSpot(this,'Incident Ray')" data-ans="Incident Ray" title="Spot 2"></div>
+      <div class="dspot" id="spot3" style="left:calc(370/520*100% - 15px);top:calc(105/260*100% - 15px)" onclick="assignSpot(this,'Reflected Ray')" data-ans="Reflected Ray" title="Spot 3"></div>
+      <div class="dspot" id="spot4" style="left:calc(380/520*100% - 15px);top:calc(192/260*100% - 15px)" onclick="assignSpot(this,'Mirror')" data-ans="Mirror" title="Spot 4"></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-p" id="lblCheck" onclick="checkLabels()" disabled>Check Labels</button>
+      <button class="btn btn-s" onclick="resetLabels()">Reset</button>
+      <span id="lbl-result" style="font-size:.88rem"></span>
+    </div>
+    <div class="fb" id="fb-lbl-ok" style="display:none">✅ Well done! All labels correctly placed.</div>
+    <div class="fb bad" id="fb-lbl-bad" style="display:none">❌ Some labels are wrong — check the highlighted spots.</div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(5)">← Back</button>
+    <button class="btn btn-p" id="btn6next" onclick="go(7)" disabled>Next: My Drawing →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 7: Drawing Upload ════════════════════════════════════════ -->
+<section id="sec7" class="sec">
+  <div class="shdr"><h2>🎨 My Reflection Diagram</h2><p>Draw your best ray diagram showing reflection from a plane mirror — then upload it to Drive.</p></div>
+
+  <div class="card">
+    <div class="ctitle">✏️ Drawing Canvas</div>
+    <div class="ctbar">
+      <span style="font-size:.8rem;color:var(--muted)">Colour:</span>
+      <div class="cbtn on" id="uc0" style="background:#f5c518" onclick="setUColor('#f5c518',0)"></div>
+      <div class="cbtn" id="uc1" style="background:#ffffff" onclick="setUColor('#ffffff',1)"></div>
+      <div class="cbtn" id="uc2" style="background:#4caf50" onclick="setUColor('#4caf50',2)"></div>
+      <div class="cbtn" id="uc3" style="background:#f44336" onclick="setUColor('#f44336',3)"></div>
+      <div class="cbtn" id="uc4" style="background:#2196f3" onclick="setUColor('#2196f3',4)"></div>
+      <span style="font-size:.8rem;color:var(--muted);margin-left:6px">Size:</span>
+      <input type="range" id="ubrush" min="1" max="14" value="4" style="width:80px">
+      <button class="btn btn-s" style="padding:5px 12px;font-size:.8rem" onclick="clearUpload()">Clear</button>
+    </div>
+    <canvas id="uploadCvs" width="700" height="340" style="width:100%;background:#0a0a1a"></canvas>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">☁️ Upload to Google Drive</div>
+    <p style="font-size:.87rem;color:var(--muted);margin-bottom:14px">Your drawing will be saved to the class Drive folder. You must click Upload before submitting.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-p" id="uploadBtn" onclick="uploadDrawing()">⬆ Upload Drawing</button>
+      <span id="upload-status" style="font-size:.88rem;color:var(--muted)">Not uploaded yet</span>
+    </div>
+    <div style="margin-top:10px" id="upload-link-wrap" style="display:none">
+      <a id="upload-link" href="#" target="_blank" style="color:var(--gold);font-size:.85rem">View uploaded drawing ↗</a>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(6)">← Back</button>
+    <button class="btn btn-p" onclick="go(8)">Next: Self Assessment →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 8: Self Assessment ══════════════════════════════════════ -->
+<section id="sec8" class="sec">
+  <div class="shdr"><h2>🌟 Self Assessment</h2><p>Rate your confidence in each exercise honestly. 1 star = not confident, 5 stars = very confident.</p></div>
+
+  <div class="card">
+    <div id="self-rows">
+      <div class="self-row"><span class="self-lbl">E1 — Light Sources</span><div class="stars" id="st-e1"></div></div>
+      <div class="self-row"><span class="self-lbl">E2 — Shadow Formation</span><div class="stars" id="st-e2"></div></div>
+      <div class="self-row"><span class="self-lbl">E3 — Ray Diagrams</span><div class="stars" id="st-e3"></div></div>
+      <div class="self-row"><span class="self-lbl">E4 — Reflection &amp; Protractor</span><div class="stars" id="st-e4"></div></div>
+      <div class="self-row"><span class="self-lbl">E5 — MCQ &amp; Labelling</span><div class="stars" id="st-e5"></div></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(7)">← Back</button>
+    <button class="btn btn-p" onclick="showSummary()">See My Score →</button>
+  </div>
+</section>
+
+<!-- ═══ SECTION 9: Summary + Submit ══════════════════════════════════════ -->
+<section id="sec9" class="sec">
+  <div class="shdr"><h2>📊 Your Results</h2><p>Review your score and submit your lab to the teacher.</p></div>
+
+  <div class="score-big">
+    <div class="snum" id="sum-score">—</div>
+    <div class="sdenom">/ 20</div>
+    <div><span class="gbadge" id="sum-grade">—</span></div>
+    <div style="color:var(--muted);font-size:.85rem;margin-top:10px" id="sum-name-class"></div>
+  </div>
+
+  <div class="bkgrid">
+    <div class="bkcell"><div class="bkpts" id="bk-e1">—</div><div class="bklbl">E1 Light Sources<br>/2</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-e2">—</div><div class="bklbl">E2 Shadows<br>/3</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-e3">—</div><div class="bklbl">E3 Ray Diagrams<br>/4</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-e4">—</div><div class="bklbl">E4 Reflection<br>/4</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-e5">—</div><div class="bklbl">E5 MCQ+Label<br>/4</div></div>
+    <div class="bkcell"><div class="bkpts" id="bk-game">—</div><div class="bklbl">Game Bonus<br>/3</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">📤 Submit to Teacher</div>
+    <p style="font-size:.87rem;color:var(--muted);margin-bottom:14px" id="submit-note">Your responses will be sent to the class Google Sheet.</p>
+    <button class="btn btn-p" id="submitBtn" onclick="submitLab()" style="width:100%;justify-content:center;font-size:1.05rem;padding:14px">
+      📤 Submit Lab
+    </button>
+    <div id="submit-status" style="margin-top:12px;text-align:center;font-size:.9rem"></div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-s" onclick="go(8)">← Back</button>
+    <div></div>
+  </div>
+</section>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  CONFIG — paste your deployed Web App URL here
+// ═══════════════════════════════════════════════════════════════════════════
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxICAoax42ta8RP-ipsMf-BXWqjIgdWcxmb8Ho5L10imdGswGVvUyoQSNVM7g3KuSIJhA/exec';
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  STUDENT ROSTER
+// ═══════════════════════════════════════════════════════════════════════════
+var STUDENTS = {
+  '8A': [
+    'أسماء هيثم علي ندوه',
+    'ابراهيم طارق صلاح معروف',
+    'ابراهيم محمد رفعت ابو حميد',
+    'احسان محمد وليد الشحبري',
+    'ادم وليد توفيق الخطيب',
+    'الين رشيد محمد احمد',
+    'تالا محمد عدنان العمري',
+    'تيا احمد محمد الركن',
+    'جنى ماهر غالب الدالي',
+    'جنى محي الدين فاعور',
+    'جود محمد مروان الشامي',
+    'حسين احمد محمود اسماعيل',
+    'حنين علي ابراهيم ميعاد',
+    'راما احمد توفيق الزقه',
+    'رهف سعيد شحادة فلاح',
+    'زينب محمد رياض حماده',
+    'سعاد مازن محمد الشامي',
+    'سمر محمد صابر ظاهر',
+    'سيلين منصور عبد شحاده',
+    'عادل محمد عادل أبو عرب',
+    'عبد الرحمن وليد محمد',
+    'علي مصطفى حسن سالم',
+    'علي ياسر نمر فاعور',
+    'عمران مازن صالح مرعي',
+    'فاطمه محمد خالد قاسم',
+    'قمر حسين عمر حمزة',
+    'كريم محمود عبد الحفيظ',
+    'ليا محمد عمر عباس',
+    'لين رشدي موسى الصالح',
+    'لين ماهر احمد العيسى',
+    'لين وسام احمد حسين',
+    'ماريا طلعت احمد مراد',
+    'محمد احمد محمد الصعيدي',
+    'محمد سامر محمد الصالح',
+    'محمد علي محمد ابو شقير',
+    'محمد علي محمد عبد الجليل',
+    'محمد قاسم عادل عفيفي',
+    'محمود شادي محمود شحادة',
+    'مرام احمد كايد خضره',
+    'نرجس هاني احمد عقلة',
+    'نور محمد علي علي',
+    'هلا شفيق علي فلوس',
+    'يارا محمود السيد السعدني'
+  ],
+  '8B': [
+    'أسينات احمد فريد العلي',
+    'اسامة بسام عبد الرحمن حمو',
+    'امال ساري علي زيداني',
+    'امنة محمد كمال قدورة',
+    'امير هشام مصطفى كروم',
+    'ايمان بسام خالد محمد',
+    'بيسان بسام عبد الرحمن حمو',
+    'تاليا انس ابراهيم المنديل',
+    'حبيبة عوني علي الزبيدات',
+    'حلا اشرف احمد الحاج علي',
+    'حنين فتحي علي حميد',
+    'راما خالد محمد عطعوط',
+    'رضوان جهاد رضوان ديب',
+    'رواد مروان ابراهيم العبدالله',
+    'زهراء عماد وليد شيخه',
+    'سارة فادي عدنان فارس',
+    'سامي يسار سامي معروف',
+    'سعيد ماهر سعيد سعيد',
+    'سهى عامر احمد عطية',
+    'صلاح الدين مصطفى بللي',
+    'علي مصطفى علي سريس',
+    'عمر حسام حسين الموسى',
+    'فاطمه جمال احمد المحمود',
+    'فضل احمد محمد حسين',
+    'كريم رائد محمد دلاشي',
+    'لارا محمد خالد عبد الغني',
+    'ليلاس وسيم شحادة شحاده',
+    'ماريه يحيى محمد ابو هموس',
+    'محمد احمد محمد شريده',
+    'محمد حسام عاطف أبو شباب',
+    'محمد حكمت غاندي عبدالله',
+    'محمد علي محمود احمد',
+    'محمد هشام احمد مره',
+    'محمود نايف مصطفى قاسميه',
+    'مريم محمود محي الدين مرّه',
+    'ملاك يونس محمد رحال',
+    'ميريانا احمد مصطفى عيتاني',
+    'هدى محمود محمد الركن',
+    'وسيله سعدو درويش ششنيه',
+    'يحيى زكريا سميح حمو'
+  ],
+  '8C': [
+    'آلاء رباح محمود شراب',
+    'آلاء محمود صالح أدلبي',
+    'ابراهيم محمد إبراهيم عزيز',
+    'امير ماجد احمد اسماعيل',
+    'بتول فايز محمد حمود',
+    'بهاء الدين بلال بهاء الدين رشيد',
+    'بيان كمال احمد ابو سويد',
+    'تبارك محمد محمد السيد يوسف',
+    'تغريد خالد عزات يحيى',
+    'جمال محمد جمال حوحو',
+    'جنى حسن محمد الظريف',
+    'جهاد فادي حسن سالم',
+    'حلا محمد حسن ابو شنار',
+    'حلا مصطفى محمد خير بللي',
+    'خالد وسيم خالد حسن',
+    'راما زياد علي الحاج علي',
+    'راما عبد المجيد محمد سالم',
+    'راما محمد يوسف العلي',
+    'رزان زياد عبد الناصر اصمهان',
+    'روان عماد فوزي ابراهيم',
+    'ريم اديب احمد حسين',
+    'ريم ماهر عطا الخطيب',
+    'ريم نور الدين فايز عبد الرازق',
+    'سلام عصام حمودة ناجي',
+    'سلام محمد بديع فيصل العلي',
+    'سيلا هشام امين الطه',
+    'شهد صالح احمد مطر',
+    'صالح محمد سامي الشورى',
+    'عبد الله حسن سعيد سليمان',
+    'علي محمد ابراهيم صالح',
+    'علي ناصر علي حماده',
+    'عمر عصام الصادق',
+    'فرح وائل باسل غزلان',
+    'لانا باسم امين صيداوي',
+    'لين احمد عيسى قاسم',
+    'لين وائل زياد الهبطه',
+    'ماسة عمار علي علي',
+    'محمد حسين احمد ندوه',
+    'محمود محمد سالم نجمي',
+    'ملكه سعد الدين برجاوي',
+    'نور الهدى جهاد عزات عليان'
+  ],
+  '8D': [
+    'إسراء ايمن محمد قدسيه',
+    'احمد زاهر جهاد قدورة',
+    'احمد علاء احمد اسماعيل',
+    'احمد محمد رياض الخطيب',
+    'ادم خالد محمود قدورة',
+    'اسراء احمد داري نوفل',
+    'الما محمد جمال ششنيه',
+    'اياد احمد حسين محمود',
+    'اياد احمد سمير قدوره',
+    'بيسان علي احمد قاسم',
+    'تقى احمد موسى عبدالله',
+    'حسن علي حسن حبقزي',
+    'حمزة عاطف محمد الحاج محمد',
+    'دانا نبيل نور الدين الهندي',
+    'راما فادي علي سليم',
+    'رهف خليل عبدالله شاهين',
+    'روزا محمود علي عودي',
+    'ريتال نضال موسى مناد',
+    'زهراء محمد حسن بركات',
+    'زينب محمد عبد غنام',
+    'سالي فادي عثمان عباس',
+    'سماح احمد عطا أبو عنزه',
+    'علا محمد زيد عثمان',
+    'علي كمال علي سعد',
+    'عمر محمود عباس الحايك',
+    'غزل محمد خليل ابو عرب',
+    'غفران محمد يوسف داوود',
+    'كريم عوني خالد عبد الغني',
+    'لين علي نايف حميد',
+    'ماريا ابراهيم درويش خزعل',
+    'محمد براء محمود حسن',
+    'محمد بهاء ابراهيم العيسى',
+    'محمد خالد محمود مطر',
+    'محمد ربيع محمد هنداوي',
+    'محمود علي محمود يوسف',
+    'مصطفى عماد الدين تراوي',
+    'ميار سعيد محمد حسن',
+    'نور عباس محمد عمر',
+    'هبة يحيى عيسى ابو مايهه',
+    'هيلين فيصل فضل الله الراشد',
+    'يوسف عامر محمد مصريه',
+    'يوسف هيثم فايز بركة'
+  ]
+};
+
+function populateNames() {
+  var cls = document.getElementById('inp-class').value;
+  var sel = document.getElementById('inp-name');
+  sel.innerHTML = '<option value="">— اختر اسمك —</option>';
+  if (!cls || !STUDENTS[cls]) {
+    sel.disabled = true;
+    sel.style.opacity = '.6';
+    return;
+  }
+  STUDENTS[cls].forEach(function(n) {
+    var opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n;
+    sel.appendChild(opt);
+  });
+  sel.disabled = false;
+  sel.style.opacity = '1';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════════════════
+var labData = {
+  Name:'', Class:'', Time_min:0,
+  E1_Q1_ok:0, E1_Q2_ok:0,
+  E2_sceneQ1_ok:0, E2_label_ok:0, E2_journal:'', E2_S3label_ok:0,
+  E3_raydraw_ok:0, E3_Q1_ok:0, E3_Q2_ok:0, E3_Q3_ok:0,
+  Game_score:0, Game_bonus:0, Game_lives:3,
+  E4_protractor_ok:0, E4_protractor_attempts:0, E4_protractor_adaptive:false,
+  E4_Q1_ok:0, E4_Q2_ok:0, E4_Q3_ok:0,
+  E5_MCQ_pts:0, E5_label_ok:0,
+  Drawing_uploaded:'no', Drawing_link:'',
+  Self_E1:0, Self_E2:0, Self_E3:0, Self_E4:0, Self_E5:0,
+  Raw_score:0, Score_20:0, Grade_letter:''
+};
+
+var currentSec = 0;
+var totalSecs  = 9;
+var timerSecs  = 0;
+var timerInt   = null;
+var e1Done=false, e2Done=false, e3Done=false, gameDone=false, e4Done=false, e5Done=false;
+
+// section labels
+var secLabels = [
+  'Welcome','E1: Light Sources','E2: Shadows','E3: Ray Diagrams',
+  'Game','E4: Reflection','E5: MCQ & Label','My Drawing',
+  'Self Assessment','Submit'
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════
+function go(n) {
+  document.getElementById('sec' + currentSec).classList.remove('on');
+  currentSec = n;
+  document.getElementById('sec' + n).classList.add('on');
+  window.scrollTo(0, 0);
+  var pct = Math.round((n / totalSecs) * 100);
+  document.getElementById('pf').style.width = pct + '%';
+  document.getElementById('plabel').textContent = secLabels[n] || '';
+  if (n === 5) initProto();
+}
+
+function startLab() {
+  var name = document.getElementById('inp-name').value.trim();
+  var cls  = document.getElementById('inp-class').value;
+  if (!name) { alert('Please enter your name.'); return; }
+  if (!cls)  { alert('Please select your class.'); return; }
+  labData.Name  = name;
+  labData.Class = cls;
+  startTimer();
+  fetchLeaderboard();
+  go(1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  TIMER
+// ═══════════════════════════════════════════════════════════════════════════
+function startTimer() {
+  timerInt = setInterval(function() {
+    timerSecs++;
+    var m = Math.floor(timerSecs / 60);
+    var s = timerSecs % 60;
+    document.getElementById('timer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  MCQ HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+function mcq(groupId, btn, correct) {
+  var grp = document.getElementById(groupId);
+  var btns = grp.querySelectorAll('.opt');
+  btns.forEach(function(b) { b.disabled = true; });
+  if (correct) {
+    btn.classList.add('ok');
+    var okFb = document.getElementById('fb-' + groupId + '-ok');
+    if (okFb) okFb.style.display = 'block';
+  } else {
+    btn.classList.add('bad');
+    var badFb = document.getElementById('fb-' + groupId + '-bad');
+    if (badFb) badFb.style.display = 'block';
+    // highlight correct
+    btns.forEach(function(b) {
+      if (!b.classList.contains('bad')) b.classList.add('ok');
+    });
+  }
+  // map groupId → labData field
+  var fieldMap = {
+    'e1q1':'E1_Q1_ok','e1q2':'E1_Q2_ok',
+    'e2q1':'E2_sceneQ1_ok','e2label':'E2_label_ok','e2s3':'E2_S3label_ok',
+    'e3q1':'E3_Q1_ok','e3q2':'E3_Q2_ok','e3q3':'E3_Q3_ok',
+    'e4q1':'E4_Q1_ok','e4q2':'E4_Q2_ok','e4q3':'E4_Q3_ok'
+  };
+  if (fieldMap[groupId] !== undefined) labData[fieldMap[groupId]] = correct ? 1 : 0;
+  checkSectionReady();
+}
+
+// MCQ that tracks pts (e5)
+var e5mcqAnswered = {e5m1:false, e5m2:false, e5m3:false};
+function mcqPts(groupId, btn, correct) {
+  if (e5mcqAnswered[groupId]) return;
+  e5mcqAnswered[groupId] = true;
+  var grp = document.getElementById(groupId);
+  var btns = grp.querySelectorAll('.opt');
+  btns.forEach(function(b) { b.disabled = true; });
+  if (correct) {
+    btn.classList.add('ok');
+    var okFb = document.getElementById('fb-' + groupId + '-ok');
+    if (okFb) okFb.style.display = 'block';
+    labData.E5_MCQ_pts++;
+  } else {
+    btn.classList.add('bad');
+    var badFb = document.getElementById('fb-' + groupId + '-bad');
+    if (badFb) badFb.style.display = 'block';
+    btns.forEach(function(b) { if (!b.classList.contains('bad')) b.classList.add('ok'); });
+  }
+  checkSectionReady();
+}
+
+function checkSectionReady() {
+  // E1
+  if (labData.E1_Q1_ok !== undefined && document.querySelector('#e1q1 .opt:disabled') &&
+      document.querySelector('#e1q2 .opt:disabled')) {
+    document.getElementById('btn1next').disabled = false;
+  }
+  // E2
+  if (document.querySelector('#e2q1 .opt:disabled') &&
+      document.querySelector('#e2label .opt:disabled') &&
+      document.querySelector('#e2s3 .opt:disabled')) {
+    document.getElementById('btn2next').disabled = false;
+  }
+  // E3
+  if (document.querySelector('#e3q1 .opt:disabled') &&
+      document.querySelector('#e3q2 .opt:disabled') &&
+      document.querySelector('#e3q3 .opt:disabled')) {
+    var btn = document.getElementById('btn3next');
+    if (btn) btn.disabled = (labData.E3_raydraw_ok === 0);
+    checkE3Nav();
+  }
+  // E4
+  if (document.querySelector('#e4q1 .opt:disabled') &&
+      document.querySelector('#e4q2 .opt:disabled') &&
+      document.querySelector('#e4q3 .opt:disabled') &&
+      labData.E4_protractor_attempts > 0) {
+    document.getElementById('btn5next').disabled = false;
+  }
+  // E5
+  if (e5mcqAnswered.e5m1 && e5mcqAnswered.e5m2 && e5mcqAnswered.e5m3 && labData.E5_label_ok >= 0) {
+    var lbl = document.getElementById('btn6next');
+    if (labelsChecked) { if(lbl) lbl.disabled = false; }
+  }
+}
+
+function checkE3Nav() {
+  var q = document.querySelector('#e3q1 .opt:disabled') &&
+          document.querySelector('#e3q2 .opt:disabled') &&
+          document.querySelector('#e3q3 .opt:disabled');
+  var btn = document.getElementById('btn3next');
+  if (btn) btn.disabled = !(q && labData.E3_raydraw_ok === 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  E3 DRAWING CANVAS
+// ═══════════════════════════════════════════════════════════════════════════
+var drawColor = '#f5c518';
+var drawCvs, drawCtx, drawing = false, drawHasContent = false;
+
+window.addEventListener('load', function() {
+  initDrawCanvas();
+  initUploadCanvas();
+  initStars();
+});
+
+function initDrawCanvas() {
+  drawCvs = document.getElementById('drawCvs');
+  if (!drawCvs) return;
+  drawCtx = drawCvs.getContext('2d');
+  drawCtx.fillStyle = '#0a0a1a';
+  drawCtx.fillRect(0, 0, drawCvs.width, drawCvs.height);
+  // draw background hint
+  drawCtx.strokeStyle = '#2a2a50';
+  drawCtx.lineWidth = 1;
+  drawCtx.setLineDash([6,4]);
+  // lamp hint
+  drawCtx.fillStyle = '#1a1a40';
+  drawCtx.font = '12px Arial'; drawCtx.fillStyle = '#303060';
+  drawCtx.fillText('← Lamp', 10, 20);
+  drawCtx.fillText('Object →', 280, 20);
+  drawCtx.fillText('Screen →', 580, 20);
+  drawCtx.setLineDash([]);
+  addCanvasListeners(drawCvs, drawCtx, function() { return drawColor; }, function() { return +document.getElementById('brush').value; }, function() { drawHasContent = true; });
+}
+
+function addCanvasListeners(cvs, ctx, colorFn, sizeFn, onChange) {
+  var isDown = false;
+  var pts = [];
+  var snapshot = null;
+
+  function getPos(e) {
+    var rect = cvs.getBoundingClientRect();
+    var ex = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    var ey = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    return { x: ex * (cvs.width / rect.width), y: ey * (cvs.height / rect.height) };
+  }
+
+  function start(e) {
+    e.preventDefault();
+    isDown = true; pts = [];
+    var p = getPos(e); pts.push(p);
+    snapshot = ctx.getImageData(0, 0, cvs.width, cvs.height);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+  }
+
+  function move(e) {
+    e.preventDefault();
+    if (!isDown) return;
+    var p = getPos(e); pts.push(p);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = colorFn(); ctx.lineWidth = sizeFn();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+    if (onChange) onChange();
+  }
+
+  function end(e) {
+    if (!isDown) return;
+    isDown = false;
+    if (pts.length < 2) return;
+
+    var first = pts[0], last = pts[pts.length - 1];
+    var dx = last.x - first.x, dy = last.y - first.y;
+    var direct = Math.sqrt(dx*dx + dy*dy);
+
+    // measure total path length
+    var pathLen = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var px = pts[i].x - pts[i-1].x, py = pts[i].y - pts[i-1].y;
+      pathLen += Math.sqrt(px*px + py*py);
+    }
+
+    // if stroke is ≥88% straight and long enough → snap to clean line + arrowhead
+    if (direct > 25 && pathLen > 0 && (direct / pathLen) >= 0.88) {
+      ctx.putImageData(snapshot, 0, 0);           // restore pre-stroke canvas
+      var color = colorFn(), size = sizeFn();
+      ctx.strokeStyle = color; ctx.lineWidth = size;
+      ctx.lineCap = 'round'; ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(first.x, first.y); ctx.lineTo(last.x, last.y); ctx.stroke();
+
+      // arrowhead at endpoint
+      var angle = Math.atan2(dy, dx);
+      var alen  = Math.max(12, size * 3.5);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+      ctx.lineTo(last.x - alen*Math.cos(angle - 0.42), last.y - alen*Math.sin(angle - 0.42));
+      ctx.lineTo(last.x - alen*Math.cos(angle + 0.42), last.y - alen*Math.sin(angle + 0.42));
+      ctx.closePath(); ctx.fill();
+    }
+    pts = []; snapshot = null;
+  }
+
+  cvs.addEventListener('mousedown', start); cvs.addEventListener('mousemove', move); cvs.addEventListener('mouseup', end);
+  cvs.addEventListener('touchstart', start, {passive:false}); cvs.addEventListener('touchmove', move, {passive:false}); cvs.addEventListener('touchend', end);
+}
+
+function setColor(c, el) {
+  drawColor = c;
+  document.querySelectorAll('#sec3 .cbtn').forEach(function(b) { b.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+function clearDraw() {
+  drawCtx.fillStyle = '#0a0a1a';
+  drawCtx.fillRect(0, 0, drawCvs.width, drawCvs.height);
+  drawHasContent = false;
+  labData.E3_raydraw_ok = 0;
+  document.getElementById('draw-badge').textContent = '';
+  checkE3Nav();
+}
+
+function doneDrawing() {
+  labData.E3_raydraw_ok = 1;
+  document.getElementById('draw-badge').textContent = '✅ Drawing recorded!';
+  document.getElementById('draw-badge').style.color = '#4caf50';
+  checkE3Nav();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  GAME
+// ═══════════════════════════════════════════════════════════════════════════
+var gameQs = [
+  { q:'A shadow is formed when an opaque object blocks ___.',
+    opts:['Sound waves','Light rays','Water waves','Heat'],
+    ans:1, exp:'Light rays are blocked by opaque objects to form shadows.' },
+  { q:'Which of the following produces its OWN light?',
+    opts:['Moon','Mirror','Candle flame','White wall'],
+    ans:2, exp:'A candle flame is luminous — it generates its own light.' },
+  { q:'A shadow is always on the ___ side of the object from the light source.',
+    opts:['Same','Opposite','Left','Top'],
+    ans:1, exp:'Shadows form on the side of the object away from the light source.' },
+  { q:'A large light source creates a shadow with a fuzzy edge called a ___.',
+    opts:['Umbra','Penumbra','Spectrum','Refraction'],
+    ans:1, exp:'A penumbra is the region of partial shadow formed by a large light source.' },
+  { q:'The angle of incidence equals the angle of ___.',
+    opts:['Refraction','Incidence again','Reflection','Absorption'],
+    ans:2, exp:'Law of reflection: angle of incidence = angle of reflection.' }
+];
+
+var gScore=0, gBonus=0, gLives=3, gQIdx=0, gInt=null, gTimeLeft=10, gStarted=false;
+
+function startGame() {
+  document.getElementById('g-start').style.display = 'none';
+  document.getElementById('g-done').style.display = 'none';
+  document.getElementById('gqbox').style.display = 'block';
+  gScore=0; gBonus=0; gLives=3; gQIdx=0; gStarted=true;
+  showGameQ();
+}
+
+function showGameQ() {
+  if (gQIdx >= gameQs.length || gLives <= 0) { endGame(); return; }
+  gTimeLeft = 10;
+  document.getElementById('g-score').textContent = gScore;
+  document.getElementById('g-bonus').textContent = gBonus;
+  updateLivesDisplay();
+  document.getElementById('g-timer').textContent = gTimeLeft;
+  var q = gameQs[gQIdx];
+  document.getElementById('g-qtext').textContent = 'Q' + (gQIdx+1) + ': ' + q.q;
+  var optsEl = document.getElementById('g-opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach(function(o, i) {
+    var b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="oind">' + 'ABCD'[i] + '</span>' + o;
+    b.onclick = function() { gameAnswer(i, b, q); };
+    optsEl.appendChild(b);
+  });
+  clearInterval(gInt);
+  gInt = setInterval(function() {
+    gTimeLeft--;
+    document.getElementById('g-timer').textContent = gTimeLeft;
+    if (gTimeLeft <= 0) { clearInterval(gInt); gameAnswer(-1, null, q); }
+  }, 1000);
+}
+
+function gameAnswer(idx, btn, q) {
+  clearInterval(gInt);
+  var btns = document.getElementById('g-opts').querySelectorAll('.opt');
+  btns.forEach(function(b) { b.disabled = true; });
+  if (idx === q.ans) {
+    if (btn) btn.classList.add('ok');
+    gScore += 2;
+    if (gTimeLeft >= 6) { gBonus++; }
+  } else {
+    if (btn) btn.classList.add('bad');
+    if (idx >= 0) btns[q.ans].classList.add('ok');
+    gLives--;
+  }
+  document.getElementById('g-score').textContent = gScore;
+  document.getElementById('g-bonus').textContent = gBonus;
+  updateLivesDisplay();
+  gQIdx++;
+  setTimeout(function() { if(gLives > 0 && gQIdx < gameQs.length) showGameQ(); else endGame(); }, 1200);
+}
+
+function updateLivesDisplay() {
+  var h = ''; for(var i=0;i<gLives;i++) h+='❤️'; for(var i=gLives;i<3;i++) h+='🖤';
+  document.getElementById('g-lives').textContent = h;
+}
+
+function endGame() {
+  clearInterval(gInt);
+  labData.Game_score = gScore;
+  labData.Game_bonus = Math.min(gBonus, 3);
+  labData.Game_lives = gLives;
+  document.getElementById('gqbox').style.display = 'none';
+  document.getElementById('g-done').style.display = 'block';
+  document.getElementById('g-result').textContent =
+    'Score: ' + gScore + ' pts | Bonus: ' + gBonus + ' | Lives left: ' + gLives;
+  document.getElementById('btn4next').disabled = false;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PROTRACTOR (E4)
+// ═══════════════════════════════════════════════════════════════════════════
+var protoCvs, protoCtx;
+var protoInciAngle = 40; // degrees from normal — answer = 40
+var protoReflPoint = null;
+var protoAttempts  = 0;
+var protoDone      = false;
+
+function initProto() {
+  if (protoCvs) return;
+  protoCvs = document.getElementById('proto-cvs');
+  protoCtx = protoCvs.getContext('2d');
+  drawProtoBase();
+  protoCvs.addEventListener('click', function(e) {
+    if (protoDone) return;
+    var rect = protoCvs.getBoundingClientRect();
+    var x = (e.clientX - rect.left) * (protoCvs.width / rect.width);
+    var y = (e.clientY - rect.top)  * (protoCvs.height / rect.height);
+    var cx = protoCvs.width / 2, cy = protoCvs.height * 0.72;
+    if (y >= cy) return; // must be above mirror
+    if (x <= cx) return; // must be right side
+    protoReflPoint = {x:x, y:y};
+    drawProtoBase();
+    document.getElementById('proto-check').disabled = false;
+    // draw candidate reflected ray
+    protoCtx.strokeStyle = '#4caf50';
+    protoCtx.lineWidth = 2.5;
+    protoCtx.setLineDash([]);
+    protoCtx.beginPath(); protoCtx.moveTo(cx, cy); protoCtx.lineTo(x, y); protoCtx.stroke();
+    // arrowhead
+    drawArrow(protoCtx, cx, cy, x, y, '#4caf50');
+  });
+}
+
+function drawProtoBase() {
+  var w = protoCvs.width, h = protoCvs.height;
+  var cx = w/2, cy = h * 0.72;
+  protoCtx.fillStyle = '#0a0a20';
+  protoCtx.fillRect(0, 0, w, h);
+
+  // mirror
+  protoCtx.strokeStyle = '#5050b0'; protoCtx.lineWidth = 5; protoCtx.setLineDash([]);
+  protoCtx.beginPath(); protoCtx.moveTo(60, cy); protoCtx.lineTo(w-60, cy); protoCtx.stroke();
+  // hatching
+  protoCtx.strokeStyle = '#2a2a55'; protoCtx.lineWidth = 1.5;
+  for (var hx = 70; hx < w-60; hx += 22) {
+    protoCtx.beginPath(); protoCtx.moveTo(hx, cy); protoCtx.lineTo(hx-12, cy+14); protoCtx.stroke();
+  }
+  // normal
+  protoCtx.strokeStyle = '#ffffff'; protoCtx.lineWidth = 1.5; protoCtx.setLineDash([6,4]);
+  protoCtx.beginPath(); protoCtx.moveTo(cx, cy-160); protoCtx.lineTo(cx, cy); protoCtx.stroke();
+  protoCtx.setLineDash([]);
+
+  // incident ray  — angle from normal on left side
+  var rad = protoInciAngle * Math.PI / 180;
+  var ix = cx - Math.sin(rad) * 170;
+  var iy = cy - Math.cos(rad) * 170;
+  protoCtx.strokeStyle = '#f5c518'; protoCtx.lineWidth = 2.5;
+  protoCtx.beginPath(); protoCtx.moveTo(ix, iy); protoCtx.lineTo(cx, cy); protoCtx.stroke();
+  drawArrow(protoCtx, ix, iy, cx, cy, '#f5c518');
+
+  // angle labels
+  protoCtx.fillStyle = '#f5c518'; protoCtx.font = '14px Arial';
+  protoCtx.fillText(protoInciAngle + '°', cx - 55, cy - 30);
+  protoCtx.fillStyle = '#4caf50'; protoCtx.font = '13px Arial';
+  protoCtx.fillText('? °', cx + 18, cy - 30);
+
+  // legend
+  protoCtx.fillStyle = '#f5c518'; protoCtx.font = '12px Arial'; protoCtx.fillText('— Incident ray', 16, 20);
+  protoCtx.fillStyle = '#4caf50'; protoCtx.fillText('— Your reflected ray', 16, 38);
+  protoCtx.fillStyle = '#808080'; protoCtx.fillText('Click above the mirror on the RIGHT side to draw your reflected ray', 16, h-12);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color) {
+  var angle = Math.atan2(y2-y1, x2-x1);
+  var len = 12;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - len*Math.cos(angle-0.4), y2 - len*Math.sin(angle-0.4));
+  ctx.lineTo(x2 - len*Math.cos(angle+0.4), y2 - len*Math.sin(angle+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function checkProto() {
+  if (!protoReflPoint) return;
+  protoAttempts++;
+  labData.E4_protractor_attempts = protoAttempts;
+  var cx = protoCvs.width/2, cy = protoCvs.height * 0.72;
+  var dx = protoReflPoint.x - cx;
+  var dy = cy - protoReflPoint.y; // positive upward
+  var studentAngle = Math.atan2(dx, dy) * 180 / Math.PI;
+  var diff = Math.abs(studentAngle - protoInciAngle);
+  var resultEl  = document.getElementById('proto-result');
+  var hintEl    = document.getElementById('proto-hint');
+  var retryEl   = document.getElementById('proto-retry');
+  var attemptsEl = document.getElementById('proto-attempts');
+
+  if (diff <= 6) {
+    labData.E4_protractor_ok = 1;
+    protoDone = true;
+    resultEl.style.color = '#4caf50';
+    resultEl.textContent = '✅ Correct! Your angle: ' + Math.round(studentAngle) + '° ≈ ' + protoInciAngle + '° ✓';
+    document.getElementById('proto-check').disabled = true;
+    retryEl.style.display = 'none';
+    checkProtoNext();
+  } else {
+    if (protoAttempts === 1) {
+      labData.E4_protractor_adaptive = true;
+      hintEl.style.display = 'block';
+    }
+    resultEl.style.color = '#f44336';
+    resultEl.textContent = '❌ Your angle: ' + Math.round(studentAngle) + '° — expected ' + protoInciAngle + '°. Try again.';
+    retryEl.style.display = 'inline-flex';
+    attemptsEl.textContent = 'Attempts: ' + protoAttempts;
+    if (protoAttempts >= 3) {
+      labData.E4_protractor_ok = 0;
+      protoDone = true;
+      resultEl.textContent += ' (max attempts reached)';
+      document.getElementById('proto-check').disabled = true;
+      retryEl.style.display = 'none';
+      checkProtoNext();
+    }
+  }
+}
+
+function resetProto() {
+  protoReflPoint = null;
+  document.getElementById('proto-check').disabled = true;
+  document.getElementById('proto-result').textContent = '';
+  drawProtoBase();
+}
+
+function checkProtoNext() {
+  if (document.querySelector('#e4q1 .opt:disabled') &&
+      document.querySelector('#e4q2 .opt:disabled') &&
+      document.querySelector('#e4q3 .opt:disabled')) {
+    document.getElementById('btn5next').disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  E5 LABEL TASK
+// ═══════════════════════════════════════════════════════════════════════════
+var labelAnswers = { spot1:'Normal', spot2:'Incident Ray', spot3:'Reflected Ray', spot4:'Mirror' };
+var labelAssigned = {};
+var selectedChip = null;
+var labelsChecked = false;
+
+function selectChip(el, label) {
+  document.querySelectorAll('.lchip').forEach(function(c) { c.classList.remove('sel'); });
+  if (selectedChip === label) { selectedChip = null; return; }
+  selectedChip = label;
+  el.classList.add('sel');
+}
+
+function assignSpot(spotEl, correctLabel) {
+  if (!selectedChip) { alert('Click a label chip first, then click a spot.'); return; }
+  if (spotEl.dataset.assigned && spotEl.dataset.assigned !== '') {
+    var prev = spotEl.dataset.assigned;
+    document.querySelectorAll('.lchip').forEach(function(c) {
+      if (c.textContent === prev) c.classList.remove('used');
+    });
+  }
+  spotEl.dataset.assigned = selectedChip;
+  spotEl.textContent = selectedChip.charAt(0);
+  spotEl.classList.add('picked');
+  labelAssigned[spotEl.id] = selectedChip;
+  document.querySelectorAll('.lchip').forEach(function(c) {
+    if (c.textContent === selectedChip) c.classList.add('used');
+    c.classList.remove('sel');
+  });
+  selectedChip = null;
+  var allFilled = Object.keys(labelAnswers).every(function(k) { return labelAssigned[k]; });
+  document.getElementById('lblCheck').disabled = !allFilled;
+}
+
+function checkLabels() {
+  labelsChecked = true;
+  var correct = 0;
+  Object.keys(labelAnswers).forEach(function(spotId) {
+    var spot = document.getElementById(spotId);
+    var assigned = labelAssigned[spotId] || '';
+    var isCorrect = assigned === labelAnswers[spotId];
+    spot.classList.remove('picked','cok','cwrong');
+    spot.classList.add(isCorrect ? 'cok' : 'cwrong');
+    if (isCorrect) correct++;
+  });
+  labData.E5_label_ok = correct >= 3 ? 1 : 0;
+  document.getElementById('lbl-result').textContent = correct + '/4 correct';
+  document.getElementById('fb-lbl-ok').style.display = correct >= 3 ? 'block' : 'none';
+  document.getElementById('fb-lbl-bad').style.display = correct < 3  ? 'block' : 'none';
+  if (e5mcqAnswered.e5m1 && e5mcqAnswered.e5m2 && e5mcqAnswered.e5m3) {
+    document.getElementById('btn6next').disabled = false;
+  }
+}
+
+function resetLabels() {
+  labelsChecked = false;
+  labelAssigned = {};
+  selectedChip  = null;
+  document.querySelectorAll('.dspot').forEach(function(s) {
+    s.dataset.assigned = '';
+    s.textContent = '';
+    s.classList.remove('picked','cok','cwrong');
+  });
+  document.querySelectorAll('.lchip').forEach(function(c) {
+    c.classList.remove('used','sel');
+  });
+  document.getElementById('lblCheck').disabled = true;
+  document.getElementById('lbl-result').textContent = '';
+  document.getElementById('fb-lbl-ok').style.display = 'none';
+  document.getElementById('fb-lbl-bad').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  UPLOAD CANVAS
+// ═══════════════════════════════════════════════════════════════════════════
+var uploadCvs, uploadCtx, uploadColor = '#f5c518';
+
+function initUploadCanvas() {
+  uploadCvs = document.getElementById('uploadCvs');
+  if (!uploadCvs) return;
+  uploadCtx = uploadCvs.getContext('2d');
+  uploadCtx.fillStyle = '#0a0a1a';
+  uploadCtx.fillRect(0, 0, uploadCvs.width, uploadCvs.height);
+  // guide text
+  uploadCtx.fillStyle = '#1e1e40';
+  uploadCtx.font = '14px Arial';
+  uploadCtx.fillText('Draw your reflection diagram here — mirror, normal, incident ray, reflected ray, labels', 14, 26);
+  addCanvasListeners(uploadCvs, uploadCtx, function() { return uploadColor; }, function() { return +document.getElementById('ubrush').value; }, null);
+}
+
+function setUColor(c, idx) {
+  uploadColor = c;
+  for (var i=0;i<5;i++) document.getElementById('uc'+i).classList.remove('on');
+  document.getElementById('uc'+idx).classList.add('on');
+}
+
+function clearUpload() {
+  uploadCtx.fillStyle = '#0a0a1a';
+  uploadCtx.fillRect(0, 0, uploadCvs.width, uploadCvs.height);
+}
+
+function uploadDrawing() {
+  var btn = document.getElementById('uploadBtn');
+  var status = document.getElementById('upload-status');
+  btn.disabled = true; btn.textContent = '⏳ Uploading…';
+  status.textContent = 'Compressing and uploading…';
+  var jpeg = uploadCvs.toDataURL('image/jpeg', 0.82);
+  var base64 = jpeg.replace(/^data:image\/jpeg;base64,/, '');
+  var payload = JSON.stringify({
+    action: 'upload_drawing',
+    name: labData.Name,
+    'class': labData.Class,
+    base64: base64,
+    filename: labData.Name + '_' + labData.Class + '.jpg'
+  });
+  fetch(SCRIPT_URL, { method:'POST', body: payload })
+    .then(function(r) { return r.text(); })
+    .then(function(link) {
+      labData.Drawing_uploaded = 'yes';
+      labData.Drawing_link = link;
+      status.textContent = '✅ Uploaded!';
+      status.style.color = '#4caf50';
+      btn.textContent = '✅ Uploaded';
+      var wrap = document.getElementById('upload-link-wrap');
+      if (wrap) { wrap.style.display = 'block'; document.getElementById('upload-link').href = link; }
+    })
+    .catch(function(err) {
+      labData.Drawing_uploaded = 'no';
+      status.textContent = '⚠ Upload failed — continue anyway.';
+      status.style.color = '#ff9800';
+      btn.disabled = false; btn.textContent = '⬆ Retry Upload';
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SELF ASSESSMENT STARS
+// ═══════════════════════════════════════════════════════════════════════════
+var selfKeys = ['Self_E1','Self_E2','Self_E3','Self_E4','Self_E5'];
+var starIds  = ['st-e1','st-e2','st-e3','st-e4','st-e5'];
+
+function initStars() {
+  starIds.forEach(function(id, si) {
+    var wrap = document.getElementById(id);
+    if (!wrap) return;
+    for (var i=1;i<=5;i++) {
+      var s = document.createElement('span');
+      s.className = 'star'; s.textContent = '★'; s.dataset.val = i;
+      (function(spanEl, starVal, sIdx) {
+        spanEl.onclick = function() {
+          labData[selfKeys[sIdx]] = starVal;
+          var container = document.getElementById(starIds[sIdx]);
+          container.querySelectorAll('.star').forEach(function(st) {
+            st.classList.toggle('on', +st.dataset.val <= starVal);
+          });
+        };
+      })(s, i, si);
+      wrap.appendChild(s);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SCORING + SUMMARY
+// ═══════════════════════════════════════════════════════════════════════════
+function calcScore() {
+  var e1 = labData.E1_Q1_ok + labData.E1_Q2_ok;
+  var e2 = labData.E2_sceneQ1_ok + labData.E2_label_ok + labData.E2_S3label_ok;
+  var e3 = labData.E3_raydraw_ok + labData.E3_Q1_ok + labData.E3_Q2_ok + labData.E3_Q3_ok;
+  var e4 = labData.E4_protractor_ok + labData.E4_Q1_ok + labData.E4_Q2_ok + labData.E4_Q3_ok;
+  var e5 = Math.min(labData.E5_MCQ_pts, 3) + labData.E5_label_ok;
+  var gb = Math.min(labData.Game_bonus, 3);
+  var raw = e1 + e2 + e3 + e4 + e5 + gb;
+  labData.Raw_score = raw;
+  labData.Score_20  = raw;
+  labData.Grade_letter = raw>=18?'A': raw>=14?'B': raw>=10?'C':'D';
+  return {e1:e1, e2:e2, e3:e3, e4:e4, e5:e5, gb:gb, raw:raw};
+}
+
+function showSummary() {
+  labData.Time_min = Math.round(timerSecs / 60 * 10) / 10;
+  var s = calcScore();
+  document.getElementById('sum-score').textContent = s.raw;
+  var g = labData.Grade_letter;
+  var gb = document.getElementById('sum-grade');
+  gb.textContent = g;
+  gb.className = 'gbadge g' + g;
+  document.getElementById('sum-name-class').textContent = labData.Name + ' · ' + labData.Class;
+  document.getElementById('bk-e1').textContent   = s.e1 + '/2';
+  document.getElementById('bk-e2').textContent   = s.e2 + '/3';
+  document.getElementById('bk-e3').textContent   = s.e3 + '/4';
+  document.getElementById('bk-e4').textContent   = s.e4 + '/4';
+  document.getElementById('bk-e5').textContent   = s.e5 + '/4';
+  document.getElementById('bk-game').textContent = s.gb + '/3';
+  go(9);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════════════════════════════════════
+function submitLab() {
+  var btn    = document.getElementById('submitBtn');
+  var status = document.getElementById('submit-status');
+  if (SCRIPT_URL === 'PASTE_YOUR_WEB_APP_URL_HERE') {
+    status.style.color = '#ff9800';
+    status.textContent = '⚠ No web app URL configured. Ask your teacher for the URL.';
+    return;
+  }
+  btn.disabled = true; btn.textContent = '⏳ Submitting…';
+  status.textContent = '';
+  // Build payload matching HEADERS exactly
+  var payload = JSON.stringify(labData);
+  fetch(SCRIPT_URL, { method:'POST', body: payload })
+    .then(function(r) { return r.text(); })
+    .then(function(res) {
+      if (res === 'ok' || res.indexOf('ok') !== -1) {
+        clearInterval(timerInt);
+        status.style.color = '#4caf50';
+        status.innerHTML = '✅ Submitted successfully! Well done, <strong>' + labData.Name + '</strong>!<br>Your grade: <strong>' + labData.Grade_letter + ' (' + labData.Score_20 + '/20)</strong>';
+        btn.textContent = '✅ Submitted';
+        fetchLeaderboard();
+      } else {
+        throw new Error(res);
+      }
+    })
+    .catch(function(err) {
+      btn.disabled = false; btn.textContent = '📤 Retry Submit';
+      status.style.color = '#f44336';
+      status.textContent = '❌ Submission failed. Check your connection and try again. (' + err.message + ')';
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  LEADERBOARD
+// ═══════════════════════════════════════════════════════════════════════════
+function fetchLeaderboard() {
+  if (SCRIPT_URL === 'PASTE_YOUR_WEB_APP_URL_HERE') return;
+  fetch(SCRIPT_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      document.getElementById('lb8A').textContent    = d['8A']    || 0;
+      document.getElementById('lb8B').textContent    = d['8B']    || 0;
+      document.getElementById('lb8C').textContent    = d['8C']    || 0;
+      document.getElementById('lb8D').textContent    = d['8D']    || 0;
+      document.getElementById('lbTotal').textContent = d['total'] || 0;
+    })
+    .catch(function() {});
+}
+
+// refresh leaderboard every 90 seconds while lab is open
+setInterval(fetchLeaderboard, 90000);
+</script>
+</body>
+</html>

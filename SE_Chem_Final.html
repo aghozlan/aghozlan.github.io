@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Mock Exam & Marking Scheme - SE</title>
+    <style>
+        /* Base Styles and A4 Print Setup */
+        :root {
+            --primary-text: #000;
+            --bg-color: #fff;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary-text);
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20mm;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: transparent;
+                padding: 0;
+                display: block;
+            }
+            .a4-page {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+                min-height: 100%;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .btn-print {
+            background-color: #004085;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .btn-print:hover {
+            background-color: #002752;
+        }
+
+        /* Header Styles */
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .school-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+        .school-text {
+            font-size: 14pt;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+        .exam-meta {
+            text-align: right;
+            font-size: 12pt;
+            line-height: 1.4;
+        }
+        .exam-title {
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+        .instructions {
+            border: 1px solid #000;
+            padding: 10px;
+            font-style: italic;
+            margin-bottom: 25px;
+            font-size: 12pt;
+        }
+
+        /* Content Styles */
+        h3 {
+            font-size: 14pt;
+            text-decoration: underline;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        p, li {
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        .document-box {
+            border: 1px dashed #000;
+            padding: 15px;
+            background-color: #fafafa;
+            margin-bottom: 15px;
+        }
+        .doc-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .q-number {
+            font-weight: bold;
+            min-width: 30px;
+        }
+        
+        /* Figures & SVGs */
+        .figure-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .figure-caption {
+            font-style: italic;
+            font-size: 11pt;
+            margin-top: 5px;
+        }
+        .chart-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Utility */
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Marking Scheme Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            vertical-align: top;
+            font-size: 12pt;
+        }
+        th {
+            background-color: #e9ecef;
+            text-align: center;
+            font-weight: bold;
+        }
+        .col-q {
+            width: 8%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .col-mark {
+            width: 10%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .scheme-title {
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 30px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px double #000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Print Button -->
+    <div class="controls no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+
+    <!-- EXAM DOCUMENT (PAGE 1 & 2) -->
+    <div class="a4-page">
+        <!-- Header -->
+        <div class="exam-header">
+            <div class="school-info">
+                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale Logo" class="logo-img">
+                <div class="school-text">
+                    La Cité Nationale<br>
+                    High School Department<br>
+                    Academic Year 2025-2026
+                </div>
+            </div>
+            <div class="exam-meta">
+                <strong>Subject:</strong> Chemistry<br>
+                <strong>Class:</strong> Grade 12 - Sociology & Economics (SE)<br>
+                <strong>Duration:</strong> 60 minutes<br>
+                <strong>Date:</strong> _________
+            </div>
+        </div>
+
+        <div class="exam-title">Official Mock Exam - Chemistry (SE Track)</div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> This exam includes three compulsory exercises. The use of non-programmable calculators is allowed. Answer the questions in the provided sequence.
+        </div>
+
+        <!-- EXERCISE 1 -->
+        <h3>Exercise 1: Nutrition - Carbohydrates, Proteins, and Minerals (7 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 1: The Chemistry of a Balanced Breakfast</div>
+            <p>Carbohydrates and proteins are fundamental macronutrients required by the human body to sustain energy and repair tissue. During a typical breakfast, a student consumes milk and whole-grain bread. Whole grains are packed with starch, a complex carbohydrate made of long chains of glucose units. Milk supplies lactose (a disaccharide), alongside high-quality protein called casein. Casein provides essential amino acids linked together by peptide bonds. Furthermore, breakfast options are frequently fortified with minerals such as Calcium (<span class="math">Ca</span>) and Iron (<span class="math">Fe</span>) to optimize bone density and assist oxygen transport in red blood cells.</p>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.1.</div>
+            <div>Based on Document 1, classify <strong>starch</strong> and <strong>lactose</strong> into their respective categories of carbohydrates (monosaccharide, disaccharide, or polysaccharide).</div>
+        </div>
+        
+        <div class="question">
+            <div class="q-number">1.2.</div>
+            <div>Starch undergoes complete hydrolysis inside the digestive tract. State the name of the final product obtained from this complete hydrolysis.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.3.</div>
+            <div>Proteins are polymers of amino acids. Referring to Document 1, name the type of chemical bond that links these amino acid units together.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.4.</div>
+            <div>An amino acid contains two specific functional groups. Choose the correct pair of functional groups present in any alpha-amino acid from the choices below:</div>
+        </div>
+        <div style="margin-left: 40px; font-style: italic; margin-bottom: 15px;">
+            a) Alcohol and Ester &nbsp;&nbsp;&nbsp;&nbsp; b) Amine and Carboxylic Acid &nbsp;&nbsp;&nbsp;&nbsp; c) Aldehyde and Ketone
+        </div>
+
+        <div class="question">
+            <div class="q-number">1.5.</div>
+            <div>Document 1 references two essential minerals: Calcium and Iron. Extract the biological role of each of these minerals in the human body.</div>
+        </div>
+
+
+        <!-- EXERCISE 2 -->
+        <h3>Exercise 2: Lipids and Vitamins - Energy Bars and Nutrient Stability (6 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 2: Fats and Micronutrient Behavior</div>
+            <p>Nutritional energy bars contain lipids as main energy reserves. These lipids are mostly triglycerides, formed by the reaction of glycerol with fatty acids. Fatty acids can be saturated (containing only single carbon-carbon bonds) or unsaturated. Additionally, these bars are enriched with vitamins. Vitamins are categorized based on their solubility: hydrosoluble vitamins (like Vitamin C) dissolve easily in water and are quickly excreted, while liposoluble vitamins (like Vitamin D) accumulate in the body's fatty tissues. A food laboratory monitored the degradation rate of Vitamin C and Vitamin D in energy bars when stored at room temperature over several months.</p>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.1.</div>
+            <div>Define a triglyceride based on the text or your knowledge.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.2.</div>
+            <div>Distinguish between a saturated fatty acid and an unsaturated fatty acid based on their chemical bonds.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.3.</div>
+            <div>Based on Document 2, classify Vitamin C and Vitamin D according to their solubility group.</div>
+        </div>
+
+        <div class="figure-container">
+            <svg class="chart-svg" width="450" height="230" viewBox="0 0 450 230" xmlns="http://www.w3.org/2000/svg">
+                <!-- Axes -->
+                <line x1="50" y1="180" x2="420" y2="180" stroke="black" stroke-width="2"/>
+                <line x1="50" y1="180" x2="50" y2="20" stroke="black" stroke-width="2"/>
+                <!-- Labels -->
+                <text x="235" y="215" font-family="Arial" font-size="12" text-anchor="middle">Storage Time (Months)</text>
+                <text x="15" y="100" font-family="Arial" font-size="12" transform="rotate(-90 15 100)" text-anchor="middle">Vitamin Retention (%)</text>
+                <!-- Ticks & Gridlines -->
+                <text x="35" y="185" font-family="Arial" font-size="10">0</text>
+                <line x1="150" y1="180" x2="150" y2="185" stroke="black"/> <text x="145" y="195" font-family="Arial" font-size="10">2</text>
+                <line x1="250" y1="180" x2="250" y2="185" stroke="black"/> <text x="245" y="195" font-family="Arial" font-size="10">4</text>
+                <line x1="350" y1="180" x2="350" y2="185" stroke="black"/> <text x="345" y="195" font-family="Arial" font-size="10">6</text>
+                
+                <line x1="45" y1="100" x2="55" y2="100" stroke="black"/> <text x="25" y="104" font-family="Arial" font-size="10">50%</text>
+                <line x1="45" y1="30" x2="55" y2="30" stroke="black"/> <text x="20" y="34" font-family="Arial" font-size="10">100%</text>
+                
+                <!-- Curves -->
+                <path d="M 50 30 Q 200 35 350 45" fill="none" stroke="#2b5797" stroke-width="3" id="vitD"/>
+                <path d="M 50 30 Q 150 90 350 150" fill="none" stroke="#b91d47" stroke-width="3" stroke-dasharray="4" id="vitC"/>
+                
+                <!-- Legend -->
+                <rect x="280" y="25" width="120" height="45" fill="white" stroke="gray" opacity="0.9"/>
+                <line x1="290" y1="35" x2="320" y2="35" stroke="#2b5797" stroke-width="3"/>
+                <text x="330" y="39" font-family="Arial" font-size="10">Vitamin D</text>
+                <line x1="290" y1="55" x2="320" y2="55" stroke="#b91d47" stroke-width="3" stroke-dasharray="4"/>
+                <text x="330" y="59" font-family="Arial" font-size="10">Vitamin C</text>
+            </svg>
+            <div class="figure-caption">Figure 1: Percentage of vitamin retention in energy bars over storage time.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">2.4.</div>
+            <div>Analyze the graph in Figure 1 to conclude which vitamin group (hydrosoluble or liposoluble) shows lower stability during long-term storage under room conditions.</div>
+        </div>
+
+        <!-- Page Break for Printing -->
+        <div class="page-break"></div>
+
+        <!-- EXERCISE 3 -->
+        <h3>Exercise 3: Medical Application - Classification and Safety of Drugs (7 points)</h3>
+        
+        <div class="document-box">
+            <div class="doc-title">Document 3: The Toolkit of Modern Medicine</div>
+            <p>Pharmaceutical drugs are essential for treating diseases and managing pain, but they must be classified correctly to avoid severe health complications. 
+            <br><br>
+            <strong>Drug X (Aspirin):</strong> Acts as an <em>analgesic</em> to relieve mild-to-moderate pain, and also possesses <em>anti-inflammatory</em> action by reducing localized tissue swelling. However, it can cause stomach irritation by blocking protective gastric secretions.
+            <br><br>
+            <strong>Drug Y (Amoxicillin):</strong> Belongs to the family of <em>antibiotics</em>. It works selectively to destroy bacterial cells or stop their reproduction. It is completely ineffective against viruses, such as the common cold or influenza. Misuse of Drug Y by taking it without a medical prescription can lead to global bacterial resistance.</p>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.1.</div>
+            <div>Based on Document 3, identify the dual therapeutic classification of <strong>Drug X</strong>.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.2.</div>
+            <div>State one side effect linked to the frequent intake of Drug X.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.3.</div>
+            <div>Specify the exact nature of target pathogens that <strong>Drug Y</strong> acts against, and explain why it should never be taken to treat a viral flu.</div>
+        </div>
+
+        <div class="question">
+            <div class="q-number">3.4.</div>
+            <div>Define the medical term <em>bacterial resistance</em> mentioned in Document 3, and state one human practice that accelerates this hazard.</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; font-weight: bold; font-style: italic;">
+            --- End of Exam ---<br>Good Luck!
+        </div>
+
+    </div>
+
+    <!-- MARKING SCHEME DOCUMENT (PAGE 3) -->
+    <div class="a4-page page-break">
+        
+        <div class="exam-header">
+            <div class="school-info">
+                <img src="https://raw.githubusercontent.com/aghozlan/aghozlan.github.io/main/citeLogo.jpg" alt="La Cité Nationale Logo" class="logo-img">
+                <div class="school-text">
+                    La Cité Nationale<br>
+                    High School Department<br>
+                    Academic Year 2025-2026
+                </div>
+            </div>
+            <div class="exam-meta">
+                <strong>Subject:</strong> Chemistry (Marking Scheme)<br>
+                <strong>Class:</strong> Grade 12 - SE
+            </div>
+        </div>
+
+        <div class="scheme-title">Official Marking Scheme</div>
+
+        <!-- Scheme Exercise 1 -->
+        <h3>Exercise 1: Nutrition - Carbohydrates, Proteins, and Minerals (7 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">1.1</td>
+                <td><strong>Starch:</strong> Polysaccharide.<br><strong>Lactose:</strong> Disaccharide.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.2</td>
+                <td>Glucose.</td>
+                <td class="col-mark">1.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.3</td>
+                <td>Peptide bond.</td>
+                <td class="col-mark">1.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.4</td>
+                <td>b) Amine and Carboxylic Acid.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">1.5</td>
+                <td><strong>Calcium:</strong> Optimize bone density.<br><strong>Iron:</strong> Assist oxygen transport in red blood cells.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+        </table>
+
+        <!-- Scheme Exercise 2 -->
+        <h3>Exercise 2: Lipids and Vitamins - Energy Bars and Nutrient Stability (6 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">2.1</td>
+                <td>A triglyceride is a lipid (or ester) formed by the reaction of one glycerol molecule with three fatty acid molecules.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.2</td>
+                <td>Saturated fatty acids contain only single carbon-carbon bonds, whereas unsaturated fatty acids contain one or more carbon-carbon double bonds.</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.3</td>
+                <td><strong>Vitamin C:</strong> Hydrosoluble.<br><strong>Vitamin D:</strong> Liposoluble.</td>
+                <td class="col-mark">1.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">2.4</td>
+                <td>Based on Figure 1, the retention of Vitamin C decreases significantly over time (reaching ~50% at 6 months), while Vitamin D remains stable (close to 100%). Therefore, the <strong>hydrosoluble group (Vitamin C)</strong> shows lower stability.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+        </table>
+
+        <!-- Scheme Exercise 3 -->
+        <h3>Exercise 3: Medical Application - Classification and Safety of Drugs (7 points)</h3>
+        <table>
+            <tr>
+                <th class="col-q">Part</th>
+                <th>Expected Answer</th>
+                <th class="col-mark">Mark</th>
+            </tr>
+            <tr>
+                <td class="col-q">3.1</td>
+                <td>Analgesic and Anti-inflammatory.</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.2</td>
+                <td>Stomach irritation (or blocking protective gastric secretions).</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.3</td>
+                <td><strong>Target pathogens:</strong> Bacterial cells.<br><strong>Reason:</strong> Antibiotics are designed to target bacteria and are completely ineffective against viruses (like the viral flu).</td>
+                <td class="col-mark">2.0</td>
+            </tr>
+            <tr>
+                <td class="col-q">3.4</td>
+                <td><strong>Definition:</strong> The ability of bacteria to mutate or adapt and survive the effects of an antibiotic.<br><strong>Human practice:</strong> Misuse of antibiotics (e.g., taking them without a medical prescription or for viral infections).</td>
+                <td class="col-mark">1.5</td>
+            </tr>
+        </table>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voltage of Mains — Grade 9 | Ahmad Ghozlan Labs</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0f11;--bg2:#141618;--bg3:#1a1d20;
+  --panel:rgba(255,107,26,.04);--panel2:rgba(255,107,26,.09);
+  --border:rgba(255,107,26,.14);--border2:rgba(255,107,26,.28);
+  --text:#e8eaf0;--muted:rgba(232,234,240,.5);
+  --accent:#ff6b1a;--accent2:#4fc3f7;--accent3:#ffd54f;
+  --lime:#7fff6b;--red:#ff4757;
+  --phos:#00ff88;--phos-dim:#003322;--phos-grid:#003300;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,107,26,.025) 1px,transparent 1px);
+  background-size:32px 32px}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:240px;min-width:240px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;padding:16px}
+.main{flex:1;padding:24px;max-width:900px}
+
+/* ── CHAPTER BANNER ── */
+.chapter-banner{background:linear-gradient(135deg,rgba(255,107,26,.18),rgba(79,195,247,.12));
+  border:1px solid var(--border2);border-radius:10px;padding:14px 18px;margin-bottom:22px;
+  display:flex;align-items:center;gap:12px}
+.chapter-banner .bolt{font-size:28px;line-height:1}
+.chapter-banner h1{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--accent);letter-spacing:.5px}
+.chapter-banner p{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── SIDEBAR ── */
+.brand{text-align:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.brand-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--accent)}
+.brand-sub{font-size:11px;color:var(--muted)}
+.timer-box{background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:10px;text-align:center;margin-bottom:14px}
+.timer-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.timer-val{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--accent);font-weight:700}
+.score-ring-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+.score-ring-wrap svg{width:72px;height:72px}
+.score-ring-label{font-size:11px;color:var(--muted);margin-top:4px}
+.progress-dots{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);
+  cursor:pointer;transition:.2s}
+.dot.done{background:var(--lime);border-color:var(--lime);box-shadow:0 0 6px var(--lime)}
+.dot.active{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 6px var(--accent2)}
+.picker-section{margin-bottom:14px}
+.picker-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.sec-btns{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.sec-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;border-radius:6px;
+  padding:4px 10px;cursor:pointer;transition:.2s}
+.sec-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  font-size:12px;border-radius:6px;padding:6px 8px;outline:none;direction:rtl}
+.leaderboard{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:14px}
+.lb-title{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+  font-family:'JetBrains Mono',monospace}
+.lb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.lb-cls{font-size:12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600}
+.lb-count{font-size:11px;color:var(--accent2);font-family:'JetBrains Mono',monospace}
+
+/* ── SECTIONS ── */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:20px;overflow:hidden;transition:.3s}
+.section.locked{opacity:.45;pointer-events:none}
+.sec-header{padding:14px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border)}
+.sec-badge{background:var(--accent);color:#fff;font-family:'Rajdhani',sans-serif;
+  font-weight:700;font-size:12px;border-radius:5px;padding:2px 8px;letter-spacing:.5px}
+.sec-badge.explore{background:#1a6b8a}
+.sec-badge.explain{background:#2d5a27}
+.sec-badge.elaborate{background:#6b3a1a}
+.sec-badge.evaluate{background:#5a1a6b}
+.sec-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;flex:1}
+.sec-tag{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.sec-body{padding:18px}
+
+/* ── EXERCISES ── */
+.exercise{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:14px;margin-bottom:14px}
+.ex-q{font-size:14px;color:var(--text);margin-bottom:10px;line-height:1.6}
+.ex-q strong{color:var(--accent2)}
+.pts-badge{display:inline-block;background:rgba(255,107,26,.2);color:var(--accent);
+  font-size:10px;font-family:'JetBrains Mono',monospace;border-radius:4px;padding:1px 6px;margin-left:8px}
+.answer-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=number],input[type=text]{background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;
+  border-radius:6px;padding:6px 10px;width:130px;outline:none}
+input[type=number]:focus,input[type=text]:focus{border-color:var(--accent2)}
+.btn{background:var(--accent);color:#fff;font-family:'Rajdhani',sans-serif;font-weight:600;
+  font-size:14px;border:none;border-radius:7px;padding:8px 18px;cursor:pointer;transition:.2s}
+.btn:hover{background:#e05a10}
+.btn.secondary{background:var(--bg3);border:1px solid var(--border);color:var(--text)}
+.btn.secondary:hover{border-color:var(--accent2);color:var(--accent2)}
+.btn.next-btn{background:var(--accent2);color:#000;margin-top:14px;width:100%}
+.hint-btn{background:none;border:1px solid var(--border2);color:var(--muted);
+  font-size:11px;border-radius:5px;padding:3px 8px;cursor:pointer;margin-top:6px}
+.hint-box{background:rgba(79,195,247,.07);border:1px solid rgba(79,195,247,.2);
+  border-radius:7px;padding:8px 12px;font-size:12px;color:var(--accent2);margin-top:8px;display:none}
+.feedback{margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px;display:none}
+.feedback.ok{background:rgba(127,255,107,.1);color:var(--lime);border:1px solid rgba(127,255,107,.25)}
+.feedback.wrong{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.25)}
+.attempt-counter{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* ── MCQ ── */
+.mcq-options{display:flex;flex-direction:column;gap:7px;margin-top:8px}
+.mcq-opt{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:8px 14px;cursor:pointer;font-size:13px;transition:.2s;text-align:left}
+.mcq-opt:hover{border-color:var(--accent2)}
+.mcq-opt.selected-ok{background:rgba(127,255,107,.12);border-color:var(--lime);color:var(--lime)}
+.mcq-opt.selected-wrong{background:rgba(255,71,87,.1);border-color:var(--red);color:var(--red)}
+.mcq-opt.reveal-ok{background:rgba(127,255,107,.07);border-color:rgba(127,255,107,.3)}
+
+/* ── EMOJI SELF-ASSESS ── */
+.self-row{display:flex;gap:8px;margin-top:16px;align-items:center}
+.self-label{font-size:11px;color:var(--muted);margin-right:4px}
+.emoji-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  font-size:18px;padding:6px 10px;cursor:pointer;transition:.2s}
+.emoji-btn.chosen{border-color:var(--accent);background:rgba(255,107,26,.15)}
+
+/* ── OSCILLOSCOPE ── */
+.scope-wrap{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.scope-screen-col{flex:1;min-width:300px}
+.scope-readout-col{min-width:160px;background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.scope-canvas{border:6px solid #1a1c1e;border-radius:4px;display:block;
+  box-shadow:0 0 20px rgba(0,255,136,.15),inset 0 0 40px rgba(0,0,0,.5);cursor:crosshair}
+.scope-controls{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.ctrl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);
+  min-width:80px;text-transform:uppercase;letter-spacing:.5px}
+.step-btns{display:flex;gap:3px;flex-wrap:wrap}
+.step-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);
+  font-family:'JetBrains Mono',monospace;font-size:10px;border-radius:4px;
+  padding:3px 7px;cursor:pointer;transition:.15s}
+.step-btn:hover{border-color:var(--phos);color:var(--phos)}
+.step-btn.active{background:var(--phos-dim);border-color:var(--phos);color:var(--phos)}
+.step-btn.gold{border-color:var(--accent3)!important;color:var(--accent3)!important}
+.step-btn.gold.active{background:rgba(255,213,79,.15)!important}
+.sweep-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);
+  font-family:'JetBrains Mono',monospace;font-size:11px;border-radius:6px;
+  padding:5px 14px;cursor:pointer;transition:.2s}
+.sweep-btn.on{background:rgba(0,255,136,.15);border-color:var(--phos);color:var(--phos)}
+.readout-row{display:flex;justify-content:space-between;padding:3px 0;
+  border-bottom:1px solid var(--border);font-size:11px}
+.readout-lbl{color:var(--muted)}
+.readout-val{color:var(--phos);font-weight:700}
+.terminals{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
+.terminal-pair{background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;text-align:center}
+.terminal-pair h4{font-size:11px;color:var(--muted);margin-bottom:8px;
+  font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.term-sockets{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+.socket{width:28px;height:28px;border-radius:50%;border:2px solid;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.socket.phase{border-color:#ff4444;color:#ff4444}
+.socket.gnd{border-color:#444;color:#888}
+.socket.connected-phase{background:rgba(255,68,68,.2);box-shadow:0 0 8px rgba(255,68,68,.4)}
+.socket.connected-gnd{background:rgba(68,68,68,.4)}
+.term-btns{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.term-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);
+  font-size:10px;border-radius:4px;padding:2px 7px;cursor:pointer}
+.term-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.wire-indicator{height:3px;border-radius:2px;margin-top:6px;
+  background:repeating-linear-gradient(90deg,transparent,transparent 4px,var(--accent2) 4px,var(--accent2) 8px);
+  display:none;animation:wire-dash .4s linear infinite}
+@keyframes wire-dash{to{background-position:8px 0}}
+
+/* ── HOME CIRCUIT ── */
+.home-canvas-wrap{position:relative;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.play-overlay{position:absolute;top:10px;right:10px;display:flex;gap:6px}
+
+/* ── QUICK FIRE ── */
+.qf-wrap{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:14px}
+.qf-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent3);margin-bottom:10px}
+.qf-q{font-size:14px;margin-bottom:8px}
+.qf-bar-wrap{height:6px;background:var(--bg3);border-radius:3px;margin-bottom:10px;overflow:hidden}
+.qf-bar{height:100%;border-radius:3px;background:var(--accent);transition:width .1s linear}
+
+/* ── WORKED EXAMPLE ── */
+.worked-toggle{background:none;border:1px dashed var(--border2);color:var(--accent3);
+  font-size:11px;border-radius:5px;padding:4px 10px;cursor:pointer;margin-bottom:8px}
+.worked-box{background:rgba(255,213,79,.05);border:1px solid rgba(255,213,79,.2);
+  border-radius:8px;padding:12px;font-size:12px;color:var(--text);margin-bottom:8px;display:none;line-height:1.7}
+.worked-box .step{color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:11px}
+
+/* ── SUBMIT ── */
+.submit-section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:20px;margin-bottom:20px;text-align:center}
+.score-display{font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;
+  color:var(--accent);margin-bottom:6px}
+.grade-display{font-size:20px;color:var(--accent2);margin-bottom:18px}
+.submit-btn{background:var(--accent);color:#fff;font-family:'Rajdhani',sans-serif;
+  font-weight:700;font-size:18px;border:none;border-radius:10px;padding:14px 36px;
+  cursor:pointer;transition:.2s;letter-spacing:.5px}
+.submit-btn:hover{background:#e05a10}
+.submit-confirm{display:none;background:rgba(127,255,107,.1);border:1px solid rgba(127,255,107,.3);
+  border-radius:8px;padding:14px;color:var(--lime);font-size:14px;margin-top:14px}
+
+/* ── CONFETTI ── */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999}
+.confetti-p{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall 3s ease-in forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}
+ 100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* ── UTILS ── */
+.hidden{display:none!important}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.info-box{background:rgba(79,195,247,.07);border:1px solid rgba(79,195,247,.2);
+  border-radius:8px;padding:12px;font-size:13px;line-height:1.6;margin-bottom:12px}
+.warn-box{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);
+  border-radius:8px;padding:12px;font-size:13px;line-height:1.6;margin-bottom:12px}
+.success-box{background:rgba(127,255,107,.07);border:1px solid rgba(127,255,107,.2);
+  border-radius:8px;padding:12px;font-size:13px;line-height:1.6;margin-bottom:12px}
+.compare-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.compare-table th{background:var(--bg3);border:1px solid var(--border);padding:6px 10px;
+  color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px}
+.compare-table td{border:1px solid var(--border);padding:6px 10px;color:var(--text)}
+.tag-new{background:rgba(255,213,79,.2);color:var(--accent3);font-size:10px;
+  border-radius:4px;padding:1px 6px;margin-left:6px;font-family:'JetBrains Mono',monospace}
+textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  font-family:'Exo 2',sans-serif;font-size:13px;border-radius:6px;padding:8px;
+  outline:none;resize:vertical;min-height:70px}
+textarea:focus{border-color:var(--accent2)}
+@media(max-width:768px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:static}
+  .scope-wrap{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<script>
+const LAB_START = Date.now();
+const APPS_URL = 'PASTE_DEPLOYMENT_URL_HERE';
+
+const STUDENTS = {
+  '9A':['ابتسام محمد علي الجعجع','ابراهيم فادي احمد مطر','احمد عمر احمد الصالح','اروى خالد محمود العريض','اماني بلال حامد ابو الهدى','امجد علي نايف حميد','براءة خالد محمود نوفل','تولين ايمن محمد قدسيه','جواد محمود غازي حسن','جود وسام جابر الصالح','حسن حسام علي العلي','حمزة هشام محمد نصر','خلود خالد اسماعيل قاسم','دانيال محمد عادل جواد','ريان ساري علي زيداني','ريان عفيف علي السيد','ريماس ايمن وليد الاشوح','سارة موسى محمد حمود','سامر احمد علي عبدالله','سلفانا ابراهيم عبد السلام قصقص','سلمان خالد ناصر عيشه','سيلين اسامة عبد الفتاح توسكا','سيلين عادل اسماعيل ابراهيم','عبد الرحمن الياس محمد الحسين','عزيزه مروان حسن حسن','علي محمود ديب حماد','كرم نادر احمد غيث','لارا خضر علي شراب','ليا محمد ابراهيم الحلو','ليمار خضر عبدالله بلاوني','لين محمود احمد احمد','مالك احمد علي الحاج علي','محمد ايمن وليد الاشوح','محمود محمد مصطفى ابو مايهه','ملك طارق محمود الاشقر','ملك محمد حسن ابو حمد','ميرا اياد وحيد حسن','نغم محمد جمعة بلال','نور ماهر مفيد العلي','هادي باسم عبد الرؤوف الحاج داود','ياسمين محمد شحادة ديب'],
+  '9B':['ادم احمد غازي الجمل','ادم فادي كامل عبدالله','اسراء خالد محمود مطر','اميره محمد احمد الهندي','اية احمد محمد مكية','بلال زياد محمود عيسى','جاد سمير ابراهيم العلي','جمانه علي "محي الدين" دمشقي','حلا محمد اكرم عجاوي','حنان محمد جمال عبد اللطيف','حنين غسان محمد ابو ليل','دانيه حسين محمد حسين','رؤى رضوان اسعد ديب','رفيف محمد احمد ندوه','رهف محمود محمد دراج','رهف يوسف جمعة جمعة','روان احمد شحادة ديب','زهرة ابراهيم عارف ظاهر','ساره بهاء ابراهيم العيسى','سناء جهاد فؤاد الفقير','عبد الرحمن وليد احمد نفاع','عبد الهادي رضوان عيسى','عصام مصطفى منير توسكا','علاء علي غالب الساري','عمار احمد عصام كروم','عمر احمد جمال الاشبه','عمر حسان عمر كروم','غزل بلال "محمد خضر" عمر','ليا محمد خالد محمد','لينا احمد علي علي','محمد "احمد قاسم" الصباهي','محمد "نور الدين" علي قطف','محمد زياد محمد عبود','محمود "محمد علي" محمد خليل','محمود احمد محمود قدورة','مريم محمد عبد الرحمن عبد الهادي','مطر علي احمد مطر','ملاك بسام احمد حشاش','ملك يوسف شحادة ديب','نادين سليمان صلاح نجم','نور محمد وليد الصالح','وسام هشام امين الطه','يوسف نضال يوسف العيساوي'],
+  '9C':['آيه هاني سعود الميناوي','اروى محمد علي علي','اسراء مصطفى ممدوح سعد الدين','اسلام وليد عبد المطلب بلاوني','اسينات طلال زياد العباسي','امينة جميل علي الغرابلي','تالا احمد ابراهيم عطور','جميل احمد جميل الطاهره','حسين علاء احمد صيداوي','حمزة ابراهيم محمود ابو جبل','حمزه خليل محمد عثمان','خالد احمد صبحي رمضان','خليل ابراهيم حسين بلاوني','راما احمد محمد خزعل','راما حسان "محمد تيسير" منصور','رماس ايمن كايد خضره','رهف بسام محمد بلاوني','زياد طارق زياد الهبطه','سيرين عماد احمد عبد الحليم','ضحى محمد حسن حسن','عائشه خالد عزات يحيى','عبد الرحمن احمد موسى محمد','عبد الرحمن اسماعيل سميح حمو','عبدالرحمن جهاد عبد ابراهيم','علي محمد عبد بشر','عمر احمد محمد اسماعيل','عمر عبدالله عطا ابو شليح','فرح علي محمد ملحم','فيروز احسان عبدالله شاهين','قمر ابراهيم فوزي الميعاري','لميس سعيد محمد الخطيب','مجد فراس حسن سعيد','محمد رامي نزيه رمضان','محمد عبد المجيد محمد سالم','ملاك احمد محمد احمد','منى احسان عبدالله شاهين','مورة عدنان محمود فوراني','ميرا محمد خالد عبد الغني','نبيل محمود نبيل درويش','نورا خليل محمود المتولي','يوسف منتصر احمد جمعة'],
+  '9D':['احمد حسن "محي الدين" قاسم','احمد حسين محمد شعيب','ادم زياد علي وهبه','اشرف محمد حكمت غيث','بلال احمد عيسى ابو الشباب','حسن عبد الوهاب حسن ابو شقير','حسن محمد حسن الفاعور','حلا حسن حسين الحسين','خالد وليد محمود العريض','رنا محمود محمد يعقوب','رهف اسماعيل علي لوباني','رهف سمير لطفي فهد','روان علي عبدالله بلاوني','رين سامر سعدو الحاج','سحر بسام احمد القط','سدره المنتهى احمد مختار الخالد','سعيد محمد سعيد سعيد','شيماء علي احمد محمد','عائشه وسام عبد الرحمن حمو','عمر احمد محمد عزيمه','عمر مالك جمعة بلال','غنى خضر فؤاد احمد','قمر محمد خالد ابو سعد','لمار محمد محمود حسين','ليا شادي ابراهيم عبد الهادي','ليال سعيد جهاد عكيله','ليان "محمد خير" احمد','ليان حسن احمد ابو عرب','لين زياد عاطف ابو الشباب','لين هاني احمد العيسى','ماجد بلال ماجد الخطيب','محمد امير فتان فضه','محمد سعيد محمود جربوع','محمد مصطفى ابراهيم الفقير','محمد وليد مصطفى خطاب','مرام جمال محمد ناصر','مريم يوسف فوزي الحاج','ملك ربيع علي عبد الرحمن','نور علي "محمد زيد" راجح','هبة فؤاد علي منصور','وليد محمد سرحان العلي','يارا يوسف محمد يحيى']
+};
+
+// ── STATE ──
+let state = {
+  name:'', cls:'',
+  scores:{e1:0,e2:0,e3:0,e4:0,e5:0},
+  self:{e1:'',e2:'',e3:'',e4:'',e5:''},
+  answers:{},
+  unlocked:[0],
+  adaptive:'standard',
+  wrongCount:0, rightCount:0,
+  e3Volts:{LN:false,LE:false,NE:false},
+  e4Phase:'',
+  restored:false
+};
+const MAX_RAW = 30;
+
+function nameHash(name){
+  let h=7;
+  for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))%997;
+  return h;
+}
+
+// ── PERSIST ──
+function saveProgress(){
+  try{sessionStorage.setItem('vmains_g9',JSON.stringify(state));}catch(e){}
+}
+function loadProgress(){
+  try{
+    const s=sessionStorage.getItem('vmains_g9');
+    if(s){const d=JSON.parse(s);Object.assign(state,d);state.restored=true;return true;}
+  }catch(e){}
+  return false;
+}
+
+// ── AUDIO ──
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+function playTone(freq,type,dur,vol){
+  if(!AC) return;
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(vol||.15,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+dur);
+  o.connect(g);g.connect(AC.destination);
+  o.start();o.stop(AC.currentTime+dur);
+}
+function playSuccess(){playTone(880,'sine',.25);setTimeout(()=>playTone(1320,'sine',.2),120);}
+function playWrong(){playTone(220,'sawtooth',.3,.1);}
+function playFanfare(){
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',.3),i*100));
+}
+
+// ── TIMER ──
+setInterval(()=>{
+  const s=Math.floor((Date.now()-LAB_START)/1000);
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  document.getElementById('timer').textContent=mm+':'+ss;
+},1000);
+
+// ── SCORE RING ──
+function updateScoreRing(){
+  const raw=Object.values(state.scores).reduce((a,b)=>a+b,0);
+  const s20=Math.round((raw/MAX_RAW)*20);
+  const pct=Math.min(s20/20,1);
+  const circ=2*Math.PI*26;
+  const el=document.getElementById('ring-circle');
+  if(el){el.style.strokeDasharray=circ;el.style.strokeDashoffset=circ*(1-pct);}
+  const rv=document.getElementById('ring-val');
+  if(rv) rv.textContent=s20;
+  const sd=document.getElementById('score-display');
+  if(sd) sd.textContent=s20+'/20';
+  const gd=document.getElementById('grade-display');
+  if(gd){
+    let g='D';
+    if(s20>=18)g='A+';else if(s20>=16)g='A';else if(s20>=13)g='B';else if(s20>=10)g='C';
+    gd.textContent='Grade: '+g;
+    if(s20>=16&&!window._confettiFired){window._confettiFired=true;fireConfetti();playFanfare();}
+  }
+  saveProgress();
+}
+
+// ── CONFETTI ──
+function fireConfetti(){
+  const c=document.getElementById('confetti-container');
+  const colors=['#ff6b1a','#4fc3f7','#7fff6b','#ffd54f','#ff4757','#00ff88'];
+  for(let i=0;i<80;i++){
+    const p=document.createElement('div');
+    p.className='confetti-p';
+    p.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[i%6]};
+      animation-delay:${Math.random()*2}s;animation-duration:${2.5+Math.random()*1.5}s;
+      transform:rotate(${Math.random()*360}deg)`;
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),5000);
+  }
+}
+
+// ── SECTION NAV ──
+function unlockSection(idx){
+  if(!state.unlocked.includes(idx)) state.unlocked.push(idx);
+  document.querySelectorAll('.section').forEach((s,i)=>{
+    s.classList.toggle('locked',!state.unlocked.includes(i));
+  });
+  const dots=document.querySelectorAll('.dot');
+  dots.forEach((d,i)=>{
+    d.classList.remove('done','active');
+    if(state.unlocked.includes(i)&&i<state.unlocked[state.unlocked.length-1]) d.classList.add('done');
+    else if(i===state.unlocked[state.unlocked.length-1]) d.classList.add('active');
+  });
+  saveProgress();
+}
+
+// ── STUDENT PICKER ──
+function setSection(cls){
+  state.cls=cls;
+  document.querySelectorAll('.sec-btn').forEach(b=>b.classList.toggle('on',b.dataset.cls===cls));
+  const sel=document.getElementById('stuName');
+  sel.innerHTML='<option value="">— اختر اسمك —</option>';
+  (STUDENTS[cls]||[]).slice().sort((a,b)=>a.localeCompare(b,'ar')).forEach(n=>{
+    const o=document.createElement('option');
+    o.value=n;o.textContent=n;sel.appendChild(o);
+  });
+  sel.disabled=false;
+}
+function pickName(){
+  state.name=document.getElementById('stuName').value;
+  if(state.name) seedExercises();
+}
+
+// ── LEADERBOARD ──
+function refreshLeaderboard(){
+  fetch(APPS_URL+'?action=counts',{mode:'no-cors'}).catch(()=>{});
+  // Show static counts (will update if CORS allows)
+}
+
+// ── OSCILLOSCOPE ENGINE ──
+// PHYSICS NOTE:
+// A real oscilloscope with triggering ON always shows a STABLE, STATIONARY wave.
+// The trigger circuit starts every sweep from the same point on the waveform → wave appears frozen.
+// "Free-run" (no trigger) causes the wave to scroll — this is the FAULT state, not normal.
+// Default here: TRIGGERED = stable wave. Free-run is a demo-only mode.
+let scopeState={
+  freq:50, vmax:311, sh:5, sv:100,
+  freeRun:false,   // false = triggered (stable) — the real default
+  trigger:0,
+  ch1:'phase', ch2:'none',
+  animFrame:null,
+  freeRunPhase:0   // only used in free-run demo mode
+};
+
+function initScope(){
+  const canvas=document.getElementById('scope-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  window._scopeCtx=ctx;
+  window._scopeCanvas=canvas;
+  drawScope(); // draw once — stable, no animation needed in triggered mode
+}
+
+function scopeFreeRunLoop(){
+  // Only runs when student deliberately enables free-run demo
+  if(!scopeState.freeRun){drawScope();return;}
+  scopeState.freeRunPhase+=scopeState.freq*0.018*2*Math.PI;
+  drawScope();
+  scopeState.animFrame=requestAnimationFrame(scopeFreeRunLoop);
+}
+
+function toggleFreeRun(){
+  scopeState.freeRun=!scopeState.freeRun;
+  cancelAnimationFrame(scopeState.animFrame);
+  const btn=document.getElementById('freerun-btn');
+  if(scopeState.freeRun){
+    // entering free-run demo
+    btn.textContent='🔴 FREE-RUN (untriggered — wave scrolls!)';
+    btn.style.background='rgba(255,71,87,0.3)';
+    btn.style.borderColor='#ff4757';
+    btn.style.color='#ff4757';
+    // show explanation
+    document.getElementById('trigger-explain').style.display='block';
+    scopeFreeRunLoop();
+  } else {
+    // back to triggered (normal stable mode)
+    scopeState.freeRunPhase=0;
+    btn.textContent='🟢 TRIGGERED (stable — normal mode)';
+    btn.style.background='rgba(0,255,136,0.1)';
+    btn.style.borderColor='#00ff88';
+    btn.style.color='#00ff88';
+    document.getElementById('trigger-explain').style.display='none';
+    drawScope();
+  }
+}
+
+function drawScope(){
+  const canvas=window._scopeCanvas;
+  const ctx=window._scopeCtx;
+  if(!canvas||!ctx) return;
+  const W=canvas.width, H=canvas.height;
+  const cols=10, rows=8;
+  const dw=W/cols, dh=H/rows;
+
+  // clear
+  ctx.fillStyle='#001a00';
+  ctx.fillRect(0,0,W,H);
+
+  // scanlines overlay
+  ctx.fillStyle='rgba(0,0,0,0.08)';
+  for(let y=0;y<H;y+=3){ctx.fillRect(0,y,W,1);}
+
+  // grid lines
+  ctx.strokeStyle='#003300';ctx.lineWidth=1;
+  for(let i=0;i<=cols;i++){ctx.beginPath();ctx.moveTo(i*dw,0);ctx.lineTo(i*dw,H);ctx.stroke();}
+  for(let j=0;j<=rows;j++){ctx.beginPath();ctx.moveTo(0,j*dh);ctx.lineTo(W,j*dh);ctx.stroke();}
+
+  // centre crosshairs (brighter)
+  ctx.strokeStyle='#005500';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();
+
+  // tick marks on centre lines (every div, 5px long)
+  ctx.strokeStyle='#004400';ctx.lineWidth=1;
+  for(let i=0;i<=cols;i++){ctx.beginPath();ctx.moveTo(i*dw,H/2-4);ctx.lineTo(i*dw,H/2+4);ctx.stroke();}
+  for(let j=0;j<=rows;j++){ctx.beginPath();ctx.moveTo(W/2-4,j*dh);ctx.lineTo(W/2+4,j*dh);ctx.stroke();}
+
+  // trigger level line (dashed gold)
+  const trigPx=H/2-(scopeState.trigger/Math.max(scopeState.vmax,1))*(H/2*0.88);
+  ctx.strokeStyle='rgba(255,213,79,0.55)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
+  ctx.beginPath();ctx.moveTo(0,trigPx);ctx.lineTo(W,trigPx);ctx.stroke();
+  ctx.setLineDash([]);
+  // trigger arrow marker left edge
+  ctx.fillStyle='rgba(255,213,79,0.7)';
+  ctx.beginPath();ctx.moveTo(0,trigPx);ctx.lineTo(10,trigPx-5);ctx.lineTo(10,trigPx+5);ctx.closePath();ctx.fill();
+
+  // Triggered mode label on screen
+  if(!scopeState.freeRun){
+    ctx.fillStyle='rgba(0,255,136,0.4)';
+    ctx.font='9px JetBrains Mono,monospace';
+    ctx.fillText('TRIG',W-36,12);
+  } else {
+    ctx.fillStyle='rgba(255,71,87,0.6)';
+    ctx.font='9px JetBrains Mono,monospace';
+    ctx.fillText('FREE',W-36,12);
+  }
+
+  // CH1 wave
+  if(scopeState.ch1!=='none'){
+    drawWave(ctx,W,H,scopeState.ch1==='phase'?1:0,'#00ff88',2.5);
+  }
+  // CH2 wave
+  if(scopeState.ch2!=='none'){
+    drawWave(ctx,W,H,scopeState.ch2==='phase'?1:0,'#4fc3f7',2);
+  }
+
+  updateReadouts();
+}
+
+function drawWave(ctx,W,H,active,color,lw){
+  const amplPx=(scopeState.vmax/scopeState.sv)*(H/8)*0.85;
+  const shSec=scopeState.sh/1000;       // time shown per division in seconds
+  const totalTimeSec=shSec*10;          // total time across full screen (10 divisions)
+  const pxPerSec=W/totalTimeSec;
+
+  // TRIGGERED MODE: phase=0 always → wave always starts from same point → STATIONARY
+  // FREE-RUN MODE: phase increments each frame → wave scrolls (educational demo only)
+  const phase=scopeState.freeRun?scopeState.freeRunPhase:0;
+
+  ctx.strokeStyle=color;ctx.lineWidth=lw;
+  ctx.shadowColor=color;ctx.shadowBlur=3;
+  ctx.beginPath();
+  for(let px=0;px<W;px++){
+    const t=px/pxPerSec;
+    const y=active===0
+      ? H/2
+      : H/2-amplPx*Math.sin(2*Math.PI*scopeState.freq*t+phase);
+    if(px===0) ctx.moveTo(px,y);
+    else ctx.lineTo(px,y);
+  }
+  ctx.stroke();
+  ctx.shadowBlur=0;
+}
+
+function updateReadouts(){
+  const T=(1/scopeState.freq*1000).toFixed(2);
+  const vrms=(scopeState.vmax/Math.sqrt(2)).toFixed(1);
+  const vpp=(scopeState.vmax*2).toFixed(0);
+  const dpPeriod=(parseFloat(T)/scopeState.sh).toFixed(2);
+  const rows=[
+    ['f',scopeState.freq+' Hz'],
+    ['T',T+' ms'],
+    ['Vmax',scopeState.vmax+' V'],
+    ['Vrms',vrms+' V'],
+    ['Vpp',vpp+' V'],
+    ['Sh',scopeState.sh+' ms/div'],
+    ['Sv',scopeState.sv+' V/div'],
+    ['Div/T',dpPeriod]
+  ];
+  const rd=document.getElementById('scope-readouts');
+  if(rd) rd.innerHTML=rows.map(r=>`<div class="readout-row"><span class="readout-lbl">${r[0]}</span><span class="readout-val">${r[1]}</span></div>`).join('');
+}
+
+function setSh(v){
+  scopeState.sh=v;
+  document.querySelectorAll('.sh-btn').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.v)===v));
+  drawScope();
+}
+function setSv(v){
+  scopeState.sv=v;
+  document.querySelectorAll('.sv-btn').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.v)===v));
+  drawScope();
+}
+function setFreq(v){
+  scopeState.freq=v;
+  document.querySelectorAll('.freq-btn').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.v)===v));
+  drawScope();
+}
+function setVmax(v){
+  scopeState.vmax=v;
+  document.querySelectorAll('.vmax-btn').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.v)===v));
+  const isGold=v===311;
+  document.querySelectorAll('.vmax-btn').forEach(b=>{
+    b.classList.toggle('gold',parseFloat(b.dataset.v)===311);
+  });
+  drawScope();
+}
+// toggleSweep removed — replaced by toggleFreeRun (see oscilloscope engine above)
+function connectTerminal(ch,mode){
+  scopeState[ch]=mode;
+  ['phase','gnd','none'].forEach(m=>{
+    const s=document.getElementById(`${ch}-socket-${m==='phase'?'phase':'gnd'}`);
+    if(s&&m!=='none') s.classList.toggle(`connected-${m}`,mode===m);
+  });
+  const wi=document.getElementById(`${ch}-wire`);
+  if(wi){wi.style.display=mode!=='none'?'block':'none';}
+  drawScope();
+}
+</script>
+<!-- ═══════════════════════════════════════ HTML ═══════════════════════════════════════ -->
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-title">⚡ Ahmad Ghozlan Labs</div>
+    <div class="brand-sub">Physics · Grade 9 · Lebanon</div>
+  </div>
+  <div class="timer-box">
+    <div class="timer-label">Session Time</div>
+    <div class="timer-val" id="timer">00:00</div>
+  </div>
+  <div class="score-ring-wrap">
+    <svg viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,107,26,.15)" stroke-width="5"/>
+      <circle id="ring-circle" cx="30" cy="30" r="26" fill="none" stroke="#ff6b1a" stroke-width="5"
+        stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4"
+        transform="rotate(-90 30 30)" style="transition:stroke-dashoffset .5s"/>
+      <text x="30" y="35" text-anchor="middle" font-family="JetBrains Mono,monospace"
+        font-size="14" font-weight="700" fill="#ff6b1a" id="ring-val">0</text>
+    </svg>
+    <div class="score-ring-label">Score /20</div>
+  </div>
+  <div class="progress-dots">
+    <div class="dot active" title="E1 Engage"></div>
+    <div class="dot" title="E2 Explore"></div>
+    <div class="dot" title="E3 Explain"></div>
+    <div class="dot" title="E4 Elaborate"></div>
+    <div class="dot" title="E5 Evaluate"></div>
+  </div>
+  <div class="picker-section">
+    <div class="picker-label">Your Class</div>
+    <div class="sec-btns">
+      <button class="sec-btn" data-cls="9A" onclick="setSection('9A')">9A</button>
+      <button class="sec-btn" data-cls="9B" onclick="setSection('9B')">9B</button>
+      <button class="sec-btn" data-cls="9C" onclick="setSection('9C')">9C</button>
+      <button class="sec-btn" data-cls="9D" onclick="setSection('9D')">9D</button>
+    </div>
+    <select id="stuName" disabled onchange="pickName()">
+      <option value="">— اختر اسمك —</option>
+    </select>
+  </div>
+  <div class="leaderboard">
+    <div class="lb-title">Class Progress</div>
+    <div id="lb-rows">
+      <div class="lb-row"><span class="lb-cls">9A</span><span class="lb-count" id="lb-9A">— / 41</span></div>
+      <div class="lb-row"><span class="lb-cls">9B</span><span class="lb-count" id="lb-9B">— / 44</span></div>
+      <div class="lb-row"><span class="lb-cls">9C</span><span class="lb-count" id="lb-9C">— / 41</span></div>
+      <div class="lb-row"><span class="lb-cls">9D</span><span class="lb-count" id="lb-9D">— / 42</span></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div id="confetti-container" class="confetti-container"></div>
+
+  <!-- CHAPTER BANNER -->
+  <div class="chapter-banner">
+    <div class="bolt">⚡</div>
+    <div>
+      <h1>NEW CHAPTER: Voltage of Mains</h1>
+      <p>Continuing from AC Voltage characteristics — this chapter covers mains supply, home wiring, and safety.</p>
+    </div>
+  </div>
+
+  <!-- E1: ENGAGE -->
+  <div class="section" id="sec-0">
+    <div class="sec-header">
+      <span class="sec-badge">E1</span>
+      <span class="sec-title">Engage — AC Voltage Review + Mains Introduction</span>
+      <span class="sec-tag">ENGAGE</span>
+    </div>
+    <div class="sec-body">
+      <div class="info-box">
+        <strong style="color:var(--accent2)">Review from Previous Chapter: AC Voltage Characteristics</strong><br>
+        Use the oscilloscope below to explore the mains voltage waveform. The scope is pre-set to Lebanese mains: <strong>Vmax = 311 V, f = 50 Hz</strong>. Read values from the screen and answer the review questions.
+      </div>
+
+      <!-- OSCILLOSCOPE -->
+      <div class="scope-wrap">
+        <div class="scope-screen-col">
+          <canvas id="scope-canvas" class="scope-canvas" width="500" height="300"></canvas>
+          <div class="scope-controls">
+            <div class="ctrl-row">
+              <span class="ctrl-label">FREQ Hz</span>
+              <div class="step-btns">
+                <button class="step-btn freq-btn" data-v="10" onclick="setFreq(10)">10</button>
+                <button class="step-btn freq-btn" data-v="20" onclick="setFreq(20)">20</button>
+                <button class="step-btn freq-btn" data-v="25" onclick="setFreq(25)">25</button>
+                <button class="step-btn freq-btn active" data-v="50" onclick="setFreq(50)">50</button>
+                <button class="step-btn freq-btn" data-v="100" onclick="setFreq(100)">100</button>
+                <button class="step-btn freq-btn" data-v="200" onclick="setFreq(200)">200</button>
+                <button class="step-btn freq-btn" data-v="500" onclick="setFreq(500)">500</button>
+              </div>
+            </div>
+            <div class="ctrl-row">
+              <span class="ctrl-label">Vmax (V)</span>
+              <div class="step-btns">
+                <button class="step-btn vmax-btn" data-v="50" onclick="setVmax(50)">50</button>
+                <button class="step-btn vmax-btn" data-v="100" onclick="setVmax(100)">100</button>
+                <button class="step-btn vmax-btn" data-v="141" onclick="setVmax(141)">141</button>
+                <button class="step-btn vmax-btn" data-v="220" onclick="setVmax(220)">220</button>
+                <button class="step-btn vmax-btn gold active" data-v="311" onclick="setVmax(311)">311★</button>
+                <button class="step-btn vmax-btn" data-v="400" onclick="setVmax(400)">400</button>
+              </div>
+            </div>
+            <div class="ctrl-row">
+              <span class="ctrl-label">Sh ms/div</span>
+              <div class="step-btns">
+                <button class="step-btn sh-btn" data-v="50" onclick="setSh(50)">50</button>
+                <button class="step-btn sh-btn" data-v="20" onclick="setSh(20)">20</button>
+                <button class="step-btn sh-btn" data-v="10" onclick="setSh(10)">10</button>
+                <button class="step-btn sh-btn active" data-v="5" onclick="setSh(5)">5</button>
+                <button class="step-btn sh-btn" data-v="2" onclick="setSh(2)">2</button>
+                <button class="step-btn sh-btn" data-v="1" onclick="setSh(1)">1</button>
+                <button class="step-btn sh-btn" data-v="0.5" onclick="setSh(0.5)">0.5</button>
+              </div>
+            </div>
+            <div class="ctrl-row">
+              <span class="ctrl-label">Sv V/div</span>
+              <div class="step-btns">
+                <button class="step-btn sv-btn" data-v="500" onclick="setSv(500)">500</button>
+                <button class="step-btn sv-btn" data-v="200" onclick="setSv(200)">200</button>
+                <button class="step-btn sv-btn active" data-v="100" onclick="setSv(100)">100</button>
+                <button class="step-btn sv-btn" data-v="50" onclick="setSv(50)">50</button>
+                <button class="step-btn sv-btn" data-v="20" onclick="setSv(20)">20</button>
+                <button class="step-btn sv-btn" data-v="10" onclick="setSv(10)">10</button>
+              </div>
+            </div>
+            <div class="ctrl-row">
+              <span class="ctrl-label">Trigger</span>
+              <input type="range" min="-311" max="311" value="0" step="10" style="flex:1"
+                oninput="scopeState.trigger=+this.value;drawScope()">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent3);min-width:50px"
+                id="trig-lbl">0 V</span>
+            </div>
+            <div class="ctrl-row">
+              <button id="freerun-btn" class="sweep-btn on" style="background:rgba(0,255,136,0.1);border-color:#00ff88;color:#00ff88;font-size:11px" onclick="toggleFreeRun()">🟢 TRIGGERED (stable — normal mode)</button>
+            </div>
+          </div>
+          <!-- TERMINALS -->
+          <div class="terminals">
+            <div class="terminal-pair">
+              <h4>CH1 INPUT</h4>
+              <div class="term-sockets">
+                <div class="socket phase connected-phase" id="ch1-socket-phase">+</div>
+                <div class="socket gnd" id="ch1-socket-gnd">⏚</div>
+              </div>
+              <div class="term-btns">
+                <button class="term-btn" onclick="connectTerminal('ch1','phase')">PHASE</button>
+                <button class="term-btn" onclick="connectTerminal('ch1','gnd')">GND</button>
+                <button class="term-btn" onclick="connectTerminal('ch1','none')">DISC.</button>
+              </div>
+              <div class="wire-indicator" id="ch1-wire" style="display:block;background:repeating-linear-gradient(90deg,transparent,transparent 4px,#ff4444 4px,#ff4444 8px)"></div>
+            </div>
+            <div class="terminal-pair">
+              <h4>CH2 INPUT</h4>
+              <div class="term-sockets">
+                <div class="socket phase" id="ch2-socket-phase">+</div>
+                <div class="socket gnd" id="ch2-socket-gnd">⏚</div>
+              </div>
+              <div class="term-btns">
+                <button class="term-btn" onclick="connectTerminal('ch2','phase')">PHASE</button>
+                <button class="term-btn" onclick="connectTerminal('ch2','gnd')">GND</button>
+                <button class="term-btn" onclick="connectTerminal('ch2','none')">DISC.</button>
+              </div>
+              <div class="wire-indicator" id="ch2-wire"></div>
+            </div>
+          </div>
+        </div>
+        <div class="scope-readout-col">
+          <div style="font-size:10px;color:var(--accent);margin-bottom:8px;letter-spacing:1px">LIVE READINGS</div>
+          <div id="scope-readouts"></div>
+          <div style="margin-top:12px;font-size:10px;color:var(--accent3)">★ 311V = Lebanese mains Vmax</div>
+        </div>
+      </div>
+
+      <!-- E1 REVIEW EXERCISES -->
+      <div class="exercise">
+        <div class="ex-q">
+          <strong>Review Q1</strong> — With Sh = 5 ms/div and f = 50 Hz, how many <strong>divisions</strong> does one complete period span on the screen? <span class="pts-badge">1 pt</span>
+        </div>
+        <div class="answer-row">
+          <input type="number" id="e1q1" placeholder="divisions" min="0" max="20" step="0.5">
+          <button class="btn" onclick="checkE1Q1()">Check</button>
+          <span class="attempt-counter" id="e1q1-att"></span>
+        </div>
+        <button class="hint-btn" onclick="showHint('h-e1q1',this)">Hint</button>
+        <div class="hint-box" id="h-e1q1">T = 1/f = 1/50 = 20 ms. Each division = Sh = 5 ms. Divisions = T ÷ Sh</div>
+        <div class="feedback" id="fb-e1q1"></div>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-q">
+          <strong>Review Q2</strong> — The mains Vmax = 311 V. Calculate <strong>Vrms</strong> in volts (round to nearest whole number). <span class="pts-badge">1 pt</span>
+        </div>
+        <div class="answer-row">
+          <input type="number" id="e1q2" placeholder="Vrms (V)" min="0" max="500">
+          <button class="btn" onclick="checkE1Q2()">Check</button>
+        </div>
+        <button class="hint-btn" onclick="showHint('h-e1q2',this)">Hint</button>
+        <div class="hint-box" id="h-e1q2">Vrms = Vmax ÷ √2 = 311 ÷ 1.414 ≈ ?</div>
+        <div class="feedback" id="fb-e1q2"></div>
+      </div>
+
+      <!-- MCQ WARMUP -->
+      <div class="exercise">
+        <div class="ex-q"><strong>Warm-up MCQ</strong> — In Lebanon, the mains voltage RMS value is: <span class="pts-badge">1 pt</span></div>
+        <div class="mcq-options" id="e1-mcq">
+          <button class="mcq-opt" onclick="checkMCQ('e1-mcq',this,false,'e1-mcq-fb')">110 V</button>
+          <button class="mcq-opt" onclick="checkMCQ('e1-mcq',this,true,'e1-mcq-fb')">220 V</button>
+          <button class="mcq-opt" onclick="checkMCQ('e1-mcq',this,false,'e1-mcq-fb')">311 V</button>
+          <button class="mcq-opt" onclick="checkMCQ('e1-mcq',this,false,'e1-mcq-fb')">380 V</button>
+        </div>
+        <div class="feedback" id="e1-mcq-fb" style="display:none"></div>
+      </div>
+
+      <div class="self-row">
+        <span class="self-label">How well do you understand this?</span>
+        <button class="emoji-btn" onclick="setSelf('e1','confused',this)">😕</button>
+        <button class="emoji-btn" onclick="setSelf('e1','thinking',this)">🤔</button>
+        <button class="emoji-btn" onclick="setSelf('e1','good',this)">😊</button>
+        <button class="emoji-btn" onclick="setSelf('e1','great',this)">🎯</button>
+      </div>
+      <button class="btn next-btn" onclick="nextSection(1)">Next → Explore</button>
+    </div>
+  </div>
+
+  <!-- E2: EXPLORE -->
+  <div class="section locked" id="sec-1">
+    <div class="sec-header">
+      <span class="sec-badge explore">E2</span>
+      <span class="sec-title">Explore — Mains Voltage Characteristics</span>
+      <span class="sec-tag">EXPLORE</span>
+    </div>
+    <div class="sec-body">
+      <div class="info-box">
+        <strong>Lebanese Mains Characteristics:</strong><br>
+        Vrms = <strong style="color:var(--accent)">220 V</strong> &nbsp;|&nbsp;
+        f = <strong style="color:var(--accent)">50 Hz</strong> &nbsp;|&nbsp;
+        T = <strong style="color:var(--accent)">20 ms</strong> &nbsp;|&nbsp;
+        Vmax = <strong style="color:var(--accent)">311 V</strong><br>
+        <span style="font-size:12px;color:var(--muted)">The oscilloscope shows this waveform. Try setting: Sh = 10ms/div → you see 2 complete cycles.</span>
+      </div>
+
+      <div class="exercise">
+        <div class="ex-q">
+          <strong>Scope Challenge</strong> — Set the oscilloscope to show <strong>exactly 4 full cycles</strong> on the screen (10 divisions wide). With f = 50 Hz (T = 20 ms), which Sh do you need?<span class="pts-badge">1 pt</span><br>
+          <span style="font-size:12px;color:var(--muted)">Think: total time shown = 10 × Sh. You need 4 × T = 4 × 20ms = 80ms. So Sh = ?</span>
+        </div>
+        <div class="mcq-options" id="e2-scope-mcq">
+          <button class="mcq-opt" onclick="checkMCQ('e2-scope-mcq',this,false,'e2-scope-fb')">5 ms/div</button>
+          <button class="mcq-opt" onclick="checkMCQ('e2-scope-mcq',this,false,'e2-scope-fb')">10 ms/div</button>
+          <button class="mcq-opt" onclick="checkMCQ('e2-scope-mcq',this,true,'e2-scope-fb')">8 ms/div — not available, so closest: 10 ms/div shows ~5 cycles → actually 20 ms/div</button>
+          <button class="mcq-opt" onclick="checkMCQ('e2-scope-mcq',this,true,'e2-scope-fb')">20 ms/div → 10 div × 20 ms = 200 ms = 10 cycles... Try 8 ms/div ✓</button>
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:var(--accent2)">
+          Simpler: Choose Sh = <strong>5 ms/div</strong> → total = 50ms → 50/20 = 2.5 cycles. Choose <strong>10 ms/div</strong> → total = 100ms → 5 cycles. For exactly 4: Sh = 80ms/10div = <strong>8 ms/div</strong> (not on scope, so closest = 5 or 10).
+        </div>
+        <div class="feedback" id="e2-scope-fb" style="display:none"></div>
+      </div>
+
+      <!-- Adaptive exercise seeded by name -->
+      <div class="exercise" id="e2-adaptive-ex">
+        <div class="ex-q" id="e2-adaptive-q">Select your name above to get your personalised exercise.</div>
+        <div id="e2-adaptive-body"></div>
+      </div>
+
+      <div class="self-row">
+        <span class="self-label">Confidence?</span>
+        <button class="emoji-btn" onclick="setSelf('e2','confused',this)">😕</button>
+        <button class="emoji-btn" onclick="setSelf('e2','thinking',this)">🤔</button>
+        <button class="emoji-btn" onclick="setSelf('e2','good',this)">😊</button>
+        <button class="emoji-btn" onclick="setSelf('e2','great',this)">🎯</button>
+      </div>
+      <button class="btn next-btn" onclick="nextSection(2)">Next → Explain</button>
+    </div>
+  </div>
+
+  <!-- E3: EXPLAIN -->
+  <div class="section locked" id="sec-2">
+    <div class="sec-header">
+      <span class="sec-badge explain">E3</span>
+      <span class="sec-title">Explain — Home Wiring: Live, Neutral, Earth &amp; Parallel</span>
+      <span class="sec-tag">EXPLAIN</span>
+    </div>
+    <div class="sec-body">
+      <div class="info-box">
+        In Lebanon (and most countries), all home appliances are connected <strong style="color:var(--accent)">in parallel</strong> to the mains supply. Every socket has 3 wires: <strong style="color:#cc3333">LIVE</strong>, <strong style="color:#aaaaff">NEUTRAL</strong>, and <strong style="color:#aacc00">EARTH</strong>.
+      </div>
+
+      <!-- HOME CIRCUIT CANVAS -->
+      <div class="home-canvas-wrap">
+        <canvas id="home-canvas" width="820" height="320" style="width:100%;display:block;background:#0a0c0e;border-radius:8px"></canvas>
+        <div class="play-overlay">
+          <button class="btn secondary" onclick="homeStep(-1)">↩ Reset</button>
+          <button class="btn" onclick="homeStep(1)" id="home-next-btn">▶ Next Step</button>
+        </div>
+      </div>
+      <div id="home-step-label" style="font-size:13px;color:var(--accent2);padding:6px 0;min-height:24px"></div>
+
+      <!-- VOLTAGE CLICK EXERCISE -->
+      <div class="exercise">
+        <div class="ex-q"><strong>Terminal Voltage Exercise</strong> — Click the correct voltage for each pair of terminals. <span class="pts-badge">3 pts</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <div class="row">
+            <span style="min-width:180px;font-size:13px;color:var(--text)">LIVE to NEUTRAL =</span>
+            <div class="mcq-options" style="flex-direction:row" id="v-LN">
+              <button class="mcq-opt" onclick="checkVolt('LN',this,false)">0 V</button>
+              <button class="mcq-opt" onclick="checkVolt('LN',this,true)">220 V</button>
+              <button class="mcq-opt" onclick="checkVolt('LN',this,false)">110 V</button>
+            </div>
+            <span id="v-LN-ok" style="font-size:16px"></span>
+          </div>
+          <div class="row">
+            <span style="min-width:180px;font-size:13px;color:var(--text)">LIVE to EARTH =</span>
+            <div class="mcq-options" style="flex-direction:row" id="v-LE">
+              <button class="mcq-opt" onclick="checkVolt('LE',this,false)">0 V</button>
+              <button class="mcq-opt" onclick="checkVolt('LE',this,true)">220 V</button>
+              <button class="mcq-opt" onclick="checkVolt('LE',this,false)">311 V</button>
+            </div>
+            <span id="v-LE-ok" style="font-size:16px"></span>
+          </div>
+          <div class="row">
+            <span style="min-width:180px;font-size:13px;color:var(--text)">NEUTRAL to EARTH =</span>
+            <div class="mcq-options" style="flex-direction:row" id="v-NE">
+              <button class="mcq-opt" onclick="checkVolt('NE',this,true)">0 V</button>
+              <button class="mcq-opt" onclick="checkVolt('NE',this,false)">220 V</button>
+              <button class="mcq-opt" onclick="checkVolt('NE',this,false)">110 V</button>
+            </div>
+            <span id="v-NE-ok" style="font-size:16px"></span>
+          </div>
+        </div>
+        <div class="feedback" id="volt-fb" style="display:none"></div>
+      </div>
+
+      <!-- MCQ SET -->
+      <div class="exercise">
+        <div class="ex-q"><strong>MCQ 1</strong> — If the TV breaks in a parallel circuit at home, the lamp: <span class="pts-badge">1 pt</span></div>
+        <div class="mcq-options" id="e3-mcq1">
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq1',this,true,'e3m1-fb','e3',1)">Stays ON — parallel branches are independent</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq1',this,false,'e3m1-fb','e3',0)">Turns OFF</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq1',this,false,'e3m1-fb','e3',0)">Flickers</button>
+        </div>
+        <div class="feedback" id="e3m1-fb" style="display:none"></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-q"><strong>MCQ 2</strong> — Voltage across the fridge connected to Lebanese mains: <span class="pts-badge">1 pt</span></div>
+        <div class="mcq-options" id="e3-mcq2">
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq2',this,false,'e3m2-fb','e3',0)">110 V</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq2',this,true,'e3m2-fb','e3',1)">220 V (same as mains — parallel means same voltage)</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq2',this,false,'e3m2-fb','e3',0)">Depends on fridge resistance</button>
+        </div>
+        <div class="feedback" id="e3m2-fb" style="display:none"></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-q"><strong>MCQ 3</strong> — Which wire in a Lebanese socket is the LIVE (dangerous) wire? <span class="pts-badge">1 pt</span></div>
+        <div class="mcq-options" id="e3-mcq3">
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq3',this,false,'e3m3-fb','e3',0)">Blue</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq3',this,true,'e3m3-fb','e3',1)">Brown (carries 220 V AC — dangerous)</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e3-mcq3',this,false,'e3m3-fb','e3',0)">Yellow-Green</button>
+        </div>
+        <div class="feedback" id="e3m3-fb" style="display:none"></div>
+      </div>
+
+      <!-- WRITTEN -->
+      <div class="exercise">
+        <div class="ex-q"><strong>Written Reflection</strong> — Why must all home appliances be connected in <strong>parallel</strong> and not in <strong>series</strong>? Write 2 reasons. <span class="pts-badge">2 pts</span></div>
+        <textarea id="e3-written" placeholder="Write your 2 reasons here..." oninput="state.answers.e3_written=this.value;saveProgress()"></textarea>
+        <button class="btn" style="margin-top:8px" onclick="submitWritten()">Save Answer</button>
+        <div class="feedback" id="e3-written-fb" style="display:none"></div>
+      </div>
+
+      <div class="self-row">
+        <span class="self-label">Understood?</span>
+        <button class="emoji-btn" onclick="setSelf('e3','confused',this)">😕</button>
+        <button class="emoji-btn" onclick="setSelf('e3','thinking',this)">🤔</button>
+        <button class="emoji-btn" onclick="setSelf('e3','good',this)">😊</button>
+        <button class="emoji-btn" onclick="setSelf('e3','great',this)">🎯</button>
+      </div>
+      <button class="btn next-btn" onclick="nextSection(3)">Next → Elaborate</button>
+    </div>
+  </div>
+
+  <!-- E4: ELABORATE -->
+  <div class="section locked" id="sec-3">
+    <div class="sec-header">
+      <span class="sec-badge elaborate">E4</span>
+      <span class="sec-title">Elaborate — Short Circuits, Fuses &amp; Circuit Breakers</span>
+      <span class="sec-tag">ELABORATE</span>
+    </div>
+    <div class="sec-body">
+
+      <!-- SHORT CIRCUIT CANVAS -->
+      <div class="warn-box">
+        <strong style="color:var(--red)">⚠ Short Circuit</strong> — A short circuit happens when the LIVE wire touches the NEUTRAL directly (near-zero resistance). The current becomes dangerously high, heating wires until fire starts.
+      </div>
+      <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px">
+        <canvas id="sc-canvas" width="820" height="200" style="width:100%;display:block;background:#0a0c0e"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn secondary" onclick="scReset()">Reset Circuit</button>
+        <button class="btn" onclick="scNormal()">▶ Normal Operation</button>
+        <button class="btn" style="background:var(--red)" onclick="scShort()">⚡ Trigger Short Circuit</button>
+      </div>
+      <div id="sc-info" class="feedback" style="display:none"></div>
+
+      <!-- MCQ -->
+      <div class="exercise">
+        <div class="ex-q"><strong>Short Circuit MCQ</strong> — In a short circuit at home, what immediately stops the danger? <span class="pts-badge">1 pt</span></div>
+        <div class="mcq-options" id="e4-sc-mcq">
+          <button class="mcq-opt" onclick="checkMCQscore('e4-sc-mcq',this,true,'e4sc-fb','e4',1)">The fuse blows (or circuit breaker trips) — opening the circuit</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e4-sc-mcq',this,false,'e4sc-fb','e4',0)">The lamp explodes</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e4-sc-mcq',this,false,'e4sc-fb','e4',0)">Nothing — the current continues</button>
+        </div>
+        <div class="feedback" id="e4sc-fb" style="display:none"></div>
+      </div>
+
+      <!-- FUSE & BREAKER SIDE BY SIDE -->
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px">
+        <div style="flex:1;min-width:280px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <h3 style="font-family:'Rajdhani',sans-serif;color:var(--accent);margin-bottom:8px">🔴 Fuse</h3>
+          <canvas id="fuse-canvas" width="260" height="80" style="width:100%;border-radius:6px;display:block;margin-bottom:8px;background:#0a0c0e"></canvas>
+          <div style="font-size:12px;line-height:1.7;color:var(--text)">
+            • Contains a <strong>thin wire</strong> that melts when current exceeds its rated value<br>
+            • Connected in <strong>SERIES</strong> in the circuit<br>
+            • <strong>Single use</strong> — must be replaced after blowing<br>
+            • Ratings: 1A · 2A · 5A · 10A · 13A · 16A
+          </div>
+          <button class="btn secondary" style="margin-top:8px;width:100%" onclick="blowFuse()">Simulate Fuse Blowing</button>
+        </div>
+        <div style="flex:1;min-width:280px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <h3 style="font-family:'Rajdhani',sans-serif;color:var(--accent2);margin-bottom:8px">🔵 Circuit Breaker</h3>
+          <canvas id="cb-canvas" width="260" height="80" style="width:100%;border-radius:6px;display:block;margin-bottom:8px;background:#0a0c0e"></canvas>
+          <div style="font-size:12px;line-height:1.7;color:var(--text)">
+            • Uses a <strong>bimetallic strip</strong> or magnetic trip that opens the circuit<br>
+            • Connected in <strong>SERIES</strong> in the circuit<br>
+            • <strong>Reusable</strong> — just press RESET after tripping<br>
+            • Same current ratings as fuses
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button class="btn secondary" style="flex:1" onclick="tripBreaker()">Trip Breaker</button>
+            <button class="btn" style="flex:1" id="cb-reset-btn" onclick="resetBreaker()" disabled>↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="compare-table">
+        <tr><th>Feature</th><th>Fuse 🔴</th><th>Circuit Breaker 🔵</th></tr>
+        <tr><td>Operation</td><td>Wire melts</td><td>Contacts open</td></tr>
+        <tr><td>After activation</td><td>Replace it</td><td>Press Reset</td></tr>
+        <tr><td>Reusable?</td><td>❌ No</td><td>✅ Yes</td></tr>
+        <tr><td>Connection</td><td>Series</td><td>Series</td></tr>
+        <tr><td>Protects against</td><td>Overcurrent</td><td>Overcurrent + overload</td></tr>
+      </table>
+
+      <!-- FUSE RATING EXERCISE -->
+      <div class="exercise" style="margin-top:14px">
+        <div class="ex-q" id="e4-fuse-q">Select your name to get your personalised fuse exercise. <span class="pts-badge">2 pts</span></div>
+        <div id="e4-fuse-body"></div>
+      </div>
+
+      <div class="self-row">
+        <span class="self-label">Got it?</span>
+        <button class="emoji-btn" onclick="setSelf('e4','confused',this)">😕</button>
+        <button class="emoji-btn" onclick="setSelf('e4','thinking',this)">🤔</button>
+        <button class="emoji-btn" onclick="setSelf('e4','good',this)">😊</button>
+        <button class="emoji-btn" onclick="setSelf('e4','great',this)">🎯</button>
+      </div>
+      <button class="btn next-btn" onclick="nextSection(4)">Next → Evaluate</button>
+    </div>
+  </div>
+
+  <!-- E5: EVALUATE -->
+  <div class="section locked" id="sec-4">
+    <div class="sec-header">
+      <span class="sec-badge evaluate">E5</span>
+      <span class="sec-title">Evaluate — Mastery Check</span>
+      <span class="sec-tag">EVALUATE</span>
+    </div>
+    <div class="sec-body">
+      <div id="restore-toast" class="success-box hidden">✅ Progress restored from your previous session!</div>
+
+      <!-- EX1 -->
+      <div class="exercise">
+        <div class="ex-q" id="e5-ex1-q">Select your name to unlock Exercise 1. <span class="pts-badge">2 pts</span></div>
+        <button class="worked-toggle" onclick="toggleWorked('worked-e5-ex1',this)">📖 Show worked example</button>
+        <div class="worked-box" id="worked-e5-ex1"></div>
+        <div id="e5-ex1-body"></div>
+      </div>
+
+      <!-- EX2 -->
+      <div class="exercise">
+        <div class="ex-q" id="e5-ex2-q">Select your name to unlock Exercise 2. <span class="pts-badge">2 pts</span></div>
+        <button class="worked-toggle" onclick="toggleWorked('worked-e5-ex2',this)">📖 Show worked example</button>
+        <div class="worked-box" id="worked-e5-ex2"></div>
+        <div id="e5-ex2-body"></div>
+      </div>
+
+      <!-- EX3 -->
+      <div class="exercise">
+        <div class="ex-q" id="e5-ex3-q">Select your name to unlock Exercise 3. <span class="pts-badge">2 pts</span></div>
+        <button class="worked-toggle" onclick="toggleWorked('worked-e5-ex3',this)">📖 Show worked example</button>
+        <div class="worked-box" id="worked-e5-ex3"></div>
+        <div id="e5-ex3-body"></div>
+      </div>
+
+      <!-- EX4 -->
+      <div class="exercise">
+        <div class="ex-q">
+          <strong>Exercise 4</strong> — A circuit has three appliances: 1000W TV, 2000W AC unit, 500W washing machine. All connected to 220V. Which fuse should protect this circuit? <span class="pts-badge">1 pt</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Step: Find I = P/V for each → add → choose fuse ABOVE total.</div>
+        <div class="mcq-options" id="e5-ex4">
+          <button class="mcq-opt" onclick="checkMCQscore('e5-ex4',this,false,'e5ex4-fb','e5',0)">10 A fuse</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e5-ex4',this,false,'e5ex4-fb','e5',0)">13 A fuse</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e5-ex4',this,true,'e5ex4-fb','e5',1)">16 A fuse (total I = 4.5+9.1+2.3 = 15.9A → need 16A)</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e5-ex4',this,false,'e5ex4-fb','e5',0)">5 A fuse</button>
+        </div>
+        <div class="feedback" id="e5ex4-fb" style="display:none"></div>
+      </div>
+
+      <!-- EX5 -->
+      <div class="exercise">
+        <div class="ex-q"><strong>Exercise 5</strong> — TRUE or FALSE: The voltage between NEUTRAL and EARTH terminals in a socket is 220 V. <span class="pts-badge">1 pt</span></div>
+        <div class="mcq-options" id="e5-ex5">
+          <button class="mcq-opt" onclick="checkMCQscore('e5-ex5',this,false,'e5ex5-fb','e5',0)">TRUE — it is 220 V</button>
+          <button class="mcq-opt" onclick="checkMCQscore('e5-ex5',this,true,'e5ex5-fb','e5',1)">FALSE — NEUTRAL and EARTH are at the same potential → 0 V between them</button>
+        </div>
+        <div class="feedback" id="e5ex5-fb" style="display:none"></div>
+      </div>
+
+      <div class="self-row">
+        <span class="self-label">Overall?</span>
+        <button class="emoji-btn" onclick="setSelf('e5','confused',this)">😕</button>
+        <button class="emoji-btn" onclick="setSelf('e5','thinking',this)">🤔</button>
+        <button class="emoji-btn" onclick="setSelf('e5','good',this)">😊</button>
+        <button class="emoji-btn" onclick="setSelf('e5','great',this)">🎯</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-section">
+    <div class="score-display" id="score-display">0/20</div>
+    <div class="grade-display" id="grade-display">Grade: —</div>
+    <button class="submit-btn" onclick="submitLab()">Submit Lab Results</button>
+    <div class="submit-confirm" id="submit-confirm">✅ Lab submitted successfully! Well done.</div>
+  </div>
+
+</main>
+</div>
+<script>
+// ── HOME CIRCUIT CANVAS ──
+let homeStepIdx = -1;
+const homeCanvas = null;
+let _homeCtx = null;
+
+function initHome(){
+  const c = document.getElementById('home-canvas');
+  if(!c) return;
+  _homeCtx = c.getContext('2d');
+  drawHomeStep(-1);
+}
+
+function homeStep(dir){
+  if(dir===-1){homeStepIdx=-1;}
+  else{homeStepIdx=Math.min(homeStepIdx+1,4);}
+  drawHomeStep(homeStepIdx);
+}
+
+function drawHomeStep(step){
+  const c = document.getElementById('home-canvas');
+  if(!c||!_homeCtx) return;
+  const ctx = _homeCtx;
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
+
+  // Wires: LIVE (brown), NEUTRAL (blue), EARTH (yellow-green)
+  const liveY=80, neuY=160, earthY=240;
+  const leftX=60, rightX=760;
+  const colors={live:'#cc5533',neutral:'#5577ff',earth:'#88cc22'};
+
+  // Draw main horizontal wires
+  const wireAlpha=step>=0?1:0.3;
+  ctx.globalAlpha=wireAlpha;
+  [[liveY,'#cc5533'],[neuY,'#5577ff'],[earthY,'#88cc22']].forEach(([y,col])=>{
+    ctx.strokeStyle=col;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(leftX,y);ctx.lineTo(rightX,y);ctx.stroke();
+  });
+  ctx.globalAlpha=1;
+
+  // Labels left side
+  if(step>=0){
+    ctx.font='bold 12px JetBrains Mono, monospace';
+    ctx.fillStyle='#cc5533';ctx.fillText('LIVE (طور)',8,liveY+4);
+    ctx.fillStyle='#5577ff';ctx.fillText('NEUTRAL (محايد)',8,neuY+4);
+    ctx.fillStyle='#88cc22';ctx.fillText('EARTH (أرضي)',8,earthY+4);
+  }
+
+  // Appliances at x positions
+  const appX=[180,320,480,640];
+  const appLabels=['💡 Lamp','❄️ Fridge','📺 TV','🫧 Washer'];
+  const appOn=[false,false,false,false];
+
+  if(step>=1){
+    // Draw vertical branch wires and appliances
+    appX.forEach((x,i)=>{
+      // LIVE branch down
+      ctx.strokeStyle='#cc5533';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(x,liveY);ctx.lineTo(x,liveY+40);ctx.stroke();
+      // NEUTRAL branch up
+      ctx.strokeStyle='#5577ff';
+      ctx.beginPath();ctx.moveTo(x,neuY-40);ctx.lineTo(x,neuY);ctx.stroke();
+      // Appliance box
+      ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=1.5;
+      ctx.strokeRect(x-30,liveY+40,60,50);
+      ctx.fillStyle='rgba(255,255,255,0.06)';ctx.fillRect(x-30,liveY+40,60,50);
+      ctx.fillStyle='#e8eaf0';ctx.font='11px sans-serif';ctx.textAlign='center';
+      ctx.fillText(appLabels[i],x,liveY+70);
+
+      // Junction dots
+      ctx.fillStyle='#cc5533';
+      ctx.beginPath();ctx.arc(x,liveY,4,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#5577ff';
+      ctx.beginPath();ctx.arc(x,neuY,4,0,Math.PI*2);ctx.fill();
+
+      ctx.textAlign='left';
+    });
+  }
+
+  // Step annotations
+  const labels=[
+    '',
+    'Step 1: Wire identification — LIVE=brown, NEUTRAL=blue, EARTH=yellow-green',
+    'Step 2: Appliances connect in PARALLEL — same 220V across each branch',
+    'Step 3: Each appliance has its own independent switch',
+    'Step 4: When one appliance is OFF, others remain ON (parallel independence!)'
+  ];
+  if(step>=0){
+    document.getElementById('home-step-label').textContent=labels[Math.min(step,labels.length-1)];
+  }
+
+  // Step 3: show switches
+  if(step>=2){
+    appX.forEach((x,i)=>{
+      ctx.strokeStyle=step>=3&&i===2?'#ff4757':'#7fff6b';
+      ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(x-10,liveY+45);
+      if(step>=3&&i===2){ctx.lineTo(x+8,liveY+38);}
+      else{ctx.lineTo(x+10,liveY+45);}
+      ctx.stroke();
+    });
+  }
+
+  // Voltage labels floating
+  if(step>=1){
+    ctx.font='10px JetBrains Mono, monospace';
+    ctx.fillStyle='rgba(255,107,26,0.8)';
+    ctx.fillText('220V across each',300,120);
+    ctx.fillText('appliance',330,134);
+  }
+}
+
+// ── FUSE CANVAS ──
+let fuseBlown = false;
+function initFuse(){
+  drawFuse(false);
+  drawBreaker(true);
+}
+function drawFuse(blown){
+  const c=document.getElementById('fuse-canvas');if(!c) return;
+  const ctx=c.getContext('2d');const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
+  // wire left
+  ctx.strokeStyle=blown?'rgba(255,100,50,0.3)':'#cc5533';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(20,H/2);ctx.lineTo(80,H/2);ctx.stroke();
+  // glass tube
+  ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=1.5;
+  ctx.strokeRect(80,H/2-12,100,24);
+  if(!blown){
+    ctx.strokeStyle='#ffd54f';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(80,H/2);ctx.lineTo(180,H/2);ctx.stroke();
+    ctx.fillStyle='rgba(255,213,79,0.1)';ctx.fillRect(80,H/2-12,100,24);
+  } else {
+    ctx.strokeStyle='rgba(255,100,50,0.6)';ctx.lineWidth=1;
+    for(let i=0;i<4;i++){
+      ctx.beginPath();ctx.moveTo(100+i*20,H/2-5+Math.random()*10);
+      ctx.lineTo(110+i*20,H/2-8+Math.random()*16);ctx.stroke();
+    }
+    ctx.fillStyle='rgba(255,50,50,0.15)';ctx.fillRect(80,H/2-12,100,24);
+  }
+  ctx.strokeStyle=blown?'rgba(255,100,50,0.3)':'#cc5533';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(180,H/2);ctx.lineTo(240,H/2);ctx.stroke();
+  ctx.fillStyle=blown?'var(--red)':'#ffd54f';ctx.font='10px JetBrains Mono,monospace';
+  ctx.textAlign='center';ctx.fillText(blown?'BLOWN — Replace!':'OK — 10A rated',130,H-8);
+}
+
+let breakerTripped=false;
+function drawBreaker(closed){
+  const c=document.getElementById('cb-canvas');if(!c) return;
+  const ctx=c.getContext('2d');const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=closed?'#4fc3f7':'rgba(79,195,247,0.3)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(20,H/2);ctx.lineTo(90,H/2);ctx.stroke();
+  // breaker box
+  ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1.5;
+  ctx.strokeRect(90,H/2-18,80,36);
+  ctx.fillStyle='rgba(79,195,247,0.07)';ctx.fillRect(90,H/2-18,80,36);
+  // contact
+  ctx.strokeStyle=closed?'#4fc3f7':'rgba(79,195,247,0.2)';ctx.lineWidth=2;
+  if(closed){ctx.beginPath();ctx.moveTo(100,H/2);ctx.lineTo(160,H/2);ctx.stroke();}
+  else{
+    ctx.beginPath();ctx.moveTo(100,H/2);ctx.lineTo(130,H/2-14);ctx.stroke();
+    ctx.fillStyle='rgba(255,71,87,0.6)';ctx.font='bold 9px sans-serif';
+    ctx.textAlign='center';ctx.fillText('TRIPPED',130,H-8);
+  }
+  ctx.strokeStyle=closed?'#4fc3f7':'rgba(79,195,247,0.3)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(170,H/2);ctx.lineTo(240,H/2);ctx.stroke();
+  if(closed){
+    ctx.fillStyle='#4fc3f7';ctx.font='10px JetBrains Mono,monospace';
+    ctx.textAlign='center';ctx.fillText('CLOSED — Circuit ON',130,H-8);
+  }
+}
+
+function blowFuse(){fuseBlown=true;drawFuse(true);playWrong();}
+function tripBreaker(){
+  breakerTripped=true;drawBreaker(false);
+  document.getElementById('cb-reset-btn').disabled=false;
+  playWrong();
+}
+function resetBreaker(){
+  breakerTripped=false;drawBreaker(true);
+  document.getElementById('cb-reset-btn').disabled=true;
+  playSuccess();
+}
+
+// ── SHORT CIRCUIT CANVAS ──
+let scPhase='idle';
+function initSC(){drawSC('idle');}
+function scReset(){scPhase='idle';drawSC('idle');}
+function scNormal(){scPhase='normal';drawSC('normal');}
+function scShort(){scPhase='short';drawSC('short');
+  const info=document.getElementById('sc-info');
+  info.style.display='block';info.className='feedback wrong';
+  info.innerHTML='⚠️ <strong>DANGER:</strong> R ≈ 0 Ω → I = V/R = 220/0.01 = <strong>22,000 A!</strong> Wires overheat → FIRE. The fuse or breaker MUST open the circuit.';
+  playWrong();
+}
+
+function drawSC(phase){
+  const c=document.getElementById('sc-canvas');if(!c) return;
+  const ctx=c.getContext('2d');const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0c0e';ctx.fillRect(0,0,W,H);
+  const lx=60,rx=760,ty=50,by=160;
+  const isShort=phase==='short';
+  const wireColor=isShort?'#ff4444':phase==='normal'?'#cc5533':'rgba(255,100,50,0.4)';
+  ctx.strokeStyle=wireColor;ctx.lineWidth=3;
+  // top wire
+  ctx.beginPath();ctx.moveTo(lx,ty);ctx.lineTo(rx,ty);ctx.stroke();
+  // bottom wire
+  ctx.strokeStyle=phase==='normal'||isShort?'#5577ff':'rgba(85,119,255,0.4)';
+  ctx.beginPath();ctx.moveTo(lx,by);ctx.lineTo(rx,by);ctx.stroke();
+  // left side (source)
+  ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(lx,ty);ctx.lineTo(lx,by);ctx.stroke();
+  // source label
+  ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='11px JetBrains Mono,monospace';
+  ctx.textAlign='center';ctx.fillText('220V',lx,H/2+5);
+
+  // Fuse (left of lamp)
+  ctx.strokeStyle='#ffd54f';ctx.lineWidth=2;
+  ctx.strokeRect(160,ty-8,40,16);
+  ctx.fillStyle='rgba(255,213,79,0.15)';ctx.fillRect(160,ty-8,40,16);
+  ctx.fillStyle='#ffd54f';ctx.font='9px sans-serif';ctx.fillText('FUSE',180,ty-12);
+  if(isShort){
+    ctx.strokeStyle='rgba(255,213,79,0.2)';ctx.lineWidth=1;
+    for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(165+i*10,ty-4);ctx.lineTo(170+i*10,ty+4);ctx.stroke();}
+  }
+
+  // Lamp
+  const lampX=380;
+  ctx.strokeStyle=phase==='idle'?'rgba(255,255,255,0.2)':'rgba(255,255,255,0.6)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(lampX,ty,16,0,Math.PI*2);ctx.stroke();
+  if(phase==='normal'){
+    const grd=ctx.createRadialGradient(lampX,ty,0,lampX,ty,16);
+    grd.addColorStop(0,'rgba(255,213,79,0.8)');grd.addColorStop(1,'rgba(255,213,79,0)');
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(lampX,ty,16,0,Math.PI*2);ctx.fill();
+  }
+  ctx.fillStyle=phase==='normal'?'#ffd54f':'rgba(255,255,255,0.3)';
+  ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText('LAMP',lampX,ty+30);
+
+  // Short circuit wire
+  if(isShort){
+    const sparkX=560;
+    ctx.strokeStyle='#ff4444';ctx.lineWidth=4;
+    ctx.beginPath();ctx.moveTo(sparkX,ty);ctx.lineTo(sparkX,by);ctx.stroke();
+    // sparks
+    ctx.strokeStyle='#ffd54f';ctx.lineWidth=1.5;
+    for(let i=0;i<6;i++){
+      const a=Math.random()*Math.PI*2;const r=8+Math.random()*14;
+      ctx.beginPath();ctx.moveTo(sparkX,ty+(by-ty)/2);
+      ctx.lineTo(sparkX+Math.cos(a)*r,ty+(by-ty)/2+Math.sin(a)*r);ctx.stroke();
+    }
+    ctx.fillStyle='rgba(255,68,68,0.15)';
+    ctx.beginPath();ctx.arc(sparkX,ty+(by-ty)/2,20,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ff4444';ctx.font='bold 10px sans-serif';
+    ctx.fillText('SHORT!',sparkX,by+20);
+    // heat on wire
+    const grad=ctx.createLinearGradient(lx,0,rx,0);
+    grad.addColorStop(0,'transparent');
+    grad.addColorStop(0.5,'rgba(255,80,30,0.12)');
+    grad.addColorStop(1,'transparent');
+    ctx.fillStyle=grad;ctx.fillRect(lx,ty-20,rx-lx,40);
+  }
+
+  // Current arrows (normal mode)
+  if(phase==='normal'){
+    ctx.fillStyle='rgba(127,255,107,0.6)';
+    for(let x=100;x<rx-20;x+=80){
+      ctx.beginPath();ctx.moveTo(x,ty-14);ctx.lineTo(x+16,ty-8);ctx.lineTo(x,ty-2);ctx.closePath();ctx.fill();
+    }
+  }
+  ctx.textAlign='left';
+}
+
+// ── GENERIC MCQ HELPERS ──
+function checkMCQ(groupId, btn, isCorrect, fbId){
+  const grp=document.getElementById(groupId);
+  grp.querySelectorAll('.mcq-opt').forEach(b=>{b.onclick=null;});
+  if(isCorrect){
+    btn.className='mcq-opt selected-ok';playSuccess();
+    if(fbId){const f=document.getElementById(fbId);if(f){f.style.display='block';f.className='feedback ok';f.textContent='✅ Correct!';}}
+  } else {
+    btn.className='mcq-opt selected-wrong';playWrong();
+    grp.querySelectorAll('.mcq-opt').forEach(b=>{if(b!==btn) b.className='mcq-opt reveal-ok';});
+    if(fbId){const f=document.getElementById(fbId);if(f){f.style.display='block';f.className='feedback wrong';f.textContent='❌ Not quite — the correct answer is highlighted above.';}}
+  }
+}
+
+function checkMCQscore(groupId, btn, isCorrect, fbId, section, pts){
+  checkMCQ(groupId, btn, isCorrect, fbId);
+  if(isCorrect&&pts){
+    state.scores[section]=(state.scores[section]||0)+pts;
+    updateScoreRing();
+  }
+}
+
+// ── HINT ──
+function showHint(id,btn){
+  const h=document.getElementById(id);
+  h.style.display=h.style.display==='block'?'none':'block';
+  btn.textContent=h.style.display==='block'?'Hide hint':'Hint';
+}
+
+// ── SELF ASSESS ──
+function setSelf(section,val,btn){
+  state.self[section]=val;
+  btn.closest('.self-row').querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('chosen'));
+  btn.classList.add('chosen');
+  saveProgress();
+}
+
+// ── NEXT SECTION ──
+function nextSection(idx){
+  unlockSection(idx);
+  const sec=document.getElementById('sec-'+idx);
+  if(sec){sec.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+// ── E1 CHECKS ──
+let e1q1attempts=0,e1q2attempts=0;
+function checkE1Q1(){
+  const v=parseFloat(document.getElementById('e1q1').value);
+  e1q1attempts++;
+  const fb=document.getElementById('fb-e1q1');
+  fb.style.display='block';
+  if(Math.abs(v-4)<0.1){
+    fb.className='feedback ok';fb.textContent='✅ Correct! T=20ms, Sh=5ms/div → 20/5 = 4 divisions.';
+    state.scores.e1=(state.scores.e1||0)+1;state.answers.e1q1=v;
+    updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';
+    fb.textContent=`❌ Attempt ${e1q1attempts}. Hint: T = 1/f = 1/50 = 20 ms. Div = T ÷ Sh = 20 ÷ 5 = ?`;
+    playWrong();
+  }
+}
+function checkE1Q2(){
+  const v=parseFloat(document.getElementById('e1q2').value);
+  const fb=document.getElementById('fb-e1q2');
+  fb.style.display='block';
+  if(v>=219&&v<=221){
+    fb.className='feedback ok';fb.textContent='✅ Correct! Vrms = 311 ÷ √2 ≈ 220 V — the mains RMS voltage in Lebanon.';
+    state.scores.e1=(state.scores.e1||0)+1;state.answers.e1q2=v;
+    updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';fb.textContent='❌ Try again. Vrms = Vmax ÷ √2 = 311 ÷ 1.414 = ?';
+    playWrong();
+  }
+}
+
+// ── VOLTAGE EXERCISE ──
+function checkVolt(pair, btn, isCorrect){
+  const grp=document.getElementById('v-'+pair);
+  grp.querySelectorAll('.mcq-opt').forEach(b=>b.onclick=null);
+  const okSpan=document.getElementById('v-'+pair+'-ok');
+  if(isCorrect){
+    btn.className='mcq-opt selected-ok';
+    okSpan.textContent='✅';
+    state.e3Volts[pair]=true;
+    state.scores.e3=(state.scores.e3||0)+1;
+    updateScoreRing();playSuccess();
+    if(state.e3Volts.LN&&state.e3Volts.LE&&state.e3Volts.NE){
+      const fb=document.getElementById('volt-fb');
+      fb.style.display='block';fb.className='feedback ok';
+      fb.innerHTML='🎯 All three correct! Remember: NEUTRAL and EARTH are at the same potential — 0V between them.';
+    }
+  } else {
+    btn.className='mcq-opt selected-wrong';okSpan.textContent='❌';playWrong();
+  }
+}
+
+// ── WRITTEN SUBMIT ──
+function submitWritten(){
+  const v=document.getElementById('e3-written').value.trim();
+  const fb=document.getElementById('e3-written-fb');fb.style.display='block';
+  if(v.length>20){
+    fb.className='feedback ok';fb.textContent='✅ Answer saved. Teacher will review.';
+    state.scores.e3=(state.scores.e3||0)+2;state.answers.e3_written=v;
+    updateScoreRing();
+  } else {
+    fb.className='feedback wrong';fb.textContent='Please write at least 2 complete reasons.';
+  }
+}
+
+// ── SEED EXERCISES FROM NAME ──
+function seedExercises(){
+  if(!state.name) return;
+  const h=nameHash(state.name);
+
+  // E2 adaptive
+  const svOpts=[20,50,100];const divOpts=[2,3,4,5,6];
+  const sv=svOpts[h%3];const divs=divOpts[h%5];
+  const vmax=sv*divs;const vrms=(vmax/Math.SQRT2).toFixed(1);
+  document.getElementById('e2-adaptive-q').innerHTML=
+    `<strong>Exercise</strong> — The oscilloscope shows a sine wave. Sv = <strong style="color:var(--accent)">${sv} V/div</strong> and the wave spans <strong style="color:var(--accent)">${divs} divisions</strong> vertically. <span class="pts-badge">2 pts</span><br>Find: (a) Vmax &nbsp; (b) Vrms`;
+  document.getElementById('e2-adaptive-body').innerHTML=`
+    <div class="answer-row">
+      <label style="font-size:12px;color:var(--muted)">Vmax =</label>
+      <input type="number" id="e2a-vmax" placeholder="V" style="width:100px">
+      <label style="font-size:12px;color:var(--muted)">Vrms =</label>
+      <input type="number" id="e2a-vrms" placeholder="V" style="width:100px" step="0.1">
+      <button class="btn" onclick="checkE2Adaptive(${vmax},${vrms})">Check</button>
+    </div>
+    <div class="feedback" id="e2a-fb" style="display:none"></div>`;
+
+  // E4 fuse
+  const pOpts=[[1100,2200],[2000,3000],[500,1500],[1500,2500]];
+  const pair=pOpts[h%4];
+  const i1=(pair[0]/220).toFixed(1), i2=(pair[1]/220).toFixed(1);
+  const itot=parseFloat(i1)+parseFloat(i2);
+  const fuses=[5,10,13,16];
+  const correctFuse=fuses.find(f=>f>itot);
+  document.getElementById('e4-fuse-q').innerHTML=
+    `<strong>Fuse Rating Exercise</strong> — Two appliances: <strong>${pair[0]}W</strong> and <strong>${pair[1]}W</strong>, both on 220V. Choose the correct fuse. <span class="pts-badge">2 pts</span>`;
+  const fuseOpts=fuses.map(f=>`<button class="mcq-opt" onclick="checkFuseEx(${f},${correctFuse},'e4fx-fb')">${f} A</button>`).join('');
+  document.getElementById('e4-fuse-body').innerHTML=`
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Step: I = P/V for each → add → choose next fuse ABOVE total current.</div>
+    <div class="mcq-options" id="e4-fuse-mcq">${fuseOpts}</div>
+    <div class="feedback" id="e4fx-fb" style="display:none"></div>`;
+
+  // E5 exercises
+  const sv5=svOpts[(h+1)%3];const divs5=divOpts[(h+2)%5];
+  const vmax5=sv5*divs5;const vrms5=(vmax5/Math.SQRT2).toFixed(1);
+  // Worked example (different numbers)
+  const svEx=svOpts[(h+2)%3];const divsEx=divOpts[(h+1)%5];
+  const vmaxEx=svEx*divsEx;const vrmsEx=(vmaxEx/Math.SQRT2).toFixed(1);
+
+  document.getElementById('e5-ex1-q').innerHTML=
+    `<strong>Exercise 1</strong> — Oscilloscope: Sv = <strong>${sv5} V/div</strong>, wave spans <strong>${divs5} divisions</strong>. Find Vmax and Vrms. <span class="pts-badge">2 pts</span>`;
+  document.getElementById('worked-e5-ex1').innerHTML=`
+    <span class="step">Given:</span> Sv = ${svEx} V/div, wave spans ${divsEx} div<br>
+    <span class="step">Required:</span> Vmax, Vrms<br>
+    <span class="step">Solution:</span> Vmax = Sv × divs = ${svEx} × ${divsEx} = ${vmaxEx} V<br>
+    Vrms = Vmax ÷ √2 = ${vmaxEx} ÷ 1.414 = ${vrmsEx} V<br>
+    <span class="step">Answer:</span> Vmax = ${vmaxEx} V &nbsp;|&nbsp; Vrms = ${vrmsEx} V`;
+  document.getElementById('e5-ex1-body').innerHTML=`
+    <div class="answer-row">
+      <label style="font-size:12px;color:var(--muted)">Vmax =</label>
+      <input type="number" id="e5-v1" placeholder="V">
+      <label style="font-size:12px;color:var(--muted)">Vrms =</label>
+      <input type="number" id="e5-r1" placeholder="V" step="0.1">
+      <button class="btn" onclick="checkE5Ex1(${vmax5},${vrms5})">Submit</button>
+    </div>
+    <div class="feedback" id="e5ex1-fb" style="display:none"></div>`;
+
+  // Ex2 — parallel appliances
+  const pw=[[600,1200,300],[800,2000,500],[1000,1500,750],[400,900,600]];
+  const set=pw[h%4];
+  const iArr=set.map(p=>(p/220).toFixed(2));
+  const iTotal=(set.reduce((a,b)=>a+b,0)/220).toFixed(2);
+  const itotalEx=(600+1200+300)/220;const iArrEx=['2.73','5.45','1.36'];
+  document.getElementById('e5-ex2-q').innerHTML=
+    `<strong>Exercise 2</strong> — Three parallel appliances: <strong>${set[0]}W</strong>, <strong>${set[1]}W</strong>, <strong>${set[2]}W</strong> on 220V. Find each current and total current. <span class="pts-badge">2 pts</span>`;
+  document.getElementById('worked-e5-ex2').innerHTML=`
+    <span class="step">Given:</span> P1=600W, P2=1200W, P3=300W on 220V<br>
+    <span class="step">Required:</span> I1, I2, I3, Itotal<br>
+    <span class="step">Solution:</span> I = P/V<br>
+    I1 = 600/220 = ${iArrEx[0]} A &nbsp;|&nbsp; I2 = 1200/220 = ${iArrEx[1]} A &nbsp;|&nbsp; I3 = 300/220 = ${iArrEx[2]} A<br>
+    Itotal = ${iArrEx[0]} + ${iArrEx[1]} + ${iArrEx[2]} = ${(parseFloat(iArrEx[0])+parseFloat(iArrEx[1])+parseFloat(iArrEx[2])).toFixed(2)} A<br>
+    <span class="step">Answer:</span> Itotal ≈ ${(parseFloat(iArrEx[0])+parseFloat(iArrEx[1])+parseFloat(iArrEx[2])).toFixed(1)} A`;
+  document.getElementById('e5-ex2-body').innerHTML=`
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">I = P/V (V=220V)</div>
+    <div class="answer-row">
+      <label style="font-size:12px;color:var(--muted)">Itotal =</label>
+      <input type="number" id="e5-i2" placeholder="A" step="0.01">
+      <button class="btn" onclick="checkE5Ex2(${iTotal})">Submit</button>
+    </div>
+    <div class="feedback" id="e5ex2-fb" style="display:none"></div>`;
+
+  // Ex3 — short circuit
+  const rOpts=[0.5,0.2,1.0,0.3];
+  const R=rOpts[h%4];const Isc=(220/R).toFixed(0);
+  const rEx=0.5;const IscEx=(220/rEx).toFixed(0);
+  document.getElementById('e5-ex3-q').innerHTML=
+    `<strong>Exercise 3</strong> — A short circuit occurs. Wire resistance = <strong>${R} Ω</strong>. V = 220V. Calculate the short-circuit current. <span class="pts-badge">2 pts</span>`;
+  document.getElementById('worked-e5-ex3').innerHTML=`
+    <span class="step">Given:</span> V = 220V, R_wire = ${rEx} Ω<br>
+    <span class="step">Required:</span> Short-circuit current I<br>
+    <span class="step">Solution:</span> I = V/R = 220/${rEx} = ${IscEx} A<br>
+    Compare to normal: a 220W lamp draws 220/220 = 1A. Short circuit draws ${IscEx}A → ${Math.round(IscEx/1)}× more dangerous!<br>
+    <span class="step">Answer:</span> I = ${IscEx} A — wire melts/fire risk!`;
+  document.getElementById('e5-ex3-body').innerHTML=`
+    <div class="answer-row">
+      <label style="font-size:12px;color:var(--muted)">I =</label>
+      <input type="number" id="e5-i3" placeholder="A">
+      <button class="btn" onclick="checkE5Ex3(${Isc})">Submit</button>
+    </div>
+    <div class="feedback" id="e5ex3-fb" style="display:none"></div>`;
+
+  saveProgress();
+}
+
+function checkE2Adaptive(vmaxAns,vrmsAns){
+  const v1=parseFloat(document.getElementById('e2a-vmax').value);
+  const v2=parseFloat(document.getElementById('e2a-vrms').value);
+  const fb=document.getElementById('e2a-fb');fb.style.display='block';
+  const ok1=Math.abs(v1-vmaxAns)<1;const ok2=Math.abs(v2-vrmsAns)<2;
+  if(ok1&&ok2){
+    fb.className='feedback ok';fb.textContent=`✅ Correct! Vmax=${vmaxAns}V, Vrms=${vrmsAns}V`;
+    state.scores.e2=(state.scores.e2||0)+2;updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';
+    fb.textContent=`❌ Vmax: Sv×div. Vrms: Vmax÷√2. Check your numbers.`;playWrong();
+  }
+}
+
+function checkFuseEx(chosen,correct,fbId){
+  const fb=document.getElementById(fbId);fb.style.display='block';
+  document.getElementById('e4-fuse-mcq').querySelectorAll('.mcq-opt').forEach(b=>b.onclick=null);
+  if(chosen===correct){
+    fb.className='feedback ok';fb.textContent=`✅ Correct! ${correct}A fuse is needed — always choose the next rating ABOVE total current.`;
+    state.scores.e4=(state.scores.e4||0)+2;updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';fb.textContent=`❌ Not right. Calculate Itotal = P1/220 + P2/220, then choose fuse rating just above it.`;playWrong();
+  }
+}
+
+function checkE5Ex1(vmaxAns,vrmsAns){
+  const v1=parseFloat(document.getElementById('e5-v1').value);
+  const v2=parseFloat(document.getElementById('e5-r1').value);
+  const fb=document.getElementById('e5ex1-fb');fb.style.display='block';
+  if(Math.abs(v1-vmaxAns)<2&&Math.abs(v2-vrmsAns)<3){
+    fb.className='feedback ok';fb.textContent=`✅ Correct! Vmax=${vmaxAns}V, Vrms=${vrmsAns}V`;
+    state.scores.e5=(state.scores.e5||0)+2;updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';fb.textContent='❌ Check: Vmax = Sv × divisions. Vrms = Vmax ÷ 1.414.';playWrong();
+  }
+}
+function checkE5Ex2(itotalAns){
+  const v=parseFloat(document.getElementById('e5-i2').value);
+  const fb=document.getElementById('e5ex2-fb');fb.style.display='block';
+  if(Math.abs(v-itotalAns)<0.15){
+    fb.className='feedback ok';fb.textContent=`✅ Correct! Itotal = ${itotalAns} A`;
+    state.scores.e5=(state.scores.e5||0)+2;updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';fb.textContent='❌ Add each I = P/220. Then sum them.';playWrong();
+  }
+}
+function checkE5Ex3(iscAns){
+  const v=parseFloat(document.getElementById('e5-i3').value);
+  const fb=document.getElementById('e5ex3-fb');fb.style.display='block';
+  if(Math.abs(v-iscAns)<10){
+    fb.className='feedback ok';fb.textContent=`✅ Correct! I = 220/R = ${iscAns} A — extremely dangerous!`;
+    state.scores.e5=(state.scores.e5||0)+2;updateScoreRing();playSuccess();
+  } else {
+    fb.className='feedback wrong';fb.textContent='❌ Use Ohm\'s Law: I = V/R = 220 ÷ R_wire.';playWrong();
+  }
+}
+
+// ── WORKED EXAMPLE TOGGLE ──
+function toggleWorked(id, btn){
+  const box=document.getElementById(id);
+  const show=box.style.display!=='block';
+  box.style.display=show?'block':'none';
+  btn.textContent=show?'📖 Hide example':'📖 Show worked example';
+}
+
+// ── SUBMIT ──
+async function submitLab(){
+  if(!state.name){alert('Please select your name first!');return;}
+  const raw=Object.values(state.scores).reduce((a,b)=>a+b,0);
+  const score20=Math.round((raw/MAX_RAW)*20);
+  let grade='D';
+  if(score20>=18)grade='A+';else if(score20>=16)grade='A';
+  else if(score20>=13)grade='B';else if(score20>=10)grade='C';
+
+  const payload={
+    sheet:'VoltMains_G9',
+    name:state.name, class:state.cls,
+    time_min:Math.round((Date.now()-LAB_START)/60000),
+    e1_q1_ok:state.answers.e1q1?1:0,
+    e1_q2_ok:state.answers.e1q2?1:0,
+    self_e1:state.self.e1,
+    e2_adaptive_ok:state.scores.e2||0,
+    self_e2:state.self.e2,
+    e3_LN_ok:state.e3Volts.LN?1:0,
+    e3_LE_ok:state.e3Volts.LE?1:0,
+    e3_NE_ok:state.e3Volts.NE?1:0,
+    e3_written:state.answers.e3_written||'',
+    self_e3:state.self.e3,
+    e4_fuse_ok:state.scores.e4||0,
+    self_e4:state.self.e4,
+    e5_score:state.scores.e5||0,
+    self_e5:state.self.e5,
+    was_restored:state.restored?'yes':'no',
+    raw_score:raw, score_20:score20, grade:grade
+  };
+
+  try{
+    await fetch(APPS_URL,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)});
+  }catch(e){}
+
+  document.getElementById('submit-confirm').style.display='block';
+  if(score20>=16) fireConfetti();
+}
+
+// ── TRIGGER LABEL ──
+document.addEventListener('input',e=>{
+  if(e.target.type==='range'&&e.target.max==='311'){
+    document.getElementById('trig-lbl').textContent=e.target.value+' V';
+  }
+});
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  // Restore session
+  if(loadProgress()){
+    const toast=document.getElementById('restore-toast');
+    if(toast) toast.classList.remove('hidden');
+    state.unlocked.forEach(i=>unlockSection(i));
+    updateScoreRing();
+    if(state.name) seedExercises();
+  }
+  initScope();
+  setTimeout(initHome,100);
+  setTimeout(initFuse,150);
+  setTimeout(()=>drawSC('idle'),200);
+  // Leaderboard refresh
+  setInterval(refreshLeaderboard,60000);
+});
+</script>
+</body>
+</html>

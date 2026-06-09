@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beit Jala Physics Final Exam 2026</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }
+        };
+    </script>
+
+    <style>
+        /* Base Styles simulating a printed exam document */
+        body {
+            background-color: #f3f4f6;
+            color: #000;
+            font-family: "Times New Roman", Times, serif; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls { margin-bottom: 20px; text-align: center; }
+        button {
+            background-color: #2563eb; color: white; border: none; padding: 10px 20px;
+            font-size: 16px; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:hover { background-color: #1d4ed8; }
+
+        .document-container {
+            background-color: white; 
+            width: 100%; 
+            max-width: 210mm; /* A4 Width */
+            min-height: 297mm; /* A4 Height */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            padding: 15mm 20mm; 
+            box-sizing: border-box;
+        }
+
+        /* Exam specific typography and layout */
+        .exam-header { 
+            text-align: center; 
+            border-bottom: 2px solid #000; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+        }
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .unrwa-logo {
+            width: 80px;
+            height: auto;
+        }
+        .spacer {
+            width: 80px; /* Balances the logo for center alignment of text */
+        }
+        .exam-header h1 { font-size: 22px; margin: 0 0 5px 0; text-transform: uppercase; }
+        .exam-header h2 { font-size: 18px; margin: 0 0 10px 0; font-weight: bold; }
+        .exam-header p { margin: 3px 0; font-size: 13px; font-style: italic; }
+
+        .exercise { margin-bottom: 20px; page-break-inside: avoid; }
+        .exercise-title { font-size: 16px; font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 3px;}
+        .content-row { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 10px; }
+        .text-content { flex: 1; font-size: 14px; line-height: 1.4; }
+
+        .figure-container {
+            flex-shrink: 0; border: 1px solid #ccc; padding: 8px; background: #fff;
+            text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .figure-caption { font-size: 11px; font-style: italic; margin-top: 5px; }
+
+        ol { margin-top: 5px; margin-bottom: 5px; padding-left: 20px; }
+        li { margin-bottom: 5px; line-height: 1.4; }
+        ol[type="a"] { margin-top: 3px; margin-bottom: 5px; }
+
+        .page-break { page-break-before: always; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #ccc; }
+        
+        /* Marking Scheme Styles */
+        .marking-scheme { font-size: 14px; width: 100%; }
+        .marking-scheme table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .marking-scheme th, .marking-scheme td { border: 1px solid #000; padding: 8px; text-align: left; }
+        .marking-scheme th { background-color: #f8f9fa; }
+        .marking-scheme .pts { text-align: center; font-weight: bold; width: 80px; }
+        .total-row { font-weight: bold; background-color: #e2e8f0; }
+
+        /* SVG Styles */
+        svg { max-width: 100%; height: auto; }
+        .wire { fill: none; stroke: black; stroke-width: 2; }
+        .component { fill: white; stroke: black; stroke-width: 2; }
+        .grid { stroke: #add8e6; stroke-width: 1; }
+        .axis { stroke: black; stroke-width: 1.5; }
+        .wave { fill: none; stroke: red; stroke-width: 2; }
+        .spring { fill: none; stroke: black; stroke-width: 2; }
+        .mass { fill: #ddd; stroke: black; stroke-width: 2; }
+        .force-vector { fill: none; stroke: blue; stroke-width: 2; marker-end: url(#arrow-blue); }
+        .force-vector-red { fill: none; stroke: red; stroke-width: 2; marker-end: url(#arrow-red); }
+
+        @media print {
+            body { background-color: white; padding: 0; }
+            .controls { display: none; }
+            .document-container { box-shadow: none; padding: 0; max-width: 100%; min-height: auto;}
+            .page-break { border-top: none; margin-top: 0; padding-top: 0; }
+            @page { size: A4; margin: 15mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button onclick="window.print()">Print / Save as PDF</button>
+        <p style="font-size: 14px; margin-top: 10px; color: #555;">(Use Ctrl+P / Cmd+P to save as A4 PDF. The marking scheme will print on a separate page.)</p>
+    </div>
+
+    <div class="document-container">
+        
+        <svg style="display: none;">
+            <defs>
+                <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="blue" /></marker>
+                <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="red" /></marker>
+                <marker id="arrow-black" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="black" /></marker>
+                <marker id="arrow-blue-small" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="blue" /></marker>
+            </defs>
+        </svg>
+
+        <div class="exam-header">
+            <div class="header-flex">
+                <img src="data:image/jpeg;base64,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" alt="UNRWA Logo" class="unrwa-logo">
+                <div>
+                    <h1>Beit Jala Secondary School</h1>
+                    <h2>Physics Final Exam</h2>
+                </div>
+                <div class="spacer"></div>
+            </div>
+            <p><strong>Date:</strong> June, 2026 | <strong>Duration:</strong> 60 minutes | <strong>Grade:</strong> 9 (Brevet)</p>
+            <p><em>Instructions: The use of non-programmable calculators is allowed. The exam consists of four mandatory exercises.</em></p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 1: Direct Current & Electric Power</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A lamp \((L)\) carries the inscriptions: \((12 \text{ V} ; 6 \text{ W})\). It is connected in series with an ohmic resistor \((R)\) of resistance \(R = 10 \ \Omega\), a closed switch \((K)\), and a DC generator \((G)\) maintaining a constant voltage \(U_G = 17 \text{ V}\).
+                    <ol>
+                        <li>Give the physical significance of the inscriptions \((12 \text{ V} ; 6 \text{ W})\) on the lamp.</li>
+                        <li>Calculate the rated current \(I_R\) of the lamp.</li>
+                        <li>The current flowing in the circuit is \(I = 0.5 \text{ A}\).
+                            <ol type="a">
+                                <li>Calculate the voltage \(U_R\) across the resistor \((R)\).</li>
+                                <li>Deduce the voltage \(U_L\) across the lamp.</li>
+                                <li>Does the lamp function normally? Justify your answer.</li>
+                            </ol>
+                        </li>
+                        <li>Calculate the electric energy consumed by the lamp in \(30\) minutes. Express the result in Joules.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <path class="wire" d="M 90 120 L 40 120 L 40 90" />
+                        <line x1="40" y1="90" x2="40" y2="70" stroke="black" stroke-width="2" />
+                        <circle cx="40" cy="90" r="2" fill="black" />
+                        <circle cx="40" cy="70" r="2" fill="black" />
+                        <text x="15" y="85" font-family="Times New Roman">K</text>
+                        <path class="wire" d="M 40 70 L 40 40 L 80 40" />
+                        <rect x="80" y="30" width="40" height="20" class="component" />
+                        <text x="95" y="45" font-family="Times New Roman">R</text>
+                        <path class="wire" d="M 120 40 L 160 40 L 160 65" />
+                        <circle cx="160" cy="80" r="15" class="component" />
+                        <path class="wire" d="M 149 69 L 171 91 M 149 91 L 171 69" />
+                        <text x="180" y="85" font-family="Times New Roman">(L)</text>
+                        <path class="wire" d="M 160 95 L 160 120 L 110 120" />
+                        <line x1="90" y1="110" x2="90" y2="130" stroke="black" stroke-width="4" />
+                        <line x1="110" y1="105" x2="110" y2="135" stroke="black" stroke-width="2" />
+                        <text x="80" y="105" font-size="12" font-family="Times New Roman">-</text>
+                        <text x="115" y="105" font-size="12" font-family="Times New Roman">+</text>
+                        <text x="95" y="145" font-size="14" font-family="Times New Roman">(G)</text>
+                    </svg>
+                    <div class="figure-caption">Figure 1: Series Circuit</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 2: Alternating Voltage &mdash; Lebanese Mains Supply</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    An electrician connects an oscilloscope to the <strong>live (phase)</strong> and <strong>neutral</strong> terminals of a Lebanese household electrical outlet. The vertical sensitivity is set to \(S_v = 100 \text{V/div}\) and the time base is set to \(S_h = 5 \text{ms/div}\). The oscillogram displayed on the screen is shown in Figure 2.
+                    <ol>
+                        <li>Name the type of voltage displayed on the oscilloscope.</li>
+                        <li>Using Figure 2, determine the maximum voltage \(U_{max}\) of this supply.</li>
+                        <li>
+                            <ol type="a">
+                                <li>Calculate the effective (RMS) voltage \(U_{eff}\). &nbsp;(Take \(\sqrt{2} \approx 1.41\))</li>
+                                <li>A voltmeter is connected to the same live&ndash;neutral terminals. What value does it display? Justify.</li>
+                            </ol>
+                        </li>
+                        <li>Determine the period \(T\) of this voltage in milliseconds, then convert it to seconds.</li>
+                        <li>Deduce the frequency \(f\). What is the standard frequency of the Lebanese electrical network? Is your result consistent?</li>
+                    </ol>
+                </div>
+                <div class="figure-container" style="min-width:260px;">
+                    <svg width="255" height="205" viewBox="0 0 255 205">
+      <!-- Amplitude annotation: double-headed arrow outside screen (x<40) -->
+      <line x1="26" y1="33" x2="26" y2="85" stroke="#cc0000" stroke-width="1.2"/>
+      <polygon points="26,28 23,34 29,34" fill="#cc0000"/>
+      <polygon points="26,90 23,84 29,84" fill="#cc0000"/>
+      <line x1="19" y1="28" x2="33" y2="28" stroke="#cc0000" stroke-width="1.5"/>
+      <line x1="19" y1="90" x2="33" y2="90" stroke="#cc0000" stroke-width="1.5"/>
+      <line x1="33" y1="28" x2="65" y2="28" stroke="#cc0000" stroke-width="0.9" stroke-dasharray="3,2"/>
+      <text x="11" y="59" font-size="9.5" font-family="Times New Roman"
+            fill="#cc0000" font-weight="bold" text-anchor="middle"
+            transform="rotate(-90,11,59)">3.1 div</text>
+      <!-- Screen -->
+      <rect x="40" y="10" width="200" height="160" fill="#f5f5f0" stroke="#111" stroke-width="2"/>
+      <line x1="40" y1="10" x2="40" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="60" y1="10" x2="60" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="80" y1="10" x2="80" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="100" y1="10" x2="100" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="120" y1="10" x2="120" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="140" y1="10" x2="140" y2="170" stroke="#888" stroke-width="1.2"/>
+      <line x1="160" y1="10" x2="160" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="180" y1="10" x2="180" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="200" y1="10" x2="200" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="220" y1="10" x2="220" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="240" y1="10" x2="240" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="10" x2="240" y2="10" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="30" x2="240" y2="30" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="50" x2="240" y2="50" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="70" x2="240" y2="70" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="90" x2="240" y2="90" stroke="#888" stroke-width="1.2"/>
+      <line x1="40" y1="110" x2="240" y2="110" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="130" x2="240" y2="130" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="150" x2="240" y2="150" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="170" x2="240" y2="170" stroke="#ccc" stroke-width="0.5"/>
+      <line x1="40" y1="87" x2="40" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="50" y1="87" x2="50" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="60" y1="87" x2="60" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="70" y1="87" x2="70" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="80" y1="87" x2="80" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="90" y1="87" x2="90" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="100" y1="87" x2="100" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="110" y1="87" x2="110" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="120" y1="87" x2="120" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="130" y1="87" x2="130" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="140" y1="87" x2="140" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="150" y1="87" x2="150" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="160" y1="87" x2="160" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="170" y1="87" x2="170" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="180" y1="87" x2="180" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="190" y1="87" x2="190" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="200" y1="87" x2="200" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="210" y1="87" x2="210" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="220" y1="87" x2="220" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="230" y1="87" x2="230" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="240" y1="87" x2="240" y2="93" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="10" x2="143" y2="10" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="20" x2="143" y2="20" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="30" x2="143" y2="30" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="40" x2="143" y2="40" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="50" x2="143" y2="50" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="60" x2="143" y2="60" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="70" x2="143" y2="70" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="80" x2="143" y2="80" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="90" x2="143" y2="90" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="100" x2="143" y2="100" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="110" x2="143" y2="110" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="120" x2="143" y2="120" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="130" x2="143" y2="130" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="140" x2="143" y2="140" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="150" x2="143" y2="150" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="160" x2="143" y2="160" stroke="#777" stroke-width="0.7"/>
+      <line x1="137" y1="170" x2="143" y2="170" stroke="#777" stroke-width="0.7"/>
+      <!-- Wave: amplitude=3.11 div (62.2 px), period=4 div (80 px) -->
+      <path fill="none" stroke="#cc0000" stroke-width="2.2"
+        d="M 40,90 C 54,7 66,7 80,90 C 94,173 106,173 120,90
+           C 134,7 146,7 160,90 C 174,173 186,173 200,90
+           C 214,7 226,7 240,90"/>
+      <!-- Sensitivity labels -->
+      <text x="40"  y="192" font-size="11" font-family="Times New Roman" font-weight="bold">S&#x1D463; = 100 V/div</text>
+      <text x="150" y="192" font-size="11" font-family="Times New Roman" font-weight="bold">S&#x2095; = 5 ms/div</text>
+    </svg>
+                    <div class="figure-caption">Figure 2: Oscilloscope Screen</div>
+                </div>
+            </div>
+        </div>
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 3: Spring&ndash;Mass System &mdash; Equilibrium and Hooke&rsquo;s Law</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A solid \((S)\) of mass \(m = 200 \text{g}\) is suspended from the free end of a vertical spring whose natural (unstretched) length is \(L_0 = 15 \text{cm}\). When the solid is in equilibrium, the total length of the spring becomes \(L = 20 \text{cm}\). (Take \(g = 10 \text{N/kg}\))
+                    <ol>
+                        <li>Name the two forces acting on \((S)\) and give, for each, its line of action and direction.</li>
+                        <li>Give the condition of equilibrium of a solid subjected to two forces. </li>
+                        <li>Calculate the weight \(W\) of the solid \((S)\). Deduce the magnitude of the tension \(T\) exerted by the spring on \((S)\).</li>
+                        <li>
+                            <ol type="a">
+                                <li>Determine the elongation \(\Delta L\) of the spring in this equilibrium position.</li>
+                                <li>Using Hooke&rsquo;s Law, deduce the stiffness constant \(k\) of the spring. Show your working.</li>
+                            </ol>
+                        </li>
+                        <li>A new object \((S')\) is attached to the same spring. The spring stretches by \(10\text{cm}\) from its natural length. Determine the mass \(m'\) of \((S')\).</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="150" height="195" viewBox="0 0 150 195">
+      <line x1="20" y1="12" x2="110" y2="12" stroke="black" stroke-width="4"/>
+      <path d="M 30 12 L 40 2 M 48 12 L 58 2 M 66 12 L 76 2 M 84 12 L 94 2" stroke="black" stroke-width="1" fill="none"/>
+      <path fill="none" stroke="#333" stroke-width="2"
+        d="M 65 12 L 65 22 L 52 32 L 78 44 L 52 56 L 78 68 L 52 80 L 78 92 L 52 104 L 78 116 L 65 126 L 65 136"/>
+      <rect x="47" y="136" width="36" height="34" fill="#dddddd" stroke="black" stroke-width="2"/>
+      <text x="58" y="158" font-family="Times New Roman" font-size="15" font-weight="bold">S</text>
+      <line x1="112" y1="12"  x2="112" y2="112" stroke="#555" stroke-width="1" stroke-dasharray="4,2"/>
+      <line x1="107" y1="12"  x2="117" y2="12"  stroke="#555" stroke-width="1.2"/>
+      <line x1="107" y1="112" x2="117" y2="112" stroke="#555" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <text x="119" y="67" font-family="Times New Roman" font-size="11" fill="#333" font-style="italic">L&#x2080;</text>
+      <line x1="112" y1="112" x2="112" y2="136" stroke="#b00" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <line x1="107" y1="136" x2="117" y2="136" stroke="#b00" stroke-width="1.2"/>
+      <text x="119" y="129" font-family="Times New Roman" font-size="11" fill="#b00" font-style="italic">&#x394;L</text>
+    </svg>
+                    <div class="figure-caption">Figure 3: Spring&ndash;Mass System</div>
+                </div>
+            </div>
+        </div>
+        <div class="exercise">
+            <div class="exercise-title"><span>Exercise 4: Principle of Interaction</span><span>(5 points)</span></div>
+            <div class="content-row">
+                <div class="text-content">
+                    A magnet \((A)\) and an iron ball \((B)\) are placed near each other on a smooth horizontal table. They attract each other by a force of magnitude \(5 \text{ N}\).
+                    <ol>
+                        <li>Give the principle of interaction.</li>
+                        <li>Let \(\vec{F}_{A/B}\) be the force exerted by \((A)\) on \((B)\), and \(\vec{F}_{B/A}\) be the force exerted by \((B)\) on \((A)\). Write the vector relation between these two forces.</li>
+                        <li>Deduce the magnitude of both forces.</li>
+                        <li>Redraw the Figure, and then represent each of the forces \(\vec{F}_{A/B}\) and \(\vec{F}_{B/A}\) to a scale of 1cm corresponds to 2 N.</li>
+                    </ol>
+                </div>
+                <div class="figure-container">
+                    <svg width="200" height="90" viewBox="0 0 200 90">
+                        <line x1="10" y1="70" x2="190" y2="70" stroke="black" stroke-width="3" />
+                        <rect x="30" y="40" width="40" height="30" fill="#cc0000" stroke="black" />
+                        <rect x="70" y="40" width="10" height="30" fill="silver" stroke="black" />
+                        <text x="45" y="60" fill="white" font-weight="bold" font-family="Times New Roman">A</text>
+                        <circle cx="150" cy="55" r="15" fill="#888" stroke="black" />
+                        <text x="145" y="60" fill="white" font-weight="bold" font-family="Times New Roman">B</text>
+                        </svg>
+                    <div class="figure-caption">Figure 4: Magnetic Interaction</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+        <div class="exam-header">
+            <div class="header-flex">
+                <img src="data:image/jpeg;base64,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" alt="UNRWA Logo" class="unrwa-logo">
+                <div>
+                    <h1>Beit Jala Secondary School</h1>
+                    <h2>Official Marking Scheme & Key Answers</h2>
+                </div>
+                <div class="spacer"></div>
+            </div>
+            <p><strong>Total Marks:</strong> 20 / 20 | <strong>Subject:</strong> Physics (Grade 9)</p>
+        </div>
+
+        <div class="marking-scheme">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Exercise / Question</th>
+                        <th>Expected Answer / Evaluation Criteria</th>
+                        <th class="pts">Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="3" style="background-color: #f1f5f9; font-weight: bold;">Exercise 1: Direct Current & Electric Power (5 points)</td></tr>
+                    <tr>
+                        <td><strong>1.</strong> Inscriptions</td>
+                        <td>12 V represents the Nominal Voltage. 6 W represents the Nominal Power.</td>
+                        <td class="pts">1.0 pt<br><span style="font-size: 10px; font-weight: normal;">(0.5 ea)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2.</strong> Nominal Current</td>
+                        <td>Formula: \(P = U \times I\) \(\Rightarrow\) \(I_n = P / U = 6 / 12 = 0.5 \text{ A}\).</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.a.</strong> Voltage \(U_R\)</td>
+                        <td>Applying Ohm's law: \(U_R = R \times I = 10 \times 0.5 = 5 \text{ V}\).</td>
+                        <td class="pts">0.75 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.b.</strong> Voltage \(U_L\)</td>
+                        <td>Law of addition of voltages: \(U_G = U_R + U_L\) \(\Rightarrow\) \(U_L = 17 - 5 = 12 \text{ V}\).</td>
+                        <td class="pts">0.75 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.c.</strong> Lamp Function</td>
+                        <td>Yes, the lamp functions normally because the applied voltage equals its nominal voltage (\(12 \text{ V} = 12 \text{ V}\)), or because \(I = I_n\).</td>
+                        <td class="pts">0.5 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4.</strong> Electric Energy</td>
+                        <td>\(t = 30 \times 60 = 1800 \text{ s}\). \(E = P \times t = 6 \times 1800 = 10,800 \text{ Joules}\).</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+
+                    <tr><td colspan="3" style="background-color: #f1f5f9; font-weight: bold;">Exercise 2: Alternating Voltage &mdash; Lebanese Mains Supply (5 points)</td></tr>
+                    <tr>
+                        <td><strong>1.</strong> Type of voltage</td>
+                        <td>Alternating sinusoidal voltage.</td>
+                        <td class="pts">0.5 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2.</strong> Maximum voltage \(U_{max}\)</td>
+                        <td>Amplitude (peak to centre axis) = 3.1 div (as labelled on Figure 2).<br>
+                            \(U_{max} = 3.1 \times S_v = 3.1 \times 100 = 310 \approx 311 \text{ V}\).</td>
+                        <td class="pts">1.25 pt<br><span style="font-size:10px;font-weight:normal;">(0.5 reading + 0.75 formula)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.a.</strong> Effective voltage \(U_{eff}\)</td>
+                        <td>\(U_{eff} = \dfrac{U_{max}}{\sqrt{2}} = \dfrac{311}{1.41} \approx 220 \text{ V}\).</td>
+                        <td class="pts">0.75 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.b.</strong> Voltmeter reading</td>
+                        <td>A voltmeter always measures the <strong>effective (RMS)</strong> value of the voltage.<br>
+                            \(\Rightarrow\) It displays \(U_{eff} \approx \mathbf{220 \text{ V}}\).</td>
+                        <td class="pts">0.25 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4.</strong> Period \(T\)</td>
+                        <td>One complete cycle spans \(x = 4\) div on the time axis.<br>
+                            \(T = x \times S_h = 4 \times 5 = 20 \text{ ms} = 0.020 \text{ s}\).</td>
+                        <td class="pts">1.25 pt<br><span style="font-size:10px;font-weight:normal;">(0.75 reading + 0.5 conversion)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>5.</strong> Frequency \(f\)</td>
+                        <td>\(f = \dfrac{1}{T} = \dfrac{1}{0.020} = 50 \text{ Hz}\).<br>
+                            Lebanese standard = <strong>50 Hz</strong>. Result is consistent. &#x2713;</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+<tr><td colspan="3" style="background-color: #f1f5f9; font-weight: bold;">Exercise 3: Spring&ndash;Mass System &mdash; Equilibrium and Hooke&rsquo;s Law (5 points)</td></tr>
+                    <tr>
+                        <td><strong>1.</strong> Condition of equilibrium</td>
+                        <td>The two forces must have the same line of action, opposite directions, and equal magnitudes.</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2.</strong> Forces on \((S)\)</td>
+                        <td>&bull; Weight \(\vec{W}\): vertical line of action, directed downward.<br>
+                            &bull; Spring tension \(\vec{T}\): vertical line of action, directed upward.</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.</strong> Weight and Tension</td>
+                        <td>\(m = 200 \text{ g} = 0.200 \text{ kg}\).<br>
+                            \(W = m \times g = 0.200 \times 10 = 2 \text{ N}\).<br>
+                            At equilibrium: \(\vec{W} + \vec{T} = \vec{0} \Rightarrow T = W = 2 \text{ N}\).</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4.a.</strong> Elongation \(\Delta L\)</td>
+                        <td>\(\Delta L = L - L_0 = 20 - 15 = 5 \text{ cm} = 0.05 \text{ m}\).</td>
+                        <td class="pts">0.75 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4.b.</strong> Stiffness \(k\)</td>
+                        <td>Hooke&rsquo;s Law: \(T = k \times \Delta L \Rightarrow k = \dfrac{T}{\Delta L} = \dfrac{2}{0.05} = 40 \text{ N/m}\).</td>
+                        <td class="pts">0.75 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5.</strong> New mass \(m'\)</td>
+                        <td>\(\Delta L' = 10 \text{ cm} = 0.10 \text{ m}\).<br>
+                            \(T' = k \times \Delta L' = 40 \times 0.10 = 4 \text{ N}\).<br>
+                            \(m' = T' / g = 4 / 10 = 0.4 \text{ kg} = \mathbf{400 \text{ g}}\).</td>
+                        <td class="pts">0.5 pt</td>
+                    </tr>
+<tr><td colspan="3" style="background-color: #f1f5f9; font-weight: bold;">Exercise 4: Principle of Interaction (5 points)</td></tr>
+                    <tr>
+                        <td><strong>1.</strong> Principle</td>
+                        <td>When body A exerts a force on body B, body B simultaneously exerts a force on body A that is equal in magnitude and opposite in direction.</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2.</strong> Vector Relation</td>
+                        <td>\(\vec{F}_{A/B} = -\vec{F}_{B/A}\)</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.</strong> Magnitude</td>
+                        <td>\(F_{A/B} = F_{B/A} = 5 \text{ N}\)</td>
+                        <td class="pts">1.0 pt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4.</strong> Drawing</td>
+                        <td>- \(\vec{F}_{A/B}\) drawn starting from B directed towards A.<br>- \(\vec{F}_{B/A}\) drawn starting from A directed towards B with each arrow's length is 2.5 cm.<br>- Both vectors must have the same length.</td>
+                        <td class="pts">2.0 pt</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2" style="text-align: right;">OVERALL TOTAL</td>
+                        <td class="pts">20 / 20</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>
