@@ -1925,7 +1925,37 @@ function showToast(msg) {
 window.addEventListener('load', function() {
   initSpectrum();
   fetchLeaderboard();
+  checkUnlockOnLoad();
 });
+
+function checkUnlockOnLoad() {
+  if (SCRIPT_URL === 'PASTE_YOUR_WEB_APP_URL_HERE') return;
+  // Read all localStorage keys that look like a submitted lock
+  var keys = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.indexOf('g8rev_submitted_') === 0) keys.push(k);
+  }
+  keys.forEach(function(k) {
+    // key format: g8rev_submitted_[name]_[class]
+    var stripped = k.replace('g8rev_submitted_', '');
+    // class is always last 2 chars (8A, 8B, 8C, 8D)
+    var cls  = stripped.slice(-2);
+    var name = stripped.slice(0, -(cls.length + 1)); // strip _8B
+    if (!name || !cls) return;
+    fetch(SCRIPT_URL + '?action=checkUnlock&name=' +
+          encodeURIComponent(name) + '&class=' + encodeURIComponent(cls))
+      .then(function(r) { return r.text(); })
+      .then(function(t) {
+        if (t.trim() === 'unlock') {
+          localStorage.removeItem(k);
+          showToast('Attempt reset by teacher. Refreshing…');
+          setTimeout(function() { location.reload(); }, 1800);
+        }
+      })
+      .catch(function() {});
+  });
+}
 </script>
 </body>
 </html>
