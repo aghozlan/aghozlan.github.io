@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change of State — Part 2 | Grade 7D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   CRYO-THERMAL LABORATORY — Design System
+   Aesthetic: Scientific Logbook × Cold Lab
+   Fonts: Syne (display) + Space Mono (data)
+   Accent: Ice-Blue #7dd3fc × Ember #fb923c × Violet #a78bfa
+═══════════════════════════════════════════════ */
+:root {
+  --bg:      #060610;
+  --bg2:     #0a0a1a;
+  --bg3:     #0f0f24;
+  --panel:   rgba(125,211,252,.04);
+  --panel2:  rgba(125,211,252,.09);
+  --border:  rgba(125,211,252,.13);
+  --border2: rgba(125,211,252,.28);
+  --text:    #e2e8f8;
+  --muted:   rgba(226,232,248,.45);
+  --ice:     #7dd3fc;
+  --ember:   #fb923c;
+  --violet:  #a78bfa;
+  --lime:    #86efac;
+  --red:     #f87171;
+  --gold:    #fbbf24;
+  --mono:    'Space Mono', monospace;
+  --sans:    'Syne', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Grid texture */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(125,211,252,.012) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(125,211,252,.012) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+
+/* Diagonal scan-lines overlay */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:repeating-linear-gradient(
+    -45deg,
+    transparent,transparent 3px,
+    rgba(125,211,252,.006) 3px,rgba(125,211,252,.006) 4px
+  );
+}
+
+/* ── LAYOUT ── */
+.lab-wrapper{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  grid-template-rows:auto 1fr;
+  min-height:100vh;
+  position:relative;z-index:1;
+}
+@media(max-width:900px){
+  .lab-wrapper{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
+}
+
+/* ── HEADER ── */
+.lab-header{
+  grid-column:1/-1;
+  background:linear-gradient(135deg,rgba(10,10,26,.97),rgba(15,15,36,.97));
+  border-bottom:1px solid var(--border2);
+  padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:100;
+}
+.header-brand{display:flex;align-items:center;gap:14px}
+.header-icon{
+  width:44px;height:44px;
+  background:linear-gradient(135deg,var(--ice),var(--violet));
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  box-shadow:0 0 20px rgba(125,211,252,.3);
+  flex-shrink:0;
+}
+.header-title{font-size:1.15rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.header-sub{font-size:.72rem;font-family:var(--mono);color:var(--muted);margin-top:2px}
+.header-badge{
+  font-family:var(--mono);font-size:.65rem;
+  background:rgba(251,146,60,.12);color:var(--ember);
+  border:1px solid rgba(251,146,60,.25);
+  padding:4px 10px;border-radius:6px;letter-spacing:.05em;
+}
+.header-student-pill{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(125,211,252,.07);
+  border:1px solid var(--border);border-radius:20px;
+  padding:5px 14px;font-size:.78rem;font-family:var(--mono);
+  color:var(--ice);cursor:pointer;
+  transition:background .2s;
+}
+.header-student-pill:hover{background:rgba(125,211,252,.13)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  background:linear-gradient(180deg,rgba(10,10,26,.95),rgba(6,6,16,.98));
+  border-right:1px solid var(--border);
+  padding:24px 16px;
+  position:sticky;top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:20px;
+}
+@media(max-width:900px){
+  .sidebar{
+    position:static;height:auto;
+    border-right:none;border-bottom:1px solid var(--border);
+    padding:16px;
+  }
+}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+.sb-label{
+  font-family:var(--mono);font-size:.6rem;color:var(--muted);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;
+}
+/* Timer */
+.timer-block{
+  background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+  padding:14px;text-align:center;
+}
+.timer-display{
+  font-family:var(--mono);font-size:1.6rem;color:var(--ice);
+  letter-spacing:.1em;
+  text-shadow:0 0 12px rgba(125,211,252,.4);
+}
+
+/* Score ring */
+.score-ring-wrap{display:flex;align-items:center;justify-content:center;padding:8px 0}
+.score-ring-svg{overflow:visible}
+.score-ring-bg{stroke:rgba(125,211,252,.1);fill:none}
+.score-ring-fill{
+  stroke:var(--ice);fill:none;
+  stroke-linecap:round;
+  transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);
+  filter:drop-shadow(0 0 6px rgba(125,211,252,.5));
+}
+.score-ring-text{font-family:var(--mono);fill:var(--text);font-size:18px;text-anchor:middle;dominant-baseline:middle}
+.score-ring-label{font-family:var(--mono);fill:var(--muted);font-size:9px;text-anchor:middle;dominant-baseline:middle}
+
+/* Progress dots */
+.progress-dots{display:flex;flex-direction:column;gap:8px}
+.prog-dot-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 10px;border-radius:8px;
+  cursor:pointer;transition:background .18s;font-size:.8rem;
+}
+.prog-dot-row:hover{background:var(--panel)}
+.prog-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.65rem;font-weight:700;
+  border:2px solid rgba(125,211,252,.2);
+  background:rgba(125,211,252,.03);color:var(--muted);
+  transition:all .3s;flex-shrink:0;
+}
+.prog-dot.done{
+  background:rgba(134,239,172,.15);border-color:var(--lime);
+  color:var(--lime);box-shadow:0 0 8px rgba(134,239,172,.2);
+}
+.prog-dot.active{
+  background:rgba(125,211,252,.15);border-color:var(--ice);
+  color:var(--ice);box-shadow:0 0 10px rgba(125,211,252,.3);
+}
+.prog-label{color:var(--muted);font-size:.78rem}
+.prog-label.active{color:var(--text);font-weight:600}
+
+/* Class progress leaderboard */
+.class-progress{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;
+}
+.class-bar-row{
+  display:flex;align-items:center;gap:8px;margin-top:6px;font-family:var(--mono);font-size:.7rem;
+}
+.class-bar-name{width:24px;color:var(--muted);flex-shrink:0}
+.class-bar-track{flex:1;background:rgba(125,211,252,.06);border-radius:4px;height:8px;overflow:hidden}
+.class-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ice),var(--violet));transition:width .8s ease}
+.class-bar-count{color:var(--ice);width:20px;text-align:right;flex-shrink:0}
+
+/* ── MAIN CONTENT ── */
+.main-content{
+  padding:32px 28px;
+  display:flex;flex-direction:column;gap:32px;
+  overflow-y:auto;
+}
+@media(max-width:900px){.main-content{padding:20px 16px}}
+
+/* ── SECTION BASE ── */
+.lab-section{
+  display:none;
+  animation:fadeUp .4s ease both;
+}
+.lab-section.active{display:block}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.section-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
+  padding:4px 12px;border-radius:6px;margin-bottom:16px;text-transform:uppercase;
+}
+.tag-e1{background:rgba(125,211,252,.1);color:var(--ice);border:1px solid rgba(125,211,252,.2)}
+.tag-e2{background:rgba(167,139,250,.1);color:var(--violet);border:1px solid rgba(167,139,250,.2)}
+.tag-e3{background:rgba(251,146,60,.1);color:var(--ember);border:1px solid rgba(251,146,60,.2)}
+.tag-e4{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2)}
+.tag-e5{background:rgba(134,239,172,.1);color:var(--lime);border:1px solid rgba(134,239,172,.2)}
+
+.section-title{
+  font-size:clamp(1.4rem,3vw,1.9rem);font-weight:800;
+  color:var(--text);letter-spacing:-.03em;margin-bottom:8px;
+}
+.section-desc{color:var(--muted);font-size:.88rem;line-height:1.65;max-width:680px}
+
+/* ── PANELS ── */
+.panel{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;padding:20px;
+}
+.panel-dark{
+  background:rgba(6,6,16,.8);border:1px solid var(--border2);
+  border-radius:16px;padding:20px;
+}
+.panel-highlight{
+  background:linear-gradient(135deg,rgba(125,211,252,.06),rgba(167,139,250,.04));
+  border:1px solid var(--border2);border-radius:16px;padding:20px;
+}
+
+/* ── GRID LAYOUTS ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:700px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+
+/* ── CONCEPT CARDS ── */
+.concept-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:18px;position:relative;overflow:hidden;
+  transition:border-color .2s,transform .2s;
+}
+.concept-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.concept-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--ice),var(--violet));border-radius:3px 3px 0 0;
+}
+.card-icon{font-size:1.5rem;margin-bottom:10px}
+.card-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.card-body{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* ── DATA TABLE ── */
+.data-table{
+  width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.78rem;
+}
+.data-table th{
+  background:rgba(125,211,252,.08);color:var(--ice);
+  padding:10px 14px;text-align:left;border:1px solid var(--border);
+  font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+}
+.data-table td{
+  padding:9px 14px;border:1px solid var(--border);
+  color:var(--text);background:rgba(6,6,16,.4);
+}
+.data-table tr:hover td{background:rgba(125,211,252,.04)}
+.data-table td.highlight{color:var(--ice);font-weight:700}
+.data-table td.plateau{color:var(--ember);font-weight:700}
+.data-table td.state-tag{
+  color:var(--violet);font-size:.68rem;
+}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:10px;font-weight:700;
+  font-size:.82rem;cursor:pointer;border:none;
+  transition:all .18s;font-family:var(--sans);
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--ice),rgba(125,211,252,.7));
+  color:#060610;
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(125,211,252,.25)}
+.btn-secondary{
+  background:var(--panel2);color:var(--ice);border:1px solid var(--border2);
+}
+.btn-secondary:hover{background:rgba(125,211,252,.12)}
+.btn-ember{
+  background:linear-gradient(135deg,var(--ember),rgba(251,146,60,.7));
+  color:#060610;
+}
+.btn-ember:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(251,146,60,.25)}
+.btn-violet{
+  background:linear-gradient(135deg,var(--violet),rgba(167,139,250,.7));
+  color:#060610;
+}
+.btn-violet:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(167,139,250,.25)}
+.btn-next{
+  margin-top:24px;
+  background:linear-gradient(135deg,rgba(125,211,252,.15),rgba(167,139,250,.1));
+  color:var(--ice);border:1px solid var(--border2);
+  width:fit-content;
+}
+.btn-next:hover{background:linear-gradient(135deg,rgba(125,211,252,.25),rgba(167,139,250,.2));transform:translateX(4px)}
+
+/* ── MCQ ── */
+.mcq-container{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.mcq-question{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:18px;
+}
+.q-text{font-size:.88rem;color:var(--text);margin-bottom:14px;line-height:1.6}
+.q-text .q-num{
+  font-family:var(--mono);font-size:.72rem;color:var(--ice);
+  background:rgba(125,211,252,.1);padding:2px 8px;border-radius:5px;margin-right:8px;
+}
+.q-options{display:flex;flex-direction:column;gap:7px}
+.q-option{
+  display:flex;align-items:flex-start;gap:10px;
+  background:rgba(125,211,252,.03);border:1px solid var(--border);border-radius:9px;
+  padding:10px 14px;cursor:pointer;transition:all .18s;font-size:.82rem;color:var(--text);
+}
+.q-option:hover{background:rgba(125,211,252,.07);border-color:var(--border2)}
+.q-option.selected{background:rgba(125,211,252,.1);border-color:var(--ice);color:var(--ice)}
+.q-option.correct{background:rgba(134,239,172,.1);border-color:var(--lime);color:var(--lime)}
+.q-option.wrong{background:rgba(248,113,113,.08);border-color:var(--red);color:var(--red)}
+.q-option-key{
+  font-family:var(--mono);font-size:.72rem;
+  background:var(--panel2);border:1px solid var(--border);
+  width:22px;height:22px;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.q-feedback{
+  font-family:var(--mono);font-size:.72rem;margin-top:10px;padding:8px 12px;
+  border-radius:7px;display:none;
+}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:rgba(134,239,172,.08);color:var(--lime);border:1px solid rgba(134,239,172,.2)}
+.q-feedback.bad{background:rgba(248,113,113,.08);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+
+/* pts badge */
+.pts-badge{
+  font-family:var(--mono);font-size:.62rem;
+  background:rgba(251,191,36,.1);color:var(--gold);
+  border:1px solid rgba(251,191,36,.2);
+  padding:2px 8px;border-radius:5px;margin-left:8px;
+}
+
+/* ── HINTS ── */
+.hint-block{
+  margin-top:10px;display:none;
+}
+.hint-block.show{display:block}
+.hint-tier{
+  font-family:var(--mono);font-size:.72rem;padding:8px 12px;border-radius:7px;
+  margin-bottom:5px;border-left:3px solid;
+}
+.hint-1{background:rgba(251,191,36,.06);border-color:var(--gold);color:var(--gold)}
+.hint-2{background:rgba(167,139,250,.06);border-color:var(--violet);color:var(--violet)}
+.hint-3{background:rgba(125,211,252,.06);border-color:var(--ice);color:var(--ice)}
+
+/* ── SELF ASSESSMENT ── */
+.self-assess{
+  margin-top:18px;padding:14px 18px;
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.self-assess-label{font-family:var(--mono);font-size:.68rem;color:var(--muted);flex-shrink:0}
+.self-btn{
+  font-size:1.2rem;background:transparent;border:1px solid var(--border);
+  border-radius:8px;padding:5px 10px;cursor:pointer;transition:all .18s;
+}
+.self-btn:hover{transform:scale(1.15)}
+.self-btn.chosen{border-color:var(--ice);background:rgba(125,211,252,.1)}
+
+/* ── CANVAS CONTAINERS ── */
+.canvas-wrap{
+  position:relative;background:rgba(6,6,16,.9);
+  border:1px solid var(--border2);border-radius:14px;overflow:hidden;
+}
+.canvas-overlay{
+  position:absolute;background:rgba(6,6,16,.8);border:1px solid var(--border);
+  border-radius:8px;padding:6px 10px;backdrop-filter:blur(4px);
+  font-family:var(--mono);font-size:.7rem;pointer-events:none;
+}
+
+/* ── GRAPH LABELS ── */
+.graph-legend{
+  display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;
+}
+.legend-item{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:.68rem;color:var(--muted);
+}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+
+/* ── GAME ELEMENTS ── */
+.game-container{
+  background:rgba(6,6,16,.95);border:2px solid var(--border2);
+  border-radius:18px;padding:24px;position:relative;
+  overflow:hidden;
+}
+.game-container::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(125,211,252,.04),transparent 60%);
+  pointer-events:none;
+}
+.lives-row{display:flex;gap:6px;font-size:1.1rem}
+.score-row{
+  font-family:var(--mono);color:var(--gold);font-size:.85rem;
+}
+.game-q-text{
+  font-size:1rem;font-weight:700;color:var(--text);
+  margin:16px 0 12px;line-height:1.5;
+}
+.game-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.game-opt{
+  background:rgba(125,211,252,.04);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;cursor:pointer;
+  font-size:.85rem;color:var(--text);transition:all .2s;
+  text-align:center;font-weight:600;
+}
+.game-opt:hover{background:rgba(125,211,252,.1);border-color:var(--ice);color:var(--ice)}
+.game-opt.g-correct{background:rgba(134,239,172,.12);border-color:var(--lime);color:var(--lime)}
+.game-opt.g-wrong{background:rgba(248,113,113,.1);border-color:var(--red);color:var(--red)}
+.game-opt:disabled{pointer-events:none}
+.game-status{
+  font-family:var(--mono);font-size:.75rem;
+  padding:8px 14px;border-radius:8px;margin-top:14px;min-height:36px;
+  transition:all .3s;
+}
+.game-status.ok{background:rgba(134,239,172,.08);color:var(--lime)}
+.game-status.bad{background:rgba(248,113,113,.08);color:var(--red)}
+.round-badge{
+  font-family:var(--mono);font-size:.65rem;
+  background:rgba(167,139,250,.1);color:var(--violet);
+  border:1px solid rgba(167,139,250,.2);
+  padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:10px;
+}
+
+/* ── INTERACTIVE GRAPH BUILDER ── */
+.graph-point-label{
+  font-family:var(--mono);font-size:.68rem;
+  background:rgba(6,6,16,.9);border:1px solid var(--border);
+  color:var(--ice);padding:3px 7px;border-radius:5px;
+  white-space:nowrap;
+}
+.interval-row{
+  display:flex;align-items:center;gap:12px;margin-bottom:8px;
+  padding:8px 14px;border-radius:8px;border:1px solid var(--border);
+  background:var(--panel);font-size:.8rem;
+}
+.interval-label{font-family:var(--mono);font-size:.7rem;color:var(--muted);width:60px;flex-shrink:0}
+.interval-val{font-family:var(--mono);font-size:.78rem;color:var(--ice);width:90px}
+.interval-state{font-size:.78rem;flex:1}
+.state-selector{
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text);
+  padding:5px 10px;border-radius:7px;font-family:var(--mono);font-size:.72rem;
+  cursor:pointer;outline:none;
+}
+.state-selector:focus{border-color:var(--ice)}
+
+/* ── CONFETTI ── */
+.confetti-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:9999;
+}
+
+/* ── SUBMIT SECTION ── */
+.submit-card{
+  background:linear-gradient(135deg,rgba(125,211,252,.06),rgba(167,139,250,.04));
+  border:1px solid var(--border2);border-radius:20px;padding:32px;text-align:center;
+}
+.grade-display{
+  font-family:var(--mono);font-size:3rem;font-weight:700;
+  background:linear-gradient(135deg,var(--ice),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  text-shadow:none;filter:drop-shadow(0 0 20px rgba(125,211,252,.3));
+}
+.score-display{font-family:var(--mono);font-size:1.2rem;color:var(--muted);margin-top:4px}
+.result-bar{
+  width:100%;height:10px;background:rgba(125,211,252,.08);
+  border-radius:5px;overflow:hidden;margin:20px 0;
+}
+.result-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--ice),var(--violet),var(--ember));
+  border-radius:5px;transition:width 1.2s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── LOGIN SCREEN ── */
+.login-screen{
+  max-width:460px;margin:60px auto;
+  background:var(--panel);border:1px solid var(--border2);
+  border-radius:20px;padding:36px;
+}
+.login-screen h2{
+  font-size:1.5rem;font-weight:800;text-align:center;
+  margin-bottom:6px;
+}
+.form-label{
+  font-family:var(--mono);font-size:.68rem;color:var(--muted);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:block;
+}
+.form-select{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text);padding:11px 14px;border-radius:10px;
+  font-family:var(--sans);font-size:.85rem;outline:none;
+  transition:border-color .2s;cursor:pointer;
+}
+.form-select:focus{border-color:var(--ice)}
+.section-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.sec-btn{
+  padding:6px 16px;border-radius:8px;font-family:var(--mono);font-size:.72rem;
+  background:var(--panel);border:1px solid var(--border);color:var(--muted);
+  cursor:pointer;transition:all .18s;
+}
+.sec-btn.on{background:rgba(125,211,252,.12);border-color:var(--ice);color:var(--ice)}
+
+/* ── NOTIFICATION TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:9000;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:12px;padding:12px 18px;
+  font-family:var(--mono);font-size:.78rem;color:var(--text);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  transform:translateY(80px);opacity:0;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  max-width:320px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── COOLING CURVE SIMULATION ── */
+.cooling-scenario{
+  background:rgba(6,6,16,.9);border:1px solid var(--border);border-radius:12px;
+  padding:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font-size:.82rem;margin-bottom:12px;
+}
+.temp-indicator{
+  font-family:var(--mono);font-size:1.4rem;
+  color:var(--ember);
+  text-shadow:0 0 12px rgba(251,146,60,.4);
+  transition:color .5s;
+}
+.state-indicator{
+  font-family:var(--mono);font-size:.8rem;
+  padding:4px 12px;border-radius:6px;
+  background:rgba(125,211,252,.1);border:1px solid rgba(125,211,252,.2);
+  color:var(--ice);transition:all .5s;
+}
+
+/* ── SCROLLBAR STYLING ── */
+.main-content::-webkit-scrollbar{width:5px}
+.main-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ── DIVIDERS ── */
+.section-divider{
+  height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);
+  margin:20px 0;
+}
+
+/* ── ANSWER INPUT ── */
+.ans-input{
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text);padding:9px 14px;border-radius:9px;
+  font-family:var(--mono);font-size:.82rem;outline:none;
+  transition:border-color .2s;width:100%;
+}
+.ans-input:focus{border-color:var(--ice)}
+.check-ans-btn{
+  background:rgba(125,211,252,.1);border:1px solid var(--border2);
+  color:var(--ice);padding:9px 18px;border-radius:9px;
+  font-family:var(--mono);font-size:.75rem;cursor:pointer;
+  transition:all .18s;margin-top:8px;
+}
+.check-ans-btn:hover{background:rgba(125,211,252,.2)}
+.ans-result{
+  font-family:var(--mono);font-size:.75rem;margin-top:8px;
+  padding:7px 12px;border-radius:7px;display:none;
+}
+.ans-result.show{display:block}
+.ans-result.ok{background:rgba(134,239,172,.08);color:var(--lime);border:1px solid rgba(134,239,172,.2)}
+.ans-result.bad{background:rgba(248,113,113,.08);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+
+/* ── OBJECTIVE CHIP ── */
+.obj-chip{
+  font-family:var(--mono);font-size:.62rem;
+  background:rgba(167,139,250,.08);color:var(--violet);
+  border:1px solid rgba(167,139,250,.18);
+  padding:2px 8px;border-radius:5px;
+}
+
+/* ── EXAM PROGRESS BAR ── */
+.exam-progress{
+  height:6px;background:rgba(125,211,252,.06);border-radius:3px;overflow:hidden;margin-bottom:20px;
+}
+.exam-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--ice),var(--ember));
+  border-radius:3px;transition:width .5s ease;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ CONFETTI CANVAS ═══════ -->
+<canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+<!-- ═══════ TOAST ═══════ -->
+<div id="toast" class="toast"></div>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div id="loginWrap" class="main-content" style="padding:40px 24px">
+  <div class="login-screen">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:2.5rem;margin-bottom:8px">🧊🔥</div>
+      <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">
+        UNRWA Lebanon · Science · Grade 7D
+      </div>
+      <h2 style="font-size:1.45rem;font-weight:800;letter-spacing:-.02em">Change of State</h2>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--ember);margin-top:4px">
+        Part 2 — Heating & Cooling Curves
+      </div>
+    </div>
+
+    <div style="background:rgba(125,211,252,.04);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:22px;font-size:.78rem;color:var(--muted);line-height:1.65">
+      ✓ You completed Part 1 — states, transitions, and the heating curve<br>
+      ✓ Now we master: reading graphs, identifying intervals, cooling curves, and mixed states
+    </div>
+
+    <div style="margin-bottom:16px">
+      <span class="form-label">Select Your Class</span>
+      <div class="section-btns">
+        <button class="sec-btn" onclick="setClass('7D')">7D</button>
+      </div>
+    </div>
+
+    <div>
+      <span class="form-label">اختر اسمك — Select Your Name</span>
+      <select id="stuName" class="form-select" dir="rtl" disabled>
+        <option value="">— اختر اسمك —</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" onclick="startLab()" style="width:100%;margin-top:20px;justify-content:center;padding:13px">
+      Enter Lab — Part 2 →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════ MAIN LAB WRAPPER ═══════ -->
+<div id="labWrap" class="lab-wrapper" style="display:none">
+
+  <!-- HEADER -->
+  <header class="lab-header">
+    <div class="header-brand">
+      <div class="header-icon">🌡️</div>
+      <div>
+        <div class="header-title">Change of State — Part 2</div>
+        <div class="header-sub">UNRWA Lebanon · Science G7D · Heating & Cooling Curves</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span class="header-badge">CHAPTER 8</span>
+      <div class="header-student-pill" onclick="showToast('Session saved ✓')">
+        <span>👤</span>
+        <span id="headerName" style="direction:rtl"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <!-- Timer -->
+    <div>
+      <div class="sb-label">⏱ Elapsed Time</div>
+      <div class="timer-block">
+        <div class="timer-display" id="timerDisplay">00:00</div>
+      </div>
+    </div>
+
+    <!-- Score Ring -->
+    <div>
+      <div class="sb-label">📊 Score /20</div>
+      <div class="score-ring-wrap">
+        <svg class="score-ring-svg" width="110" height="110" viewBox="0 0 110 110">
+          <circle class="score-ring-bg" cx="55" cy="55" r="46" stroke-width="8"/>
+          <circle class="score-ring-fill" id="scoreRingFill" cx="55" cy="55" r="46"
+            stroke-width="8" stroke-dasharray="289" stroke-dashoffset="289"
+            transform="rotate(-90 55 55)"/>
+          <text class="score-ring-text" id="scoreRingText" x="55" y="50">0</text>
+          <text class="score-ring-label" x="55" y="65">/20</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Progress dots -->
+    <div>
+      <div class="sb-label">📍 Sections</div>
+      <div class="progress-dots">
+        <div class="prog-dot-row" onclick="goTo('e1')">
+          <div class="prog-dot" id="dot-e1">E1</div>
+          <span class="prog-label" id="lbl-e1">Engage</span>
+        </div>
+        <div class="prog-dot-row" onclick="goTo('e2')">
+          <div class="prog-dot" id="dot-e2">E2</div>
+          <span class="prog-label" id="lbl-e2">Explore</span>
+        </div>
+        <div class="prog-dot-row" onclick="goTo('e3')">
+          <div class="prog-dot" id="dot-e3">E3</div>
+          <span class="prog-label" id="lbl-e3">Explain</span>
+        </div>
+        <div class="prog-dot-row" onclick="goTo('e4')">
+          <div class="prog-dot" id="dot-e4">E4</div>
+          <span class="prog-label" id="lbl-e4">Elaborate</span>
+        </div>
+        <div class="prog-dot-row" onclick="goTo('e5')">
+          <div class="prog-dot" id="dot-e5">E5</div>
+          <span class="prog-label" id="lbl-e5">Evaluate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Progress -->
+    <div>
+      <div class="sb-label">🏆 Class Progress</div>
+      <div class="class-progress">
+        <div id="classProgressRows" style="font-family:var(--mono);font-size:.68rem;color:var(--muted);text-align:center">
+          Loading...
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+<!-- ══════════════════════════════════════════
+     E1 — ENGAGE
+══════════════════════════════════════════ -->
+<section id="sec-e1" class="lab-section active">
+  <span class="section-tag tag-e1">E1 · ENGAGE</span>
+  <h2 class="section-title">What happens when we stop heating?</h2>
+  <p class="section-desc">In Part 1 we heated water from ice to steam. Now we ask the reverse question — what happens when we let things cool down, or never heat them at all? Every object left alone will eventually reach the temperature of the room around it.</p>
+
+  <div style="height:20px"></div>
+
+  <!-- Animated Cooling Demo -->
+  <div class="panel-dark" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:.88rem;font-weight:700;color:var(--text)">🧊 Live Cooling Simulation</div>
+      <div style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">Room temperature: 20°C</div>
+    </div>
+
+    <div class="cooling-scenario">
+      <div>
+        <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-bottom:4px">CURRENT TEMP</div>
+        <div class="temp-indicator" id="coolTempDisplay">120°C</div>
+      </div>
+      <div style="width:1px;height:40px;background:var(--border)"></div>
+      <div>
+        <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-bottom:4px">CURRENT STATE</div>
+        <div class="state-indicator" id="coolStateDisplay">Gas (Steam)</div>
+      </div>
+      <div style="flex:1;text-align:right">
+        <button class="btn btn-secondary" onclick="toggleCooling()" id="coolBtn">▶ Start Cooling</button>
+      </div>
+    </div>
+
+    <canvas id="coolCurveCanvas" width="700" height="240" style="width:100%;border-radius:10px;display:block"></canvas>
+
+    <div class="graph-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Gas cooling</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>Condensation plateau (100°C)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7dd3fc"></div>Liquid cooling</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Solidification plateau (0°C)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#93c5fd"></div>Solid cooling → room temp</div>
+    </div>
+  </div>
+
+  <!-- Key Insight -->
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="concept-card">
+      <div class="card-icon">🌡️</div>
+      <div class="card-title">Room Temperature Rule</div>
+      <div class="card-body">Any object left without heating or cooling will eventually reach the temperature of its surroundings. This is called <strong style="color:var(--ice)">thermal equilibrium</strong>. In Shatila camp, room temperature is about 20°C in most seasons.</div>
+    </div>
+    <div class="concept-card" style="--border:rgba(251,146,60,.2)">
+      <div class="card-icon">📉</div>
+      <div class="card-title">The Cooling Curve</div>
+      <div class="card-body">A cooling curve is a temperature-vs-time graph that shows what happens when a substance loses heat. It is the <strong style="color:var(--ember)">mirror image</strong> of the heating curve — same plateaus, same transition temperatures, but going <em>downward</em>.</div>
+    </div>
+  </div>
+
+  <!-- Q1: Engage MCQ -->
+  <div class="mcq-question">
+    <div class="q-text">
+      <span class="q-num">Q1</span>
+      <span class="pts-badge">1 pt</span>
+      <span class="obj-chip">Obj 6</span>
+      A cup of hot tea at 75°C is left on the table in a room at 22°C. After many hours with no heating, what temperature will the tea reach?
+    </div>
+    <div class="q-options">
+      <div class="q-option" onclick="checkMCQ(this,'e1-q1',false)"><span class="q-option-key">A</span>0°C — it will freeze eventually</div>
+      <div class="q-option" onclick="checkMCQ(this,'e1-q1',false)"><span class="q-option-key">B</span>75°C — it keeps the temperature it started with</div>
+      <div class="q-option" onclick="checkMCQ(this,'e1-q1',true)"><span class="q-option-key">C</span>22°C — it equilibrates with the room</div>
+      <div class="q-option" onclick="checkMCQ(this,'e1-q1',false)"><span class="q-option-key">D</span>50°C — halfway between start and room temperature</div>
+    </div>
+    <div id="fb-e1-q1" class="q-feedback"></div>
+    <button class="check-ans-btn" onclick="toggleHint('h-e1-q1')">💡 Hint</button>
+    <div id="h-e1-q1" class="hint-block">
+      <div class="hint-tier hint-1">🟡 Hint 1: Think about what "no heating" means for a system.</div>
+      <div class="hint-tier hint-2">🟣 Hint 2: Objects always exchange heat with the environment until they match it.</div>
+      <div class="hint-tier hint-3">🔵 Hint 3: Thermal equilibrium = object temperature = room temperature.</div>
+    </div>
+  </div>
+
+  <!-- Q2: Cooling vs Heating -->
+  <div class="mcq-question" style="margin-top:14px">
+    <div class="q-text">
+      <span class="q-num">Q2</span>
+      <span class="pts-badge">1 pt</span>
+      <span class="obj-chip">Obj 6</span>
+      On a cooling curve for water starting at 120°C, the temperature stops decreasing for a while at 100°C. What is happening during this plateau?
+    </div>
+    <div class="q-options">
+      <div class="q-option" onclick="checkMCQ(this,'e1-q2',false)"><span class="q-option-key">A</span>The water is absorbing heat from the surroundings</div>
+      <div class="q-option" onclick="checkMCQ(this,'e1-q2',true)"><span class="q-option-key">B</span>The steam is condensing — releasing heat energy while changing state</div>
+      <div class="q-option" onclick="checkMCQ(this,'e1-q2',false)"><span class="q-option-key">C</span>The temperature sensor is broken</div>
+      <div class="q-option" onclick="checkMCQ(this,'e1-q2',false)"><span class="q-option-key">D</span>The water has reached room temperature</div>
+    </div>
+    <div id="fb-e1-q2" class="q-feedback"></div>
+  </div>
+
+  <!-- Self-assess -->
+  <div class="self-assess">
+    <span class="self-assess-label">How do you feel about the cooling curve concept?</span>
+    <button class="self-btn" onclick="selfAssess(this,'e1','😕')">😕</button>
+    <button class="self-btn" onclick="selfAssess(this,'e1','🤔')">🤔</button>
+    <button class="self-btn" onclick="selfAssess(this,'e1','😊')">😊</button>
+    <button class="self-btn" onclick="selfAssess(this,'e1','🎯')">🎯</button>
+  </div>
+  <input type="hidden" id="self-e1" value="">
+
+  <button class="btn btn-next" onclick="goTo('e2')">
+    Explore Interactive Graph Builder →
+  </button>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     E2 — EXPLORE: Interactive Curve Builder
+══════════════════════════════════════════ -->
+<section id="sec-e2" class="lab-section">
+  <span class="section-tag tag-e2">E2 · EXPLORE</span>
+  <h2 class="section-title">Build Your Own Cooling Curve</h2>
+  <p class="section-desc">A scientist gives you a table of temperature readings taken every minute while a substance cools from 110°C to room temperature. Your job: read the table, identify each time interval's state, then watch your curve come to life.</p>
+
+  <div style="height:20px"></div>
+
+  <!-- Data Table -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.88rem;font-weight:700;margin-bottom:14px;color:var(--text)">
+      📋 Experimental Data — Substance X cooling from 110°C
+      <span style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-left:8px">(Melting point: 80°C · Boiling point: ??°C → you'll find out!)</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table" id="dataTable">
+        <tr>
+          <th>Time (min)</th>
+          <th>Temperature (°C)</th>
+          <th>Observation</th>
+          <th>Your State Answer</th>
+        </tr>
+        <tr><td>0</td><td class="highlight">110</td><td>Still very hot — no bubbles</td>
+          <td><select class="state-selector" id="st0" onchange="checkStateAnswer(0,this,'gas')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>2</td><td class="highlight">104</td><td>Cooling slowly, vapor visible</td>
+          <td><select class="state-selector" id="st1" onchange="checkStateAnswer(1,this,'gas')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>4</td><td class="plateau">100</td><td>⚠ Temperature STOPPED changing</td>
+          <td><select class="state-selector" id="st2" onchange="checkStateAnswer(2,this,'condensing')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>6</td><td class="plateau">100</td><td>⚠ Still 100°C — plateau continues</td>
+          <td><select class="state-selector" id="st3" onchange="checkStateAnswer(3,this,'condensing')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>8</td><td class="highlight">96</td><td>Temperature dropping again</td>
+          <td><select class="state-selector" id="st4" onchange="checkStateAnswer(4,this,'liquid')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>10</td><td class="highlight">88</td><td>Liquid visible in container</td>
+          <td><select class="state-selector" id="st5" onchange="checkStateAnswer(5,this,'liquid')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>12</td><td class="plateau">80</td><td>⚠ Temperature STOPPED AGAIN</td>
+          <td><select class="state-selector" id="st6" onchange="checkStateAnswer(6,this,'solidifying')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>14</td><td class="plateau">80</td><td>⚠ Still 80°C — second plateau</td>
+          <td><select class="state-selector" id="st7" onchange="checkStateAnswer(7,this,'solidifying')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>16</td><td class="highlight">60</td><td>Substance has solidified</td>
+          <td><select class="state-selector" id="st8" onchange="checkStateAnswer(8,this,'solid')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>18</td><td class="highlight">35</td><td>Cooling toward room temp</td>
+          <td><select class="state-selector" id="st9" onchange="checkStateAnswer(9,this,'solid')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+        <tr><td>20</td><td class="highlight">20</td><td>Reached room temperature</td>
+          <td><select class="state-selector" id="st10" onchange="checkStateAnswer(10,this,'solid')"><option value="">—select—</option><option>Solid</option><option>Liquid</option><option>Gas</option><option>Condensing (Gas→Liquid)</option><option>Solidifying (Liquid→Solid)</option></select></td></tr>
+      </table>
+    </div>
+    <div id="tableScore" style="font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-top:10px">
+      States identified: <span id="stateCount" style="color:var(--ice)">0</span> / 11
+    </div>
+  </div>
+
+  <!-- Live Graph Builder -->
+  <div class="panel-dark" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:.88rem;font-weight:700;color:var(--text)">📈 Your Cooling Curve — builds as you answer the table</div>
+      <button class="btn btn-secondary" style="font-size:.72rem;padding:6px 14px" onclick="revealFullCurve()">Show Full Curve</button>
+    </div>
+    <canvas id="explorerGraph" width="680" height="300" style="width:100%;border-radius:10px;display:block"></canvas>
+    <div class="graph-legend" style="margin-top:10px">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--ice)"></div>Data points you identified</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(125,211,252,.3)"></div>Full curve (hidden until revealed)</div>
+    </div>
+  </div>
+
+  <!-- Discovery Questions -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:14px">🔬 Discovery Questions</div>
+
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">Q1</span><span class="pts-badge">1 pt</span><span class="obj-chip">Obj 6</span>
+        How many plateaus appear on the cooling curve of Substance X?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e2-q1',false)"><span class="q-option-key">A</span>Zero — temperature always changes smoothly</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q1',true)"><span class="q-option-key">B</span>Two — at 100°C (condensation) and 80°C (solidification)</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q1',false)"><span class="q-option-key">C</span>Three — at 100°C, 80°C, and 20°C</div>
+      </div>
+      <div id="fb-e2-q1" class="q-feedback"></div>
+    </div>
+
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">Q2</span><span class="pts-badge">1 pt</span><span class="obj-chip">Obj 5+6</span>
+        Based on the data table, what is the melting point of Substance X?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e2-q2',false)"><span class="q-option-key">A</span>100°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q2',true)"><span class="q-option-key">B</span>80°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q2',false)"><span class="q-option-key">C</span>20°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q2',false)"><span class="q-option-key">D</span>110°C</div>
+      </div>
+      <div id="fb-e2-q2" class="q-feedback"></div>
+    </div>
+
+    <div class="mcq-question">
+      <div class="q-text"><span class="q-num">Q3</span><span class="pts-badge">1 pt</span><span class="obj-chip">Obj 6</span>
+        At t = 10 min, Substance X is at 88°C. Its melting point is 80°C and boiling point is 100°C. What state is it in?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e2-q3',false)"><span class="q-option-key">A</span>Solid</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q3',true)"><span class="q-option-key">B</span>Liquid (between melting and boiling point)</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q3',false)"><span class="q-option-key">C</span>Gas</div>
+        <div class="q-option" onclick="checkMCQ(this,'e2-q3',false)"><span class="q-option-key">D</span>Mixture of liquid and solid</div>
+      </div>
+      <div id="fb-e2-q3" class="q-feedback"></div>
+    </div>
+  </div>
+
+  <div class="self-assess">
+    <span class="self-assess-label">Can you read a cooling data table and draw a curve?</span>
+    <button class="self-btn" onclick="selfAssess(this,'e2','😕')">😕</button>
+    <button class="self-btn" onclick="selfAssess(this,'e2','🤔')">🤔</button>
+    <button class="self-btn" onclick="selfAssess(this,'e2','😊')">😊</button>
+    <button class="self-btn" onclick="selfAssess(this,'e2','🎯')">🎯</button>
+  </div>
+  <input type="hidden" id="self-e2" value="">
+
+  <button class="btn btn-next" onclick="goTo('e3')">
+    Explain — Analyze Real Graphs →
+  </button>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     E3 — EXPLAIN: Graph Analysis Exercises
+══════════════════════════════════════════ -->
+<section id="sec-e3" class="lab-section">
+  <span class="section-tag tag-e3">E3 · EXPLAIN</span>
+  <h2 class="section-title">Reading the Graph — Expert Level</h2>
+  <p class="section-desc">Scientists must extract exact information from temperature-time graphs. Let's practice with three different scenarios — a heating curve, a cooling curve, and a mystery substance.</p>
+
+  <div style="height:16px"></div>
+
+  <!-- Graph A: Heating Curve Analysis -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:4px">
+      📊 Graph A — Heating Curve for Water
+    </div>
+    <div style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-bottom:16px">
+      Study the labeled graph, then answer the questions below
+    </div>
+
+    <canvas id="graphA" width="660" height="280" style="width:100%;border-radius:10px;display:block;margin-bottom:16px"></canvas>
+
+    <!-- Questions about Graph A -->
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">GA-1</span><span class="pts-badge">1 pt</span>
+        On Graph A, which segment shows the <strong>liquid water heating up</strong>?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga1',false)"><span class="q-option-key">A</span>Segment AB — from -15°C to 0°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga1',false)"><span class="q-option-key">B</span>Segment BC — the flat plateau at 0°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga1',true)"><span class="q-option-key">C</span>Segment CD — from 0°C to 100°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga1',false)"><span class="q-option-key">D</span>Segment DE — the flat plateau at 100°C</div>
+      </div>
+      <div id="fb-e3-ga1" class="q-feedback"></div>
+    </div>
+
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">GA-2</span><span class="pts-badge">1 pt</span>
+        On Graph A, segment DE is the boiling plateau. What is the substance doing during this interval?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga2',false)"><span class="q-option-key">A</span>Gaining temperature as it turns to gas</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga2',true)"><span class="q-option-key">B</span>Absorbing heat energy to break intermolecular bonds — changing state at constant temperature</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga2',false)"><span class="q-option-key">C</span>Losing heat to the surroundings</div>
+      </div>
+      <div id="fb-e3-ga2" class="q-feedback"></div>
+    </div>
+
+    <div class="mcq-question">
+      <div class="q-text"><span class="q-num">GA-3</span><span class="pts-badge">1 pt</span>
+        A point on graph A is at t=8 min. Temperature reads 55°C. Which state is the water in?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga3',false)"><span class="q-option-key">A</span>Solid</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga3',true)"><span class="q-option-key">B</span>Liquid — 55°C is between 0°C (MP) and 100°C (BP)</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga3',false)"><span class="q-option-key">C</span>Gas</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-ga3',false)"><span class="q-option-key">D</span>Melting mixture</div>
+      </div>
+      <div id="fb-e3-ga3" class="q-feedback"></div>
+    </div>
+  </div>
+
+  <!-- Graph B: Cooling Curve Analysis -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:4px">
+      📊 Graph B — Cooling Curve for Substance Y (MP = 45°C · BP = 95°C)
+    </div>
+    <div style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-bottom:16px">
+      Room temperature = 20°C
+    </div>
+
+    <canvas id="graphB" width="660" height="280" style="width:100%;border-radius:10px;display:block;margin-bottom:16px"></canvas>
+
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">GB-1</span><span class="pts-badge">1 pt</span>
+        Graph B shows substance Y cooling. What state is substance Y in at 70°C?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e3-gb1',false)"><span class="q-option-key">A</span>Solid (70°C > 45°C MP, but wait...)</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-gb1',true)"><span class="q-option-key">B</span>Liquid — 70°C is between 45°C (MP) and 95°C (BP)</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-gb1',false)"><span class="q-option-key">C</span>Gas</div>
+      </div>
+      <div id="fb-e3-gb1" class="q-feedback"></div>
+    </div>
+
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">GB-2</span><span class="pts-badge">1 pt</span>
+        On Graph B, after cooling stops (substance reaches room temperature), the curve becomes a <strong>flat horizontal line</strong>. What does this mean?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e3-gb2',false)"><span class="q-option-key">A</span>The substance froze solid and can't cool further</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-gb2',true)"><span class="q-option-key">B</span>The substance reached thermal equilibrium with its surroundings — no more heat exchange</div>
+        <div class="q-option" onclick="checkMCQ(this,'e3-gb2',false)"><span class="q-option-key">C</span>The experiment ended and data stopped being recorded</div>
+      </div>
+      <div id="fb-e3-gb2" class="q-feedback"></div>
+    </div>
+
+    <!-- Numeric exercise -->
+    <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-top:4px">
+      <div style="font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:10px">
+        🔢 Numeric Exercise <span class="pts-badge">2 pts</span>
+      </div>
+      <div style="font-size:.83rem;color:var(--muted);line-height:1.65;margin-bottom:12px">
+        Substance Y has a melting point of 45°C and boiling point of 95°C.<br>
+        <strong style="color:var(--ice)">Question:</strong> At 30°C, what state is substance Y in? At 100°C, what state is it in?
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div style="flex:1;min-width:140px">
+          <div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:5px">State at 30°C:</div>
+          <select class="state-selector" style="width:100%" id="num-e3-1" onchange="">
+            <option value="">—select—</option>
+            <option value="solid">Solid</option>
+            <option value="liquid">Liquid</option>
+            <option value="gas">Gas</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:140px">
+          <div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:5px">State at 100°C:</div>
+          <select class="state-selector" style="width:100%" id="num-e3-2" onchange="">
+            <option value="">—select—</option>
+            <option value="solid">Solid</option>
+            <option value="liquid">Liquid</option>
+            <option value="gas">Gas</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="check-ans-btn" style="margin-top:0" onclick="checkNumericE3()">Check →</button>
+        </div>
+      </div>
+      <div id="fb-e3-num" class="ans-result"></div>
+    </div>
+  </div>
+
+  <div class="self-assess">
+    <span class="self-assess-label">Can you read heating AND cooling graphs?</span>
+    <button class="self-btn" onclick="selfAssess(this,'e3','😕')">😕</button>
+    <button class="self-btn" onclick="selfAssess(this,'e3','🤔')">🤔</button>
+    <button class="self-btn" onclick="selfAssess(this,'e3','😊')">😊</button>
+    <button class="self-btn" onclick="selfAssess(this,'e3','🎯')">🎯</button>
+  </div>
+  <input type="hidden" id="self-e3" value="">
+
+  <button class="btn btn-next" onclick="goTo('e4')">
+    Elaborate — Temperature Detective Game →
+  </button>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     E4 — ELABORATE: Temperature Detective Game
+══════════════════════════════════════════ -->
+<section id="sec-e4" class="lab-section">
+  <span class="section-tag tag-e4">E4 · ELABORATE</span>
+  <h2 class="section-title">🕵️ Temperature Detective</h2>
+  <p class="section-desc">Five rounds. Each round shows you a mystery graph with a glowing dot at a specific point. Your mission: identify the state of the substance at that point. Earn points, keep your lives!</p>
+
+  <div style="height:16px"></div>
+
+  <div class="game-container">
+    <!-- Game HUD -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="round-badge" id="gameRoundBadge">Round 1 / 5</div>
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+        <div class="lives-row" id="gameLives">❤️❤️❤️</div>
+        <div class="score-row">Score: <span id="gameScore" style="color:var(--gold)">0</span></div>
+      </div>
+    </div>
+
+    <!-- Graph area -->
+    <canvas id="gameCanvas" width="640" height="260" style="width:100%;border-radius:12px;border:1px solid var(--border);display:block;margin-bottom:12px"></canvas>
+
+    <!-- Question -->
+    <div class="game-q-text" id="gameQ">Loading round...</div>
+
+    <!-- Options -->
+    <div class="game-options" id="gameOpts">
+      <button class="game-opt" onclick="answerGame(0)">Solid</button>
+      <button class="game-opt" onclick="answerGame(1)">Liquid</button>
+      <button class="game-opt" onclick="answerGame(2)">Gas</button>
+      <button class="game-opt" onclick="answerGame(3)">State Change (Plateau)</button>
+    </div>
+
+    <!-- Status -->
+    <div class="game-status" id="gameStatus"></div>
+
+    <!-- Start / Next / End -->
+    <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap" id="gameControls">
+      <button class="btn btn-violet" onclick="startGame()">▶ Start Game</button>
+    </div>
+
+    <!-- Game Result (hidden initially) -->
+    <div id="gameResult" style="display:none;margin-top:20px;text-align:center">
+      <div style="font-family:var(--mono);font-size:1.2rem;color:var(--gold)">Game Complete! 🏆</div>
+      <div style="font-family:var(--mono);font-size:.88rem;color:var(--muted);margin-top:6px">
+        Final: <span id="gameFinalScore" style="color:var(--ice)">0</span>/5 correct
+      </div>
+      <button class="btn btn-secondary" onclick="startGame()" style="margin-top:12px">↺ Play Again</button>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+
+  <!-- Elaborate Extra: Mixed-State Challenge -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:14px">
+      🧪 Bonus Challenge — The Mixture Moment <span class="pts-badge">2 pts</span>
+    </div>
+    <div style="font-size:.83rem;color:var(--muted);line-height:1.65;margin-bottom:14px">
+      A pure substance is at exactly its melting point. Both solid AND liquid are present at the same time. This is a <strong style="color:var(--ember)">mixture of states</strong>. The temperature stays fixed until all of one state converts to the other.
+    </div>
+
+    <div class="mcq-question" style="margin-bottom:12px">
+      <div class="q-text"><span class="q-num">B1</span><span class="pts-badge">1 pt</span>
+        Water is being cooled slowly. You notice both liquid water and ice cubes in the same glass. What temperature must the water be at?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e4-b1',false)"><span class="q-option-key">A</span>-10°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e4-b1',true)"><span class="q-option-key">B</span>0°C — exactly at the melting/freezing point</div>
+        <div class="q-option" onclick="checkMCQ(this,'e4-b1',false)"><span class="q-option-key">C</span>50°C</div>
+        <div class="q-option" onclick="checkMCQ(this,'e4-b1',false)"><span class="q-option-key">D</span>100°C</div>
+      </div>
+      <div id="fb-e4-b1" class="q-feedback"></div>
+    </div>
+
+    <div class="mcq-question">
+      <div class="q-text"><span class="q-num">B2</span><span class="pts-badge">1 pt</span>
+        After the last piece of ice melts and only liquid remains, but no more heat is added, what happens to the water's temperature if room temperature is 22°C?
+      </div>
+      <div class="q-options">
+        <div class="q-option" onclick="checkMCQ(this,'e4-b2',false)"><span class="q-option-key">A</span>Stays at 0°C forever</div>
+        <div class="q-option" onclick="checkMCQ(this,'e4-b2',true)"><span class="q-option-key">B</span>Rises from 0°C toward 22°C (room temp) — thermal equilibrium</div>
+        <div class="q-option" onclick="checkMCQ(this,'e4-b2',false)"><span class="q-option-key">C</span>Drops to -10°C as ice forms again</div>
+      </div>
+      <div id="fb-e4-b2" class="q-feedback"></div>
+    </div>
+  </div>
+
+  <div class="self-assess">
+    <span class="self-assess-label">Can you identify states from any graph point?</span>
+    <button class="self-btn" onclick="selfAssess(this,'e4','😕')">😕</button>
+    <button class="self-btn" onclick="selfAssess(this,'e4','🤔')">🤔</button>
+    <button class="self-btn" onclick="selfAssess(this,'e4','😊')">😊</button>
+    <button class="self-btn" onclick="selfAssess(this,'e4','🎯')">🎯</button>
+  </div>
+  <input type="hidden" id="self-e4" value="">
+
+  <button class="btn btn-next" onclick="goTo('e5')">
+    Evaluate — Final Assessment →
+  </button>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     E5 — EVALUATE: Full Assessment
+══════════════════════════════════════════ -->
+<section id="sec-e5" class="lab-section">
+  <span class="section-tag tag-e5">E5 · EVALUATE</span>
+  <h2 class="section-title">Final Assessment</h2>
+  <p class="section-desc">This is your exam-style challenge. All skills from both Part 1 and Part 2 are tested here. Take your time — read each question carefully.</p>
+
+  <div style="height:12px"></div>
+
+  <div class="exam-progress">
+    <div class="exam-progress-fill" id="examProgressFill" style="width:0%"></div>
+  </div>
+
+  <!-- PART A: Graph Interpretation -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:4px;letter-spacing:-.01em">
+      Part A — Graph Interpretation
+    </div>
+    <div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:16px">Questions 1–5 · 5 points</div>
+
+    <!-- Exam Graph -->
+    <canvas id="examGraph" width="660" height="280" style="width:100%;border-radius:10px;display:block;margin-bottom:18px"></canvas>
+
+    <div class="mcq-container">
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">1</span><span class="pts-badge">1 pt</span>
+          The graph above shows a heating curve. What state is the substance in during segment <strong>BC</strong> (the first flat region)?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q1',false)"><span class="q-option-key">A</span>Pure solid</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q1',false)"><span class="q-option-key">B</span>Pure liquid</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q1',true)"><span class="q-option-key">C</span>Mixture of solid and liquid (at melting point)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q1',false)"><span class="q-option-key">D</span>Gas</div>
+        </div>
+        <div id="fb-ev-q1" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">2</span><span class="pts-badge">1 pt</span>
+          In the graph, segment EF rises steeply after the boiling plateau. What state is the substance in along EF?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q2',false)"><span class="q-option-key">A</span>Liquid</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q2',true)"><span class="q-option-key">B</span>Gas (steam/vapor)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q2',false)"><span class="q-option-key">C</span>Solid</div>
+        </div>
+        <div id="fb-ev-q2" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">3</span><span class="pts-badge">1 pt</span>
+          Why does the temperature remain constant at 0°C during segment BC?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q3',false)"><span class="q-option-key">A</span>No heat is being added during this segment</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q3',true)"><span class="q-option-key">B</span>All heat energy goes into breaking bonds for the state change — none raises temperature</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q3',false)"><span class="q-option-key">C</span>The substance is releasing heat equal to what it gains</div>
+        </div>
+        <div id="fb-ev-q3" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">4</span><span class="pts-badge">1 pt</span>
+          You are given this data about Substance Z: Melting Point = 62°C · Boiling Point = 182°C · Room Temp = 25°C. In which state is Substance Z at room temperature?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q4',true)"><span class="q-option-key">A</span>Solid — 25°C is below the melting point (62°C)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q4',false)"><span class="q-option-key">B</span>Liquid — 25°C is between MP and BP</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q4',false)"><span class="q-option-key">C</span>Gas</div>
+        </div>
+        <div id="fb-ev-q4" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">5</span><span class="pts-badge">1 pt</span>
+          A cooling curve for water starts at 120°C. The curve shows two plateaus. Which temperatures do these plateaus occur at?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q5',false)"><span class="q-option-key">A</span>50°C and 25°C</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q5',true)"><span class="q-option-key">B</span>100°C (condensation) and 0°C (solidification)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q5',false)"><span class="q-option-key">C</span>0°C and -15°C</div>
+        </div>
+        <div id="fb-ev-q5" class="q-feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PART B: Table → State Identification -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:4px">Part B — Table to Graph</div>
+    <div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:16px">Questions 6–9 · 4 points</div>
+
+    <div style="font-size:.83rem;color:var(--muted);margin-bottom:14px;line-height:1.65">
+      Substance W has: <strong style="color:var(--ice)">Melting Point = 30°C</strong> · <strong style="color:var(--ember)">Boiling Point = 78°C</strong>. The following temperature readings were recorded as it was heated from -10°C.
+    </div>
+
+    <canvas id="partBGraph" width="660" height="230" style="width:100%;border-radius:10px;display:block;margin-bottom:16px"></canvas>
+
+    <div class="mcq-container">
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">6</span><span class="pts-badge">1 pt</span>
+          Based on Substance W data, what state is it in at 20°C?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q6',true)"><span class="q-option-key">A</span>Solid — 20°C is below the melting point (30°C)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q6',false)"><span class="q-option-key">B</span>Liquid</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q6',false)"><span class="q-option-key">C</span>Gas</div>
+        </div>
+        <div id="fb-ev-q6" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">7</span><span class="pts-badge">1 pt</span>
+          Substance W is at 50°C. What state is it in?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q7',false)"><span class="q-option-key">A</span>Solid</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q7',true)"><span class="q-option-key">B</span>Liquid — 50°C is between MP (30°C) and BP (78°C)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q7',false)"><span class="q-option-key">C</span>Gas</div>
+        </div>
+        <div id="fb-ev-q7" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">8</span><span class="pts-badge">1 pt</span>
+          Substance W is heated to 90°C. What state is it in?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q8',false)"><span class="q-option-key">A</span>Liquid</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q8',true)"><span class="q-option-key">B</span>Gas — 90°C is above the boiling point (78°C)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q8',false)"><span class="q-option-key">C</span>Solid</div>
+        </div>
+        <div id="fb-ev-q8" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">9</span><span class="pts-badge">1 pt</span>
+          Substance W is at exactly 30°C. What is observed?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q9',false)"><span class="q-option-key">A</span>Only solid is present</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q9',false)"><span class="q-option-key">B</span>Only liquid is present</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q9',true)"><span class="q-option-key">C</span>Both solid and liquid coexist — melting/freezing point transition</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q9',false)"><span class="q-option-key">D</span>Boiling begins</div>
+        </div>
+        <div id="fb-ev-q9" class="q-feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PART C: Drawn Cooling Curve Exercise -->
+  <div class="panel" style="margin-bottom:20px">
+    <div style="font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:4px">Part C — Cooling Curve Analysis</div>
+    <div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:16px">Questions 10–12 · 3 points</div>
+
+    <canvas id="partCGraph" width="660" height="260" style="width:100%;border-radius:10px;display:block;margin-bottom:16px"></canvas>
+
+    <div class="mcq-container">
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">10</span><span class="pts-badge">1 pt</span>
+          The cooling curve above ends with a <strong>flat horizontal line at 22°C</strong>. The room temperature is 22°C. What does this final horizontal segment represent?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q10',false)"><span class="q-option-key">A</span>The substance has frozen completely</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q10',true)"><span class="q-option-key">B</span>Thermal equilibrium — substance reached room temperature and stops changing</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q10',false)"><span class="q-option-key">C</span>Another phase change is occurring at 22°C</div>
+        </div>
+        <div id="fb-ev-q10" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">11</span><span class="pts-badge">1 pt</span>
+          The graph above shows a cooling curve with ONE plateau. What type of state change is occurring at that plateau?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q11',false)"><span class="q-option-key">A</span>Melting (fusion)</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q11',false)"><span class="q-option-key">B</span>Evaporation</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q11',true)"><span class="q-option-key">C</span>Solidification (freezing) — liquid releasing heat to become solid</div>
+        </div>
+        <div id="fb-ev-q11" class="q-feedback"></div>
+      </div>
+
+      <div class="mcq-question">
+        <div class="q-text"><span class="q-num">12</span><span class="pts-badge">1 pt</span>
+          A teacher gives you this information about a substance: "At 25°C the substance is liquid. At -5°C it is solid." What can you conclude about the melting point?
+        </div>
+        <div class="q-options">
+          <div class="q-option" onclick="checkMCQ(this,'ev-q12',true)"><span class="q-option-key">A</span>The melting point is somewhere between -5°C and 25°C</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q12',false)"><span class="q-option-key">B</span>The melting point is exactly 10°C</div>
+          <div class="q-option" onclick="checkMCQ(this,'ev-q12',false)"><span class="q-option-key">C</span>The melting point is 25°C</div>
+        </div>
+        <div id="fb-ev-q12" class="q-feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PART D: Open Written Response -->
+  <div class="panel" style="margin-bottom:24px">
+    <div style="font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:4px">Part D — Written Response</div>
+    <div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-bottom:16px">Question 13 · 2 pts (teacher reviewed)</div>
+
+    <div style="font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:14px">
+      <strong style="color:var(--text)">Question 13:</strong> A scientist measures the temperature of a beaker of water every minute as it cools from 100°C to room temperature (20°C) with no heating. Describe what the temperature-time graph would look like. Include: where the plateau is, what happens after the plateau, and what temperature the curve ends at.
+    </div>
+    <textarea id="written-q13" class="ans-input" rows="4" placeholder="Write your answer here (2-3 sentences minimum)..." style="resize:vertical"></textarea>
+    <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-top:6px">
+      💡 Key words to include: plateau · 0°C · solidification · room temperature · thermal equilibrium
+    </div>
+  </div>
+
+  <!-- SUBMIT BUTTON -->
+  <div class="submit-card">
+    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:6px">Ready to submit?</div>
+    <div style="font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-bottom:20px">Your score will be calculated and sent to your teacher's Google Sheet.</div>
+    <button class="btn btn-primary" onclick="submitLab()" style="justify-content:center;padding:14px 36px;font-size:.95rem">
+      ✓ Submit Lab — Part 2
+    </button>
+  </div>
+
+  <!-- Result display (shown after submit) -->
+  <div id="resultWrap" style="display:none;margin-top:24px">
+    <div class="submit-card">
+      <div class="grade-display" id="gradeLetter">A</div>
+      <div class="score-display" id="scoreDisplay">— / 20</div>
+      <div class="result-bar">
+        <div class="result-fill" id="resultFill" style="width:0%"></div>
+      </div>
+      <div style="font-family:var(--mono);font-size:.78rem;color:var(--muted);margin-top:8px" id="resultMsg"></div>
+    </div>
+  </div>
+</section>
+
+  </main>
+</div><!-- end labWrap -->
+
+
+<script>
+const LAB_START = Date.now();
+
+// ══════════════════════════════════════════════
+// STUDENTS
+// ══════════════════════════════════════════════
+const STUDENTS = {
+  '7D': [
+    '"أحمد عمر" حسين جعجع',
+    'أحمد محمد احمد ابو جاموس',
+    'ابراهيم سامي مروان حليحل',
+    'ابراهيم يونس محمد رحال',
+    'احمد علي احمد المحمود',
+    'احمد فؤاد احمد جمعة',
+    'اسيل احمد فريد العلي',
+    'ايلانا محمد ابراهيم الحلو',
+    'حلا فادي فايز معتوق',
+    'حمزة عفيف علي السيد',
+    'داني محمد محمود حسين',
+    'رؤى حسن احمد محمد',
+    'راما ابراهيم رشيد فارس',
+    'راما محمد علي الجعجع',
+    'زاهر محمد شحادة ديب',
+    'سالي احمد وليد كريديه',
+    '"سدرة المنتهى" احمد حسون',
+    'عبد الرحمن درويش محمد سلام',
+    'علي ابراهيم حسان الاشوح',
+    'علي مروان عدنان شحاده',
+    'علي وسيم علي مره',
+    'عيسى احمد محمود الحصري',
+    'غيداء مالك جمعة بلال',
+    'فرح محمود كامل الخطيب',
+    'ليمار هاني محمد جمعه',
+    'محمد مصطفى كمال الترك',
+    'محمد هاشم عادل المنسي',
+    'محمد يوسف محمد محمد',
+    'مصطفى كمال علي سعد',
+    'منى وسام عمر سلام',
+    'ندى علي احمد مطر',
+    'ولاء احمد فهد السعيد',
+    'يوسف "علاء الدين" كرزون',
+    'يوسف علاء جهاد شحادة'
+  ]
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+const APPS_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+let studentName = '';
+let studentClass = '';
+let timerInterval = null;
+let scores = {};
+let selfScores = {};
+let gameScore = 0;
+let gameLives = 3;
+let gameRound = 0;
+let gameActive = false;
+let gameCorrectCount = 0;
+let stateAnswers = new Array(11).fill(null);
+let stateCorrect = 0;
+let coolInterval = null;
+let coolRunning = false;
+let coolStep = 0;
+
+// Progress persistence (Session E #1 — first use in this lab)
+function saveProg() {
+  try {
+    sessionStorage.setItem('cos_p2_student', studentName);
+    sessionStorage.setItem('cos_p2_class', studentClass);
+    sessionStorage.setItem('cos_p2_scores', JSON.stringify(scores));
+  } catch(e) {}
+}
+function loadProg() {
+  try {
+    const n = sessionStorage.getItem('cos_p2_student');
+    const c = sessionStorage.getItem('cos_p2_class');
+    const s = sessionStorage.getItem('cos_p2_scores');
+    if (n && c) {
+      studentName = n;
+      studentClass = c;
+      if (s) scores = JSON.parse(s);
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ══════════════════════════════════════════════
+// AUDIO
+// ══════════════════════════════════════════════
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playSound(type) {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    if (type === 'correct') {
+      osc.frequency.value = 880;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .35);
+    } else if (type === 'wrong') {
+      osc.frequency.value = 220;
+      osc.type = 'sawtooth';
+      gain.gain.setValueAtTime(.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .28);
+    } else if (type === 'fanfare') {
+      const freqs = [523,659,784,1047];
+      freqs.forEach((f,i) => {
+        const o2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.frequency.value = f; o2.type = 'sine';
+        g2.gain.setValueAtTime(0, ctx.currentTime + i * .12);
+        g2.gain.linearRampToValueAtTime(.2, ctx.currentTime + i * .12 + .05);
+        g2.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + i * .12 + .35);
+        o2.start(ctx.currentTime + i * .12);
+        o2.stop(ctx.currentTime + i * .12 + .35);
+      });
+      return;
+    }
+    osc.start(); osc.stop(ctx.currentTime + .35);
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════
+function setClass(cls) {
+  studentClass = cls;
+  document.querySelectorAll('.sec-btn').forEach(b => b.classList.toggle('on', b.textContent.trim() === cls));
+  const sel = document.getElementById('stuName');
+  sel.innerHTML = '<option value="">— اختر اسمك —</option>';
+  sel.disabled = false;
+  (STUDENTS[cls] || []).slice().sort((a, b) => a.localeCompare(b, 'ar')).forEach(n => {
+    const o = document.createElement('option');
+    o.value = n; o.textContent = n;
+    sel.appendChild(o);
+  });
+}
+
+window.addEventListener('load', () => {
+  setClass('7D');
+  if (loadProg()) {
+    showToast('Welcome back! Session restored ✓');
+    launchLab();
+  }
+});
+
+function startLab() {
+  const sel = document.getElementById('stuName');
+  studentName = sel ? sel.value : '';
+  if (!studentName) { showToast('⚠ Please select your name'); return; }
+  saveProg();
+  launchLab();
+}
+
+function launchLab() {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('labWrap').style.display = 'grid';
+  document.getElementById('headerName').textContent = studentName;
+  startTimer();
+  initSidebar();
+  drawCoolCurve();
+  drawGraphA();
+  drawGraphB();
+  drawExamGraph();
+  drawPartBGraph();
+  drawPartCGraph();
+  fetchClassProgress();
+  setInterval(fetchClassProgress, 60000);
+  goTo('e1');
+}
+
+// ══════════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    const s = Math.floor((Date.now() - LAB_START) / 1000);
+    const m = Math.floor(s / 60);
+    const ss = s % 60;
+    document.getElementById('timerDisplay').textContent =
+      String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const SECTIONS = ['e1','e2','e3','e4','e5'];
+function goTo(id) {
+  SECTIONS.forEach(s => {
+    const el = document.getElementById('sec-' + s);
+    if (el) el.classList.toggle('active', s === id);
+  });
+  updateDots(id);
+  document.getElementById('mainContent').scrollTo(0, 0);
+}
+function updateDots(active) {
+  const order = ['e1','e2','e3','e4','e5'];
+  const idx = order.indexOf(active);
+  order.forEach((s, i) => {
+    const dot = document.getElementById('dot-' + s);
+    const lbl = document.getElementById('lbl-' + s);
+    if (!dot) return;
+    dot.className = 'prog-dot ' + (i < idx ? 'done' : (i === idx ? 'active' : ''));
+    if (lbl) lbl.className = 'prog-label ' + (i === idx ? 'active' : '');
+  });
+}
+
+// ══════════════════════════════════════════════
+// SCORE RING
+// ══════════════════════════════════════════════
+function updateScoreRing(val, max) {
+  const v = Math.max(0, Math.min(val, max));
+  const pct = v / max;
+  const circ = 289;
+  const offset = circ - pct * circ;
+  const fill = document.getElementById('scoreRingFill');
+  const text = document.getElementById('scoreRingText');
+  if (fill) fill.setAttribute('stroke-dashoffset', offset);
+  if (text) text.textContent = v;
+}
+function initSidebar() { updateScoreRing(0, 20); }
+
+function recalcScore() {
+  let raw = 0;
+  // MCQ scores (each 1pt): count truthy flags
+  const mcqKeys = ['e1-q1','e1-q2','e2-q1','e2-q2','e2-q3',
+    'e3-ga1','e3-ga2','e3-ga3','e3-gb1','e3-gb2',
+    'e4-b1','e4-b2',
+    'ev-q1','ev-q2','ev-q3','ev-q4','ev-q5',
+    'ev-q6','ev-q7','ev-q8','ev-q9','ev-q10','ev-q11','ev-q12'];
+  mcqKeys.forEach(k => { if (scores[k]) raw++; });
+  // Table states (11 items, worth up to 3 pts scaled)
+  raw += Math.round(stateCorrect / 11 * 3);
+  // Numeric E3 (2 pts)
+  if (scores['e3-num']) raw += scores['e3-num'];
+  // Game (up to 2 pts)
+  raw += Math.min(2, Math.round(gameCorrectCount / 5 * 2));
+  // Cap at 22 raw, scale to /20
+  const scaled = Math.round(Math.min(raw, 22) / 22 * 20);
+  updateScoreRing(scaled, 20);
+  saveProg();
+  updateExamProgress();
+  return scaled;
+}
+
+function updateExamProgress() {
+  const answered = Object.keys(scores).length;
+  const total = 24;
+  const pct = Math.min(100, Math.round(answered / total * 100));
+  const bar = document.getElementById('examProgressFill');
+  if (bar) bar.style.width = pct + '%';
+}
+
+// ══════════════════════════════════════════════
+// MCQ ENGINE
+// ══════════════════════════════════════════════
+function checkMCQ(el, key, isCorrect) {
+  const parent = el.closest('.mcq-question');
+  const opts = parent.querySelectorAll('.q-option');
+  opts.forEach(o => { o.onclick = null; o.style.pointerEvents = 'none'; });
+
+  const fb = document.getElementById('fb-' + key);
+
+  if (isCorrect) {
+    el.classList.add('correct');
+    scores[key] = 1;
+    if (fb) { fb.className = 'q-feedback show ok'; fb.textContent = '✓ Correct! Well done.'; }
+    playSound('correct');
+    showToast('✓ Correct!');
+  } else {
+    el.classList.add('wrong');
+    scores[key] = 0;
+    // Highlight correct answer
+    opts.forEach(o => { if (o.onclick === null && o !== el) {
+      // find correct by checking data
+    }});
+    if (fb) { fb.className = 'q-feedback show bad'; fb.textContent = '✗ Not quite — review the concept and try the hint below.'; }
+    playSound('wrong');
+  }
+  recalcScore();
+}
+
+// ══════════════════════════════════════════════
+// HINTS
+// ══════════════════════════════════════════════
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show');
+}
+
+// ══════════════════════════════════════════════
+// SELF ASSESSMENT
+// ══════════════════════════════════════════════
+function selfAssess(btn, section, emoji) {
+  const wrap = btn.closest('.self-assess');
+  wrap.querySelectorAll('.self-btn').forEach(b => b.classList.remove('chosen'));
+  btn.classList.add('chosen');
+  selfScores[section] = emoji;
+  const inp = document.getElementById('self-' + section);
+  if (inp) inp.value = emoji;
+}
+
+// ══════════════════════════════════════════════
+// COOLING SIMULATION
+// ══════════════════════════════════════════════
+const COOL_POINTS = [
+  { t: 0,  temp: 120, state: 'Gas (Steam)' },
+  { t: 2,  temp: 112, state: 'Gas (Steam)' },
+  { t: 4,  temp: 105, state: 'Gas (Steam)' },
+  { t: 6,  temp: 100, state: 'Condensing (Gas→Liquid)' },
+  { t: 9,  temp: 100, state: 'Condensing (Gas→Liquid)' },
+  { t: 11, temp: 92,  state: 'Liquid' },
+  { t: 13, temp: 60,  state: 'Liquid' },
+  { t: 16, temp: 20,  state: 'Liquid' },
+  { t: 18, temp: 10,  state: 'Liquid' }, 
+  // For water we'd also show solidification, but here we go to room temp
+  { t: 20, temp: 20,  state: 'Liquid (room temp)' }
+];
+
+// For the full cooling curve (water: from 120 to ~20°C in room)
+const WATER_COOL = [
+  { t:0,  T:120 },
+  { t:2,  T:111 },
+  { t:4,  T:102 },
+  { t:5,  T:100 }, // condensation start
+  { t:8,  T:100 }, // condensation end
+  { t:10, T:85  },
+  { t:13, T:55  },
+  { t:16, T:22  },
+  { t:20, T:20  }
+];
+
+function getCoolColor(T) {
+  if (T >= 100) return '#f87171'; // gas
+  if (T > 20) return '#7dd3fc'; // liquid
+  return '#93c5fd'; // equilibrium
+}
+
+function getCoolState(T) {
+  if (T > 100) return 'Gas (Steam)';
+  if (T === 100) return 'Condensing (Gas → Liquid)';
+  if (T > 20) return 'Liquid Water';
+  return 'Liquid — Room Temp ✓';
+}
+
+function drawCoolCurve() {
+  const canvas = document.getElementById('coolCurveCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const PAD = {l:50, r:20, t:20, b:40};
+  const gW = W - PAD.l - PAD.r;
+  const gH = H - PAD.t - PAD.b;
+  const maxT = 20, minT = 0, maxTemp = 130, minTemp = -5;
+
+  function tx(t) { return PAD.l + (t / maxT) * gW; }
+  function ty(temp) { return PAD.t + gH - ((temp - minTemp) / (maxTemp - minTemp)) * gH; }
+
+  // Background
+  ctx.fillStyle = '#060610';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(125,211,252,.06)';
+  ctx.lineWidth = 1;
+  [0,25,50,75,100,125].forEach(T => {
+    ctx.beginPath(); ctx.moveTo(PAD.l, ty(T)); ctx.lineTo(W-PAD.r, ty(T)); ctx.stroke();
+  });
+  [0,4,8,12,16,20].forEach(t => {
+    ctx.beginPath(); ctx.moveTo(tx(t), PAD.t); ctx.lineTo(tx(t), H-PAD.b); ctx.stroke();
+  });
+
+  // Axes
+  ctx.strokeStyle = 'rgba(125,211,252,.25)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(PAD.l, PAD.t); ctx.lineTo(PAD.l, H-PAD.b); ctx.lineTo(W-PAD.r, H-PAD.b);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(125,211,252,.5)';
+  ctx.font = '10px Space Mono, monospace';
+  ctx.fillText('120°C', 4, ty(120)+4);
+  ctx.fillText('100°C', 4, ty(100)+4);
+  ctx.fillText('20°C', 8, ty(20)+4);
+  ctx.fillText('0°C', 8, ty(0)+4);
+  [0,5,10,15,20].forEach(t => { ctx.fillText(t+'m', tx(t)-8, H-PAD.b+16); });
+  ctx.fillStyle = 'rgba(125,211,252,.35)';
+  ctx.fillText('Temperature (°C)', 4, PAD.t);
+  ctx.fillText('Time (min) →', W-80, H-PAD.b+28);
+
+  // Plateau lines (dashed)
+  ctx.strokeStyle = 'rgba(251,191,36,.15)';
+  ctx.setLineDash([4,6]);
+  ctx.beginPath(); ctx.moveTo(PAD.l, ty(100)); ctx.lineTo(W-PAD.r, ty(100)); ctx.stroke();
+  ctx.strokeStyle = 'rgba(167,139,250,.12)';
+  ctx.beginPath(); ctx.moveTo(PAD.l, ty(20)); ctx.lineTo(W-PAD.r, ty(20)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw current revealed curve
+  const visiblePoints = WATER_COOL.slice(0, coolStep + 1);
+  if (visiblePoints.length < 2) {
+    // Just a dot at start
+    ctx.fillStyle = 'rgba(248,113,113,.8)';
+    ctx.beginPath();
+    ctx.arc(tx(WATER_COOL[0].t), ty(WATER_COOL[0].T), 5, 0, Math.PI*2);
+    ctx.fill();
+    return;
+  }
+
+  // Draw colored segments
+  for (let i = 1; i < visiblePoints.length; i++) {
+    const a = visiblePoints[i-1];
+    const b = visiblePoints[i];
+    let col;
+    if (a.T >= 100) col = '#f87171';
+    else if (a.T === 100 && b.T === 100) col = '#fbbf24';
+    else if (a.T > 20) col = '#7dd3fc';
+    else col = '#a5b4fc';
+
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.moveTo(tx(a.t), ty(a.T));
+    ctx.lineTo(tx(b.t), ty(b.T));
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Moving dot
+  const last = visiblePoints[visiblePoints.length-1];
+  ctx.fillStyle = '#fff';
+  ctx.shadowColor = '#7dd3fc';
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(tx(last.t), ty(last.T), 5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Plateau labels
+  ctx.fillStyle = 'rgba(251,191,36,.8)';
+  ctx.font = '10px Space Mono, monospace';
+  if (coolStep >= 4) ctx.fillText('Condensation Plateau (100°C)', tx(5.5), ty(100)-8);
+  ctx.fillStyle = 'rgba(165,180,252,.7)';
+  if (coolStep >= 8) ctx.fillText('Room Temp (20°C) — Equilibrium', tx(16), ty(20)-8);
+}
+
+function toggleCooling() {
+  if (coolRunning) {
+    clearInterval(coolInterval);
+    coolRunning = false;
+    document.getElementById('coolBtn').textContent = '▶ Continue';
+  } else {
+    coolRunning = true;
+    document.getElementById('coolBtn').textContent = '⏸ Pause';
+    coolInterval = setInterval(() => {
+      if (coolStep >= WATER_COOL.length - 1) {
+        clearInterval(coolInterval);
+        coolRunning = false;
+        document.getElementById('coolBtn').textContent = '✓ Done';
+        return;
+      }
+      coolStep++;
+      const pt = WATER_COOL[coolStep];
+      document.getElementById('coolTempDisplay').textContent = pt.T + '°C';
+      document.getElementById('coolTempDisplay').style.color = pt.T > 50 ? '#fb923c' : (pt.T > 20 ? '#7dd3fc' : '#a78bfa');
+      document.getElementById('coolStateDisplay').textContent = getCoolState(pt.T);
+      drawCoolCurve();
+    }, 600);
+  }
+}
+
+// ══════════════════════════════════════════════
+// EXPLORER GRAPH (E2)
+// ══════════════════════════════════════════════
+const EXPLORER_DATA = [
+  { t:0,  T:110 }, { t:2, T:104 }, { t:4, T:100 }, { t:6, T:100 },
+  { t:8, T:96 }, { t:10, T:88 }, { t:12, T:80 }, { t:14, T:80 },
+  { t:16, T:60 }, { t:18, T:35 }, { t:20, T:20 }
+];
+let revealedPoints = 0;
+
+function checkStateAnswer(idx, sel, correct) {
+  const map = {
+    'gas': 'Gas',
+    'condensing': 'Condensing (Gas\u2192Liquid)',
+    'liquid': 'Liquid',
+    'solidifying': 'Solidifying (Liquid\u2192Solid)',
+    'solid': 'Solid'
+  };
+  const correctText = map[correct] || correct;
+  if (sel.value === correctText || sel.value.toLowerCase().includes(correct.toLowerCase())) {
+    sel.style.color = '#86efac';
+    stateCorrect++;
+  } else if (sel.value && sel.value !== '') {
+    sel.style.color = '#f87171';
+  }
+  stateAnswers[idx] = sel.value;
+  document.getElementById('stateCount').textContent = stateCorrect;
+  revealedPoints = Math.max(revealedPoints, idx + 1);
+  drawExplorerGraph();
+  recalcScore();
+}
+
+function drawExplorerGraph() {
+  const canvas = document.getElementById('explorerGraph');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const PAD = {l:50, r:20, t:20, b:40};
+  const gW = W - PAD.l - PAD.r;
+  const gH = H - PAD.t - PAD.b;
+  const maxT = 20, maxTemp = 120, minTemp = 10;
+
+  function tx(t) { return PAD.l + (t/maxT)*gW; }
+  function ty(T) { return PAD.t + gH - ((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  ctx.fillStyle = '#060610'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(167,139,250,.06)'; ctx.lineWidth = 1;
+  [20,40,60,80,100,110].forEach(T => {
+    ctx.beginPath(); ctx.moveTo(PAD.l, ty(T)); ctx.lineTo(W-PAD.r, ty(T)); ctx.stroke();
+  });
+
+  // Axes
+  ctx.strokeStyle = 'rgba(167,139,250,.3)'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(PAD.l, PAD.t); ctx.lineTo(PAD.l, H-PAD.b); ctx.lineTo(W-PAD.r, H-PAD.b);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = 'rgba(167,139,250,.55)'; ctx.font = '10px Space Mono, monospace';
+  [20,40,60,80,100,110].forEach(T => { ctx.fillText(T+'°C', 4, ty(T)+4); });
+  [0,5,10,15,20].forEach(t => { ctx.fillText(t+'m', tx(t)-8, H-PAD.b+15); });
+
+  // Plateau dashes
+  ctx.strokeStyle = 'rgba(251,146,60,.2)'; ctx.setLineDash([5,7]);
+  [100,80].forEach(T => {
+    ctx.beginPath(); ctx.moveTo(PAD.l, ty(T)); ctx.lineTo(W-PAD.r, ty(T)); ctx.stroke();
+  });
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(251,146,60,.6)'; ctx.font = '9px Space Mono, monospace';
+  ctx.fillText('Boiling Point ~100°C', tx(0)+4, ty(100)-6);
+  ctx.fillText('Melting Point 80°C', tx(0)+4, ty(80)-6);
+
+  // Full curve (dim) 
+  if (revealedPoints > 0) {
+    ctx.strokeStyle = 'rgba(167,139,250,.2)'; ctx.lineWidth = 2;
+    ctx.setLineDash([4,8]);
+    ctx.beginPath();
+    ctx.moveTo(tx(EXPLORER_DATA[0].t), ty(EXPLORER_DATA[0].T));
+    EXPLORER_DATA.forEach(p => ctx.lineTo(tx(p.t), ty(p.T)));
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Revealed points
+  const shown = EXPLORER_DATA.slice(0, revealedPoints+1);
+  if (shown.length > 1) {
+    ctx.strokeStyle = 'rgba(125,211,252,.9)'; ctx.lineWidth = 3;
+    ctx.shadowColor = '#7dd3fc'; ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(tx(shown[0].t), ty(shown[0].T));
+    shown.forEach(p => ctx.lineTo(tx(p.t), ty(p.T)));
+    ctx.stroke(); ctx.shadowBlur = 0;
+  }
+
+  // Dots
+  shown.forEach((p,i) => {
+    ctx.fillStyle = stateAnswers[i] ? '#86efac' : '#7dd3fc';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.arc(tx(p.t), ty(p.T), 5, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+}
+
+function revealFullCurve() {
+  revealedPoints = EXPLORER_DATA.length;
+  drawExplorerGraph();
+}
+
+// ══════════════════════════════════════════════
+// GRAPH A (E3 — Water heating curve labeled)
+// ══════════════════════════════════════════════
+function drawGraphA() {
+  const canvas = document.getElementById('graphA');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#060610'; ctx.fillRect(0,0,W,H);
+
+  const PAD = {l:55,r:20,t:24,b:40};
+  const gW = W-PAD.l-PAD.r, gH = H-PAD.t-PAD.b;
+  const pts = [
+    {t:0,T:-15,lbl:'A'},{t:2,T:0,lbl:'B'},{t:5,T:0,lbl:'C'},
+    {t:9,T:100,lbl:'D'},{t:12,T:100,lbl:'E'},{t:15,T:120,lbl:'F'}
+  ];
+  const maxT=15, minTemp=-20, maxTemp=130;
+  function tx(t){ return PAD.l+(t/maxT)*gW; }
+  function ty(T){ return PAD.t+gH-((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  // Grid
+  ctx.strokeStyle='rgba(125,211,252,.06)'; ctx.lineWidth=1;
+  [-10,0,50,100,120].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+  [0,3,6,9,12,15].forEach(t=>{ ctx.beginPath(); ctx.moveTo(tx(t),PAD.t); ctx.lineTo(tx(t),H-PAD.b); ctx.stroke(); });
+
+  // Axes
+  ctx.strokeStyle='rgba(125,211,252,.25)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,H-PAD.b); ctx.lineTo(W-PAD.r,H-PAD.b); ctx.stroke();
+
+  // Labels
+  ctx.fillStyle='rgba(125,211,252,.5)'; ctx.font='10px Space Mono, monospace';
+  ['-15°C','0°C','100°C','120°C'].forEach((s,i)=>{
+    ctx.fillText(s, 4, ty([-15,0,100,120][i])+4);
+  });
+  ctx.fillText('Time (min) →', W-90, H-PAD.b+28);
+  ctx.fillText('Temp (°C)', 4, PAD.t);
+
+  // Curve segments
+  const cols = ['#38bdf8','#34d399','#22d3ee','#fbbf24','#f87171'];
+  for (let i=1; i<pts.length; i++) {
+    ctx.strokeStyle=cols[i-1]; ctx.lineWidth=3;
+    ctx.shadowColor=cols[i-1]; ctx.shadowBlur=6;
+    ctx.beginPath(); ctx.moveTo(tx(pts[i-1].t),ty(pts[i-1].T)); ctx.lineTo(tx(pts[i].t),ty(pts[i].T)); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  // Letter labels
+  pts.forEach(p=>{
+    ctx.fillStyle='#fff'; ctx.font='bold 12px Syne, sans-serif';
+    ctx.fillText(p.lbl, tx(p.t)-5, ty(p.T)-10);
+    ctx.fillStyle='rgba(125,211,252,.8)';
+    ctx.beginPath(); ctx.arc(tx(p.t),ty(p.T),5,0,Math.PI*2); ctx.fill();
+  });
+
+  // Segment labels
+  ctx.fillStyle='rgba(52,211,153,.7)'; ctx.font='9px Space Mono, monospace';
+  ctx.fillText('Melting Plateau 0°C', tx(2.5)+4, ty(0)-8);
+  ctx.fillStyle='rgba(251,191,36,.7)';
+  ctx.fillText('Boiling Plateau 100°C', tx(9.5)+4, ty(100)-8);
+}
+
+// ══════════════════════════════════════════════
+// GRAPH B (E3 — Substance Y cooling)
+// ══════════════════════════════════════════════
+function drawGraphB() {
+  const canvas = document.getElementById('graphB');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle='#060610'; ctx.fillRect(0,0,W,H);
+
+  const PAD={l:55,r:20,t:24,b:40};
+  const gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
+  // Substance Y: BP=95, MP=45, room=20
+  const pts=[
+    {t:0,T:115},{t:2,T:98},{t:3,T:95},{t:6,T:95},{t:8,T:75},{t:11,T:45},
+    {t:13,T:45},{t:16,T:30},{t:18,T:20},{t:20,T:20}
+  ];
+  const maxT=20,minTemp=10,maxTemp=125;
+  function tx(t){ return PAD.l+(t/maxT)*gW; }
+  function ty(T){ return PAD.t+gH-((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  ctx.strokeStyle='rgba(167,139,250,.06)'; ctx.lineWidth=1;
+  [20,45,75,95,115].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+
+  ctx.strokeStyle='rgba(167,139,250,.25)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,H-PAD.b); ctx.lineTo(W-PAD.r,H-PAD.b); ctx.stroke();
+
+  ctx.fillStyle='rgba(167,139,250,.5)'; ctx.font='10px Space Mono, monospace';
+  ['115°C','95°C','45°C','20°C'].forEach((s,i)=>{
+    ctx.fillText(s,4,ty([115,95,45,20][i])+4);
+  });
+  ctx.fillText('Time (min) →',W-90,H-PAD.b+28);
+
+  const cols=['#f87171','#fbbf24','#7dd3fc','#a78bfa','#7dd3fc','#a78bfa','#93c5fd','#93c5fd','#a5b4fc'];
+  for(let i=1;i<pts.length;i++){
+    ctx.strokeStyle=cols[i-1]||'#7dd3fc'; ctx.lineWidth=3;
+    ctx.shadowColor=cols[i-1]||'#7dd3fc'; ctx.shadowBlur=5;
+    ctx.beginPath(); ctx.moveTo(tx(pts[i-1].t),ty(pts[i-1].T)); ctx.lineTo(tx(pts[i].t),ty(pts[i].T)); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  ctx.fillStyle='rgba(251,191,36,.65)'; ctx.font='9px Space Mono, monospace';
+  ctx.fillText('Condensation Plateau (95°C)',tx(3)+4,ty(95)-8);
+  ctx.fillStyle='rgba(167,139,250,.65)';
+  ctx.fillText('Solidification Plateau (45°C)',tx(11)+4,ty(45)-8);
+  ctx.fillStyle='rgba(165,180,252,.5)';
+  ctx.fillText('Thermal Equilibrium (20°C)',tx(18)-80,ty(20)-8);
+}
+
+// ══════════════════════════════════════════════
+// NUMERIC E3
+// ══════════════════════════════════════════════
+function checkNumericE3() {
+  const s1 = document.getElementById('num-e3-1').value;
+  const s2 = document.getElementById('num-e3-2').value;
+  const fb = document.getElementById('fb-e3-num');
+  let pts = 0;
+  if (s1 === 'solid') pts++;
+  if (s2 === 'gas') pts++;
+  scores['e3-num'] = pts;
+  if (fb) {
+    fb.className = 'ans-result show ' + (pts === 2 ? 'ok' : 'bad');
+    if (pts === 2) fb.textContent = '✓ Perfect! At 30°C Substance Y is solid (below 45°C MP). At 100°C it is gas (above 95°C BP).';
+    else if (pts === 1) fb.textContent = '✓ One correct! Check: MP=45°C → below=solid; BP=95°C → above=gas.';
+    else fb.textContent = '✗ Review: MP=45°C means below that = solid; BP=95°C means above that = gas.';
+    playSound(pts === 2 ? 'correct' : 'wrong');
+  }
+  recalcScore();
+}
+
+// ══════════════════════════════════════════════
+// EXAM GRAPH (E5 Part A)
+// ══════════════════════════════════════════════
+function drawExamGraph() {
+  const canvas = document.getElementById('examGraph');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#060610'; ctx.fillRect(0,0,W,H);
+
+  const PAD={l:55,r:20,t:28,b:40};
+  const gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
+  const pts=[
+    {t:0,T:-10,lbl:'A'},{t:2.5,T:0,lbl:'B'},{t:5.5,T:0,lbl:'C'},
+    {t:10,T:100,lbl:'D'},{t:13,T:100,lbl:'E'},{t:15,T:115,lbl:'F'}
+  ];
+  const maxT=15,minTemp=-15,maxTemp=125;
+  function tx(t){ return PAD.l+(t/maxT)*gW; }
+  function ty(T){ return PAD.t+gH-((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  ctx.strokeStyle='rgba(125,211,252,.05)'; ctx.lineWidth=1;
+  [-10,0,50,100,115].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+
+  ctx.strokeStyle='rgba(125,211,252,.2)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,H-PAD.b); ctx.lineTo(W-PAD.r,H-PAD.b); ctx.stroke();
+
+  ctx.fillStyle='rgba(125,211,252,.45)'; ctx.font='10px Space Mono, monospace';
+  ['-10°C','0°C','100°C'].forEach((s,i)=>{ ctx.fillText(s,4,ty([-10,0,100][i])+4); });
+  ctx.fillText('Time →',W-55,H-PAD.b+26);
+  ctx.fillText('Heating Curve — Water',PAD.l+10,PAD.t+2);
+
+  const cols=['#38bdf8','#34d399','#22d3ee','#fbbf24','#f87171'];
+  for(let i=1;i<pts.length;i++){
+    ctx.strokeStyle=cols[i-1]; ctx.lineWidth=3.5;
+    ctx.shadowColor=cols[i-1]; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.moveTo(tx(pts[i-1].t),ty(pts[i-1].T)); ctx.lineTo(tx(pts[i].t),ty(pts[i].T)); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  pts.forEach(p=>{
+    ctx.fillStyle='rgba(255,255,255,.9)';
+    ctx.beginPath(); ctx.arc(tx(p.t),ty(p.T),5.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(226,232,248,.9)'; ctx.font='bold 13px Syne, sans-serif';
+    ctx.fillText(p.lbl,tx(p.t)-4,ty(p.T)-11);
+  });
+}
+
+// ══════════════════════════════════════════════
+// PART B GRAPH (Substance W heating)
+// ══════════════════════════════════════════════
+function drawPartBGraph() {
+  const canvas = document.getElementById('partBGraph');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#060610'; ctx.fillRect(0,0,W,H);
+
+  const PAD={l:55,r:20,t:24,b:35};
+  const gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
+  // W: MP=30, BP=78
+  const pts=[
+    {t:0,T:-10},{t:2,T:30},{t:4.5,T:30},{t:8,T:78},{t:10.5,T:78},{t:13,T:90}
+  ];
+  const maxT=13,minTemp=-15,maxTemp=100;
+  function tx(t){ return PAD.l+(t/maxT)*gW; }
+  function ty(T){ return PAD.t+gH-((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  ctx.strokeStyle='rgba(251,146,60,.06)'; ctx.lineWidth=1;
+  [-10,0,30,78,90].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+
+  ctx.strokeStyle='rgba(251,146,60,.25)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,H-PAD.b); ctx.lineTo(W-PAD.r,H-PAD.b); ctx.stroke();
+
+  ctx.fillStyle='rgba(251,146,60,.5)'; ctx.font='10px Space Mono, monospace';
+  ['-10°C','30°C','78°C'].forEach((s,i)=>{ ctx.fillText(s,4,ty([-10,30,78][i])+4); });
+
+  ctx.strokeStyle='rgba(251,146,60,.15)'; ctx.setLineDash([5,7]);
+  [30,78].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+  ctx.setLineDash([]);
+
+  ctx.fillStyle='rgba(251,146,60,.65)'; ctx.font='9px Space Mono, monospace';
+  ctx.fillText('MP=30°C',tx(2)+4,ty(30)-6);
+  ctx.fillText('BP=78°C',tx(8)+4,ty(78)-6);
+
+  const gradCols=['#38bdf8','#34d399','#22d3ee','#fbbf24','#f87171'];
+  for(let i=1;i<pts.length;i++){
+    ctx.strokeStyle=gradCols[i-1]; ctx.lineWidth=3;
+    ctx.shadowColor=gradCols[i-1]; ctx.shadowBlur=5;
+    ctx.beginPath(); ctx.moveTo(tx(pts[i-1].t),ty(pts[i-1].T)); ctx.lineTo(tx(pts[i].t),ty(pts[i].T)); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+  ctx.fillText('Substance W (MP=30°C · BP=78°C)',PAD.l+8,PAD.t+2);
+}
+
+// ══════════════════════════════════════════════
+// PART C GRAPH (Cooling curve with one plateau)
+// ══════════════════════════════════════════════
+function drawPartCGraph() {
+  const canvas = document.getElementById('partCGraph');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#060610'; ctx.fillRect(0,0,W,H);
+
+  const PAD={l:55,r:20,t:28,b:40};
+  const gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
+  // Substance with BP=95, only shows liquid cooling → solidification plateau → solid → room
+  const pts=[
+    {t:0,T:90},{t:3,T:60},{t:5,T:40},{t:7,T:40},{t:10,T:22},{t:13,T:22}
+  ];
+  const maxT=13,minTemp=15,maxTemp=100;
+  function tx(t){ return PAD.l+(t/maxT)*gW; }
+  function ty(T){ return PAD.t+gH-((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  ctx.strokeStyle='rgba(167,139,250,.06)'; ctx.lineWidth=1;
+  [22,40,60,90].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+
+  ctx.strokeStyle='rgba(167,139,250,.25)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,H-PAD.b); ctx.lineTo(W-PAD.r,H-PAD.b); ctx.stroke();
+
+  ctx.fillStyle='rgba(167,139,250,.5)'; ctx.font='10px Space Mono, monospace';
+  ['90°C','40°C','22°C'].forEach((s,i)=>{ ctx.fillText(s,4,ty([90,40,22][i])+4); });
+  ctx.fillText('Time (min) →',W-90,H-PAD.b+26);
+  ctx.fillText('Cooling Curve (Substance Q · room=22°C)',PAD.l+4,PAD.t+2);
+
+  ctx.strokeStyle='rgba(167,139,250,.2)'; ctx.setLineDash([5,7]);
+  [40,22].forEach(T=>{ ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke(); });
+  ctx.setLineDash([]);
+
+  ctx.fillStyle='rgba(251,146,60,.65)'; ctx.font='9px Space Mono, monospace';
+  ctx.fillText('Solidification Plateau (40°C)',tx(5.2)+4,ty(40)-8);
+  ctx.fillStyle='rgba(165,180,252,.5)';
+  ctx.fillText('Thermal Equilibrium (22°C)',tx(10)+4,ty(22)-8);
+
+  const cols=['#7dd3fc','#7dd3fc','#a78bfa','#93c5fd','#a5b4fc'];
+  for(let i=1;i<pts.length;i++){
+    ctx.strokeStyle=cols[i-1]; ctx.lineWidth=3;
+    ctx.shadowColor=cols[i-1]; ctx.shadowBlur=5;
+    ctx.beginPath(); ctx.moveTo(tx(pts[i-1].t),ty(pts[i-1].T)); ctx.lineTo(tx(pts[i].t),ty(pts[i].T)); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  pts.forEach(p=>{
+    ctx.fillStyle='rgba(167,139,250,.7)';
+    ctx.beginPath(); ctx.arc(tx(p.t),ty(p.T),4,0,Math.PI*2); ctx.fill();
+  });
+}
+
+// ══════════════════════════════════════════════
+// TEMPERATURE DETECTIVE GAME
+// ══════════════════════════════════════════════
+const GAME_ROUNDS = [
+  {
+    // Heating curve water, dot on liquid segment
+    type:'heating', mp:0, bp:100, dotT:55, dotX:0.55,
+    substance:'Water',
+    correct:1, // liquid
+    question:'The glowing dot on the water heating curve is at 55°C. What state is water in here?',
+    explanation:'55°C is between 0°C (MP) and 100°C (BP) — so water is liquid here.'
+  },
+  {
+    // Heating curve, dot on boiling plateau
+    type:'heating', mp:0, bp:100, dotT:100, dotX:0.78,
+    substance:'Water',
+    correct:3, // plateau
+    question:'The dot is on the boiling plateau at 100°C. What is happening?',
+    explanation:'The flat region at 100°C is the boiling plateau — a state change (vaporization). Temperature stays constant.'
+  },
+  {
+    // Cooling curve, dot on solid segment
+    type:'cooling', mp:45, bp:95, dotT:25, dotX:0.82,
+    substance:'Substance Y',
+    correct:0, // solid
+    question:'Substance Y (MP=45°C, BP=95°C) cooling curve. Dot is at 25°C. What state?',
+    explanation:'25°C is below the melting point (45°C) — so Substance Y is solid.'
+  },
+  {
+    // Cooling curve, dot on condensation plateau
+    type:'cooling', mp:0, bp:100, dotT:100, dotX:0.3,
+    substance:'Water',
+    correct:3, // plateau
+    question:'Water cooling curve. Dot is on the first plateau at 100°C. What is happening?',
+    explanation:'The plateau at 100°C during cooling is condensation — gas releasing heat to become liquid.'
+  },
+  {
+    // Heating curve, dot on solid segment (below MP)
+    type:'heating', mp:30, bp:78, dotT:15, dotX:0.18,
+    substance:'Substance W (MP=30°C)',
+    correct:0, // solid
+    question:'Substance W (MP=30°C, BP=78°C) heating curve. Dot is at 15°C. What state?',
+    explanation:'15°C is below the melting point (30°C) — Substance W is solid here.'
+  }
+];
+
+let curRound = 0;
+let gameAnswered = false;
+
+function drawGameCanvas(round) {
+  const canvas = document.getElementById('gameCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#060610'; ctx.fillRect(0,0,W,H);
+
+  const PAD={l:50,r:20,t:20,b:35};
+  const gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
+  const r = GAME_ROUNDS[round];
+  if (!r) return;
+
+  let pts;
+  if (r.type === 'heating') {
+    if (r.bp === 78) {
+      pts=[{t:0,T:-10},{t:2,T:r.mp},{t:4,T:r.mp},{t:7,T:r.bp},{t:9.5,T:r.bp},{t:12,T:r.bp+12}];
+    } else {
+      pts=[{t:0,T:-15},{t:2,T:r.mp},{t:4,T:r.mp},{t:8,T:r.bp},{t:11,T:r.bp},{t:14,T:r.bp+20}];
+    }
+  } else {
+    if (r.bp === 95) {
+      pts=[{t:0,T:115},{t:2,T:r.bp},{t:5,T:r.bp},{t:8,T:r.mp+30},{t:10,T:r.mp},{t:13,T:r.mp},{t:16,T:20}];
+    } else {
+      pts=[{t:0,T:120},{t:2,T:r.bp},{t:5,T:r.bp},{t:9,T:r.mp+20},{t:12,T:r.mp},{t:15,T:r.mp},{t:18,T:20}];
+    }
+  }
+
+  const maxT = pts[pts.length-1].t;
+  const allTemps = pts.map(p=>p.T);
+  const minTemp = Math.min(...allTemps)-10;
+  const maxTemp = Math.max(...allTemps)+10;
+
+  function tx(t){ return PAD.l+(t/maxT)*gW; }
+  function ty(T){ return PAD.t+gH-((T-minTemp)/(maxTemp-minTemp))*gH; }
+
+  // Grid
+  ctx.strokeStyle='rgba(125,211,252,.05)'; ctx.lineWidth=1;
+  for(let T=Math.floor(minTemp/20)*20; T<=maxTemp; T+=20){
+    ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle='rgba(125,211,252,.2)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,H-PAD.b); ctx.lineTo(W-PAD.r,H-PAD.b); ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle='rgba(125,211,252,.4)'; ctx.font='9px Space Mono, monospace';
+  [r.mp, r.bp].forEach(T=>{
+    ctx.fillText(T+'°C', 4, ty(T)+3);
+    ctx.strokeStyle='rgba(125,211,252,.12)'; ctx.setLineDash([4,6]);
+    ctx.beginPath(); ctx.moveTo(PAD.l,ty(T)); ctx.lineTo(W-PAD.r,ty(T)); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // Draw curve
+  const cols = r.type==='heating' ? ['#38bdf8','#34d399','#22d3ee','#fbbf24','#f87171','#ef4444']
+                                   : ['#f87171','#fbbf24','#7dd3fc','#a78bfa','#7dd3fc','#93c5fd'];
+  for(let i=1;i<pts.length;i++){
+    ctx.strokeStyle=cols[i-1]||'#7dd3fc'; ctx.lineWidth=3;
+    ctx.shadowColor=cols[i-1]||'#7dd3fc'; ctx.shadowBlur=6;
+    ctx.beginPath(); ctx.moveTo(tx(pts[i-1].t),ty(pts[i-1].T)); ctx.lineTo(tx(pts[i].t),ty(pts[i].T)); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  // DOT position
+  const dotPx = PAD.l + r.dotX * gW;
+  const dotPy = ty(r.dotT);
+
+  // Glowing pulsing dot
+  const pulse = 0.7 + 0.3 * Math.sin(Date.now() * 0.006);
+  ctx.fillStyle = `rgba(255,255,255,${pulse})`;
+  ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 16 * pulse;
+  ctx.beginPath(); ctx.arc(dotPx, dotPy, 8, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+
+  // Dot label
+  ctx.fillStyle='rgba(251,191,36,.9)'; ctx.font='bold 10px Space Mono, monospace';
+  ctx.fillText('? '+r.dotT+'°C', dotPx+10, dotPy+4);
+
+  // Title
+  ctx.fillStyle='rgba(125,211,252,.45)'; ctx.font='9px Space Mono, monospace';
+  ctx.fillText(r.substance+' ('+(r.type==='heating'?'Heating':'Cooling')+' curve)', PAD.l+4, PAD.t+2);
+  ctx.fillText('MP='+r.mp+'°C  BP='+r.bp+'°C', PAD.l+4, H-PAD.b+12);
+}
+
+let gamePulseInterval = null;
+
+function startGame() {
+  curRound = 0;
+  gameLives = 3;
+  gameScore = 0;
+  gameCorrectCount = 0;
+  gameActive = true;
+  document.getElementById('gameResult').style.display = 'none';
+  document.getElementById('gameControls').innerHTML = '';
+  loadGameRound();
+}
+
+function loadGameRound() {
+  if (curRound >= GAME_ROUNDS.length) {
+    endGame(); return;
+  }
+  gameAnswered = false;
+  const r = GAME_ROUNDS[curRound];
+  document.getElementById('gameRoundBadge').textContent = 'Round ' + (curRound+1) + ' / ' + GAME_ROUNDS.length;
+  document.getElementById('gameQ').textContent = r.question;
+  document.getElementById('gameStatus').className = 'game-status';
+  document.getElementById('gameStatus').textContent = '';
+  updateLivesDisplay();
+  document.getElementById('gameScore').textContent = gameScore;
+
+  // Pulse animation for dot
+  clearInterval(gamePulseInterval);
+  gamePulseInterval = setInterval(() => { drawGameCanvas(curRound); }, 80);
+
+  const opts = document.getElementById('gameOpts');
+  opts.innerHTML = '';
+  ['Solid','Liquid','Gas','State Change (Plateau)'].forEach((label,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'game-opt';
+    btn.textContent = label;
+    btn.onclick = () => answerGame(i);
+    opts.appendChild(btn);
+  });
+}
+
+function answerGame(idx) {
+  if (gameAnswered || !gameActive) return;
+  gameAnswered = true;
+  clearInterval(gamePulseInterval);
+
+  const r = GAME_ROUNDS[curRound];
+  const opts = document.getElementById('gameOpts').querySelectorAll('.game-opt');
+  opts.forEach(b => { b.disabled = true; b.style.pointerEvents = 'none'; });
+
+  const status = document.getElementById('gameStatus');
+  if (idx === r.correct) {
+    opts[idx].classList.add('g-correct');
+    gameScore += 20;
+    gameCorrectCount++;
+    status.className = 'game-status ok';
+    status.textContent = '✓ Correct! ' + r.explanation;
+    playSound('correct');
+    document.getElementById('gameScore').textContent = gameScore;
+  } else {
+    opts[idx].classList.add('g-wrong');
+    opts[r.correct].classList.add('g-correct');
+    gameLives--;
+    status.className = 'game-status bad';
+    status.textContent = '✗ Not quite. ' + r.explanation;
+    playSound('wrong');
+    updateLivesDisplay();
+    if (gameLives <= 0) {
+      setTimeout(() => endGame(), 1500);
+      return;
+    }
+  }
+
+  recalcScore();
+  document.getElementById('gameControls').innerHTML = `
+    <button class="btn btn-secondary" onclick="nextGameRound()">
+      ${curRound < GAME_ROUNDS.length-1 ? 'Next Round →' : 'Finish →'}
+    </button>`;
+}
+
+function nextGameRound() {
+  curRound++;
+  if (curRound >= GAME_ROUNDS.length) { endGame(); return; }
+  document.getElementById('gameControls').innerHTML = '';
+  loadGameRound();
+}
+
+function updateLivesDisplay() {
+  document.getElementById('gameLives').textContent = 
+    '❤️'.repeat(Math.max(0,gameLives)) + '🖤'.repeat(Math.max(0,3-gameLives));
+}
+
+function endGame() {
+  gameActive = false;
+  clearInterval(gamePulseInterval);
+  document.getElementById('gameResult').style.display = 'block';
+  document.getElementById('gameFinalScore').textContent = gameCorrectCount;
+  document.getElementById('gameControls').innerHTML = '';
+  if (gameCorrectCount >= 4) playSound('fanfare');
+  recalcScore();
+}
+
+// ══════════════════════════════════════════════
+// CLASS LEADERBOARD
+// ══════════════════════════════════════════════
+function fetchClassProgress() {
+  const el = document.getElementById('classProgressRows');
+  if (!el) return;
+  if (APPS_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    el.innerHTML = '<div style="color:var(--muted);font-size:.68rem;text-align:center">Connect Apps Script to see class progress</div>';
+    return;
+  }
+  fetch(APPS_URL + '?action=leaderboard')
+    .then(r => r.json())
+    .then(data => {
+      const maxCount = Math.max(...Object.values(data), 1);
+      let html = '';
+      ['7D'].forEach(cls => {
+        const count = data[cls] || 0;
+        html += `<div class="class-bar-row">
+          <div class="class-bar-name">${cls}</div>
+          <div class="class-bar-track"><div class="class-bar-fill" style="width:${(count/maxCount*100)}%"></div></div>
+          <div class="class-bar-count">${count}</div>
+        </div>`;
+      });
+      el.innerHTML = html || '<div style="color:var(--muted);font-size:.68rem">No data yet</div>';
+    })
+    .catch(() => {
+      el.innerHTML = '<div style="color:var(--muted);font-size:.68rem;text-align:center">Class data unavailable</div>';
+    });
+}
+
+// ══════════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════════
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const particles = [];
+  const colors = ['#7dd3fc','#fb923c','#a78bfa','#86efac','#fbbf24','#f87171'];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+      w: Math.random()*8+4, h: Math.random()*10+6,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vx: (Math.random()-0.5)*4, vy: Math.random()*4+2,
+      angle: Math.random()*360, spin: (Math.random()-0.5)*8
+    });
+  }
+  let frame = 0;
+  function drawCf() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.angle += p.spin;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.angle*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 200) requestAnimationFrame(drawCf);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  drawCf();
+}
+
+// ══════════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════════
+async function submitLab() {
+  const time_min = Math.round((Date.now() - LAB_START) / 60000);
+  const rawScore = recalcScore();
+
+  const gradeMap = [
+    [18,'A+','Outstanding! You mastered heating and cooling curves!'],
+    [16,'A','Excellent work — strong understanding of all objectives!'],
+    [14,'B+','Very good! Minor areas to review.'],
+    [12,'B','Good job — keep reviewing the graph analysis section.'],
+    [10,'C','Keep practicing — focus on identifying states from graphs.'],
+    [0,'D','Review Part 1 and Part 2 with your teacher.']
+  ];
+  let gradeLetter = 'D', gradeMsg = '';
+  for (const [min,g,m] of gradeMap) {
+    if (rawScore >= min) { gradeLetter = g; gradeMsg = m; break; }
+  }
+
+  // Show result
+  document.getElementById('resultWrap').style.display = 'block';
+  document.getElementById('gradeLetter').textContent = gradeLetter;
+  document.getElementById('scoreDisplay').textContent = rawScore + ' / 20';
+  document.getElementById('resultMsg').textContent = gradeMsg;
+  setTimeout(() => {
+    document.getElementById('resultFill').style.width = (rawScore/20*100)+'%';
+  }, 200);
+
+  if (gradeLetter.startsWith('A')) {
+    playSound('fanfare');
+    launchConfetti();
+  } else {
+    playSound('correct');
+  }
+
+  showToast('✓ Score submitted — ' + rawScore + '/20 (' + gradeLetter + ')');
+
+  // Build payload
+  const payload = {
+    sheet: 'ChangeOfState_P2_G7D',
+    name: studentName,
+    class: studentClass,
+    time_min,
+    // E1
+    e1_q1: scores['e1-q1']||0, e1_q2: scores['e1-q2']||0,
+    self_e1: selfScores.e1||'',
+    // E2
+    e2_q1: scores['e2-q1']||0, e2_q2: scores['e2-q2']||0, e2_q3: scores['e2-q3']||0,
+    state_correct: stateCorrect, state_total: 11,
+    self_e2: selfScores.e2||'',
+    // E3
+    e3_ga1: scores['e3-ga1']||0, e3_ga2: scores['e3-ga2']||0, e3_ga3: scores['e3-ga3']||0,
+    e3_gb1: scores['e3-gb1']||0, e3_gb2: scores['e3-gb2']||0,
+    e3_num: scores['e3-num']||0,
+    self_e3: selfScores.e3||'',
+    // E4
+    game_score: gameScore, game_lives: gameLives, game_correct: gameCorrectCount,
+    e4_b1: scores['e4-b1']||0, e4_b2: scores['e4-b2']||0,
+    self_e4: selfScores.e4||'',
+    // E5
+    ev_q1:scores['ev-q1']||0,ev_q2:scores['ev-q2']||0,ev_q3:scores['ev-q3']||0,
+    ev_q4:scores['ev-q4']||0,ev_q5:scores['ev-q5']||0,ev_q6:scores['ev-q6']||0,
+    ev_q7:scores['ev-q7']||0,ev_q8:scores['ev-q8']||0,ev_q9:scores['ev-q9']||0,
+    ev_q10:scores['ev-q10']||0,ev_q11:scores['ev-q11']||0,ev_q12:scores['ev-q12']||0,
+    written_q13: (document.getElementById('written-q13')||{}).value||'',
+    raw_score: rawScore,
+    score_20: rawScore,
+    grade: gradeLetter
+  };
+
+  if (APPS_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    try {
+      await fetch(APPS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) {}
+  }
+
+  // Clear session
+  try { sessionStorage.removeItem('cos_p2_student'); } catch(e) {}
+}
+
+// Init explorer graph
+window.addEventListener('load', () => {
+  setTimeout(drawExplorerGraph, 500);
+});
+</script>
+</body>
+</html>
