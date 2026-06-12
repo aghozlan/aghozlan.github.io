@@ -7,256 +7,512 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; user-select: none; }
-        /* Disable text selection and copying */
         * { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        input[type="text"], textarea { -webkit-user-select: text; user-select: text; }
-        
-        .circuit-symbol { display: inline-block; padding: 4px 10px; border: 2px solid #38bdf8; border-radius: 50%; font-weight: bold; margin: 0 4px;}
         .glass-panel { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px); border: 1px solid #334155; }
-        
-        /* Cheat warning overlay */
-        #cheatOverlay { display: none; position: fixed; inset: 0; background: rgba(220, 38, 38, 0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #cheatOverlay { display: none; position: fixed; inset: 0; background: rgba(220, 38, 38, 0.98); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .radio-custom:checked + label { background-color: #0369a1; border-color: #38bdf8; color: #fff; }
+        svg { max-width: 100%; height: auto; }
     </style>
 </head>
 <body class="min-h-screen" oncontextmenu="return false;">
 
+    <!-- CHEAT WARNING OVERLAY -->
     <div id="cheatOverlay">
-        <h1 class="text-6xl font-black text-white mb-4">⚠️ WARNING ⚠️</h1>
-        <p class="text-2xl font-bold text-white mb-2">You left the exam window or attempted a forbidden action.</p>
-        <p class="text-lg text-red-200 mb-6">This violation has been recorded and sent to the instructor.</p>
-        <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-3 rounded-lg hover:bg-gray-100">I Understand, Return to Exam</button>
+        <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
+        <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
+        <p class="text-lg text-red-200 mb-6">This violation has been recorded to your instructor's dashboard.</p>
+        <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100">Acknowledge & Return to Exam</button>
     </div>
 
+    <!-- BLOCKED OVERLAY -->
     <div id="blockedOverlay" class="hidden fixed inset-0 bg-slate-900 z-[10000] flex flex-col justify-center items-center">
-        <h1 class="text-4xl font-bold text-red-500 mb-2">Exam Locked</h1>
-        <p class="text-slate-300">Your exam has been paused by the instructor. Please raise your hand.</p>
+        <h1 class="text-5xl font-bold text-red-500 mb-4">Exam Locked</h1>
+        <p class="text-xl text-slate-300">Your exam has been paused by the instructor. Please raise your hand.</p>
     </div>
 
-    <main class="max-w-4xl mx-auto p-6" id="appContainer">
+    <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
         
-        <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12">
-            <h2 class="text-3xl font-bold text-center text-sky-400 mb-6">Grade 7D - Physics Final Exam</h2>
+        <!-- LOGIN SCREEN -->
+        <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 7D</h2>
+            <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
             <div class="mb-6">
                 <label class="block text-sm font-bold text-slate-400 mb-2">Select Student Name:</label>
                 <select id="studentSelect" class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500" dir="rtl">
-    <option value="" disabled selected>-- اختر اسمك --</option>
-    <option value='"أحمد عمر" حسين جعجع'>"أحمد عمر" حسين جعجع</option>
-    <option value="أحمد محمد احمد ابو جاموس">أحمد محمد احمد ابو جاموس</option>
-    <option value="ابراهيم سامي مروان حليحل">ابراهيم سامي مروان حليحل</option>
-    <option value="ابراهيم يونس محمد رحال">ابراهيم يونس محمد رحال</option>
-    <option value="احمد علي احمد المحمود">احمد علي احمد المحمود</option>
-    <option value="احمد فؤاد احمد جمعة">احمد فؤاد احمد جمعة</option>
-    <option value="اسيل احمد فريد العلي">اسيل احمد فريد العلي</option>
-    <option value="ايلانا محمد ابراهيم الحلو">ايلانا محمد ابراهيم الحلو</option>
-    <option value="حلا فادي فايز معتوق">حلا فادي فايز معتوق</option>
-    <option value="حمزة عفيف علي السيد">حمزة عفيف علي السيد</option>
-    <option value="داني محمد محمود حسين">داني محمد محمود حسين</option>
-    <option value="رؤى حسن احمد محمد">رؤى حسن احمد محمد</option>
-    <option value="راما ابراهيم رشيد فارس">راما ابراهيم رشيد فارس</option>
-    <option value="راما محمد علي الجعجع">راما محمد علي الجعجع</option>
-    <option value="زاهر محمد شحادة ديب">زاهر محمد شحادة ديب</option>
-    <option value="سالي احمد وليد كريديه">سالي احمد وليد كريديه</option>
-    <option value='"سدرة المنتهى" احمد حسون'>"سدرة المنتهى" احمد حسون</option>
-    <option value="عبد الرحمن درويش محمد سلام">عبد الرحمن درويش محمد سلام</option>
-    <option value="علي ابراهيم حسان الاشوح">علي ابراهيم حسان الاشوح</option>
-    <option value="علي مروان عدنان شحاده">علي مروان عدنان شحاده</option>
-    <option value="علي وسيم علي مره">علي وسيم علي مره</option>
-    <option value="عيسى احمد محمود الحصري">عيسى احمد محمود الحصري</option>
-    <option value="غيداء مالك جمعة بلال">غيداء مالك جمعة بلال</option>
-    <option value="فرح محمود كامل الخطيب">فرح محمود كامل الخطيب</option>
-    <option value="ليمار هاني محمد جمعه">ليمار هاني محمد جمعه</option>
-    <option value="محمد مصطفى كمال الترك">محمد مصطفى كمال الترك</option>
-    <option value="محمد هاشم عادل المنسي">محمد هاشم عادل المنسي</option>
-    <option value="محمد يوسف محمد محمد">محمد يوسف محمد محمد</option>
-    <option value="مصطفى كمال علي سعد">مصطفى كمال علي سعد</option>
-    <option value="منى وسام عمر سلام">منى وسام عمر سلام</option>
-    <option value="ندى علي احمد مطر">ندى علي احمد مطر</option>
-    <option value="ولاء احمد فهد السعيد">ولاء احمد فهد السعيد</option>
-    <option value='يوسف "علاء الدين"  كرزون'>يوسف "علاء الدين"  كرزون</option>
-    <option value="يوسف علاء جهاد شحادة">يوسف علاء جهاد شحادة</option>
-</select>
+                    <option value="" disabled selected>-- اختر اسمك --</option>
+                    <option value='"أحمد عمر" حسين جعجع'>"أحمد عمر" حسين جعجع</option>
+                    <option value="أحمد محمد احمد ابو جاموس">أحمد محمد احمد ابو جاموس</option>
+                    <option value="ابراهيم سامي مروان حليحل">ابراهيم سامي مروان حليحل</option>
+                    <option value="ابراهيم يونس محمد رحال">ابراهيم يونس محمد رحال</option>
+                    <option value="احمد علي احمد المحمود">احمد علي احمد المحمود</option>
+                    <option value="احمد فؤاد احمد جمعة">احمد فؤاد احمد جمعة</option>
+                    <option value="اسيل احمد فريد العلي">اسيل احمد فريد العلي</option>
+                    <option value="ايلانا محمد ابراهيم الحلو">ايلانا محمد ابراهيم الحلو</option>
+                    <option value="حلا فادي فايز معتوق">حلا فادي فايز معتوق</option>
+                    <option value="حمزة عفيف علي السيد">حمزة عفيف علي السيد</option>
+                    <option value="داني محمد محمود حسين">داني محمد محمود حسين</option>
+                    <option value="رؤى حسن احمد محمد">رؤى حسن احمد محمد</option>
+                    <option value="راما ابراهيم رشيد فارس">راما ابراهيم رشيد فارس</option>
+                    <option value="راما محمد علي الجعجع">راما محمد علي الجعجع</option>
+                    <option value="زاهر محمد شحادة ديب">زاهر محمد شحادة ديب</option>
+                    <option value="سالي احمد وليد كريديه">سالي احمد وليد كريديه</option>
+                    <option value='"سدرة المنتهى" احمد حسون'>"سدرة المنتهى" احمد حسون</option>
+                    <option value="عبد الرحمن درويش محمد سلام">عبد الرحمن درويش محمد سلام</option>
+                    <option value="علي ابراهيم حسان الاشوح">علي ابراهيم حسان الاشوح</option>
+                    <option value="علي مروان عدنان شحاده">علي مروان عدنان شحاده</option>
+                    <option value="علي وسيم علي مره">علي وسيم علي مره</option>
+                    <option value="عيسى احمد محمود الحصري">عيسى احمد محمود الحصري</option>
+                    <option value="غيداء مالك جمعة بلال">غيداء مالك جمعة بلال</option>
+                    <option value="فرح محمود كامل الخطيب">فرح محمود كامل الخطيب</option>
+                    <option value="ليمار هاني محمد جمعه">ليمار هاني محمد جمعه</option>
+                    <option value="محمد مصطفى كمال الترك">محمد مصطفى كمال الترك</option>
+                    <option value="محمد هاشم عادل المنسي">محمد هاشم عادل المنسي</option>
+                    <option value="محمد يوسف محمد محمد">محمد يوسف محمد محمد</option>
+                    <option value="مصطفى كمال علي سعد">مصطفى كمال علي سعد</option>
+                    <option value="منى وسام عمر سلام">منى وسام عمر سلام</option>
+                    <option value="ندى علي احمد مطر">ندى علي احمد مطر</option>
+                    <option value="ولاء احمد فهد السعيد">ولاء احمد فهد السعيد</option>
+                    <option value='يوسف "علاء الدين"  كرزون'>يوسف "علاء الدين"  كرزون</option>
+                    <option value="يوسف علاء جهاد شحادة">يوسف علاء جهاد شحادة</option>
+                </select>
             </div>
-            <div class="bg-slate-800 p-4 rounded-lg mb-6 border-l-4 border-amber-500 text-sm text-slate-300">
-                <strong>Instructions:</strong> Entering fullscreen mode is required. You cannot exit this tab, open other applications, or take screenshots. Any attempt to leave the page will flag your exam for review.
+            <div class="bg-slate-800 p-4 rounded-lg mb-6 border-l-4 border-amber-500 text-xs text-slate-300 leading-relaxed">
+                <strong>STRICT EXAM RULES:</strong><br>
+                1. The exam will open in Fullscreen Mode.<br>
+                2. Exiting fullscreen, switching tabs, or using keyboard shortcuts will trigger an instant security flag.<br>
+                3. The exam consists of 15 MCQs (15 pts) and 1 Circuit Drawing (5 pts).
             </div>
-            <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl transition-all">Begin Exam</button>
+            <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
         </div>
 
-        <div id="examScreen" class="hidden space-y-6">
-            <header class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <div>
-                    <span class="text-sky-400 font-bold" id="displayName">Student Name</span>
-                    <span class="ml-4 text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">Version <span id="displayVersion"></span></span>
+        <!-- EXAM SCREEN -->
+        <div id="examScreen" class="hidden space-y-6 pb-12">
+            <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
+                <div class="mb-2 md:mb-0">
+                    <span class="text-sky-400 font-bold text-lg" id="displayName">Student Name</span>
+                    <span class="ml-4 text-xs font-bold bg-slate-700 px-3 py-1 rounded text-slate-300">Form <span id="displayVersion"></span></span>
                 </div>
-                <div class="text-sm font-mono text-emerald-400 bg-emerald-900/30 px-3 py-1 rounded-full border border-emerald-800">
-                    🟢 Live Monitoring Active
+                <div class="flex gap-4">
+                    <div class="text-sm font-bold text-slate-300 bg-slate-900 px-4 py-2 rounded-lg border border-slate-700">
+                        Total Points: 20
+                    </div>
+                    <div class="text-sm font-mono text-emerald-400 bg-emerald-950 px-4 py-2 rounded-lg border border-emerald-800 animate-pulse">
+                        LIVE MONITORING ON
+                    </div>
                 </div>
             </header>
 
-            <div id="questionsContainer" class="space-y-6"></div>
+            <div id="questionsContainer" class="space-y-8">
+                <!-- Dynamically Injected Visual Sections & MCQs -->
+            </div>
 
-            <div class="glass-panel p-6 rounded-xl">
-                <h3 class="text-xl font-bold text-white mb-3">Part 4: Circuit Drawing (Lebanese Curriculum Standards)</h3>
-                <p class="text-sm text-slate-300 mb-4">On a clean piece of paper, draw the following circuit using conventional symbols:</p>
-                <div class="bg-slate-800 p-4 rounded-lg text-sky-200 mb-4 font-medium" id="drawingPrompt"></div>
-                <ul class="text-xs text-slate-400 list-disc pl-5 mb-4 space-y-1">
-                    <li>Motor: Circle with 'M'</li>
-                    <li>Voltmeter: Circle with 'V' connected in parallel</li>
-                    <li>Ammeter: Circle with 'A' connected in series</li>
-                    <li>Indicate the COM terminal on the negative side.</li>
-                </ul>
-                <div class="border-2 border-dashed border-slate-600 rounded-xl p-6 text-center">
-                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)">
-                    <button onclick="document.getElementById('cameraInput').click()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg font-bold transition-all w-full md:w-auto">
-                        📸 Open Camera & Take Photo of Drawing
-                    </button>
-                    <p id="uploadStatus" class="mt-3 text-emerald-400 font-bold hidden">✓ Image Attached Successfully!</p>
+            <!-- Drawing Section (Always at the end) -->
+            <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">IV</div>
+                    <h3 class="text-2xl font-bold text-white">Circuit Engineering & Drawing (5 pts)</h3>
+                </div>
+                <p class="text-slate-300 mb-4 leading-relaxed">On a clean sheet of paper, draw the circuit requested below using the conventional Lebanese curriculum symbols. Ensure your lines are straight and components are clearly marked.</p>
+                
+                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6">
+                    <p class="text-sky-300 font-semibold text-lg" id="drawingPrompt"></p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <ul class="text-sm text-slate-400 space-y-2 bg-slate-800/50 p-4 rounded-lg">
+                        <li class="flex items-center gap-2">✓ <span class="font-bold text-slate-300">Voltmeter:</span> Circle with V, connected in parallel.</li>
+                        <li class="flex items-center gap-2">✓ <span class="font-bold text-slate-300">Ammeter:</span> Circle with A, connected in series.</li>
+                        <li class="flex items-center gap-2">✓ <span class="font-bold text-slate-300">Polarity:</span> Indicate the COM terminal correctly.</li>
+                    </ul>
+                    
+                    <div class="border-2 border-dashed border-sky-700/50 hover:border-sky-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
+                        <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)">
+                        <button onclick="document.getElementById('cameraInput').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Take Photo of Drawing
+                        </button>
+                        <p id="uploadStatus" class="mt-4 text-emerald-400 font-bold hidden flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Drawing Attached Successfully
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-lg py-4 rounded-xl transition-all shadow-lg shadow-emerald-900/50">
+            <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl py-5 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">
                 SUBMIT FINAL EXAM
             </button>
         </div>
 
+        <!-- TEACHER DASHBOARD -->
         <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-amber-400">Control Panel</h2>
-                <button onclick="pollTeacherData()" class="bg-slate-700 px-4 py-2 rounded text-sm hover:bg-slate-600">Refresh Data</button>
+            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                <h2 class="text-3xl font-black text-amber-400 tracking-wider">Grade 7D Control Panel</h2>
+                <button onclick="pollTeacherData()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-2 rounded-lg shadow transition-colors">Refresh Live Data</button>
             </div>
-            <table class="w-full text-left text-sm text-slate-300">
-                <thead class="bg-slate-800 text-slate-400">
-                    <tr>
-                        <th class="p-3 rounded-tl-lg">Student Name</th>
-                        <th class="p-3">Status</th>
-                        <th class="p-3">Violations</th>
-                        <th class="p-3 rounded-tr-lg">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="rosterTableBody" class="divide-y divide-slate-700">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-800 text-slate-400 uppercase text-xs tracking-wider">
+                        <tr>
+                            <th class="p-4 rounded-tl-lg">Student Name</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">MCQ Score</th>
+                            <th class="p-4">Violations</th>
+                            <th class="p-4 rounded-tr-lg">Control Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rosterTableBody" class="divide-y divide-slate-700 bg-slate-900/50">
+                        <!-- Dynamic Rows -->
                     </tbody>
-            </table>
+                </table>
+            </div>
         </div>
     </main>
 
     <script>
         // ==========================================
-        // CONFIGURATION
+        // CONFIGURATION (TEACHER: PASTE URL HERE)
         // ==========================================
-        // 🔴 PASTE YOUR APPS SCRIPT WEB APP URL HERE:
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmaHcBA7BBpA0VMjBRhb9LUES3e55YzC-aiCgpNi8aM5N_cpFTiW1Ei1pVIKL3P52CFw/exec"; 
-        
+
         // ==========================================
-        // EXAM CONTENT (3 VERSIONS)
+        // SVG VISUALS (EMBEDDED)
         // ==========================================
-        const examVersions = {
-            "A": {
-                heat: "Explain the difference between Heat and Temperature. Give an example of heat transfer by Conduction.",
-                state: "Explain why the temperature remains constant (plateau) during vaporization even though heat is continuously added. Are both liquid and gas present at this temperature?",
-                circuit: "A dry cell has a rating of 9V. You have a lamp rated 4.5V. Explain the concept of adaptation here. What will happen if you connect them?",
-                drawing: "Draw a circuit containing a dry cell, an open switch, a motor, an ammeter measuring the main current, and a voltmeter measuring the voltage across the motor."
-            },
-            "B": {
-                heat: "Explain the difference between Heat and Temperature. Give an example of heat transfer by Convection.",
-                state: "Define Fusion and Solidification. Draw a rough sketch of a cooling curve and point out where the temperature stays constant during solidification.",
-                circuit: "A dry cell has a rating of 12V. You connect a motor rated 12V. Explain the adaptation and how the motor will function.",
-                drawing: "Draw a circuit containing a dry cell, a closed switch, a lamp, an ammeter, and a voltmeter measuring the voltage across the dry cell."
-            },
-            "C": {
-                heat: "Explain the difference between Heat and Temperature. Give an example of heat transfer by Radiation.",
-                state: "What is the physical difference between Boiling and Evaporation? At what specific point does the temperature remain constant for pure water during heating?",
-                circuit: "A dry cell is rated 3V. A lamp is rated 12V. Explain what happens regarding adaptation and how the receiver functions.",
-                drawing: "Draw a series circuit with a dry cell, a closed switch, a lamp, and a motor. Add an ammeter, and a voltmeter measuring the voltage across the lamp."
-            }
+        const svgCurve = `
+            <svg viewBox="0 0 500 300" class="w-full max-w-lg mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner">
+                <text x="250" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Temperature vs. Time Graph</text>
+                <!-- Axes -->
+                <line x1="50" y1="250" x2="450" y2="250" stroke="#475569" stroke-width="2"/>
+                <line x1="50" y1="50" x2="50" y2="250" stroke="#475569" stroke-width="2"/>
+                <text x="250" y="280" fill="#94a3b8" font-size="12" text-anchor="middle">Time (minutes)</text>
+                <text x="20" y="150" fill="#94a3b8" font-size="12" transform="rotate(-90 20,150)" text-anchor="middle">Temperature (°C)</text>
+                <!-- Labels -->
+                <text x="30" y="255" fill="#cbd5e1" font-size="12">-10°C</text>
+                <text x="30" y="195" fill="#cbd5e1" font-size="12">0°C</text>
+                <text x="25" y="95" fill="#cbd5e1" font-size="12">100°C</text>
+                <!-- Dashed Lines -->
+                <line x1="50" y1="190" x2="450" y2="190" stroke="#334155" stroke-dasharray="4"/>
+                <line x1="50" y1="90" x2="450" y2="90" stroke="#334155" stroke-dasharray="4"/>
+                <!-- The Curve -->
+                <polyline points="50,250 100,190 200,190 300,90 400,90 450,40" fill="none" stroke="#38bdf8" stroke-width="4"/>
+                <!-- Points A,B,C,D,E,F -->
+                <circle cx="50" cy="250" r="4" fill="#f8fafc"/><text x="45" y="240" fill="#fff" font-weight="bold">A</text>
+                <circle cx="100" cy="190" r="4" fill="#f8fafc"/><text x="95" y="180" fill="#fff" font-weight="bold">B</text>
+                <circle cx="200" cy="190" r="4" fill="#f8fafc"/><text x="195" y="180" fill="#fff" font-weight="bold">C</text>
+                <circle cx="300" cy="90" r="4" fill="#f8fafc"/><text x="295" y="80" fill="#fff" font-weight="bold">D</text>
+                <circle cx="400" cy="90" r="4" fill="#f8fafc"/><text x="395" y="80" fill="#fff" font-weight="bold">E</text>
+                <circle cx="450" cy="40" r="4" fill="#f8fafc"/><text x="455" y="45" fill="#fff" font-weight="bold">F</text>
+            </svg>`;
+
+        const svgHeat = `
+            <svg viewBox="0 0 400 300" class="w-full max-w-sm mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner">
+                <text x="200" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Heat Transfer Diagram</text>
+                <!-- Fire -->
+                <path d="M180,260 Q200,200 220,260 Z" fill="#ef4444"/>
+                <path d="M190,260 Q200,220 210,260 Z" fill="#f59e0b"/>
+                <!-- Pot -->
+                <rect x="140" y="140" width="120" height="90" fill="#64748b" rx="5"/>
+                <rect x="130" y="130" width="140" height="15" fill="#475569" rx="3"/>
+                <!-- Handle -->
+                <rect x="260" y="150" width="60" height="12" fill="#334155" rx="2"/>
+                <text x="290" y="140" fill="#cbd5e1" font-size="12" text-anchor="middle">Point X</text>
+                <!-- Water Waves inside pot -->
+                <path d="M 145 160 Q 160 155 175 160 T 205 160 T 235 160 T 255 160" stroke="#38bdf8" stroke-width="2" fill="none"/>
+                <!-- Arrows -->
+                <!-- Convection -->
+                <path d="M170,210 C150,180 180,170 190,190" stroke="#f8fafc" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+                <path d="M230,210 C250,180 220,170 210,190" stroke="#f8fafc" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+                <text x="200" y="200" fill="#cbd5e1" font-size="12" text-anchor="middle">Point Y</text>
+                <!-- Radiation -->
+                <line x1="230" y1="250" x2="280" y2="230" stroke="#ef4444" stroke-width="2" stroke-dasharray="4"/>
+                <text x="270" y="250" fill="#cbd5e1" font-size="12">Point Z</text>
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#f8fafc" />
+                    </marker>
+                </defs>
+            </svg>`;
+
+        const svgCircuit = `
+            <svg viewBox="0 0 500 300" class="w-full max-w-lg mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner">
+                <text x="250" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Electric Circuit Diagram</text>
+                <!-- Wires -->
+                <polyline points="100,200 100,100 200,100" fill="none" stroke="#f8fafc" stroke-width="3"/>
+                <polyline points="260,100 400,100 400,200 340,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
+                <polyline points="260,200 160,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
+                
+                <!-- Battery G -->
+                <line x1="160" y1="180" x2="160" y2="220" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="180" y1="190" x2="180" y2="210" stroke="#f8fafc" stroke-width="6"/>
+                <polyline points="180,200 200,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
+                <text x="150" y="170" fill="#cbd5e1" font-size="14">+</text>
+                <text x="180" y="170" fill="#cbd5e1" font-size="14">-</text>
+                <text x="170" y="240" fill="#f59e0b" font-weight="bold" font-size="14" text-anchor="middle">G (9V)</text>
+                
+                <!-- Switch K -->
+                <circle cx="200" cy="100" r="4" fill="#f8fafc"/>
+                <circle cx="260" cy="100" r="4" fill="#f8fafc"/>
+                <line x1="200" y1="100" x2="250" y2="80" stroke="#f8fafc" stroke-width="3"/> <!-- Open switch -->
+                <text x="230" y="70" fill="#cbd5e1" font-size="14" text-anchor="middle">K</text>
+                
+                <!-- Lamp L1 -->
+                <circle cx="300" cy="200" r="20" fill="none" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="285" y1="185" x2="315" y2="215" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="285" y1="215" x2="315" y2="185" stroke="#f8fafc" stroke-width="3"/>
+                <text x="300" y="240" fill="#38bdf8" font-weight="bold" font-size="14" text-anchor="middle">L (4.5V)</text>
+
+                <!-- Voltmeter V -->
+                <polyline points="260,200 260,150 280,150" fill="none" stroke="#f8fafc" stroke-width="2"/>
+                <polyline points="320,150 340,150 340,200" fill="none" stroke="#f8fafc" stroke-width="2"/>
+                <circle cx="300" cy="150" r="16" fill="#1e293b" stroke="#f8fafc" stroke-width="2"/>
+                <text x="300" y="155" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">V</text>
+                <text x="325" y="145" fill="#cbd5e1" font-size="10">COM</text>
+            </svg>`;
+
+        // ==========================================
+        // EXAM CONTENT (15 MCQs per version)
+        // ==========================================
+        // We structure questions logically mapped to the 3 visual sections.
+        const examDatabase = {
+            "A": [
+                // Section 1: Change of State (Graph)
+                { id: "q1", visual: "curve", title: "Part I: Change of State", text: "Looking at the Temperature vs. Time graph, what physical state is the substance in between points B and C?", options: ["Solid only", "Liquid only", "A mixture of Solid and Liquid", "Gas only"], correct: 2 },
+                { id: "q2", visual: "curve", text: "At what specific temperature does this substance boil (vaporize)?", options: ["-10°C", "0°C", "100°C", "It is not shown"], correct: 2 },
+                { id: "q3", visual: "curve", text: "During the segment D to E, heat energy is constantly being added. Why does the temperature remain constant?", options: ["The heat is lost to the environment", "The heat energy is used to break intermolecular bonds to change the state", "The thermometer is broken", "Boiling doesn't require heat"], correct: 1 },
+                { id: "q4", visual: "curve", text: "What process is represented by the segment A to B?", options: ["Heating a solid", "Melting", "Heating a liquid", "Condensation"], correct: 0 },
+                { id: "q5", visual: "curve", text: "What is the primary difference between boiling (at D-E) and evaporation?", options: ["Evaporation only happens at 100°C", "Boiling happens only at the surface, evaporation throughout the liquid", "Boiling occurs throughout the liquid at a specific temperature; evaporation occurs only at the surface at any temperature", "There is no difference"], correct: 2 },
+                
+                // Section 2: Heat Transfer
+                { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "At Point X (the pot handle), thermal energy is transferred primarily through which mechanism?", options: ["Conduction", "Convection", "Radiation", "Vaporization"], correct: 0 },
+                { id: "q7", visual: "heat", text: "The arrows at Point Y represent the movement of water. What is this method of heat transfer called?", options: ["Conduction", "Convection", "Radiation", "Insulation"], correct: 1 },
+                { id: "q8", visual: "heat", text: "How does heat from the fire reach Point Z (the space next to the fire) without direct contact?", options: ["Conduction", "Convection", "Radiation", "Evaporation"], correct: 2 },
+                { id: "q9", visual: "heat", text: "Which statement best describes the relationship between Heat and Temperature in this diagram?", options: ["They are the exact same thing", "Temperature is energy; Heat is a measure of speed", "Heat is the thermal energy transferred; Temperature measures the average kinetic energy of the particles", "Heat is measured in Celsius, Temperature in Joules"], correct: 2 },
+                { id: "q10", visual: "heat", text: "If the pot is made of aluminum, it is considered a good thermal...", options: ["Insulator", "Conductor", "Radiator", "Convector"], correct: 1 },
+
+                // Section 3: Circuits
+                { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "In the Electric Circuit diagram, what is the state of Switch K?", options: ["Closed, current is flowing", "Closed, no current is flowing", "Open, current is flowing", "Open, no current is flowing"], correct: 3 },
+                { id: "q12", visual: "circuit", text: "How is the Voltmeter (V) connected relative to the Lamp (L)?", options: ["In Series", "In Parallel", "It is not connected", "In short circuit"], correct: 1 },
+                { id: "q13", visual: "circuit", text: "Notice the COM terminal of the voltmeter. To which pole of the battery (G) is it correctly oriented?", options: ["The positive pole (+)", "The negative pole (-)", "Both poles", "Neither pole"], correct: 1 },
+                { id: "q14", visual: "circuit", text: "The dry cell (G) is rated 9V, but the lamp (L) is rated 4.5V. Which term best describes this situation?", options: ["Normal Adaptation", "Under-voltage (Under-adaptation)", "Over-voltage (Over-adaptation)", "Short Circuit"], correct: 2 },
+                { id: "q15", visual: "circuit", text: "Because of the adaptation state in the previous question, what is most likely to happen when the switch is closed?", options: ["The lamp will glow normally", "The lamp will glow dimly", "The lamp will glow very brightly and likely burn out", "The battery will explode instantly"], correct: 2 }
+            ],
+            // For token efficiency in this code, B and C share the visual structure but have slightly altered questions/correct answers.
+            "B": [
+                 { id: "q1", visual: "curve", title: "Part I: Change of State", text: "On the Temperature-Time graph, segment C to D represents:", options: ["Melting", "Heating a liquid", "Boiling", "Heating a gas"], correct: 1 },
+                 { id: "q2", visual: "curve", text: "The plateau at 0°C (B to C) represents which physical process?", options: ["Fusion (Melting)", "Solidification", "Vaporization", "Condensation"], correct: 0 },
+                 { id: "q3", visual: "curve", text: "During boiling (D to E), the temperature is 100°C. What states of matter are present in the beaker?", options: ["Liquid only", "Gas only", "Both Liquid and Gas", "Solid and Liquid"], correct: 2 },
+                 { id: "q4", visual: "curve", text: "If we reversed this process (cooling), the plateau at 100°C would represent:", options: ["Boiling", "Condensation", "Melting", "Freezing"], correct: 1 },
+                 { id: "q5", visual: "curve", text: "Which requires heat absorption from the surroundings?", options: ["Condensation", "Solidification", "Evaporation", "Freezing"], correct: 2 },
+                 
+                 { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "Thermal conduction at Point X occurs best in which state of matter?", options: ["Solids", "Liquids", "Gases", "Vacuum"], correct: 0 },
+                 { id: "q7", visual: "heat", text: "Convection currents at Point Y are caused by differences in:", options: ["Color", "Density", "Voltage", "Mass"], correct: 1 },
+                 { id: "q8", visual: "heat", text: "Radiation at Point Z can travel through a vacuum. True or False?", options: ["True", "False", "Only in water", "Only in air"], correct: 0 },
+                 { id: "q9", visual: "heat", text: "What is the SI unit for Heat Energy?", options: ["Celsius", "Fahrenheit", "Joule", "Volt"], correct: 2 },
+                 { id: "q10", visual: "heat", text: "A plastic handle on the pot would prevent burns because plastic is a:", options: ["Thermal Conductor", "Thermal Insulator", "Convector", "Radiator"], correct: 1 },
+
+                 { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "If Switch K is closed, what happens to the circuit?", options: ["It becomes an open circuit", "It becomes a closed circuit and current flows", "The battery dies instantly", "Nothing happens"], correct: 1 },
+                 { id: "q12", visual: "circuit", text: "What is the function of the Voltmeter (V)?", options: ["Measure current", "Measure electric resistance", "Measure voltage (potential difference)", "Provide energy"], correct: 2 },
+                 { id: "q13", visual: "circuit", text: "If you wanted to measure the main current in this circuit, what device would you add, and how?", options: ["Voltmeter in series", "Ammeter in parallel", "Ammeter in series", "Voltmeter in parallel"], correct: 2 },
+                 { id: "q14", visual: "circuit", text: "If the lamp (L) was rated 12V instead of 4.5V, what would be the adaptation with the 9V battery?", options: ["Over-adaptation", "Under-adaptation", "Normal adaptation", "Short circuit"], correct: 1 },
+                 { id: "q15", visual: "circuit", text: "Under adaptation (12V lamp on 9V battery) causes the lamp to:", options: ["Burn out", "Glow dimly", "Glow normally", "Flash repeatedly"], correct: 1 }
+            ],
+            "C": [
+                 { id: "q1", visual: "curve", title: "Part I: Change of State", text: "At point E on the graph, vaporization is complete. What state is the substance in?", options: ["Solid", "Liquid", "Gas", "Plasma"], correct: 2 },
+                 { id: "q2", visual: "curve", text: "What is the melting point of the substance shown in the graph?", options: ["-10°C", "0°C", "100°C", "110°C"], correct: 1 },
+                 { id: "q3", visual: "curve", text: "During the phase change from Liquid to Gas (D to E), the kinetic energy of the molecules:", options: ["Increases", "Decreases", "Remains constant (energy goes to breaking bonds)", "Drops to zero"], correct: 2 },
+                 { id: "q4", visual: "curve", text: "The physical difference between evaporation and boiling is that boiling:", options: ["Happens only at the surface", "Happens at any temperature", "Happens throughout the liquid at a specific temperature", "Releases heat"], correct: 2 },
+                 { id: "q5", visual: "curve", text: "A plateau on a heating curve always indicates:", options: ["A broken thermometer", "A change of state", "Cooling", "Maximum temperature reached"], correct: 1 },
+                 
+                 { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "Which mechanism transfers heat through direct particle collisions (like in the pot's metal bottom)?", options: ["Conduction", "Convection", "Radiation", "Insulation"], correct: 0 },
+                 { id: "q7", visual: "heat", text: "As water heats at the bottom of the pot, it expands, becomes less dense, and rises. This is:", options: ["Conduction", "Radiation", "Convection", "Sublimation"], correct: 2 },
+                 { id: "q8", visual: "heat", text: "Heat from the sun reaches Earth via the same mechanism shown at Point Z. What is it?", options: ["Conduction", "Convection", "Radiation", "Friction"], correct: 2 },
+                 { id: "q9", visual: "heat", text: "Temperature is a measure of:", options: ["Total thermal energy", "Average kinetic energy of particles", "Mass of the object", "Volume of the object"], correct: 1 },
+                 { id: "q10", visual: "heat", text: "Wood is often used for pot handles. Why?", options: ["It is a good conductor", "It is a good insulator", "It radiates heat well", "It melts easily"], correct: 1 },
+
+                 { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "What symbol represents the dry cell (G)?", options: ["A circle with an X", "Two parallel lines of equal length", "Two parallel lines of unequal length (one long, one short)", "A circle with a V"], correct: 2 },
+                 { id: "q12", visual: "circuit", text: "The COM terminal of a measurement device must always be connected towards the:", options: ["Positive pole", "Negative pole", "Switch", "Lamp"], correct: 1 },
+                 { id: "q13", visual: "circuit", text: "If the switch (K) is closed, what will the Voltmeter (V) read roughly?", options: ["0 V", "4.5 V", "9 V (since it measures the voltage across the lamp receiving power)", "12 V"], correct: 2 },
+                 { id: "q14", visual: "circuit", text: "The 9V battery providing power to a 4.5V lamp is a state of over-voltage. What is the risk?", options: ["No risk", "The battery will drain slowly", "The lamp filament will break (burn out)", "The switch will melt"], correct: 2 },
+                 { id: "q15", visual: "circuit", text: "To protect the 4.5V lamp from the 9V battery, you could add:", options: ["A motor in series", "A switch in parallel", "Another 9V battery", "Nothing, it's fine"], correct: 0 }
+            ]
+        };
+
+        const drawingPrompts = {
+            "A": "Draw a circuit containing a dry cell, an open switch, a motor, an ammeter measuring the main current, and a voltmeter measuring the voltage across the motor.",
+            "B": "Draw a circuit containing a dry cell, a closed switch, a lamp, an ammeter, and a voltmeter measuring the voltage across the dry cell.",
+            "C": "Draw a series circuit with a dry cell, a closed switch, a lamp, and a motor. Add an ammeter, and a voltmeter measuring the voltage across the lamp."
         };
 
         // ==========================================
-        // STATE MANAGEMENT & SECURITY
+        // STATE MANAGEMENT & LOGIC
         // ==========================================
         let currentStudent = "";
         let currentVersion = "A";
         let violations = 0;
         let base64Image = null;
         let heartbeatInterval;
+        let currentQuestions = [];
 
-        // Check if teacher mode is requested via URL
+        // Check for Teacher Mode
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.has('teacher')) {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('teacherDashboard').style.display = 'block';
             pollTeacherData();
-            setInterval(pollTeacherData, 10000); // Auto-refresh teacher dashboard every 10s
+            setInterval(pollTeacherData, 10000);
         }
 
         function startExam() {
             const select = document.getElementById('studentSelect');
-            if(!select.value) { alert("Please select your name."); return; }
+            if(!select.value) { alert("الرجاء اختيار اسمك."); return; }
             currentStudent = select.value;
             
-            // Assign version based on name length modulo 3 (random but consistent)
+            // Assign version
             const vIndex = currentStudent.length % 3;
             currentVersion = ["A", "B", "C"][vIndex];
+            currentQuestions = examDatabase[currentVersion];
 
-            // Request Fullscreen (Crucial for security)
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen denied"));
             }
 
-            // Build UI
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('examScreen').classList.remove('hidden');
             document.getElementById('displayName').innerText = currentStudent;
             document.getElementById('displayVersion').innerText = currentVersion;
+            document.getElementById('drawingPrompt').innerText = drawingPrompts[currentVersion];
 
-            renderQuestions(examVersions[currentVersion]);
-            document.getElementById('drawingPrompt').innerText = examVersions[currentVersion].drawing;
-
-            // Start Anti-Cheat Monitors
+            renderExam();
             startSecurityMonitors();
-            
-            // Start Polling Backend
             startHeartbeat();
         }
 
-        function renderQuestions(versionData) {
+        function renderExam() {
             const container = document.getElementById('questionsContainer');
-            container.innerHTML = `
-                <div class="glass-panel p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-amber-400 mb-2">Part 1: Transfer of Heat</h3>
-                    <p class="text-slate-200 mb-3 text-sm">${versionData.heat}</p>
-                    <textarea id="ans_heat" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-amber-500" placeholder="Type your answer here..."></textarea>
-                </div>
-                <div class="glass-panel p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-emerald-400 mb-2">Part 2: Change of State</h3>
-                    <p class="text-slate-200 mb-3 text-sm">${versionData.state}</p>
-                    <textarea id="ans_state" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-emerald-500" placeholder="Type your answer here..."></textarea>
-                </div>
-                <div class="glass-panel p-6 rounded-xl">
-                    <h3 class="text-xl font-bold text-blue-400 mb-2">Part 3: Electric Circuit Adaptation</h3>
-                    <p class="text-slate-200 mb-3 text-sm">${versionData.circuit}</p>
-                    <textarea id="ans_circuit" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-blue-500" placeholder="Type your answer here..."></textarea>
-                </div>
-            `;
+            container.innerHTML = "";
+
+            let currentVisual = "";
+            let html = "";
+
+            currentQuestions.forEach((q, index) => {
+                // Insert Visual Header if it changes
+                if (q.visual !== currentVisual) {
+                    if (html !== "") html += `</div>`; // Close previous panel
+                    currentVisual = q.visual;
+                    html += `<div class="glass-panel p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-sky-500">`;
+                    if (q.title) html += `<h3 class="text-2xl font-bold text-amber-400 mb-6 border-b border-slate-700 pb-2">${q.title}</h3>`;
+                    
+                    if (currentVisual === "curve") html += svgCurve;
+                    if (currentVisual === "heat") html += svgHeat;
+                    if (currentVisual === "circuit") html += svgCircuit;
+                }
+
+                // Insert Question
+                html += `
+                    <div class="mb-8 bg-slate-800/30 p-5 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
+                        <p class="text-white font-semibold text-lg mb-4"><span class="text-sky-400 mr-2">${index + 1}.</span> ${q.text}</p>
+                        <div class="space-y-3 pl-2 md:pl-6">
+                `;
+                
+                q.options.forEach((opt, optIndex) => {
+                    html += `
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <div class="relative flex items-center justify-center">
+                                <input type="radio" name="${q.id}" value="${optIndex}" class="peer hidden radio-custom">
+                                <div class="w-5 h-5 rounded-full border-2 border-slate-500 peer-checked:bg-sky-500 peer-checked:border-sky-500 group-hover:border-sky-400 transition-all"></div>
+                            </div>
+                            <span class="text-slate-300 group-hover:text-white transition-colors text-base">${opt}</span>
+                        </label>
+                    `;
+                });
+                
+                html += `</div></div>`;
+            });
+            html += `</div>`; // Close last panel
+            container.innerHTML = html;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                base64Image = reader.result;
+                document.getElementById('uploadStatus').classList.remove('hidden');
+                document.getElementById('cameraInput').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
+            }
+            reader.readAsDataURL(file); 
         }
 
         // ==========================================
-        // SECURITY / ANTI-CHEAT LOGIC
+        // GRADING & SUBMISSION
+        // ==========================================
+        function calculateMCQScore() {
+            let score = 0;
+            currentQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+            return score;
+        }
+
+        function submitExam() {
+            // Validate all answered
+            let unanswered = 0;
+            currentQuestions.forEach(q => {
+                if (!document.querySelector(`input[name="${q.id}"]:checked`)) unanswered++;
+            });
+            
+            if (unanswered > 0) {
+                if(!confirm(`You have ${unanswered} unanswered MCQs. Are you sure you want to submit?`)) return;
+            } else {
+                if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+            }
+
+            const finalScore = calculateMCQScore();
+
+            const payload = {
+                action: "submit",
+                studentName: currentStudent,
+                version: currentVersion,
+                mcqScore: finalScore,
+                violations: violations,
+                imageFile: base64Image
+            };
+
+            document.body.innerHTML = '<div class="h-screen flex items-center justify-center flex-col bg-slate-900"><div class="w-16 h-16 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-4"></div><h1 class="text-2xl text-sky-400 font-bold">Encrypting & Submitting...</h1></div>';
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                clearInterval(heartbeatInterval);
+                document.body.innerHTML = `
+                    <div class="h-screen flex flex-col items-center justify-center bg-slate-900 text-center p-6">
+                        <div class="bg-emerald-500/20 p-6 rounded-full mb-6 border border-emerald-500/50">
+                            <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <h1 class="text-4xl text-white font-black mb-4">Exam Submitted Successfully</h1>
+                        <p class="text-xl text-slate-400 mb-8">Part I-III Score: <span class="text-emerald-400 font-bold">${finalScore} / 15</span></p>
+                        <p class="text-sm text-slate-500 max-w-md">Your drawing will be manually graded out of 5 by your instructor. You may now close this browser tab safely.</p>
+                    </div>`;
+            }).catch(err => {
+                alert("Network Error. Do not close the window. Raise your hand for the teacher.");
+            });
+        }
+
+        // ==========================================
+        // SECURITY / HEARTBEAT / DASHBOARD
         // ==========================================
         function startSecurityMonitors() {
-            // Detect Tab Switch / Window Blur
             window.addEventListener('blur', triggerViolation);
-            document.addEventListener('visibilitychange', () => {
-                if(document.hidden) triggerViolation();
-            });
-
-            // Prevent Copy/Paste/Print Keyboard Shortcuts
+            document.addEventListener('visibilitychange', () => { if(document.hidden) triggerViolation(); });
             document.addEventListener('keydown', (e) => {
-                if(e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'p' || e.key === 's')) {
+                if(e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'p' || e.key === 's') || e.key === 'PrintScreen') {
                     e.preventDefault();
-                    triggerViolation();
-                }
-                // Attempt to block print screen
-                if(e.key === 'PrintScreen') {
                     triggerViolation();
                 }
             });
@@ -265,97 +521,31 @@
         function triggerViolation() {
             violations++;
             document.getElementById('cheatOverlay').style.display = 'flex';
-            // Send immediate violation ping to server
             sendHeartbeat();
         }
 
         function returnToExam() {
             document.getElementById('cheatOverlay').style.display = 'none';
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => {});
-            }
+            if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(e => {});
         }
 
-        // ==========================================
-        // FILE UPLOAD (DRAWING)
-        // ==========================================
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                base64Image = reader.result;
-                document.getElementById('uploadStatus').classList.remove('hidden');
-            }
-            // Compress slightly by drawing to canvas if needed, but direct base64 is fine for small files.
-            reader.readAsDataURL(file); 
-        }
-
-        // ==========================================
-        // NETWORK / COMMUNICATION LOGIC
-        // ==========================================
         function startHeartbeat() {
-            // Poll every 8 seconds to prevent overwhelming Google Quotas
             heartbeatInterval = setInterval(sendHeartbeat, 8000);
             sendHeartbeat();
         }
 
         function sendHeartbeat() {
-            if(APPS_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") return; // Prevent errors if url not set
-            
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // necessary for some GAS setups, though we can't read response easily. Using standard post.
-                headers: { 'Content-Type': 'text/plain' }, // Using text/plain avoids CORS preflight
-                body: JSON.stringify({
-                    action: "heartbeat",
-                    studentName: currentStudent,
-                    violations: violations
-                })
-            }).then(response => response.json()).then(data => {
-                if(data.status === "BLOCKED") {
-                    document.getElementById('blockedOverlay').classList.remove('hidden');
-                } else {
-                    document.getElementById('blockedOverlay').classList.add('hidden');
-                }
-            }).catch(e => console.log("Network restricted mode"));
-        }
-
-        function submitExam() {
-            if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
-
-            const payload = {
-                action: "submit",
-                studentName: currentStudent,
-                version: currentVersion,
-                violations: violations,
-                imageFile: base64Image,
-                answers: {
-                    heat: document.getElementById('ans_heat').value,
-                    state: document.getElementById('ans_state').value,
-                    circuit: document.getElementById('ans_circuit').value
-                }
-            };
-
-            document.body.innerHTML = '<div class="h-screen flex items-center justify-center"><h1 class="text-3xl text-emerald-400 font-bold animate-pulse">Submitting Securely... Please wait.</h1></div>';
-
+            if(APPS_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") return;
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                clearInterval(heartbeatInterval);
-                document.body.innerHTML = '<div class="h-screen flex items-center justify-center flex-col"><h1 class="text-4xl text-sky-400 font-bold mb-4">Exam Submitted Successfully!</h1><p class="text-slate-400">You may now close this window.</p></div>';
-            }).catch(err => {
-                alert("Submission failed. Please raise your hand for the teacher.");
-                console.error(err);
-            });
+                body: JSON.stringify({ action: "heartbeat", studentName: currentStudent, violations: violations })
+            }).then(res => res.json()).then(data => {
+                if(data.status === "BLOCKED") document.getElementById('blockedOverlay').classList.remove('hidden');
+                else document.getElementById('blockedOverlay').classList.add('hidden');
+            }).catch(e => {});
         }
 
-        // ==========================================
-        // TEACHER DASHBOARD LOGIC
-        // ==========================================
         function pollTeacherData() {
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
@@ -364,30 +554,32 @@
             }).then(res => res.json()).then(res => {
                 const tbody = document.getElementById('rosterTableBody');
                 tbody.innerHTML = '';
-                
-                // Group properties by student
                 const students = {};
+                
                 for(let key in res.data) {
-                    if(key.includes('_lastSeen') || key.includes('_violations')) continue;
-                    let name = key;
-                    students[name] = {
-                        status: res.data[name],
-                        violations: res.data[name + "_violations"] || 0,
+                    if(key.includes('_')) continue; 
+                    students[key] = {
+                        status: res.data[key],
+                        violations: res.data[key + "_violations"] || 0,
+                        score: res.data[key + "_score"] || "Pending"
                     };
                 }
 
                 for(let name in students) {
                     let s = students[name];
-                    let statusColor = s.status === "ACTIVE" ? "text-emerald-400" : (s.status === "BLOCKED" ? "text-red-500" : "text-sky-400");
+                    let statusColor = s.status === "ACTIVE" ? "text-emerald-400 font-bold" : (s.status === "SUBMITTED" ? "text-sky-400 font-bold" : "text-red-500 font-bold");
                     
                     tbody.innerHTML += `
-                        <tr class="hover:bg-slate-800/50 transition-colors">
-                            <td class="p-3 font-medium text-white">${name}</td>
-                            <td class="p-3 font-bold ${statusColor}">${s.status}</td>
-                            <td class="p-3 ${s.violations > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${s.violations}</td>
-                            <td class="p-3 space-x-2">
-                                <button onclick="setStudentState('${name}', 'BLOCKED')" class="bg-red-900/50 text-red-400 border border-red-800 px-3 py-1 rounded text-xs hover:bg-red-800 transition-colors">Lock</button>
-                                <button onclick="setStudentState('${name}', 'ACTIVE')" class="bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-3 py-1 rounded text-xs hover:bg-emerald-800 transition-colors">Release</button>
+                        <tr class="hover:bg-slate-800 transition-colors border-b border-slate-700/50">
+                            <td class="p-4 font-medium text-white">${name}</td>
+                            <td class="p-4 ${statusColor}">${s.status}</td>
+                            <td class="p-4 text-sky-300 font-mono text-lg">${s.score}</td>
+                            <td class="p-4 ${s.violations > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${s.violations}</td>
+                            <td class="p-4 space-x-2">
+                                ${s.status !== "SUBMITTED" ? `
+                                <button onclick="setStudentState('${name}', 'BLOCKED')" class="bg-red-900/50 text-red-400 border border-red-800 px-4 py-1.5 rounded-md text-xs hover:bg-red-800 hover:text-white transition-colors">Lock Tab</button>
+                                <button onclick="setStudentState('${name}', 'ACTIVE')" class="bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-4 py-1.5 rounded-md text-xs hover:bg-emerald-800 hover:text-white transition-colors">Release</button>
+                                ` : '<span class="text-xs text-slate-500">Exam Finished</span>'}
                             </td>
                         </tr>
                     `;
