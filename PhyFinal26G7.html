@@ -16,7 +16,6 @@
 </head>
 <body class="min-h-screen" oncontextmenu="return false;">
 
-    <!-- CHEAT WARNING OVERLAY -->
     <div id="cheatOverlay">
         <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
         <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
@@ -24,7 +23,6 @@
         <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100">Acknowledge & Return to Exam</button>
     </div>
 
-    <!-- BLOCKED OVERLAY -->
     <div id="blockedOverlay" class="hidden fixed inset-0 bg-slate-900 z-[10000] flex flex-col justify-center items-center">
         <h1 class="text-5xl font-bold text-red-500 mb-4">Exam Locked</h1>
         <p class="text-xl text-slate-300">Your exam has been paused by the instructor. Please raise your hand.</p>
@@ -32,7 +30,6 @@
 
     <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
         
-        <!-- LOGIN SCREEN -->
         <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
             <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 7D</h2>
             <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
@@ -85,7 +82,6 @@
             <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
         </div>
 
-        <!-- EXAM SCREEN -->
         <div id="examScreen" class="hidden space-y-6 pb-12">
             <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
                 <div class="mb-2 md:mb-0">
@@ -103,10 +99,8 @@
             </header>
 
             <div id="questionsContainer" class="space-y-8">
-                <!-- Dynamically Injected Visual Sections & MCQs -->
-            </div>
+                </div>
 
-            <!-- Drawing Section (Always at the end) -->
             <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">IV</div>
@@ -144,7 +138,6 @@
             </button>
         </div>
 
-        <!-- TEACHER DASHBOARD -->
         <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
             <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
                 <h2 class="text-3xl font-black text-amber-400 tracking-wider">Grade 7D Control Panel</h2>
@@ -162,8 +155,7 @@
                         </tr>
                     </thead>
                     <tbody id="rosterTableBody" class="divide-y divide-slate-700 bg-slate-900/50">
-                        <!-- Dynamic Rows -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
@@ -176,26 +168,21 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmaHcBA7BBpA0VMjBRhb9LUES3e55YzC-aiCgpNi8aM5N_cpFTiW1Ei1pVIKL3P52CFw/exec"; 
 
         // ==========================================
-        // SVG VISUALS (EMBEDDED)
+        // CORRECTED SVG VISUALS
         // ==========================================
         const svgCurve = `
             <svg viewBox="0 0 500 300" class="w-full max-w-lg mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner">
                 <text x="250" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Temperature vs. Time Graph</text>
-                <!-- Axes -->
                 <line x1="50" y1="250" x2="450" y2="250" stroke="#475569" stroke-width="2"/>
                 <line x1="50" y1="50" x2="50" y2="250" stroke="#475569" stroke-width="2"/>
                 <text x="250" y="280" fill="#94a3b8" font-size="12" text-anchor="middle">Time (minutes)</text>
                 <text x="20" y="150" fill="#94a3b8" font-size="12" transform="rotate(-90 20,150)" text-anchor="middle">Temperature (°C)</text>
-                <!-- Labels -->
                 <text x="30" y="255" fill="#cbd5e1" font-size="12">-10°C</text>
                 <text x="30" y="195" fill="#cbd5e1" font-size="12">0°C</text>
                 <text x="25" y="95" fill="#cbd5e1" font-size="12">100°C</text>
-                <!-- Dashed Lines -->
                 <line x1="50" y1="190" x2="450" y2="190" stroke="#334155" stroke-dasharray="4"/>
                 <line x1="50" y1="90" x2="450" y2="90" stroke="#334155" stroke-dasharray="4"/>
-                <!-- The Curve -->
                 <polyline points="50,250 100,190 200,190 300,90 400,90 450,40" fill="none" stroke="#38bdf8" stroke-width="4"/>
-                <!-- Points A,B,C,D,E,F -->
                 <circle cx="50" cy="250" r="4" fill="#f8fafc"/><text x="45" y="240" fill="#fff" font-weight="bold">A</text>
                 <circle cx="100" cy="190" r="4" fill="#f8fafc"/><text x="95" y="180" fill="#fff" font-weight="bold">B</text>
                 <circle cx="200" cy="190" r="4" fill="#f8fafc"/><text x="195" y="180" fill="#fff" font-weight="bold">C</text>
@@ -207,23 +194,16 @@
         const svgHeat = `
             <svg viewBox="0 0 400 300" class="w-full max-w-sm mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner">
                 <text x="200" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Heat Transfer Diagram</text>
-                <!-- Fire -->
                 <path d="M180,260 Q200,200 220,260 Z" fill="#ef4444"/>
                 <path d="M190,260 Q200,220 210,260 Z" fill="#f59e0b"/>
-                <!-- Pot -->
                 <rect x="140" y="140" width="120" height="90" fill="#64748b" rx="5"/>
                 <rect x="130" y="130" width="140" height="15" fill="#475569" rx="3"/>
-                <!-- Handle -->
                 <rect x="260" y="150" width="60" height="12" fill="#334155" rx="2"/>
                 <text x="290" y="140" fill="#cbd5e1" font-size="12" text-anchor="middle">Point X</text>
-                <!-- Water Waves inside pot -->
                 <path d="M 145 160 Q 160 155 175 160 T 205 160 T 235 160 T 255 160" stroke="#38bdf8" stroke-width="2" fill="none"/>
-                <!-- Arrows -->
-                <!-- Convection -->
                 <path d="M170,210 C150,180 180,170 190,190" stroke="#f8fafc" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
                 <path d="M230,210 C250,180 220,170 210,190" stroke="#f8fafc" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
                 <text x="200" y="200" fill="#cbd5e1" font-size="12" text-anchor="middle">Point Y</text>
-                <!-- Radiation -->
                 <line x1="230" y1="250" x2="280" y2="230" stroke="#ef4444" stroke-width="2" stroke-dasharray="4"/>
                 <text x="270" y="250" fill="#cbd5e1" font-size="12">Point Z</text>
                 <defs>
@@ -233,70 +213,64 @@
                 </defs>
             </svg>`;
 
+        // ENTIRELY REWRITTEN AND FIXED CIRCUIT DIAGRAM
         const svgCircuit = `
             <svg viewBox="0 0 500 300" class="w-full max-w-lg mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner">
                 <text x="250" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Electric Circuit Diagram</text>
-                <!-- Wires -->
-                <polyline points="100,200 100,100 200,100" fill="none" stroke="#f8fafc" stroke-width="3"/>
-                <polyline points="260,100 400,100 400,200 340,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
-                <polyline points="260,200 160,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
-                
-                <!-- Battery G -->
-                <line x1="160" y1="180" x2="160" y2="220" stroke="#f8fafc" stroke-width="3"/>
-                <line x1="180" y1="190" x2="180" y2="210" stroke="#f8fafc" stroke-width="6"/>
-                <polyline points="180,200 200,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
-                <text x="150" y="170" fill="#cbd5e1" font-size="14">+</text>
-                <text x="180" y="170" fill="#cbd5e1" font-size="14">-</text>
-                <text x="170" y="240" fill="#f59e0b" font-weight="bold" font-size="14" text-anchor="middle">G (9V)</text>
-                
-                <!-- Switch K -->
+
+                <polyline points="200,100 100,100 100,200 160,200" fill="none" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="180" y1="200" x2="280" y2="200" stroke="#f8fafc" stroke-width="3"/>
+                <polyline points="320,200 400,200 400,100 260,100" fill="none" stroke="#f8fafc" stroke-width="3"/>
+
+                <line x1="160" y1="175" x2="160" y2="225" stroke="#f8fafc" stroke-width="3"/> <line x1="180" y1="190" x2="180" y2="210" stroke="#f8fafc" stroke-width="6"/> <text x="150" y="165" fill="#cbd5e1" font-size="14" font-weight="bold">+</text>
+                <text x="190" y="165" fill="#cbd5e1" font-size="14" font-weight="bold">-</text>
+                <text x="170" y="245" fill="#f59e0b" font-weight="bold" font-size="14" text-anchor="middle">G (9V)</text>
+
                 <circle cx="200" cy="100" r="4" fill="#f8fafc"/>
                 <circle cx="260" cy="100" r="4" fill="#f8fafc"/>
-                <line x1="200" y1="100" x2="250" y2="80" stroke="#f8fafc" stroke-width="3"/> <!-- Open switch -->
-                <text x="230" y="70" fill="#cbd5e1" font-size="14" text-anchor="middle">K</text>
-                
-                <!-- Lamp L1 -->
-                <circle cx="300" cy="200" r="20" fill="none" stroke="#f8fafc" stroke-width="3"/>
-                <line x1="285" y1="185" x2="315" y2="215" stroke="#f8fafc" stroke-width="3"/>
-                <line x1="285" y1="215" x2="315" y2="185" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="200" y1="100" x2="250" y2="80" stroke="#f8fafc" stroke-width="3"/>
+                <text x="230" y="70" fill="#cbd5e1" font-size="14" font-weight="bold" text-anchor="middle">K</text>
+
+                <circle cx="300" cy="200" r="20" fill="#1e293b" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="286" y1="186" x2="314" y2="214" stroke="#f8fafc" stroke-width="3"/>
+                <line x1="286" y1="214" x2="314" y2="186" stroke="#f8fafc" stroke-width="3"/>
                 <text x="300" y="240" fill="#38bdf8" font-weight="bold" font-size="14" text-anchor="middle">L (4.5V)</text>
 
-                <!-- Voltmeter V -->
-                <polyline points="260,200 260,150 280,150" fill="none" stroke="#f8fafc" stroke-width="2"/>
-                <polyline points="320,150 340,150 340,200" fill="none" stroke="#f8fafc" stroke-width="2"/>
-                <circle cx="300" cy="150" r="16" fill="#1e293b" stroke="#f8fafc" stroke-width="2"/>
-                <text x="300" y="155" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">V</text>
-                <text x="325" y="145" fill="#cbd5e1" font-size="10">COM</text>
+                <circle cx="280" cy="200" r="4" fill="#f8fafc"/>
+                <circle cx="320" cy="200" r="4" fill="#f8fafc"/>
+                
+                <polyline points="280,200 280,140 284,140" fill="none" stroke="#f8fafc" stroke-width="2"/>
+                <polyline points="320,200 320,140 316,140" fill="none" stroke="#f8fafc" stroke-width="2"/>
+                
+                <circle cx="300" cy="140" r="16" fill="#1e293b" stroke="#f8fafc" stroke-width="2"/>
+                <text x="300" y="145" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">V</text>
+                
+                <text x="260" y="135" fill="#cbd5e1" font-size="12" font-weight="bold">COM</text>
             </svg>`;
 
         // ==========================================
         // EXAM CONTENT (15 MCQs per version)
         // ==========================================
-        // We structure questions logically mapped to the 3 visual sections.
         const examDatabase = {
             "A": [
-                // Section 1: Change of State (Graph)
                 { id: "q1", visual: "curve", title: "Part I: Change of State", text: "Looking at the Temperature vs. Time graph, what physical state is the substance in between points B and C?", options: ["Solid only", "Liquid only", "A mixture of Solid and Liquid", "Gas only"], correct: 2 },
                 { id: "q2", visual: "curve", text: "At what specific temperature does this substance boil (vaporize)?", options: ["-10°C", "0°C", "100°C", "It is not shown"], correct: 2 },
                 { id: "q3", visual: "curve", text: "During the segment D to E, heat energy is constantly being added. Why does the temperature remain constant?", options: ["The heat is lost to the environment", "The heat energy is used to break intermolecular bonds to change the state", "The thermometer is broken", "Boiling doesn't require heat"], correct: 1 },
                 { id: "q4", visual: "curve", text: "What process is represented by the segment A to B?", options: ["Heating a solid", "Melting", "Heating a liquid", "Condensation"], correct: 0 },
                 { id: "q5", visual: "curve", text: "What is the primary difference between boiling (at D-E) and evaporation?", options: ["Evaporation only happens at 100°C", "Boiling happens only at the surface, evaporation throughout the liquid", "Boiling occurs throughout the liquid at a specific temperature; evaporation occurs only at the surface at any temperature", "There is no difference"], correct: 2 },
                 
-                // Section 2: Heat Transfer
                 { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "At Point X (the pot handle), thermal energy is transferred primarily through which mechanism?", options: ["Conduction", "Convection", "Radiation", "Vaporization"], correct: 0 },
                 { id: "q7", visual: "heat", text: "The arrows at Point Y represent the movement of water. What is this method of heat transfer called?", options: ["Conduction", "Convection", "Radiation", "Insulation"], correct: 1 },
                 { id: "q8", visual: "heat", text: "How does heat from the fire reach Point Z (the space next to the fire) without direct contact?", options: ["Conduction", "Convection", "Radiation", "Evaporation"], correct: 2 },
                 { id: "q9", visual: "heat", text: "Which statement best describes the relationship between Heat and Temperature in this diagram?", options: ["They are the exact same thing", "Temperature is energy; Heat is a measure of speed", "Heat is the thermal energy transferred; Temperature measures the average kinetic energy of the particles", "Heat is measured in Celsius, Temperature in Joules"], correct: 2 },
                 { id: "q10", visual: "heat", text: "If the pot is made of aluminum, it is considered a good thermal...", options: ["Insulator", "Conductor", "Radiator", "Convector"], correct: 1 },
 
-                // Section 3: Circuits
                 { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "In the Electric Circuit diagram, what is the state of Switch K?", options: ["Closed, current is flowing", "Closed, no current is flowing", "Open, current is flowing", "Open, no current is flowing"], correct: 3 },
                 { id: "q12", visual: "circuit", text: "How is the Voltmeter (V) connected relative to the Lamp (L)?", options: ["In Series", "In Parallel", "It is not connected", "In short circuit"], correct: 1 },
                 { id: "q13", visual: "circuit", text: "Notice the COM terminal of the voltmeter. To which pole of the battery (G) is it correctly oriented?", options: ["The positive pole (+)", "The negative pole (-)", "Both poles", "Neither pole"], correct: 1 },
                 { id: "q14", visual: "circuit", text: "The dry cell (G) is rated 9V, but the lamp (L) is rated 4.5V. Which term best describes this situation?", options: ["Normal Adaptation", "Under-voltage (Under-adaptation)", "Over-voltage (Over-adaptation)", "Short Circuit"], correct: 2 },
                 { id: "q15", visual: "circuit", text: "Because of the adaptation state in the previous question, what is most likely to happen when the switch is closed?", options: ["The lamp will glow normally", "The lamp will glow dimly", "The lamp will glow very brightly and likely burn out", "The battery will explode instantly"], correct: 2 }
             ],
-            // For token efficiency in this code, B and C share the visual structure but have slightly altered questions/correct answers.
             "B": [
                  { id: "q1", visual: "curve", title: "Part I: Change of State", text: "On the Temperature-Time graph, segment C to D represents:", options: ["Melting", "Heating a liquid", "Boiling", "Heating a gas"], correct: 1 },
                  { id: "q2", visual: "curve", text: "The plateau at 0°C (B to C) represents which physical process?", options: ["Fusion (Melting)", "Solidification", "Vaporization", "Condensation"], correct: 0 },
@@ -353,7 +327,6 @@
         let heartbeatInterval;
         let currentQuestions = [];
 
-        // Check for Teacher Mode
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.has('teacher')) {
             document.getElementById('loginScreen').style.display = 'none';
@@ -367,7 +340,6 @@
             if(!select.value) { alert("الرجاء اختيار اسمك."); return; }
             currentStudent = select.value;
             
-            // Assign version
             const vIndex = currentStudent.length % 3;
             currentVersion = ["A", "B", "C"][vIndex];
             currentQuestions = examDatabase[currentVersion];
@@ -395,9 +367,8 @@
             let html = "";
 
             currentQuestions.forEach((q, index) => {
-                // Insert Visual Header if it changes
                 if (q.visual !== currentVisual) {
-                    if (html !== "") html += `</div>`; // Close previous panel
+                    if (html !== "") html += `</div>`; 
                     currentVisual = q.visual;
                     html += `<div class="glass-panel p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-sky-500">`;
                     if (q.title) html += `<h3 class="text-2xl font-bold text-amber-400 mb-6 border-b border-slate-700 pb-2">${q.title}</h3>`;
@@ -407,7 +378,6 @@
                     if (currentVisual === "circuit") html += svgCircuit;
                 }
 
-                // Insert Question
                 html += `
                     <div class="mb-8 bg-slate-800/30 p-5 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
                         <p class="text-white font-semibold text-lg mb-4"><span class="text-sky-400 mr-2">${index + 1}.</span> ${q.text}</p>
@@ -428,7 +398,7 @@
                 
                 html += `</div></div>`;
             });
-            html += `</div>`; // Close last panel
+            html += `</div>`; 
             container.innerHTML = html;
         }
 
@@ -459,7 +429,6 @@
         }
 
         function submitExam() {
-            // Validate all answered
             let unanswered = 0;
             currentQuestions.forEach(q => {
                 if (!document.querySelector(`input[name="${q.id}"]:checked`)) unanswered++;
