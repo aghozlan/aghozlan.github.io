@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Final Exam - Grade 7D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; user-select: none; }
+        /* Disable text selection and copying */
+        * { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        input[type="text"], textarea { -webkit-user-select: text; user-select: text; }
+        
+        .circuit-symbol { display: inline-block; padding: 4px 10px; border: 2px solid #38bdf8; border-radius: 50%; font-weight: bold; margin: 0 4px;}
+        .glass-panel { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px); border: 1px solid #334155; }
+        
+        /* Cheat warning overlay */
+        #cheatOverlay { display: none; position: fixed; inset: 0; background: rgba(220, 38, 38, 0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    </style>
+</head>
+<body class="min-h-screen" oncontextmenu="return false;">
+
+    <div id="cheatOverlay">
+        <h1 class="text-6xl font-black text-white mb-4">⚠️ WARNING ⚠️</h1>
+        <p class="text-2xl font-bold text-white mb-2">You left the exam window or attempted a forbidden action.</p>
+        <p class="text-lg text-red-200 mb-6">This violation has been recorded and sent to the instructor.</p>
+        <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-3 rounded-lg hover:bg-gray-100">I Understand, Return to Exam</button>
+    </div>
+
+    <div id="blockedOverlay" class="hidden fixed inset-0 bg-slate-900 z-[10000] flex flex-col justify-center items-center">
+        <h1 class="text-4xl font-bold text-red-500 mb-2">Exam Locked</h1>
+        <p class="text-slate-300">Your exam has been paused by the instructor. Please raise your hand.</p>
+    </div>
+
+    <main class="max-w-4xl mx-auto p-6" id="appContainer">
+        
+        <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12">
+            <h2 class="text-3xl font-bold text-center text-sky-400 mb-6">Grade 7D - Physics Final Exam</h2>
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-400 mb-2">Select Student Name:</label>
+                <select id="studentSelect" class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500" dir="rtl">
+                    <option value="" disabled selected>-- اختر اسمك --</option>
+                    <option value="محمود كامل الخطيب">محمود كامل الخطيب</option>
+                    <option value="ليمار هاني محمد جمعه">ليمار هاني محمد جمعه</option>
+                    <option value="محمد مصطفى كمال الترك">محمد مصطفى كمال الترك</option>
+                    <option value="محمد هاشم عادل المنسي">محمد هاشم عادل المنسي</option>
+                    <option value="محمد يوسف محمد محمد">محمد يوسف محمد محمد</option>
+                    <option value="مصطفى كمال علي سعد">مصطفى كمال علي سعد</option>
+                    <option value="منى وسام عمر سلام">منى وسام عمر سلام</option>
+                    <option value="ندى علي احمد مطر">ندى علي احمد مطر</option>
+                    <option value="ولاء احمد فهد السعيد">ولاء احمد فهد السعيد</option>
+                    <option value="يوسف علاء الدين كرزون">يوسف علاء الدين كرزون</option>
+                    <option value="يوسف علاء جهاد شحادة">يوسف علاء جهاد شحادة</option>
+                </select>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-lg mb-6 border-l-4 border-amber-500 text-sm text-slate-300">
+                <strong>Instructions:</strong> Entering fullscreen mode is required. You cannot exit this tab, open other applications, or take screenshots. Any attempt to leave the page will flag your exam for review.
+            </div>
+            <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl transition-all">Begin Exam</button>
+        </div>
+
+        <div id="examScreen" class="hidden space-y-6">
+            <header class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div>
+                    <span class="text-sky-400 font-bold" id="displayName">Student Name</span>
+                    <span class="ml-4 text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">Version <span id="displayVersion"></span></span>
+                </div>
+                <div class="text-sm font-mono text-emerald-400 bg-emerald-900/30 px-3 py-1 rounded-full border border-emerald-800">
+                    🟢 Live Monitoring Active
+                </div>
+            </header>
+
+            <div id="questionsContainer" class="space-y-6"></div>
+
+            <div class="glass-panel p-6 rounded-xl">
+                <h3 class="text-xl font-bold text-white mb-3">Part 4: Circuit Drawing (Lebanese Curriculum Standards)</h3>
+                <p class="text-sm text-slate-300 mb-4">On a clean piece of paper, draw the following circuit using conventional symbols:</p>
+                <div class="bg-slate-800 p-4 rounded-lg text-sky-200 mb-4 font-medium" id="drawingPrompt"></div>
+                <ul class="text-xs text-slate-400 list-disc pl-5 mb-4 space-y-1">
+                    <li>Motor: Circle with 'M'</li>
+                    <li>Voltmeter: Circle with 'V' connected in parallel</li>
+                    <li>Ammeter: Circle with 'A' connected in series</li>
+                    <li>Indicate the COM terminal on the negative side.</li>
+                </ul>
+                <div class="border-2 border-dashed border-slate-600 rounded-xl p-6 text-center">
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)">
+                    <button onclick="document.getElementById('cameraInput').click()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-lg font-bold transition-all w-full md:w-auto">
+                        📸 Open Camera & Take Photo of Drawing
+                    </button>
+                    <p id="uploadStatus" class="mt-3 text-emerald-400 font-bold hidden">✓ Image Attached Successfully!</p>
+                </div>
+            </div>
+
+            <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-lg py-4 rounded-xl transition-all shadow-lg shadow-emerald-900/50">
+                SUBMIT FINAL EXAM
+            </button>
+        </div>
+
+        <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-amber-400">Control Panel</h2>
+                <button onclick="pollTeacherData()" class="bg-slate-700 px-4 py-2 rounded text-sm hover:bg-slate-600">Refresh Data</button>
+            </div>
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-800 text-slate-400">
+                    <tr>
+                        <th class="p-3 rounded-tl-lg">Student Name</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Violations</th>
+                        <th class="p-3 rounded-tr-lg">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="rosterTableBody" class="divide-y divide-slate-700">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        // 🔴 PASTE YOUR APPS SCRIPT WEB APP URL HERE:
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmaHcBA7BBpA0VMjBRhb9LUES3e55YzC-aiCgpNi8aM5N_cpFTiW1Ei1pVIKL3P52CFw/exec"; 
+        
+        // ==========================================
+        // EXAM CONTENT (3 VERSIONS)
+        // ==========================================
+        const examVersions = {
+            "A": {
+                heat: "Explain the difference between Heat and Temperature. Give an example of heat transfer by Conduction.",
+                state: "Explain why the temperature remains constant (plateau) during vaporization even though heat is continuously added. Are both liquid and gas present at this temperature?",
+                circuit: "A dry cell has a rating of 9V. You have a lamp rated 4.5V. Explain the concept of adaptation here. What will happen if you connect them?",
+                drawing: "Draw a circuit containing a dry cell, an open switch, a motor, an ammeter measuring the main current, and a voltmeter measuring the voltage across the motor."
+            },
+            "B": {
+                heat: "Explain the difference between Heat and Temperature. Give an example of heat transfer by Convection.",
+                state: "Define Fusion and Solidification. Draw a rough sketch of a cooling curve and point out where the temperature stays constant during solidification.",
+                circuit: "A dry cell has a rating of 12V. You connect a motor rated 12V. Explain the adaptation and how the motor will function.",
+                drawing: "Draw a circuit containing a dry cell, a closed switch, a lamp, an ammeter, and a voltmeter measuring the voltage across the dry cell."
+            },
+            "C": {
+                heat: "Explain the difference between Heat and Temperature. Give an example of heat transfer by Radiation.",
+                state: "What is the physical difference between Boiling and Evaporation? At what specific point does the temperature remain constant for pure water during heating?",
+                circuit: "A dry cell is rated 3V. A lamp is rated 12V. Explain what happens regarding adaptation and how the receiver functions.",
+                drawing: "Draw a series circuit with a dry cell, a closed switch, a lamp, and a motor. Add an ammeter, and a voltmeter measuring the voltage across the lamp."
+            }
+        };
+
+        // ==========================================
+        // STATE MANAGEMENT & SECURITY
+        // ==========================================
+        let currentStudent = "";
+        let currentVersion = "A";
+        let violations = 0;
+        let base64Image = null;
+        let heartbeatInterval;
+
+        // Check if teacher mode is requested via URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('teacher')) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('teacherDashboard').style.display = 'block';
+            pollTeacherData();
+            setInterval(pollTeacherData, 10000); // Auto-refresh teacher dashboard every 10s
+        }
+
+        function startExam() {
+            const select = document.getElementById('studentSelect');
+            if(!select.value) { alert("Please select your name."); return; }
+            currentStudent = select.value;
+            
+            // Assign version based on name length modulo 3 (random but consistent)
+            const vIndex = currentStudent.length % 3;
+            currentVersion = ["A", "B", "C"][vIndex];
+
+            // Request Fullscreen (Crucial for security)
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen denied"));
+            }
+
+            // Build UI
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('examScreen').classList.remove('hidden');
+            document.getElementById('displayName').innerText = currentStudent;
+            document.getElementById('displayVersion').innerText = currentVersion;
+
+            renderQuestions(examVersions[currentVersion]);
+            document.getElementById('drawingPrompt').innerText = examVersions[currentVersion].drawing;
+
+            // Start Anti-Cheat Monitors
+            startSecurityMonitors();
+            
+            // Start Polling Backend
+            startHeartbeat();
+        }
+
+        function renderQuestions(versionData) {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = `
+                <div class="glass-panel p-6 rounded-xl">
+                    <h3 class="text-xl font-bold text-amber-400 mb-2">Part 1: Transfer of Heat</h3>
+                    <p class="text-slate-200 mb-3 text-sm">${versionData.heat}</p>
+                    <textarea id="ans_heat" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-amber-500" placeholder="Type your answer here..."></textarea>
+                </div>
+                <div class="glass-panel p-6 rounded-xl">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-2">Part 2: Change of State</h3>
+                    <p class="text-slate-200 mb-3 text-sm">${versionData.state}</p>
+                    <textarea id="ans_state" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-emerald-500" placeholder="Type your answer here..."></textarea>
+                </div>
+                <div class="glass-panel p-6 rounded-xl">
+                    <h3 class="text-xl font-bold text-blue-400 mb-2">Part 3: Electric Circuit Adaptation</h3>
+                    <p class="text-slate-200 mb-3 text-sm">${versionData.circuit}</p>
+                    <textarea id="ans_circuit" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-slate-100 focus:ring-2 focus:ring-blue-500" placeholder="Type your answer here..."></textarea>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // SECURITY / ANTI-CHEAT LOGIC
+        // ==========================================
+        function startSecurityMonitors() {
+            // Detect Tab Switch / Window Blur
+            window.addEventListener('blur', triggerViolation);
+            document.addEventListener('visibilitychange', () => {
+                if(document.hidden) triggerViolation();
+            });
+
+            // Prevent Copy/Paste/Print Keyboard Shortcuts
+            document.addEventListener('keydown', (e) => {
+                if(e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'p' || e.key === 's')) {
+                    e.preventDefault();
+                    triggerViolation();
+                }
+                // Attempt to block print screen
+                if(e.key === 'PrintScreen') {
+                    triggerViolation();
+                }
+            });
+        }
+
+        function triggerViolation() {
+            violations++;
+            document.getElementById('cheatOverlay').style.display = 'flex';
+            // Send immediate violation ping to server
+            sendHeartbeat();
+        }
+
+        function returnToExam() {
+            document.getElementById('cheatOverlay').style.display = 'none';
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => {});
+            }
+        }
+
+        // ==========================================
+        // FILE UPLOAD (DRAWING)
+        // ==========================================
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                base64Image = reader.result;
+                document.getElementById('uploadStatus').classList.remove('hidden');
+            }
+            // Compress slightly by drawing to canvas if needed, but direct base64 is fine for small files.
+            reader.readAsDataURL(file); 
+        }
+
+        // ==========================================
+        // NETWORK / COMMUNICATION LOGIC
+        // ==========================================
+        function startHeartbeat() {
+            // Poll every 8 seconds to prevent overwhelming Google Quotas
+            heartbeatInterval = setInterval(sendHeartbeat, 8000);
+            sendHeartbeat();
+        }
+
+        function sendHeartbeat() {
+            if(APPS_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") return; // Prevent errors if url not set
+            
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // necessary for some GAS setups, though we can't read response easily. Using standard post.
+                headers: { 'Content-Type': 'text/plain' }, // Using text/plain avoids CORS preflight
+                body: JSON.stringify({
+                    action: "heartbeat",
+                    studentName: currentStudent,
+                    violations: violations
+                })
+            }).then(response => response.json()).then(data => {
+                if(data.status === "BLOCKED") {
+                    document.getElementById('blockedOverlay').classList.remove('hidden');
+                } else {
+                    document.getElementById('blockedOverlay').classList.add('hidden');
+                }
+            }).catch(e => console.log("Network restricted mode"));
+        }
+
+        function submitExam() {
+            if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+
+            const payload = {
+                action: "submit",
+                studentName: currentStudent,
+                version: currentVersion,
+                violations: violations,
+                imageFile: base64Image,
+                answers: {
+                    heat: document.getElementById('ans_heat').value,
+                    state: document.getElementById('ans_state').value,
+                    circuit: document.getElementById('ans_circuit').value
+                }
+            };
+
+            document.body.innerHTML = '<div class="h-screen flex items-center justify-center"><h1 class="text-3xl text-emerald-400 font-bold animate-pulse">Submitting Securely... Please wait.</h1></div>';
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                clearInterval(heartbeatInterval);
+                document.body.innerHTML = '<div class="h-screen flex items-center justify-center flex-col"><h1 class="text-4xl text-sky-400 font-bold mb-4">Exam Submitted Successfully!</h1><p class="text-slate-400">You may now close this window.</p></div>';
+            }).catch(err => {
+                alert("Submission failed. Please raise your hand for the teacher.");
+                console.error(err);
+            });
+        }
+
+        // ==========================================
+        // TEACHER DASHBOARD LOGIC
+        // ==========================================
+        function pollTeacherData() {
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: "teacher_poll" })
+            }).then(res => res.json()).then(res => {
+                const tbody = document.getElementById('rosterTableBody');
+                tbody.innerHTML = '';
+                
+                // Group properties by student
+                const students = {};
+                for(let key in res.data) {
+                    if(key.includes('_lastSeen') || key.includes('_violations')) continue;
+                    let name = key;
+                    students[name] = {
+                        status: res.data[name],
+                        violations: res.data[name + "_violations"] || 0,
+                    };
+                }
+
+                for(let name in students) {
+                    let s = students[name];
+                    let statusColor = s.status === "ACTIVE" ? "text-emerald-400" : (s.status === "BLOCKED" ? "text-red-500" : "text-sky-400");
+                    
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800/50 transition-colors">
+                            <td class="p-3 font-medium text-white">${name}</td>
+                            <td class="p-3 font-bold ${statusColor}">${s.status}</td>
+                            <td class="p-3 ${s.violations > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${s.violations}</td>
+                            <td class="p-3 space-x-2">
+                                <button onclick="setStudentState('${name}', 'BLOCKED')" class="bg-red-900/50 text-red-400 border border-red-800 px-3 py-1 rounded text-xs hover:bg-red-800 transition-colors">Lock</button>
+                                <button onclick="setStudentState('${name}', 'ACTIVE')" class="bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-3 py-1 rounded text-xs hover:bg-emerald-800 transition-colors">Release</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function setStudentState(name, state) {
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: "teacher_action", targetStudent: name, command: state })
+            }).then(() => pollTeacherData());
+        }
+    </script>
+</body>
+</html>
