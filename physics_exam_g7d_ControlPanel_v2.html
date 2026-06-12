@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ahmad · Physics G7D · Control Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070d19;--bg2:#0c1424;--bg3:#111c30;
+  --border:rgba(0,220,255,.10);--border2:rgba(0,220,255,.22);
+  --text:#e8f0ff;--muted:rgba(232,240,255,.42);--muted2:rgba(232,240,255,.68);
+  --cyan:#00dcff;--lime:#6dffb3;--red:#ff4b5c;--amber:#ffcc44;--purple:#b57bee;
+  --fh:'Space Grotesk',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:var(--fh);min-height:100vh;
+  background-image:linear-gradient(rgba(0,220,255,.013) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(0,220,255,.013) 1px,transparent 1px);
+  background-size:40px 40px;}
+
+/* ── SETUP SCREEN ─────────────────────────────────────────── */
+#setup{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:2rem;}
+.setup-card{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;
+  padding:2rem;max-width:520px;width:100%;}
+.setup-logo{font-family:var(--fm);font-size:.62rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--cyan);opacity:.7;margin-bottom:1.5rem;text-align:center;}
+.setup-title{font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:.3rem;}
+.setup-sub{font-size:.83rem;color:var(--muted2);line-height:1.7;margin-bottom:1.5rem;}
+.field-label{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;
+  color:var(--cyan);display:block;margin-bottom:.35rem;}
+.cp-input{width:100%;padding:.6rem .9rem;background:var(--bg3);border:1.5px solid var(--border2);
+  border-radius:8px;color:var(--text);font-family:var(--fm);font-size:.85rem;outline:none;
+  transition:border-color .2s;margin-bottom:1rem;}
+.cp-input:focus{border-color:var(--cyan);}
+.cp-input.amber-focus:focus{border-color:var(--amber);}
+.setup-note{font-family:var(--fm);font-size:.68rem;color:var(--muted);background:rgba(0,220,255,.04);
+  border:1px solid var(--border);border-radius:6px;padding:.6rem .9rem;margin-bottom:1rem;line-height:1.8;}
+.setup-note strong{color:var(--amber);}
+
+/* ── BUTTONS ──────────────────────────────────────────────── */
+.btn{padding:.55rem 1.2rem;border:none;border-radius:7px;font-family:var(--fh);
+  font-weight:600;font-size:.85rem;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-cyan{background:var(--cyan);color:#000;}
+.btn-lime{background:var(--lime);color:#000;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-amber{background:var(--amber);color:#000;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--muted2);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--text);}
+.btn:hover{opacity:.85;transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn:disabled{opacity:.32;cursor:not-allowed;transform:none;}
+.btn-sm{padding:.3rem .7rem;font-size:.78rem;border-radius:5px;}
+.btn-xs{padding:.22rem .55rem;font-size:.72rem;border-radius:4px;}
+
+/* ── MAIN PANEL ───────────────────────────────────────────── */
+#main{display:none;padding:1.2rem;}
+
+/* ── HEADER BAR ──────────────────────────────────────────── */
+.top-bar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding:.7rem 1rem;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:12px;margin-bottom:1.2rem;position:relative;overflow:hidden;}
+.top-bar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan);border-radius:3px 0 0 3px;}
+.top-title{font-size:1rem;font-weight:700;color:#fff;}
+.top-sub{font-size:.72rem;color:var(--muted);font-family:var(--fm);}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(109,255,179,.4)}60%{box-shadow:0 0 0 8px rgba(109,255,179,0)}}
+.live-dot.dead{background:var(--red);animation:none;}
+.live-dot.warn{background:var(--amber);animation:none;}
+#liveLabel{font-family:var(--fm);font-size:.7rem;color:var(--lime);}
+.top-right{display:flex;align-items:center;gap:.6rem;margin-left:auto;flex-wrap:wrap;}
+.countdown-box{font-family:var(--fm);font-size:.8rem;color:var(--amber);
+  background:rgba(255,204,68,.07);border:1px solid rgba(255,204,68,.2);
+  border-radius:6px;padding:.25rem .7rem;}
+.refresh-btn{font-size:1rem;background:none;border:none;cursor:pointer;color:var(--cyan);
+  padding:.2rem .5rem;border-radius:5px;transition:all .2s;}
+.refresh-btn:hover{background:rgba(0,220,255,.08);}
+.refresh-btn.spinning{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── NAV TABS ─────────────────────────────────────────────── */
+.nav-tabs{display:flex;gap:.4rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.nav-tab{padding:.45rem 1rem;border-radius:7px;font-size:.83rem;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--border);background:transparent;
+  color:var(--muted2);transition:all .18s;position:relative;}
+.nav-tab:hover{border-color:var(--cyan);color:var(--text);}
+.nav-tab.active{background:rgba(0,220,255,.08);border-color:var(--cyan);color:var(--cyan);}
+.nav-tab .badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;
+  font-size:.58rem;font-family:var(--fm);border-radius:20px;padding:.1rem .35rem;min-width:16px;text-align:center;}
+.nav-tab .badge.green{background:var(--lime);color:#000;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* ── STAT CARDS ──────────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.9rem;margin-bottom:1.2rem;}
+.stat{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;
+  padding:.9rem 1rem;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+.stat.s-lime::before{background:var(--lime);}
+.stat.s-amber::before{background:var(--amber);}
+.stat.s-red::before{background:var(--red);}
+.stat.s-purple::before{background:var(--purple);}
+.stat.s-cyan::before{background:var(--cyan);}
+.stat-lbl{font-family:var(--fm);font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:.25rem;}
+.stat-val{font-size:2.2rem;font-weight:700;line-height:1;margin-bottom:.15rem;}
+.stat.s-lime .stat-val{color:var(--lime);}
+.stat.s-amber .stat-val{color:var(--amber);}
+.stat.s-red .stat-val{color:var(--red);}
+.stat.s-purple .stat-val{color:var(--purple);}
+.stat.s-cyan .stat-val{color:var(--cyan);}
+.stat-note{font-size:.72rem;color:var(--muted);}
+
+/* ── PROGRESS BAR ─────────────────────────────────────────── */
+.prog-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:.8rem 1rem;margin-bottom:1.2rem;}
+.prog-label{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted);margin-bottom:.5rem;display:flex;justify-content:space-between;}
+.prog-bar{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--lime));
+  border-radius:5px;transition:width .5s ease;}
+
+/* ── SECTION HEADER ──────────────────────────────────────── */
+.sec-hdr{font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:3px;
+  color:var(--cyan);margin-bottom:.7rem;display:flex;align-items:center;gap:.6rem;}
+.sec-hdr.red{color:var(--red);}
+.sec-hdr.amber{color:var(--amber);}
+.sec-sep{flex:1;height:1px;background:var(--border);}
+
+/* ── ALERT BOX ────────────────────────────────────────────── */
+.alert{padding:.7rem 1rem;border-radius:8px;font-size:.85rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.6rem;}
+.alert.red{background:rgba(255,75,92,.08);border:1px solid rgba(255,75,92,.25);color:#ffaaaa;}
+.alert.lime{background:rgba(109,255,179,.06);border:1px solid rgba(109,255,179,.2);color:var(--lime);}
+.alert.amber{background:rgba(255,204,68,.06);border:1px solid rgba(255,204,68,.2);color:var(--amber);}
+
+/* ── BAN TABLE ─────────────────────────────────────────────── */
+.ban-card{background:var(--bg2);border:1.5px solid rgba(255,75,92,.3);border-radius:12px;
+  padding:1rem;margin-bottom:.8rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.ban-name{font-weight:700;font-size:.95rem;color:#fff;direction:rtl;flex:1;min-width:160px;}
+.ban-time{font-family:var(--fm);font-size:.65rem;color:var(--muted);}
+.ban-code{font-family:var(--fm);font-size:.78rem;color:var(--amber);letter-spacing:2px;
+  background:rgba(255,204,68,.07);border:1px solid rgba(255,204,68,.18);
+  border-radius:5px;padding:.2rem .55rem;}
+.ban-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
+.ban-status{font-family:var(--fm);font-size:.65rem;padding:.2rem .6rem;border-radius:4px;}
+.ban-status.released{background:rgba(109,255,179,.1);color:var(--lime);border:1px solid rgba(109,255,179,.25);}
+.ban-status.ended{background:rgba(255,75,92,.1);color:var(--red);border:1px solid rgba(255,75,92,.25);}
+
+/* ── SUBMISSION TABLE ─────────────────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;font-size:.82rem;}
+.tbl th{background:var(--bg3);padding:.5rem .7rem;text-align:left;font-family:var(--fm);
+  font-size:.58rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);
+  border-bottom:1px solid var(--border2);font-weight:500;}
+.tbl td{padding:.5rem .7rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(0,220,255,.025);}
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.2rem;}
+td.ar{direction:rtl;text-align:right;font-weight:600;color:#fff;}
+.ver-pip{font-family:var(--fm);font-size:.65rem;padding:.2rem .5rem;border-radius:4px;font-weight:700;display:inline-block;}
+.vA{background:rgba(109,255,179,.12);color:var(--lime);border:1px solid rgba(109,255,179,.3);}
+.vB{background:rgba(0,220,255,.1);color:var(--cyan);border:1px solid rgba(0,220,255,.25);}
+.vC{background:rgba(181,123,238,.1);color:var(--purple);border:1px solid rgba(181,123,238,.25);}
+.vD{background:rgba(255,204,68,.1);color:var(--amber);border:1px solid rgba(255,204,68,.25);}
+.vE{background:rgba(255,75,92,.1);color:var(--red);border:1px solid rgba(255,75,92,.25);}
+.sc-pip{font-family:var(--fm);font-size:.72rem;padding:.2rem .45rem;border-radius:4px;}
+.sc-hi{background:rgba(109,255,179,.1);color:var(--lime);}
+.sc-md{background:rgba(255,204,68,.1);color:var(--amber);}
+.sc-lo{background:rgba(255,75,92,.1);color:var(--red);}
+
+/* ── DRAWING SCORE CONTROL ────────────────────────────────── */
+.draw-ctl{display:flex;align-items:center;gap:.5rem;}
+.score-slider{-webkit-appearance:none;width:80px;height:4px;
+  background:linear-gradient(90deg,var(--lime) 0%,var(--lime) var(--pct,0%),var(--border2) var(--pct,0%));
+  border-radius:2px;outline:none;cursor:pointer;}
+.score-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--lime);cursor:pointer;}
+.score-val{font-family:var(--fm);font-size:.72rem;color:var(--lime);min-width:24px;text-align:center;}
+.save-draw-btn{font-size:.7rem;padding:.22rem .6rem;border-radius:4px;}
+
+/* ── DRAWING PREVIEW ────────────────────────────────────────── */
+.draw-link{color:var(--cyan);font-size:.72rem;font-family:var(--fm);text-decoration:none;}
+.draw-link:hover{text-decoration:underline;}
+
+/* ── EXAM PREVIEW (teacher review mode) ──────────────────── */
+.preview-header{background:var(--bg2);border:1px solid rgba(255,204,68,.25);border-radius:10px;
+  padding:.9rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.ver-tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;}
+.ver-tab{padding:.35rem .9rem;border-radius:6px;font-family:var(--fm);font-size:.78rem;
+  cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--muted2);transition:all .18s;}
+.ver-tab.on{background:rgba(0,220,255,.1);border-color:var(--cyan);color:var(--cyan);}
+.preview-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:1rem;margin-bottom:.8rem;}
+.preview-section h4{font-size:.82rem;font-weight:700;color:var(--cyan);margin-bottom:.7rem;
+  font-family:var(--fm);text-transform:uppercase;letter-spacing:1px;}
+.q-preview{margin-bottom:.9rem;padding:.7rem;background:rgba(0,220,255,.03);
+  border:1px solid var(--border);border-radius:8px;}
+.q-preview .q-stem{font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:.5rem;}
+.q-preview .q-opts{font-size:.78rem;color:var(--muted2);font-family:var(--fm);}
+.q-preview .q-opt{padding:.2rem .4rem;border-radius:3px;}
+.q-preview .q-opt.correct{background:rgba(109,255,179,.1);color:var(--lime);}
+.q-preview .tf-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.35rem;font-size:.82rem;}
+.q-preview .tf-ans{font-family:var(--fm);font-size:.72rem;padding:.15rem .5rem;border-radius:3px;
+  background:rgba(109,255,179,.1);color:var(--lime);}
+.fig-note{font-family:var(--fm);font-size:.68rem;color:var(--muted);
+  background:rgba(0,220,255,.04);border:1px solid var(--border);border-radius:5px;
+  padding:.4rem .7rem;margin-bottom:.6rem;line-height:1.6;}
+.draw-spec{font-size:.82rem;color:var(--muted2);line-height:1.7;}
+.draw-spec strong{color:var(--amber);}
+
+/* ── TIME GATE CONTROL ────────────────────────────────────── */
+.time-ctl-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+.time-ctl-card h3{font-size:.85rem;font-weight:700;color:var(--amber);margin-bottom:.7rem;}
+.time-row{display:flex;gap:.8rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.7rem;}
+.time-field{display:flex;flex-direction:column;gap:.3rem;}
+.time-field label{font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);}
+.time-field input{width:160px;padding:.45rem .7rem;background:var(--bg3);border:1.5px solid var(--border2);
+  border-radius:6px;color:var(--text);font-family:var(--fm);font-size:.82rem;outline:none;}
+.time-field input:focus{border-color:var(--amber);}
+.time-status{font-family:var(--fm);font-size:.75rem;padding:.4rem .8rem;border-radius:6px;margin-top:.5rem;}
+.time-status.live{background:rgba(109,255,179,.07);border:1px solid rgba(109,255,179,.2);color:var(--lime);}
+.time-status.not-started{background:rgba(255,204,68,.07);border:1px solid rgba(255,204,68,.2);color:var(--amber);}
+.time-status.ended{background:rgba(255,75,92,.07);border:1px solid rgba(255,75,92,.2);color:var(--red);}
+.time-status.preview{background:rgba(0,220,255,.07);border:1px solid rgba(0,220,255,.2);color:var(--cyan);}
+
+/* ── TOAST ────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg2);border:1px solid var(--border2);border-radius:8px;
+  padding:.5rem 1.2rem;font-family:var(--fm);font-size:.75rem;color:var(--text);
+  opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:1000;
+  max-width:90vw;text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.ok{border-color:rgba(109,255,179,.4);color:var(--lime);}
+#toast.err{border-color:rgba(255,75,92,.4);color:var(--red);}
+
+@media(max-width:600px){
+  #main{padding:.8rem .6rem;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .ban-card{flex-direction:column;align-items:flex-start;}
+  .top-right{gap:.4rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SETUP SCREEN ════════════════════════════════════════ -->
+<div id="setup">
+  <div class="setup-card">
+    <div class="setup-logo">Ahmad Ghozlan &middot; Physics G7D &middot; Exam Control</div>
+    <div class="setup-title">Teacher Control Panel</div>
+    <div class="setup-sub">Connect once. Everything runs from here — no Apps Script editor needed during the exam.</div>
+
+    <label class="field-label">Apps Script Deployment URL</label>
+    <input class="cp-input" id="inUrl" type="text"
+      placeholder="https://script.google.com/macros/s/.../exec">
+
+    <label class="field-label">Teacher Token (must match TEACHER_TOKEN in Apps Script)</label>
+    <input class="cp-input amber-focus" id="inToken" type="password" placeholder="e.g. ahmad2026physics">
+
+    <div class="setup-note">
+      <strong>One-time only.</strong> These are saved in your browser — you won't need to re-enter them unless you clear browser data.<br>
+      The token blocks anyone else from using your control panel even if they know the URL.
+    </div>
+    <button class="btn btn-cyan" style="width:100%" onclick="doSetup()">Connect &rarr;</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN PANEL ═══════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="live-dot" id="liveDot"></div>
+    <div>
+      <div class="top-title">Physics G7D &mdash; Control Panel</div>
+      <div class="top-sub" id="liveLabel">Connecting&hellip;</div>
+    </div>
+    <div class="top-right">
+      <div class="countdown-box" id="examClock">&#8212;</div>
+      <div style="font-family:var(--fm);font-size:.65rem;color:var(--muted)" id="lastRefresh">&mdash;</div>
+      <button class="refresh-btn" id="refreshBtn" onclick="refresh()" title="Refresh now">&#8635;</button>
+      <button class="btn btn-ghost btn-sm" onclick="disconnect()">&#8617; Disconnect</button>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('overview')" id="tab-overview">Overview</button>
+    <button class="nav-tab" onclick="showTab('suspended')" id="tab-suspended">
+      Suspended <span class="badge" id="banBadge" style="display:none">0</span>
+    </button>
+    <button class="nav-tab" onclick="showTab('submissions')" id="tab-submissions">
+      Submitted <span class="badge green" id="subBadge">0</span>
+    </button>
+    <button class="nav-tab" onclick="showTab('drawings')" id="tab-drawings">Drawings</button>
+    <button class="nav-tab" onclick="showTab('preview')" id="tab-preview">Exam Preview</button>
+    <button class="nav-tab" onclick="showTab('settings')" id="tab-settings">&#9881; Settings</button>
+  </div>
+
+  <!-- ══ TAB: OVERVIEW ══════════════════════════════════════ -->
+  <div class="tab-pane active" id="pane-overview">
+    <div class="stats-row">
+      <div class="stat s-lime">
+        <div class="stat-lbl">Submitted</div>
+        <div class="stat-val" id="sSubmit">—</div>
+        <div class="stat-note">out of 34 students</div>
+      </div>
+      <div class="stat s-amber">
+        <div class="stat-lbl">Avg Auto /15</div>
+        <div class="stat-val" id="sAvg">—</div>
+        <div class="stat-note">auto-graded</div>
+      </div>
+      <div class="stat s-red">
+        <div class="stat-lbl">Suspended</div>
+        <div class="stat-val" id="sSusp">—</div>
+        <div class="stat-note">need your action</div>
+      </div>
+      <div class="stat s-purple">
+        <div class="stat-lbl">Drawings</div>
+        <div class="stat-val" id="sDraw">—</div>
+        <div class="stat-note">photos received</div>
+      </div>
+      <div class="stat s-cyan">
+        <div class="stat-lbl">Not Yet</div>
+        <div class="stat-val" id="sRemain">—</div>
+        <div class="stat-note">still active / absent</div>
+      </div>
+    </div>
+
+    <!-- submission progress bar -->
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Submission Progress</span>
+        <span id="progPct">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+
+    <!-- version distribution -->
+    <div class="sec-hdr">Version Distribution <div class="sec-sep"></div></div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.2rem" id="verDist"></div>
+
+    <!-- score distribution -->
+    <div class="sec-hdr">Score Distribution (Auto /15) <div class="sec-sep"></div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.7rem;margin-bottom:1.2rem" id="scoreDist"></div>
+  </div>
+
+  <!-- ══ TAB: SUSPENDED ════════════════════════════════════= -->
+  <div class="tab-pane" id="pane-suspended">
+    <div id="noBans" class="alert lime" style="display:none">
+      <span>&#10003;</span> No suspended students right now.
+    </div>
+    <div id="banAlert" class="alert red" style="display:none">
+      <span>&#9888;</span>
+      <span id="banAlertTxt"></span>
+    </div>
+    <div id="banList"></div>
+  </div>
+
+  <!-- ══ TAB: SUBMISSIONS ══════════════════════════════════= -->
+  <div class="tab-pane" id="pane-submissions">
+    <div class="tbl-wrap">
+      <table class="tbl" id="subTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Ver</th>
+            <th>Auto /15</th>
+            <th>Tab &#9888;</th>
+            <th>Time</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="subBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ TAB: DRAWINGS ════════════════════════════════════= -->
+  <div class="tab-pane" id="pane-drawings">
+    <div class="alert amber" style="margin-bottom:1rem">
+      <span>&#128247;</span>
+      <span>Grade each drawing out of 5. Use the slider then tap <strong>Save</strong> — updates Google Sheet instantly. No coding needed.</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="drawTable">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Ver</th>
+            <th>Auto /15</th>
+            <th>Drawing Photo</th>
+            <th>Score /5</th>
+            <th>Total /20</th>
+          </tr>
+        </thead>
+        <tbody id="drawBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ TAB: EXAM PREVIEW ════════════════════════════════= -->
+  <div class="tab-pane" id="pane-preview">
+    <div class="preview-header">
+      <div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--amber)">&#128270; Exam Content Review</div>
+        <div style="font-size:.78rem;color:var(--muted2);margin-top:.2rem">
+          Review every version before the exam. Check figures, questions, correct answers. No surprises on exam day.
+        </div>
+      </div>
+    </div>
+    <div class="ver-tabs">
+      <button class="ver-tab on" onclick="showVer('A')">Version A</button>
+      <button class="ver-tab" onclick="showVer('B')">Version B</button>
+      <button class="ver-tab" onclick="showVer('C')">Version C</button>
+      <button class="ver-tab" onclick="showVer('D')">Version D</button>
+      <button class="ver-tab" onclick="showVer('E')">Version E</button>
+    </div>
+    <div id="previewContent"></div>
+  </div>
+
+  <!-- ══ TAB: SETTINGS ════════════════════════════════════= -->
+  <div class="tab-pane" id="pane-settings">
+    <div class="time-ctl-card">
+      <h3>&#9200; Exam Time Window (Beirut time)</h3>
+      <p style="font-size:.82rem;color:var(--muted2);margin-bottom:.9rem;line-height:1.7;">
+        Control when the exam gate opens and closes. Changes take effect immediately in the HTML — students who haven't started yet will see the updated window. Set to a test window to preview the exam yourself.
+      </p>
+      <div class="time-row">
+        <div class="time-field">
+          <label>Start (Beirut / 24h)</label>
+          <input type="datetime-local" id="tStart">
+        </div>
+        <div class="time-field">
+          <label>End (Beirut / 24h)</label>
+          <input type="datetime-local" id="tEnd">
+        </div>
+        <button class="btn btn-amber" onclick="applyTimeWindow()">Apply &rarr;</button>
+      </div>
+      <div id="timeStatus" class="time-status not-started">Calculating&hellip;</div>
+      <div style="margin-top:.9rem;display:flex;gap:.6rem;flex-wrap:wrap;">
+        <button class="btn btn-cyan btn-sm" onclick="setPreviewWindow()">&#128269; Set 60-min preview window (now)</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetExamWindow()">Reset to exam day (June 18)</button>
+      </div>
+    </div>
+
+    <div class="time-ctl-card" style="border-color:rgba(255,75,92,.2)">
+      <h3 style="color:var(--red)">&#128683; Danger Zone</h3>
+      <p style="font-size:.82rem;color:var(--muted2);margin-bottom:.8rem;line-height:1.7;">
+        Disconnect this control panel from the current Apps Script URL. You will need to re-enter the URL and token.
+      </p>
+      <button class="btn btn-red btn-sm" onclick="disconnect()">Disconnect &amp; Reset</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div id="toast"></div>
+
+<script>
+// ─── EXAM VERSION DATA (mirrors the exam HTML exactly) ────────
+const V = {
+A:{
+  students_sample:['احمد محمد احمد ابو جاموس','احمد علي احمد المحمود','اسيل احمد فريد العلي','ليمار هاني محمد جمعه','محمد مصطفى كمال الترك','منى وسام عمر سلام','يوسف علاء جهاد شحادة'],
+  heat:{fig:'Metal rod + flame (left) + wax drops W1, W2, W3 equally spaced',
+    q1:{stem:'Which wax drop melts first and why?',opts:['W3 — heat travels cool→hot','W1 — conduction from flame end toward cool end ✓','W2 — always middle','All same time'],ans:1},
+    q2:{stmt:'Replacing metal rod with wood: wax drops melt same order and speed.',tf:'FALSE',nc_opts:['Wood better conductor','Wood is poor conductor — wax barely melts ✓','Material doesn\'t matter','Only flame temp matters'],nc_ans:'2'},
+    q3:'Name ONE other method needing NO material medium + real-life example.'},
+  state:{fig:'Heating curve ABCDEF — segments AB, BC(flat 0°C), CD, DE(flat 100°C), EF',
+    q1:{stem:'Segment DE stays at 100°C while heat is added — why?',opts:['Thermometer broken','Energy breaks water bonds (liquid→gas), not temperature rise ✓','Water stops absorbing at 100°C','Converts to kinetic energy'],ans:1},
+    q2:{stmt:'Segment BC represents FREEZING.',tf:'FALSE',nc_opts:['BC is at 0°C so it is freezing','BC is flat at 0°C on HEATING curve → melting, not freezing ✓','BC = evaporation','BC = sublimation'],nc_ans:'2'},
+    q3:'Fill: during CD water is in _____ state · during EF water is in _____ state. [liquid / gas]'},
+  circuit:{fig:'Series: battery(bottom) + lamp L(top) + switch S(right, closed)',
+    q1:{stem:'Switch S closed. Student claims current only flows between battery and lamp.',opts:['Yes, only between battery and lamp','No — current flows through every part of complete loop ✓','Yes, stops at corners','No, opposite directions both sides'],ans:1},
+    q2:{stmt:'Opening switch S: current continues at reduced level.',tf:'FALSE',nc_opts:['Reduces to half','Open switch breaks loop — current stops EVERYWHERE ✓','Lamp has stored charge','Only stops at switch'],nc_ans:'2'},
+    q3:'Identify component on TOP wire. State its function.'},
+  measure:{fig:'6V battery + R1=12Ω series + ammeter A + voltmeter V across R1',
+    q1:{stem:'Calculate current (6V, 12Ω)',opts:['I=V×R=72A','I=V/R=6/12=0.5A ✓','I=R/V=2A','I=V+R=18A'],ans:1},
+    q2:{stem:'Ammeter connected in PARALLEL with resistor — what happens?',opts:['Works correctly','Short-circuit — lamp out, ammeter may be damaged ✓','Doubles current','Voltmeter increases'],ans:1},
+    q3:'Voltmeter reads ___V. Explain why parallel and not series.'},
+  draw:{desc:'Series: 1 battery (6V) + 1 lamp L1 + 1 closed switch S1 in rectangular loop',
+    ammeter:'in series between battery and lamp',voltmeter:'in parallel across lamp L1'}
+},
+B:{
+  students_sample:['ابراهيم سامي مروان حليحل','ابراهيم يونس محمد رحال','ايلانا محمد ابراهيم الحلو','حلا فادي فايز معتوق','زاهر محمد شحادة ديب','محمد هاشم عادل المنسي'],
+  heat:{fig:'Room: radiator (left) + window (right) + convection arrows showing warm air rising, crossing ceiling, cooling, falling',
+    q1:{stem:'What heat transfer method do the arrows show?',opts:['Conduction through solids','Convection — heat carried by circulating warm air ✓','Radiation — EM waves','Evaporation'],ans:1},
+    q2:{stmt:'Opening window on cold day speeds up convection current.',tf:'TRUE',nc_opts:['Opening stops convection','Larger ΔT → stronger density difference → stronger current ✓','Converts convection to conduction','Only radiator temp controls speed'],nc_ans:'2'},
+    q3:'Convection example in a LIQUID. Why must the medium be a fluid?'},
+  state:{fig:'Particle diagrams X(solid — ordered rows), Y(liquid — random close), Z(gas — far apart free)',
+    q1:{stem:'Which box is liquid state?',opts:['Box X — tightly packed ordered','Box Y — close but random, can flow ✓','Box Z — far apart free','Y and Z both liquid'],ans:1},
+    q2:{stmt:'During melting X→Y, particles gain kinetic energy so temperature rises.',tf:'FALSE',nc_opts:['Melting raises temp because particles speed up','Energy breaks bonds (potential energy), NOT speed — temp stays constant ✓','Melting lowers temp','Rises only if fast'],nc_ans:'2'},
+    q3:'X→Y: _____ (adding/removing) energy. Y→Z: _____ energy. [adding / adding]'},
+  circuit:{fig:'Parallel: battery(left) + Branch 1: lamp L1 + Branch 2: lamp L2 + switch S (open, in series with L2 only) + junction dots',
+    q1:{stem:'Switch S is open (L2 branch broken). What happens to L1?',opts:['L1 goes out','L1 stays on at full brightness — parallel branches are independent ✓','L1 dims to half','L1 brightens'],ans:1},
+    q2:{stmt:'Both L1 and L2 have full battery voltage across them.',tf:'TRUE',nc_opts:['Parallel = voltage shared — each gets half','All components between same two junctions share FULL battery voltage ✓','Voltage increases per branch','Full voltage only if sole component'],nc_ans:'2'},
+    q3:'Purpose of junction dots. What if L1 burns out?'},
+  measure:{fig:'9V battery + R1=6Ω + R2=12Ω series + ammeter A + V1 across R1 + V2 across R2',
+    q1:{stem:'Total resistance and current (9V, 6Ω+12Ω)',opts:['R=6Ω I=1.5A','R=18Ω I=0.5A ✓','R=4Ω I=2.25A','R=72Ω I=0.125A'],ans:1},
+    q2:{stem:'V1 across R1=6Ω reads?',opts:['9V — full battery','3V — splits equally (wrong reasoning)','3V — V1=I×R1=0.5×6=3V ✓','6V — first always more'],ans:2},
+    q3:'Why same current everywhere in series? Why NOT true in parallel?'},
+  draw:{desc:'Series: 1 battery (9V) + R1 + R2 in series + 1 open switch S1',
+    ammeter:'in series between battery (+) and R1',voltmeter:'in parallel across R2 only'}
+},
+C:{
+  students_sample:['احمد فؤاد احمد جمعة','حمزة عفيف علي السيد','داني محمد محمود حسين','رؤى حسن احمد محمد','راما ابراهيم رشيد فارس','محمد يوسف محمد محمد'],
+  heat:{fig:'Cup A (200ml, 80°C) + Cup B (1000ml, 30°C) with thermometers',
+    q1:{stem:'Which has higher TEMPERATURE? Which has more HEAT ENERGY?',opts:['Cup A: both higher temp AND more heat','Cup A: higher temp; Cup B: more heat energy (greater mass) ✓','Cup B: both','Both same'],ans:1},
+    q2:{stmt:'Cup A cools faster than Cup B in a room at 20°C.',tf:'TRUE',nc_opts:['A cools faster only because smaller','Larger ΔT between object and surroundings drives faster heat transfer ✓','B cools faster — more heat to lose','Both same rate'],nc_ans:'2'},
+    q3:'Fill: heat flows spontaneously from _____ temperature to _____ temperature. [higher / lower]'},
+  state:{fig:'Cycle diagram: Solid→(A Melting)→Liquid→(B Evaporation)→Gas→(C Condensation)→Liquid→(D Freezing)→Solid',
+    q1:{stem:'Which arrow = CONDENSATION?',opts:['Arrow A — melting','Arrow B — evaporation','Arrow C — gas → liquid ✓','Arrow D — freezing'],ans:2},
+    q2:{stmt:'All four arrows A, B, C, D require ADDING heat energy.',tf:'FALSE',nc_opts:['All need heat','A and B need adding heat; C and D RELEASE heat (exothermic) ✓','Only B needs heat','C and D also need heat'],nc_ans:'2'},
+    q3:'Solid → gas directly (skipping liquid) = _____ [sublimation]. Give one real-life example.'},
+  circuit:{fig:'Series: battery(B) + lamp L1 + open switch S + lamp L2 + voltmeter V across open switch S',
+    q1:{stem:'Switch S is open. What does voltmeter across S read?',opts:['0V','Half battery voltage','Full battery voltage — voltmeter reads full EMF across open gap ✓','Negative voltage'],ans:2},
+    q2:{stmt:'With S open, both L1 and L2 are completely off. No current flows anywhere.',tf:'TRUE',nc_opts:['Opening affects only adjacent lamp','Series circuit needs complete loop — opening S breaks only path ✓','L2 stays on (after switch)','L1 stays on (before switch)'],nc_ans:'2'},
+    q3:'Voltmeter reads full battery V across open switch. If switch CLOSED, what does it read? Explain.'},
+  measure:{fig:'4.5V battery + R=15Ω + ammeter A (reads 0.3A) + voltmeter V (reads 4.5V)',
+    q1:{stem:'V=I×R check: 0.3×15=?',opts:['0.3+15=15.3V no match','0.3×15=4.5V — matches voltmeter ✓','15/0.3=50V no match','4.5/0.3=15V no match'],ans:1},
+    q2:{stem:'Voltmeter connected in SERIES with R — effect?',opts:['No change','Resistor gets almost no voltage — most drops across voltmeter (very high R) ✓','Voltmeter reads double','Short circuit'],ans:1},
+    q3:'Ammeter has ~1Ω internal resistance. Why dangerous if placed in PARALLEL?'},
+  draw:{desc:'Series: 1 battery (4.5V) + resistor R (15Ω) + lamp L + closed switch S',
+    ammeter:'in series after switch S and before lamp L',voltmeter:'in parallel across resistor R only'}
+},
+D:{
+  students_sample:['"سدرة المنتهى" احمد حسون','عبد الرحمن درويش محمد سلام','علي ابراهيم حسان الاشوح','علي مروان عدنان شحاده','غيداء مالك جمعة بلال','فرح محمود كامل الخطيب','مصطفى كمال علي سعد'],
+  heat:{fig:'Sun (top-right) + wavy radiation arrows through vacuum + atmosphere curve + person on ground (left)',
+    q1:{stem:'Wavy arrows travel through vacuum of space — which method?',opts:['Conduction through dense space','Convection — hot air rises from Sun','Radiation — EM waves, no medium needed ✓','Evaporation — water vapour'],ans:2},
+    q2:{stmt:'If no atmosphere, Sun\'s radiation would NOT reach Earth (needs air).',tf:'FALSE',nc_opts:['Radiation always needs some medium','Radiation is EM wave at speed of light through VACUUM — no medium needed at all ✓','Can only travel through air','Sun would be cooler'],nc_ans:'2'},
+    q3:'Give ONE practical everyday use of thermal radiation (not solar panels).'},
+  state:{fig:'Cooling curve: P(80°C) → Q(45°C flat) → R(45°C) → S(20°C) — segments PQ, QR, RS',
+    q1:{stem:'Freezing point? What happens during QR?',opts:['Freezing=80°C; QR = warming','Freezing=45°C; QR = liquid→solid, releasing latent heat at constant T ✓','Freezing=20°C; rapid cooling to room T','Freezing=45°C; condensation'],ans:1},
+    q2:{stmt:'During QR temperature is constant because substance GAINS heat from surroundings.',tf:'FALSE',nc_opts:['Heat gained = heat lost','During freezing, substance RELEASES latent heat while bonds form — constant T ✓','No heat transfers at all','Thermometer stopped'],nc_ans:'2'},
+    q3:'During PQ substance is in _____ state. After RS it is in _____ state. [liquid / solid]'},
+  circuit:{fig:'Series: battery B(6V) + lamp L1(4Ω) + lamp L2(2Ω) + closed switch S + ammeter A',
+    q1:{stem:'L2 burns out (filament breaks). What happens to L1?',opts:['L1 brighter — all current through it','L1 stays on — series lamps independent','L1 goes out — break anywhere stops current everywhere ✓','L1 flickers'],ans:2},
+    q2:{stmt:'Ammeter reads same value wherever placed in series loop.',tf:'TRUE',nc_opts:['Ammeters only correct near battery','Series circuit has one path — same current flows through every component regardless of position ✓','Changes with position','Reduced each time through lamp'],nc_ans:'2'},
+    q3:'6V battery, L1=4Ω, L2=2Ω in series. Calculate current. [Total R=6Ω, I=1A]'},
+  measure:{fig:'12V battery + R1=4Ω + R2=8Ω series + ammeter A + voltmeter V across battery terminals',
+    q1:{stem:'Total current (12V, 4Ω+8Ω)',opts:['I=12/(4+8)=1A ✓','I=12/4=3A','I=4×8=32A','I=12×12=144A'],ans:0},
+    q2:{stem:'Voltmeter across battery terminals reads?',opts:['0V','12V — full battery EMF ✓','6V — split at terminals','4V — only R1'],ans:1},
+    q3:'Using I=1A, calculate V across R2=8Ω. [V_R2 = 1×8 = 8V]'},
+  draw:{desc:'Series: 1 battery (12V) + R1 (4Ω) + R2 (8Ω) in series + closed switch S',
+    ammeter:'in series in main loop between battery and R1',voltmeter:'in parallel across R1 only'}
+},
+E:{
+  students_sample:['"احمد عمر" حسين جعجع','راما محمد علي الجعجع','سالي احمد وليد كريديه','علي وسيم علي مره','عيسى احمد محمود الحصري','ندى علي احمد مطر','ولاء احمد فهد السعيد','يوسف "علاء الدين" كرزون'],
+  heat:{fig:'Three spoons in hot liquid: Spoon 1=metal (handle hot after 2 min), Spoon 2=glass (cool), Spoon 3=plastic (cool)',
+    q1:{stem:'What conclusion about thermal conductivity?',opts:['Glass/plastic better conductors','Metal conducts much better — metal=conductor, glass&plastic=insulators ✓','All materials equal','Plastic heats first'],ans:1},
+    q2:{stmt:'Wooden spoon (Spoon 4) handle would become equally hot as metal.',tf:'FALSE',nc_opts:['Wood = metal as solid','Wood is insulator like plastic — handle stays cool ✓','Wood conducts better (denser)','Only liquids conduct'],nc_ans:'2'},
+    q3:'Why do pots have metal bodies but plastic/wood handles? Link to Figure 1.'},
+  state:{fig:'Sealed container with dry ice (CO₂, −78°C). White mist above solid — NO liquid puddle forms.',
+    q1:{stem:'Dry ice goes solid→gas with no liquid. What process?',opts:['Evaporation','Condensation','Sublimation — solid directly to gas ✓','Freezing'],ans:2},
+    q2:{stmt:'CO₂ has NO liquid state at standard atmospheric pressure.',tf:'TRUE',nc_opts:['All substances must have liquid','CO₂ triple point > 1 atm — liquid CO₂ impossible at normal pressure ✓','Liquid exists but evaporates fast','Sublimation only at high pressure'],nc_ans:'2'},
+    q3:'Energy must be _____ [added]. White mist is actually _____ [water vapour] from surrounding air condensing.'},
+  circuit:{fig:'Parallel: 6V battery + Branch 1: L1=2Ω (ammeter A1) + Branch 2: L2=3Ω (ammeter A2) + main ammeter A_total',
+    q1:{stem:'What does branch ammeter A1 read? (6V, L1=2Ω)',opts:['A1=6/5=1.2A (wrong resistance)','A1=6/2=3A — parallel branch has full 6V, R1=2Ω ✓','A1=6/3=2A (wrong)','A1=1A (split equally wrong)'],ans:1},
+    q2:{stmt:'A_total = A1 + A2.',tf:'TRUE',nc_opts:['Parallel: total = branch (wrong)','Parallel: battery current SPLITS — A_total = A1 + A2 (Kirchhoff\'s Current Law) ✓','Total < any branch','Branch ammeters read zero'],nc_ans:'2'},
+    q3:'Calculate A2 (L2=3Ω) and A_total. [A2=6/3=2A, A_total=3+2=5A]'},
+  measure:{fig:'6V battery + L1=2Ω parallel with L2=3Ω + main ammeter A + voltmeter V across parallel combination',
+    q1:{stem:'Voltmeter V reads?',opts:['3V — splits between branches','6V — parallel: full battery voltage ✓','2V — lower R gets less','12V — parallel doubles'],ans:1},
+    q2:{stem:'Equivalent resistance of 2Ω ∥ 3Ω?',opts:['1/R=1/2+1/3=5/6 → R=1.2Ω ✓','R=2+3=5Ω (wrong)','R=2×3=6Ω (wrong)','R=(2+3)/2=2.5Ω (wrong)'],ans:0},
+    q3:'Using R_eq=1.2Ω, V=6V, calculate I_total. [I=6/1.2=5A]'},
+  draw:{desc:'Parallel: 1 battery (6V) + L1 (2Ω) ∥ L2 (3Ω) in parallel branches + main switch S in supply wire',
+    ammeter:'in main supply wire before circuit splits',voltmeter:'in parallel across entire parallel combination (between the two junction dots)'}
+}
+};
+
+// ─── STORAGE ─────────────────────────────────────────────────
+const SK = 'phy_cp_v2';
+let cfg = {};
+let data = null;
+let refreshTimer = null;
+let banActions = {}; // {name: 'released'|'ended'}
+let pendingDrawScores = {}; // {name: score}
+
+function loadCfg() {
+  try { cfg = JSON.parse(localStorage.getItem(SK)||'{}'); } catch(e){ cfg={}; }
+}
+function saveCfg() { localStorage.setItem(SK, JSON.stringify(cfg)); }
+
+// ─── SETUP ────────────────────────────────────────────────────
+function doSetup() {
+  const url = document.getElementById('inUrl').value.trim();
+  const tok = document.getElementById('inToken').value.trim();
+  if (!url.startsWith('https://')) { toast('Please enter a valid https:// URL','err'); return; }
+  if (!tok) { toast('Please enter your teacher token','err'); return; }
+  cfg.url = url; cfg.token = tok;
+  // Restore exam window defaults if not set
+  if (!cfg.startISO) cfg.startISO = '2026-06-18T09:00';
+  if (!cfg.endISO)   cfg.endISO   = '2026-06-18T10:00';
+  saveCfg();
+  startPanel();
+}
+
+function startPanel() {
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+  loadTimeInputs();
+  updateTimeStatus();
+  renderPreview('A');
+  refresh();
+  refreshTimer = setInterval(refresh, 20000);
+}
+
+function disconnect() {
+  clearInterval(refreshTimer);
+  cfg = {}; localStorage.removeItem(SK);
+  location.reload();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+loadCfg();
+if (cfg.url && cfg.token) startPanel();
+else document.getElementById('setup').style.display = 'flex';
+
+// ─── API CALLS ────────────────────────────────────────────────
+async function api(params) {
+  const qs = new URLSearchParams({...params, token: cfg.token}).toString();
+  const resp = await fetch(cfg.url + '?' + qs);
+  return await resp.json();
+}
+
+// ─── REFRESH ──────────────────────────────────────────────────
+async function refresh() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  try {
+    const d = await api({action:'dashboard'});
+    if (d.error) { setStatus('error', d.error); return; }
+    data = d;
+    renderAll(d);
+    setStatus('live', 'Live · ' + d.timestamp);
+    document.getElementById('lastRefresh').textContent =
+      'Refreshed ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    updateExamClock();
+  } catch(e) {
+    setStatus('error', 'Connection error — retrying');
+  } finally {
+    btn.classList.remove('spinning');
+  }
+}
+
+// ─── STATUS ───────────────────────────────────────────────────
+function setStatus(state, msg) {
+  const dot = document.getElementById('liveDot');
+  const lbl = document.getElementById('liveLabel');
+  dot.className = 'live-dot' + (state==='live'?'':state==='error'?' dead':' warn');
+  lbl.textContent = msg;
+  lbl.style.color = state==='live'?'var(--lime)':state==='error'?'var(--red)':'var(--amber)';
+}
+
+// ─── EXAM CLOCK ────────────────────────────────────────────────
+function updateExamClock() {
+  const el = document.getElementById('examClock');
+  const now = Date.now();
+  // Use cfg values (Beirut local input → parse as local)
+  const startMs = parseBeirutLocal(cfg.startISO);
+  const endMs   = parseBeirutLocal(cfg.endISO);
+  if (now < startMs) {
+    const diff = Math.ceil((startMs-now)/60000);
+    el.textContent = 'Opens in ' + diff + 'm';
+    el.style.color = 'var(--amber)';
+  } else if (now <= endMs) {
+    const rem = Math.max(0, Math.floor((endMs-now)/1000));
+    const m = Math.floor(rem/60), s = rem%60;
+    el.textContent = 'LIVE ' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    el.style.color = rem < 600 ? 'var(--red)' : 'var(--lime)';
+  } else {
+    el.textContent = 'Exam ended';
+    el.style.color = 'var(--muted)';
+  }
+}
+
+// Parse a datetime-local string as Beirut (UTC+3)
+function parseBeirutLocal(iso) {
+  if (!iso) return 0;
+  // iso = "2026-06-18T09:00" — treat as Beirut (UTC+3)
+  const d = new Date(iso + ':00+03:00');
+  return d.getTime();
+}
+
+setInterval(updateExamClock, 1000);
+
+// ─── RENDER ALL ───────────────────────────────────────────────
+function renderAll(d) {
+  renderStats(d);
+  renderSuspended(d);
+  renderSubmissions(d);
+  renderDrawings(d);
+}
+
+// ─── STATS ────────────────────────────────────────────────────
+function renderStats(d) {
+  const sub = d.submissions || 0;
+  document.getElementById('sSubmit').textContent = sub;
+  document.getElementById('sAvg').textContent    = d.avg_score !== undefined ? d.avg_score.toFixed(1) : '—';
+  document.getElementById('sSusp').textContent   = (d.suspended||[]).length;
+  document.getElementById('sDraw').textContent   = d.drawing_count || 0;
+  document.getElementById('sRemain').textContent = Math.max(0, 34 - sub);
+  const pct = Math.round(sub/34*100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent  = pct + '%';
+  // Ban badge
+  const bans = (d.suspended||[]).length;
+  const bb = document.getElementById('banBadge');
+  bb.style.display = bans ? 'block' : 'none';
+  bb.textContent = bans;
+  // Sub badge
+  document.getElementById('subBadge').textContent = sub;
+  // Version dist
+  const vdEl = document.getElementById('verDist');
+  vdEl.innerHTML = '';
+  const vc = d.version_counts || {};
+  ['A','B','C','D','E'].forEach(v => {
+    const b = document.createElement('div');
+    b.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.6rem 1rem;text-align:center;min-width:70px;';
+    b.innerHTML = '<div style="font-size:1.4rem;font-weight:700" class="v'+v+'">'+(vc[v]||0)+'</div>'+
+      '<div style="font-family:var(--fm);font-size:.58rem;color:var(--muted);margin-top:.2rem">Ver '+v+'</div>';
+    vdEl.appendChild(b);
+  });
+  // Score dist
+  const sdEl = document.getElementById('scoreDist');
+  sdEl.innerHTML = '';
+  const sd = d.score_dist || {};
+  [['0–5','0-5','var(--red)'],['6–9','6-9','var(--muted2)'],['10–12','10-12','var(--amber)'],['13–15','13-15','var(--lime)']].forEach(([lbl,key,clr]) => {
+    const b = document.createElement('div');
+    b.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.6rem 1rem;text-align:center;';
+    b.innerHTML = '<div style="font-size:1.6rem;font-weight:700;color:'+clr+'">'+(sd[key]||0)+'</div>'+
+      '<div style="font-family:var(--fm);font-size:.6rem;color:var(--muted);margin-top:.2rem">'+lbl+'</div>';
+    sdEl.appendChild(b);
+  });
+}
+
+// ─── SUSPENDED ────────────────────────────────────────────────
+function renderSuspended(d) {
+  const list = document.getElementById('banList');
+  const noBans = document.getElementById('noBans');
+  const banAlert = document.getElementById('banAlert');
+  const bans = d.suspended || [];
+  if (!bans.length) { list.innerHTML=''; noBans.style.display='flex'; banAlert.style.display='none'; return; }
+  noBans.style.display = 'none';
+  banAlert.style.display = 'flex';
+  document.getElementById('banAlertTxt').textContent =
+    bans.length + ' student(s) suspended. Each needs your decision below.';
+  list.innerHTML = '';
+  bans.forEach(b => {
+    const status = banActions[b.name];
+    const card = document.createElement('div');
+    card.className = 'ban-card';
+    card.id = 'ban_' + btoa(encodeURIComponent(b.name)).replace(/=/g,'');
+    card.innerHTML =
+      '<div class="ban-name">'+b.name+'</div>'+
+      '<div><div class="ban-code">CODE: '+(b.ban_code||'—')+'</div>'+
+      '<div class="ban-time">'+(b.time||'')+'</div></div>'+
+      '<div class="ban-actions" id="ba_'+card.id+'">'+
+      (status === 'released'
+        ? '<span class="ban-status released">&#10003; Released — exam resuming</span>'
+        : status === 'ended'
+        ? '<span class="ban-status ended">&#10007; Exam ended</span>'
+        : '<button class="btn btn-lime btn-sm" onclick="doRelease(\''+esc(b.name)+'\',this)">&#128275; Release</button>'+
+          '<button class="btn btn-red btn-sm" onclick="doForceEnd(\''+esc(b.name)+'\',this)">&#128683; End Exam</button>'
+      )+'</div>';
+    list.appendChild(card);
+  });
+}
+
+// ─── SUBMISSIONS ──────────────────────────────────────────────
+function renderSubmissions(d) {
+  const body = document.getElementById('subBody');
+  body.innerHTML = '';
+  const rows = d.rows || [];
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--muted);font-family:var(--fm)">No submissions yet</td></tr>';
+    return;
+  }
+  rows.forEach((r,i) => {
+    const sc = parseInt(r.auto_score)||0;
+    const scCls = sc>=13?'sc-hi':sc>=8?'sc-md':'sc-lo';
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td style="font-family:var(--fm);font-size:.7rem;color:var(--muted)">'+(i+1)+'</td>'+
+      '<td class="ar">'+r.name+'</td>'+
+      '<td><span class="ver-pip v'+(r.version||'')+'">'+r.version+'</span></td>'+
+      '<td><span class="sc-pip '+scCls+'">'+sc+'/15</span></td>'+
+      '<td style="font-family:var(--fm);font-size:.75rem;color:'+(r.tab_switches>0?'var(--amber)':'var(--muted)')+'">'+r.tab_switches+'</td>'+
+      '<td style="font-family:var(--fm);font-size:.72rem;color:var(--muted)">'+r.time_min+'m</td>'+
+      '<td style="font-family:var(--fm);font-size:.65rem;color:var(--muted)">'+r.submitted_at+'</td>';
+    body.appendChild(tr);
+  });
+}
+
+// ─── DRAWINGS ─────────────────────────────────────────────────
+function renderDrawings(d) {
+  const body = document.getElementById('drawBody');
+  body.innerHTML = '';
+  const rows = d.rows || [];
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--muted);font-family:var(--fm)">No submissions yet</td></tr>';
+    return;
+  }
+  rows.forEach(r => {
+    const sc  = parseInt(r.auto_score)||0;
+    const ds  = pendingDrawScores[r.name] !== undefined ? pendingDrawScores[r.name] : (parseInt(r.draw_score)||0);
+    const tot = sc + ds;
+    const scCls = sc>=13?'sc-hi':sc>=8?'sc-md':'sc-lo';
+    const hasLink = r.drawing_link && r.drawing_link.startsWith('http');
+    const safeN = esc(r.name);
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="ar">'+r.name+'</td>'+
+      '<td><span class="ver-pip v'+(r.version||'')+'">'+r.version+'</span></td>'+
+      '<td><span class="sc-pip '+scCls+'">'+sc+'/15</span></td>'+
+      '<td>'+(hasLink?'<a class="draw-link" href="'+r.drawing_link+'" target="_blank">&#128065; View Photo</a>':'<span style="color:var(--muted);font-size:.72rem">Not uploaded</span>')+'</td>'+
+      '<td><div class="draw-ctl">'+
+        '<input type="range" class="score-slider" min="0" max="5" step="1" value="'+ds+'" '+
+          'style="--pct:'+(ds/5*100)+'%" '+
+          'oninput="updateSlider(this,\''+safeN+'\')" id="sl_'+safeN+'" data-name="'+safeN+'">'+
+        '<span class="score-val" id="sv_'+safeN+'">'+ds+'/5</span>'+
+        '<button class="btn btn-lime btn-xs save-draw-btn" onclick="saveDrawScore(\''+safeN+'\')">Save</button>'+
+      '</div></td>'+
+      '<td style="font-weight:700;color:#fff;font-family:var(--fm)" id="tot_'+safeN+'">'+tot+'/20</td>';
+    body.appendChild(tr);
+  });
+}
+
+function updateSlider(el, name) {
+  const v = parseInt(el.value);
+  el.style.setProperty('--pct', (v/5*100)+'%');
+  document.getElementById('sv_'+name).textContent = v+'/5';
+  pendingDrawScores[name] = v;
+  // update total preview
+  const row = data && data.rows ? data.rows.find(r=>r.name===name) : null;
+  if (row) {
+    const totEl = document.getElementById('tot_'+name);
+    if (totEl) totEl.textContent = (parseInt(row.auto_score)||0) + v + '/20';
+  }
+}
+
+async function saveDrawScore(name) {
+  const score = pendingDrawScores[name];
+  if (score === undefined) { toast('Move the slider first','err'); return; }
+  try {
+    const r = await api({action:'teacherDrawingScore', name:encodeURIComponent(name), score:score});
+    if (r.error) { toast('Error: '+r.error,'err'); return; }
+    toast('Drawing score saved: '+name.slice(0,20)+'… → '+score+'/5','ok');
+    delete pendingDrawScores[name];
+    await refresh();
+  } catch(e) { toast('Connection error','err'); }
+}
+
+// ─── BAN ACTIONS (one-tap, fire directly) ────────────────────
+async function doRelease(name, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await api({action:'teacherUnlock', name:encodeURIComponent(name)});
+    if (r.error) { toast('Error: '+r.error,'err'); btn.disabled=false; btn.textContent='Release'; return; }
+    banActions[name] = 'released';
+    toast('Released: '+name.slice(0,25)+'… — exam resumes within 30s','ok');
+    renderSuspended(data);
+  } catch(e) { toast('Connection error','err'); btn.disabled=false; btn.textContent='Release'; }
+}
+
+async function doForceEnd(name, btn) {
+  if (!confirm('Permanently end the exam for:\n'+name+'\n\nThis cannot be undone.')) return;
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await api({action:'teacherForceEnd', name:encodeURIComponent(name)});
+    if (r.error) { toast('Error: '+r.error,'err'); btn.disabled=false; btn.textContent='End Exam'; return; }
+    banActions[name] = 'ended';
+    toast('Exam ended for: '+name.slice(0,25)+'…','ok');
+    renderSuspended(data);
+  } catch(e) { toast('Connection error','err'); btn.disabled=false; btn.textContent='End Exam'; }
+}
+
+// ─── EXAM PREVIEW ─────────────────────────────────────────────
+function showVer(v) {
+  document.querySelectorAll('.ver-tab').forEach(t => t.classList.toggle('on', t.textContent.trim()==='Version '+v));
+  renderPreview(v);
+}
+
+function renderPreview(v) {
+  const vd = V[v];
+  const el = document.getElementById('previewContent');
+  const sectionColor = {heat:'#ff7b44',state:'#60cfff',circuit:'#6dffb3',measure:'#ffcc44'};
+
+  let html = '';
+
+  // Students assigned this version
+  html += '<div class="preview-section">';
+  html += '<h4 style="color:var(--muted)">Students with Version '+v+' (sample)</h4>';
+  html += '<div style="direction:rtl;font-size:.82rem;color:var(--muted2);line-height:2;font-family:var(--fm);">';
+  html += vd.students_sample.join(' &nbsp;&middot;&nbsp; ');
+  html += '</div></div>';
+
+  // Chapter 1 — Heat
+  html += chapterPreview('1','Transfer of Heat','3 marks',sectionColor.heat,vd.heat);
+  html += chapterPreview('2','Change of State','3 marks',sectionColor.state,vd.state);
+  html += chapterPreview('3','Electric Circuit','3 marks',sectionColor.circuit,vd.circuit);
+  html += chapterPreview('4','Electric Measurements','6 marks',sectionColor.measure,vd.measure);
+
+  // Drawing task
+  html += '<div class="preview-section" style="border-color:rgba(255,204,68,.25)">';
+  html += '<h4 style="color:var(--amber)">Drawing Task — /5 teacher-graded</h4>';
+  html += '<div class="draw-spec">';
+  html += '<strong>Circuit:</strong> '+vd.draw.desc+'<br>';
+  html += '<strong>Add Ammeter:</strong> '+vd.draw.ammeter+'<br>';
+  html += '<strong>Add Voltmeter:</strong> '+vd.draw.voltmeter;
+  html += '</div></div>';
+
+  el.innerHTML = html;
+}
+
+function chapterPreview(num, title, marks, accent, ch) {
+  let html = '<div class="preview-section" style="border-color:'+accent+'22">';
+  html += '<h4 style="color:'+accent+'">Ch '+num+' — '+title+' ('+marks+')</h4>';
+
+  // Figure note
+  html += '<div class="fig-note">&#128444; Figure: '+ch.fig+'</div>';
+
+  // Q1 MCQ
+  html += qPreviewMCQ(num+'.1 MCQ (1 mark)', ch.q1);
+  // Q2 T/F + NC
+  html += qPreviewTFNC(num+'.2 T/F + Justification (1+1 marks)', ch.q2);
+  // Q3 Open
+  html += '<div class="q-preview"><div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:.3rem">'+num+'.3 Open Response (teacher-reviewed)</div>'+
+    '<div class="q-stem">'+ch.q3+'</div></div>';
+
+  html += '</div>';
+  return html;
+}
+
+function qPreviewMCQ(label, q) {
+  let html = '<div class="q-preview">';
+  html += '<div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:.35rem">'+label+'</div>';
+  html += '<div class="q-stem">'+q.stem+'</div>';
+  html += '<div class="q-opts">';
+  q.opts.forEach((o,i) => {
+    html += '<div class="q-opt'+(i===q.ans?' correct':'')+'">';
+    html += '<span style="font-family:var(--fm);font-size:.65rem;margin-right:.4rem">'+(i===q.ans?'✓':String.fromCharCode(65+i))+'</span>';
+    html += o + '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function qPreviewTFNC(label, q) {
+  let html = '<div class="q-preview">';
+  html += '<div style="font-family:var(--fm);font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:.35rem">'+label+'</div>';
+  html += '<div class="tf-row"><em style="color:var(--muted2)">'+q.stmt+'</em> &nbsp;<span class="tf-ans">'+q.tf+'</span></div>';
+  html += '<div class="q-opts" style="margin-top:.35rem">';
+  q.nc_opts.forEach((o,i) => {
+    const correct = String(i+1) === q.nc_ans;
+    html += '<div class="q-opt'+(correct?' correct':'')+'">'+
+      '<span style="font-family:var(--fm);font-size:.65rem;margin-right:.4rem">'+(correct?'✓':(i+1))+'</span>'+o+'</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+// ─── TIME GATE CONTROL ────────────────────────────────────────
+function loadTimeInputs() {
+  document.getElementById('tStart').value = cfg.startISO || '2026-06-18T09:00';
+  document.getElementById('tEnd').value   = cfg.endISO   || '2026-06-18T10:00';
+}
+
+function applyTimeWindow() {
+  cfg.startISO = document.getElementById('tStart').value;
+  cfg.endISO   = document.getElementById('tEnd').value;
+  saveCfg();
+  updateTimeStatus();
+  updateExamClock();
+  toast('Time window updated. Reload the exam HTML to apply.','ok');
+}
+
+function setPreviewWindow() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+  const end = new Date(now.getTime() + 60*60*1000);
+  cfg.startISO = fmt(now);
+  cfg.endISO   = fmt(end);
+  saveCfg(); loadTimeInputs(); updateTimeStatus(); updateExamClock();
+  toast('Preview window set: next 60 minutes. Update EXAM_START_UTC in the exam HTML.','ok');
+}
+
+function resetExamWindow() {
+  cfg.startISO = '2026-06-18T09:00';
+  cfg.endISO   = '2026-06-18T10:00';
+  saveCfg(); loadTimeInputs(); updateTimeStatus(); updateExamClock();
+  toast('Reset to exam day (June 18, 09:00–10:00 Beirut)','ok');
+}
+
+function updateTimeStatus() {
+  const el = document.getElementById('timeStatus');
+  const now = Date.now();
+  const s = parseBeirutLocal(cfg.startISO);
+  const e = parseBeirutLocal(cfg.endISO);
+  if (now < s) {
+    el.className = 'time-status not-started';
+    el.textContent = 'Not yet open — opens '+cfg.startISO+' Beirut time';
+  } else if (now <= e) {
+    el.className = 'time-status live';
+    el.textContent = 'LIVE NOW — closes '+cfg.endISO+' Beirut time';
+  } else {
+    el.className = 'time-status ended';
+    el.textContent = 'Exam window has closed (ended '+cfg.endISO+')';
+  }
+}
+
+// ─── TAB NAVIGATION ──────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + (type||'');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.className = '', 3500);
+}
+
+// ─── ESCAPE ───────────────────────────────────────────────────
+function esc(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
