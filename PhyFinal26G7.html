@@ -444,18 +444,21 @@
                     if(s.status === "BANNED") statusColor = "text-red-500 font-black";
                     if(s.status === "SUBMITTED") statusColor = "text-sky-400 font-bold";
 
+                    // Safely encode the name so quotes don't break the HTML buttons
+                    let safeNameHtml = name.replace(/"/g, '&quot;');
+
                     let controls = "";
                     if (s.status === "SUBMITTED" || s.status === "BANNED") {
-                        controls = `<button onclick="setStudentState('${name}', 'RESET')" class="bg-indigo-900/50 text-indigo-300 border border-indigo-700 px-4 py-1.5 rounded-md text-xs hover:bg-indigo-700 hover:text-white transition-colors w-full font-bold">Reset / Allow Retake</button>`;
+                        controls = `<button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'RESET')" class="bg-indigo-900/50 text-indigo-300 border border-indigo-700 px-4 py-1.5 rounded-md text-xs hover:bg-indigo-700 hover:text-white transition-colors w-full font-bold">Reset / Allow Retake</button>`;
                     } else {
                         let lockBtn = s.status === "BLOCKED" 
-                            ? `<button onclick="setStudentState('${name}', 'ACTIVE')" class="bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-4 py-1.5 rounded-md text-xs hover:bg-emerald-800 hover:text-white transition-colors">Release</button>`
-                            : `<button onclick="setStudentState('${name}', 'BLOCKED')" class="bg-amber-900/50 text-amber-500 border border-amber-800 px-4 py-1.5 rounded-md text-xs hover:bg-amber-800 hover:text-white transition-colors">Pause</button>`;
+                            ? `<button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'ACTIVE')" class="bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-4 py-1.5 rounded-md text-xs hover:bg-emerald-800 hover:text-white transition-colors">Release</button>`
+                            : `<button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'BLOCKED')" class="bg-amber-900/50 text-amber-500 border border-amber-800 px-4 py-1.5 rounded-md text-xs hover:bg-amber-800 hover:text-white transition-colors">Pause</button>`;
                         
                         controls = `
                             ${lockBtn}
-                            <button onclick="setStudentState('${name}', 'BANNED')" class="bg-red-900/50 text-red-400 border border-red-800 px-4 py-1.5 rounded-md text-xs hover:bg-red-800 hover:text-white transition-colors">Ban</button>
-                            <button onclick="setStudentState('${name}', 'RESET')" class="bg-slate-700 text-slate-300 border border-slate-600 px-4 py-1.5 rounded-md text-xs hover:bg-slate-600 hover:text-white transition-colors">Reset</button>
+                            <button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'BANNED')" class="bg-red-900/50 text-red-400 border border-red-800 px-4 py-1.5 rounded-md text-xs hover:bg-red-800 hover:text-white transition-colors">Ban</button>
+                            <button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'RESET')" class="bg-slate-700 text-slate-300 border border-slate-600 px-4 py-1.5 rounded-md text-xs hover:bg-slate-600 hover:text-white transition-colors">Reset</button>
                         `;
                     }
 
@@ -468,7 +471,7 @@
                             <td class="p-4 flex gap-2">${controls}</td>
                         </tr>
                     `;
-                }
+                }                }
             });
         }
 
