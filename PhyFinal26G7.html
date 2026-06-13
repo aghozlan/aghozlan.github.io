@@ -18,6 +18,7 @@
 </head>
 <body class="min-h-screen" oncontextmenu="return false;">
 
+    <!-- OVERLAYS -->
     <div id="cheatOverlay" class="strict-overlay" style="background: rgba(220, 38, 38, 0.98);">
         <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
         <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
@@ -47,6 +48,7 @@
 
     <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
         
+        <!-- LOGIN SCREEN -->
         <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
             <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 7D</h2>
             <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
@@ -93,6 +95,7 @@
             <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
         </div>
 
+        <!-- EXAM SCREEN -->
         <div id="examScreen" class="hidden space-y-6 pb-12">
             <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
                 <div class="mb-2 md:mb-0">
@@ -107,6 +110,7 @@
 
             <div id="questionsContainer" class="space-y-8"></div>
 
+            <!-- Drawing Section -->
             <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">IV</div>
@@ -133,6 +137,7 @@
             <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl py-5 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">SUBMIT FINAL EXAM</button>
         </div>
 
+        <!-- TEACHER DASHBOARD (LEVEL 2) -->
         <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
             <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
                 <h2 class="text-3xl font-black text-amber-400 tracking-wider">Level 2 Control Panel</h2>
@@ -150,7 +155,8 @@
                         </tr>
                     </thead>
                     <tbody id="rosterTableBody" class="divide-y divide-slate-700 bg-slate-900/50">
-                        </tbody>
+                        <!-- Dynamic Rows -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -268,7 +274,10 @@
 
             renderExam();
             startSecurityMonitors();
-            startHeartbeat();
+            
+            // Instantly register student on the dashboard
+            sendHeartbeat();
+            heartbeatInterval = setInterval(sendHeartbeat, 8000);
         }
 
         function renderExam() {
@@ -354,7 +363,6 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             }).then(() => {
-                // Instantly lock screen locally and push state
                 document.body.innerHTML = "";
                 document.getElementById('submittedOverlay').style.display = 'flex';
                 clearInterval(heartbeatInterval);
@@ -385,11 +393,6 @@
             if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(e => {});
         }
 
-        function startHeartbeat() {
-            heartbeatInterval = setInterval(sendHeartbeat, 8000);
-            sendHeartbeat();
-        }
-
         function sendHeartbeat() {
             if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") return;
             
@@ -398,7 +401,6 @@
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: "heartbeat", studentName: currentStudent, violations: violations })
             }).then(res => res.json()).then(data => {
-                // Reset strict overlays
                 document.getElementById('blockedOverlay').style.display = 'none';
                 document.getElementById('bannedOverlay').style.display = 'none';
                 document.getElementById('submittedOverlay').style.display = 'none';
@@ -407,7 +409,7 @@
                 if(data.status === "BANNED") document.getElementById('bannedOverlay').style.display = 'flex';
                 if(data.status === "SUBMITTED") {
                     document.getElementById('submittedOverlay').style.display = 'flex';
-                    clearInterval(heartbeatInterval); // Stop polling if submitted
+                    clearInterval(heartbeatInterval); 
                 }
             }).catch(e => {});
         }
@@ -442,7 +444,6 @@
                     if(s.status === "BANNED") statusColor = "text-red-500 font-black";
                     if(s.status === "SUBMITTED") statusColor = "text-sky-400 font-bold";
 
-                    // Build Override Controls based on state
                     let controls = "";
                     if (s.status === "SUBMITTED" || s.status === "BANNED") {
                         controls = `<button onclick="setStudentState('${name}', 'RESET')" class="bg-indigo-900/50 text-indigo-300 border border-indigo-700 px-4 py-1.5 rounded-md text-xs hover:bg-indigo-700 hover:text-white transition-colors w-full font-bold">Reset / Allow Retake</button>`;
