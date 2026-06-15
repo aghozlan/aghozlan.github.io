@@ -577,15 +577,15 @@
             heartbeatInterval = setInterval(sendHeartbeat, 8000);
         }
 
-        function getVersionSVG(visual, version) {
-            if (visual === "curve")     return svgHeatingCurve;
-            if (visual === "flowchart") return svgFlowchart;
-            if (visual === "schematic") return svgSchematic;
-            if (visual === "gap")       return version === "A" ? svgGap_A : (version === "B" ? svgGap_B : svgGap_C);
-            if (visual === "meters")    return version === "A" ? svgMeters_A : (version === "B" ? svgMeters_B : svgMeters_C);
+       function getVersionSVG(visual, version) {
+            const cap = (n) => `<p class="text-center font-bold text-slate-300 mb-2">Diagram ${n}</p>`;
+            if (visual === "curve")     return cap(1) + svgHeatingCurve;
+            if (visual === "flowchart") return cap(2) + svgFlowchart;
+            if (visual === "schematic") return cap(3) + svgSchematic;
+            if (visual === "gap")       return cap(4) + (version === "A" ? svgGap_A : (version === "B" ? svgGap_B : svgGap_C));
+            if (visual === "meters")    return cap(5) + (version === "A" ? svgMeters_A : (version === "B" ? svgMeters_B : svgMeters_C));
             return "";
         }
-
         function renderExam() {
             const container = document.getElementById('questionsContainer');
             container.innerHTML = "";
