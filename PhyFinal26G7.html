@@ -175,66 +175,319 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbcyfpU2Y5Xnkdg-OVd_yPXTzz2JFOKq8qJSiOx3Z4nn8CqOIP6LVFSRkeE3s8W2BFiw/exec"; 
 
         // ==========================================
-        // CORRECTED SVG VISUALS & DATABASE
+        // SVG DIAGRAMS - FROM QUESTION BANK
         // ==========================================
-        const svgCurve = `<svg viewBox="0 0 500 300" class="w-full max-w-lg mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner"><text x="250" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Temperature vs. Time Graph</text><line x1="50" y1="250" x2="450" y2="250" stroke="#475569" stroke-width="2"/><line x1="50" y1="50" x2="50" y2="250" stroke="#475569" stroke-width="2"/><text x="250" y="280" fill="#94a3b8" font-size="12" text-anchor="middle">Time (minutes)</text><text x="20" y="150" fill="#94a3b8" font-size="12" transform="rotate(-90 20,150)" text-anchor="middle">Temperature (°C)</text><text x="30" y="255" fill="#cbd5e1" font-size="12">-10°C</text><text x="30" y="195" fill="#cbd5e1" font-size="12">0°C</text><text x="25" y="95" fill="#cbd5e1" font-size="12">100°C</text><line x1="50" y1="190" x2="450" y2="190" stroke="#334155" stroke-dasharray="4"/><line x1="50" y1="90" x2="450" y2="90" stroke="#334155" stroke-dasharray="4"/><polyline points="50,250 100,190 200,190 300,90 400,90 450,40" fill="none" stroke="#38bdf8" stroke-width="4"/><circle cx="50" cy="250" r="4" fill="#f8fafc"/><text x="45" y="240" fill="#fff" font-weight="bold">A</text><circle cx="100" cy="190" r="4" fill="#f8fafc"/><text x="95" y="180" fill="#fff" font-weight="bold">B</text><circle cx="200" cy="190" r="4" fill="#f8fafc"/><text x="195" y="180" fill="#fff" font-weight="bold">C</text><circle cx="300" cy="90" r="4" fill="#f8fafc"/><text x="295" y="80" fill="#fff" font-weight="bold">D</text><circle cx="400" cy="90" r="4" fill="#f8fafc"/><text x="395" y="80" fill="#fff" font-weight="bold">E</text><circle cx="450" cy="40" r="4" fill="#f8fafc"/><text x="455" y="45" fill="#fff" font-weight="bold">F</text></svg>`;
-        const svgHeat = `<svg viewBox="0 0 400 300" class="w-full max-w-sm mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner"><text x="200" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Heat Transfer Diagram</text><path d="M180,260 Q200,200 220,260 Z" fill="#ef4444"/><path d="M190,260 Q200,220 210,260 Z" fill="#f59e0b"/><rect x="140" y="140" width="120" height="90" fill="#64748b" rx="5"/><rect x="130" y="130" width="140" height="15" fill="#475569" rx="3"/><rect x="260" y="150" width="60" height="12" fill="#334155" rx="2"/><text x="290" y="140" fill="#cbd5e1" font-size="12" text-anchor="middle">Point X</text><path d="M 145 160 Q 160 155 175 160 T 205 160 T 235 160 T 255 160" stroke="#38bdf8" stroke-width="2" fill="none"/><path d="M170,210 C150,180 180,170 190,190" stroke="#f8fafc" stroke-width="2" fill="none" marker-end="url(#arrow)"/><path d="M230,210 C250,180 220,170 210,190" stroke="#f8fafc" stroke-width="2" fill="none" marker-end="url(#arrow)"/><text x="200" y="200" fill="#cbd5e1" font-size="12" text-anchor="middle">Point Y</text><line x1="230" y1="250" x2="280" y2="230" stroke="#ef4444" stroke-width="2" stroke-dasharray="4"/><text x="270" y="250" fill="#cbd5e1" font-size="12">Point Z</text><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#f8fafc" /></marker></defs></svg>`;
-        const svgCircuit = `<svg viewBox="0 0 500 300" class="w-full max-w-lg mx-auto bg-slate-900 rounded-lg border border-slate-700 mb-6 shadow-inner"><text x="250" y="25" fill="#94a3b8" font-size="14" text-anchor="middle" font-weight="bold">Electric Circuit Diagram</text><polyline points="200,100 100,100 100,200 160,200" fill="none" stroke="#f8fafc" stroke-width="3"/><line x1="180" y1="200" x2="280" y2="200" stroke="#f8fafc" stroke-width="3"/><polyline points="320,200 400,200 400,100 260,100" fill="none" stroke="#f8fafc" stroke-width="3"/><line x1="160" y1="175" x2="160" y2="225" stroke="#f8fafc" stroke-width="3"/><line x1="180" y1="190" x2="180" y2="210" stroke="#f8fafc" stroke-width="6"/><text x="150" y="165" fill="#cbd5e1" font-size="14" font-weight="bold">+</text><text x="190" y="165" fill="#cbd5e1" font-size="14" font-weight="bold">-</text><text x="170" y="245" fill="#f59e0b" font-weight="bold" font-size="14" text-anchor="middle">G (9V)</text><circle cx="200" cy="100" r="4" fill="#f8fafc"/><circle cx="260" cy="100" r="4" fill="#f8fafc"/><line x1="200" y1="100" x2="250" y2="80" stroke="#f8fafc" stroke-width="3"/><text x="230" y="70" fill="#cbd5e1" font-size="14" font-weight="bold" text-anchor="middle">K</text><circle cx="300" cy="200" r="20" fill="#1e293b" stroke="#f8fafc" stroke-width="3"/><line x1="286" y1="186" x2="314" y2="214" stroke="#f8fafc" stroke-width="3"/><line x1="286" y1="214" x2="314" y2="186" stroke="#f8fafc" stroke-width="3"/><text x="300" y="240" fill="#38bdf8" font-weight="bold" font-size="14" text-anchor="middle">L (4.5V)</text><circle cx="280" cy="200" r="4" fill="#f8fafc"/><circle cx="320" cy="200" r="4" fill="#f8fafc"/><polyline points="280,200 280,140 284,140" fill="none" stroke="#f8fafc" stroke-width="2"/><polyline points="320,200 320,140 316,140" fill="none" stroke="#f8fafc" stroke-width="2"/><circle cx="300" cy="140" r="16" fill="#1e293b" stroke="#f8fafc" stroke-width="2"/><text x="300" y="145" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">V</text><text x="260" y="135" fill="#cbd5e1" font-size="12" font-weight="bold">COM</text></svg>`;
 
+        // SHARED DIAGRAMS (same across all versions - only numerical values in Diagram 4 & 5 differ)
+
+        const svgHeatingCurve = `<svg width="450" height="300" viewBox="0 0 450 300" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="white"/><line x1="50" y1="250" x2="420" y2="250" stroke="#475569" stroke-width="2"/><line x1="50" y1="250" x2="50" y2="20" stroke="#475569" stroke-width="2"/><text x="220" y="290" font-family="sans-serif" font-size="14" font-weight="bold" fill="#334155">Time (min)</text><text x="15" y="160" font-family="sans-serif" font-size="14" font-weight="bold" fill="#334155" transform="rotate(-90 15,160)">Temperature (°C)</text><path d="M 50 200 L 100 150 L 200 150 L 270 50 L 380 50" fill="none" stroke="#e74c3c" stroke-width="3"/><text x="25" y="155" font-family="sans-serif" font-size="12" fill="#334155">0</text><text x="15" y="55" font-family="sans-serif" font-size="12" fill="#334155">100</text><text x="55" y="190" font-family="sans-serif" font-size="12" fill="#334155">Solid</text><text x="130" y="135" font-family="sans-serif" font-size="14" font-weight="bold" font-style="italic" fill="#c0392b">Phase A</text><text x="220" y="100" font-family="sans-serif" font-size="12" fill="#334155">Liquid</text><text x="300" y="35" font-family="sans-serif" font-size="14" font-weight="bold" font-style="italic" fill="#c0392b">Phase B</text><line x1="45" y1="150" x2="55" y2="150" stroke="#475569" stroke-width="2"/><line x1="45" y1="50" x2="55" y2="50" stroke="#475569" stroke-width="2"/></svg>`;
+
+        const svgFlowchart = `<svg width="450" height="300" viewBox="0 0 450 300" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="white"/><rect x="175" y="40" width="100" height="50" rx="10" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/><text x="225" y="70" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#00838f">GAS</text><rect x="75" y="200" width="100" height="50" rx="10" fill="#e8eaf6" stroke="#283593" stroke-width="2"/><text x="125" y="230" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#283593">SOLID</text><rect x="275" y="200" width="100" height="50" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/><text x="325" y="230" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1565c0">LIQUID</text><path d="M 175 215 L 265 215" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr1)"/><text x="220" y="205" font-family="sans-serif" font-size="14" font-weight="bold" fill="#c0392b" text-anchor="middle">Process 1</text><path d="M 275 235 L 185 235" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr2)"/><text x="230" y="255" font-family="sans-serif" font-size="14" font-weight="bold" fill="#c0392b" text-anchor="middle">Process 2</text><path d="M 310 190 L 250 100" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr1)"/><text x="295" y="140" font-family="sans-serif" font-size="14" font-weight="bold" fill="#c0392b" text-anchor="middle">Process 3</text><path d="M 200 100 L 280 190" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arr1)"/><text x="215" y="160" font-family="sans-serif" font-size="14" font-weight="bold" fill="#c0392b" text-anchor="middle">Process 4</text><defs><marker id="arr1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#555"/></marker><marker id="arr2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#555"/></marker></defs></svg>`;
+
+        const svgSchematic = `<svg width="450" height="300" viewBox="0 0 450 300" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="100" y1="100" x2="215" y2="100" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="100" x2="350" y2="100" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="75" x2="215" y2="125" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="85" x2="235" y2="115" stroke="#2c3e50" stroke-width="2"/><line x1="350" y1="100" x2="350" y2="140" stroke="#2c3e50" stroke-width="3"/><line x1="350" y1="160" x2="350" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="350" cy="140" r="4" fill="#2c3e50"/><circle cx="350" cy="160" r="4" fill="#2c3e50"/><line x1="350" y1="140" x2="330" y2="150" stroke="#2c3e50" stroke-width="3"/><line x1="350" y1="200" x2="240" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="210" y1="200" x2="100" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="225" cy="200" r="15" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="214" y1="189" x2="236" y2="211" stroke="#2c3e50" stroke-width="2"/><line x1="214" y1="211" x2="236" y2="189" stroke="#2c3e50" stroke-width="2"/><line x1="100" y1="200" x2="100" y2="100" stroke="#2c3e50" stroke-width="3"/><text x="175" y="65" font-family="sans-serif" font-size="14" font-weight="bold" fill="#8e44ad">Component 1</text><text x="210" y="70" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="232" y="70" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="440" y="155" font-family="sans-serif" font-size="14" font-weight="bold" fill="#8e44ad" text-anchor="end">Component 2</text><text x="220" y="240" font-family="sans-serif" font-size="14" font-weight="bold" fill="#8e44ad">Component 3</text><text x="40" y="145" font-family="sans-serif" font-size="14" font-weight="bold" fill="#8e44ad">Component 4</text><path d="M 90 150 L 100 150" stroke="#8e44ad" stroke-width="3" marker-end="url(#arrowP)"/><defs><marker id="arrowP" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#8e44ad"/></marker></defs></svg>`;
+
+        // Diagram 4: Version A — Applied 12V / Rated 6V / Switch CLOSED
+        const svgGap_A = `<svg width="450" height="250" viewBox="0 0 450 250" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="125" y1="50" x2="215" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="50" x2="325" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="25" x2="215" y2="75" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="40" x2="235" y2="60" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="50" x2="325" y2="105" stroke="#2c3e50" stroke-width="3"/><line x1="325" y1="145" x2="325" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="325" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="311" y1="111" x2="339" y2="139" stroke="#2c3e50" stroke-width="2"/><line x1="311" y1="139" x2="339" y2="111" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="200" x2="240" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="210" y1="200" x2="125" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="210" cy="200" r="4" fill="#2c3e50"/><circle cx="240" cy="200" r="4" fill="#2c3e50"/><line x1="210" y1="200" x2="240" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="200" x2="125" y2="150" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="100" x2="125" y2="50" stroke="#2c3e50" stroke-width="3"/><circle cx="125" cy="100" r="4" fill="#2c3e50"/><circle cx="125" cy="150" r="4" fill="#2c3e50"/><text x="200" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="240" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="200" y="100" font-family="sans-serif" font-size="14" fill="#c0392b" font-weight="bold">Applied: 12 V</text><text x="355" y="130" font-family="sans-serif" font-size="14" fill="#2980b9" font-weight="bold">Rated: 6 V</text><text x="25" y="130" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Material Gap</text></svg>`;
+
+        // Diagram 4: Version B — Applied 9V / Rated 3V / Switch OPEN
+        const svgGap_B = `<svg width="450" height="250" viewBox="0 0 450 250" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="125" y1="50" x2="215" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="50" x2="325" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="25" x2="215" y2="75" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="40" x2="235" y2="60" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="50" x2="325" y2="105" stroke="#2c3e50" stroke-width="3"/><line x1="325" y1="145" x2="325" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="325" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="311" y1="111" x2="339" y2="139" stroke="#2c3e50" stroke-width="2"/><line x1="311" y1="139" x2="339" y2="111" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="200" x2="240" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="210" y1="200" x2="125" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="210" cy="200" r="4" fill="#2c3e50"/><circle cx="240" cy="200" r="4" fill="#2c3e50"/><line x1="210" y1="200" x2="230" y2="185" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="200" x2="125" y2="150" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="100" x2="125" y2="50" stroke="#2c3e50" stroke-width="3"/><circle cx="125" cy="100" r="4" fill="#2c3e50"/><circle cx="125" cy="150" r="4" fill="#2c3e50"/><text x="200" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="240" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="200" y="100" font-family="sans-serif" font-size="14" fill="#c0392b" font-weight="bold">Applied: 9 V</text><text x="355" y="130" font-family="sans-serif" font-size="14" fill="#2980b9" font-weight="bold">Rated: 3 V</text><text x="25" y="130" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Material Gap</text></svg>`;
+
+        // Diagram 4: Version C — Applied 24V / Rated 12V / Switch CLOSED
+        const svgGap_C = `<svg width="450" height="250" viewBox="0 0 450 250" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="125" y1="50" x2="215" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="50" x2="325" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="25" x2="215" y2="75" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="40" x2="235" y2="60" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="50" x2="325" y2="105" stroke="#2c3e50" stroke-width="3"/><line x1="325" y1="145" x2="325" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="325" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="311" y1="111" x2="339" y2="139" stroke="#2c3e50" stroke-width="2"/><line x1="311" y1="139" x2="339" y2="111" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="200" x2="240" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="210" y1="200" x2="125" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="210" cy="200" r="4" fill="#2c3e50"/><circle cx="240" cy="200" r="4" fill="#2c3e50"/><line x1="210" y1="200" x2="240" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="200" x2="125" y2="150" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="100" x2="125" y2="50" stroke="#2c3e50" stroke-width="3"/><circle cx="125" cy="100" r="4" fill="#2c3e50"/><circle cx="125" cy="150" r="4" fill="#2c3e50"/><text x="200" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="240" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="200" y="100" font-family="sans-serif" font-size="14" fill="#c0392b" font-weight="bold">Applied: 24 V</text><text x="355" y="130" font-family="sans-serif" font-size="14" fill="#2980b9" font-weight="bold">Rated: 12 V</text><text x="25" y="130" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Material Gap</text></svg>`;
+
+        // Diagram 5: Version A — Ammeter: 250 mA / Voltmeter: 9 V
+        const svgMeters_A = `<svg width="450" height="250" viewBox="0 0 450 250" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="125" y1="50" x2="215" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="50" x2="325" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="25" x2="215" y2="75" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="40" x2="235" y2="60" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="50" x2="325" y2="105" stroke="#2c3e50" stroke-width="3"/><line x1="325" y1="145" x2="325" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="325" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="311" y1="111" x2="339" y2="139" stroke="#2c3e50" stroke-width="2"/><line x1="311" y1="139" x2="339" y2="111" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="200" x2="125" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="200" x2="125" y2="145" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="105" x2="125" y2="50" stroke="#2c3e50" stroke-width="3"/><circle cx="125" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><text x="117" y="132" font-family="sans-serif" font-size="18" font-weight="bold" fill="#e67e22">A</text><path d="M 325 80 L 390 80 L 390 105" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M 325 170 L 390 170 L 390 145" fill="none" stroke="#2c3e50" stroke-width="3"/><circle cx="390" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><text x="382" y="132" font-family="sans-serif" font-size="18" font-weight="bold" fill="#e67e22">V</text><text x="200" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="240" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="205" y="95" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">U = ?</text><text x="40" y="130" font-family="sans-serif" font-size="13" fill="#2c3e50">250 mA</text><text x="110" y="95" font-family="sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Device A</text><text x="415" y="130" font-family="sans-serif" font-size="14" fill="#2c3e50">9 V</text><text x="360" y="85" font-family="sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Device V</text><text x="155" y="238" font-family="sans-serif" font-size="13" font-weight="bold" fill="#c0392b">Direction of Current: ?</text></svg>`;
+
+        // Diagram 5: Version B — Ammeter: 400 mA / Voltmeter: 6 V
+        const svgMeters_B = `<svg width="450" height="250" viewBox="0 0 450 250" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="125" y1="50" x2="215" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="50" x2="325" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="25" x2="215" y2="75" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="40" x2="235" y2="60" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="50" x2="325" y2="105" stroke="#2c3e50" stroke-width="3"/><line x1="325" y1="145" x2="325" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="325" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="311" y1="111" x2="339" y2="139" stroke="#2c3e50" stroke-width="2"/><line x1="311" y1="139" x2="339" y2="111" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="200" x2="125" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="200" x2="125" y2="145" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="105" x2="125" y2="50" stroke="#2c3e50" stroke-width="3"/><circle cx="125" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><text x="117" y="132" font-family="sans-serif" font-size="18" font-weight="bold" fill="#e67e22">A</text><path d="M 325 80 L 390 80 L 390 105" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M 325 170 L 390 170 L 390 145" fill="none" stroke="#2c3e50" stroke-width="3"/><circle cx="390" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><text x="382" y="132" font-family="sans-serif" font-size="18" font-weight="bold" fill="#e67e22">V</text><text x="200" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="240" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="205" y="95" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">U = ?</text><text x="40" y="130" font-family="sans-serif" font-size="13" fill="#2c3e50">400 mA</text><text x="110" y="95" font-family="sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Device A</text><text x="415" y="130" font-family="sans-serif" font-size="14" fill="#2c3e50">6 V</text><text x="360" y="85" font-family="sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Device V</text><text x="155" y="238" font-family="sans-serif" font-size="13" font-weight="bold" fill="#c0392b">Direction of Current: ?</text></svg>`;
+
+        // Diagram 5: Version C — Ammeter: 150 mA / Voltmeter: 12 V
+        const svgMeters_C = `<svg width="450" height="250" viewBox="0 0 450 250" class="w-full max-w-lg mx-auto rounded-lg border border-slate-700 mb-6 shadow-inner bg-white"><rect width="100%" height="100%" fill="#f9fbfd"/><line x1="125" y1="50" x2="215" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="235" y1="50" x2="325" y2="50" stroke="#2c3e50" stroke-width="3"/><line x1="215" y1="25" x2="215" y2="75" stroke="#2c3e50" stroke-width="5"/><line x1="235" y1="40" x2="235" y2="60" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="50" x2="325" y2="105" stroke="#2c3e50" stroke-width="3"/><line x1="325" y1="145" x2="325" y2="200" stroke="#2c3e50" stroke-width="3"/><circle cx="325" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><line x1="311" y1="111" x2="339" y2="139" stroke="#2c3e50" stroke-width="2"/><line x1="311" y1="139" x2="339" y2="111" stroke="#2c3e50" stroke-width="2"/><line x1="325" y1="200" x2="125" y2="200" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="200" x2="125" y2="145" stroke="#2c3e50" stroke-width="3"/><line x1="125" y1="105" x2="125" y2="50" stroke="#2c3e50" stroke-width="3"/><circle cx="125" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><text x="117" y="132" font-family="sans-serif" font-size="18" font-weight="bold" fill="#e67e22">A</text><path d="M 325 80 L 390 80 L 390 105" fill="none" stroke="#2c3e50" stroke-width="3"/><path d="M 325 170 L 390 170 L 390 145" fill="none" stroke="#2c3e50" stroke-width="3"/><circle cx="390" cy="125" r="20" fill="white" stroke="#2c3e50" stroke-width="3"/><text x="382" y="132" font-family="sans-serif" font-size="18" font-weight="bold" fill="#e67e22">V</text><text x="200" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">+</text><text x="240" y="20" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">-</text><text x="205" y="95" font-family="sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">U = ?</text><text x="40" y="130" font-family="sans-serif" font-size="13" fill="#2c3e50">150 mA</text><text x="110" y="95" font-family="sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Device A</text><text x="415" y="130" font-family="sans-serif" font-size="14" fill="#2c3e50">12 V</text><text x="360" y="85" font-family="sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">Device V</text><text x="155" y="238" font-family="sans-serif" font-size="13" font-weight="bold" fill="#c0392b">Direction of Current: ?</text></svg>`;
+
+        // ==========================================
+        // EXAM DATABASE  –  30 MCQs × 3 Versions
+        // visual keys: "curve" | "flowchart" | "schematic" | "gap" | "meters"
+        // ==========================================
         const examDatabase = {
             "A": [
-                { id: "q1", visual: "curve", title: "Part I: Change of State", text: "Looking at the Temperature vs. Time graph, what physical state is the substance in between points B and C?", options: ["Solid only", "Liquid only", "A mixture of Solid and Liquid", "Gas only"], correct: 2 },
-                { id: "q2", visual: "curve", text: "At what specific temperature does this substance boil (vaporize)?", options: ["-10°C", "0°C", "100°C", "It is not shown"], correct: 2 },
-                { id: "q3", visual: "curve", text: "During the segment D to E, heat energy is constantly being added. Why does the temperature remain constant?", options: ["The heat is lost to the environment", "The heat energy is used to break intermolecular bonds to change the state", "The thermometer is broken", "Boiling doesn't require heat"], correct: 1 },
-                { id: "q4", visual: "curve", text: "What process is represented by the segment A to B?", options: ["Heating a solid", "Melting", "Heating a liquid", "Condensation"], correct: 0 },
-                { id: "q5", visual: "curve", text: "What is the primary difference between boiling (at D-E) and evaporation?", options: ["Evaporation only happens at 100°C", "Boiling happens only at the surface, evaporation throughout the liquid", "Boiling occurs throughout the liquid at a specific temperature; evaporation occurs only at the surface at any temperature", "There is no difference"], correct: 2 },
-                { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "At Point X (the pot handle), thermal energy is transferred primarily through which mechanism?", options: ["Conduction", "Convection", "Radiation", "Vaporization"], correct: 0 },
-                { id: "q7", visual: "heat", text: "The arrows at Point Y represent the movement of water. What is this method of heat transfer called?", options: ["Conduction", "Convection", "Radiation", "Insulation"], correct: 1 },
-                { id: "q8", visual: "heat", text: "How does heat from the fire reach Point Z (the space next to the fire) without direct contact?", options: ["Conduction", "Convection", "Radiation", "Evaporation"], correct: 2 },
-                { id: "q9", visual: "heat", text: "Which statement best describes the relationship between Heat and Temperature in this diagram?", options: ["They are the exact same thing", "Temperature is energy; Heat is a measure of speed", "Heat is the thermal energy transferred; Temperature measures the average kinetic energy of the particles", "Heat is measured in Celsius, Temperature in Joules"], correct: 2 },
-                { id: "q10", visual: "heat", text: "If the pot is made of aluminum, it is considered a good thermal...", options: ["Insulator", "Conductor", "Radiator", "Convector"], correct: 1 },
-                { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "In the Electric Circuit diagram, what is the state of Switch K?", options: ["Closed, current is flowing", "Closed, no current is flowing", "Open, current is flowing", "Open, no current is flowing"], correct: 3 },
-                { id: "q12", visual: "circuit", text: "How is the Voltmeter (V) connected relative to the Lamp (L)?", options: ["In Series", "In Parallel", "It is not connected", "In short circuit"], correct: 1 },
-                { id: "q13", visual: "circuit", text: "Notice the COM terminal of the voltmeter. To which pole of the battery (G) is it correctly oriented?", options: ["The positive pole (+)", "The negative pole (-)", "Both poles", "Neither pole"], correct: 1 },
-                { id: "q14", visual: "circuit", text: "The dry cell (G) is rated 9V, but the lamp (L) is rated 4.5V. Which term best describes this situation?", options: ["Normal Adaptation", "Under-voltage (Under-adaptation)", "Over-voltage (Over-adaptation)", "Short Circuit"], correct: 2 },
-                { id: "q15", visual: "circuit", text: "Because of the adaptation state in the previous question, what is most likely to happen when the switch is closed?", options: ["The lamp will glow normally", "The lamp will glow dimly", "The lamp will glow very brightly and likely burn out", "The battery will explode instantly"], correct: 2 }
+                { id:"q1",  visual:"curve",     title:"Part I: Change of State",
+                  text:"Based purely on observation of Diagram 1, what physical process is occurring during Phase A?",
+                  options:["Solidification","Fusion (Melting)","Boiling","Condensation"], correct:1 },
+                { id:"q2",  visual:"curve",
+                  text:"According to Diagram 1, what two states of matter co-exist during Phase B?",
+                  options:["Solid and Liquid","Liquid and Gas","Solid and Gas","Only Liquid"], correct:1 },
+                { id:"q3",  visual:"curve",
+                  text:"By projecting the position of Phase B onto the vertical axis in Diagram 1, what is the temperature value for this process?",
+                  options:["0°C","50°C","100°C","150°C"], correct:2 },
+                { id:"q4",  visual:"curve",
+                  text:"Which statement correctly describes the behavior of the plotted line during Phase A in Diagram 1?",
+                  options:["It shows a rapid increase in temperature over time.","It is horizontal, meaning the temperature remains constant.","It shows a slow decrease in temperature.","It drops immediately to -10°C."], correct:1 },
+                { id:"q5",  visual:"flowchart",
+                  text:"Referencing the specific boxes connected by the arrow in Diagram 2, which scientific term accurately identifies 'Process 1'?",
+                  options:["Fusion","Solidification","Evaporation","Condensation"], correct:0 },
+                { id:"q6",  visual:"flowchart",
+                  text:"Based on the arrow direction for 'Process 2' in Diagram 2, what energy change is required for the substance to undergo this phase change?",
+                  options:["The substance must absorb heat energy.","The substance must lose heat energy.","The substance must be placed in a vacuum.","Energy change is not required for Process 2."], correct:1 },
+                { id:"q7",  visual:"flowchart",
+                  text:"If 'Process 3' in Diagram 2 occurs rapidly at a specific, fixed temperature throughout the entire volume of the substance, it is specifically called:",
+                  options:["Evaporation","Boiling","Condensation","Fusion"], correct:1 },
+                { id:"q8",  visual:"flowchart",
+                  text:"How does evaporation differ from the specific manifestation of 'Process 3' described in Question 7?",
+                  options:["Evaporation only happens when the substance starts freezing.","Evaporation occurs at any temperature and only at the free surface.","Evaporation is associated with the arrow for Process 4 instead.","Evaporation requires the exact opposite energy transfer."], correct:1 },
+                { id:"q9",  visual:"flowchart",
+                  text:"Determine the scientific name for the phase change indicated by 'Process 4' in Diagram 2.",
+                  options:["Boiling","Condensation","Solidification","Sublimation"], correct:1 },
+                { id:"q10", visual:"curve",
+                  text:"By evaluating the line in Diagram 1, what is the state of the substance when the temperature on the y-axis reads 50°C?",
+                  options:["Solid","Liquid","Gas","A mixture of solid and gas"], correct:1 },
+                { id:"q11", visual:"schematic", title:"Part II: Electric Circuit",
+                  text:"By examining the graphic symbols in Diagram 3, identify the standard name for the element labeled as Component 1.",
+                  options:["An ammeter","A dry cell (battery)","A closed switch","A resistor"], correct:1 },
+                { id:"q12", visual:"schematic",
+                  text:"Based exclusively on the physical drawing of Component 2 in Diagram 3, what is the current operational status of this specific circuit?",
+                  options:["Closed, allowing electric current to flow to Component 3.","Open, meaning the electric current is interrupted.","Short-circuited.","Bypassed entirely."], correct:1 },
+                { id:"q13", visual:"schematic",
+                  text:"Observe the internal structure of the circle labeled Component 3 in Diagram 3. What electrical device does this standardized icon represent?",
+                  options:["A connecting wire","A voltmeter","A lamp","A motor"], correct:2 },
+                { id:"q14", visual:"schematic",
+                  text:"What is the designated primary function of Component 4 as depicted in Diagram 3?",
+                  options:["To measure the total voltage of the system.","To act as the main generator of electrical energy.","To connect the components and act as a pathway for current.","To provide high resistance and prevent circuit damage."], correct:2 },
+                { id:"q15", visual:"gap",
+                  text:"In Diagram 4, locate the topmost symbol. What does the longer parallel line with the adjacent symbol indicate?",
+                  options:["The negative terminal","The positive terminal","The earth ground","An internal resistor"], correct:1 },
+                { id:"q16", visual:"gap",
+                  text:"Examine the switch located at the bottom horizontal wire of Diagram 4. What is its current physical state?",
+                  options:["Closed, meaning current can flow if the gap is bridged.","Open, meaning current cannot flow.","It is functioning as a voltmeter.","It is blown like a fuse."], correct:0 },
+                { id:"q17", visual:"gap",
+                  text:"Compare the numerical values shown next to the top and rightmost components in Diagram 4. What will happen to the rightmost component if a perfectly conductive wire is placed across the Material Gap?",
+                  options:["It will function normally at its designed capacity.","It will function very weakly.","It will likely burn out due to overvoltage.","It will emit no light at all due to undervoltage."], correct:2 },
+                { id:"q18", visual:"gap",
+                  text:"If the topmost component in Diagram 4 is replaced by a unit providing 3 V, how will the rightmost component behave upon closing the circuit?",
+                  options:["It will burn out instantly.","It will function at its optimum normal brightness.","It will function weakly (dimly).","It will explode."], correct:2 },
+                { id:"q19", visual:"gap",
+                  text:"If a solid piece of copper connects the two small black dots in the 'Material Gap' of Diagram 4, the rightmost component will ____________ because copper is classified as a ____________.",
+                  options:["Receive no current; Insulator","Flash briefly; Voltage source","Receive current; Conductor","Burn; Resistor"], correct:2 },
+                { id:"q20", visual:"gap",
+                  text:"Which of the following real-world objects, if placed exactly across the 'Material Gap' in Diagram 4, would prevent the entire circuit from operating?",
+                  options:["Iron nail","Aluminum foil","Silver coin","Plastic spoon"], correct:3 },
+                { id:"q21", visual:"meters", title:"Part III: Electric Measurements",
+                  text:"Analyze the topmost component in Diagram 5. Based on its indicated terminals, what is the conventional direction of the electric current through the bottom wire?",
+                  options:["From right to left.","From left to right.","It alternates back and forth rapidly.","There is no current in the bottom wire."], correct:0 },
+                { id:"q22", visual:"meters",
+                  text:"Note the letter inside Device A and its position in the circuit path in Diagram 5. What is the specific name of this instrument?",
+                  options:["Voltmeter","Ammeter","Ohmmeter","Resistor"], correct:1 },
+                { id:"q23", visual:"meters",
+                  text:"Note the letter inside Device V and how its wires branch off in Diagram 5. What is the specific name of this instrument?",
+                  options:["Voltmeter","Ammeter","Oscilloscope","Wattmeter"], correct:0 },
+                { id:"q24", visual:"meters",
+                  text:"Look at the numerical value displayed just outside Device A in Diagram 5. What is this exact measurement converted into the standard SI unit (A)?",
+                  options:["2500 A","25.0 A","2.5 A","0.25 A"], correct:3 },
+                { id:"q25", visual:"meters",
+                  text:"What physical quantity is Device V currently measuring for the component it is connected across in Diagram 5?",
+                  options:["Electric Current","Electric Voltage (Potential Difference)","Electric Resistance","Electric Power"], correct:1 },
+                { id:"q26", visual:"meters",
+                  text:"If the physical reading on Device A in Diagram 5 were to increase, what observable change would subsequently occur in the central right component?",
+                  options:["Its brightness will decrease.","Its brightness will increase.","It will reverse its polarity.","It will turn off completely."], correct:1 },
+                { id:"q27", visual:"meters",
+                  text:"Based solely on the reading of Device V in Diagram 5, and assuming the connecting wires have negligible resistance, what is the approximate value of U at the top?",
+                  options:["0 V","4.5 V","9 V","18 V"], correct:2 },
+                { id:"q28", visual:"meters",
+                  text:"How must Device V in Diagram 5 be physically repositioned in order to directly measure U instead of the lower component?",
+                  options:["Inserted in series right next to the top component.","Connected in parallel directly across the terminals of the top component.","Swapped in placement with Device A.","Removed from the circuit entirely."], correct:1 },
+                { id:"q29", visual:"meters",
+                  text:"Observe how Device A is placed within the continuous wire loop in Diagram 5. Why is it incorrect to place Device A in the branching manner of Device V?",
+                  options:["Because measuring the flow requires the device to be part of the main path (in series).","Because the device measures potential difference, requiring a parallel connection.","Because it would increase the circuit's overall resistance significantly.","Because the battery would explode."], correct:0 },
+                { id:"q30", visual:"meters",
+                  text:"If the input/output connections of Device A in Diagram 5 are swapped relative to the current direction shown by the battery, how will the displayed number change?",
+                  options:["It will become a value of zero.","It will display an extremely high positive current.","It will display a negative sign (e.g., -250 mA).","It will measure voltage instead."], correct:2 }
             ],
-            "B": [
-                 { id: "q1", visual: "curve", title: "Part I: Change of State", text: "On the Temperature-Time graph, segment C to D represents:", options: ["Melting", "Heating a liquid", "Boiling", "Heating a gas"], correct: 1 },
-                 { id: "q2", visual: "curve", text: "The plateau at 0°C (B to C) represents which physical process?", options: ["Fusion (Melting)", "Solidification", "Vaporization", "Condensation"], correct: 0 },
-                 { id: "q3", visual: "curve", text: "During boiling (D to E), the temperature is 100°C. What states of matter are present in the beaker?", options: ["Liquid only", "Gas only", "Both Liquid and Gas", "Solid and Liquid"], correct: 2 },
-                 { id: "q4", visual: "curve", text: "If we reversed this process (cooling), the plateau at 100°C would represent:", options: ["Boiling", "Condensation", "Melting", "Freezing"], correct: 1 },
-                 { id: "q5", visual: "curve", text: "Which requires heat absorption from the surroundings?", options: ["Condensation", "Solidification", "Evaporation", "Freezing"], correct: 2 },
-                 { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "Thermal conduction at Point X occurs best in which state of matter?", options: ["Solids", "Liquids", "Gases", "Vacuum"], correct: 0 },
-                 { id: "q7", visual: "heat", text: "Convection currents at Point Y are caused by differences in:", options: ["Color", "Density", "Voltage", "Mass"], correct: 1 },
-                 { id: "q8", visual: "heat", text: "Radiation at Point Z can travel through a vacuum. True or False?", options: ["True", "False", "Only in water", "Only in air"], correct: 0 },
-                 { id: "q9", visual: "heat", text: "What is the SI unit for Heat Energy?", options: ["Celsius", "Fahrenheit", "Joule", "Volt"], correct: 2 },
-                 { id: "q10", visual: "heat", text: "A plastic handle on the pot would prevent burns because plastic is a:", options: ["Thermal Conductor", "Thermal Insulator", "Convector", "Radiator"], correct: 1 },
-                 { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "If Switch K is closed, what happens to the circuit?", options: ["It becomes an open circuit", "It becomes a closed circuit and current flows", "The battery dies instantly", "Nothing happens"], correct: 1 },
-                 { id: "q12", visual: "circuit", text: "What is the function of the Voltmeter (V)?", options: ["Measure current", "Measure electric resistance", "Measure voltage (potential difference)", "Provide energy"], correct: 2 },
-                 { id: "q13", visual: "circuit", text: "If you wanted to measure the main current in this circuit, what device would you add, and how?", options: ["Voltmeter in series", "Ammeter in parallel", "Ammeter in series", "Voltmeter in parallel"], correct: 2 },
-                 { id: "q14", visual: "circuit", text: "If the lamp (L) was rated 12V instead of 4.5V, what would be the adaptation with the 9V battery?", options: ["Over-adaptation", "Under-adaptation", "Normal adaptation", "Short circuit"], correct: 1 },
-                 { id: "q15", visual: "circuit", text: "Under adaptation (12V lamp on 9V battery) causes the lamp to:", options: ["Burn out", "Glow dimly", "Glow normally", "Flash repeatedly"], correct: 1 }
-            ],
-            "C": [
-                 { id: "q1", visual: "curve", title: "Part I: Change of State", text: "At point E on the graph, vaporization is complete. What state is the substance in?", options: ["Solid", "Liquid", "Gas", "Plasma"], correct: 2 },
-                 { id: "q2", visual: "curve", text: "What is the melting point of the substance shown in the graph?", options: ["-10°C", "0°C", "100°C", "110°C"], correct: 1 },
-                 { id: "q3", visual: "curve", text: "During the phase change from Liquid to Gas (D to E), the kinetic energy of the molecules:", options: ["Increases", "Decreases", "Remains constant (energy goes to breaking bonds)", "Drops to zero"], correct: 2 },
-                 { id: "q4", visual: "curve", text: "The physical difference between evaporation and boiling is that boiling:", options: ["Happens only at the surface", "Happens at any temperature", "Happens throughout the liquid at a specific temperature", "Releases heat"], correct: 2 },
-                 { id: "q5", visual: "curve", text: "A plateau on a heating curve always indicates:", options: ["A broken thermometer", "A change of state", "Cooling", "Maximum temperature reached"], correct: 1 },
-                 { id: "q6", visual: "heat", title: "Part II: Transfer of Heat", text: "Which mechanism transfers heat through direct particle collisions (like in the pot's metal bottom)?", options: ["Conduction", "Convection", "Radiation", "Insulation"], correct: 0 },
-                 { id: "q7", visual: "heat", text: "As water heats at the bottom of the pot, it expands, becomes less dense, and rises. This is:", options: ["Conduction", "Radiation", "Convection", "Sublimation"], correct: 2 },
-                 { id: "q8", visual: "heat", text: "Heat from the sun reaches Earth via the same mechanism shown at Point Z. What is it?", options: ["Conduction", "Convection", "Radiation", "Friction"], correct: 2 },
-                 { id: "q9", visual: "heat", text: "Temperature is a measure of:", options: ["Total thermal energy", "Average kinetic energy of particles", "Mass of the object", "Volume of the object"], correct: 1 },
-                 { id: "q10", visual: "heat", text: "Wood is often used for pot handles. Why?", options: ["It is a good conductor", "It is a good insulator", "It radiates heat well", "It melts easily"], correct: 1 },
-                 { id: "q11", visual: "circuit", title: "Part III: Electric Circuits", text: "What symbol represents the dry cell (G)?", options: ["A circle with an X", "Two parallel lines of equal length", "Two parallel lines of unequal length (one long, one short)", "A circle with a V"], correct: 2 },
-                 { id: "q12", visual: "circuit", text: "The COM terminal of a measurement device must always be connected towards the:", options: ["Positive pole", "Negative pole", "Switch", "Lamp"], correct: 1 },
-                 { id: "q13", visual: "circuit", text: "If the switch (K) is closed, what will the Voltmeter (V) read roughly?", options: ["0 V", "4.5 V", "9 V (since it measures the voltage across the lamp receiving power)", "12 V"], correct: 2 },
-                 { id: "q14", visual: "circuit", text: "The 9V battery providing power to a 4.5V lamp is a state of over-voltage. What is the risk?", options: ["No risk", "The battery will drain slowly", "The lamp filament will break (burn out)", "The switch will melt"], correct: 2 },
-                 { id: "q15", visual: "circuit", text: "To protect the 4.5V lamp from the 9V battery, you could add:", options: ["A motor in series", "A switch in parallel", "Another 9V battery", "Nothing, it's fine"], correct: 0 }
-            ]
-        };
 
+            "B": [
+                { id:"q1",  visual:"curve",     title:"Part I: Change of State",
+                  text:"Based purely on observation of Diagram 1, what physical process is occurring during Phase A?",
+                  options:["Fusion (Melting)","Solidification","Condensation","Boiling"], correct:0 },
+                { id:"q2",  visual:"curve",
+                  text:"According to Diagram 1, what two states of matter co-exist during Phase B?",
+                  options:["Liquid and Gas","Solid and Liquid","Solid and Gas","Only Liquid"], correct:1 },
+                { id:"q3",  visual:"curve",
+                  text:"By projecting the position of Phase B onto the vertical axis in Diagram 1, what is the temperature value for this process?",
+                  options:["0°C","50°C","100°C","150°C"], correct:2 },
+                { id:"q4",  visual:"curve",
+                  text:"Which statement correctly describes the behavior of the plotted line during Phase A in Diagram 1?",
+                  options:["It shows a rapid increase in temperature over time.","It is horizontal, meaning the temperature remains constant.","It shows a slow decrease in temperature.","It drops immediately to -10°C."], correct:1 },
+                { id:"q5",  visual:"flowchart",
+                  text:"Referencing the specific boxes connected by the arrow in Diagram 2, which scientific term accurately identifies 'Process 1'?",
+                  options:["Solidification","Fusion","Condensation","Evaporation"], correct:0 },
+                { id:"q6",  visual:"flowchart",
+                  text:"Based on the arrow direction for 'Process 2' in Diagram 2, what energy change is required for the substance to undergo this phase change?",
+                  options:["The substance must absorb heat energy.","The substance must lose heat energy.","The substance must be placed in a vacuum.","Energy change is not required for Process 2."], correct:1 },
+                { id:"q7",  visual:"flowchart",
+                  text:"If 'Process 3' in Diagram 2 occurs rapidly at a specific, fixed temperature throughout the entire volume of the substance, it is specifically called:",
+                  options:["Boiling","Evaporation","Condensation","Fusion"], correct:0 },
+                { id:"q8",  visual:"flowchart",
+                  text:"How does evaporation differ from the specific manifestation of 'Process 3' described in Question 7?",
+                  options:["Evaporation only happens when the substance starts freezing.","Evaporation occurs at any temperature and only at the free surface.","Evaporation is associated with the arrow for Process 4 instead.","Evaporation requires the exact opposite energy transfer."], correct:1 },
+                { id:"q9",  visual:"flowchart",
+                  text:"Determine the scientific name for the phase change indicated by 'Process 4' in Diagram 2.",
+                  options:["Boiling","Condensation","Solidification","Sublimation"], correct:1 },
+                { id:"q10", visual:"curve",
+                  text:"By evaluating the line in Diagram 1, what is the state of the substance when the temperature on the y-axis reads 50°C?",
+                  options:["Solid","Liquid","Gas","A mixture of solid and gas"], correct:1 },
+                { id:"q11", visual:"schematic", title:"Part II: Electric Circuit",
+                  text:"By examining the graphic symbols in Diagram 3, identify the standard name for the element labeled as Component 1.",
+                  options:["A dry cell (battery)","An ammeter","A closed switch","A resistor"], correct:0 },
+                { id:"q12", visual:"schematic",
+                  text:"Based exclusively on the physical drawing of Component 2 in Diagram 3, what is the current operational status of this specific circuit?",
+                  options:["Closed, allowing electric current to flow to Component 3.","Open, meaning the electric current is interrupted.","Short-circuited.","Bypassed entirely."], correct:1 },
+                { id:"q13", visual:"schematic",
+                  text:"Observe the internal structure of the circle labeled Component 3 in Diagram 3. What electrical device does this standardized icon represent?",
+                  options:["A lamp","A voltmeter","A connecting wire","A motor"], correct:0 },
+                { id:"q14", visual:"schematic",
+                  text:"What is the designated primary function of Component 4 as depicted in Diagram 3?",
+                  options:["To measure the total voltage of the system.","To act as the main generator of electrical energy.","To connect the components and act as a pathway for current.","To provide high resistance and prevent circuit damage."], correct:2 },
+                { id:"q15", visual:"gap",
+                  text:"In Diagram 4, locate the topmost symbol. What does the longer parallel line with the adjacent symbol indicate?",
+                  options:["The positive terminal","The negative terminal","The earth ground","An internal resistor"], correct:0 },
+                { id:"q16", visual:"gap",
+                  text:"Examine the switch located at the bottom horizontal wire of Diagram 4. What is its current physical state?",
+                  options:["Closed, meaning current can flow if the gap is bridged.","Open, meaning current cannot flow.","It is functioning as a voltmeter.","It is blown like a fuse."], correct:1 },
+                { id:"q17", visual:"gap",
+                  text:"Compare the numerical values shown next to the top and rightmost components in Diagram 4. What will happen to the rightmost component if a perfectly conductive wire is placed across the Material Gap?",
+                  options:["It will likely burn out due to overvoltage.","It will function very weakly.","It will function normally at its designed capacity.","It will emit no light at all due to undervoltage."], correct:0 },
+                { id:"q18", visual:"gap",
+                  text:"If the topmost component in Diagram 4 is replaced by a unit providing 1.5 V, how will the rightmost component behave upon closing the circuit?",
+                  options:["It will function weakly (dimly).","It will function at its optimum normal brightness.","It will burn out instantly.","It will explode."], correct:0 },
+                { id:"q19", visual:"gap",
+                  text:"If a solid piece of copper connects the two small black dots in the 'Material Gap' of Diagram 4, the rightmost component will ____________ because copper is classified as a ____________.",
+                  options:["Receive current; Conductor","Receive no current; Insulator","Flash briefly; Voltage source","Burn; Resistor"], correct:0 },
+                { id:"q20", visual:"gap",
+                  text:"Which of the following real-world objects, if placed exactly across the 'Material Gap' in Diagram 4, would prevent the entire circuit from operating?",
+                  options:["Iron nail","Aluminum foil","Silver coin","Plastic spoon"], correct:3 },
+                { id:"q21", visual:"meters", title:"Part III: Electric Measurements",
+                  text:"Analyze the topmost component in Diagram 5. Based on its indicated terminals, what is the conventional direction of the electric current through the bottom wire?",
+                  options:["From left to right.","From right to left.","It alternates back and forth rapidly.","There is no current in the bottom wire."], correct:0 },
+                { id:"q22", visual:"meters",
+                  text:"Note the letter inside Device A and its position in the circuit path in Diagram 5. What is the specific name of this instrument?",
+                  options:["Voltmeter","Ammeter","Ohmmeter","Resistor"], correct:1 },
+                { id:"q23", visual:"meters",
+                  text:"Note the letter inside Device V and how its wires branch off in Diagram 5. What is the specific name of this instrument?",
+                  options:["Ammeter","Voltmeter","Oscilloscope","Wattmeter"], correct:1 },
+                { id:"q24", visual:"meters",
+                  text:"Look at the numerical value displayed just outside Device A in Diagram 5. What is this exact measurement converted into the standard SI unit (A)?",
+                  options:["0.4 A","4000 A","40.0 A","4.0 A"], correct:0 },
+                { id:"q25", visual:"meters",
+                  text:"What physical quantity is Device V currently measuring for the component it is connected across in Diagram 5?",
+                  options:["Electric Voltage (Potential Difference)","Electric Current","Electric Resistance","Electric Power"], correct:0 },
+                { id:"q26", visual:"meters",
+                  text:"If the physical reading on Device A in Diagram 5 were to increase, what observable change would subsequently occur in the central right component?",
+                  options:["Its brightness will decrease.","Its brightness will increase.","It will reverse its polarity.","It will turn off completely."], correct:1 },
+                { id:"q27", visual:"meters",
+                  text:"Based solely on the reading of Device V in Diagram 5, and assuming the connecting wires have negligible resistance, what is the approximate value of U at the top?",
+                  options:["6 V","0 V","3.0 V","12 V"], correct:0 },
+                { id:"q28", visual:"meters",
+                  text:"How must Device V in Diagram 5 be physically repositioned in order to directly measure U instead of the lower component?",
+                  options:["Connected in parallel directly across the terminals of the top component.","Inserted in series right next to the top component.","Swapped in placement with Device A.","Removed from the circuit entirely."], correct:0 },
+                { id:"q29", visual:"meters",
+                  text:"Observe how Device A is placed within the continuous wire loop in Diagram 5. Why is it incorrect to place Device A in the branching manner of Device V?",
+                  options:["Because measuring the flow requires the device to be part of the main path (in series).","Because the device measures potential difference, requiring a parallel connection.","Because it would increase the circuit's overall resistance significantly.","Because the battery would explode."], correct:0 },
+                { id:"q30", visual:"meters",
+                  text:"If the input/output connections of Device A in Diagram 5 are swapped relative to the current direction shown by the battery, how will the displayed number change?",
+                  options:["It will display a negative sign (e.g., -400 mA).","It will become a value of zero.","It will display an extremely high positive current.","It will measure voltage instead."], correct:0 }
+            ],
+
+            "C": [
+                { id:"q1",  visual:"curve",     title:"Part I: Change of State",
+                  text:"Based purely on observation of Diagram 1, what physical process is occurring during Phase A?",
+                  options:["Boiling","Fusion (Melting)","Solidification","Condensation"], correct:1 },
+                { id:"q2",  visual:"curve",
+                  text:"According to Diagram 1, what two states of matter co-exist during Phase B?",
+                  options:["Solid and Liquid","Liquid and Gas","Solid and Gas","Only Liquid"], correct:1 },
+                { id:"q3",  visual:"curve",
+                  text:"By projecting the position of Phase B onto the vertical axis in Diagram 1, what is the temperature value for this process?",
+                  options:["100°C","0°C","50°C","150°C"], correct:0 },
+                { id:"q4",  visual:"curve",
+                  text:"Which statement correctly describes the behavior of the plotted line during Phase A in Diagram 1?",
+                  options:["It shows a rapid increase in temperature over time.","It is horizontal, meaning the temperature remains constant.","It shows a slow decrease in temperature.","It drops immediately to -10°C."], correct:1 },
+                { id:"q5",  visual:"flowchart",
+                  text:"Referencing the specific boxes connected by the arrow in Diagram 2, which scientific term accurately identifies 'Process 1'?",
+                  options:["Fusion","Solidification","Evaporation","Condensation"], correct:0 },
+                { id:"q6",  visual:"flowchart",
+                  text:"Based on the arrow direction for 'Process 2' in Diagram 2, what energy change is required for the substance to undergo this phase change?",
+                  options:["The substance must lose heat energy.","The substance must absorb heat energy.","The substance must be placed in a vacuum.","Energy change is not required for Process 2."], correct:0 },
+                { id:"q7",  visual:"flowchart",
+                  text:"If 'Process 3' in Diagram 2 occurs rapidly at a specific, fixed temperature throughout the entire volume of the substance, it is specifically called:",
+                  options:["Evaporation","Boiling","Condensation","Fusion"], correct:1 },
+                { id:"q8",  visual:"flowchart",
+                  text:"How does evaporation differ from the specific manifestation of 'Process 3' described in Question 7?",
+                  options:["Evaporation only happens when the substance starts freezing.","Evaporation occurs at any temperature and only at the free surface.","Evaporation is associated with the arrow for Process 4 instead.","Evaporation requires the exact opposite energy transfer."], correct:1 },
+                { id:"q9",  visual:"flowchart",
+                  text:"Determine the scientific name for the phase change indicated by 'Process 4' in Diagram 2.",
+                  options:["Boiling","Condensation","Solidification","Sublimation"], correct:1 },
+                { id:"q10", visual:"curve",
+                  text:"By evaluating the line in Diagram 1, what is the state of the substance when the temperature on the y-axis reads 50°C?",
+                  options:["Liquid","Solid","Gas","A mixture of solid and gas"], correct:0 },
+                { id:"q11", visual:"schematic", title:"Part II: Electric Circuit",
+                  text:"By examining the graphic symbols in Diagram 3, identify the standard name for the element labeled as Component 1.",
+                  options:["An ammeter","A dry cell (battery)","A closed switch","A resistor"], correct:1 },
+                { id:"q12", visual:"schematic",
+                  text:"Based exclusively on the physical drawing of Component 2 in Diagram 3, what is the current operational status of this specific circuit?",
+                  options:["Open, meaning the electric current is interrupted.","Closed, allowing electric current to flow to Component 3.","Short-circuited.","Bypassed entirely."], correct:0 },
+                { id:"q13", visual:"schematic",
+                  text:"Observe the internal structure of the circle labeled Component 3 in Diagram 3. What electrical device does this standardized icon represent?",
+                  options:["A connecting wire","A voltmeter","A lamp","A motor"], correct:2 },
+                { id:"q14", visual:"schematic",
+                  text:"What is the designated primary function of Component 4 as depicted in Diagram 3?",
+                  options:["To connect the components and act as a pathway for current.","To act as the main generator of electrical energy.","To measure the total voltage of the system.","To provide high resistance and prevent circuit damage."], correct:0 },
+                { id:"q15", visual:"gap",
+                  text:"In Diagram 4, locate the topmost symbol. What does the longer parallel line with the adjacent symbol indicate?",
+                  options:["An internal resistor","The positive terminal","The negative terminal","The earth ground"], correct:1 },
+                { id:"q16", visual:"gap",
+                  text:"Examine the switch located at the bottom horizontal wire of Diagram 4. What is its current physical state?",
+                  options:["Closed, meaning current can flow if the gap is bridged.","Open, meaning current cannot flow.","It is functioning as a voltmeter.","It is blown like a fuse."], correct:0 },
+                { id:"q17", visual:"gap",
+                  text:"Compare the numerical values shown next to the top and rightmost components in Diagram 4. What will happen to the rightmost component if a perfectly conductive wire is placed across the Material Gap?",
+                  options:["It will emit no light at all due to undervoltage.","It will likely burn out due to overvoltage.","It will function very weakly.","It will function normally at its designed capacity."], correct:1 },
+                { id:"q18", visual:"gap",
+                  text:"If the topmost component in Diagram 4 is replaced by a unit providing 6 V, how will the rightmost component behave upon closing the circuit?",
+                  options:["It will function at its optimum normal brightness.","It will function weakly (dimly).","It will burn out instantly.","It will explode."], correct:0 },
+                { id:"q19", visual:"gap",
+                  text:"If a solid piece of copper connects the two small black dots in the 'Material Gap' of Diagram 4, the rightmost component will ____________ because copper is classified as a ____________.",
+                  options:["Receive no current; Insulator","Flash briefly; Voltage source","Receive current; Conductor","Burn; Resistor"], correct:2 },
+                { id:"q20", visual:"gap",
+                  text:"Which of the following real-world objects, if placed exactly across the 'Material Gap' in Diagram 4, would prevent the entire circuit from operating?",
+                  options:["Plastic spoon","Aluminum foil","Silver coin","Iron nail"], correct:0 },
+                { id:"q21", visual:"meters", title:"Part III: Electric Measurements",
+                  text:"Analyze the topmost component in Diagram 5. Based on its indicated terminals, what is the conventional direction of the electric current through the bottom wire?",
+                  options:["From right to left.","From left to right.","It alternates back and forth rapidly.","There is no current in the bottom wire."], correct:0 },
+                { id:"q22", visual:"meters",
+                  text:"Note the letter inside Device A and its position in the circuit path in Diagram 5. What is the specific name of this instrument?",
+                  options:["Ammeter","Voltmeter","Ohmmeter","Resistor"], correct:0 },
+                { id:"q23", visual:"meters",
+                  text:"Note the letter inside Device V and how its wires branch off in Diagram 5. What is the specific name of this instrument?",
+                  options:["Voltmeter","Ammeter","Oscilloscope","Wattmeter"], correct:0 },
+                { id:"q24", visual:"meters",
+                  text:"Look at the numerical value displayed just outside Device A in Diagram 5. What is this exact measurement converted into the standard SI unit (A)?",
+                  options:["15.0 A","0.15 A","1500 A","1.5 A"], correct:1 },
+                { id:"q25", visual:"meters",
+                  text:"What physical quantity is Device V currently measuring for the component it is connected across in Diagram 5?",
+                  options:["Electric Current","Electric Voltage (Potential Difference)","Electric Resistance","Electric Power"], correct:1 },
+                { id:"q26", visual:"meters",
+                  text:"If the physical reading on Device A in Diagram 5 were to increase, what observable change would subsequently occur in the central right component?",
+                  options:["Its brightness will increase.","Its brightness will decrease.","It will reverse its polarity.","It will turn off completely."], correct:0 },
+                { id:"q27", visual:"meters",
+                  text:"Based solely on the reading of Device V in Diagram 5, and assuming the connecting wires have negligible resistance, what is the approximate value of U at the top?",
+                  options:["6.0 V","12 V","0 V","24 V"], correct:1 },
+                { id:"q28", visual:"meters",
+                  text:"How must Device V in Diagram 5 be physically repositioned in order to directly measure U instead of the lower component?",
+                  options:["Inserted in series right next to the top component.","Connected in parallel directly across the terminals of the top component.","Swapped in placement with Device A.","Removed from the circuit entirely."], correct:1 },
+                { id:"q29", visual:"meters",
+                  text:"Observe how Device A is placed within the continuous wire loop in Diagram 5. Why is it incorrect to place Device A in the branching manner of Device V?",
+                  options:["Because the device measures potential difference, requiring a parallel connection.","Because measuring the flow requires the device to be part of the main path (in series).","Because it would increase the circuit's overall resistance significantly.","Because the battery would explode."], correct:1 },
+                { id:"q30", visual:"meters",
+                  text:"If the input/output connections of Device A in Diagram 5 are swapped relative to the current direction shown by the battery, how will the displayed number change?",
+                  options:["It will become a value of zero.","It will display an extremely high positive current.","It will display a negative sign (e.g., -150 mA).","It will measure voltage instead."], correct:2 }
+            ]
+        }
         const drawingPrompts = {
             "A": "Draw a circuit containing a dry cell, an open switch, a motor, an ammeter measuring the main current, and a voltmeter measuring the voltage across the motor.",
             "B": "Draw a circuit containing a dry cell, a closed switch, a lamp, an ammeter, and a voltmeter measuring the voltage across the dry cell.",
@@ -324,6 +577,15 @@
             heartbeatInterval = setInterval(sendHeartbeat, 8000);
         }
 
+        function getVersionSVG(visual, version) {
+            if (visual === "curve")     return svgHeatingCurve;
+            if (visual === "flowchart") return svgFlowchart;
+            if (visual === "schematic") return svgSchematic;
+            if (visual === "gap")       return version === "A" ? svgGap_A : (version === "B" ? svgGap_B : svgGap_C);
+            if (visual === "meters")    return version === "A" ? svgMeters_A : (version === "B" ? svgMeters_B : svgMeters_C);
+            return "";
+        }
+
         function renderExam() {
             const container = document.getElementById('questionsContainer');
             container.innerHTML = "";
@@ -336,10 +598,7 @@
                     currentVisual = q.visual;
                     html += `<div class="glass-panel p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-sky-500">`;
                     if (q.title) html += `<h3 class="text-2xl font-bold text-amber-400 mb-6 border-b border-slate-700 pb-2">${q.title}</h3>`;
-                    
-                    if (currentVisual === "curve") html += svgCurve;
-                    if (currentVisual === "heat") html += svgHeat;
-                    if (currentVisual === "circuit") html += svgCircuit;
+                    html += getVersionSVG(currentVisual, currentVersion);
                 }
                 html += `
                     <div class="mb-8 bg-slate-800/30 p-5 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
@@ -399,7 +658,7 @@
             // Confirm dialogs blur the window - pause monitoring so they don't count as a violation.
             pauseMonitoring();
             if (unanswered > 0) {
-                if(!confirm(`You have ${unanswered} unanswered MCQs. Are you sure you want to submit?`)) { resumeMonitoring(); return; }
+                if(!confirm(`You have ${unanswered} unanswered question(s). Are you sure you want to submit?`)) { resumeMonitoring(); return; }
             } else {
                 if(!confirm("Are you sure you want to submit? You cannot undo this action.")) { resumeMonitoring(); return; }
             }
