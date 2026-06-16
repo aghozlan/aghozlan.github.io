@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Final Exam - Grade 8</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; user-select: none; }
+        * { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .glass-panel { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px); border: 1px solid #334155; }
+        .radio-custom:checked + label { background-color: #0369a1; border-color: #38bdf8; color: #fff; }
+        svg { max-width: 100%; height: auto; }
+        
+        /* Full-screen strict overlays */
+        .strict-overlay { display: none; position: fixed; inset: 0; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="min-h-screen" oncontextmenu="return false;">
+
+    <div id="cheatOverlay" class="strict-overlay" style="background: rgba(220, 38, 38, 0.98);">
+        <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
+        <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
+        <p class="text-lg text-red-200 mb-6">This violation has been recorded to your instructor's dashboard.</p>
+        <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100">Acknowledge & Return to Exam</button>
+    </div>
+
+    <div id="blockedOverlay" class="strict-overlay bg-slate-900/95">
+        <h1 class="text-5xl font-bold text-amber-500 mb-4">Exam Paused</h1>
+        <p class="text-xl text-slate-300">Your exam has been locked by the instructor. Please raise your hand.</p>
+    </div>
+
+    <div id="bannedOverlay" class="strict-overlay bg-red-950/95">
+        <h1 class="text-6xl font-black text-red-500 mb-4">EXAM TERMINATED</h1>
+        <p class="text-2xl text-red-200 mb-2">Your access to this exam has been revoked.</p>
+        <p class="text-lg text-red-400">Please speak with your instructor immediately.</p>
+    </div>
+
+    <div id="submittedOverlay" class="strict-overlay bg-emerald-950/95">
+        <div class="bg-emerald-500/20 p-6 rounded-full mb-6 border border-emerald-500/50">
+            <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h1 class="text-4xl font-black text-emerald-400 mb-4">Exam Already Submitted</h1>
+        <p class="text-xl text-emerald-200">Your final exam has been securely recorded.</p>
+        <p class="text-md text-emerald-400/50 mt-4">You may safely close this browser window.</p>
+    </div>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
+        
+        <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 8</h2>
+            <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-400 mb-2">Select Student Name:</label>
+                <select id="studentSelect" class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500" dir="rtl">
+                    <option value="" disabled selected>-- اختر اسمك --</option>
+                    <option value="هشام مصطفى كروم">هشام مصطفى كروم</option>
+                    <option value="ايمان بسام خالد محمد">ايمان بسام خالد محمد</option>
+                    <option value="بيسان بسام عبد الرحمن حمو">بيسان بسام عبد الرحمن حمو</option>
+                    <option value="تاليا انس ابراهيم المنديل">تاليا انس ابراهيم المنديل</option>
+                    <option value="حبيبة عوني علي الزبيدات">حبيبة عوني علي الزبيدات</option>
+                    <option value="حلا اشرف احمد الحاج علي">حلا اشرف احمد الحاج علي</option>
+                    <option value="حنين فتحي علي حميد">حنين فتحي علي حميد</option>
+                    <option value="راما خالد محمد عطعوط">راما خالد محمد عطعوط</option>
+                    <option value="رضوان جهاد رضوان ديب">رضوان جهاد رضوان ديب</option>
+                    <option value="رواد مروان ابراهيم العبدالله">رواد مروان ابراهيم العبدالله</option>
+                    <option value="اياد احمد حسين محمود">اياد احمد حسين محمود</option>
+                    <option value="اياد احمد سمير قدوره">اياد احمد سمير قدوره</option>
+                    <option value="بيسان علي احمد قاسم">بيسان علي احمد قاسم</option>
+                    <option value="تقى احمد موسى عبدالله">تقى احمد موسى عبدالله</option>
+                    <option value="حسن علي حسن حبقزي">حسن علي حسن حبقزي</option>
+                    <option value="حمزة عاطف محمد الحاج محمد">حمزة عاطف محمد الحاج محمد</option>
+                    <option value="دانا نبيل نور الدين الهندي">دانا نبيل نور الدين الهندي</option>
+                    <option value="راما فادي علي سليم">راما فادي علي سليم</option>
+                    <option value="رهف خليل عبدالله شاهين">رهف خليل عبدالله شاهين</option>
+                    <option value="روزا محمود علي عودي">روزا محمود علي عودي</option>
+                    <option value="ريتال نضال موسى مناد">ريتال نضال موسى مناد</option>
+                    <option value="زهراء محمد حسن بركات">زهراء محمد حسن بركات</option>
+                </select>
+            </div>
+            <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
+        </div>
+
+        <div id="examScreen" class="hidden space-y-6 pb-12">
+            <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
+                <div class="mb-2 md:mb-0">
+                    <span class="text-sky-400 font-bold text-lg" id="displayName">Student Name</span>
+                    <span class="ml-4 text-xs font-bold bg-slate-700 px-3 py-1 rounded text-slate-300">Form <span id="displayVersion"></span></span>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-sm font-bold text-slate-300 bg-slate-900 px-4 py-2 rounded-lg border border-slate-700">Total Points: 25</div>
+                    <div class="text-sm font-mono text-emerald-400 bg-emerald-950 px-4 py-2 rounded-lg border border-emerald-800 animate-pulse">LIVE MONITORING ON</div>
+                </div>
+            </header>
+
+            <div id="questionsContainer" class="space-y-8"></div>
+
+            <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">IV</div>
+                    <h3 class="text-2xl font-bold text-white">Drawing Part 1: Plane Mirror Reflection (5 pts)</h3>
+                </div>
+                <p class="text-slate-300 mb-4 leading-relaxed">On a clean sheet of paper, draw the situation described below using a ruler and a protractor.</p>
+                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6">
+                    <p class="text-sky-300 font-semibold text-lg" id="drawingPrompt1"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <ul class="text-sm text-slate-400 space-y-2 bg-slate-800/50 p-4 rounded-lg">
+                        <li>✓ <span class="font-bold text-slate-300">Scale:</span> Draw the object at the given distance.</li>
+                        <li>✓ <span class="font-bold text-slate-300">Rays:</span> Show normal and oblique incident rays from point A.</li>
+                        <li>✓ <span class="font-bold text-slate-300">Image:</span> Locate the virtual image using dashed lines.</li>
+                    </ul>
+                    <div class="border-2 border-dashed border-sky-700/50 hover:border-sky-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
+                        <input type="file" id="cameraInput1" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 1)">
+                        <button onclick="document.getElementById('cameraInput1').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Mirror Drawing</button>
+                        <p id="uploadStatus1" class="mt-4 text-emerald-400 font-bold hidden">✓ Mirror Drawing Attached Successfully</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-amber-900 shadow-xl mt-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-amber-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">V</div>
+                    <h3 class="text-2xl font-bold text-white">Drawing Part 2: Shadow Formation (5 pts)</h3>
+                </div>
+                <p class="text-slate-300 mb-4 leading-relaxed">On the same or a new sheet of paper, draw the situation described below using a ruler.</p>
+                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6">
+                    <p class="text-amber-300 font-semibold text-lg" id="drawingPrompt2"></p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <ul class="text-sm text-slate-400 space-y-2 bg-slate-800/50 p-4 rounded-lg">
+                        <li>✓ <span class="font-bold text-slate-300">Setup:</span> Draw the street lamp, ground, and opaque object.</li>
+                        <li>✓ <span class="font-bold text-slate-300">Ray of Light:</span> Draw the critical light ray determining the shadow boundary.</li>
+                        <li>✓ <span class="font-bold text-slate-300">Shadow:</span> Clearly mark the shadow region on the ground.</li>
+                    </ul>
+                    <div class="border-2 border-dashed border-amber-700/50 hover:border-amber-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
+                        <input type="file" id="cameraInput2" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 2)">
+                        <button onclick="document.getElementById('cameraInput2').click()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Shadow Drawing</button>
+                        <p id="uploadStatus2" class="mt-4 text-emerald-400 font-bold hidden">✓ Shadow Drawing Attached Successfully</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl py-5 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">SUBMIT FINAL EXAM</button>
+        </div>
+
+        <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                <h2 class="text-3xl font-black text-amber-400 tracking-wider">Level 2 Control Panel (Grade 8)</h2>
+                <button onclick="pollTeacherData()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-6 py-2 rounded-lg shadow transition-colors">Refresh Live Data</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-800 text-slate-400 uppercase text-xs tracking-wider">
+                        <tr>
+                            <th class="p-4 rounded-tl-lg">Student Name</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">Score</th>
+                            <th class="p-4">Violations</th>
+                            <th class="p-4 rounded-tr-lg">Override Controls</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rosterTableBody" class="divide-y divide-slate-700 bg-slate-900/50">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION (PASTE NEW WEB APP URL HERE)
+        // ==========================================
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxqhRtDJ1hRKgsjXm7-eScj692cxBdCKHbylALzJZ9LyKTMYrrZuMvzMKXmpnlFSqjH/exec"; 
+
+        // ==========================================
+        // EXAM CONTENT (15 MCQs per version from Grade 8 Advanced)
+        // ==========================================
+        const examDatabase = {
+            "A": [
+                { id: "q1", title: "Part I: Waves & Sound", text: "Based on Graph A (Displacement vs. Distance), the horizontal distance covered by one full cycle represents the:", options: ["Period (T)", "Wavelength (λ)", "Amplitude (A)", "Frequency (f)"], correct: 1 },
+                { id: "q2", text: "According to Graph B (Displacement vs. Time), the duration required to complete one full cycle is called:", options: ["Frequency", "Velocity", "Period (T)", "Wavelength"], correct: 2 },
+                { id: "q3", text: "What is the maximum displacement shown on the vertical axis of both graphs called?", options: ["Wavelength", "Node", "Crest", "Amplitude"], correct: 3 },
+                { id: "q4", text: "If the period of a wave decreases, what happens to its frequency?", options: ["It decreases", "It increases", "It remains constant", "It drops to zero"], correct: 1 },
+                { id: "q5", text: "Using the formula v = λ / T, the propagation speed of the wave can be calculated by:", options: ["Multiplying distance by time", "Dividing wavelength by period", "Adding amplitude to wavelength", "Squaring the frequency"], correct: 1 },
+                { id: "q6", title: "Part II: Shadows & Optics", text: "What would happen to the central dark zone (Umbra) if the opaque object was moved closer to the screen?", options: ["It would become smaller", "It would become larger", "It would disappear", "It would change color"], correct: 0 },
+                { id: "q7", text: "The shape and sharpness of the umbra and penumbra are determined by:", options: ["The temperature of the light source", "The relative sizes and distances of the source, object, and screen", "The color of the opaque object", "The speed of light"], correct: 1 },
+                { id: "q8", text: "A shadow forms behind an opaque object because light:", options: ["Bends around the object", "Travels in straight lines and is blocked", "Changes its speed", "Reflects backward perfectly"], correct: 1 },
+                { id: "q9", text: "Which domain of physics primarily studies the phenomenon of shadows and mirrors?", options: ["Acoustics", "Mechanics", "Optics", "Thermodynamics"], correct: 2 },
+                { id: "q10", text: "If a light source is a point source (very small), what type of shadow will it produce?", options: ["Only a penumbra", "A perfectly sharp umbra without a penumbra", "No shadow", "A distorted shadow"], correct: 1 },
+                { id: "q11", title: "Part III: Reflection on Plane Mirrors", text: "The angle of reflection in a plane mirror is always:", options: ["Equal to the angle of incidence", "Half the angle of incidence", "Double the angle of incidence", "Independent of the angle of incidence"], correct: 0 },
+                { id: "q12", text: "Which statement is correct regarding the extensions of the reflected rays behind the plane mirror?", options: ["They are real rays", "They converge to form a virtual image", "They spread out infinitely", "They curve downwards"], correct: 1 },
+                { id: "q13", text: "The dashed line N (Normal) is drawn:", options: ["Parallel to the incident ray", "Parallel to the mirror surface", "Perpendicular to the mirror surface at the point of incidence", "Randomly"], correct: 2 },
+                { id: "q14", text: "The type of reflection occurring on a perfectly flat plane mirror is:", options: ["Diffuse scattering", "Regular (specular) reflection", "Refraction", "Absorption"], correct: 1 },
+                { id: "q15", text: "If an incident ray strikes a plane mirror perfectly along the normal line, the angle of reflection is:", options: ["90°", "180°", "0°", "45°"], correct: 2 }
+            ],
+            // Versions B and C share questions with reshuffled options to prevent cheating
+            "B": [
+                { id: "q1", title: "Part I: Waves & Sound", text: "The horizontal distance covered by one full cycle in a Displacement vs. Distance graph represents:", options: ["Amplitude (A)", "Period (T)", "Frequency (f)", "Wavelength (λ)"], correct: 3 },
+                { id: "q2", text: "The duration required to complete one full cycle (Graph B) is called:", options: ["Period (T)", "Velocity", "Frequency", "Wavelength"], correct: 0 },
+                { id: "q3", text: "The maximum displacement shown on the vertical axis is known as:", options: ["Wavelength", "Amplitude", "Crest", "Node"], correct: 1 },
+                { id: "q4", text: "If the period of a wave decreases, what happens to its frequency?", options: ["It remains constant", "It decreases", "It increases", "It drops to zero"], correct: 2 },
+                { id: "q5", text: "The propagation speed of the wave can be calculated by:", options: ["Adding amplitude to wavelength", "Dividing wavelength by period", "Multiplying distance by time", "Squaring the frequency"], correct: 1 },
+                { id: "q6", title: "Part II: Shadows & Optics", text: "Moving the opaque object closer to the screen causes the central dark zone (Umbra) to:", options: ["Become smaller", "Disappear", "Become larger", "Change color"], correct: 0 },
+                { id: "q7", text: "The size of the umbra and penumbra are determined by:", options: ["The temperature of the light source", "The color of the opaque object", "The relative sizes and distances of the source, object, and screen", "The speed of light"], correct: 2 },
+                { id: "q8", text: "A shadow forms because light:", options: ["Bends around the object", "Travels in straight lines and is blocked", "Changes its speed", "Reflects backward perfectly"], correct: 1 },
+                { id: "q9", text: "Mirrors and shadows are primarily studied in:", options: ["Thermodynamics", "Mechanics", "Optics", "Acoustics"], correct: 2 },
+                { id: "q10", text: "A point light source produces:", options: ["A perfectly sharp umbra without a penumbra", "Only a penumbra", "No shadow", "A distorted shadow"], correct: 0 },
+                { id: "q11", title: "Part III: Reflection on Plane Mirrors", text: "The angle of reflection in a plane mirror is:", options: ["Double the angle of incidence", "Equal to the angle of incidence", "Half the angle of incidence", "Independent of the angle of incidence"], correct: 1 },
+                { id: "q12", text: "The extensions of reflected rays behind a plane mirror:", options: ["Are real rays", "Spread out infinitely", "Converge to form a virtual image", "Curve downwards"], correct: 2 },
+                { id: "q13", text: "The Normal line is drawn:", options: ["Perpendicular to the mirror surface", "Parallel to the mirror surface", "Parallel to the incident ray", "Randomly"], correct: 0 },
+                { id: "q14", text: "Reflection on a flat mirror is called:", options: ["Diffuse scattering", "Regular (specular) reflection", "Refraction", "Absorption"], correct: 1 },
+                { id: "q15", text: "An incident ray striking perfectly along the normal line has an angle of reflection of:", options: ["90°", "180°", "45°", "0°"], correct: 3 }
+            ],
+            "C": [
+                { id: "q1", title: "Part I: Waves & Sound", text: "In a Displacement vs. Distance graph, one full cycle represents the:", options: ["Frequency (f)", "Wavelength (λ)", "Amplitude (A)", "Period (T)"], correct: 1 },
+                { id: "q2", text: "The time to complete one full cycle is defined as:", options: ["Velocity", "Frequency", "Wavelength", "Period (T)"], correct: 3 },
+                { id: "q3", text: "The maximum vertical displacement of a wave is its:", options: ["Amplitude", "Wavelength", "Crest", "Node"], correct: 0 },
+                { id: "q4", text: "Frequency and period are inversely related. If period decreases:", options: ["Frequency drops to zero", "Frequency decreases", "Frequency increases", "Frequency remains constant"], correct: 2 },
+                { id: "q5", text: "Propagation speed (v) is equal to:", options: ["Distance multiplied by time", "Wavelength divided by period", "Amplitude added to wavelength", "Frequency squared"], correct: 1 },
+                { id: "q6", title: "Part II: Shadows & Optics", text: "If the opaque object moves closer to the screen, the umbra will:", options: ["Disappear", "Become larger", "Become smaller", "Change color"], correct: 2 },
+                { id: "q7", text: "What determines the size of shadows (umbra/penumbra)?", options: ["Relative sizes and distances of source, object, screen", "Temperature of the light source", "Color of the opaque object", "The speed of light"], correct: 0 },
+                { id: "q8", text: "Why do shadows exist?", options: ["Light bends around the object", "Light changes its speed", "Light reflects backward perfectly", "Light travels in straight lines and is blocked"], correct: 3 },
+                { id: "q9", text: "Optics is the domain of physics that studies:", options: ["Thermodynamics", "Acoustics", "Mechanics", "Light, shadows, and mirrors"], correct: 3 },
+                { id: "q10", text: "Point sources of light produce:", options: ["Only a penumbra", "A perfectly sharp umbra", "No shadow", "A distorted shadow"], correct: 1 },
+                { id: "q11", title: "Part III: Reflection on Plane Mirrors", text: "According to the law of reflection, the angle of reflection is:", options: ["Equal to the angle of incidence", "Double the angle of incidence", "Half the angle of incidence", "Random"], correct: 0 },
+                { id: "q12", text: "Behind a plane mirror, the extensions of reflected rays:", options: ["Converge to form a virtual image", "Are real rays", "Spread out infinitely", "Curve downwards"], correct: 0 },
+                { id: "q13", text: "The imaginary Normal line is:", options: ["Parallel to the mirror surface", "Parallel to the incident ray", "Perpendicular to the mirror surface", "Randomly angled"], correct: 2 },
+                { id: "q14", text: "A perfectly flat mirror causes:", options: ["Diffuse scattering", "Refraction", "Absorption", "Regular (specular) reflection"], correct: 3 },
+                { id: "q15", text: "If light strikes perfectly along the normal line, the reflection angle is:", options: ["0°", "90°", "180°", "45°"], correct: 0 }
+            ]
+        };
+
+        const drawingPrompts1 = {
+            "A": "A stand lamp of height 15cm is placed 10cm away from a vertical plane mirror. Let point A be the top of the lamp. Draw the lamp and mirror. Draw a ray from A incident normally on the mirror, and an oblique ray from A with a 30° angle of incidence. Locate the virtual image of the lamp.",
+            "B": "A woman of height 1.6m (scale: 16cm) stands 12cm away from a vertical plane mirror. Let point A be the top of her head. Draw the setup. Draw a normal ray from A to the mirror and an oblique ray with a 45° angle of incidence. Construct the image.",
+            "C": "A man is standing 8cm in front of a plane mirror. Point A is the top of his hat. Draw the mirror and the man. Draw one ray from A incident perpendicularly on the mirror, and another oblique ray from A with a 60° angle of incidence. Complete the rays to find his image."
+        };
+
+        const drawingPrompts2 = {
+            "A": "A street lamp is 40cm high. An opaque object (10cm high) is placed on the ground 15cm away from the base of the lamp. Draw the lamp, the object, and the ground. Draw a light ray from the top of the lamp passing the tip of the object to find and shade the shadow on the ground.",
+            "B": "A street lamp is positioned 30cm above the ground. An opaque stand (5cm high) is placed 10cm from the lamp's base. Draw the setup. Draw the critical light ray from the lamp over the object to determine the length of the shadow on the ground. Shade the shadow.",
+            "C": "A street lamp is 50cm tall. An opaque barrier (15cm tall) is placed on the horizontal ground 20cm from the lamp. Draw the elements. Draw the extreme light ray originating from the lamp, grazing the top of the barrier, and striking the ground. Shade the shadow region."
+        };
+
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        let currentStudent = "";
+        let currentVersion = "A";
+        let violations = 0;
+        let base64Image1 = null;
+        let base64Image2 = null;
+        let heartbeatInterval;
+        let currentQuestions = [];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('teacher')) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('teacherDashboard').style.display = 'block';
+            pollTeacherData();
+            setInterval(pollTeacherData, 10000);
+        }
+
+        function startExam() {
+            const select = document.getElementById('studentSelect');
+            if(!select.value) { alert("الرجاء اختيار اسمك."); return; }
+            currentStudent = select.value;
+            
+            const vIndex = currentStudent.length % 3;
+            currentVersion = ["A", "B", "C"][vIndex];
+            currentQuestions = examDatabase[currentVersion];
+
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen denied"));
+            }
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('examScreen').classList.remove('hidden');
+            document.getElementById('displayName').innerText = currentStudent;
+            document.getElementById('displayVersion').innerText = currentVersion;
+            
+            document.getElementById('drawingPrompt1').innerText = drawingPrompts1[currentVersion];
+            document.getElementById('drawingPrompt2').innerText = drawingPrompts2[currentVersion];
+
+            renderExam();
+            startSecurityMonitors();
+            
+            sendHeartbeat();
+            heartbeatInterval = setInterval(sendHeartbeat, 8000);
+        }
+
+        function renderExam() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = "";
+            let html = "";
+
+            currentQuestions.forEach((q, index) => {
+                if (q.title) {
+                    html += `<h3 class="text-2xl font-bold text-amber-400 mt-8 mb-4 border-b border-slate-700 pb-2">${q.title}</h3>`;
+                }
+                html += `
+                    <div class="mb-6 bg-slate-800/30 p-5 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
+                        <p class="text-white font-semibold text-lg mb-4"><span class="text-sky-400 mr-2">${index + 1}.</span> ${q.text}</p>
+                        <div class="space-y-3 pl-2 md:pl-6">
+                `;
+                q.options.forEach((opt, optIndex) => {
+                    html += `
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <div class="relative flex items-center justify-center">
+                                <input type="radio" name="${q.id}" value="${optIndex}" class="peer hidden radio-custom">
+                                <div class="w-5 h-5 rounded-full border-2 border-slate-500 peer-checked:bg-sky-500 peer-checked:border-sky-500 group-hover:border-sky-400 transition-all"></div>
+                            </div>
+                            <span class="text-slate-300 group-hover:text-white transition-colors text-base">${opt}</span>
+                        </label>
+                    `;
+                });
+                html += `</div></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function handleImageUpload(event, partNum) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                if(partNum === 1) {
+                    base64Image1 = reader.result;
+                    document.getElementById('uploadStatus1').classList.remove('hidden');
+                    document.getElementById('cameraInput1').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
+                } else {
+                    base64Image2 = reader.result;
+                    document.getElementById('uploadStatus2').classList.remove('hidden');
+                    document.getElementById('cameraInput2').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
+                }
+            }
+            reader.readAsDataURL(file); 
+        }
+
+        function calculateMCQScore() {
+            let score = 0;
+            currentQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) score++;
+            });
+            return score;
+        }
+
+        function submitExam() {
+            let unanswered = 0;
+            currentQuestions.forEach(q => {
+                if (!document.querySelector(`input[name="${q.id}"]:checked`)) unanswered++;
+            });
+            
+            let warningText = "";
+            if (unanswered > 0) warningText += `You have ${unanswered} unanswered MCQs.\n`;
+            if (!base64Image1) warningText += `You have NOT attached the Mirror Drawing (Part 1).\n`;
+            if (!base64Image2) warningText += `You have NOT attached the Shadow Drawing (Part 2).\n`;
+            
+            if (warningText !== "") {
+                if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
+            } else {
+                if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+            }
+
+            const finalScore = calculateMCQScore();
+            const payload = { 
+                action: "submit", 
+                studentName: currentStudent, 
+                version: currentVersion, 
+                mcqScore: finalScore, 
+                violations: violations, 
+                imageFile1: base64Image1,
+                imageFile2: base64Image2
+            };
+
+            document.getElementById('appContainer').style.display = 'none';
+            
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                document.getElementById('submittedOverlay').style.display = 'flex';
+                clearInterval(heartbeatInterval);
+            });
+        }
+
+        // ==========================================
+        // SECURITY & REAL-TIME MONITORING
+        // ==========================================
+        function startSecurityMonitors() {
+            window.addEventListener('blur', triggerViolation);
+            document.addEventListener('visibilitychange', () => { if(document.hidden) triggerViolation(); });
+            document.addEventListener('keydown', (e) => {
+                if(e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'p' || e.key === 's') || e.key === 'PrintScreen') {
+                    e.preventDefault(); triggerViolation();
+                }
+            });
+        }
+
+        function triggerViolation() {
+            violations++;
+            document.getElementById('cheatOverlay').style.display = 'flex';
+            sendHeartbeat();
+        }
+
+        function returnToExam() {
+            document.getElementById('cheatOverlay').style.display = 'none';
+            if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(e => {});
+        }
+
+        function sendHeartbeat() {
+            if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") return;
+            
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: "heartbeat", studentName: currentStudent, violations: violations })
+            }).then(res => res.json()).then(data => {
+                document.getElementById('blockedOverlay').style.display = 'none';
+                document.getElementById('bannedOverlay').style.display = 'none';
+                document.getElementById('submittedOverlay').style.display = 'none';
+
+                if(data.status === "BLOCKED") document.getElementById('blockedOverlay').style.display = 'flex';
+                if(data.status === "BANNED") document.getElementById('bannedOverlay').style.display = 'flex';
+                if(data.status === "SUBMITTED") {
+                    document.getElementById('appContainer').style.display = 'none';
+                    document.getElementById('submittedOverlay').style.display = 'flex';
+                    clearInterval(heartbeatInterval); 
+                }
+            }).catch(e => {});
+        }
+
+        // ==========================================
+        // LEVEL 2 TEACHER DASHBOARD
+        // ==========================================
+        function pollTeacherData() {
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: "teacher_poll" })
+            }).then(res => res.json()).then(res => {
+                const tbody = document.getElementById('rosterTableBody');
+                if (!tbody) return; 
+                tbody.innerHTML = '';
+                const students = {};
+                
+                for(let key in res.data) {
+                    if(key.includes('_')) continue; 
+                    students[key] = {
+                        status: res.data[key],
+                        violations: res.data[key + "_violations"] || 0,
+                        score: res.data[key + "_score"] || "Pending"
+                    };
+                }
+
+                for(let name in students) {
+                    let s = students[name];
+                    let statusColor = "text-sky-400";
+                    if(s.status === "ACTIVE") statusColor = "text-emerald-400";
+                    if(s.status === "BLOCKED") statusColor = "text-amber-500";
+                    if(s.status === "BANNED") statusColor = "text-red-500 font-black";
+                    if(s.status === "SUBMITTED") statusColor = "text-sky-400 font-bold";
+
+                    let safeNameHtml = name.replace(/"/g, '&quot;');
+                    let controls = "";
+
+                    if (s.status === "SUBMITTED" || s.status === "BANNED") {
+                        controls = `<button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'RESET')" class="bg-indigo-900/50 text-indigo-300 border border-indigo-700 px-4 py-1.5 rounded-md text-xs hover:bg-indigo-700 hover:text-white transition-colors w-full font-bold">Reset / Allow Retake</button>`;
+                    } else {
+                        let lockBtn = s.status === "BLOCKED" 
+                            ? `<button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'ACTIVE')" class="bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-4 py-1.5 rounded-md text-xs hover:bg-emerald-800 hover:text-white transition-colors">Release</button>`
+                            : `<button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'BLOCKED')" class="bg-amber-900/50 text-amber-500 border border-amber-800 px-4 py-1.5 rounded-md text-xs hover:bg-amber-800 hover:text-white transition-colors">Pause</button>`;
+                        
+                        controls = `
+                            ${lockBtn}
+                            <button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'BANNED')" class="bg-red-900/50 text-red-400 border border-red-800 px-4 py-1.5 rounded-md text-xs hover:bg-red-800 hover:text-white transition-colors">Ban</button>
+                            <button data-name="${safeNameHtml}" onclick="setStudentState(this.getAttribute('data-name'), 'RESET')" class="bg-slate-700 text-slate-300 border border-slate-600 px-4 py-1.5 rounded-md text-xs hover:bg-slate-600 hover:text-white transition-colors">Reset</button>
+                        `;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800 transition-colors border-b border-slate-700/50">
+                            <td class="p-4 font-medium text-white">${name}</td>
+                            <td class="p-4 ${statusColor}">${s.status}</td>
+                            <td class="p-4 text-sky-300 font-mono text-lg">${s.score}</td>
+                            <td class="p-4 ${s.violations > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${s.violations}</td>
+                            <td class="p-4 flex gap-2">${controls}</td>
+                        </tr>
+                    `;
+                }
+            }).catch(err => console.error("Poll error:", err));
+        }
+
+        function setStudentState(name, state) {
+            let confirmMsg = `Change ${name} state to ${state}?`;
+            if (state === "RESET") confirmMsg = `WARNING: This will wipe ${name}'s state and allow them to take the exam again. Proceed?`;
+            if (state === "BANNED") confirmMsg = `Are you sure you want to TERMINATE the exam for ${name}?`;
+            
+            if(!confirm(confirmMsg)) return;
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: "teacher_action", targetStudent: name, command: state })
+            }).then(() => pollTeacherData());
+        }
+    </script>
+</body>
+</html>
