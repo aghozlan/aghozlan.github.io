@@ -301,14 +301,48 @@
         };
 
         const drawingPrompts1 = {
-            "1": "A stand lamp of height 15cm is placed 10cm away from a vertical plane mirror. Let point A be the top of the lamp. Draw the lamp and mirror. Draw a ray from A incident normally on the mirror, and an oblique ray from A with a 30° angle of incidence. Locate the virtual image of the lamp.",
-            "2": "A woman of height 1.6m (scale: 16cm) stands 12cm away from a vertical plane mirror. Let point A be the top of her head. Draw the setup. Draw a normal ray from A to the mirror and an oblique ray with a 45° angle of incidence. Construct the image."
+            "1": "A stand lamp of height 8 cm is placed 6 cm away from a vertical plane mirror. Let point A be the top of the lamp. Draw the lamp and mirror. Draw a ray from A incident normally on the mirror, and an oblique ray from A with a 30° angle of incidence. Locate the virtual image of the lamp.",
+            "2": "A woman of height 1.6 m (draw using a scale where height = 8 cm) stands 1.2 m (draw as 6 cm) away from a vertical plane mirror. Let point A be the top of her head. Draw the setup. Draw a normal ray from A to the mirror and an oblique ray with a 45° angle of incidence. Construct the image."
         };
 
         const drawingPrompts2 = {
-            "1": "A street lamp is 40cm high. An opaque object (10cm high) is placed on the ground 15cm away from the base of the lamp. Draw the lamp, the object, and the ground. Draw a light ray from the top of the lamp passing the tip of the object to find and shade the shadow on the ground.",
-            "2": "A street lamp is positioned 30cm above the ground. An opaque stand (5cm high) is placed 10cm from the lamp's base. Draw the setup. Draw the critical light ray from the lamp over the object to determine the length of the shadow on the ground. Shade the shadow."
+            "1": "A point light source (S) is placed 12 cm above the ground. An opaque object (4 cm high) is placed vertically on the ground 6 cm away from the point directly below S. Draw the setup. Draw a light ray from S passing the tip of the object to find and shade the shadow on the ground.",
+            "2": "A street lamp (S) is positioned 10 cm above the ground. An opaque stand (3 cm high) is placed 5 cm from the lamp's base. Draw the setup. Draw the critical light ray from the lamp over the object to determine the length of the shadow on the ground. Shade the shadow."
         };
+
+        // Illustrative Setup SVGs
+        const setupSvgMirror = `
+            <svg width="100%" height="auto" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+                <line x1="40" y1="180" x2="360" y2="180" stroke="#95a5a6" stroke-width="3"/>
+                <line x1="300" y1="40" x2="300" y2="180" stroke="#2c3e50" stroke-width="6"/>
+                <line x1="300" y1="50" x2="315" y2="65" stroke="#7f8c8d" stroke-width="2"/>
+                <line x1="300" y1="80" x2="315" y2="95" stroke="#7f8c8d" stroke-width="2"/>
+                <line x1="300" y1="110" x2="315" y2="125" stroke="#7f8c8d" stroke-width="2"/>
+                <line x1="300" y1="140" x2="315" y2="155" stroke="#7f8c8d" stroke-width="2"/>
+                <line x1="300" y1="170" x2="315" y2="185" stroke="#7f8c8d" stroke-width="2"/>
+                <line x1="150" y1="80" x2="150" y2="180" stroke="#e74c3c" stroke-width="5"/>
+                <polygon points="150,80 135,100 165,100" fill="#e74c3c"/>
+                <text x="142" y="65" font-weight="bold" font-size="18" fill="#e74c3c">A</text>
+                <text x="325" y="115" font-weight="bold" font-size="14" fill="#2c3e50">Plane Mirror</text>
+                <text x="80" y="135" font-weight="bold" font-size="14" fill="#7f8c8d">Object</text>
+                <path d="M 150 200 L 300 200" stroke="#3498db" stroke-width="2" stroke-dasharray="6"/>
+                <text x="200" y="215" font-size="14" font-weight="bold" fill="#3498db">Distance</text>
+            </svg>
+        `;
+
+        const setupSvgShadow = `
+            <svg width="100%" height="auto" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+                <line x1="20" y1="180" x2="380" y2="180" stroke="#95a5a6" stroke-width="4"/>
+                <line x1="80" y1="40" x2="80" y2="180" stroke="#7f8c8d" stroke-width="5"/>
+                <circle cx="80" cy="40" r="10" fill="#f1c40f"/>
+                <text x="73" y="20" font-weight="bold" font-size="18" fill="#f39c12">S</text>
+                <rect x="220" y="110" width="12" height="70" fill="#2c3e50"/>
+                <text x="200" y="95" font-weight="bold" fill="#2c3e50" font-size="14">Opaque Object</text>
+                <text x="290" y="200" font-weight="bold" fill="#95a5a6" font-size="14">Ground (Screen)</text>
+                <path d="M 80 200 L 226 200" stroke="#3498db" stroke-width="2" stroke-dasharray="6"/>
+                <text x="125" y="215" font-size="14" font-weight="bold" fill="#3498db">Distance</text>
+            </svg>
+        `;
 
         // ==========================================
         // STATE MANAGEMENT
@@ -351,6 +385,8 @@
             
             document.getElementById('drawingPrompt1').innerText = drawingPrompts1[currentVersion];
             document.getElementById('drawingPrompt2').innerText = drawingPrompts2[currentVersion];
+            document.getElementById('drawingSvgContainer1').innerHTML = setupSvgMirror;
+            document.getElementById('drawingSvgContainer2').innerHTML = setupSvgShadow;
 
             renderExam();
             startSecurityMonitors();
