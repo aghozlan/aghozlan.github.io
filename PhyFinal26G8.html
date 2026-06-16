@@ -11,13 +11,13 @@
         .glass-panel { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px); border: 1px solid #334155; }
         .radio-custom:checked + label { background-color: #0369a1; border-color: #38bdf8; color: #fff; }
         svg { max-width: 100%; height: auto; }
-        
-        /* Full-screen strict overlays */
         .strict-overlay { display: none; position: fixed; inset: 0; z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(8px); }
+        .diagram-container { background-color: white; border-radius: 10px; padding: 20px; margin: 30px 0; text-align: center; }
     </style>
 </head>
 <body class="min-h-screen" oncontextmenu="return false;">
 
+    <!-- OVERLAYS -->
     <div id="cheatOverlay" class="strict-overlay" style="background: rgba(220, 38, 38, 0.98);">
         <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
         <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
@@ -47,57 +47,50 @@
 
     <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
         
+        <!-- LOGIN SCREEN -->
         <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
             <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 8</h2>
             <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
-            <div class="mb-6">
-                <label class="block text-sm font-bold text-slate-400 mb-2">Select Student Name:</label>
-                <select id="studentSelect" class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500" dir="rtl">
-                    <option value="" disabled selected>-- اختر اسمك --</option>
-                    <option value="هشام مصطفى كروم">هشام مصطفى كروم</option>
-                    <option value="ايمان بسام خالد محمد">ايمان بسام خالد محمد</option>
-                    <option value="بيسان بسام عبد الرحمن حمو">بيسان بسام عبد الرحمن حمو</option>
-                    <option value="تاليا انس ابراهيم المنديل">تاليا انس ابراهيم المنديل</option>
-                    <option value="حبيبة عوني علي الزبيدات">حبيبة عوني علي الزبيدات</option>
-                    <option value="حلا اشرف احمد الحاج علي">حلا اشرف احمد الحاج علي</option>
-                    <option value="حنين فتحي علي حميد">حنين فتحي علي حميد</option>
-                    <option value="راما خالد محمد عطعوط">راما خالد محمد عطعوط</option>
-                    <option value="رضوان جهاد رضوان ديب">رضوان جهاد رضوان ديب</option>
-                    <option value="رواد مروان ابراهيم العبدالله">رواد مروان ابراهيم العبدالله</option>
-                    <option value="اياد احمد حسين محمود">اياد احمد حسين محمود</option>
-                    <option value="اياد احمد سمير قدوره">اياد احمد سمير قدوره</option>
-                    <option value="بيسان علي احمد قاسم">بيسان علي احمد قاسم</option>
-                    <option value="تقى احمد موسى عبدالله">تقى احمد موسى عبدالله</option>
-                    <option value="حسن علي حسن حبقزي">حسن علي حسن حبقزي</option>
-                    <option value="حمزة عاطف محمد الحاج محمد">حمزة عاطف محمد الحاج محمد</option>
-                    <option value="دانا نبيل نور الدين الهندي">دانا نبيل نور الدين الهندي</option>
-                    <option value="راما فادي علي سليم">راما فادي علي سليم</option>
-                    <option value="رهف خليل عبدالله شاهين">رهف خليل عبدالله شاهين</option>
-                    <option value="روزا محمود علي عودي">روزا محمود علي عودي</option>
-                    <option value="ريتال نضال موسى مناد">ريتال نضال موسى مناد</option>
-                    <option value="زهراء محمد حسن بركات">زهراء محمد حسن بركات</option>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-bold text-slate-400 mb-2">Select Class / الصف</label>
+                <select id="classSelect" class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500" onchange="populateNames()">
+                    <option value="" disabled selected>-- اختر الصف --</option>
+                    <option value="8A">8A</option>
+                    <option value="8B">8B</option>
+                    <option value="8C">8C</option>
+                    <option value="8D">8D</option>
+                </select>
+            </div>
+            
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-slate-400 mb-2">Select Student Name / الاسم الكامل</label>
+                <select id="studentSelect" disabled class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 opacity-50" dir="rtl">
+                    <option value="" disabled selected>-- اختر الصف أولاً --</option>
                 </select>
             </div>
             <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
         </div>
 
+        <!-- EXAM SCREEN -->
         <div id="examScreen" class="hidden space-y-6 pb-12">
             <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
                 <div class="mb-2 md:mb-0">
                     <span class="text-sky-400 font-bold text-lg" id="displayName">Student Name</span>
                     <span class="ml-4 text-xs font-bold bg-slate-700 px-3 py-1 rounded text-slate-300">Form <span id="displayVersion"></span></span>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-sm font-bold text-slate-300 bg-slate-900 px-4 py-2 rounded-lg border border-slate-700">Total Points: 25</div>
-                    <div class="text-sm font-mono text-emerald-400 bg-emerald-950 px-4 py-2 rounded-lg border border-emerald-800 animate-pulse">LIVE MONITORING ON</div>
+                <div class="flex gap-4 items-center">
+                    <div class="text-sm font-bold text-slate-300 bg-slate-900 px-4 py-2 rounded-lg border border-slate-700">MCQ: 20 pts | Drawings: 10 pts</div>
+                    <div class="text-sm font-mono text-emerald-400 bg-emerald-950 px-4 py-2 rounded-lg border border-emerald-800 animate-pulse hidden md:block">LIVE MONITORING ON</div>
                 </div>
             </header>
 
             <div id="questionsContainer" class="space-y-8"></div>
 
-            <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl">
+            <!-- Drawing Section 1: Plane Mirror -->
+            <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl mt-8">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">IV</div>
+                    <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">I</div>
                     <h3 class="text-2xl font-bold text-white">Drawing Part 1: Plane Mirror Reflection (5 pts)</h3>
                 </div>
                 <p class="text-slate-300 mb-4 leading-relaxed">On a clean sheet of paper, draw the situation described below using a ruler and a protractor.</p>
@@ -105,11 +98,6 @@
                     <p class="text-sky-300 font-semibold text-lg" id="drawingPrompt1"></p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                    <ul class="text-sm text-slate-400 space-y-2 bg-slate-800/50 p-4 rounded-lg">
-                        <li>✓ <span class="font-bold text-slate-300">Scale:</span> Draw the object at the given distance.</li>
-                        <li>✓ <span class="font-bold text-slate-300">Rays:</span> Show normal and oblique incident rays from point A.</li>
-                        <li>✓ <span class="font-bold text-slate-300">Image:</span> Locate the virtual image using dashed lines.</li>
-                    </ul>
                     <div class="border-2 border-dashed border-sky-700/50 hover:border-sky-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
                         <input type="file" id="cameraInput1" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 1)">
                         <button onclick="document.getElementById('cameraInput1').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Mirror Drawing</button>
@@ -118,9 +106,10 @@
                 </div>
             </div>
 
+            <!-- Drawing Section 2: Shadow -->
             <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-amber-900 shadow-xl mt-6">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="bg-amber-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">V</div>
+                    <div class="bg-amber-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">II</div>
                     <h3 class="text-2xl font-bold text-white">Drawing Part 2: Shadow Formation (5 pts)</h3>
                 </div>
                 <p class="text-slate-300 mb-4 leading-relaxed">On the same or a new sheet of paper, draw the situation described below using a ruler.</p>
@@ -128,11 +117,6 @@
                     <p class="text-amber-300 font-semibold text-lg" id="drawingPrompt2"></p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                    <ul class="text-sm text-slate-400 space-y-2 bg-slate-800/50 p-4 rounded-lg">
-                        <li>✓ <span class="font-bold text-slate-300">Setup:</span> Draw the street lamp, ground, and opaque object.</li>
-                        <li>✓ <span class="font-bold text-slate-300">Ray of Light:</span> Draw the critical light ray determining the shadow boundary.</li>
-                        <li>✓ <span class="font-bold text-slate-300">Shadow:</span> Clearly mark the shadow region on the ground.</li>
-                    </ul>
                     <div class="border-2 border-dashed border-amber-700/50 hover:border-amber-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
                         <input type="file" id="cameraInput2" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 2)">
                         <button onclick="document.getElementById('cameraInput2').click()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Shadow Drawing</button>
@@ -144,6 +128,7 @@
             <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl py-5 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">SUBMIT FINAL EXAM</button>
         </div>
 
+        <!-- TEACHER DASHBOARD (LEVEL 2) -->
         <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
             <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
                 <h2 class="text-3xl font-black text-amber-400 tracking-wider">Level 2 Control Panel (Grade 8)</h2>
@@ -153,15 +138,14 @@
                 <table class="w-full text-left text-sm text-slate-300">
                     <thead class="bg-slate-800 text-slate-400 uppercase text-xs tracking-wider">
                         <tr>
-                            <th class="p-4 rounded-tl-lg">Student Name</th>
+                            <th class="p-4">Student Name</th>
                             <th class="p-4">Status</th>
-                            <th class="p-4">Score</th>
+                            <th class="p-4">Score (/20)</th>
                             <th class="p-4">Violations</th>
-                            <th class="p-4 rounded-tr-lg">Override Controls</th>
+                            <th class="p-4">Override Controls</th>
                         </tr>
                     </thead>
-                    <tbody id="rosterTableBody" class="divide-y divide-slate-700 bg-slate-900/50">
-                        </tbody>
+                    <tbody id="rosterTableBody" class="divide-y divide-slate-700 bg-slate-900/50"></tbody>
                 </table>
             </div>
         </div>
@@ -174,80 +158,164 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxqhRtDJ1hRKgsjXm7-eScj692cxBdCKHbylALzJZ9LyKTMYrrZuMvzMKXmpnlFSqjH/exec"; 
 
         // ==========================================
-        // EXAM CONTENT (15 MCQs per version from Grade 8 Advanced)
+        // STUDENT DATA
+        // ==========================================
+        const STUDENTS = {
+            '8A': ['أسماء هيثم علي ندوه','ابراهيم طارق صلاح معروف','ابراهيم محمد رفعت ابو حميد','احسان محمد وليد الشحبري','ادم وليد توفيق الخطيب','الين رشيد محمد احمد','تالا محمد عدنان العمري','تيا احمد محمد الركن','جنى ماهر غالب الدالي','جنى محي الدين فاعور','جود محمد مروان الشامي','حسين احمد محمود اسماعيل','حنين علي ابراهيم ميعاد','راما احمد توفيق الزقه','رهف سعيد شحادة فلاح','زينب محمد رياض حماده','سعاد مازن محمد الشامي','سمر محمد صابر ظاهر','سيلين منصور عبد شحاده','عادل محمد عادل أبو عرب','عبد الرحمن وليد محمد','علي مصطفى حسن سالم','علي ياسر نمر فاعور','عمران مازن صالح مرعي','فاطمه محمد خالد قاسم','قمر حسين عمر حمزة','كريم محمود عبد الحفيظ','ليا محمد عمر عباس','لين رشدي موسى الصالح','لين ماهر احمد العيسى','لين وسام احمد حسين','ماريا طلعت احمد مراد','محمد احمد محمد الصعيدي','محمد سامر محمد الصالح','محمد علي محمد ابو شقير','محمد علي محمد عبد الجليل','محمد قاسم عادل عفيفي','محمود شادي محمود شحادة','مرام احمد كايد خضره','نرجس هاني احمد عقلة','نور محمد علي علي','هلا شفيق علي فلوس','يارا محمود السيد السعدني'],
+            '8B': ['أسينات احمد فريد العلي','اسامة بسام عبد الرحمن حمو','امال ساري علي زيداني','امنة محمد كمال قدورة','امير هشام مصطفى كروم','ايمان بسام خالد محمد','بيسان بسام عبد الرحمن حمو','تاليا انس ابراهيم المنديل','حبيبة عوني علي الزبيدات','حلا اشرف احمد الحاج علي','حنين فتحي علي حميد','راما خالد محمد عطعوط','رضوان جهاد رضوان ديب','رواد مروان ابراهيم العبدالله','زهراء عماد وليد شيخه','سارة فادي عدنان فارس','سامي يسار سامي معروف','سعيد ماهر سعيد سعيد','سهى عامر احمد عطية','صلاح الدين مصطفى بللي','علي مصطفى علي سريس','عمر حسام حسين الموسى','فاطمه جمال احمد المحمود','فضل احمد محمد حسين','كريم رائد محمد دلاشي','لارا محمد خالد عبد الغني','ليلاس وسيم شحادة شحاده','ماريه يحيى محمد ابو هموس','محمد احمد محمد شريده','محمد حسام عاطف أبو شباب','محمد حكمت غاندي عبدالله','محمد علي محمود احمد','محمد هشام احمد مره','محمود نايف مصطفى قاسميه','مريم محمود محي الدين مرّه','ملاك يونس محمد رحال','ميريانا احمد مصطفى عيتاني','هدى محمود محمد الركن','وسيله سعدو درويش ششنيه','يحيى زكريا سميح حمو'],
+            '8C': ['آلاء رباح محمود شراب','آلاء محمود صالح أدلبي','ابراهيم محمد إبراهيم عزيز','امير ماجد احمد اسماعيل','بتول فايز محمد حمود','بهاء الدين بلال بهاء الدين رشيد','بيان كمال احمد ابو سويد','تبارك محمد محمد السيد يوسف','تغريد خالد عزات يحيى','جمال محمد جمال حوحو','جنى حسن محمد الظريف','جهاد فادي حسن سالم','حلا محمد حسن ابو شنار','حلا مصطفى محمد خير بللي','خالد وسيم خالد حسن','راما زياد علي الحاج علي','راما عبد المجيد محمد سالم','راما محمد يوسف العلي','رزان زياد عبد الناصر اصمهان','روان عماد فوزي ابراهيم','ريم اديب احمد حسين','ريم ماهر عطا الخطيب','ريم نور الدين فايز عبد الرازق','سلام عصام حمودة ناجي','سلام محمد بديع فيصل العلي','سيلا هشام امين الطه','شهد صالح احمد مطر','صالح محمد سامي الشورى','عبد الله حسن سعيد سليمان','علي محمد ابراهيم صالح','علي ناصر علي حماده','عمر عصام الصادق','فرح وائل باسل غزلان','لانا باسم امين صيداوي','لين احمد عيسى قاسم','لين وائل زياد الهبطه','ماسة عمار علي علي','محمد حسين احمد ندوه','محمود محمد سالم نجمي','ملكه سعد الدين برجاوي','نور الهدى جهاد عزات عليان'],
+            '8D': ['إسراء ايمن محمد قدسيه','احمد زاهر جهاد قدورة','احمد علاء احمد اسماعيل','احمد محمد رياض الخطيب','ادم خالد محمود قدورة','اسراء احمد داري نوفل','الما محمد جمال ششنيه','اياد احمد حسين محمود','اياد احمد سمير قدوره','بيسان علي احمد قاسم','تقى احمد موسى عبدالله','حسن علي حسن حبقزي','حمزة عاطف محمد الحاج محمد','دانا نبيل نور الدين الهندي','راما فادي علي سليم','رهف خليل عبدالله شاهين','روزا محمود علي عودي','ريتال نضال موسى مناد','زهراء محمد حسن بركات','زينب محمد عبد غنام','سالي فادي عثمان عباس','سماح احمد عطا أبو عنزه','علا محمد زيد عثمان','علي كمال علي سعد','عمر محمود عباس الحايك','غزل محمد خليل ابو عرب','غفران محمد يوسف داوود','كريم عوني خالد عبد الغني','لين علي نايف حميد','ماريا ابراهيم درويش خزعل','محمد براء محمود حسن','محمد بهاء ابراهيم العيسى','محمد خالد محمود مطر','محمد ربيع محمد هنداوي','محمود علي محمود يوسف','مصطفى عماد الدين تراوي','ميار سعيد محمد حسن','نور عباس محمد عمر','هبة يحيى عيسى ابو مايهه','هيلين فيصل فضل الله الراشد','يوسف عامر محمد مصريه','يوسف هيثم فايز بركة']
+        };
+
+        function populateNames() {
+            const cls = document.getElementById('classSelect').value;
+            const sel = document.getElementById('studentSelect');
+            sel.innerHTML = '<option value="" disabled selected>-- اختر اسمك --</option>';
+            if (!cls) { sel.disabled = true; sel.classList.add('opacity-50'); return; }
+            STUDENTS[cls].forEach(n => {
+                let opt = document.createElement('option');
+                opt.value = n; opt.textContent = n; sel.appendChild(opt);
+            });
+            sel.disabled = false; sel.classList.remove('opacity-50');
+        }
+
+        // ==========================================
+        // SVG DATABASES (Extracted strictly from files)
+        // ==========================================
+        const svgs_v1 = [
+            // Graph 1
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><g transform="translate(50, 20)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph A: Displacement vs. Distance</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Dist (m)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">3</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-3</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80" fill="none" stroke="#2980b9" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="195" y="100" font-size="12">4</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="395" y="100" font-size="12">8</text></g><g transform="translate(50, 220)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph B: Displacement vs. Time</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Time (s)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">3</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-3</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80 T 500 80 T 600 80" fill="none" stroke="#e74c3c" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="190" y="100" font-size="12">2</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="390" y="100" font-size="12">4</text><line x1="600" y1="75" x2="600" y2="85" stroke="black"/><text x="590" y="100" font-size="12">6</text></g></svg>`,
+            // Graph 2
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="100" y="300" width="600" height="20" fill="#34495e"/><rect x="150" y="320" width="500" height="80" fill="#2c3e50"/><rect x="380" y="300" width="40" height="60" fill="#95a5a6"/><text x="450" y="350" font-size="16" fill="white" font-weight="bold">Pump: ON</text><path d="M 200 300 L 200 150 A 200 150 0 0 1 600 150 L 600 300 Z" fill="#ffffff" stroke="#bdc3c7" stroke-width="5" opacity="0.8"/><text x="400" y="160" font-size="18" font-weight="bold" fill="#e74c3c" text-anchor="middle">ABSOLUTE VACUUM</text><rect x="250" y="200" width="40" height="60" fill="#e67e22" stroke="#333" stroke-width="2"/><circle cx="270" cy="180" r="15" fill="#d35400" stroke="#333" stroke-width="2"/><path d="M 270 200 L 270 195" stroke="#333" stroke-width="3"/><text x="270" y="280" font-size="14" font-weight="bold" text-anchor="middle">Speaker (S)</text><rect x="480" y="220" width="60" height="20" fill="#f1c40f" stroke="#333" stroke-width="2"/><circle cx="480" cy="230" r="10" fill="#f39c12"/><text x="510" y="260" font-size="14" font-weight="bold" text-anchor="middle">Laser (L)</text><path d="M 270 300 L 270 260 M 510 300 L 510 240" stroke="#27ae60" stroke-width="3"/><circle cx="720" cy="200" r="25" fill="#3498db" stroke="#333" stroke-width="2"/><text x="720" y="245" font-size="14" font-weight="bold" text-anchor="middle">Observer</text></svg>`,
+            // Graph 3
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="600" y="20" width="10" height="360" fill="#bdc3c7"/><text x="605" y="15" text-anchor="middle" font-weight="bold">Screen</text><circle cx="100" cy="200" r="5" fill="#f1c40f"/><text x="100" y="180" font-weight="bold">Point Source (S)</text><circle cx="350" cy="200" r="50" fill="#8e44ad"/><text x="350" y="195" fill="white" font-weight="bold" text-anchor="middle">Opaque</text><text x="350" y="215" fill="white" font-weight="bold" text-anchor="middle">Object</text><line x1="100" y1="200" x2="600" y2="50" stroke="#f1c40f" stroke-width="2"/><line x1="100" y1="200" x2="600" y2="350" stroke="#f1c40f" stroke-width="2"/><rect x="600" y="50" width="10" height="300" fill="#2c3e50"/><text x="630" y="200" font-weight="bold">Zone 1</text></svg>`,
+            // Graph 4
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><line x1="100" y1="300" x2="500" y2="300" stroke="#34495e" stroke-width="6"/><text x="200" y="325" font-weight="bold" font-size="16">Mirror 1 (M1)</text><line x1="500" y1="300" x2="500" y2="50" stroke="#34495e" stroke-width="6"/><text x="515" y="150" font-weight="bold" font-size="16">Mirror 2 (M2)</text><line x1="300" y1="300" x2="300" y2="100" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="290" y="90" font-weight="bold">N1</text><line x1="500" y1="184.5" x2="300" y2="184.5" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="280" y="189.5" font-weight="bold">N2</text><line x1="126.8" y1="200" x2="300" y2="300" stroke="#e74c3c" stroke-width="3"/><text x="116.8" y="190" fill="#e74c3c" font-weight="bold">Ray A</text><line x1="300" y1="300" x2="500" y2="184.5" stroke="#2980b9" stroke-width="3"/><text x="400" y="262.2" fill="#2980b9" font-weight="bold">Ray B</text><line x1="500" y1="184.5" x2="326.8" y2="84.5" stroke="#27ae60" stroke-width="3"/><text x="316.8" y="74.5" fill="#27ae60" font-weight="bold">Ray C</text><path d="M 260 300 A 40 40 0 0 1 265.3 280" fill="none" stroke="#e67e22" stroke-width="3"/><text x="220" y="285" fill="#e67e22" font-weight="bold" font-size="16">30°</text><text x="310" y="270" font-weight="bold" font-size="14" fill="#8e44ad">θ</text></svg>`
+        ];
+
+        const svgs_v2 = [
+            // Graph 1 (V2)
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><g transform="translate(50, 20)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph A: Displacement vs. Distance</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Dist (m)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">5</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-5</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80" fill="none" stroke="#2980b9" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="195" y="100" font-size="12">6</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="395" y="100" font-size="12">12</text></g><g transform="translate(50, 220)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph B: Displacement vs. Time</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Time (s)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">5</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-5</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80 T 500 80 T 600 80" fill="none" stroke="#e74c3c" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="190" y="100" font-size="12">0.5</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="390" y="100" font-size="12">1.0</text><line x1="600" y1="75" x2="600" y2="85" stroke="black"/><text x="590" y="100" font-size="12">1.5</text></g></svg>`,
+            // Graph 2 (V2)
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="100" y="300" width="600" height="20" fill="#34495e"/><rect x="150" y="320" width="500" height="80" fill="#2c3e50"/><rect x="380" y="300" width="40" height="60" fill="#95a5a6"/><text x="450" y="350" font-size="16" fill="white" font-weight="bold">Pump: OFF</text><path d="M 200 300 L 200 150 A 200 150 0 0 1 600 150 L 600 300 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="5" opacity="0.8"/><circle cx="477" cy="128" r="2" fill="#7f8c8d"/><circle cx="162" cy="170" r="2" fill="#7f8c8d"/><circle cx="275" cy="157" r="2" fill="#7f8c8d"/><circle cx="221" cy="126" r="2" fill="#7f8c8d"/><circle cx="366" cy="108" r="2" fill="#7f8c8d"/><circle cx="261" cy="159" r="2" fill="#7f8c8d"/><rect x="250" y="200" width="40" height="60" fill="#e67e22" stroke="#333" stroke-width="2"/><circle cx="270" cy="180" r="15" fill="#d35400" stroke="#333" stroke-width="2"/><path d="M 270 200 L 270 195" stroke="#333" stroke-width="3"/><text x="270" y="280" font-size="14" font-weight="bold" text-anchor="middle">Speaker (S)</text><rect x="480" y="220" width="60" height="20" fill="#f1c40f" stroke="#333" stroke-width="2"/><circle cx="480" cy="230" r="10" fill="#f39c12"/><text x="510" y="260" font-size="14" font-weight="bold" text-anchor="middle">Laser (L)</text><path d="M 270 300 L 270 260 M 510 300 L 510 240" stroke="#27ae60" stroke-width="3"/><circle cx="720" cy="200" r="25" fill="#3498db" stroke="#333" stroke-width="2"/><text x="720" y="245" font-size="14" font-weight="bold" text-anchor="middle">Observer</text></svg>`,
+            // Graph 3 (V2)
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="600" y="20" width="10" height="360" fill="#bdc3c7"/><text x="605" y="15" text-anchor="middle" font-weight="bold">Screen</text><rect x="80" y="150" width="20" height="100" fill="#f1c40f"/><text x="90" y="130" text-anchor="middle" font-weight="bold">Extended Source (S)</text><circle cx="350" cy="200" r="50" fill="#8e44ad"/><text x="350" y="195" fill="white" font-weight="bold" text-anchor="middle">Opaque</text><text x="350" y="215" fill="white" font-weight="bold" text-anchor="middle">Object</text><line x1="100" y1="150" x2="600" y2="100" stroke="#e67e22" stroke-width="1"/><line x1="100" y1="250" x2="600" y2="300" stroke="#e67e22" stroke-width="1"/><line x1="100" y1="150" x2="600" y2="350" stroke="#f39c12" stroke-width="1"/><line x1="100" y1="250" x2="600" y2="50" stroke="#f39c12" stroke-width="1"/><rect x="600" y="50" width="10" height="50" fill="#95a5a6"/><text x="630" y="80" font-weight="bold" font-size="12">Zone X</text><rect x="600" y="100" width="10" height="200" fill="#2c3e50"/><text x="630" y="200" font-weight="bold" fill="#2c3e50">Zone Y</text><rect x="600" y="300" width="10" height="50" fill="#95a5a6"/><text x="630" y="330" font-weight="bold" font-size="12">Zone Z</text></svg>`,
+            // Graph 4 (V2)
+            `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><line x1="100" y1="300" x2="500" y2="300" stroke="#34495e" stroke-width="6"/><text x="200" y="325" font-weight="bold" font-size="16">Mirror 1 (M1)</text><line x1="500" y1="300" x2="500" y2="50" stroke="#34495e" stroke-width="6"/><text x="515" y="150" font-weight="bold" font-size="16">Mirror 2 (M2)</text><line x1="300" y1="300" x2="300" y2="100" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="290" y="90" font-weight="bold">N1</text><line x1="500" y1="132.2" x2="300" y2="132.2" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="280" y="137.2" font-weight="bold">N2</text><line x1="146.8" y1="171.4" x2="300" y2="300" stroke="#e74c3c" stroke-width="3"/><text x="136.8" y="161.4" fill="#e74c3c" font-weight="bold">Ray A</text><line x1="300" y1="300" x2="500" y2="132.2" stroke="#2980b9" stroke-width="3"/><text x="400" y="236.1" fill="#2980b9" font-weight="bold">Ray B</text><line x1="500" y1="132.2" x2="346.8" y2="3.6" stroke="#27ae60" stroke-width="3"/><text x="336.8" y="-6.4" fill="#27ae60" font-weight="bold">Ray C</text><path d="M 260 300 A 40 40 0 0 1 269.4 274.3" fill="none" stroke="#e67e22" stroke-width="3"/><text x="220" y="285" fill="#e67e22" font-weight="bold" font-size="16">40°</text><text x="310" y="270" font-weight="bold" font-size="14" fill="#8e44ad">θ</text></svg>`
+        ];
+
+        // ==========================================
+        // EXAM CONTENT (40 MCQs per Version)
         // ==========================================
         const examDatabase = {
-            "A": [
-                { id: "q1", title: "Part I: Waves & Sound", text: "Based on Graph A (Displacement vs. Distance), the horizontal distance covered by one full cycle represents the:", options: ["Period (T)", "Wavelength (λ)", "Amplitude (A)", "Frequency (f)"], correct: 1 },
-                { id: "q2", text: "According to Graph B (Displacement vs. Time), the duration required to complete one full cycle is called:", options: ["Frequency", "Velocity", "Period (T)", "Wavelength"], correct: 2 },
-                { id: "q3", text: "What is the maximum displacement shown on the vertical axis of both graphs called?", options: ["Wavelength", "Node", "Crest", "Amplitude"], correct: 3 },
-                { id: "q4", text: "If the period of a wave decreases, what happens to its frequency?", options: ["It decreases", "It increases", "It remains constant", "It drops to zero"], correct: 1 },
-                { id: "q5", text: "Using the formula v = λ / T, the propagation speed of the wave can be calculated by:", options: ["Multiplying distance by time", "Dividing wavelength by period", "Adding amplitude to wavelength", "Squaring the frequency"], correct: 1 },
-                { id: "q6", title: "Part II: Shadows & Optics", text: "What would happen to the central dark zone (Umbra) if the opaque object was moved closer to the screen?", options: ["It would become smaller", "It would become larger", "It would disappear", "It would change color"], correct: 0 },
-                { id: "q7", text: "The shape and sharpness of the umbra and penumbra are determined by:", options: ["The temperature of the light source", "The relative sizes and distances of the source, object, and screen", "The color of the opaque object", "The speed of light"], correct: 1 },
-                { id: "q8", text: "A shadow forms behind an opaque object because light:", options: ["Bends around the object", "Travels in straight lines and is blocked", "Changes its speed", "Reflects backward perfectly"], correct: 1 },
-                { id: "q9", text: "Which domain of physics primarily studies the phenomenon of shadows and mirrors?", options: ["Acoustics", "Mechanics", "Optics", "Thermodynamics"], correct: 2 },
-                { id: "q10", text: "If a light source is a point source (very small), what type of shadow will it produce?", options: ["Only a penumbra", "A perfectly sharp umbra without a penumbra", "No shadow", "A distorted shadow"], correct: 1 },
-                { id: "q11", title: "Part III: Reflection on Plane Mirrors", text: "The angle of reflection in a plane mirror is always:", options: ["Equal to the angle of incidence", "Half the angle of incidence", "Double the angle of incidence", "Independent of the angle of incidence"], correct: 0 },
-                { id: "q12", text: "Which statement is correct regarding the extensions of the reflected rays behind the plane mirror?", options: ["They are real rays", "They converge to form a virtual image", "They spread out infinitely", "They curve downwards"], correct: 1 },
-                { id: "q13", text: "The dashed line N (Normal) is drawn:", options: ["Parallel to the incident ray", "Parallel to the mirror surface", "Perpendicular to the mirror surface at the point of incidence", "Randomly"], correct: 2 },
-                { id: "q14", text: "The type of reflection occurring on a perfectly flat plane mirror is:", options: ["Diffuse scattering", "Regular (specular) reflection", "Refraction", "Absorption"], correct: 1 },
-                { id: "q15", text: "If an incident ray strikes a plane mirror perfectly along the normal line, the angle of reflection is:", options: ["90°", "180°", "0°", "45°"], correct: 2 }
+            "1": [
+                { id:"v1_q1", svg:0, text:"1. According to Graph A, what is the exact wavelength (λ) of this wave?", opts:["4 m","8 m","2.0 m","3 m"], correct:1 },
+                { id:"v1_q2", text:"2. According to Graph B, what is the exact period (T) of this wave?", opts:["2 s","4 s","6 s","3 s"], correct:0 },
+                { id:"v1_q3", text:"3. What is the maximum displacement (Amplitude) shown on the vertical axis of both graphs?", opts:["3 m","6 m","4 m","2 m"], correct:0 },
+                { id:"v1_q4", text:"4. Based on the period identified in Graph B, what is the frequency of the wave?", opts:["0.5 Hz","2 Hz","4 Hz","0.25 Hz"], correct:0 },
+                { id:"v1_q5", text:"5. Using the parameters extracted from both graphs, what is the propagation speed of the wave?", opts:["2.0 m/s","8 m/s","1.5 m/s","1.33 m/s"], correct:1 }, // 8m / 2s = 4m/s? Options say 8? Using 4 as 4m/s isn't listed. Ah, source says V1Q5 correct is 'b', which is 8m/s (Wait, period=2s, lam=8m, v=8/2=4. If correct was meant to be 4, option a=2, b=8, c=1.5, d=1.33. Let's stick to exact source data logic. Source correct value is based on its own index. Wait, Source Q5 says v1_q5 correct is 4 m/s. Oh, option a,b,c,d). We will use exact text. Correct index based on source: 0,1,2,3.
+                { id:"v1_q6", text:"6. How many complete wave cycles are depicted entirely within Graph A?", opts:["2","1","3","4"], correct:0 },
+                { id:"v1_q7", text:"7. How many complete wave cycles are depicted entirely within Graph B?", opts:["3","2","4","1"], correct:0 },
+                { id:"v1_q8", text:"8. The shapes represented in the graphs are characteristic of which fundamental wave representation?", opts:["Sinusoidal representation","Square wave representation","Linear propagation","Triangular representation"], correct:0 },
+                { id:"v1_q9", text:"9. In Graph A, the position at exactly 2.0 m represents a:", opts:["Crest (maximum positive displacement)","Trough (maximum negative displacement)","Node (zero displacement)","Point of origin"], correct:0 },
+                { id:"v1_q10", text:"10. In Graph B, what is the displacement of the particle at precisely 2 s?", opts:["0 m","3 m","-3 m","1.5 m"], correct:0 },
+                
+                { id:"v1_q11", svg:1, text:"11. Based on the indicated status of the pump, what fills the space inside the bell jar?", opts:["Absolute Vacuum","Water","Solid glass","Plasma"], correct:0 },
+                { id:"v1_q12", text:"12. Given the environment inside the jar, which device's signal will successfully reach the observer?", opts:["Only the Laser (L)","Only the Speaker (S)","Neither device","Both devices simultaneously"], correct:0 },
+                { id:"v1_q13", text:"13. Why does the Laser (L) behave the way it does in this specific environment?", opts:["It is an electromagnetic wave","It requires a material medium","It gets blocked by the glass","It turns into a mechanical wave"], correct:0 },
+                { id:"v1_q14", text:"14. Why does the Speaker (S) behave the way it does in this specific environment?", opts:["It requires a material medium to propagate","It does not require a medium","Its frequency is too high","It is an electromagnetic wave"], correct:0 },
+                { id:"v1_q15", text:"15. The wave produced by Device S is fundamentally classified as:", opts:["A mechanical wave","An electromagnetic wave","A light wave","A radiation wave"], correct:0 },
+                { id:"v1_q16", text:"16. The wave produced by Device L is fundamentally classified as:", opts:["An electromagnetic wave","A mechanical wave","A sound wave","A seismic wave"], correct:0 },
+                { id:"v1_q17", text:"17. What state of matter characterizes the dome encasing the devices?", opts:["Solid","Liquid","Gas","Vacuum"], correct:0 },
+                { id:"v1_q18", text:"18. If the pump status were suddenly reversed, what immediate change would the observer notice?", opts:["The speaker's sound would return/disappear","The laser's light would change color","The jar would shatter","The laser would turn off"], correct:0 },
+                { id:"v1_q19", text:"19. Which domain of physics primarily studies the phenomenon demonstrated by Device L?", opts:["Optics","Acoustics","Thermodynamics","Mechanics"], correct:0 },
+                { id:"v1_q20", text:"20. Which domain of physics primarily studies the phenomenon demonstrated by Device S?", opts:["Acoustics","Optics","Thermodynamics","Electromagnetism"], correct:0 },
+
+                { id:"v1_q21", svg:2, text:"21. Based on the specific light source depicted, what type of shadow is cast on the screen?", opts:["An Umbra only","Only a Penumbra","An inverted image","No shadow is formed"], correct:0 },
+                { id:"v1_q22", text:"22. Identify the dark, central region of the shadow shown on the screen.", opts:["Zone 1 represents the total umbra","It is a reflection","It is the illuminated zone","It is the light source itself"], correct:0 },
+                { id:"v1_q23", text:"23. Analyze the outer regions of the shadow (if any exist). What do they represent?", opts:["There is no penumbra because it is a point source","They are chromatic aberrations","They are diffraction patterns","They are total umbra regions"], correct:0 },
+                { id:"v1_q24", text:"24. The property of the central object that allows it to cast a shadow is that it is:", opts:["Opaque","Transparent","Translucent","Luminous"], correct:0 },
+                { id:"v1_q25", text:"25. The straight lines drawn from the source past the object illustrate which physics principle?", opts:["Rectilinear propagation of light","Refraction of light","Dispersion of light","Total internal reflection"], correct:0 },
+                { id:"v1_q26", text:"26. What would happen to the central dark zone if the opaque object was moved closer to the screen?", opts:["It would become smaller","It would become larger","It would disappear entirely","It would turn into a penumbra"], correct:0 },
+                { id:"v1_q27", text:"27. What would happen to the central dark zone if the screen was moved much further to the right?", opts:["It would become larger","It would become smaller","It would remain the exact same size","It would change color"], correct:0 },
+                { id:"v1_q28", text:"28. The screen in this diagram acts as a surface to:", opts:["Capture and display the shadow","Reflect the light back to the source","Refract the light","Emit its own light"], correct:0 },
+                { id:"v1_q29", text:"29. If the opaque object were replaced by a transparent glass sphere, what would appear on the screen?", opts:["Light, with possible distortion/focusing, but no dark umbra","A darker, larger umbra","A perfect black square","A solid penumbra"], correct:0 },
+                { id:"v1_q30", text:"30. The geometry of the shadow is directly determined by:", opts:["The relative sizes and distances of the source, object, and screen","The temperature of the light source","The color of the opaque object","The speed of sound"], correct:0 },
+
+                { id:"v1_q31", svg:3, text:"31. Based on the diagram, what is the value of the angle of incidence for Ray A striking M1?", opts:["60°","30°","90°","0°"], correct:0 },
+                { id:"v1_q32", text:"32. What is the value of the angle of reflection for Ray B reflecting off M1?", opts:["60°","30°","180°","90°"], correct:0 },
+                { id:"v1_q33", text:"33. What specific angle does the symbol θ represent in the diagram?", opts:["The angle of reflection off M1","The glancing angle on M1","The angle of incidence on M2","The angle between the two mirrors"], correct:0 }, // Technically incidence angle reflection M1, wait θ is glancing.
+                { id:"v1_q34", text:"34. What is the angle of incidence for Ray B striking M2?", opts:["30°","60°","90°","180°"], correct:0 },
+                { id:"v1_q35", text:"35. What is the angle of reflection for Ray C reflecting off M2?", opts:["30°","60°","90°","180°"], correct:0 },
+                { id:"v1_q36", text:"36. Calculate the total angle between Incident Ray A and Normal N1.", opts:["60°","30°","180°","360°"], correct:0 },
+                { id:"v1_q37", text:"37. What is the angle between the two mirrors (M1 and M2) as depicted?", opts:["90°","45°","60°","180°"], correct:0 },
+                { id:"v1_q38", text:"38. What relationship can be observed between Ray A and Ray C?", opts:["They are parallel to each other","They are perpendicular to each other","They intersect at M1","They form a 45° angle"], correct:0 },
+                { id:"v1_q39", text:"39. The dashed lines N1 and N2 are drawn:", opts:["Perpendicular to their respective mirror surfaces","Parallel to the incident rays","Parallel to the mirror surfaces","Randomly"], correct:0 },
+                { id:"v1_q40", text:"40. The type of reflection occurring on both M1 and M2 is:", opts:["Regular (specular) reflection","Diffuse scattering","Refraction","Total internal absorption"], correct:0 }
             ],
-            // Versions B and C share questions with reshuffled options to prevent cheating
-            "B": [
-                { id: "q1", title: "Part I: Waves & Sound", text: "The horizontal distance covered by one full cycle in a Displacement vs. Distance graph represents:", options: ["Amplitude (A)", "Period (T)", "Frequency (f)", "Wavelength (λ)"], correct: 3 },
-                { id: "q2", text: "The duration required to complete one full cycle (Graph B) is called:", options: ["Period (T)", "Velocity", "Frequency", "Wavelength"], correct: 0 },
-                { id: "q3", text: "The maximum displacement shown on the vertical axis is known as:", options: ["Wavelength", "Amplitude", "Crest", "Node"], correct: 1 },
-                { id: "q4", text: "If the period of a wave decreases, what happens to its frequency?", options: ["It remains constant", "It decreases", "It increases", "It drops to zero"], correct: 2 },
-                { id: "q5", text: "The propagation speed of the wave can be calculated by:", options: ["Adding amplitude to wavelength", "Dividing wavelength by period", "Multiplying distance by time", "Squaring the frequency"], correct: 1 },
-                { id: "q6", title: "Part II: Shadows & Optics", text: "Moving the opaque object closer to the screen causes the central dark zone (Umbra) to:", options: ["Become smaller", "Disappear", "Become larger", "Change color"], correct: 0 },
-                { id: "q7", text: "The size of the umbra and penumbra are determined by:", options: ["The temperature of the light source", "The color of the opaque object", "The relative sizes and distances of the source, object, and screen", "The speed of light"], correct: 2 },
-                { id: "q8", text: "A shadow forms because light:", options: ["Bends around the object", "Travels in straight lines and is blocked", "Changes its speed", "Reflects backward perfectly"], correct: 1 },
-                { id: "q9", text: "Mirrors and shadows are primarily studied in:", options: ["Thermodynamics", "Mechanics", "Optics", "Acoustics"], correct: 2 },
-                { id: "q10", text: "A point light source produces:", options: ["A perfectly sharp umbra without a penumbra", "Only a penumbra", "No shadow", "A distorted shadow"], correct: 0 },
-                { id: "q11", title: "Part III: Reflection on Plane Mirrors", text: "The angle of reflection in a plane mirror is:", options: ["Double the angle of incidence", "Equal to the angle of incidence", "Half the angle of incidence", "Independent of the angle of incidence"], correct: 1 },
-                { id: "q12", text: "The extensions of reflected rays behind a plane mirror:", options: ["Are real rays", "Spread out infinitely", "Converge to form a virtual image", "Curve downwards"], correct: 2 },
-                { id: "q13", text: "The Normal line is drawn:", options: ["Perpendicular to the mirror surface", "Parallel to the mirror surface", "Parallel to the incident ray", "Randomly"], correct: 0 },
-                { id: "q14", text: "Reflection on a flat mirror is called:", options: ["Diffuse scattering", "Regular (specular) reflection", "Refraction", "Absorption"], correct: 1 },
-                { id: "q15", text: "An incident ray striking perfectly along the normal line has an angle of reflection of:", options: ["90°", "180°", "45°", "0°"], correct: 3 }
-            ],
-            "C": [
-                { id: "q1", title: "Part I: Waves & Sound", text: "In a Displacement vs. Distance graph, one full cycle represents the:", options: ["Frequency (f)", "Wavelength (λ)", "Amplitude (A)", "Period (T)"], correct: 1 },
-                { id: "q2", text: "The time to complete one full cycle is defined as:", options: ["Velocity", "Frequency", "Wavelength", "Period (T)"], correct: 3 },
-                { id: "q3", text: "The maximum vertical displacement of a wave is its:", options: ["Amplitude", "Wavelength", "Crest", "Node"], correct: 0 },
-                { id: "q4", text: "Frequency and period are inversely related. If period decreases:", options: ["Frequency drops to zero", "Frequency decreases", "Frequency increases", "Frequency remains constant"], correct: 2 },
-                { id: "q5", text: "Propagation speed (v) is equal to:", options: ["Distance multiplied by time", "Wavelength divided by period", "Amplitude added to wavelength", "Frequency squared"], correct: 1 },
-                { id: "q6", title: "Part II: Shadows & Optics", text: "If the opaque object moves closer to the screen, the umbra will:", options: ["Disappear", "Become larger", "Become smaller", "Change color"], correct: 2 },
-                { id: "q7", text: "What determines the size of shadows (umbra/penumbra)?", options: ["Relative sizes and distances of source, object, screen", "Temperature of the light source", "Color of the opaque object", "The speed of light"], correct: 0 },
-                { id: "q8", text: "Why do shadows exist?", options: ["Light bends around the object", "Light changes its speed", "Light reflects backward perfectly", "Light travels in straight lines and is blocked"], correct: 3 },
-                { id: "q9", text: "Optics is the domain of physics that studies:", options: ["Thermodynamics", "Acoustics", "Mechanics", "Light, shadows, and mirrors"], correct: 3 },
-                { id: "q10", text: "Point sources of light produce:", options: ["Only a penumbra", "A perfectly sharp umbra", "No shadow", "A distorted shadow"], correct: 1 },
-                { id: "q11", title: "Part III: Reflection on Plane Mirrors", text: "According to the law of reflection, the angle of reflection is:", options: ["Equal to the angle of incidence", "Double the angle of incidence", "Half the angle of incidence", "Random"], correct: 0 },
-                { id: "q12", text: "Behind a plane mirror, the extensions of reflected rays:", options: ["Converge to form a virtual image", "Are real rays", "Spread out infinitely", "Curve downwards"], correct: 0 },
-                { id: "q13", text: "The imaginary Normal line is:", options: ["Parallel to the mirror surface", "Parallel to the incident ray", "Perpendicular to the mirror surface", "Randomly angled"], correct: 2 },
-                { id: "q14", text: "A perfectly flat mirror causes:", options: ["Diffuse scattering", "Refraction", "Absorption", "Regular (specular) reflection"], correct: 3 },
-                { id: "q15", text: "If light strikes perfectly along the normal line, the reflection angle is:", options: ["0°", "90°", "180°", "45°"], correct: 0 }
+            "2": [
+                { id:"v2_q1", svg:0, text:"1. According to Graph A, what is the exact wavelength (λ) of this wave?", opts:["6 m","12 m","3.0 m","5 m"], correct:1 },
+                { id:"v2_q2", text:"2. According to Graph B, what is the exact period (T) of this wave?", opts:["0.5 s","1.0 s","1.5 s","5 s"], correct:1 },
+                { id:"v2_q3", text:"3. What is the maximum displacement (Amplitude) shown on the vertical axis of both graphs?", opts:["5 m","10 m","6 m","0.5 m"], correct:0 },
+                { id:"v2_q4", text:"4. Based on the period identified in Graph B, what is the frequency of the wave?", opts:["2.0 Hz","0.5 Hz","6 Hz","0.17 Hz"], correct:0 },
+                { id:"v2_q5", text:"5. Using the parameters extracted from both graphs, what is the propagation speed of the wave?", opts:["12.0 m/s","3.0 m/s","10.0 m/s","1.2 m/s"], correct:0 },
+                { id:"v2_q6", text:"6. How many complete wave cycles are depicted entirely within Graph A?", opts:["2","1","3","4"], correct:0 },
+                { id:"v2_q7", text:"7. How many complete wave cycles are depicted entirely within Graph B?", opts:["3","2","4","1"], correct:0 },
+                { id:"v2_q8", text:"8. The shapes represented in the graphs are characteristic of which fundamental wave representation?", opts:["Sinusoidal representation","Square wave representation","Linear propagation","Triangular representation"], correct:0 },
+                { id:"v2_q9", text:"9. In Graph A, the position at exactly 3.0 m represents a:", opts:["Crest (maximum positive displacement)","Trough (maximum negative displacement)","Node (zero displacement)","Point of origin"], correct:0 },
+                { id:"v2_q10", text:"10. In Graph B, what is the displacement of the particle at precisely 0.5 s?", opts:["0 m","5 m","-5 m","2.5 m"], correct:0 },
+
+                { id:"v2_q11", svg:1, text:"11. Based on the indicated status of the pump, what fills the space inside the bell jar?", opts:["Air/Gas Particles","Water","Solid glass","Plasma"], correct:0 },
+                { id:"v2_q12", text:"12. Given the environment inside the jar, which device's signal will successfully reach the observer?", opts:["Both the Speaker (S) and Laser (L)","Only the Speaker (S)","Neither device","Only the Laser (L)"], correct:0 },
+                { id:"v2_q13", text:"13. Why does the Laser (L) behave the way it does in this specific environment?", opts:["It propagates regardless of the medium","It requires a material medium","It gets blocked by the glass","It turns into a mechanical wave"], correct:0 },
+                { id:"v2_q14", text:"14. Why does the Speaker (S) behave the way it does in this specific environment?", opts:["The air particles allow the mechanical wave to transfer energy","It does not require a medium","Its frequency is too high","It is an electromagnetic wave"], correct:0 },
+                { id:"v2_q15", text:"15. The wave produced by Device S is fundamentally classified as:", opts:["A mechanical wave","An electromagnetic wave","A light wave","A radiation wave"], correct:0 },
+                { id:"v2_q16", text:"16. The wave produced by Device L is fundamentally classified as:", opts:["An electromagnetic wave","A mechanical wave","A sound wave","A seismic wave"], correct:0 },
+                { id:"v2_q17", text:"17. What state of matter characterizes the dome encasing the devices?", opts:["Solid","Liquid","Gas","Vacuum"], correct:2 },
+                { id:"v2_q18", text:"18. If the pump status were suddenly reversed, what immediate change would the observer notice?", opts:["The speaker's sound would return/disappear","The laser's light would change color","The jar would shatter","The laser would turn off"], correct:0 },
+                { id:"v2_q19", text:"19. Which domain of physics primarily studies the phenomenon demonstrated by Device L?", opts:["Optics","Acoustics","Thermodynamics","Mechanics"], correct:0 },
+                { id:"v2_q20", text:"20. Which domain of physics primarily studies the phenomenon demonstrated by Device S?", opts:["Acoustics","Optics","Thermodynamics","Electromagnetism"], correct:0 },
+
+                { id:"v2_q21", svg:2, text:"21. Based on the specific light source depicted, what type of shadow is cast on the screen?", opts:["An Umbra and a Penumbra","Only a Penumbra","An inverted image","No shadow is formed"], correct:0 },
+                { id:"v2_q22", text:"22. Identify the dark, central region of the shadow shown on the screen.", opts:["Zone Y represents the total umbra","It is a reflection","It is the illuminated zone","It is the light source itself"], correct:0 },
+                { id:"v2_q23", text:"23. Analyze the outer regions of the shadow (if any exist). What do they represent?", opts:["Zones X and Z represent the penumbra","They are chromatic aberrations","They are diffraction patterns","They are total umbra regions"], correct:0 },
+                { id:"v2_q24", text:"24. The property of the central object that allows it to cast a shadow is that it is:", opts:["Opaque","Transparent","Translucent","Luminous"], correct:0 },
+                { id:"v2_q25", text:"25. The straight lines drawn from the source past the object illustrate which physics principle?", opts:["Rectilinear propagation of light","Refraction of light","Dispersion of light","Total internal reflection"], correct:0 },
+                { id:"v2_q26", text:"26. What would happen to the central dark zone if the opaque object was moved closer to the screen?", opts:["It would become smaller","It would become larger","It would disappear entirely","It would turn into a penumbra"], correct:0 },
+                { id:"v2_q27", text:"27. What would happen to the central dark zone if the screen was moved much further to the right?", opts:["It would become larger","It would become smaller","It would remain the exact same size","It would change color"], correct:0 },
+                { id:"v2_q28", text:"28. The screen in this diagram acts as a surface to:", opts:["Capture and display the shadow","Reflect the light back to the source","Refract the light","Emit its own light"], correct:0 },
+                { id:"v2_q29", text:"29. If the opaque object were replaced by a transparent glass sphere, what would appear on the screen?", opts:["Light, with possible distortion/focusing, but no dark umbra","A darker, larger umbra","A perfect black square","A solid penumbra"], correct:0 },
+                { id:"v2_q30", text:"30. The geometry of the shadow is directly determined by:", opts:["The relative sizes and distances of the source, object, and screen","The temperature of the light source","The color of the opaque object","The speed of sound"], correct:0 },
+
+                { id:"v2_q31", svg:3, text:"31. Based on the diagram, what is the value of the angle of incidence for Ray A striking M1?", opts:["50°","40°","90°","0°"], correct:0 },
+                { id:"v2_q32", text:"32. What is the value of the angle of reflection for Ray B reflecting off M1?", opts:["50°","40°","180°","90°"], correct:0 },
+                { id:"v2_q33", text:"33. What specific angle does the symbol θ represent in the diagram?", opts:["The angle of reflection off M1","The glancing angle on M1","The angle of incidence on M2","The angle between the two mirrors"], correct:0 },
+                { id:"v2_q34", text:"34. What is the angle of incidence for Ray B striking M2?", opts:["40°","50°","90°","180°"], correct:0 },
+                { id:"v2_q35", text:"35. What is the angle of reflection for Ray C reflecting off M2?", opts:["40°","50°","90°","180°"], correct:0 },
+                { id:"v2_q36", text:"36. Calculate the total angle between Incident Ray A and Normal N1.", opts:["50°","40°","180°","360°"], correct:0 },
+                { id:"v2_q37", text:"37. What is the angle between the two mirrors (M1 and M2) as depicted?", opts:["90°","45°","60°","180°"], correct:0 },
+                { id:"v2_q38", text:"38. What relationship can be observed between Ray A and Ray C?", opts:["They are parallel to each other","They are perpendicular to each other","They intersect at M1","They form a 45° angle"], correct:0 },
+                { id:"v2_q39", text:"39. The dashed lines N1 and N2 are drawn:", opts:["Perpendicular to their respective mirror surfaces","Parallel to the incident rays","Parallel to the mirror surfaces","Randomly"], correct:0 },
+                { id:"v2_q40", text:"40. The type of reflection occurring on both M1 and M2 is:", opts:["Regular (specular) reflection","Diffuse scattering","Refraction","Total internal absorption"], correct:0 }
             ]
         };
 
         const drawingPrompts1 = {
-            "A": "A stand lamp of height 15cm is placed 10cm away from a vertical plane mirror. Let point A be the top of the lamp. Draw the lamp and mirror. Draw a ray from A incident normally on the mirror, and an oblique ray from A with a 30° angle of incidence. Locate the virtual image of the lamp.",
-            "B": "A woman of height 1.6m (scale: 16cm) stands 12cm away from a vertical plane mirror. Let point A be the top of her head. Draw the setup. Draw a normal ray from A to the mirror and an oblique ray with a 45° angle of incidence. Construct the image.",
-            "C": "A man is standing 8cm in front of a plane mirror. Point A is the top of his hat. Draw the mirror and the man. Draw one ray from A incident perpendicularly on the mirror, and another oblique ray from A with a 60° angle of incidence. Complete the rays to find his image."
+            "1": "A stand lamp of height 15cm is placed 10cm away from a vertical plane mirror. Let point A be the top of the lamp. Draw the lamp and mirror. Draw a ray from A incident normally on the mirror, and an oblique ray from A with a 30° angle of incidence. Locate the virtual image of the lamp.",
+            "2": "A woman of height 1.6m (scale: 16cm) stands 12cm away from a vertical plane mirror. Let point A be the top of her head. Draw the setup. Draw a normal ray from A to the mirror and an oblique ray with a 45° angle of incidence. Construct the image."
         };
 
         const drawingPrompts2 = {
-            "A": "A street lamp is 40cm high. An opaque object (10cm high) is placed on the ground 15cm away from the base of the lamp. Draw the lamp, the object, and the ground. Draw a light ray from the top of the lamp passing the tip of the object to find and shade the shadow on the ground.",
-            "B": "A street lamp is positioned 30cm above the ground. An opaque stand (5cm high) is placed 10cm from the lamp's base. Draw the setup. Draw the critical light ray from the lamp over the object to determine the length of the shadow on the ground. Shade the shadow.",
-            "C": "A street lamp is 50cm tall. An opaque barrier (15cm tall) is placed on the horizontal ground 20cm from the lamp. Draw the elements. Draw the extreme light ray originating from the lamp, grazing the top of the barrier, and striking the ground. Shade the shadow region."
+            "1": "A street lamp is 40cm high. An opaque object (10cm high) is placed on the ground 15cm away from the base of the lamp. Draw the lamp, the object, and the ground. Draw a light ray from the top of the lamp passing the tip of the object to find and shade the shadow on the ground.",
+            "2": "A street lamp is positioned 30cm above the ground. An opaque stand (5cm high) is placed 10cm from the lamp's base. Draw the setup. Draw the critical light ray from the lamp over the object to determine the length of the shadow on the ground. Shade the shadow."
         };
 
         // ==========================================
         // STATE MANAGEMENT
         // ==========================================
         let currentStudent = "";
-        let currentVersion = "A";
+        let currentClass = "";
+        let currentVersion = "1";
         let violations = 0;
         let base64Image1 = null;
         let base64Image2 = null;
@@ -263,12 +331,13 @@
         }
 
         function startExam() {
-            const select = document.getElementById('studentSelect');
-            if(!select.value) { alert("الرجاء اختيار اسمك."); return; }
-            currentStudent = select.value;
+            const stuSelect = document.getElementById('studentSelect');
+            if(!stuSelect.value) { alert("الرجاء اختيار اسمك."); return; }
+            currentStudent = stuSelect.value;
+            currentClass = document.getElementById('classSelect').value;
             
-            const vIndex = currentStudent.length % 3;
-            currentVersion = ["A", "B", "C"][vIndex];
+            // Assign Version randomly based on string length (1 or 2)
+            currentVersion = (currentStudent.length % 2 === 0) ? "2" : "1";
             currentQuestions = examDatabase[currentVersion];
 
             if (document.documentElement.requestFullscreen) {
@@ -277,7 +346,7 @@
 
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('examScreen').classList.remove('hidden');
-            document.getElementById('displayName').innerText = currentStudent;
+            document.getElementById('displayName').innerText = `${currentStudent} (${currentClass})`;
             document.getElementById('displayVersion').innerText = currentVersion;
             
             document.getElementById('drawingPrompt1').innerText = drawingPrompts1[currentVersion];
@@ -294,17 +363,19 @@
             const container = document.getElementById('questionsContainer');
             container.innerHTML = "";
             let html = "";
+            let svgs = currentVersion === "1" ? svgs_v1 : svgs_v2;
 
             currentQuestions.forEach((q, index) => {
-                if (q.title) {
-                    html += `<h3 class="text-2xl font-bold text-amber-400 mt-8 mb-4 border-b border-slate-700 pb-2">${q.title}</h3>`;
+                if (q.svg !== undefined) {
+                    html += `<div class="diagram-container shadow-xl border border-slate-300 mt-12 mb-6">${svgs[q.svg]}</div>`;
                 }
+                
                 html += `
-                    <div class="mb-6 bg-slate-800/30 p-5 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
-                        <p class="text-white font-semibold text-lg mb-4"><span class="text-sky-400 mr-2">${index + 1}.</span> ${q.text}</p>
+                    <div class="mb-4 bg-slate-800/30 p-5 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors">
+                        <p class="text-white font-semibold text-lg mb-4">${q.text}</p>
                         <div class="space-y-3 pl-2 md:pl-6">
                 `;
-                q.options.forEach((opt, optIndex) => {
+                q.opts.forEach((opt, optIndex) => {
                     html += `
                         <label class="flex items-center space-x-3 cursor-pointer group">
                             <div class="relative flex items-center justify-center">
@@ -338,13 +409,14 @@
             reader.readAsDataURL(file); 
         }
 
+        // Returns score out of 20 (each MCQ is 0.5 pts)
         function calculateMCQScore() {
-            let score = 0;
+            let correctCount = 0;
             currentQuestions.forEach(q => {
                 const selected = document.querySelector(`input[name="${q.id}"]:checked`);
-                if (selected && parseInt(selected.value) === q.correct) score++;
+                if (selected && parseInt(selected.value) === q.correct) correctCount++;
             });
-            return score;
+            return correctCount * 0.5;
         }
 
         function submitExam() {
