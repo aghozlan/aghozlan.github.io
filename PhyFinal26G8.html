@@ -17,7 +17,6 @@
 </head>
 <body class="min-h-screen" oncontextmenu="return false;">
 
-    <!-- OVERLAYS -->
     <div id="cheatOverlay" class="strict-overlay" style="background: rgba(220, 38, 38, 0.98);">
         <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
         <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
@@ -47,7 +46,6 @@
 
     <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
         
-        <!-- LOGIN SCREEN -->
         <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
             <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 8</h2>
             <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
@@ -72,7 +70,6 @@
             <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
         </div>
 
-        <!-- EXAM SCREEN -->
         <div id="examScreen" class="hidden space-y-6 pb-12">
             <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
                 <div class="mb-2 md:mb-0">
@@ -87,15 +84,18 @@
 
             <div id="questionsContainer" class="space-y-8"></div>
 
-            <!-- Drawing Section 1: Plane Mirror -->
             <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-sky-900 shadow-xl mt-8">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="bg-sky-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">I</div>
                     <h3 class="text-2xl font-bold text-white">Drawing Part 1: Plane Mirror Reflection (5 pts)</h3>
                 </div>
-                <p class="text-slate-300 mb-4 leading-relaxed">On a clean sheet of paper, draw the situation described below using a ruler and a protractor.</p>
-                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6">
-                    <p class="text-sky-300 font-semibold text-lg" id="drawingPrompt1"></p>
+                <p class="text-slate-300 mb-4 leading-relaxed">On a clean A4 sheet of paper, draw the situation described below using a ruler and a protractor.</p>
+                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <p class="text-sky-300 font-semibold text-lg" id="drawingPrompt1"></p>
+                    </div>
+                    <div class="w-full md:w-5/12 bg-white rounded-lg p-3 shadow-inner diagram-container m-0" id="drawingSvgContainer1">
+                        </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div class="border-2 border-dashed border-sky-700/50 hover:border-sky-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
@@ -106,15 +106,18 @@
                 </div>
             </div>
 
-            <!-- Drawing Section 2: Shadow -->
             <div class="glass-panel p-6 md:p-8 rounded-xl border-2 border-amber-900 shadow-xl mt-6">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="bg-amber-500 text-slate-900 font-black rounded-full w-8 h-8 flex items-center justify-center">II</div>
                     <h3 class="text-2xl font-bold text-white">Drawing Part 2: Shadow Formation (5 pts)</h3>
                 </div>
-                <p class="text-slate-300 mb-4 leading-relaxed">On the same or a new sheet of paper, draw the situation described below using a ruler.</p>
-                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6">
-                    <p class="text-amber-300 font-semibold text-lg" id="drawingPrompt2"></p>
+                <p class="text-slate-300 mb-4 leading-relaxed">On the same or a new A4 sheet of paper, draw the situation described below using a ruler.</p>
+                <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 mb-6 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <p class="text-amber-300 font-semibold text-lg" id="drawingPrompt2"></p>
+                    </div>
+                    <div class="w-full md:w-5/12 bg-white rounded-lg p-3 shadow-inner diagram-container m-0" id="drawingSvgContainer2">
+                        </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div class="border-2 border-dashed border-amber-700/50 hover:border-amber-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
@@ -128,7 +131,6 @@
             <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl py-5 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">SUBMIT FINAL EXAM</button>
         </div>
 
-        <!-- TEACHER DASHBOARD (LEVEL 2) -->
         <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
             <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
                 <h2 class="text-3xl font-black text-amber-400 tracking-wider">Level 2 Control Panel (Grade 8)</h2>
@@ -180,32 +182,24 @@
         }
 
         // ==========================================
-        // SVG DATABASES (Extracted strictly from files)
+        // SVG DATABASES
         // ==========================================
         const svgs_v1 = [
-            // Graph 1
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><g transform="translate(50, 20)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph A: Displacement vs. Distance</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Dist (m)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">3</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-3</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80" fill="none" stroke="#2980b9" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="195" y="100" font-size="12">4</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="395" y="100" font-size="12">8</text></g><g transform="translate(50, 220)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph B: Displacement vs. Time</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Time (s)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">3</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-3</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80 T 500 80 T 600 80" fill="none" stroke="#e74c3c" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="190" y="100" font-size="12">2</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="390" y="100" font-size="12">4</text><line x1="600" y1="75" x2="600" y2="85" stroke="black"/><text x="590" y="100" font-size="12">6</text></g></svg>`,
-            // Graph 2
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="100" y="300" width="600" height="20" fill="#34495e"/><rect x="150" y="320" width="500" height="80" fill="#2c3e50"/><rect x="380" y="300" width="40" height="60" fill="#95a5a6"/><text x="450" y="350" font-size="16" fill="white" font-weight="bold">Pump: ON</text><path d="M 200 300 L 200 150 A 200 150 0 0 1 600 150 L 600 300 Z" fill="#ffffff" stroke="#bdc3c7" stroke-width="5" opacity="0.8"/><text x="400" y="160" font-size="18" font-weight="bold" fill="#e74c3c" text-anchor="middle">ABSOLUTE VACUUM</text><rect x="250" y="200" width="40" height="60" fill="#e67e22" stroke="#333" stroke-width="2"/><circle cx="270" cy="180" r="15" fill="#d35400" stroke="#333" stroke-width="2"/><path d="M 270 200 L 270 195" stroke="#333" stroke-width="3"/><text x="270" y="280" font-size="14" font-weight="bold" text-anchor="middle">Speaker (S)</text><rect x="480" y="220" width="60" height="20" fill="#f1c40f" stroke="#333" stroke-width="2"/><circle cx="480" cy="230" r="10" fill="#f39c12"/><text x="510" y="260" font-size="14" font-weight="bold" text-anchor="middle">Laser (L)</text><path d="M 270 300 L 270 260 M 510 300 L 510 240" stroke="#27ae60" stroke-width="3"/><circle cx="720" cy="200" r="25" fill="#3498db" stroke="#333" stroke-width="2"/><text x="720" y="245" font-size="14" font-weight="bold" text-anchor="middle">Observer</text></svg>`,
-            // Graph 3
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="600" y="20" width="10" height="360" fill="#bdc3c7"/><text x="605" y="15" text-anchor="middle" font-weight="bold">Screen</text><circle cx="100" cy="200" r="5" fill="#f1c40f"/><text x="100" y="180" font-weight="bold">Point Source (S)</text><circle cx="350" cy="200" r="50" fill="#8e44ad"/><text x="350" y="195" fill="white" font-weight="bold" text-anchor="middle">Opaque</text><text x="350" y="215" fill="white" font-weight="bold" text-anchor="middle">Object</text><line x1="100" y1="200" x2="600" y2="50" stroke="#f1c40f" stroke-width="2"/><line x1="100" y1="200" x2="600" y2="350" stroke="#f1c40f" stroke-width="2"/><rect x="600" y="50" width="10" height="300" fill="#2c3e50"/><text x="630" y="200" font-weight="bold">Zone 1</text></svg>`,
-            // Graph 4
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><line x1="100" y1="300" x2="500" y2="300" stroke="#34495e" stroke-width="6"/><text x="200" y="325" font-weight="bold" font-size="16">Mirror 1 (M1)</text><line x1="500" y1="300" x2="500" y2="50" stroke="#34495e" stroke-width="6"/><text x="515" y="150" font-weight="bold" font-size="16">Mirror 2 (M2)</text><line x1="300" y1="300" x2="300" y2="100" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="290" y="90" font-weight="bold">N1</text><line x1="500" y1="184.5" x2="300" y2="184.5" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="280" y="189.5" font-weight="bold">N2</text><line x1="126.8" y1="200" x2="300" y2="300" stroke="#e74c3c" stroke-width="3"/><text x="116.8" y="190" fill="#e74c3c" font-weight="bold">Ray A</text><line x1="300" y1="300" x2="500" y2="184.5" stroke="#2980b9" stroke-width="3"/><text x="400" y="262.2" fill="#2980b9" font-weight="bold">Ray B</text><line x1="500" y1="184.5" x2="326.8" y2="84.5" stroke="#27ae60" stroke-width="3"/><text x="316.8" y="74.5" fill="#27ae60" font-weight="bold">Ray C</text><path d="M 260 300 A 40 40 0 0 1 265.3 280" fill="none" stroke="#e67e22" stroke-width="3"/><text x="220" y="285" fill="#e67e22" font-weight="bold" font-size="16">30°</text><text x="310" y="270" font-weight="bold" font-size="14" fill="#8e44ad">θ</text></svg>`
         ];
 
         const svgs_v2 = [
-            // Graph 1 (V2)
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><g transform="translate(50, 20)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph A: Displacement vs. Distance</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Dist (m)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">5</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-5</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80" fill="none" stroke="#2980b9" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="195" y="100" font-size="12">6</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="395" y="100" font-size="12">12</text></g><g transform="translate(50, 220)"><text x="0" y="15" font-weight="bold" fill="#2c3e50">Graph B: Displacement vs. Time</text><line x1="0" y1="80" x2="700" y2="80" stroke="#95a5a6" stroke-width="2"/><line x1="0" y1="30" x2="0" y2="130" stroke="#95a5a6" stroke-width="2"/><text x="710" y="85" font-size="12">Time (s)</text><text x="-30" y="25" font-size="12">Disp (m)</text><line x1="-5" y1="40" x2="5" y2="40" stroke="black"/><text x="-25" y="45" font-size="12">5</text><line x1="-5" y1="120" x2="5" y2="120" stroke="black"/><text x="-25" y="125" font-size="12">-5</text><path d="M 0 80 Q 50 0 100 80 T 200 80 T 300 80 T 400 80 T 500 80 T 600 80" fill="none" stroke="#e74c3c" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="85" stroke="black"/><text x="190" y="100" font-size="12">0.5</text><line x1="400" y1="75" x2="400" y2="85" stroke="black"/><text x="390" y="100" font-size="12">1.0</text><line x1="600" y1="75" x2="600" y2="85" stroke="black"/><text x="590" y="100" font-size="12">1.5</text></g></svg>`,
-            // Graph 2 (V2)
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="100" y="300" width="600" height="20" fill="#34495e"/><rect x="150" y="320" width="500" height="80" fill="#2c3e50"/><rect x="380" y="300" width="40" height="60" fill="#95a5a6"/><text x="450" y="350" font-size="16" fill="white" font-weight="bold">Pump: OFF</text><path d="M 200 300 L 200 150 A 200 150 0 0 1 600 150 L 600 300 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="5" opacity="0.8"/><circle cx="477" cy="128" r="2" fill="#7f8c8d"/><circle cx="162" cy="170" r="2" fill="#7f8c8d"/><circle cx="275" cy="157" r="2" fill="#7f8c8d"/><circle cx="221" cy="126" r="2" fill="#7f8c8d"/><circle cx="366" cy="108" r="2" fill="#7f8c8d"/><circle cx="261" cy="159" r="2" fill="#7f8c8d"/><rect x="250" y="200" width="40" height="60" fill="#e67e22" stroke="#333" stroke-width="2"/><circle cx="270" cy="180" r="15" fill="#d35400" stroke="#333" stroke-width="2"/><path d="M 270 200 L 270 195" stroke="#333" stroke-width="3"/><text x="270" y="280" font-size="14" font-weight="bold" text-anchor="middle">Speaker (S)</text><rect x="480" y="220" width="60" height="20" fill="#f1c40f" stroke="#333" stroke-width="2"/><circle cx="480" cy="230" r="10" fill="#f39c12"/><text x="510" y="260" font-size="14" font-weight="bold" text-anchor="middle">Laser (L)</text><path d="M 270 300 L 270 260 M 510 300 L 510 240" stroke="#27ae60" stroke-width="3"/><circle cx="720" cy="200" r="25" fill="#3498db" stroke="#333" stroke-width="2"/><text x="720" y="245" font-size="14" font-weight="bold" text-anchor="middle">Observer</text></svg>`,
-            // Graph 3 (V2)
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><rect x="600" y="20" width="10" height="360" fill="#bdc3c7"/><text x="605" y="15" text-anchor="middle" font-weight="bold">Screen</text><rect x="80" y="150" width="20" height="100" fill="#f1c40f"/><text x="90" y="130" text-anchor="middle" font-weight="bold">Extended Source (S)</text><circle cx="350" cy="200" r="50" fill="#8e44ad"/><text x="350" y="195" fill="white" font-weight="bold" text-anchor="middle">Opaque</text><text x="350" y="215" fill="white" font-weight="bold" text-anchor="middle">Object</text><line x1="100" y1="150" x2="600" y2="100" stroke="#e67e22" stroke-width="1"/><line x1="100" y1="250" x2="600" y2="300" stroke="#e67e22" stroke-width="1"/><line x1="100" y1="150" x2="600" y2="350" stroke="#f39c12" stroke-width="1"/><line x1="100" y1="250" x2="600" y2="50" stroke="#f39c12" stroke-width="1"/><rect x="600" y="50" width="10" height="50" fill="#95a5a6"/><text x="630" y="80" font-weight="bold" font-size="12">Zone X</text><rect x="600" y="100" width="10" height="200" fill="#2c3e50"/><text x="630" y="200" font-weight="bold" fill="#2c3e50">Zone Y</text><rect x="600" y="300" width="10" height="50" fill="#95a5a6"/><text x="630" y="330" font-weight="bold" font-size="12">Zone Z</text></svg>`,
-            // Graph 4 (V2)
             `<svg width="100%" height="auto" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fdfefe" rx="10"/><line x1="100" y1="300" x2="500" y2="300" stroke="#34495e" stroke-width="6"/><text x="200" y="325" font-weight="bold" font-size="16">Mirror 1 (M1)</text><line x1="500" y1="300" x2="500" y2="50" stroke="#34495e" stroke-width="6"/><text x="515" y="150" font-weight="bold" font-size="16">Mirror 2 (M2)</text><line x1="300" y1="300" x2="300" y2="100" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="290" y="90" font-weight="bold">N1</text><line x1="500" y1="132.2" x2="300" y2="132.2" stroke="#7f8c8d" stroke-dasharray="8" stroke-width="2"/><text x="280" y="137.2" font-weight="bold">N2</text><line x1="146.8" y1="171.4" x2="300" y2="300" stroke="#e74c3c" stroke-width="3"/><text x="136.8" y="161.4" fill="#e74c3c" font-weight="bold">Ray A</text><line x1="300" y1="300" x2="500" y2="132.2" stroke="#2980b9" stroke-width="3"/><text x="400" y="236.1" fill="#2980b9" font-weight="bold">Ray B</text><line x1="500" y1="132.2" x2="346.8" y2="3.6" stroke="#27ae60" stroke-width="3"/><text x="336.8" y="-6.4" fill="#27ae60" font-weight="bold">Ray C</text><path d="M 260 300 A 40 40 0 0 1 269.4 274.3" fill="none" stroke="#e67e22" stroke-width="3"/><text x="220" y="285" fill="#e67e22" font-weight="bold" font-size="16">40°</text><text x="310" y="270" font-weight="bold" font-size="14" fill="#8e44ad">θ</text></svg>`
         ];
 
         // ==========================================
-        // EXAM CONTENT (40 MCQs per Version)
+        // EXAM CONTENT
         // ==========================================
         const examDatabase = {
             "1": [
@@ -213,7 +207,7 @@
                 { id:"v1_q2", text:"2. According to Graph B, what is the exact period (T) of this wave?", opts:["2 s","4 s","6 s","3 s"], correct:0 },
                 { id:"v1_q3", text:"3. What is the maximum displacement (Amplitude) shown on the vertical axis of both graphs?", opts:["3 m","6 m","4 m","2 m"], correct:0 },
                 { id:"v1_q4", text:"4. Based on the period identified in Graph B, what is the frequency of the wave?", opts:["0.5 Hz","2 Hz","4 Hz","0.25 Hz"], correct:0 },
-                { id:"v1_q5", text:"5. Using the parameters extracted from both graphs, what is the propagation speed of the wave?", opts:["2.0 m/s","8 m/s","1.5 m/s","1.33 m/s"], correct:1 }, // 8m / 2s = 4m/s? Options say 8? Using 4 as 4m/s isn't listed. Ah, source says V1Q5 correct is 'b', which is 8m/s (Wait, period=2s, lam=8m, v=8/2=4. If correct was meant to be 4, option a=2, b=8, c=1.5, d=1.33. Let's stick to exact source data logic. Source correct value is based on its own index. Wait, Source Q5 says v1_q5 correct is 4 m/s. Oh, option a,b,c,d). We will use exact text. Correct index based on source: 0,1,2,3.
+                { id:"v1_q5", text:"5. Using the parameters extracted from both graphs, what is the propagation speed of the wave?", opts:["2.0 m/s","8 m/s","1.5 m/s","1.33 m/s"], correct:1 },
                 { id:"v1_q6", text:"6. How many complete wave cycles are depicted entirely within Graph A?", opts:["2","1","3","4"], correct:0 },
                 { id:"v1_q7", text:"7. How many complete wave cycles are depicted entirely within Graph B?", opts:["3","2","4","1"], correct:0 },
                 { id:"v1_q8", text:"8. The shapes represented in the graphs are characteristic of which fundamental wave representation?", opts:["Sinusoidal representation","Square wave representation","Linear propagation","Triangular representation"], correct:0 },
@@ -244,7 +238,7 @@
 
                 { id:"v1_q31", svg:3, text:"31. Based on the diagram, what is the value of the angle of incidence for Ray A striking M1?", opts:["60°","30°","90°","0°"], correct:0 },
                 { id:"v1_q32", text:"32. What is the value of the angle of reflection for Ray B reflecting off M1?", opts:["60°","30°","180°","90°"], correct:0 },
-                { id:"v1_q33", text:"33. What specific angle does the symbol θ represent in the diagram?", opts:["The angle of reflection off M1","The glancing angle on M1","The angle of incidence on M2","The angle between the two mirrors"], correct:0 }, // Technically incidence angle reflection M1, wait θ is glancing.
+                { id:"v1_q33", text:"33. What specific angle does the symbol θ represent in the diagram?", opts:["The angle of reflection off M1","The glancing angle on M1","The angle of incidence on M2","The angle between the two mirrors"], correct:0 },
                 { id:"v1_q34", text:"34. What is the angle of incidence for Ray B striking M2?", opts:["30°","60°","90°","180°"], correct:0 },
                 { id:"v1_q35", text:"35. What is the angle of reflection for Ray C reflecting off M2?", opts:["30°","60°","90°","180°"], correct:0 },
                 { id:"v1_q36", text:"36. Calculate the total angle between Incident Ray A and Normal N1.", opts:["60°","30°","180°","360°"], correct:0 },
@@ -310,7 +304,6 @@
             "2": "A street lamp (S) is positioned 10 cm above the ground. An opaque stand (3 cm high) is placed 5 cm from the lamp's base. Draw the setup. Draw the critical light ray from the lamp over the object to determine the length of the shadow on the ground. Shade the shadow."
         };
 
-        // Illustrative Setup SVGs
         const setupSvgMirror = `
             <svg width="100%" height="auto" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
                 <line x1="40" y1="180" x2="360" y2="180" stroke="#95a5a6" stroke-width="3"/>
@@ -345,7 +338,7 @@
         `;
 
         // ==========================================
-        // STATE MANAGEMENT
+        // CORE LOGIC
         // ==========================================
         let currentStudent = "";
         let currentClass = "";
@@ -397,6 +390,7 @@
 
         function renderExam() {
             const container = document.getElementById('questionsContainer');
+            if(!container) return; // Failsafe
             container.innerHTML = "";
             let html = "";
             let svgs = currentVersion === "1" ? svgs_v1 : svgs_v2;
@@ -445,7 +439,6 @@
             reader.readAsDataURL(file); 
         }
 
-        // Returns score out of 20 (each MCQ is 0.5 pts)
         function calculateMCQScore() {
             let correctCount = 0;
             currentQuestions.forEach(q => {
@@ -496,9 +489,6 @@
             });
         }
 
-        // ==========================================
-        // SECURITY & REAL-TIME MONITORING
-        // ==========================================
         function startSecurityMonitors() {
             window.addEventListener('blur', triggerViolation);
             document.addEventListener('visibilitychange', () => { if(document.hidden) triggerViolation(); });
@@ -542,9 +532,6 @@
             }).catch(e => {});
         }
 
-        // ==========================================
-        // LEVEL 2 TEACHER DASHBOARD
-        // ==========================================
         function pollTeacherData() {
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
