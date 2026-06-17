@@ -450,8 +450,19 @@
 
         function submitExam() {
             let unanswered = 0;
-            currentQuestions.forEach(q => {
-                if (!document.querySelector(`input[name="${q.id}"]:checked`)) unanswered++;
+            let studentChoices = {}; // NEW: Object to store exact answers
+
+            // Loop through questions to capture exact choices
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                if (!selected) {
+                    unanswered++;
+                    studentChoices[`Q${index + 1}`] = "[Unanswered]";
+                } else {
+                    let choiceIndex = parseInt(selected.value);
+                    // Get the actual text of the option they chose
+                    studentChoices[`Q${index + 1}`] = q.opts[choiceIndex]; 
+                }
             });
             
             let warningText = "";
@@ -466,12 +477,16 @@
             }
 
             const finalScore = calculateMCQScore();
+            
+            // NEW: Added className and choices to the payload
             const payload = { 
                 action: "submit", 
                 studentName: currentStudent, 
+                className: currentClass,     
                 version: currentVersion, 
                 mcqScore: finalScore, 
                 violations: violations, 
+                choices: studentChoices,     
                 imageFile1: base64Image1,
                 imageFile2: base64Image2
             };
