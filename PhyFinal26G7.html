@@ -649,64 +649,81 @@
         }
 
         function submitExam() {
-            let unanswered = 0;
-            let studentChoices = {};
+            try {
+                let unanswered = 0;
+                let studentChoices = {};
 
-            // NEW: Loop through questions to capture exact choices AND mark correctness
-            currentQuestions.forEach((q, index) => {
-                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
-                if (!selected) {
-                    unanswered++;
-                    studentChoices[`Q${index + 1}`] = "⚠️ [Unanswered]";
-                } else {
-                    let choiceIndex = parseInt(selected.value);
-                    
-                    // Check if the option they picked matches the correct index
-                    let isCorrect = (choiceIndex === q.correct) ? "✅ Correct" : "❌ Incorrect";
-                    
-                    // Format: "The text they picked (✅ Correct)"
-                    studentChoices[`Q${index + 1}`] = `${q.opts[choiceIndex]} (${isCorrect})`; 
+                // Safely check if currentQuestions exists
+                if (typeof currentQuestions === 'undefined') {
+                    throw new Error("Variable 'currentQuestions' is missing. What is the array of questions called in Grade 7?");
                 }
-            });
-            
-            let warningText = "";
-            if (unanswered > 0) warningText += `You have ${unanswered} unanswered MCQs.\n`;
-            if (!base64Image) warningText += `You have NOT attached the Circuit Drawing.\n`;
-            
-            if (warningText !== "") {
-                if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
-            } else {
-                if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+
+                currentQuestions.forEach((q, index) => {
+                    const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                    if (!selected) {
+                        unanswered++;
+                        studentChoices[`Q${index + 1}`] = "⚠️ [Unanswered]";
+                    } else {
+                        let choiceIndex = parseInt(selected.value);
+                        let isCorrect = (choiceIndex === q.correct) ? "✅ Correct" : "❌ Incorrect";
+                        studentChoices[`Q${index + 1}`] = `${q.opts[choiceIndex]} (${isCorrect})`; 
+                    }
+                });
+                
+                let warningText = "";
+                if (unanswered > 0) warningText += `You have ${unanswered} unanswered MCQs.\n`;
+                
+                // Safely check the image variable
+                let finalImage = "";
+                if (typeof base64Image !== 'undefined') {
+                    finalImage = base64Image;
+                    if (!base64Image) warningText += `You have NOT attached the Circuit Drawing.\n`;
+                } else if (typeof imageFile !== 'undefined') {
+                    finalImage = imageFile;
+                    if (!imageFile) warningText += `You have NOT attached the Circuit Drawing.\n`;
+                } else {
+                    throw new Error("Could not find the image variable. (Looked for 'base64Image' or 'imageFile').");
+                }
+                
+                if (warningText !== "") {
+                    if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
+                } else {
+                    if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+                }
+
+                if (typeof calculateMCQScore === 'undefined') {
+                    throw new Error("Function 'calculateMCQScore()' is missing.");
+                }
+
+                const finalScore = calculateMCQScore();
+                
+                const payload = { 
+                    action: "submit", 
+                    studentName: currentStudent, 
+                    version: typeof currentVersion !== 'undefined' ? currentVersion : "1", 
+                    mcqScore: finalScore, 
+                    violations: typeof violations !== 'undefined' ? violations : 0, 
+                    choices: studentChoices,  
+                    imageFile: finalImage    
+                };
+
+                document.getElementById('appContainer').style.display = 'none';
+                
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(() => {
+                    document.getElementById('submittedOverlay').style.display = 'flex';
+                    if (typeof heartbeatInterval !== 'undefined') clearInterval(heartbeatInterval);
+                });
+
+            } catch (error) {
+                // THIS WILL TELL US EXACTLY WHAT BROKE
+                alert("SYSTEM ERROR: " + error.message);
+                console.error(error);
             }
-
-            const finalScore = calculateMCQScore();
-            
-            // Added choices to the payload
-            const payload = { 
-                action: "submit", 
-                studentName: currentStudent, 
-                version: currentVersion, 
-                mcqScore: finalScore, 
-                violations: violations, 
-                choices: studentChoices,  // <--- DETAILED REPORTS DATA
-                imageFile: base64Image    // Grade 7 uses a single circuit drawing
-            };
-
-            document.getElementById('appContainer').style.display = 'none';
-            // If you have a loading overlay, show it here
-            const loadingOverlay = document.getElementById('submittingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'flex';
-            
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                if (loadingOverlay) loadingOverlay.style.display = 'none';
-                document.getElementById('submittedOverlay').style.display = 'flex';
-                clearInterval(heartbeatInterval);
-            });
         }
         // ==========================================
         // SECURITY & REAL-TIME MONITORING
