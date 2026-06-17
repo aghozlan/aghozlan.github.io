@@ -649,46 +649,65 @@
         }
 
         function submitExam() {
-            if (examSubmitted) return;
             let unanswered = 0;
-            currentQuestions.forEach(q => {
-                if (!document.querySelector(`input[name="${q.id}"]:checked`)) unanswered++;
+            let studentChoices = {};
+
+            // NEW: Loop through questions to capture exact choices AND mark correctness
+            currentQuestions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                if (!selected) {
+                    unanswered++;
+                    studentChoices[`Q${index + 1}`] = "⚠️ [Unanswered]";
+                } else {
+                    let choiceIndex = parseInt(selected.value);
+                    
+                    // Check if the option they picked matches the correct index
+                    let isCorrect = (choiceIndex === q.correct) ? "✅ Correct" : "❌ Incorrect";
+                    
+                    // Format: "The text they picked (✅ Correct)"
+                    studentChoices[`Q${index + 1}`] = `${q.opts[choiceIndex]} (${isCorrect})`; 
+                }
             });
             
-            // Confirm dialogs blur the window - pause monitoring so they don't count as a violation.
-            pauseMonitoring();
-            if (unanswered > 0) {
-                if(!confirm(`You have ${unanswered} unanswered question(s). Are you sure you want to submit?`)) { resumeMonitoring(); return; }
+            let warningText = "";
+            if (unanswered > 0) warningText += `You have ${unanswered} unanswered MCQs.\n`;
+            if (!base64Image) warningText += `You have NOT attached the Circuit Drawing.\n`;
+            
+            if (warningText !== "") {
+                if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
             } else {
-                if(!confirm("Are you sure you want to submit? You cannot undo this action.")) { resumeMonitoring(); return; }
+                if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
             }
 
             const finalScore = calculateMCQScore();
-            const payload = { action: "submit", studentName: currentStudent, version: currentVersion, mcqScore: finalScore, violations: violations, imageFile: base64Image };
+            
+            // Added choices to the payload
+            const payload = { 
+                action: "submit", 
+                studentName: currentStudent, 
+                version: currentVersion, 
+                mcqScore: finalScore, 
+                violations: violations, 
+                choices: studentChoices,  // <--- DETAILED REPORTS DATA
+                imageFile: base64Image    // Grade 7 uses a single circuit drawing
+            };
 
-            // Non-destructive spinner - wiping document.body deletes the overlays we need to show.
-            document.getElementById('submittingOverlay').style.display = 'flex';
-
+            document.getElementById('appContainer').style.display = 'none';
+            // If you have a loading overlay, show it here
+            const loadingOverlay = document.getElementById('submittingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+            
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
-            })
-            .then(res => res.text())
-            .then(() => {
-                examSubmitted = true;
-                try { localStorage.setItem('phyfinal_submitted_' + currentStudent, '1'); } catch(e) {}
-                clearInterval(heartbeatInterval);
-                document.getElementById('submittingOverlay').style.display = 'none';
+            }).then(() => {
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
                 document.getElementById('submittedOverlay').style.display = 'flex';
-            })
-            .catch(() => {
-                // Network/backend failure - do NOT claim success; let the student retry.
-                document.getElementById('submittingOverlay').style.display = 'none';
-                alert("Submission failed - please check your connection and tap SUBMIT FINAL EXAM again.");
+                clearInterval(heartbeatInterval);
             });
         }
-
         // ==========================================
         // SECURITY & REAL-TIME MONITORING
         // ==========================================
