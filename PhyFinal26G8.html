@@ -35,6 +35,11 @@
         <p class="text-lg text-red-400">Please speak with your instructor immediately.</p>
     </div>
 
+    <div id="submittingOverlay" class="strict-overlay bg-slate-900/95">
+        <h1 class="text-4xl font-bold text-sky-400 mb-4 animate-pulse">Submitting Exam...</h1>
+        <p class="text-xl text-slate-300">Please wait while your answers and drawings are uploaded.</p>
+    </div>
+
     <div id="submittedOverlay" class="strict-overlay bg-emerald-950/95">
         <div class="bg-emerald-500/20 p-6 rounded-full mb-6 border border-emerald-500/50">
             <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -77,7 +82,10 @@
                     <span class="ml-4 text-xs font-bold bg-slate-700 px-3 py-1 rounded text-slate-300">Form <span id="displayVersion"></span></span>
                 </div>
                 <div class="flex gap-4 items-center">
-                    <div class="text-sm font-bold text-slate-300 bg-slate-900 px-4 py-2 rounded-lg border border-slate-700">MCQ: 20 pts | Drawings: 10 pts</div>
+                    <div class="text-sm font-bold text-slate-300 bg-slate-900 px-4 py-2 rounded-lg border border-slate-700 hidden md:block">MCQ: 20 pts | Drawings: 10 pts</div>
+                    
+                    <div id="examTimerDisplay" class="text-lg font-black text-amber-400 bg-amber-950/50 px-4 py-2 rounded-lg border border-amber-800 tracking-widest shadow-inner">60:00</div>
+                    
                     <div class="text-sm font-mono text-emerald-400 bg-emerald-950 px-4 py-2 rounded-lg border border-emerald-800 animate-pulse hidden md:block">LIVE MONITORING ON</div>
                 </div>
             </header>
@@ -155,7 +163,7 @@
 
     <script>
         // ==========================================
-        // CONFIGURATION (PASTE NEW WEB APP URL HERE)
+        // CONFIGURATION
         // ==========================================
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxqhRtDJ1hRKgsjXm7-eScj692cxBdCKHbylALzJZ9LyKTMYrrZuMvzMKXmpnlFSqjH/exec"; 
 
@@ -231,14 +239,14 @@
                 { id:"v1_q24", text:"24. The property of the central object that allows it to cast a shadow is that it is:", opts:["Transparent","Opaque","Translucent","Luminous"], correct:1 },
                 { id:"v1_q25", text:"25. The straight lines drawn from the source past the object illustrate which physics principle?", opts:["Refraction","Dispersion","Rectilinear propagation","Total Internal Reflection"], correct:2 },
                 { id:"v1_q26", text:"26. What would happen to the central dark zone if the opaque object was moved closer to the screen?", opts:["Larger","Smaller","Disappear","Penumbra"], correct:1 },
-                { id:"v1_q27", text:"27. What would happen to the central dark zone if the screen was moved much further to the right?", opts:["Smaller","Larger","Same size","Color change"], correct:2 },
+                { id:"v1_q27", text:"27. What would happen to the central dark zone if the screen was moved much further to the right?", opts:["Smaller","Larger","Same size","Color change"], correct:1 },
                 { id:"v1_q28", text:"28. The screen in this diagram acts as a surface to:", opts:["Reflect light","Refract light","Emit light","Capture shadow"], correct:3 },
                 { id:"v1_q29", text:"29. If the opaque object were replaced by a transparent glass sphere, what would appear on the screen?", opts:["Dark umbra","Solid penumbra","Black square","Light distortion/no dark umbra"], correct:3 },
                 { id:"v1_q30", text:"30. The geometry of the shadow is directly determined by:", opts:["Temperature","Speed of sound","Relative sizes/distances","Color"], correct:2 },
 
                 { id:"v1_q31", svg:3, text:"31. Based on the diagram, what is the value of the angle of incidence for Ray A striking M1?", opts:["30°","60°","90°","0°"], correct:1 },
                 { id:"v1_q32", text:"32. What is the value of the angle of reflection for Ray B reflecting off M1?", opts:["30°","60°","180°","90°"], correct:1 },
-                { id:"v1_q33", text:"33. What specific angle does the symbol θ represent in the diagram?", opts:["Reflection M1","Incidence M2","Glancing M1","Mirror Angle"], correct:0 },
+                { id:"v1_q33", text:"33. What specific angle does the symbol θ represent in the diagram?", opts:["Reflection M1","Incidence M2","Glancing M1","Mirror Angle"], correct:2 },
                 { id:"v1_q34", text:"34. What is the angle of incidence for Ray B striking M2?", opts:["60°","30°","90°","180°"], correct:1 },
                 { id:"v1_q35", text:"35. What is the angle of reflection for Ray C reflecting off M2?", opts:["60°","30°","90°","180°"], correct:1 },
                 { id:"v1_q36", text:"36. Calculate the total angle between Incident Ray A and Normal N1.", opts:["30°","60°","180°","360°"], correct:1 },
@@ -338,7 +346,7 @@
         `;
 
         // ==========================================
-        // CORE LOGIC
+        // CORE LOGIC & STATE
         // ==========================================
         let currentStudent = "";
         let currentClass = "";
@@ -348,6 +356,10 @@
         let base64Image2 = null;
         let heartbeatInterval;
         let currentQuestions = [];
+        
+        // Timer Variables
+        let examTimerInterval;
+        let timeLeftSeconds = 3600; // 60 minutes = 3600 seconds
 
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.has('teacher')) {
@@ -363,7 +375,6 @@
             currentStudent = stuSelect.value;
             currentClass = document.getElementById('classSelect').value;
             
-            // Assign Version randomly based on string length (1 or 2)
             currentVersion = (currentStudent.length % 2 === 0) ? "2" : "1";
             currentQuestions = examDatabase[currentVersion];
 
@@ -386,11 +397,39 @@
             
             sendHeartbeat();
             heartbeatInterval = setInterval(sendHeartbeat, 8000);
+            
+            // --- TIMER START ---
+            timeLeftSeconds = 3600; // 60 minutes
+            updateTimerDisplay();
+            examTimerInterval = setInterval(() => {
+                timeLeftSeconds--;
+                updateTimerDisplay();
+                
+                if (timeLeftSeconds <= 0) {
+                    clearInterval(examTimerInterval);
+                    alert("⏳ Time is up! Your exam is being automatically submitted.");
+                    submitExam(true); // TRUE triggers the forced submission logic
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const display = document.getElementById('examTimerDisplay');
+            if(!display) return;
+            let minutes = Math.floor(timeLeftSeconds / 60);
+            let seconds = timeLeftSeconds % 60;
+            display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Turn red & blink if 5 minutes or less remain
+            if (timeLeftSeconds <= 300) {
+                display.classList.remove('text-amber-400', 'bg-amber-950/50', 'border-amber-800');
+                display.classList.add('text-red-500', 'bg-red-950', 'border-red-800', 'animate-pulse');
+            }
         }
 
         function renderExam() {
             const container = document.getElementById('questionsContainer');
-            if(!container) return; // Failsafe
+            if(!container) return; 
             container.innerHTML = "";
             let html = "";
             let svgs = currentVersion === "1" ? svgs_v1 : svgs_v2;
@@ -448,20 +487,22 @@
             return correctCount * 0.5;
         }
 
-        function submitExam() {
+        function submitExam(isForced = false) {
             let unanswered = 0;
-            let studentChoices = {}; // NEW: Object to store exact answers
+            let studentChoices = {};
 
-            // Loop through questions to capture exact choices
+            // Log detailed choices and evaluate correctness
             currentQuestions.forEach((q, index) => {
                 const selected = document.querySelector(`input[name="${q.id}"]:checked`);
                 if (!selected) {
                     unanswered++;
-                    studentChoices[`Q${index + 1}`] = "[Unanswered]";
+                    studentChoices[`Q${index + 1}`] = "⚠️ [Unanswered]";
                 } else {
                     let choiceIndex = parseInt(selected.value);
-                    // Get the actual text of the option they chose
-                    studentChoices[`Q${index + 1}`] = q.opts[choiceIndex]; 
+                    let optionsArray = q.opts || q.options || q.choices || [];
+                    let answerText = optionsArray[choiceIndex] || `Option ${choiceIndex + 1}`;
+                    let isCorrect = (choiceIndex === q.correct) ? "✅ Correct" : "❌ Incorrect";
+                    studentChoices[`Q${index + 1}`] = `${answerText} (${isCorrect})`; 
                 }
             });
             
@@ -470,15 +511,16 @@
             if (!base64Image1) warningText += `You have NOT attached the Mirror Drawing (Part 1).\n`;
             if (!base64Image2) warningText += `You have NOT attached the Shadow Drawing (Part 2).\n`;
             
-            if (warningText !== "") {
-                if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
-            } else {
-                if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+            // Bypass the popup warnings if it's an automatic or Banned forced submission
+            if (!isForced) {
+                if (warningText !== "") {
+                    if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
+                } else {
+                    if(!confirm("Are you sure you want to submit? You cannot undo this action.")) return;
+                }
             }
 
             const finalScore = calculateMCQScore();
-            
-            // NEW: Added className and choices to the payload
             const payload = { 
                 action: "submit", 
                 studentName: currentStudent, 
@@ -492,6 +534,8 @@
             };
 
             document.getElementById('appContainer').style.display = 'none';
+            const loadingOverlay = document.getElementById('submittingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
             
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
@@ -499,8 +543,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             }).then(() => {
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
                 document.getElementById('submittedOverlay').style.display = 'flex';
-                clearInterval(heartbeatInterval);
+                if (typeof heartbeatInterval !== 'undefined') clearInterval(heartbeatInterval);
+                if (typeof examTimerInterval !== 'undefined') clearInterval(examTimerInterval);
+            }).catch(e => {
+                console.error(e);
+                alert("Submission network issue. Keep this window open and call your instructor.");
             });
         }
 
@@ -534,15 +583,22 @@
                 body: JSON.stringify({ action: "heartbeat", studentName: currentStudent, violations: violations })
             }).then(res => res.json()).then(data => {
                 document.getElementById('blockedOverlay').style.display = 'none';
-                document.getElementById('bannedOverlay').style.display = 'none';
-                document.getElementById('submittedOverlay').style.display = 'none';
 
                 if(data.status === "BLOCKED") document.getElementById('blockedOverlay').style.display = 'flex';
-                if(data.status === "BANNED") document.getElementById('bannedOverlay').style.display = 'flex';
+                
+                // BAN NOW TRIGGERS FORCED SUBMIT
+                if(data.status === "BANNED") {
+                    if (document.getElementById('bannedOverlay').style.display !== 'flex') {
+                        document.getElementById('bannedOverlay').style.display = 'flex';
+                        submitExam(true); 
+                    }
+                }
+                
                 if(data.status === "SUBMITTED") {
                     document.getElementById('appContainer').style.display = 'none';
                     document.getElementById('submittedOverlay').style.display = 'flex';
                     clearInterval(heartbeatInterval); 
+                    if(typeof examTimerInterval !== 'undefined') clearInterval(examTimerInterval);
                 }
             }).catch(e => {});
         }
