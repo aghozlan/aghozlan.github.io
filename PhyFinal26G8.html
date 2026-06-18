@@ -108,7 +108,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div class="border-2 border-dashed border-sky-700/50 hover:border-sky-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
                         <input type="file" id="cameraInput1" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 1)">
-                        <button onclick="document.getElementById('cameraInput1').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Mirror Drawing</button>
+                        <button onclick="isUploading = true; document.getElementById('cameraInput1').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Mirror Drawing</button>
                         <p id="uploadStatus1" class="mt-4 text-emerald-400 font-bold hidden">✓ Mirror Drawing Attached Successfully</p>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div class="border-2 border-dashed border-amber-700/50 hover:border-amber-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
                         <input type="file" id="cameraInput2" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 2)">
-                        <button onclick="document.getElementById('cameraInput2').click()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Shadow Drawing</button>
+                        <button onclick="isUploading = true; document.getElementById('cameraInput2').click()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Shadow Drawing</button>
                         <p id="uploadStatus2" class="mt-4 text-emerald-400 font-bold hidden">✓ Shadow Drawing Attached Successfully</p>
                     </div>
                 </div>
@@ -356,6 +356,8 @@
         let base64Image2 = null;
         let heartbeatInterval;
         let currentQuestions = [];
+        let isUploading = false; // NEW: The "hall pass" for taking photos
+        
         
         // Timer Variables
         let examTimerInterval;
@@ -556,6 +558,12 @@
         function startSecurityMonitors() {
             window.addEventListener('blur', triggerViolation);
             document.addEventListener('visibilitychange', () => { if(document.hidden) triggerViolation(); });
+            
+            // NEW: Revoke the hall pass half a second after they return to the exam
+            window.addEventListener('focus', () => {
+                if (isUploading) setTimeout(() => { isUploading = false; }, 500); 
+            });
+
             document.addEventListener('keydown', (e) => {
                 if(e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'p' || e.key === 's') || e.key === 'PrintScreen') {
                     e.preventDefault(); triggerViolation();
@@ -564,6 +572,7 @@
         }
 
         function triggerViolation() {
+            if (isUploading) return; // Ignore the violation if they are taking a photo
             violations++;
             document.getElementById('cheatOverlay').style.display = 'flex';
             sendHeartbeat();
