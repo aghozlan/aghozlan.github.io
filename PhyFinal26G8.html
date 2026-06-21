@@ -19,14 +19,14 @@
 
     <div id="cheatOverlay" class="strict-overlay" style="background: rgba(220, 38, 38, 0.98);">
         <h1 class="text-6xl font-black text-white mb-4">⚠️ SECURITY ALERT ⚠️</h1>
-        <p class="text-2xl font-bold text-white mb-2">You left the exam window or used a forbidden shortcut.</p>
+        <p class="text-2xl font-bold text-white mb-2">You left the exam window, missed a security check, or used a forbidden shortcut.</p>
         <p class="text-lg text-red-200 mb-6">This violation has been recorded to your instructor's dashboard.</p>
-        <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100">Acknowledge & Return to Exam</button>
+        <button onclick="returnToExam()" class="bg-white text-red-600 font-bold px-8 py-4 rounded-xl shadow-2xl hover:bg-gray-100 transition-all text-xl">Acknowledge & Return to Exam</button>
     </div>
 
     <div id="blockedOverlay" class="strict-overlay bg-slate-900/95">
         <h1 class="text-5xl font-bold text-amber-500 mb-4">Exam Paused</h1>
-        <p class="text-xl text-slate-300">Your exam has been locked by the instructor. Please raise your hand.</p>
+        <p class="text-xl text-slate-300">Your exam has been locked by the instructor. Please raise your hand or contact support.</p>
     </div>
 
     <div id="bannedOverlay" class="strict-overlay bg-red-950/95">
@@ -49,9 +49,31 @@
         <p class="text-md text-emerald-400/50 mt-4">You may safely close this browser window.</p>
     </div>
 
+    <div id="backupOverlay" class="strict-overlay bg-slate-900/95" style="overflow-y: auto; align-items: flex-start; padding: 20px;">
+        <div class="max-w-2xl mx-auto bg-slate-800 p-6 rounded-xl border border-red-500 w-full mt-10 text-center">
+            <h1 class="text-3xl font-black text-red-400 mb-2">Network Submission Failed</h1>
+            <p class="text-slate-300 mb-6">Your internet connection dropped while uploading the photos. Do not panic. Your answers are saved below. <strong class="text-white">Take a screenshot of this entire box and send it to your instructor on Microsoft Teams.</strong></p>
+            <div class="bg-slate-900 p-4 rounded text-left text-sky-300 font-mono text-sm whitespace-pre-wrap border border-slate-700" id="backupText">
+                </div>
+            <button onclick="submitExam(true)" class="mt-6 bg-amber-600 hover:bg-amber-500 text-white px-6 py-3 rounded-lg font-bold w-full transition-all">Retry Submission</button>
+        </div>
+    </div>
+
+    <div id="securityCheckModal" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 bg-slate-900 border-2 border-amber-500 p-6 rounded-2xl z-50 hidden max-w-sm" style="box-shadow: 0 0 40px rgba(245, 158, 11, 0.4);">
+        <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">📸</span>
+            <h3 class="text-amber-400 font-bold text-2xl">Security Check</h3>
+        </div>
+        <p class="text-slate-300 text-sm mb-5 leading-relaxed">Please take a quick selfie to verify your identity. You have <span id="securityCheckTimer" class="font-black text-red-400 text-xl">60</span> seconds.</p>
+        <input type="file" id="securityCameraInput" accept="image/*" capture="user" class="hidden" onchange="handleSecurityPhoto(event)">
+        <button onclick="startSecurityUpload()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-3 rounded-xl font-bold w-full transition-all shadow-lg flex items-center justify-center gap-2 text-lg">
+            Open Camera
+        </button>
+    </div>
+
     <main class="max-w-5xl mx-auto p-4 md:p-6" id="appContainer">
         
-        <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto">
+        <div id="loginScreen" class="glass-panel p-8 rounded-2xl shadow-2xl mt-12 max-w-xl mx-auto border-t-4 border-sky-500">
             <h2 class="text-3xl font-bold text-center text-sky-400 mb-2">Grade 8</h2>
             <h3 class="text-xl font-bold text-center text-white mb-8">Physics Final Examination</h3>
             
@@ -66,17 +88,22 @@
                 </select>
             </div>
             
-            <div class="mb-8">
+            <div class="mb-6">
                 <label class="block text-sm font-bold text-slate-400 mb-2">Select Student Name / الاسم الكامل</label>
                 <select id="studentSelect" disabled class="w-full bg-slate-800 border border-slate-600 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 opacity-50" dir="rtl">
                     <option value="" disabled selected>-- اختر الصف أولاً --</option>
                 </select>
             </div>
-            <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg text-lg">ENTER EXAM</button>
+
+            <p class="text-xs text-amber-500 font-bold text-center mb-6 leading-relaxed bg-amber-900/20 p-3 rounded-lg border border-amber-900/50">
+                ⚠️ SECURITY NOTICE: This exam utilizes random security check-ins. By clicking 'Enter Exam', you consent to taking quick photos using your device's camera when prompted to verify your identity.
+            </p>
+
+            <button onclick="startExam()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg text-lg tracking-wide">ENTER EXAM</button>
         </div>
 
         <div id="examScreen" class="hidden space-y-6 pb-12">
-            <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-50 shadow-md">
+            <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 sticky top-0 z-40 shadow-md">
                 <div class="mb-2 md:mb-0">
                     <span class="text-sky-400 font-bold text-lg" id="displayName">Student Name</span>
                     <span class="ml-4 text-xs font-bold bg-slate-700 px-3 py-1 rounded text-slate-300">Form <span id="displayVersion"></span></span>
@@ -108,7 +135,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div class="border-2 border-dashed border-sky-700/50 hover:border-sky-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
                         <input type="file" id="cameraInput1" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 1)">
-                        <button onclick="isUploading = true; document.getElementById('cameraInput1').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Mirror Drawing</button>
+                        <button onclick="isUploading = true; document.getElementById('cameraInput1').click()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2 text-lg">📸 Take Photo of Mirror Drawing</button>
                         <p id="uploadStatus1" class="mt-4 text-emerald-400 font-bold hidden">✓ Mirror Drawing Attached Successfully</p>
                     </div>
                 </div>
@@ -130,13 +157,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div class="border-2 border-dashed border-amber-700/50 hover:border-amber-500 bg-slate-800/50 rounded-xl p-6 text-center transition-all">
                         <input type="file" id="cameraInput2" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event, 2)">
-                        <button onclick="isUploading = true; document.getElementById('cameraInput2').click()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2">📸 Take Photo of Shadow Drawing</button>
+                        <button onclick="isUploading = true; document.getElementById('cameraInput2').click()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg w-full flex items-center justify-center gap-2 text-lg">📸 Take Photo of Shadow Drawing</button>
                         <p id="uploadStatus2" class="mt-4 text-emerald-400 font-bold hidden">✓ Shadow Drawing Attached Successfully</p>
                     </div>
                 </div>
             </div>
 
-            <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl py-5 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">SUBMIT FINAL EXAM</button>
+            <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-2xl py-6 rounded-xl transition-all shadow-xl shadow-emerald-900/50 tracking-wider">SUBMIT FINAL EXAM</button>
         </div>
 
         <div id="teacherDashboard" class="hidden glass-panel p-6 rounded-xl mt-8">
@@ -230,8 +257,8 @@
                 { id:"v1_q16", text:"16. The wave produced by Device L is fundamentally classified as:", opts:["Mechanical","Sound","Electromagnetic wave","Seismic"], correct:2 },
                 { id:"v1_q17", text:"17. What state of matter characterizes the dome encasing the devices?", opts:["Liquid","Gas","Vacuum","Solid"], correct:3 },
                 { id:"v1_q18", text:"18. If the pump status were suddenly reversed, what immediate change would the observer notice?", opts:["Laser color change","Jar shatters","Sound returns","Laser off"], correct:2 },
-                { id:"v1_q19", text:"19. What type of waves is that demonstrated by Device L?", opts:["Longitudinal","Transverse","Both","None"], correct:2 },
-                { id:"v1_q20", text:"20. What type of waves is that demonstrated by Device S?", opts:["Longitudinal","Transverse","Both","None"], correct:1 },
+                { id:"v1_q19", text:"19. Which domain of physics primarily studies the phenomenon demonstrated by Device L?", opts:["Acoustics","Thermodynamics","Mechanics","Optics"], correct:3 },
+                { id:"v1_q20", text:"20. Which domain of physics primarily studies the phenomenon demonstrated by Device S?", opts:["Optics","Thermodynamics","Acoustics","Electromagnetism"], correct:2 },
 
                 { id:"v1_q21", svg:2, text:"21. Based on the specific light source depicted, what type of shadow is cast on the screen?", opts:["Penumbra","Inverted","No shadow","Umbra only"], correct:3 },
                 { id:"v1_q22", text:"22. Identify the dark, central region of the shadow shown on the screen.", opts:["Reflection","Illuminated zone","Total umbra","Light source"], correct:2 },
@@ -275,8 +302,8 @@
                 { id:"v2_q16", text:"16. The wave produced by Device L is fundamentally classified as:", opts:["Electromagnetic wave","Sound","Mechanical","Seismic"], correct:0 },
                 { id:"v2_q17", text:"17. What state of matter characterizes the dome encasing the devices?", opts:["Gas","Liquid","Solid","Vacuum"], correct:2 },
                 { id:"v2_q18", text:"18. If the pump status were suddenly reversed (turned ON), what immediate change would the observer notice?", opts:["Laser color change","Sound would disappear","Jar would shatter","Laser would turn off"], correct:1 },
-                { id:"v2_q19", text:"19. What type of waves is that demonstrated by Device L?", opts:["Longitudinal","Transverse","Both","None"], correct:2 },
-                { id:"v2_q20", text:"20. What type of waves is that demonstrated by Device S?", opts:["Longitudinal","Transverse","Both","None"], correct:1 },
+                { id:"v2_q19", text:"19. Which domain of physics primarily studies the phenomenon demonstrated by Device L?", opts:["Mechanics","Optics","Acoustics","Thermodynamics"], correct:1 },
+                { id:"v2_q20", text:"20. Which domain of physics primarily studies the phenomenon demonstrated by Device S?", opts:["Acoustics","Thermodynamics","Optics","Electromagnetism"], correct:0 },
 
                 { id:"v2_q21", svg:2, text:"21. Based on the specific light source depicted, what type of shadow is cast on the screen?", opts:["Only Penumbra","No shadow","Umbra and Penumbra","Umbra only"], correct:2 },
                 { id:"v2_q22", text:"22. Identify the dark, central region of the shadow shown on the screen.", opts:["Illuminated zone","Reflection","Light source","Zone Y represents total umbra"], correct:3 },
@@ -356,12 +383,17 @@
         let base64Image2 = null;
         let heartbeatInterval;
         let currentQuestions = [];
-        let isUploading = false; // NEW: The "hall pass" for taking photos
-        
+        let isUploading = false; // HALL PASS FOR CAMERAS
         
         // Timer Variables
         let examTimerInterval;
-        let timeLeftSeconds = 3600; // 60 minutes = 3600 seconds
+        let timeLeftSeconds = 3600; // 60 minutes
+        
+        // Security Check Variables
+        let securityCheckIntervalId;
+        let securityCountdownId;
+        let securityPhotos = [];
+        let securityChecksPassed = 0;
 
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.has('teacher')) {
@@ -369,6 +401,29 @@
             document.getElementById('teacherDashboard').style.display = 'block';
             pollTeacherData();
             setInterval(pollTeacherData, 10000);
+        }
+
+        // ==========================================
+        // AUTO-SAVE LOGIC (Protection against accidental refresh/close)
+        // ==========================================
+        function saveProgress() {
+            let tempChoices = {};
+            currentQuestions.forEach(q => {
+                let sel = document.querySelector(`input[name="${q.id}"]:checked`);
+                if(sel) tempChoices[q.id] = sel.value;
+            });
+            localStorage.setItem('exam8_backup_' + currentStudent, JSON.stringify(tempChoices));
+        }
+
+        function restoreProgress() {
+            let saved = localStorage.getItem('exam8_backup_' + currentStudent);
+            if(saved) {
+                let tempChoices = JSON.parse(saved);
+                for(let id in tempChoices) {
+                    let rad = document.querySelector(`input[name="${id}"][value="${tempChoices[id]}"]`);
+                    if(rad) rad.checked = true;
+                }
+            }
         }
 
         function startExam() {
@@ -395,13 +450,14 @@
             document.getElementById('drawingSvgContainer2').innerHTML = setupSvgShadow;
 
             renderExam();
+            restoreProgress(); // Pull saved answers if tab was previously closed
             startSecurityMonitors();
             
             sendHeartbeat();
             heartbeatInterval = setInterval(sendHeartbeat, 8000);
             
             // --- TIMER START ---
-            timeLeftSeconds = 3600; // 60 minutes
+            timeLeftSeconds = 3600; 
             updateTimerDisplay();
             examTimerInterval = setInterval(() => {
                 timeLeftSeconds--;
@@ -410,9 +466,77 @@
                 if (timeLeftSeconds <= 0) {
                     clearInterval(examTimerInterval);
                     alert("⏳ Time is up! Your exam is being automatically submitted.");
-                    submitExam(true); // TRUE triggers the forced submission logic
+                    submitExam(true);
                 }
             }, 1000);
+
+            // --- START SECURITY CHECK SCHEDULER ---
+            scheduleNextSecurityCheck();
+        }
+
+        // ==========================================
+        // SECURITY CHECK LOGIC
+        // ==========================================
+        function scheduleNextSecurityCheck() {
+            // Appears randomly between 8 to 15 minutes
+            const nextCheckMs = Math.floor(Math.random() * 420000) + 480000;
+            securityCheckIntervalId = setTimeout(showSecurityCheck, nextCheckMs);
+        }
+
+        function showSecurityCheck() {
+            const modal = document.getElementById('securityCheckModal');
+            if (!modal || modal.style.display === 'block') return; 
+            
+            modal.style.display = 'block';
+            let timeLeft = 60;
+            document.getElementById('securityCheckTimer').innerText = timeLeft;
+            
+            securityCountdownId = setInterval(() => {
+                timeLeft--;
+                document.getElementById('securityCheckTimer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(securityCountdownId);
+                    modal.style.display = 'none';
+                    triggerViolation(); 
+                    scheduleNextSecurityCheck(); 
+                }
+            }, 1000);
+        }
+
+        function startSecurityUpload() {
+            isUploading = true; 
+            document.getElementById('securityCameraInput').click();
+        }
+
+        function handleSecurityPhoto(event) {
+            clearInterval(securityCountdownId);
+            document.getElementById('securityCheckModal').style.display = 'none';
+            
+            const file = event.target.files[0];
+            if (file) {
+                securityChecksPassed++;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 320;
+                        const scale = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scale;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        securityPhotos.push(canvas.toDataURL('image/jpeg', 0.5)); 
+                    }
+                    img.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                triggerViolation();
+            }
+            
+            scheduleNextSecurityCheck();
+            setTimeout(() => { isUploading = false; }, 1000);
         }
 
         function updateTimerDisplay() {
@@ -422,7 +546,6 @@
             let seconds = timeLeftSeconds % 60;
             display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            // Turn red & blink if 5 minutes or less remain
             if (timeLeftSeconds <= 300) {
                 display.classList.remove('text-amber-400', 'bg-amber-950/50', 'border-amber-800');
                 display.classList.add('text-red-500', 'bg-red-950', 'border-red-800', 'animate-pulse');
@@ -447,10 +570,11 @@
                         <div class="space-y-3 pl-2 md:pl-6">
                 `;
                 q.opts.forEach((opt, optIndex) => {
+                    // Added onchange="saveProgress()"
                     html += `
                         <label class="flex items-center space-x-3 cursor-pointer group">
                             <div class="relative flex items-center justify-center">
-                                <input type="radio" name="${q.id}" value="${optIndex}" class="peer hidden radio-custom">
+                                <input type="radio" name="${q.id}" value="${optIndex}" class="peer hidden radio-custom" onchange="saveProgress()">
                                 <div class="w-5 h-5 rounded-full border-2 border-slate-500 peer-checked:bg-sky-500 peer-checked:border-sky-500 group-hover:border-sky-400 transition-all"></div>
                             </div>
                             <span class="text-slate-300 group-hover:text-white transition-colors text-base">${opt}</span>
@@ -465,17 +589,36 @@
         function handleImageUpload(event, partNum) {
             const file = event.target.files[0];
             if (!file) return;
+            
+            // NEW: Compress the drawing images so they upload fast and don't crash Apps Script
             const reader = new FileReader();
-            reader.onloadend = function() {
-                if(partNum === 1) {
-                    base64Image1 = reader.result;
-                    document.getElementById('uploadStatus1').classList.remove('hidden');
-                    document.getElementById('cameraInput1').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
-                } else {
-                    base64Image2 = reader.result;
-                    document.getElementById('uploadStatus2').classList.remove('hidden');
-                    document.getElementById('cameraInput2').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200; // Perfect for readability, fast for uploading
+                    let scale = 1;
+                    if (img.width > MAX_WIDTH) {
+                        scale = MAX_WIDTH / img.width;
+                    }
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // 70% quality
+                    
+                    if(partNum === 1) {
+                        base64Image1 = compressedBase64;
+                        document.getElementById('uploadStatus1').classList.remove('hidden');
+                        document.getElementById('cameraInput1').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
+                    } else {
+                        base64Image2 = compressedBase64;
+                        document.getElementById('uploadStatus2').classList.remove('hidden');
+                        document.getElementById('cameraInput2').parentElement.classList.add('border-emerald-500', 'bg-emerald-900/20');
+                    }
                 }
+                img.src = e.target.result;
             }
             reader.readAsDataURL(file); 
         }
@@ -493,7 +636,6 @@
             let unanswered = 0;
             let studentChoices = {};
 
-            // Log detailed choices and evaluate correctness
             currentQuestions.forEach((q, index) => {
                 const selected = document.querySelector(`input[name="${q.id}"]:checked`);
                 if (!selected) {
@@ -508,12 +650,13 @@
                 }
             });
             
+            studentChoices["Security Verification"] = `Passed ${securityChecksPassed} Random Selfie Checks`;
+            
             let warningText = "";
             if (unanswered > 0) warningText += `You have ${unanswered} unanswered MCQs.\n`;
             if (!base64Image1) warningText += `You have NOT attached the Mirror Drawing (Part 1).\n`;
             if (!base64Image2) warningText += `You have NOT attached the Shadow Drawing (Part 2).\n`;
             
-            // Bypass the popup warnings if it's an automatic or Banned forced submission
             if (!isForced) {
                 if (warningText !== "") {
                     if(!confirm(warningText + "\nAre you absolutely sure you want to submit?")) return;
@@ -532,10 +675,13 @@
                 violations: violations, 
                 choices: studentChoices,     
                 imageFile1: base64Image1,
-                imageFile2: base64Image2
+                imageFile2: base64Image2,
+                securityPhotos: securityPhotos 
             };
 
             document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('backupOverlay').style.display = 'none'; // Hide backup if retrying
+            
             const loadingOverlay = document.getElementById('submittingOverlay');
             if (loadingOverlay) loadingOverlay.style.display = 'flex';
             
@@ -545,13 +691,27 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             }).then(() => {
+                // SUCCESS: Clear Local Storage and Stop Timers
+                localStorage.removeItem('exam8_backup_' + currentStudent);
+                
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
                 document.getElementById('submittedOverlay').style.display = 'flex';
+                
                 if (typeof heartbeatInterval !== 'undefined') clearInterval(heartbeatInterval);
                 if (typeof examTimerInterval !== 'undefined') clearInterval(examTimerInterval);
+                if (typeof securityCheckIntervalId !== 'undefined') clearTimeout(securityCheckIntervalId);
+                if (typeof securityCountdownId !== 'undefined') clearInterval(securityCountdownId);
             }).catch(e => {
-                console.error(e);
-                alert("Submission network issue. Keep this window open and call your instructor.");
+                console.error("Network Error:", e);
+                if (loadingOverlay) loadingOverlay.style.display = 'none';
+                
+                // Show the Rescue Panel with all their exact text answers
+                document.getElementById('backupOverlay').style.display = 'flex';
+                let backupString = `STUDENT: ${currentStudent}\nCLASS: ${currentClass}\n\n`;
+                for (const [qNum, ans] of Object.entries(studentChoices)) {
+                    backupString += `${qNum}: ${ans}\n`;
+                }
+                document.getElementById('backupText').innerText = backupString;
             });
         }
 
@@ -559,7 +719,6 @@
             window.addEventListener('blur', triggerViolation);
             document.addEventListener('visibilitychange', () => { if(document.hidden) triggerViolation(); });
             
-            // NEW: Revoke the hall pass half a second after they return to the exam
             window.addEventListener('focus', () => {
                 if (isUploading) setTimeout(() => { isUploading = false; }, 500); 
             });
@@ -569,10 +728,17 @@
                     e.preventDefault(); triggerViolation();
                 }
             });
+
+            // NEW: Prevent accidental F5 / refresh while testing
+            window.addEventListener('beforeunload', function (e) {
+                if (document.getElementById('examScreen').classList.contains('hidden')) return;
+                e.preventDefault();
+                e.returnValue = '';
+            });
         }
 
         function triggerViolation() {
-            if (isUploading) return; // Ignore the violation if they are taking a photo
+            if (isUploading) return; 
             violations++;
             document.getElementById('cheatOverlay').style.display = 'flex';
             sendHeartbeat();
@@ -595,7 +761,6 @@
 
                 if(data.status === "BLOCKED") document.getElementById('blockedOverlay').style.display = 'flex';
                 
-                // BAN NOW TRIGGERS FORCED SUBMIT
                 if(data.status === "BANNED") {
                     if (document.getElementById('bannedOverlay').style.display !== 'flex') {
                         document.getElementById('bannedOverlay').style.display = 'flex';
@@ -662,7 +827,7 @@
                             <td class="p-4 font-medium text-white">${name}</td>
                             <td class="p-4 ${statusColor}">${s.status}</td>
                             <td class="p-4 text-sky-300 font-mono text-lg">${s.score}</td>
-                            <td class="p-4 ${s.violations > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${s.violations}</td>
+                            <td class="p-4 ${s.violations > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}\">${s.violations}</td>
                             <td class="p-4 flex gap-2">${controls}</td>
                         </tr>
                     `;
