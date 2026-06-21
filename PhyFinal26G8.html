@@ -387,7 +387,8 @@
         
         // Timer Variables
         let examTimerInterval;
-        let timeLeftSeconds = 3600; // 60 minutes
+        let timeLeftSeconds = 3600; 
+        let examEndTime = 0; // NEW: Absolute timestamp to prevent pausing
         
         // Security Check Variables
         let securityCheckIntervalId;
@@ -456,11 +457,18 @@
             sendHeartbeat();
             heartbeatInterval = setInterval(sendHeartbeat, 8000);
             
-            // --- TIMER START ---
-            timeLeftSeconds = 3600; 
-            updateTimerDisplay();
-            examTimerInterval = setInterval(() => {
-                timeLeftSeconds--;
+            // --- TIMER START (Absolute Time) ---
+            let savedEndTime = localStorage.getItem('exam8_endtime_' + currentStudent);
+            if (savedEndTime) {
+                examEndTime = parseInt(savedEndTime);
+            } else {
+                examEndTime = Date.now() + (3600 * 1000); // 60 minutes from right now
+                localStorage.setItem('exam8_endtime_' + currentStudent, examEndTime);
+            }
+
+            function tickTimer() {
+                let now = Date.now();
+                timeLeftSeconds = Math.max(0, Math.floor((examEndTime - now) / 1000));
                 updateTimerDisplay();
                 
                 if (timeLeftSeconds <= 0) {
@@ -468,7 +476,10 @@
                     alert("⏳ Time is up! Your exam is being automatically submitted.");
                     submitExam(true);
                 }
-            }, 1000);
+            }
+
+            tickTimer(); // Run once immediately
+            examTimerInterval = setInterval(tickTimer, 1000);
 
             // --- START SECURITY CHECK SCHEDULER ---
             scheduleNextSecurityCheck();
@@ -693,6 +704,7 @@
             }).then(() => {
                 // SUCCESS: Clear Local Storage and Stop Timers
                 localStorage.removeItem('exam8_backup_' + currentStudent);
+                localStorage.removeItem('exam8_endtime_' + currentStudent); // NEW: Clear the saved timer
                 
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
                 document.getElementById('submittedOverlay').style.display = 'flex';
