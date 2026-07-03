@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>The Resonance Chamber — A Chladni Sound Lab</title>
+<meta name="description" content="Turn sound into shape. An interactive Chladni plate simulation — tune a frequency, watch sand find the silence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0d0b;
+  --bg2:#0e1210;
+  --panel:#121613;
+  --copper:#c97a4a;
+  --copper-bright:#e3936a;
+  --verdigris:#4fa88f;
+  --verdigris-bright:#7fd4b8;
+  --text:#eae6dc;
+  --muted:rgba(234,230,220,.52);
+  --muted2:rgba(234,230,220,.28);
+  --line:rgba(201,122,74,.22);
+  --line-bright:rgba(201,122,74,.45);
+  --sand:#e9dfc8;
+  --red:#e2604f;
+  --font-display:'Fraunces', serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'Space Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+body::before{
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(79,168,143,.05), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(201,122,74,.06), transparent 50%),
+    repeating-linear-gradient(0deg, rgba(234,230,220,.012) 0px, transparent 1px, transparent 3px);
+}
+::selection{ background:var(--verdigris); color:#08110d; }
+::-webkit-scrollbar{ width:10px; }
+::-webkit-scrollbar-track{ background:var(--bg); }
+::-webkit-scrollbar-thumb{ background:var(--line-bright); border-radius:6px; }
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px;
+  background:rgba(10,13,11,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{ width:26px; height:26px; }
+.brand-text{ font-family:var(--font-display); font-weight:600; font-size:17px; letter-spacing:.02em; }
+.brand-sub{ font-family:var(--font-mono); font-size:10px; color:var(--muted); letter-spacing:.12em; text-transform:uppercase; }
+.top-right{ display:flex; align-items:center; gap:16px; }
+.mini-counter{
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:12px; color:var(--muted);
+  border:1px solid var(--line); border-radius:20px; padding:6px 12px;
+}
+.mini-counter b{ color:var(--verdigris-bright); font-weight:700; }
+.sound-toggle{
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--line); background:transparent; color:var(--text);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:15px; transition:.2s;
+}
+.sound-toggle:hover{ border-color:var(--line-bright); background:rgba(201,122,74,.08); }
+
+/* ============ ENTRY GATE ============ */
+#gate{
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(ellipse at 50% 40%, #131a16 0%, #07090a 75%);
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#gate.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.gate-inner{ text-align:center; max-width:480px; padding:32px; position:relative; z-index:2; }
+.gate-plate{
+  width:120px; height:120px; margin:0 auto 28px;
+  border-radius:50%;
+  border:2px solid var(--line-bright);
+  display:flex; align-items:center; justify-content:center;
+  animation: gatePulse 3.2s ease-in-out infinite;
+}
+@keyframes gatePulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(79,168,143,.18); }
+  50%{ box-shadow:0 0 0 18px rgba(79,168,143,0); }
+}
+.gate-title{
+  font-family:var(--font-display); font-weight:600; font-size:clamp(28px,5vw,40px);
+  line-height:1.15; margin-bottom:10px;
+}
+.gate-title em{ font-style:italic; color:var(--copper-bright); }
+.gate-sub{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); letter-spacing:.04em; margin-bottom:32px; line-height:1.6; }
+.gate-form{ display:flex; flex-direction:column; gap:14px; align-items:center; }
+#nameInput{
+  width:100%; max-width:320px;
+  background:rgba(234,230,220,.04);
+  border:1px solid var(--line-bright);
+  border-radius:10px;
+  padding:14px 16px;
+  font-family:var(--font-body); font-size:16px; color:var(--text);
+  text-align:center;
+  outline:none;
+  transition:.2s;
+}
+#nameInput:focus{ border-color:var(--verdigris-bright); background:rgba(79,168,143,.06); }
+#nameInput::placeholder{ color:var(--muted2); }
+.gate-start{
+  margin-top:6px;
+  padding:14px 38px;
+  border-radius:30px;
+  border:1px solid var(--copper);
+  background:linear-gradient(180deg, rgba(201,122,74,.22), rgba(201,122,74,.08));
+  color:var(--copper-bright);
+  font-family:var(--font-mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase;
+  cursor:pointer; transition:.2s;
+}
+.gate-start:hover{ background:rgba(201,122,74,.32); transform:translateY(-1px); }
+.gate-start:disabled{ opacity:.35; cursor:not-allowed; transform:none; }
+.gate-visits{ margin-top:26px; font-family:var(--font-mono); font-size:11px; color:var(--muted2); }
+
+/* ============ MAIN ============ */
+main{ position:relative; z-index:1; opacity:0; transition:opacity .6s ease; }
+main.show{ opacity:1; }
+
+.hero{
+  padding:40px 24px 20px;
+  text-align:center;
+  max-width:760px; margin:0 auto;
+}
+.hero-eyebrow{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--verdigris-bright); margin-bottom:14px;
+}
+.hero-title{
+  font-family:var(--font-display); font-weight:600; font-size:clamp(30px,5vw,46px);
+  line-height:1.1; margin-bottom:14px;
+}
+.hero-title .greet{ color:var(--copper-bright); font-style:italic; font-weight:500; }
+.hero-desc{ color:var(--muted); font-size:15px; line-height:1.65; max-width:560px; margin:0 auto; }
+
+/* ============ INSTRUMENT PANEL ============ */
+.lab-wrap{
+  max-width:920px; margin:28px auto 0; padding:0 20px 60px;
+  display:flex; flex-direction:column; align-items:center; gap:22px;
+}
+.instrument{
+  position:relative;
+  width:100%; max-width:640px;
+  border-radius:18px;
+  padding:22px;
+  background:linear-gradient(160deg, #171c18, #0d100e 70%);
+  border:1px solid var(--line);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.5), 0 20px 60px rgba(0,0,0,.5);
+}
+.instrument::before{ /* corner screws */
+  content:''; position:absolute; inset:10px; border-radius:12px;
+  border:1px solid rgba(234,230,220,.06); pointer-events:none;
+}
+.screw{
+  position:absolute; width:9px; height:9px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #8a8378, #2c2a26 70%);
+  box-shadow:0 1px 2px rgba(0,0,0,.6);
+}
+.screw.tl{ top:14px; left:14px; } .screw.tr{ top:14px; right:14px; }
+.screw.bl{ bottom:14px; left:14px; } .screw.br{ bottom:14px; right:14px; }
+
+.plate-frame{
+  position:relative;
+  border-radius:12px;
+  overflow:hidden;
+  background:#04100b;
+  border:1px solid rgba(79,168,143,.25);
+  box-shadow:inset 0 0 30px rgba(0,0,0,.7);
+}
+#plateCanvas{ display:block; width:100%; height:auto; touch-action:none; cursor:crosshair; }
+.plate-readout{
+  position:absolute; top:10px; left:12px;
+  font-family:var(--font-mono); font-size:11px; color:var(--verdigris-bright);
+  background:rgba(4,16,11,.55); padding:4px 9px; border-radius:6px;
+  border:1px solid rgba(79,168,143,.25);
+  letter-spacing:.03em;
+}
+.plate-mode-label{
+  position:absolute; top:10px; right:12px;
+  font-family:var(--font-mono); font-size:11px; color:var(--copper-bright);
+  background:rgba(4,16,11,.55); padding:4px 9px; border-radius:6px;
+  border:1px solid var(--line);
+}
+.predict-hint{
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:11px; color:var(--sand);
+  background:rgba(4,16,11,.7); padding:5px 12px; border-radius:16px;
+  border:1px solid var(--line-bright);
+  opacity:0; transition:.3s; pointer-events:none; text-align:center; max-width:88%;
+}
+.predict-hint.show{ opacity:1; }
+
+/* controls row under plate */
+.controls-row{
+  display:flex; align-items:center; justify-content:center; gap:26px;
+  margin-top:20px; flex-wrap:wrap;
+}
+.dial-wrap{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+.dial{
+  width:96px; height:96px; border-radius:50%; position:relative;
+  background:radial-gradient(circle at 35% 30%, #3a3530, #16130f 75%);
+  border:2px solid var(--copper);
+  box-shadow:0 4px 14px rgba(0,0,0,.5), inset 0 0 10px rgba(0,0,0,.6);
+  cursor:grab;
+  touch-action:none;
+}
+.dial:active{ cursor:grabbing; }
+.dial-pointer{
+  position:absolute; top:6px; left:50%; width:3px; height:30px;
+  background:var(--copper-bright); border-radius:2px;
+  transform-origin:50% 42px;
+  transform:translateX(-50%) rotate(0deg);
+  box-shadow:0 0 6px rgba(227,147,106,.6);
+}
+.dial-center{
+  position:absolute; top:50%; left:50%; width:14px; height:14px; border-radius:50%;
+  background:#0a0806; transform:translate(-50%,-50%);
+  border:1px solid rgba(234,230,220,.15);
+}
+.dial-label{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; }
+.freq-readout{ font-family:var(--font-mono); font-size:15px; color:var(--copper-bright); font-weight:700; }
+
+.action-buttons{ display:flex; flex-direction:column; gap:10px; }
+.abtn{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.04em;
+  padding:11px 20px; border-radius:24px; cursor:pointer; transition:.2s;
+  border:1px solid var(--line-bright); background:transparent; color:var(--text);
+  white-space:nowrap;
+}
+.abtn:hover{ background:rgba(234,230,220,.06); }
+.abtn.primary{ border-color:var(--verdigris-bright); color:var(--verdigris-bright); }
+.abtn.primary:hover{ background:rgba(79,168,143,.12); }
+.abtn.active{ background:rgba(79,168,143,.18); color:var(--verdigris-bright); border-color:var(--verdigris-bright); }
+.abtn:disabled{ opacity:.3; cursor:not-allowed; }
+
+/* score toast */
+.score-toast{
+  font-family:var(--font-mono); font-size:13px; text-align:center;
+  padding:10px 18px; border-radius:10px; max-width:400px;
+  border:1px solid var(--line-bright); background:rgba(79,168,143,.07);
+  color:var(--verdigris-bright);
+  display:none;
+}
+.score-toast.show{ display:block; animation:fadein .4s ease; }
+@keyframes fadein{ from{ opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);} }
+
+/* ============ SIDE QUEST CARDS ============ */
+.quests{
+  display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+  max-width:640px; margin-top:6px;
+}
+.quest-chip{
+  display:flex; align-items:center; gap:9px;
+  padding:10px 16px; border-radius:24px;
+  border:1px dashed var(--line-bright);
+  font-family:var(--font-mono); font-size:12px; color:var(--muted);
+  cursor:pointer; transition:.2s; background:rgba(234,230,220,.02);
+}
+.quest-chip:hover{ border-style:solid; color:var(--text); background:rgba(234,230,220,.05); }
+.quest-chip .dot{ width:6px; height:6px; border-radius:50%; background:var(--copper-bright); }
+.quest-chip.locked{ opacity:.4; cursor:default; }
+.quest-chip.locked:hover{ border-style:dashed; background:transparent; color:var(--muted); }
+
+/* ============ MODAL (quests + certificate) ============ */
+.modal-overlay{
+  position:fixed; inset:0; z-index:80;
+  background:rgba(4,7,5,.78); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:.3s;
+  padding:20px;
+}
+.modal-overlay.show{ opacity:1; visibility:visible; }
+.modal{
+  background:linear-gradient(160deg,#161b17,#0d100e);
+  border:1px solid var(--line-bright); border-radius:16px;
+  max-width:480px; width:100%; max-height:86vh; overflow-y:auto;
+  padding:28px; position:relative;
+}
+.modal-close{
+  position:absolute; top:14px; right:16px; background:none; border:none;
+  color:var(--muted); font-size:20px; cursor:pointer; line-height:1;
+}
+.modal-close:hover{ color:var(--text); }
+.modal h3{ font-family:var(--font-display); font-size:22px; margin-bottom:6px; padding-right:20px; }
+.modal .modal-sub{ font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-bottom:20px; }
+
+.thumb-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0; }
+.thumb-opt{
+  border:1px solid var(--line); border-radius:10px; overflow:hidden; cursor:pointer;
+  background:#04100b; transition:.2s;
+}
+.thumb-opt:hover{ border-color:var(--verdigris-bright); }
+.thumb-opt.correct{ border-color:var(--verdigris-bright); box-shadow:0 0 0 2px rgba(79,168,143,.3); }
+.thumb-opt.wrong{ border-color:var(--red); box-shadow:0 0 0 2px rgba(226,96,79,.25); }
+.thumb-opt canvas{ display:block; width:100%; height:auto; }
+.round-info{ font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-bottom:10px; }
+.lives{ font-size:13px; letter-spacing:2px; }
+
+.freq-guess-row{ display:flex; align-items:center; gap:12px; margin:18px 0; }
+#guessSlider{ flex:1; accent-color:var(--verdigris-bright); }
+
+/* certificate */
+#certCanvas{ width:100%; border-radius:8px; border:1px solid var(--line); margin-bottom:16px; }
+
+/* accordion quiz */
+.accordion{
+  max-width:640px; width:100%; margin:20px auto 0;
+  border:1px solid var(--line); border-radius:14px; overflow:hidden;
+}
+.accordion-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; cursor:pointer; background:rgba(234,230,220,.02);
+}
+.accordion-head h4{ font-family:var(--font-display); font-size:16px; font-weight:600; }
+.accordion-head span.eyebrow{ font-family:var(--font-mono); font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:3px; }
+.accordion-arrow{ transition:.3s; color:var(--muted); }
+.accordion-body{ max-height:0; overflow:hidden; transition:max-height .4s ease; }
+.accordion.open .accordion-body{ max-height:900px; }
+.accordion.open .accordion-arrow{ transform:rotate(180deg); }
+.accordion-content{ padding:6px 20px 24px; }
+.quiz-q{ margin-bottom:20px; }
+.quiz-q p{ font-size:14.5px; margin-bottom:10px; line-height:1.5; }
+.quiz-opts{ display:flex; flex-direction:column; gap:8px; }
+.quiz-opt{
+  text-align:left; padding:10px 14px; border-radius:8px;
+  border:1px solid var(--line); background:transparent; color:var(--text);
+  font-family:var(--font-body); font-size:13.5px; cursor:pointer; transition:.15s;
+}
+.quiz-opt:hover{ border-color:var(--line-bright); }
+.quiz-opt.correct{ border-color:var(--verdigris-bright); background:rgba(79,168,143,.1); color:var(--verdigris-bright); }
+.quiz-opt.wrong{ border-color:var(--red); background:rgba(226,96,79,.08); color:var(--red); }
+.quiz-fb{ font-family:var(--font-mono); font-size:12px; color:var(--muted); margin-top:8px; min-height:16px; }
+
+/* emoji self-assess */
+.emoji-row{ display:flex; gap:10px; justify-content:center; margin-top:18px; }
+.emoji-btn{
+  font-size:22px; background:none; border:1px solid var(--line); border-radius:10px;
+  padding:8px 12px; cursor:pointer; transition:.15s; opacity:.6;
+}
+.emoji-btn:hover, .emoji-btn.sel{ opacity:1; border-color:var(--verdigris-bright); transform:translateY(-2px); }
+
+footer{
+  text-align:center; padding:30px 20px 50px;
+  font-family:var(--font-mono); font-size:11px; color:var(--muted2);
+}
+
+/* confetti */
+.confetti-piece{
+  position:fixed; top:-10px; width:8px; height:14px; z-index:200;
+  animation:confettiFall linear forwards; pointer-events:none;
+}
+@keyframes confettiFall{
+  to{ transform:translateY(105vh) rotate(540deg); opacity:.2; }
+}
+
+@media (max-width:560px){
+  .controls-row{ gap:18px; }
+  .lab-wrap{ padding:0 14px 50px; }
+  .hero{ padding:28px 16px 14px; }
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ ENTRY GATE ============ -->
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-plate">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+        <circle cx="30" cy="30" r="28" stroke="#4fa88f" stroke-width="1.2" opacity=".5"/>
+        <path d="M8 30 Q30 8 52 30 Q30 52 8 30" stroke="#c97a4a" stroke-width="1.3" opacity=".8"/>
+        <path d="M30 8 Q52 30 30 52 Q8 30 30 8" stroke="#c97a4a" stroke-width="1.3" opacity=".8"/>
+      </svg>
+    </div>
+    <h1 class="gate-title">Turn sound<br>into <em>shape</em>.</h1>
+    <p class="gate-sub">A LIVE CHLADNI PLATE, IN YOUR BROWSER<br>TUNE A FREQUENCY — WATCH SAND FIND THE SILENCE</p>
+    <div class="gate-form">
+      <input type="text" id="nameInput" placeholder="What should we call you?" maxlength="30" autocomplete="off">
+      <button class="gate-start" id="gateStart" disabled>Enter the Chamber</button>
+    </div>
+    <div class="gate-visits" id="gateVisits">🌍 counting explorers…</div>
+  </div>
+</div>
+
+<!-- ============ TOP BAR ============ -->
+<div class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 26 26" fill="none">
+      <circle cx="13" cy="13" r="11.5" stroke="#4fa88f" stroke-width="1"/>
+      <path d="M4 13 Q13 4 22 13 Q13 22 4 13" stroke="#c97a4a" stroke-width="1.1"/>
+    </svg>
+    <div>
+      <div class="brand-text">The Resonance Chamber</div>
+      <div class="brand-sub">A Cymatics Sound Lab</div>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="mini-counter">🌍 <b id="topVisits">—</b> explorers</div>
+    <button class="sound-toggle" id="soundToggle" title="Mute / unmute">🔊</button>
+  </div>
+</div>
+
+<!-- ============ MAIN ============ -->
+<main id="main">
+  <section class="hero">
+    <div class="hero-eyebrow">Engage → Explore → Play</div>
+    <h1 class="hero-title">Welcome, <span class="greet" id="heroName">Explorer</span>.</h1>
+    <p class="hero-desc">Every pitch has a shape. Turn the dial to excite the plate, then sprinkle sand and watch it flee the loud places — settling only where the plate stays still. Those quiet lines are called <strong>nodes</strong>. This is how Ernst Chladni first made sound visible in 1787.</p>
+  </section>
+
+  <div class="lab-wrap">
+    <div class="instrument">
+      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+      <div class="plate-frame">
+        <canvas id="plateCanvas" width="600" height="600"></canvas>
+        <div class="plate-readout" id="plateReadout">n=2 · m=1</div>
+        <div class="plate-mode-label" id="plateFreqLabel">220 Hz</div>
+        <div class="predict-hint" id="predictHint">Tap up to 5 spots where you think the sand will settle</div>
+      </div>
+
+      <div class="controls-row">
+        <div class="dial-wrap">
+          <div class="dial" id="dial">
+            <div class="dial-pointer" id="dialPointer"></div>
+            <div class="dial-center"></div>
+          </div>
+          <div class="dial-label">Tuning Dial</div>
+          <div class="freq-readout" id="freqReadout">220 Hz</div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="abtn primary" id="sprinkleBtn">✨ Sprinkle Sand</button>
+          <button class="abtn" id="predictBtn">🎯 Predict Nodes</button>
+          <button class="abtn" id="clearBtn">Clear Plate</button>
+        </div>
+      </div>
+
+      <div class="score-toast" id="scoreToast"></div>
+    </div>
+
+    <div class="quests">
+      <div class="quest-chip" id="questMatch"><span class="dot"></span> Match the Mode — hear it, spot it</div>
+      <div class="quest-chip" id="questGuess"><span class="dot"></span> Guess the Frequency</div>
+      <div class="quest-chip locked" id="questCert"><span class="dot"></span> 🔒 Resonance Certificate (play a round first)</div>
+    </div>
+
+    <!-- OPTIONAL QUIZ ACCORDION -->
+    <div class="accordion" id="quizAccordion">
+      <div class="accordion-head" id="quizHead">
+        <div><span class="eyebrow">Optional · 3 questions</span><h4>Test what you noticed</h4></div>
+        <span class="accordion-arrow">▾</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content" id="quizContent">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="emoji-row" id="selfAssess">
+      <button class="emoji-btn" data-v="😕">😕</button>
+      <button class="emoji-btn" data-v="🤔">🤔</button>
+      <button class="emoji-btn" data-v="😊">😊</button>
+      <button class="emoji-btn" data-v="🎯">🎯</button>
+    </div>
+  </div>
+
+  <footer>Built by Ahmad Ghozlan · Physics Lab Series · Chladni patterns computed from a simplified free-plate mode model</footer>
+</main>
+
+<!-- ============ MATCH THE MODE MODAL ============ -->
+<div class="modal-overlay" id="matchModal">
+  <div class="modal">
+    <button class="modal-close" data-close>×</button>
+    <h3>Match the Mode</h3>
+    <div class="modal-sub" id="matchRoundInfo">ROUND 1 OF 3 · LIVES <span class="lives" id="matchLives">●●●</span></div>
+    <p style="font-size:14px; color:var(--muted); margin-bottom:6px;">Listen to the tone, then tap the pattern you think it makes.</p>
+    <button class="abtn primary" id="playToneBtn" style="margin:10px 0 4px;">▶ Play the tone</button>
+    <div class="thumb-grid" id="matchGrid"></div>
+    <div class="quiz-fb" id="matchFb"></div>
+  </div>
+</div>
+
+<!-- ============ GUESS THE FREQUENCY MODAL ============ -->
+<div class="modal-overlay" id="guessModal">
+  <div class="modal">
+    <button class="modal-close" data-close>×</button>
+    <h3>Guess the Frequency</h3>
+    <div class="modal-sub">A pattern is shown below. Slide until you reproduce it.</div>
+    <div class="plate-frame" style="max-width:260px; margin:0 auto;">
+      <canvas id="guessTargetCanvas" width="260" height="260"></canvas>
+    </div>
+    <div class="freq-guess-row">
+      <span style="font-family:var(--font-mono); font-size:11px; color:var(--muted);">100Hz</span>
+      <input type="range" id="guessSlider" min="220" max="620" value="400" step="1">
+      <span style="font-family:var(--font-mono); font-size:11px; color:var(--muted);">620Hz</span>
+    </div>
+    <div style="text-align:center; font-family:var(--font-mono); font-size:14px; color:var(--copper-bright); margin-bottom:10px;" id="guessReadout">400 Hz</div>
+    <button class="abtn primary" id="guessCheckBtn">Check my match</button>
+    <div class="quiz-fb" id="guessFb"></div>
+  </div>
+</div>
+
+<!-- ============ CERTIFICATE MODAL ============ -->
+<div class="modal-overlay" id="certModal">
+  <div class="modal">
+    <button class="modal-close" data-close>×</button>
+    <h3>Your Resonance Certificate</h3>
+    <div class="modal-sub">Right-click / long-press to save the image</div>
+    <canvas id="certCanvas" width="600" height="420"></canvas>
+    <button class="abtn primary" id="downloadCertBtn" style="width:100%;">⬇ Download Certificate</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   VISIT COUNTER — no backend, third-party badge service
+   Swap the "path" value for your own published page URL.
+   ═══════════════════════════════════════════════ */
+(function initVisitCounter(){
+  var pagePath = 'aghozlan.github.io-resonance-chamber'; // TODO: replace with your real GitHub Pages URL once published
+  var url = 'https://api.visitorbadge.io/api/combined?path=' + encodeURIComponent(pagePath) + '&format=json';
+  fetch(url).then(function(r){ return r.json(); }).then(function(data){
+    var n = (data && (data.count || data.value)) || null;
+    if(n){
+      document.getElementById('topVisits').textContent = n.toLocaleString();
+      document.getElementById('gateVisits').textContent = '🌍 ' + n.toLocaleString() + ' people have made sand dance here';
+    } else { throw new Error('no count'); }
+  }).catch(function(){
+    document.getElementById('topVisits').textContent = '—';
+    document.getElementById('gateVisits').textContent = '🌍 you are one of the first explorers';
+  });
+})();
+/* Optional: paste your GoatCounter tag (from goatcounter.com, free signup)
+   right before the closing body tag for a private analytics dashboard,
+   separate from the public counter above. Ask Claude for the exact snippet
+   once you have your GoatCounter site code. */
+
+/* ═══════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════ */
+let studentName = '';
+let soundOn = true;
+let audioCtx = null;
+let currentTone = null;
+let unlockedCert = false;
+
+const MODES = [
+  {n:2,m:1,f:220},{n:3,m:1,f:300},{n:3,m:2,f:340},{n:4,m:1,f:380},
+  {n:4,m:2,f:420},{n:4,m:3,f:460},{n:5,m:1,f:500},{n:5,m:2,f:540},
+  {n:5,m:3,f:580},{n:5,m:4,f:620}
+];
+let currentMode = MODES[0];
+
+/* ═══════════════════════════════════════════════
+   SESSION PERSISTENCE
+   ═══════════════════════════════════════════════ */
+function saveProgress(){
+  try{
+    sessionStorage.setItem('chladni_progress', JSON.stringify({
+      name: studentName, unlockedCert: unlockedCert
+    }));
+  }catch(e){}
+}
+function loadProgress(){
+  try{
+    const raw = sessionStorage.getItem('chladni_progress');
+    if(raw){
+      const p = JSON.parse(raw);
+      return p;
+    }
+  }catch(e){}
+  return null;
+}
+
+/* ═══════════════════════════════════════════════
+   SOUND — Web Audio
+   ═══════════════════════════════════════════════ */
+function getAC(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freq, dur, type){
+  if(!soundOn) return;
+  try{
+    const ctx = getAC(), o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.16, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.start(); o.stop(ctx.currentTime + dur);
+  }catch(e){}
+}
+function playSuccess(){ playTone(880,.08); setTimeout(()=>playTone(1100,.15),90); }
+function playWrong(){ playTone(180,.3,'sawtooth'); }
+function playBonus(){ [880,1100,1320,1760].forEach((f,i)=>setTimeout(()=>playTone(f,.12),i*80)); }
+function startSustainedTone(freq){
+  stopSustainedTone();
+  if(!soundOn) return;
+  try{
+    const ctx = getAC(), o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.15);
+    o.start();
+    currentTone = {osc:o, gain:g};
+  }catch(e){}
+}
+function stopSustainedTone(){
+  if(currentTone){
+    try{
+      const ctx = getAC();
+      currentTone.gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.2);
+      currentTone.osc.stop(ctx.currentTime + 0.25);
+    }catch(e){}
+    currentTone = null;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   CONFETTI
+   ═══════════════════════════════════════════════ */
+function celebrate(){
+  const colors = ['#c97a4a','#4fa88f','#e9dfc8','#7fd4b8','#e3936a'];
+  for(let i=0;i<70;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = 'left:'+(Math.random()*100)+'vw; background:'+colors[Math.floor(Math.random()*colors.length)]+
+      '; animation-delay:'+(Math.random())+'s; animation-duration:'+(1.4+Math.random())+'s;';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 3000);
+  }
+  playBonus();
+}
+
+/* ═══════════════════════════════════════════════
+   CHLADNI PHYSICS — simplified free-plate mode model
+   z(x,y) = cos(nπx)cos(mπy) - cos(mπx)cos(nπy),  x,y in [0,1]
+   ═══════════════════════════════════════════════ */
+function chladniZ(x, y, n, m){
+  return Math.cos(n*Math.PI*x)*Math.cos(m*Math.PI*y) - Math.cos(m*Math.PI*x)*Math.cos(n*Math.PI*y);
+}
+function chladniGrad(x, y, n, m){
+  const dzdx = -n*Math.PI*Math.sin(n*Math.PI*x)*Math.cos(m*Math.PI*y) + m*Math.PI*Math.sin(m*Math.PI*x)*Math.cos(n*Math.PI*y);
+  const dzdy = -m*Math.PI*Math.cos(n*Math.PI*x)*Math.sin(m*Math.PI*y) + n*Math.PI*Math.cos(m*Math.PI*x)*Math.sin(n*Math.PI*y);
+  return [dzdx, dzdy];
+}
+
+/* draw a static thumbnail pattern onto a small canvas (used for quizzes/certificate) */
+function drawStaticPattern(ctx, w, h, n, m, sandColor){
+  ctx.fillStyle = '#04100b';
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = sandColor || '#e9dfc8';
+  const N = 900;
+  for(let i=0;i<N;i++){
+    // rejection-sample points near nodes for a clean static preview
+    let x,y,z, tries=0;
+    do{
+      x = Math.random(); y = Math.random();
+      z = chladniZ(x,y,n,m);
+      tries++;
+    }while(Math.abs(z) > 0.12 && tries < 6);
+    ctx.beginPath();
+    ctx.arc(x*w, y*h, 1.3, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN PLATE SIMULATION
+   ═══════════════════════════════════════════════ */
+const plateCanvas = document.getElementById('plateCanvas');
+const pctx = plateCanvas.getContext('2d');
+const PLATE_N_PARTICLES = 1800;
+let particles = [];
+let simRunning = false;
+let predictMode = false;
+let predictPins = [];
+
+function seedParticles(n){
+  particles = [];
+  for(let i=0;i<n;i++){
+    particles.push({x:Math.random(), y:Math.random(), vx:0, vy:0});
+  }
+}
+function clearPlate(){
+  particles = [];
+  predictPins = [];
+  simRunning = false;
+  drawPlate();
+}
+function stepSim(){
+  const {n,m} = currentMode;
+  for(const p of particles){
+    const z = chladniZ(p.x, p.y, n, m);
+    const [gx, gy] = chladniGrad(p.x, p.y, n, m);
+    // force pushes particle away from high |z| toward nodes (z=0)
+    const k = 0.00045;
+    p.vx += -k * z * gx;
+    p.vy += -k * z * gy;
+    // jitter proportional to local amplitude (sand "bouncing")
+    const amp = Math.min(1, Math.abs(z));
+    p.vx += (Math.random()-0.5) * amp * 0.01;
+    p.vy += (Math.random()-0.5) * amp * 0.01;
+    // damping
+    p.vx *= 0.86; p.vy *= 0.86;
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < 0) p.x = 0; if(p.x > 1) p.x = 1;
+    if(p.y < 0) p.y = 0; if(p.y > 1) p.y = 1;
+  }
+}
+function drawPlate(){
+  const w = plateCanvas.width, h = plateCanvas.height;
+  pctx.fillStyle = '#04100b';
+  pctx.fillRect(0,0,w,h);
+  // faint plate outline
+  pctx.strokeStyle = 'rgba(79,168,143,.18)';
+  pctx.lineWidth = 1;
+  pctx.strokeRect(6,6,w-12,h-12);
+
+  pctx.fillStyle = '#e9dfc8';
+  for(const p of particles){
+    pctx.beginPath();
+    pctx.arc(p.x*w, p.y*h, 1.6, 0, Math.PI*2);
+    pctx.fill();
+  }
+  // predict pins
+  pctx.strokeStyle = '#7fd4b8';
+  for(const pin of predictPins){
+    pctx.beginPath();
+    pctx.arc(pin.x*w, pin.y*h, 7, 0, Math.PI*2);
+    pctx.lineWidth = 2;
+    pctx.stroke();
+    pctx.beginPath();
+    pctx.arc(pin.x*w, pin.y*h, 2, 0, Math.PI*2);
+    pctx.fillStyle = '#7fd4b8';
+    pctx.fill();
+  }
+}
+function animate(){
+  if(simRunning) stepSim();
+  drawPlate();
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* plate click handling — for predict mode */
+function plateCoordFromEvent(evt){
+  const rect = plateCanvas.getBoundingClientRect();
+  const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+  const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+  const x = (clientX - rect.left) / rect.width;
+  const y = (clientY - rect.top) / rect.height;
+  return {x: Math.min(1,Math.max(0,x)), y: Math.min(1,Math.max(0,y))};
+}
+plateCanvas.addEventListener('pointerdown', (evt)=>{
+  if(!predictMode) return;
+  if(predictPins.length >= 5) return;
+  const c = plateCoordFromEvent(evt);
+  predictPins.push(c);
+  drawPlate();
+  playTone(600,.05);
+});
+
+/* ═══════════════════════════════════════════════
+   DIAL CONTROL
+   ═══════════════════════════════════════════════ */
+const dial = document.getElementById('dial');
+const dialPointer = document.getElementById('dialPointer');
+let dialAngle = 0; // -135 to 135 deg mapped to freq range
+let dragging = false;
+let lastMode = null;
+
+function angleToFreq(deg){
+  const t = (deg + 135) / 270; // 0..1
+  return Math.round(220 + t * (620-220));
+}
+function nearestMode(freq){
+  let best = MODES[0], bd = Infinity;
+  for(const md of MODES){
+    const d = Math.abs(md.f - freq);
+    if(d < bd){ bd = d; best = md; }
+  }
+  return best;
+}
+function setDial(deg){
+  dialAngle = Math.max(-135, Math.min(135, deg));
+  dialPointer.style.transform = 'translateX(-50%) rotate(' + dialAngle + 'deg)';
+  const freq = angleToFreq(dialAngle);
+  document.getElementById('freqReadout').textContent = freq + ' Hz';
+  const mode = nearestMode(freq);
+  if(!lastMode || mode.n !== lastMode.n || mode.m !== lastMode.m){
+    currentMode = mode;
+    lastMode = mode;
+    document.getElementById('plateReadout').textContent = 'n=' + mode.n + ' · m=' + mode.m;
+    document.getElementById('plateFreqLabel').textContent = mode.f + ' Hz';
+    if(dragging) playTone(mode.f, .05, 'triangle');
+  }
+}
+function dialPointerPos(evt){
+  const rect = dial.getBoundingClientRect();
+  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+  const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+  const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+  const dx = clientX - cx, dy = clientY - cy;
+  let deg = Math.atan2(dx, -dy) * 180/Math.PI;
+  return deg;
+}
+dial.addEventListener('pointerdown', (evt)=>{
+  dragging = true;
+  simRunning = true;
+  startSustainedTone(currentMode.f);
+  dial.setPointerCapture(evt.pointerId);
+});
+dial.addEventListener('pointermove', (evt)=>{
+  if(!dragging) return;
+  const deg = dialPointerPos(evt);
+  setDial(deg);
+  if(currentTone) currentTone.osc.frequency.setValueAtTime(currentMode.f, getAC().currentTime);
+});
+dial.addEventListener('pointerup', ()=>{ dragging = false; stopSustainedTone(); });
+dial.addEventListener('pointercancel', ()=>{ dragging = false; stopSustainedTone(); });
+setDial(-135); // init at first mode
+
+/* ═══════════════════════════════════════════════
+   ACTION BUTTONS
+   ═══════════════════════════════════════════════ */
+document.getElementById('sprinkleBtn').addEventListener('click', ()=>{
+  seedParticles(PLATE_N_PARTICLES);
+  simRunning = true;
+  playTone(currentMode.f, .3, 'triangle');
+  if(predictMode && predictPins.length){
+    setTimeout(scorePrediction, 3200);
+  }
+});
+document.getElementById('clearBtn').addEventListener('click', clearPlate);
+document.getElementById('predictBtn').addEventListener('click', ()=>{
+  predictMode = !predictMode;
+  const btn = document.getElementById('predictBtn');
+  const hint = document.getElementById('predictHint');
+  btn.classList.toggle('active', predictMode);
+  hint.classList.toggle('show', predictMode);
+  if(predictMode){
+    particles = [];
+    predictPins = [];
+    simRunning = false;
+    drawPlate();
+  }
+});
+
+function scorePrediction(){
+  const {n,m} = currentMode;
+  let total = 0;
+  for(const pin of predictPins){
+    const z = Math.abs(chladniZ(pin.x, pin.y, n, m));
+    total += Math.max(0, 1 - z/1.4);
+  }
+  const pct = Math.round((total / predictPins.length) * 100);
+  const toast = document.getElementById('scoreToast');
+  toast.classList.add('show');
+  if(pct >= 75){
+    toast.textContent = '🎯 Excellent instinct — ' + pct + '% node accuracy!';
+    celebrate();
+  } else if(pct >= 45){
+    toast.textContent = '🤔 Getting there — ' + pct + '% node accuracy. Try tuning slower.';
+    playSuccess();
+  } else {
+    toast.textContent = '〰 ' + pct + '% node accuracy — the sand found quieter spots than you guessed.';
+    playWrong();
+  }
+  unlockCert();
+  predictMode = false;
+  document.getElementById('predictBtn').classList.remove('active');
+  document.getElementById('predictHint').classList.remove('show');
+}
+
+function unlockCert(){
+  if(unlockedCert) return;
+  unlockedCert = true;
+  const chip = document.getElementById('questCert');
+  chip.classList.remove('locked');
+  chip.innerHTML = '<span class="dot"></span> 🏅 Generate your Resonance Certificate';
+  saveProgress();
+}
+
+/* ═══════════════════════════════════════════════
+   MODALS — generic open/close
+   ═══════════════════════════════════════════════ */
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('[data-close]').forEach(btn=>{
+  btn.addEventListener('click', (e)=> e.target.closest('.modal-overlay').classList.remove('show'));
+});
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if(e.target === ov) ov.classList.remove('show'); });
+});
+
+/* ═══════════════════════════════════════════════
+   MATCH THE MODE
+   ═══════════════════════════════════════════════ */
+let matchRound = 1, matchLives = 3;
+function pickDistinctModes(count, difficulty){
+  // difficulty 1 = very different modes, 3 = adjacent close modes
+  const pool = MODES.slice();
+  const correct = pool[Math.floor(Math.random()*pool.length)];
+  let distractors = [];
+  if(difficulty >= 3){
+    // pick modes near the correct one in the MODES array (visually similar)
+    const idx = pool.indexOf(correct);
+    distractors = pool.filter((md,i)=> md!==correct && Math.abs(i-idx) <= 2);
+  } else {
+    distractors = pool.filter(md=> md!==correct);
+  }
+  distractors.sort(()=>Math.random()-0.5);
+  return {correct, options: [correct, ...distractors.slice(0,count-1)].sort(()=>Math.random()-0.5)};
+}
+let matchCurrent = null;
+function renderMatchRound(){
+  document.getElementById('matchRoundInfo').textContent = 'ROUND ' + matchRound + ' OF 3 · LIVES ' ;
+  document.getElementById('matchLives').textContent = '●'.repeat(matchLives) + '○'.repeat(3-matchLives);
+  document.getElementById('matchFb').textContent = '';
+  matchCurrent = pickDistinctModes(4, matchRound);
+  const grid = document.getElementById('matchGrid');
+  grid.innerHTML = '';
+  matchCurrent.options.forEach(md=>{
+    const div = document.createElement('div');
+    div.className = 'thumb-opt';
+    const c = document.createElement('canvas');
+    c.width = 140; c.height = 140;
+    div.appendChild(c);
+    grid.appendChild(div);
+    drawStaticPattern(c.getContext('2d'), 140, 140, md.n, md.m);
+    div.addEventListener('click', ()=>{
+      if(md === matchCurrent.correct){
+        div.classList.add('correct');
+        playSuccess();
+        document.getElementById('matchFb').textContent = '✓ Correct — that tone excites n=' + md.n + ', m=' + md.m;
+        setTimeout(()=>{
+          if(matchRound < 3){ matchRound++; renderMatchRound(); }
+          else { document.getElementById('matchFb').textContent = '🏆 All three rounds cleared!'; celebrate(); unlockCert(); }
+        }, 1100);
+      } else {
+        div.classList.add('wrong');
+        matchLives--;
+        playWrong();
+        document.getElementById('matchLives').textContent = '●'.repeat(matchLives) + '○'.repeat(3-matchLives);
+        document.getElementById('matchFb').textContent = matchLives > 0 ? '✗ Not quite — listen again' : '✗ Out of lives — new set incoming';
+        if(matchLives <= 0){ setTimeout(()=>{ matchLives = 3; renderMatchRound(); }, 1200); }
+      }
+    });
+  });
+}
+document.getElementById('questMatch').addEventListener('click', ()=>{
+  matchRound = 1; matchLives = 3;
+  openModal('matchModal');
+  renderMatchRound();
+});
+document.getElementById('playToneBtn').addEventListener('click', ()=>{
+  if(matchCurrent) playTone(matchCurrent.correct.f, .9, 'sine');
+});
+
+/* ═══════════════════════════════════════════════
+   GUESS THE FREQUENCY
+   ═══════════════════════════════════════════════ */
+let guessTargetMode = MODES[0];
+function setupGuessRound(){
+  guessTargetMode = MODES[Math.floor(Math.random()*MODES.length)];
+  const c = document.getElementById('guessTargetCanvas');
+  drawStaticPattern(c.getContext('2d'), 260, 260, guessTargetMode.n, guessTargetMode.m);
+  document.getElementById('guessFb').textContent = '';
+}
+document.getElementById('questGuess').addEventListener('click', ()=>{
+  openModal('guessModal');
+  setupGuessRound();
+});
+document.getElementById('guessSlider').addEventListener('input', (e)=>{
+  document.getElementById('guessReadout').textContent = e.target.value + ' Hz';
+});
+document.getElementById('guessCheckBtn').addEventListener('click', ()=>{
+  const guess = parseInt(document.getElementById('guessSlider').value, 10);
+  const guessedMode = nearestMode(guess);
+  const fb = document.getElementById('guessFb');
+  if(guessedMode === guessTargetMode){
+    fb.textContent = '🎯 Matched it! That pattern is n=' + guessTargetMode.n + ', m=' + guessTargetMode.m + ' at ' + guessTargetMode.f + ' Hz.';
+    playSuccess(); celebrate(); unlockCert();
+    setTimeout(setupGuessRound, 1400);
+  } else {
+    const diff = Math.abs(guessedMode.f - guessTargetMode.f);
+    fb.textContent = diff < 80 ? '🤔 Close — try nudging further.' : '〰 Not yet — that pattern needs a very different frequency.';
+    playWrong();
+  }
+});
+
+/* ═══════════════════════════════════════════════
+   CERTIFICATE
+   ═══════════════════════════════════════════════ */
+document.getElementById('questCert').addEventListener('click', ()=>{
+  if(!unlockedCert) return;
+  renderCertificate();
+  openModal('certModal');
+});
+function renderCertificate(){
+  const c = document.getElementById('certCanvas');
+  const ctx = c.getContext('2d');
+  // background plaque
+  const grad = ctx.createLinearGradient(0,0,c.width,c.height);
+  grad.addColorStop(0, '#171c18'); grad.addColorStop(1, '#0a0d0b');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.strokeStyle = '#c97a4a';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(14,14,c.width-28,c.height-28);
+  ctx.strokeStyle = 'rgba(201,122,74,.4)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(22,22,c.width-44,c.height-44);
+
+  // pattern thumbnail
+  const pw = 170, px = 40, py = 60;
+  ctx.fillStyle = '#04100b';
+  ctx.fillRect(px, py, pw, pw);
+  ctx.strokeStyle = 'rgba(79,168,143,.4)';
+  ctx.strokeRect(px, py, pw, pw);
+  ctx.fillStyle = '#e9dfc8';
+  for(let i=0;i<500;i++){
+    let x,y,z,tries=0;
+    do{ x=Math.random(); y=Math.random(); z=chladniZ(x,y,currentMode.n,currentMode.m); tries++; }while(Math.abs(z)>0.12 && tries<6);
+    ctx.beginPath(); ctx.arc(px+x*pw, py+y*pw, 1.1, 0, Math.PI*2); ctx.fill();
+  }
+
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#7fd4b8';
+  ctx.font = '11px "Space Mono", monospace';
+  ctx.fillText('RESONANCE CHAMBER · CERTIFICATE OF EXPLORATION', 234, 55);
+
+  ctx.fillStyle = '#eae6dc';
+  ctx.font = '600 26px Georgia, serif';
+  ctx.fillText(studentName || 'Explorer', 234, 92);
+
+  ctx.fillStyle = 'rgba(234,230,220,.6)';
+  ctx.font = '13px Georgia, serif';
+  ctx.fillText('made sound visible on the plate', 234, 116);
+
+  ctx.fillStyle = '#c97a4a';
+  ctx.font = '600 16px "Space Mono", monospace';
+  ctx.fillText('Mode n=' + currentMode.n + ', m=' + currentMode.m, 234, 148);
+  ctx.fillText(currentMode.f + ' Hz', 234, 172);
+
+  const today = new Date();
+  ctx.fillStyle = 'rgba(234,230,220,.4)';
+  ctx.font = '11px "Space Mono", monospace';
+  ctx.fillText(today.toLocaleDateString(), 234, 200);
+
+  ctx.font = '10px "Space Mono", monospace';
+  ctx.fillStyle = 'rgba(234,230,220,.35)';
+  ctx.fillText('ernst chladni · 1787 · sand on a vibrating plate', 40, 260);
+}
+document.getElementById('downloadCertBtn').addEventListener('click', ()=>{
+  const c = document.getElementById('certCanvas');
+  const link = document.createElement('a');
+  link.download = 'resonance-certificate-' + (studentName||'explorer').replace(/\s+/g,'-') + '.png';
+  link.href = c.toDataURL('image/png');
+  link.click();
+});
+
+/* ═══════════════════════════════════════════════
+   QUIZ ACCORDION
+   ═══════════════════════════════════════════════ */
+const QUIZ = [
+  { q:'Where does the sand end up settling on the plate?', opts:[
+      {t:'Where the plate vibrates the most', c:false},
+      {t:'Where the plate stays still — the nodes', c:true},
+      {t:'Randomly, it never settles', c:false}
+    ], fb:'Sand is shaken off the loud, moving regions (antinodes) and collects along the still lines (nodes).'},
+  { q:'As you raise the frequency, what generally happens to the pattern?', opts:[
+      {t:'It gets simpler, with fewer lines', c:false},
+      {t:'It gets more complex, with more nodal lines', c:true},
+      {t:'Nothing changes', c:false}
+    ], fb:'Higher frequency modes have higher n and m values, which means more nodal lines dividing the plate.'},
+  { q:'This whole effect — matter arranging itself visibly in response to sound — is called:', opts:[
+      {t:'Cymatics', c:true},
+      {t:'Photosynthesis', c:false},
+      {t:'Refraction', c:false}
+    ], fb:'Cymatics is the study of visible sound and vibration — Chladni plates are its most famous demonstration.'}
+];
+function buildQuiz(){
+  const wrap = document.getElementById('quizContent');
+  wrap.innerHTML = '';
+  QUIZ.forEach((item, qi)=>{
+    const block = document.createElement('div');
+    block.className = 'quiz-q';
+    const p = document.createElement('p');
+    p.textContent = (qi+1) + '. ' + item.q;
+    block.appendChild(p);
+    const optsWrap = document.createElement('div');
+    optsWrap.className = 'quiz-opts';
+    const fb = document.createElement('div');
+    fb.className = 'quiz-fb';
+    item.opts.forEach(opt=>{
+      const b = document.createElement('button');
+      b.className = 'quiz-opt';
+      b.textContent = opt.t;
+      b.addEventListener('click', ()=>{
+        if(b.classList.contains('correct') || b.classList.contains('wrong')) return;
+        if(opt.c){
+          b.classList.add('correct'); playSuccess();
+          fb.textContent = '✓ ' + item.fb;
+        } else {
+          b.classList.add('wrong'); playWrong();
+          fb.textContent = '✗ Try another option.';
+        }
+      });
+      optsWrap.appendChild(b);
+    });
+    block.appendChild(optsWrap);
+    block.appendChild(fb);
+    wrap.appendChild(block);
+  });
+}
+buildQuiz();
+document.getElementById('quizHead').addEventListener('click', ()=>{
+  document.getElementById('quizAccordion').classList.toggle('open');
+});
+
+/* ═══════════════════════════════════════════════
+   SELF ASSESS
+   ═══════════════════════════════════════════════ */
+document.querySelectorAll('.emoji-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.emoji-btn').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');
+    playTone(700,.06);
+  });
+});
+
+/* ═══════════════════════════════════════════════
+   SOUND TOGGLE
+   ═══════════════════════════════════════════════ */
+document.getElementById('soundToggle').addEventListener('click', ()=>{
+  soundOn = !soundOn;
+  document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+  if(!soundOn) stopSustainedTone();
+});
+
+/* ═══════════════════════════════════════════════
+   GATE / ENTRY FLOW
+   ═══════════════════════════════════════════════ */
+const nameInput = document.getElementById('nameInput');
+const gateStart = document.getElementById('gateStart');
+nameInput.addEventListener('input', ()=>{
+  gateStart.disabled = nameInput.value.trim().length < 1;
+});
+nameInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' && !gateStart.disabled) enterLab(); });
+gateStart.addEventListener('click', enterLab);
+
+function enterLab(){
+  studentName = nameInput.value.trim().slice(0,30) || 'Explorer';
+  document.getElementById('heroName').textContent = studentName;
+  document.getElementById('gate').classList.add('hidden');
+  document.getElementById('main').classList.add('show');
+  saveProgress();
+}
+
+/* restore session if page was reloaded */
+(function restore(){
+  const p = loadProgress();
+  if(p && p.name){
+    nameInput.value = p.name;
+    gateStart.disabled = false;
+    unlockedCert = !!p.unlockedCert;
+    if(unlockedCert){
+      const chip = document.getElementById('questCert');
+      chip.classList.remove('locked');
+      chip.innerHTML = '<span class="dot"></span> 🏅 Generate your Resonance Certificate';
+    }
+  }
+})();
+</script>
+</body>
+</html>
