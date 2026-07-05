@@ -359,6 +359,28 @@ main.show{ opacity:1; }
 }
 .emoji-btn:hover, .emoji-btn.sel{ opacity:1; border-color:var(--verdigris-bright); transform:translateY(-2px); }
 
+.badge-row{ display:flex; gap:8px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+.badge-icon{
+  width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:16px; border:1px solid var(--line); background:rgba(234,230,220,.02);
+  opacity:.25; filter:grayscale(1); cursor:default; transition:.2s;
+}
+.badge-icon.earned{ opacity:1; filter:none; border-color:var(--verdigris-bright); background:rgba(79,168,143,.1); }
+.badge-toast{
+  position:fixed; top:20px; right:20px; z-index:150;
+  display:flex; align-items:center; gap:10px;
+  background:linear-gradient(160deg,#171c18,#0d100e);
+  border:1px solid var(--verdigris-bright); border-radius:12px;
+  padding:12px 16px; font-family:var(--font-mono); font-size:12px; color:var(--text);
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  transform:translateX(120%); transition:transform .4s ease;
+}
+.badge-toast.show{ transform:translateX(0); }
+.badge-toast b{ color:var(--verdigris-bright); }
+.thumb-opt.locked-atlas{ display:flex; align-items:center; justify-content:center; opacity:.35; cursor:default; }
+.thumb-opt.locked-atlas:hover{ border-color:var(--line); }
+.atlas-label{ font-family:var(--font-mono); font-size:9.5px; color:var(--muted); text-align:center; padding:4px 0; }
+
 footer{
   text-align:center; padding:30px 20px 50px;
   font-family:var(--font-mono); font-size:11px; color:var(--muted2);
@@ -429,6 +451,7 @@ footer{
     <div class="hero-eyebrow">Engage → Explore → Play</div>
     <h1 class="hero-title">Welcome, <span class="greet" id="heroName">Explorer</span>.</h1>
     <p class="hero-desc">Every pitch has a shape. Turn the dial to excite the plate, then sprinkle sand and watch it flee the loud places — settling only where the plate stays still. Those quiet lines are called <strong>nodes</strong>. This is how Ernst Chladni first made sound visible in 1787.</p>
+    <div class="badge-row" id="badgeRow"></div>
   </section>
 
   <div class="lab-wrap">
@@ -464,6 +487,7 @@ footer{
     <div class="quests">
       <div class="quest-chip" id="questMatch"><span class="dot"></span> Match the Mode — hear it, spot it</div>
       <div class="quest-chip" id="questGuess"><span class="dot"></span> Guess the Frequency</div>
+      <div class="quest-chip" id="questAtlas"><span class="dot"></span> 🗺️ Pattern Atlas — <span id="atlasProgress">0/10</span> discovered</div>
       <div class="quest-chip locked" id="questCert"><span class="dot"></span> 🔒 Resonance Certificate (play a round first)</div>
     </div>
 
@@ -535,6 +559,16 @@ footer{
   </div>
 </div>
 
+<!-- ============ PATTERN ATLAS MODAL ============ -->
+<div class="modal-overlay" id="atlasModal">
+  <div class="modal">
+    <button class="modal-close" data-close>×</button>
+    <h3>Pattern Atlas</h3>
+    <div class="modal-sub">Sweep the Tuning Dial to discover every pattern</div>
+    <div class="thumb-grid" id="atlasGrid" style="grid-template-columns:repeat(5,1fr);"></div>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════════
    VISIT COUNTER — no backend, third-party badge service
@@ -579,6 +613,46 @@ const MODES = [
   {n:5,m:3,f:580},{n:5,m:4,f:620}
 ];
 let currentMode = MODES[0];
+let discoveredModes = new Set();
+let earnedBadges = new Set();
+
+const ACHIEVEMENTS = [
+  {id:'first_pattern', icon:'🔎', name:'First Bloom', desc:'Discovered your first Chladni pattern'},
+  {id:'atlas_complete', icon:'🗺️', name:'Mode Collector', desc:'Discovered all 10 patterns'},
+  {id:'perfect_predictor', icon:'🎯', name:'Perfect Predictor', desc:'Scored 75%+ on a node prediction'},
+  {id:'quiz_master', icon:'🏆', name:'Quiz Master', desc:'Cleared all 3 rounds of Match the Mode'},
+  {id:'frequency_whisperer', icon:'🎧', name:'Frequency Whisperer', desc:'Nailed Guess the Frequency'}
+];
+function unlockBadge(id){
+  if(earnedBadges.has(id)) return;
+  earnedBadges.add(id);
+  const badge = ACHIEVEMENTS.find(a=>a.id===id);
+  if(!badge) return;
+  renderBadgeRow();
+  showBadgeToast(badge);
+  saveProgress();
+}
+function showBadgeToast(badge){
+  const el = document.createElement('div');
+  el.className = 'badge-toast';
+  el.innerHTML = '<span style="font-size:20px;">'+badge.icon+'</span><div><b>Achievement unlocked</b><br>'+badge.name+'</div>';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  playBonus();
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 400); }, 3200);
+}
+function renderBadgeRow(){
+  const row = document.getElementById('badgeRow');
+  if(!row) return;
+  row.innerHTML = '';
+  ACHIEVEMENTS.forEach(a=>{
+    const span = document.createElement('span');
+    span.className = 'badge-icon' + (earnedBadges.has(a.id) ? ' earned' : '');
+    span.textContent = a.icon;
+    span.title = earnedBadges.has(a.id) ? a.name + ' — ' + a.desc : '???';
+    row.appendChild(span);
+  });
+}
 
 /* ═══════════════════════════════════════════════
    SESSION PERSISTENCE
@@ -586,7 +660,8 @@ let currentMode = MODES[0];
 function saveProgress(){
   try{
     sessionStorage.setItem('chladni_progress', JSON.stringify({
-      name: studentName, unlockedCert: unlockedCert
+      name: studentName, unlockedCert: unlockedCert,
+      discovered: Array.from(discoveredModes), badges: Array.from(earnedBadges)
     }));
   }catch(e){}
 }
@@ -824,7 +899,18 @@ function setDial(deg){
     document.getElementById('plateReadout').textContent = 'n=' + mode.n + ' · m=' + mode.m;
     document.getElementById('plateFreqLabel').textContent = mode.f + ' Hz';
     if(dragging) playTone(mode.f, .05, 'triangle');
+    discoverMode(mode);
   }
+}
+function discoverMode(mode){
+  const key = mode.n + '-' + mode.m;
+  if(discoveredModes.has(key)) return;
+  const wasEmpty = discoveredModes.size === 0;
+  discoveredModes.add(key);
+  renderAtlasChip();
+  if(wasEmpty) unlockBadge('first_pattern');
+  if(discoveredModes.size === MODES.length) unlockBadge('atlas_complete');
+  saveProgress();
 }
 function dialPointerPos(evt){
   const rect = dial.getBoundingClientRect();
@@ -890,6 +976,7 @@ function scorePrediction(){
   if(pct >= 75){
     toast.textContent = '🎯 Excellent instinct — ' + pct + '% node accuracy!';
     celebrate();
+    unlockBadge('perfect_predictor');
   } else if(pct >= 45){
     toast.textContent = '🤔 Getting there — ' + pct + '% node accuracy. Try tuning slower.';
     playSuccess();
@@ -911,6 +998,42 @@ function unlockCert(){
   chip.innerHTML = '<span class="dot"></span> 🏅 Generate your Resonance Certificate';
   saveProgress();
 }
+
+function renderAtlasChip(){
+  const el = document.getElementById('atlasProgress');
+  if(el) el.textContent = discoveredModes.size + '/' + MODES.length;
+}
+function renderAtlasModal(){
+  const grid = document.getElementById('atlasGrid');
+  grid.innerHTML = '';
+  MODES.forEach(md=>{
+    const key = md.n + '-' + md.m;
+    const wrap = document.createElement('div');
+    if(discoveredModes.has(key)){
+      wrap.className = 'thumb-opt';
+      const c = document.createElement('canvas');
+      c.width = 100; c.height = 100;
+      wrap.appendChild(c);
+      const lab = document.createElement('div');
+      lab.className = 'atlas-label';
+      lab.textContent = 'n=' + md.n + ' m=' + md.m;
+      wrap.appendChild(lab);
+      grid.appendChild(wrap);
+      drawStaticPattern(c.getContext('2d'), 100, 100, md.n, md.m);
+    } else {
+      wrap.className = 'thumb-opt locked-atlas';
+      wrap.style.height = '100px';
+      wrap.textContent = '?';
+      wrap.style.fontFamily = 'var(--font-mono)';
+      wrap.style.fontSize = '22px';
+      grid.appendChild(wrap);
+    }
+  });
+}
+document.getElementById('questAtlas').addEventListener('click', ()=>{
+  openModal('atlasModal');
+  renderAtlasModal();
+});
 
 /* ═══════════════════════════════════════════════
    MODALS — generic open/close
@@ -966,7 +1089,7 @@ function renderMatchRound(){
         document.getElementById('matchFb').textContent = '✓ Correct — that tone excites n=' + md.n + ', m=' + md.m;
         setTimeout(()=>{
           if(matchRound < 3){ matchRound++; renderMatchRound(); }
-          else { document.getElementById('matchFb').textContent = '🏆 All three rounds cleared!'; celebrate(); unlockCert(); }
+          else { document.getElementById('matchFb').textContent = '🏆 All three rounds cleared!'; celebrate(); unlockCert(); unlockBadge('quiz_master'); }
         }, 1100);
       } else {
         div.classList.add('wrong');
@@ -1011,7 +1134,7 @@ document.getElementById('guessCheckBtn').addEventListener('click', ()=>{
   const fb = document.getElementById('guessFb');
   if(guessedMode === guessTargetMode){
     fb.textContent = '🎯 Matched it! That pattern is n=' + guessTargetMode.n + ', m=' + guessTargetMode.m + ' at ' + guessTargetMode.f + ' Hz.';
-    playSuccess(); celebrate(); unlockCert();
+    playSuccess(); celebrate(); unlockCert(); unlockBadge('frequency_whisperer');
     setTimeout(setupGuessRound, 1400);
   } else {
     const diff = Math.abs(guessedMode.f - guessTargetMode.f);
@@ -1082,6 +1205,17 @@ function renderCertificate(){
   ctx.font = '10px "Space Mono", monospace';
   ctx.fillStyle = 'rgba(234,230,220,.35)';
   ctx.fillText('ernst chladni · 1787 · sand on a vibrating plate', 40, 260);
+
+  if(earnedBadges.size){
+    ctx.font = '11px "Space Mono", monospace';
+    ctx.fillStyle = 'rgba(234,230,220,.5)';
+    ctx.fillText('Achievements earned:', 40, 300);
+    ctx.font = '22px sans-serif';
+    let bx = 40;
+    ACHIEVEMENTS.forEach(a=>{
+      if(earnedBadges.has(a.id)){ ctx.fillText(a.icon, bx, 335); bx += 34; }
+    });
+  }
 }
 document.getElementById('downloadCertBtn').addEventListener('click', ()=>{
   const c = document.getElementById('certCanvas');
@@ -1201,6 +1335,12 @@ function enterLab(){
       chip.classList.remove('locked');
       chip.innerHTML = '<span class="dot"></span> 🏅 Generate your Resonance Certificate';
     }
+    if(Array.isArray(p.discovered)) discoveredModes = new Set(p.discovered);
+    if(Array.isArray(p.badges)) earnedBadges = new Set(p.badges);
+    renderAtlasChip();
+    renderBadgeRow();
+  } else {
+    renderBadgeRow();
   }
 })();
 </script>
