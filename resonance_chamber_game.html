@@ -418,7 +418,7 @@ footer{
     </div>
   </div>
   <div class="top-right">
-    <div class="mini-counter">🌍 <b id="topVisits">—</b> explorers</div>
+    <div class="mini-counter" id="topVisitsWrap">🌍 <b id="topVisits">—</b> explorers</div>
     <button class="sound-toggle" id="soundToggle" title="Mute / unmute">🔊</button>
   </div>
 </div>
@@ -541,18 +541,23 @@ footer{
    Swap the "path" value for your own published page URL.
    ═══════════════════════════════════════════════ */
 (function initVisitCounter(){
-  var pagePath = 'aghozlan.github.io/resonance_chamber_game.html';
-  var url = 'https://api.visitorbadge.io/api/combined?path=' + encodeURIComponent(pagePath) + '&format=json';
-  fetch(url).then(function(r){ return r.json(); }).then(function(data){
-    var n = (data && (data.count || data.value)) || null;
-    if(n){
-      document.getElementById('topVisits').textContent = n.toLocaleString();
-      document.getElementById('gateVisits').textContent = '🌍 ' + n.toLocaleString() + ' people have made sand dance here';
-    } else { throw new Error('no count'); }
-  }).catch(function(){
-    document.getElementById('topVisits').textContent = '—';
-    document.getElementById('gateVisits').textContent = '🌍 you are one of the first explorers';
-  });
+  var pagePath = 'aghozlan.github.io/resonance_chamber_game.html'; // must match your live published URL exactly
+  var badgeUrl = 'https://api.visitorbadge.io/api/visitors?path=' + encodeURIComponent(pagePath) +
+    '&label=Explorers&labelColor=%230a0d0b&countColor=%234fa88f&style=flat';
+
+  var topImg = document.createElement('img');
+  topImg.src = badgeUrl;
+  topImg.alt = 'visitor count';
+  topImg.style.cssText = 'height:20px; border-radius:4px; vertical-align:middle;';
+  var topWrap = document.getElementById('topVisitsWrap');
+  if(topWrap){ topWrap.innerHTML = ''; topWrap.appendChild(topImg); }
+
+  var gateImg = document.createElement('img');
+  gateImg.src = badgeUrl;
+  gateImg.alt = 'visitor count';
+  gateImg.style.cssText = 'height:22px; border-radius:5px; margin-top:6px;';
+  var gateWrap = document.getElementById('gateVisits');
+  if(gateWrap){ gateWrap.innerHTML = '🌍 Explorers so far<br>'; gateWrap.appendChild(gateImg); }
 })();
 /* Optional: paste your GoatCounter tag (from goatcounter.com, free signup)
    right before the closing body tag for a private analytics dashboard,
