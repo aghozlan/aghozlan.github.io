@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Superconductivity — The Meissner Effect | Ahmad Ghozlan</title>
+<meta name="description" content="An interactive 3D lab: watch a magnet levitate over a superconductor, then zoom into the quantum mechanism — Cooper pairs — that a real lab can never show you." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#D4AF37;
+    --gold-bright:#FFD700;
+    --bg:#000000;
+    --text:#FFFAF0;
+    --cool:#6fd8ff;
+    --hot:#ff5533;
+    --panel:rgba(12,12,14,0.55);
+    --panel-border:rgba(212,175,55,0.25);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  #scene-canvas{
+    position:fixed;
+    top:0; left:0;
+    width:100vw; height:100vh;
+    z-index:0;
+    display:block;
+  }
+  h1,h2,h3,.brand{ font-family:'Space Grotesk', sans-serif; }
+
+  /* ---------- loader ---------- */
+  #loader{
+    position:fixed; inset:0; z-index:100;
+    background:#000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:18px;
+    transition:opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #loader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .spinner{
+    width:46px; height:46px;
+    border-radius:50%;
+    border:2px solid rgba(212,175,55,0.15);
+    border-top-color:var(--gold-bright);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  #loader p{
+    letter-spacing:0.14em; text-transform:uppercase;
+    font-size:0.75rem; color:var(--gold);
+    opacity:0.85;
+  }
+
+  /* ---------- content layer ---------- */
+  .content{ position:relative; z-index:1; }
+
+  .section{
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:8vh 6vw;
+    text-align:center;
+  }
+
+  .hero{ position:relative; }
+  .hero .eyebrow{
+    color:var(--gold);
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    font-size:0.72rem;
+    margin-bottom:18px;
+    opacity:0.9;
+  }
+  .hero h1{
+    font-size:clamp(2.2rem, 6vw, 4.6rem);
+    font-weight:700;
+    line-height:1.05;
+    background:linear-gradient(180deg, #fffaf0 0%, var(--gold-bright) 55%, var(--gold) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 60px rgba(212,175,55,0.25);
+    max-width:16ch;
+  }
+  .hero .sub{
+    margin-top:22px;
+    max-width:620px;
+    font-weight:300;
+    font-size:clamp(1rem, 1.6vw, 1.2rem);
+    color:rgba(255,250,240,0.75);
+    line-height:1.6;
+  }
+  .scroll-cue{
+    position:absolute; bottom:6vh; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    color:rgba(255,250,240,0.5); font-size:0.7rem; letter-spacing:0.2em;
+    text-transform:uppercase;
+    animation:bob 2.2s ease-in-out infinite;
+  }
+  .scroll-cue .line{ width:1px; height:26px; background:linear-gradient(var(--gold), transparent); }
+  @keyframes bob{ 0%,100%{ transform:translate(-50%,0);} 50%{ transform:translate(-50%,8px);} }
+
+  /* ---------- glass cards ---------- */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-radius:20px;
+    padding:38px 40px;
+    max-width:640px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .card h2{
+    font-size:clamp(1.5rem,3vw,2.1rem);
+    margin-bottom:16px;
+    color:var(--gold-bright);
+  }
+  .card p{
+    font-weight:300;
+    line-height:1.75;
+    color:rgba(255,250,240,0.82);
+    font-size:1rem;
+    margin-bottom:12px;
+  }
+  .card .tag{
+    display:inline-block;
+    font-size:0.7rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--cool);
+    border:1px solid rgba(111,216,255,0.35);
+    padding:4px 12px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .card.hot .tag{ color:var(--hot); border-color:rgba(255,85,51,0.35); }
+
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity 0.9s ease, transform 0.9s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  /* ---------- control dock ---------- */
+  #dock{
+    position:fixed;
+    right:22px; bottom:22px;
+    z-index:20;
+    width:320px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    backdrop-filter:blur(20px) saturate(150%);
+    -webkit-backdrop-filter:blur(20px) saturate(150%);
+    border-radius:18px;
+    padding:20px 22px 18px;
+    box-shadow:0 18px 50px rgba(0,0,0,0.5);
+  }
+  #dock .dock-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:12px;
+  }
+  #dock .dock-title{ font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); }
+  #state-badge{
+    font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase;
+    padding:4px 10px; border-radius:999px; font-weight:600;
+    border:1px solid rgba(255,85,51,0.4); color:var(--hot);
+    background:rgba(255,85,51,0.08);
+    transition:all 0.4s ease;
+    white-space:nowrap;
+  }
+  #state-badge.sc{
+    color:var(--gold-bright); border-color:rgba(255,215,0,0.5);
+    background:rgba(255,215,0,0.1);
+    box-shadow:0 0 18px rgba(255,215,0,0.25);
+  }
+  .readout-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.78rem; color:rgba(255,250,240,0.6);
+    margin-bottom:2px;
+  }
+  .readout-row b{ color:var(--text); font-size:0.95rem; font-weight:600; }
+  #temp-slider{
+    width:100%; margin:10px 0 14px;
+    -webkit-appearance:none; appearance:none;
+    height:4px; border-radius:2px;
+    background:linear-gradient(90deg, var(--gold-bright), var(--cool));
+    outline:none;
+  }
+  #temp-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--gold-bright);
+    box-shadow:0 0 10px rgba(255,215,0,0.7), 0 0 0 4px rgba(255,215,0,0.15);
+    cursor:pointer;
+  }
+  #temp-slider::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%; border:none;
+    background:var(--gold-bright);
+    box-shadow:0 0 10px rgba(255,215,0,0.7);
+    cursor:pointer;
+  }
+  .btn-row{ display:flex; gap:8px; margin-top:12px; }
+  .btn{
+    flex:1;
+    background:rgba(212,175,55,0.08);
+    border:1px solid var(--panel-border);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.03em;
+    padding:9px 8px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:all 0.25s ease;
+  }
+  .btn:hover{ background:rgba(212,175,55,0.2); border-color:var(--gold); transform:translateY(-1px); }
+  .btn.active{ background:var(--gold); color:#0a0a0a; font-weight:600; border-color:var(--gold); }
+  #graph-wrap{ margin-top:16px; }
+  #graph-canvas{ width:100%; height:90px; display:block; }
+  .graph-label{ font-size:0.62rem; color:rgba(255,250,240,0.45); letter-spacing:0.08em; text-transform:uppercase; margin-top:4px; display:flex; justify-content:space-between; }
+
+  /* mobile dock repositioning */
+  @media (max-width: 760px){
+    #dock{ left:12px; right:12px; bottom:12px; width:auto; }
+    .section{ padding:6vh 6vw 30vh; }
+  }
+
+  footer{
+    position:relative; z-index:1;
+    text-align:center;
+    padding:60px 6vw 40px;
+    color:rgba(255,250,240,0.55);
+    font-size:0.85rem;
+  }
+  footer .fname{
+    color:var(--gold-bright);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:0.04em;
+    font-size:1.05rem;
+    display:block;
+    margin-bottom:6px;
+    text-shadow:0 0 20px rgba(212,175,55,0.3);
+  }
+  footer a{ color:var(--gold); text-decoration:none; border-bottom:1px solid rgba(212,175,55,0.3); }
+  footer a:hover{ color:var(--gold-bright); }
+
+  .stat-strip{
+    display:flex; gap:36px; flex-wrap:wrap; justify-content:center;
+    margin-top:26px;
+  }
+  .stat{ text-align:center; }
+  .stat b{ display:block; font-size:1.6rem; color:var(--gold-bright); font-family:'Space Grotesk', sans-serif; }
+  .stat span{ font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,250,240,0.5); }
+</style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Initializing quantum state…</p>
+  </div>
+
+  <canvas id="scene-canvas"></canvas>
+
+  <div class="content">
+
+    <section class="section hero">
+      <div class="eyebrow">Built, Not Coded · Ahmad Ghozlan</div>
+      <h1>You can watch a magnet float.<br/>You can't watch why.</h1>
+      <p class="sub">Cool a superconductor below its critical temperature and a magnet levitates above it — the Meissner effect. Drag the slider to run the experiment yourself, then switch to the microscopic view to see the electron mechanism no real lab camera can ever capture.</p>
+      <div class="scroll-cue"><span>Scroll</span><div class="line"></div></div>
+    </section>
+
+    <section class="section">
+      <div class="card reveal">
+        <span class="tag">What a real lab shows you</span>
+        <h2>The Macro View</h2>
+        <p>Pour liquid nitrogen over a ceramic superconductor disc and it hisses down to 77 Kelvin — colder than any winter on Earth. Lower a magnet toward it and, below the material's critical temperature, it simply stops. Floating. Spinning gently. No strings, no trick.</p>
+        <p>This is genuinely how it looks in a school lab, filmed with nothing but a camera and a flask of LN₂. It's real, it's repeatable — and it tells you almost nothing about <em>why</em> it happens.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card hot reveal">
+        <span class="tag">What no camera can show you</span>
+        <h2>The Micro View</h2>
+        <p>Above the critical temperature, electrons travel through the metal's atomic lattice alone, constantly scattering off vibrating atoms — that scattering <em>is</em> electrical resistance, and the energy lost becomes heat.</p>
+        <p>Below the critical temperature, something stranger happens: electrons stop moving alone. They bind into <b>Cooper pairs</b>, correlated across the entire lattice, gliding through it in perfect lock-step. There is nothing left to scatter off. Resistance doesn't drop — it hits exactly zero.</p>
+        <p>No microscope built has ever filmed a Cooper pair forming. A simulation is the only way to see it.</p>
+      </div>
+    </section>
+
+    <section class="section" style="min-height:60vh;">
+      <div class="reveal" style="max-width:680px;">
+        <span class="tag" style="color:var(--gold); border-color:rgba(212,175,55,0.35);">The point of the simulation</span>
+        <h2 style="color:var(--gold-bright); margin-bottom:16px; font-size:clamp(1.4rem,2.6vw,1.9rem);">Real labs prove that something happens.<br/>Simulations show you why.</h2>
+        <p style="font-weight:300; line-height:1.75; color:rgba(255,250,240,0.78);">That's the entire argument for building physics simulations — not as a replacement for the hands-on demo, but as the only lens that reaches the scale a real lab physically can't. Use the control panel to run both experiments yourself.</p>
+        <div class="stat-strip">
+          <div class="stat"><b>92 K</b><span>Critical Temp (YBCO)</span></div>
+          <div class="stat"><b>77 K</b><span>Liquid Nitrogen</span></div>
+          <div class="stat"><b>0 Ω</b><span>Resistance Below Tc</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ---------- control dock ---------- -->
+  <div id="dock">
+    <div class="dock-head">
+      <span class="dock-title">Live Experiment</span>
+      <span id="state-badge">NORMAL</span>
+    </div>
+
+    <div class="readout-row"><span>Temperature</span><b id="temp-k-read">150 K</b></div>
+    <div class="readout-row"><span style="opacity:0.6; font-size:0.7rem;" id="temp-c-read">(−123 °C)</span><span></span></div>
+    <input type="range" id="temp-slider" min="50" max="300" value="150" step="1" />
+
+    <div class="readout-row"><span>Resistance</span><b id="res-read">0.42 Ω (rel.)</b></div>
+
+    <div class="btn-row">
+      <button class="btn" id="btn-ln2">🧊 Pour LN₂ (77K)</button>
+      <button class="btn" id="btn-warm">🔥 Warm to 300K</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn active" id="btn-macro">Macro View</button>
+      <button class="btn" id="btn-micro">Microscopic View</button>
+    </div>
+
+    <div id="graph-wrap">
+      <canvas id="graph-canvas" width="560" height="180"></canvas>
+      <div class="graph-label"><span>50K</span><span>R vs T</span><span>300K</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="fname">Ahmad Ghozlan</span>
+    Physics &amp; Science · AI in Education · Lebanon 🇱🇧<br/>
+    <a href="https://aghozlan.github.io" target="_blank" rel="noopener">aghozlan.github.io</a>
+  </footer>
+
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+  (function(){
+    "use strict";
+
+    /* ============================================================
+       CONFIG / PHYSICS MODEL
+       ============================================================ */
+    var Tc = 92;              // critical temperature (K) - YBCO high-Tc superconductor
+    var TRANSITION_WIDTH = 9; // K, width of the (dramatized) resistive transition
+    var state = {
+      temp: 150,
+      sf: 0,                  // superconducting fraction 0..1
+      view: 'macro'
+    };
+
+    function superconductingFraction(T){
+      var x = (Tc - T) / TRANSITION_WIDTH;
+      var t = Math.min(Math.max(x, 0), 1);
+      return t * t * (3 - 2 * t); // smoothstep
+    }
+    function normalResistance(T){
+      return 0.08 + 0.92 * (T / 300);
+    }
+    function resistanceAt(T){
+      var sf = superconductingFraction(T);
+      return normalResistance(T) * (1 - sf);
+    }
+
+    /* ============================================================
+       THREE.JS SETUP
+       ============================================================ */
+    var scene, camera, renderer, controls, clock;
+    var macroGroup, microGroup;
+    var disc, bench, magnet, fieldRings = [], vaporPoints, vaporVel;
+    var latticeAtoms = [], travelers = [];
+
+    function makeCeramicTexture(){
+      var size = 512;
+      var c = document.createElement('canvas'); c.width = c.height = size;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#14161c'; ctx.fillRect(0,0,size,size);
+      for (var i=0;i<3500;i++){
+        var x = Math.random()*size, y = Math.random()*size;
+        var r = Math.random()*1.3;
+        var s = Math.random()*50;
+        ctx.fillStyle = 'rgba('+(170+s)+','+(170+s)+','+(185+s)+','+(Math.random()*0.09).toFixed(3)+')';
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      }
+      var grad = ctx.createRadialGradient(size/2,size/2,size*0.08,size/2,size/2,size*0.52);
+      grad.addColorStop(0,'rgba(0,0,0,0)'); grad.addColorStop(1,'rgba(0,0,0,0.65)');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,size,size);
+      var tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
+      return tex;
+    }
+    function makeBenchTexture(){
+      var w=512,h=512;
+      var c = document.createElement('canvas'); c.width=w; c.height=h;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#0c0d10'; ctx.fillRect(0,0,w,h);
+      for (var i=0;i<220;i++){
+        var y = Math.random()*h;
+        ctx.strokeStyle = 'rgba(255,255,255,'+(Math.random()*0.035).toFixed(3)+')';
+        ctx.lineWidth = Math.random()*1.4;
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w, y + (Math.random()-0.5)*6); ctx.stroke();
+      }
+      var tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(2,2);
+      return tex;
+    }
+    function makeMagnetTexture(){
+      var size = 256;
+      var c = document.createElement('canvas'); c.width=size; c.height=size;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#c0392b'; ctx.fillRect(0,0,size,size/2);
+      ctx.fillStyle = '#2e6ff2'; ctx.fillRect(0,size/2,size,size/2);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.font = 'bold 90px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('N', size/2, size*0.26);
+      ctx.fillText('S', size/2, size*0.76);
+      var tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
+      return tex;
+    }
+    function makeSpriteTexture(){
+      var size = 64;
+      var c = document.createElement('canvas'); c.width=c.height=size;
+      var ctx = c.getContext('2d');
+      var grad = ctx.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2);
+      grad.addColorStop(0,'rgba(255,255,255,0.9)');
+      grad.addColorStop(0.4,'rgba(200,225,255,0.5)');
+      grad.addColorStop(1,'rgba(200,225,255,0)');
+      ctx.fillStyle = grad; ctx.fillRect(0,0,size,size);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function addLights(){
+      scene.add(new THREE.AmbientLight(0x1a1a22, 0.65));
+
+      var gold = new THREE.SpotLight(0xD4AF37, 4.2, 22, Math.PI/6, 0.45, 1.6);
+      gold.position.set(4.5, 6.5, 3.2);
+      gold.castShadow = true;
+      gold.shadow.mapSize.set(1024,1024);
+      scene.add(gold);
+
+      var blue = new THREE.PointLight(0x6fd8ff, 2.4, 14);
+      blue.position.set(-3.2, 2.2, -2);
+      scene.add(blue);
+
+      var rim = new THREE.PointLight(0xFFD700, 1.1, 16);
+      rim.position.set(0, 1.4, -5.5);
+      scene.add(rim);
+    }
+
+    function buildMacroScene(){
+      macroGroup = new THREE.Group();
+      scene.add(macroGroup);
+
+      var benchTex = makeBenchTexture();
+      var benchMat = new THREE.MeshStandardMaterial({ map: benchTex, roughness:0.32, metalness:0.75 });
+      bench = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.4, 0.3, 64), benchMat);
+      bench.position.y = -0.15; bench.receiveShadow = true;
+      macroGroup.add(bench);
+
+      var discMat = new THREE.MeshStandardMaterial({ map: makeCeramicTexture(), roughness:0.55, metalness:0.22 });
+      disc = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 0.25, 64), discMat);
+      disc.position.y = 0.125; disc.castShadow = true; disc.receiveShadow = true;
+      macroGroup.add(disc);
+
+      var magnetMat = new THREE.MeshStandardMaterial({ map: makeMagnetTexture(), metalness:0.55, roughness:0.28, emissive:0x220000, emissiveIntensity:0.12 });
+      magnet = new THREE.Mesh(new THREE.CylinderGeometry(0.36,0.36,0.5,48), magnetMat);
+      magnet.castShadow = true;
+      magnet.position.set(0, 0.5, 0);
+      macroGroup.add(magnet);
+
+      // expelled field-line rings
+      var ringCount = 6;
+      for (var i=0;i<ringCount;i++){
+        var radius = 0.85 + i*0.16;
+        var geo = new THREE.TorusGeometry(radius, 0.012, 12, 80);
+        var col = new THREE.Color().lerpColors(new THREE.Color(0xFFD700), new THREE.Color(0x6fd8ff), i/(ringCount-1));
+        var mat = new THREE.MeshBasicMaterial({ color: col, transparent:true, opacity:0, blending: THREE.AdditiveBlending });
+        var ring = new THREE.Mesh(geo, mat);
+        ring.rotation.x = Math.PI/2;
+        ring.rotation.y = (i / ringCount) * Math.PI * 0.4;
+        ring.position.y = 0.3;
+        ring.userData.baseRadius = radius;
+        ring.userData.phase = i * 0.7;
+        macroGroup.add(ring);
+        fieldRings.push(ring);
+      }
+
+      // cryo vapor particles
+      var VN = 700;
+      var geo = new THREE.BufferGeometry();
+      var positions = new Float32Array(VN*3);
+      vaporVel = new Float32Array(VN*3);
+      for (var j=0;j<VN;j++){
+        resetVaporParticle(positions, vaporVel, j, true);
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      var vaporMat = new THREE.PointsMaterial({
+        size:0.09, map: makeSpriteTexture(), transparent:true, opacity:0.55,
+        color:0xbfe9ff, depthWrite:false, blending:THREE.AdditiveBlending
+      });
+      vaporPoints = new THREE.Points(geo, vaporMat);
+      macroGroup.add(vaporPoints);
+
+      var floor = new THREE.Mesh(
+        new THREE.CircleGeometry(14, 48),
+        new THREE.MeshStandardMaterial({ color:0x050506, roughness:0.9, metalness:0.1 })
+      );
+      floor.rotation.x = -Math.PI/2; floor.position.y = -0.32; floor.receiveShadow = true;
+      macroGroup.add(floor);
+    }
+
+    function resetVaporParticle(positions, vel, i, initial){
+      var a = Math.random()*Math.PI*2;
+      var r = Math.random()*1.05;
+      var idx = i*3;
+      positions[idx]   = Math.cos(a)*r;
+      positions[idx+1] = initial ? Math.random()*1.4 : 0.15;
+      positions[idx+2] = Math.sin(a)*r;
+      vel[idx]   = (Math.random()-0.5)*0.004;
+      vel[idx+1] = 0.006 + Math.random()*0.012;
+      vel[idx+2] = (Math.random()-0.5)*0.004;
+    }
+
+    function buildMicroScene(){
+      microGroup = new THREE.Group();
+      scene.add(microGroup);
+
+      var atomMat = new THREE.MeshStandardMaterial({ color:0x8fa3c7, metalness:0.7, roughness:0.35, emissive:0x0a1020, emissiveIntensity:0.3 });
+      var atomGeo = new THREE.SphereGeometry(0.11, 20, 20);
+      var GRID = 7, SPACING = 0.62;
+      for (var xi=0; xi<GRID; xi++){
+        for (var zi=0; zi<GRID; zi++){
+          var atom = new THREE.Mesh(atomGeo, atomMat);
+          var bx = (xi - (GRID-1)/2) * SPACING;
+          var bz = (zi - (GRID-1)/2) * SPACING;
+          atom.position.set(bx, 0, bz);
+          atom.userData.base = new THREE.Vector3(bx, 0, bz);
+          atom.userData.phase = Math.random()*Math.PI*2;
+          microGroup.add(atom);
+          latticeAtoms.push(atom);
+        }
+      }
+
+      var lattice_extent = (GRID-1)*SPACING/2 + 0.4;
+      var TRAV = 6;
+      for (var t=0; t<TRAV; t++){
+        var g = new THREE.Group();
+        var z0 = (t - (TRAV-1)/2) * (SPACING*0.98);
+        g.position.set(-lattice_extent, 0.02, z0);
+        g.userData.z0 = z0;
+        g.userData.speed = 0.85 + Math.random()*0.25;
+        g.userData.phase = Math.random()*Math.PI*2;
+        g.userData.extent = lattice_extent;
+
+        var eMat1 = new THREE.MeshBasicMaterial({ color:0xff7a4d });
+        var eGeo = new THREE.SphereGeometry(0.075, 16, 16);
+        var e1 = new THREE.Mesh(eGeo, eMat1);
+        g.add(e1);
+
+        var eMat2 = new THREE.MeshBasicMaterial({ color:0xFFD700, transparent:true, opacity:0 });
+        var e2 = new THREE.Mesh(eGeo.clone(), eMat2);
+        e2.position.x = 0.22;
+        g.add(e2);
+
+        var bondMat = new THREE.MeshBasicMaterial({ color:0xFFD700, transparent:true, opacity:0 });
+        var bond = new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.018,0.22,8), bondMat);
+        bond.rotation.z = Math.PI/2; bond.position.x = 0.11;
+        g.add(bond);
+
+        microGroup.add(g);
+        travelers.push({ group:g, e1:e1, e2:e2, e2mat:eMat2, bondMat:bondMat, e1mat:eMat1 });
+      }
+    }
+
+    /* ============================================================
+       ANIMATION / PHYSICS UPDATE
+       ============================================================ */
+    var vapPositions;
+    function updatePhysics(dt, elapsed){
+      var sf = state.sf;
+
+      // magnet levitation height: rests at 0.5 (touching disc top) -> rises to 1.35
+      var restY = 0.5, levY = 1.5;
+      var targetY = restY + (levY - restY) * sf;
+      magnet.position.y += (targetY - magnet.position.y) * Math.min(1, dt*4);
+      magnet.rotation.y += dt * (0.3 + sf*1.4);
+      // gentle spin wobble once levitating
+      magnet.position.x = Math.sin(elapsed*0.6) * 0.05 * sf;
+      magnet.position.z = Math.cos(elapsed*0.5) * 0.05 * sf;
+
+      // field rings: fade in + rise with expulsion as sf -> 1
+      for (var i=0;i<fieldRings.length;i++){
+        var r = fieldRings[i];
+        var op = sf * (0.55 - i*0.06);
+        r.material.opacity += (Math.max(op,0) - r.material.opacity) * 0.08;
+        r.position.y = 0.3 + sf*0.15 + Math.sin(elapsed*0.8 + r.userData.phase)*0.03;
+        r.rotation.z += dt * (0.12 + i*0.02);
+      }
+
+      // vapor: emit more intensely at lower temps
+      var vaporIntensity = THREE.MathUtils.clamp((260 - state.temp) / 220, 0.05, 1);
+      vaporPoints.material.opacity = 0.15 + vaporIntensity*0.55;
+      var pos = vaporPoints.geometry.attributes.position.array;
+      for (var vi=0; vi<pos.length; vi+=3){
+        pos[vi]   += vaporVel[vi]   * (0.4 + vaporIntensity);
+        pos[vi+1] += vaporVel[vi+1] * (0.4 + vaporIntensity*1.6);
+        pos[vi+2] += vaporVel[vi+2] * (0.4 + vaporIntensity);
+        if (pos[vi+1] > 1.8 + vaporIntensity*1.2){
+          var idx3 = vi/3;
+          resetVaporParticle(pos, vaporVel, idx3, false);
+        }
+      }
+      vaporPoints.geometry.attributes.position.needsUpdate = true;
+
+      // micro lattice jitter — shrinks as sf -> 1 (Cooper pairs immune to phonon scattering)
+      var jitterAmp = (state.temp/300) * 0.055 * (1 - sf*0.85);
+      for (var ai=0; ai<latticeAtoms.length; ai++){
+        var atom = latticeAtoms[ai];
+        var b = atom.userData.base, ph = atom.userData.phase;
+        atom.position.x = b.x + Math.sin(elapsed*3.1 + ph) * jitterAmp;
+        atom.position.z = b.z + Math.cos(elapsed*2.6 + ph*1.3) * jitterAmp;
+        atom.position.y = Math.sin(elapsed*4 + ph) * jitterAmp*0.6;
+      }
+
+      // travelers: electrons crossing the lattice
+      for (var ti=0; ti<travelers.length; ti++){
+        var tr = travelers[ti], g = tr.group;
+        var speedMul = 0.6 + sf*0.9; // pairs glide faster/smoother once formed
+        var x = g.position.x + tr._x !== undefined ? 0 : 0;
+        var progress = ((elapsed*g.userData.speed*speedMul) + g.userData.phase) % (g.userData.extent*2);
+        g.position.x = -g.userData.extent + progress;
+        var waviness = (1 - sf) * 0.16;
+        g.position.z = g.userData.z0 + Math.sin(elapsed*6 + g.userData.phase*3) * waviness;
+
+        // color + pairing blend
+        var hot = new THREE.Color(0xff7a4d), cold = new THREE.Color(0xFFD700);
+        tr.e1mat.color.lerpColors(hot, cold, sf);
+        tr.e2mat.opacity = sf;
+        tr.bondMat.opacity = sf * 0.85;
+        var pairSpread = 0.16 + sf*0.08;
+        tr.e2.position.x = pairSpread;
+        tr.bondMat.needsUpdate = false;
+      }
+    }
+
+    /* ============================================================
+       RESISTANCE GRAPH
+       ============================================================ */
+    var gctx, gcanvas;
+    function initGraph(){
+      gcanvas = document.getElementById('graph-canvas');
+      gctx = gcanvas.getContext('2d');
+      drawGraph();
+    }
+    function drawGraph(){
+      var w = gcanvas.width, h = gcanvas.height;
+      gctx.clearRect(0,0,w,h);
+      var minT=50, maxT=300;
+      var maxR = normalResistance(maxT);
+
+      function xOf(T){ return ((T-minT)/(maxT-minT)) * w; }
+      function yOf(R){ return h - (R/maxR) * (h-14) - 6; }
+
+      // grid baseline
+      gctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      gctx.lineWidth = 1;
+      gctx.beginPath(); gctx.moveTo(0,h-6); gctx.lineTo(w,h-6); gctx.stroke();
+
+      // Tc marker
+      var xTc = xOf(Tc);
+      gctx.strokeStyle = 'rgba(255,215,0,0.35)';
+      gctx.setLineDash([4,4]);
+      gctx.beginPath(); gctx.moveTo(xTc,0); gctx.lineTo(xTc,h); gctx.stroke();
+
+      // LN2 marker
+      var xLN2 = xOf(77);
+      gctx.strokeStyle = 'rgba(111,216,255,0.35)';
+      gctx.beginPath(); gctx.moveTo(xLN2,0); gctx.lineTo(xLN2,h); gctx.stroke();
+      gctx.setLineDash([]);
+
+      // curve
+      gctx.beginPath();
+      for (var T=minT; T<=maxT; T+=1){
+        var R = resistanceAt(T);
+        var x = xOf(T), y = yOf(R);
+        if (T===minT) gctx.moveTo(x,y); else gctx.lineTo(x,y);
+      }
+      var grad = gctx.createLinearGradient(0,0,w,0);
+      grad.addColorStop(0,'#FFD700'); grad.addColorStop(1,'#ff7a4d');
+      gctx.strokeStyle = grad;
+      gctx.lineWidth = 2.2;
+      gctx.stroke();
+
+      // current point marker
+      var curR = resistanceAt(state.temp);
+      var cx = xOf(state.temp), cy = yOf(curR);
+      gctx.fillStyle = state.sf > 0.5 ? '#FFD700' : '#ff7a4d';
+      gctx.shadowColor = gctx.fillStyle;
+      gctx.shadowBlur = 10;
+      gctx.beginPath(); gctx.arc(cx,cy,4.5,0,Math.PI*2); gctx.fill();
+      gctx.shadowBlur = 0;
+    }
+
+    /* ============================================================
+       UI WIRING
+       ============================================================ */
+    function fmtC(K){ return Math.round(K - 273.15); }
+
+    function applyTemp(T){
+      state.temp = T;
+      state.sf = superconductingFraction(T);
+      document.getElementById('temp-k-read').textContent = Math.round(T) + ' K';
+      document.getElementById('temp-c-read').textContent = '(' + fmtC(T) + ' °C)';
+      document.getElementById('res-read').textContent = resistanceAt(T).toFixed(3) + ' Ω (rel.)';
+      var badge = document.getElementById('state-badge');
+      if (state.sf > 0.5){
+        badge.textContent = 'SUPERCONDUCTING';
+        badge.classList.add('sc');
+      } else {
+        badge.textContent = 'NORMAL';
+        badge.classList.remove('sc');
+      }
+      drawGraph();
+    }
+
+    function animateSliderTo(target, duration){
+      var slider = document.getElementById('temp-slider');
+      var start = parseFloat(slider.value);
+      var t0 = performance.now();
+      function step(now){
+        var p = Math.min(1, (now - t0) / duration);
+        var eased = 1 - Math.pow(1-p, 3);
+        var val = start + (target - start) * eased;
+        slider.value = val;
+        applyTemp(val);
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function setView(view){
+      state.view = view;
+      macroGroup.visible = (view === 'macro');
+      microGroup.visible = (view === 'micro');
+      document.getElementById('btn-macro').classList.toggle('active', view==='macro');
+      document.getElementById('btn-micro').classList.toggle('active', view==='micro');
+      if (view === 'macro'){
+        controls.target.set(0,1,0);
+        camera.position.lerp(new THREE.Vector3(0,3.2,7), 0.001); // instant-ish via controls update loop
+      } else {
+        controls.target.set(0,0.2,0);
+      }
+    }
+
+    function wireUI(){
+      var slider = document.getElementById('temp-slider');
+      slider.addEventListener('input', function(){ applyTemp(parseFloat(slider.value)); });
+
+      document.getElementById('btn-ln2').addEventListener('click', function(){ animateSliderTo(77, 1800); });
+      document.getElementById('btn-warm').addEventListener('click', function(){ animateSliderTo(300, 1800); });
+      document.getElementById('btn-macro').addEventListener('click', function(){ setView('macro'); });
+      document.getElementById('btn-micro').addEventListener('click', function(){ setView('micro'); });
+    }
+
+    /* ============================================================
+       SCROLL REVEAL
+       ============================================================ */
+    function initReveal(){
+      var els = document.querySelectorAll('.reveal');
+      var obs = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting) en.target.classList.add('visible');
+        });
+      }, { threshold: 0.2 });
+      els.forEach(function(el){ obs.observe(el); });
+    }
+
+    /* ============================================================
+       MAIN INIT / LOOP
+       ============================================================ */
+    function onResize(){
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+      var dt = Math.min(clock.getDelta(), 0.05);
+      var elapsed = clock.getElapsedTime();
+      updatePhysics(dt, elapsed);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function init(){
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      scene.fog = new THREE.FogExp2(0x000000, 0.032);
+
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+      camera.position.set(0, 3.2, 7);
+
+      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('scene-canvas'), antialias:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 2.6;
+      controls.maxDistance = 13;
+      controls.maxPolarAngle = Math.PI * 0.49;
+      controls.target.set(0,1,0);
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.45;
+
+      clock = new THREE.Clock();
+
+      addLights();
+      buildMacroScene();
+      buildMicroScene();
+      microGroup.visible = false;
+
+      window.addEventListener('resize', onResize);
+      wireUI();
+      initGraph();
+      initReveal();
+      applyTemp(state.temp);
+      animate();
+
+      setTimeout(function(){
+        document.getElementById('loader').classList.add('hidden');
+      }, 500);
+    }
+
+    init();
+  })();
+  </script>
+</body>
+</html>
