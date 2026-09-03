@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee Skill Center | Global STEAM Physics Assessment</title>
+    <style>
+        :root {
+            --primary: #f59e0b; /* Bee Yellow */
+            --secondary: #1e293b; /* Slate Dark */
+            --bg: #f8fafc;
+            --text: #334155;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            max-width: 850px;
+            width: 90%;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        h1 { color: var(--secondary); margin-bottom: 0.5rem; }
+        h1 span { color: var(--primary); }
+        h2 { color: var(--secondary); font-size: 1.3rem; }
+        p { line-height: 1.6; margin-bottom: 1.5rem; color: #64748b; font-size: 0.95rem; }
+        
+        .section { display: none; animation: fadeIn 0.5s; }
+        .section.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .interactive-box {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            text-align: left;
+        }
+
+        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .btn-option {
+            padding: 12px 15px; border: 2px solid #cbd5e1; background: white;
+            cursor: pointer; border-radius: 6px; font-weight: 500; text-align: left; transition: 0.2s;
+        }
+        .btn-option:hover { border-color: var(--primary); background: #fffbeb; }
+        .btn-option.selected { border-color: var(--secondary); background: var(--secondary); color: white; }
+
+        .btn-primary {
+            background-color: var(--primary); color: white; border: none;
+            padding: 12px 28px; font-size: 1.1rem; border-radius: 6px;
+            cursor: pointer; font-weight: bold; transition: background 0.3s; margin-top: 1rem;
+        }
+        .btn-primary:hover { background-color: #d97706; }
+        
+        input[type="text"], input[type="number"] {
+            width: 70%; padding: 10px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form id="assessmentForm" action="https://formsubmit.co/aghozlan.81@gmail.com" method="POST">
+        
+        <input type="hidden" name="_subject" value="Global Assessment Report - Bee Skill Center">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="Global_Expert_Report" id="expertReport">
+        
+        <div class="section active" id="sec-intro">
+            <h1>Bee Skill Center <span>Global Entrance Assessment</span></h1>
+            <p>Welcome, future creator! This evaluation measures your core scientific intuition, mechanical logic, and spatial thinking. There are no rote equations here—just pure problem-solving.</p>
+            <input type="text" name="Student_Name" placeholder="Full Name" required><br>
+            <input type="number" name="Age" placeholder="Age (12 to 18)" min="12" max="18" required><br><br>
+            <button type="button" class="btn-primary" onclick="nextSection('sec-intro', 'sec-q1')">Begin Assessment</button>
+        </div>
+
+        <div class="section" id="sec-q1">
+            <h2>Challenge 1: The Swing Experiment (Variable Control)</h2>
+            <p>You want to discover if changing the <strong>length of a string</strong> makes a pendulum swing faster or slower. You have 3 setups available:</p>
+            <div class="interactive-box">
+                <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem;">
+                    <li><strong>Setup A:</strong> Short string, Light Bob (10g)</li>
+                    <li><strong>Setup B:</strong> Long string, Heavy Bob (50g)</li>
+                    <li><strong>Setup C:</strong> Short string, Heavy Bob (50g)</li>
+                </ul>
+            </div>
+            <p>Which <strong>two</strong> setups should you compare to isolate and prove the effect of length alone?</p>
+            <div class="btn-group" id="q1Options">
+                <button type="button" class="btn-option" onclick="selectOption('q1', 'A and B', this)">Compare Setup A and Setup B</button>
+                <button type="button" class="btn-option" onclick="selectOption('q1', 'A and C', this)">Compare Setup A and Setup C</button>
+                <button type="button" class="btn-option" onclick="selectOption('q1', 'B and C', this)">Compare Setup B and Setup C</button>
+            </div>
+            <input type="hidden" name="Variable_Isolation_Q1" id="resQ1">
+            <br><button type="button" class="btn-primary" onclick="validateAndNext('q1', 'sec-q2')">Next Challenge</button>
+        </div>
+
+        <div class="section" id="sec-q2">
+            <h2>Challenge 2: The Lever Balancing Puzzle</h2>
+            <p>Imagine a seesaw. A heavy 10kg block is placed <strong>1 meter</strong> away from the center pivot on the left side.</p>
+            <div class="interactive-box">
+                <p style="margin:0; text-align:center;">⚖️ <strong>[ 10kg at 1m ]</strong> <span style="margin:0 15px;">⟷</span> [ Pivot ] <span style="margin:0 15px;">⟷</span> <strong>[ 5kg Block ]</strong></p>
+            </div>
+            <p>To balance this seesaw with a lighter <strong>5kg block</strong> on the right side, where must you place the 5kg block?</p>
+            <div class="btn-group" id="q2Options">
+                <button type="button" class="btn-option" onclick="selectOption('q2', '0.5 meters', this)">0.5 meters away (Too close)</button>
+                <button type="button" class="btn-option" onclick="selectOption('q2', '1 meter', this)">1 meter away (Equal distance)</button>
+                <button type="button" class="btn-option" onclick="selectOption('q2', '2 meters', this)">2 meters away (Double distance)</button>
+            </div>
+            <input type="hidden" name="Proportional_Reasoning_Q2" id="resQ2">
+            <br><button type="button" class="btn-primary" onclick="validateAndNext('q2', 'sec-q3')">Next Challenge</button>
+        </div>
+
+        <div class="section" id="sec-q3">
+            <h2>Challenge 3: Mental Folding & Space</h2>
+            <p>Imagine taking a flat piece of cardboard shaped like a cross (6 equal square faces) and folding the outer flaps up to form a closed cube box.</p>
+            <div class="interactive-box">
+                <p style="margin:0; font-size:0.9rem;">If the face marked <strong>"TOP"</strong> ends up facing directly upwards, which physical relationship is true for a standard cube?</p>
+            </div>
+            <div class="btn-group" id="q3Options">
+                <button type="button" class="btn-option" onclick="selectOption('q3', 'Adjacent faces', this)">The bottom face is directly connected via 4 folding edges</button>
+                <button type="button" class="btn-option" onclick="selectOption('q3', 'Opposite face', this)">The bottom face is completely opposite with no shared edge</button>
+                <button type="button" class="btn-option" onclick="selectOption('q3', 'Random', this)">It can land on any random face depending on folding force</button>
+            </div>
+            <input type="hidden" name="Spatial_Reasoning_Q3" id="resQ3">
+            <br><button type="button" class="btn-primary" onclick="validateAndNext('q3', 'sec-q4')">Next Challenge</button>
+        </div>
+
+        <div class="section" id="sec-q4">
+            <h2>Challenge 4: The Gear Train Network</h2>
+            <p>You have three interlocked physical gears in a straight line: <strong>Gear 1 (left)</strong>, <strong>Gear 2 (middle)</strong>, and <strong>Gear 3 (right)</strong>.</p>
+            <div class="interactive-box">
+                <p style="margin:0; text-align:center; font-size: 1.5rem;">⚙️ ⟷ ⚙️ ⟷ ⚙️</p>
+                <p style="margin:10px 0 0 0; font-size: 0.85rem; text-align:center;">If you turn <strong>Gear 1 Clockwise</strong>, what happens to Gear 3?</p>
+            </div>
+            <div class="btn-group" id="q4Options">
+                <button type="button" class="btn-option" onclick="selectOption('q4', 'Clockwise', this)">Turns Clockwise (Same direction as Gear 1)</button>
+                <button type="button" class="btn-option" onclick="selectOption('q4', 'Counter-Clockwise', this)">Turns Counter-Clockwise (Opposite direction)</button>
+                <button type="button" class="btn-option" onclick="selectOption('q4', 'Stops', this)">Stops completely due to locking friction</button>
+            </div>
+            <input type="hidden" name="Mechanical_Logic_Q4" id="resQ4">
+            <br><button type="button" class="btn-primary" onclick="submitAssessment()">Complete & Send Report</button>
+        </div>
+
+        <div class="section" id="sec-success">
+            <h2>Assessment Submitted Successfully! 🚀</h2>
+            <p>The student's cognitive and technical reasoning profile has been compiled and emailed directly to your inbox with tailored pathway recommendations.</p>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    function nextSection(currentId, nextId) {
+        document.getElementById(currentId).classList.remove('active');
+        document.getElementById(nextId).classList.add('active');
+    }
+
+    function selectOption(questionKey, value, btnElement) {
+        document.getElementById('res' + questionKey.toUpperCase()).value = value;
+        const parent = btnElement.parentElement;
+        const buttons = parent.getElementsByClassName('btn-option');
+        for(let b of buttons) { b.classList.remove('selected'); }
+        btnElement.classList.add('selected');
+    }
+
+    function validateAndNext(currentQ, nextSectionId) {
+        const val = document.getElementById('res' + currentQ.toUpperCase()).value;
+        if(!val) {
+            alert("Please select an option before moving forward.");
+            return;
+        }
+        nextSection('sec-' + currentQ, nextSectionId);
+    }
+
+    function submitAssessment() {
+        const q4Val = document.getElementById('resQ4').value;
+        if(!q4Val) {
+            alert("Please complete the final question.");
+            return;
+        }
+
+        // Gather metrics
+        const a1 = document.getElementById('resQ1').value;
+        const a2 = document.getElementById('resQ2').value;
+        const a3 = document.getElementById('resQ3').value;
+        const a4 = document.getElementById('resQ4').value;
+
+        // Scoring Logic for Diagnostic Report
+        let score = 0;
+        if(a1 === 'A and C') score++; // Correct variable isolation
+        if(a2 === '2 meters') score++; // Correct inverse proportion (torque balance)
+        if(a3 === 'Opposite face') score++; // Correct mental folding
+        if(a4 === 'Clockwise') score++; // Correct 3-gear sequence (C -> CC -> C)
+
+        let profile = "";
+        let recommendation = "";
+
+        if (score >= 3) {
+            profile = "Formal / Advanced Reasoner (High Readiness)";
+            recommendation = "Eligible for Core & Advanced Maker Tracks. Shows elite multi-variable control, spatial rotation, and systems thinking.";
+        } else if (score === 2) {
+            profile = "Transitional Reasoner (Moderate Readiness)";
+            recommendation = "Eligible for standard Bee Skill Center STEAM Physics squad. Will benefit greatly from tactile kits bridging hands-on assembly with simulations.";
+        } else {
+            profile = "Concrete Thinker (Foundational Support Needed)";
+            recommendation = "Recommend Foundation Track. Focus initial months on assisted guided exploration, tactile levers, and peer collaboration before independent prototyping.";
+        }
+
+        let report = "GLOBAL COGNITIVE & SCIENTIFIC REASONING REPORT:\n\n";
+        report += "Total Diagnostic Score: " + score + "/4\n";
+        report += "Assigned Cognitive Profile: " + profile + "\n\n";
+        report += "DETAILED RESPONSES:\n";
+        report += "- Variable Control (Q1): " + a1 + "\n";
+        report += "- Proportional/Torque Reasoning (Q2): " + a2 + "\n";
+        report += "- Spatial 3D Translation (Q3): " + a3 + "\n";
+        report += "- Mechanical System Logic (Q4): " + a4 + "\n\n";
+        report += "RECOMMENDED PLACEMENT:\n" + recommendation;
+
+        // Inject into hidden input
+        document.getElementById('expertReport').value = report;
+
+        // Submit to FormSubmit
+        document.getElementById('assessmentForm').submit();
+
+        // Switch UI to success
+        nextSection('sec-q4', 'sec-success');
+    }
+</script>
+
+</body>
+</html>
