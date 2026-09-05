@@ -3,405 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bee Skill Center | Advanced Diagnostic Engine</title>
+    <title>Bee Skill Center | Ultimate Diagnostic Engine</title>
     <style>
         :root {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --primary: #f59e0b; /* Bee Yellow */
-            --primary-hover: #fbbf24;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #10b981;
-            --danger: #ef4444;
+            --bg: #0f172a; --surface: #1e293b; --primary: #f59e0b; 
+            --primary-hover: #fbbf24; --text: #f8fafc; --text-muted: #94a3b8;
+            --success: #10b981; --danger: #ef4444; --accent: #0ea5e9;
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { margin: 0; padding: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        .header { text-align: center; padding: 2rem 1rem; width: 100%; background: linear-gradient(180deg, rgba(30,41,59,1) 0%, rgba(15,23,42,1) 100%); border-bottom: 1px solid #334155; }
-        .header h1 { margin: 0; font-size: 2rem; letter-spacing: 1px; }
+        .header { text-align: center; padding: 1.5rem 1rem; width: 100%; background: #0b1120; border-bottom: 1px solid #334155; }
+        .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; color: var(--text); }
         .header span { color: var(--primary); }
-        .header p { color: var(--text-muted); max-width: 600px; margin: 10px auto 0; line-height: 1.5; }
-
+        
         .container { width: 100%; max-width: 900px; padding: 2rem 1rem; position: relative; }
         
-        .module { display: none; background: var(--surface); border-radius: 12px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid #334155; animation: slideUp 0.5s ease; }
+        .module { display: none; background: var(--surface); border-radius: 12px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid #334155; animation: fadeIn 0.4s ease; }
         .module.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .module h2 { margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 0.5rem; color: var(--primary); }
+        h2 { margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 0.5rem; color: var(--primary); font-size: 1.4rem; }
+        p { color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem; }
+        strong { color: var(--text); }
         
-        canvas { background: #0b1120; border-radius: 8px; width: 100%; max-width: 800px; height: auto; cursor: crosshair; box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #334155; }
+        canvas { background: #0b1120; border-radius: 8px; width: 100%; max-width: 800px; height: 400px; box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #334155; display: block; margin: 0 auto; cursor: crosshair; }
         
-        .controls { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; }
+        .controls { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; align-items: center; background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155; }
         
-        button { background: var(--primary); color: #000; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
-        button:hover { background: var(--primary-hover); transform: translateY(-2px); }
-        button:disabled { background: #334155; color: #64748b; cursor: not-allowed; transform: none; }
+        button { background: var(--primary); color: #000; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        button:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
+        button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
         button.secondary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        button.secondary:hover { background: rgba(245, 158, 11, 0.1); }
         
+        input[type="range"] { width: 200px; accent-color: var(--primary); cursor: pointer; }
         input[type="text"], input[type="number"] { width: 100%; max-width: 300px; padding: 0.75rem; border: 1px solid #475569; background: #0f172a; color: white; border-radius: 6px; margin: 0.5rem 0; font-size: 1rem; }
         
-        .status-bar { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid #334155; font-family: monospace; font-size: 1.1rem; }
-        .success-text { color: var(--success); }
-        .danger-text { color: var(--danger); }
+        .status-bar { display: flex; justify-content: space-between; margin-top: 1rem; font-family: monospace; font-size: 1.1rem; padding: 0 0.5rem; }
+        .badge { background: #334155; padding: 4px 10px; border-radius: 4px; color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Bee Skill Center <span>Diagnostics</span></h1>
-        <p>Interactive STEAM Evaluation Engine for ages 14-17.</p>
+        <h1>Bee Skill Center <span>Ultimate Diagnostics</span></h1>
     </div>
 
     <div class="container">
         <form id="assessmentForm" action="https://formsubmit.co/aghozlan.81@gmail.com" method="POST">
-            <input type="hidden" name="_subject" value="Pro Interactive Diagnostic Results - Bee Skill Center">
+            <input type="hidden" name="_subject" value="Ultimate Diagnostic Profile - Bee Skill Center">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="System_Report" id="systemReport">
 
-            <!-- INTRO -->
             <div class="module active" id="mod-0">
-                <h2>Candidate Profile</h2>
-                <p>Enter your details to initialize the physics engine. You will be tested on real-time spatial mechanics, inertia, and equilibrium.</p>
-                <input type="text" name="Student_Name" placeholder="Full Name" required><br>
-                <input type="number" name="Age" placeholder="Age" min="12" max="18" required><br><br>
-                <button type="button" onclick="startAssessment()">Initialize Engine</button>
+                <h2>Candidate Initialization</h2>
+                <p>This assessment features 5 rigorous modules testing Kinematics, Statics, Energy, Optics, and Waves. <strong>You have exactly 3 attempts per module.</strong> Calculate carefully before testing your hypotheses.</p>
+                <input type="text" name="Student_Name" placeholder="Full Legal Name" required><br>
+                <input type="number" name="Age" placeholder="Age (12-18)" min="12" max="18" required><br><br>
+                <button type="button" onclick="startAssesment()">Initialize Engine</button>
             </div>
 
-            <!-- SIM 1: INERTIA -->
             <div class="module" id="mod-1">
-                <h2>Module 1: Inertial Trajectory</h2>
-                <p>A supply drone is moving at a constant velocity. You must drop the payload so it lands precisely on the green target pad. <strong>Consider the payload's horizontal inertia.</strong></p>
-                <canvas id="sim1Canvas" width="800" height="400"></canvas>
+                <h2>Module 1: Kinematic Inertia</h2>
+                <p>The drone moves horizontally at constant velocity. Release the payload to hit the green target. Calculate the horizontal momentum inheritance.</p>
+                <canvas id="c1" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="sim1Status">Status: Awaiting Drop...</span>
-                    <span>Attempts left: <span id="sim1Attempts">3</span></span>
+                    <span id="s1-msg">Awaiting Drop...</span>
+                    <span class="badge">Attempts: <span id="s1-att">3</span>/3</span>
                 </div>
                 <div class="controls">
-                    <button type="button" id="btnDrop" onclick="triggerDrop()">Drop Payload</button>
-                    <button type="button" class="secondary" onclick="resetSim1()">Reset Flight</button>
-                    <button type="button" id="btnNext1" onclick="nextModule(1, 2)" disabled>Proceed</button>
+                    <button type="button" id="b1-fire" onclick="fireM1()">Drop Payload</button>
+                    <button type="button" id="b1-next" class="secondary" onclick="nextMod(1, 2)" style="display:none;">Next Module</button>
                 </div>
-                <input type="hidden" name="Mod1_Inertia_Score" id="score1">
+                <input type="hidden" id="r1">
             </div>
 
-            <!-- SIM 2: TORQUE -->
             <div class="module" id="mod-2">
-                <h2>Module 2: Dynamic Equilibrium</h2>
-                <p>The system is unbalanced. A heavy <strong>20kg</strong> mass is fixed on the left. Click on the right side of the beam to place a <strong>10kg</strong> mass to achieve perfect equilibrium ($\sum \tau = 0$).</p>
-                <canvas id="sim2Canvas" width="800" height="400"></canvas>
+                <h2>Module 2: Static Equilibrium</h2>
+                <p>A <strong>20kg</strong> mass is locked at 4 meters left of the fulcrum. Drag the slider to position a <strong>10kg</strong> mass on the right. Lock it in and test for perfect balance ($\sum \tau = 0$).</p>
+                <canvas id="c2" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="sim2Status">System State: Unbalanced</span>
+                    <span id="s2-msg">Set distance and test...</span>
+                    <span class="badge">Attempts: <span id="s2-att">3</span>/3</span>
                 </div>
                 <div class="controls">
-                    <button type="button" class="secondary" onclick="resetSim2()">Clear Mass</button>
-                    <button type="button" id="btnNext2" onclick="nextModule(2, 3)" disabled>Proceed</button>
+                    <input type="range" id="i2-dist" min="1" max="10" step="0.5" value="2" oninput="drawM2()">
+                    <span style="font-family:monospace; color:var(--primary);" id="s2-val">2.0m</span>
+                    <button type="button" id="b2-fire" onclick="fireM2()">Test Balance</button>
+                    <button type="button" id="b2-next" class="secondary" onclick="nextMod(2, 3)" style="display:none;">Next Module</button>
                 </div>
-                <input type="hidden" name="Mod2_Torque_Score" id="score2">
+                <input type="hidden" id="r2">
             </div>
 
-            <!-- SIM 3: WAVES -->
             <div class="module" id="mod-3">
-                <h2>Module 3: Wave Synthesis</h2>
-                <p>Adjust the properties of the blue wave to perfectly match the ghosted target wave. Click and drag the canvas horizontally for <strong>Frequency</strong> and vertically for <strong>Amplitude</strong>.</p>
-                <canvas id="sim3Canvas" width="800" height="400"></canvas>
+                <h2>Module 3: Elastic Potential to Kinetic</h2>
+                <p>Set the compression of the spring cannon to launch the projectile exactly into the containment unit. Friction and air resistance are negligible.</p>
+                <canvas id="c3" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="sim3Status">Alignment: 0%</span>
+                    <span id="s3-msg">Awaiting Launch Parameters...</span>
+                    <span class="badge">Attempts: <span id="s3-att">3</span>/3</span>
                 </div>
                 <div class="controls">
-                    <button type="button" id="btnSubmitSim" onclick="finalizeAssessment()">Complete Assessment</button>
+                    <label style="font-family:monospace;">Compression:</label>
+                    <input type="range" id="i3-comp" min="10" max="60" step="1" value="20" oninput="drawM3(false)">
+                    <button type="button" id="b3-fire" onclick="fireM3()">Launch Projectile</button>
+                    <button type="button" id="b3-next" class="secondary" onclick="nextMod(3, 4)" style="display:none;">Next Module</button>
                 </div>
-                <input type="hidden" name="Mod3_Wave_Score" id="score3">
+                <input type="hidden" id="r3">
             </div>
 
-            <!-- SUCCESS -->
-            <div class="module" id="mod-success">
-                <h2>Diagnostic Complete</h2>
-                <p>Your interaction telemetry and performance metrics have been compiled and transmitted to the lead instructor.</p>
-                <p style="color: var(--success); font-family: monospace;">> TRANSMISSION SECURE</p>
+            <div class="module" id="mod-4">
+                <h2>Module 4: Geometric Optics</h2>
+                <p>Rotate the central mirror to bounce the laser from the bottom emitter to the right-side receiver. Consider the angle of incidence.</p>
+                <canvas id="c4" width="800" height="400"></canvas>
+                <div class="status-bar">
+                    <span id="s4-msg">Adjust mirror angle...</span>
+                    <span class="badge">Attempts: <span id="s4-att">3</span>/3</span>
+                </div>
+                <div class="controls">
+                    <input type="range" id="i4-ang" min="-60" max="60" step="1" value="0" oninput="drawM4()">
+                    <span style="font-family:monospace; color:var(--primary);" id="s4-val">0°</span>
+                    <button type="button" id="b4-fire" onclick="fireM4()">Fire Laser</button>
+                    <button type="button" id="b4-next" class="secondary" onclick="nextMod(4, 5)" style="display:none;">Next Module</button>
+                </div>
+                <input type="hidden" id="r4">
+            </div>
+
+            <div class="module" id="mod-5">
+                <h2>Module 5: Wave Synthesis</h2>
+                <p>Match the Amplitude and Frequency of your blue wave to the ghosted target wave. You have 3 attempts to run the phase-alignment scanner.</p>
+                <canvas id="c5" width="800" height="400"></canvas>
+                <div class="status-bar">
+                    <span id="s5-msg">Tune wave parameters...</span>
+                    <span class="badge">Attempts: <span id="s5-att">3</span>/3</span>
+                </div>
+                <div class="controls">
+                    <label style="font-family:monospace;">Freq:</label><input type="range" id="i5-freq" min="1" max="10" step="0.1" value="2" oninput="drawM5()">
+                    <label style="font-family:monospace;">Amp:</label><input type="range" id="i5-amp" min="20" max="150" step="1" value="50" oninput="drawM5()">
+                    <button type="button" id="b5-fire" onclick="fireM5()">Run Alignment Scan</button>
+                    <button type="button" id="b5-next" class="secondary" onclick="finish()" style="display:none;">Complete Profile</button>
+                </div>
+                <input type="hidden" id="r5">
+            </div>
+
+            <div class="module" id="mod-success" style="text-align: center;">
+                <h2>Transmission Secure</h2>
+                <p>Your diagnostic profile has been successfully evaluated and transmitted.</p>
             </div>
         </form>
     </div>
 
 <script>
-    // System Navigation
-    function startAssessment() {
+    // --- GLOBAL SYSTEM ---
+    function startAssesment() {
         const name = document.querySelector('input[name="Student_Name"]').value;
-        const age = document.querySelector('input[name="Age"]').value;
-        if(!name || !age) { alert("Please complete your profile."); return; }
+        if(!name) { alert("Enter Name"); return; }
         document.getElementById('mod-0').classList.remove('active');
         document.getElementById('mod-1').classList.add('active');
-        initSim1();
+        initM1();
     }
-    function nextModule(curr, next) {
-        document.getElementById(`mod-${curr}`).classList.remove('active');
-        document.getElementById(`mod-${next}`).classList.add('active');
-        if(next === 2) initSim2();
-        if(next === 3) initSim3();
+    function nextMod(c, n) {
+        document.getElementById(`mod-${c}`).classList.remove('active');
+        document.getElementById(`mod-${n}`).classList.add('active');
+        if(n===2) initM2(); if(n===3) initM3(); if(n===4) initM4(); if(n===5) initM5();
     }
-
-    // --- ENGINE 1: INERTIA (Kinematics) ---
-    let s1_ctx, s1_anim, s1_drone, s1_payload, s1_target, s1_attempts = 3, s1_bestError = 999;
-    
-    function initSim1() {
-        const c = document.getElementById('sim1Canvas');
-        s1_ctx = c.getContext('2d');
-        resetSim1();
-        if(!s1_anim) s1_loop();
+    function failState(m, msg, res) {
+        document.getElementById(`s${m}-msg`).innerText = msg;
+        document.getElementById(`s${m}-msg`).style.color = 'var(--danger)';
+        if(res) document.getElementById(`r${m}`).value = res;
     }
-
-    function resetSim1() {
-        s1_drone = { x: 50, y: 50, vx: 3.5, width: 60, height: 20 };
-        s1_payload = { active: false, x: 0, y: 0, vx: 0, vy: 0, radius: 10, dropped: false };
-        s1_target = { x: 600, y: 350, width: 80, height: 10 };
-        document.getElementById('btnDrop').disabled = false;
-        document.getElementById('sim1Status').innerText = "Status: Airborne...";
-        document.getElementById('sim1Status').className = "";
+    function passState(m, msg) {
+        document.getElementById(`s${m}-msg`).innerText = msg;
+        document.getElementById(`s${m}-msg`).style.color = 'var(--success)';
+        document.getElementById(`r${m}`).value = "PASSED";
+        document.getElementById(`b${m}-fire`).style.display = 'none';
+        document.getElementById(`b${m}-next`).style.display = 'inline-block';
     }
-
-    function triggerDrop() {
-        if(s1_payload.dropped || s1_attempts <= 0) return;
-        s1_payload.active = true;
-        s1_payload.dropped = true;
-        s1_payload.x = s1_drone.x + s1_drone.width/2;
-        s1_payload.y = s1_drone.y + s1_drone.height;
-        s1_payload.vx = s1_drone.vx; // Inherit horizontal velocity
-        s1_payload.vy = 0;
-        document.getElementById('btnDrop').disabled = true;
-        s1_attempts--;
-        document.getElementById('sim1Attempts').innerText = s1_attempts;
+    function checkAttempts(m, attempts, resIfFail) {
+        document.getElementById(`s${m}-att`).innerText = attempts;
+        if(attempts <= 0) {
+            document.getElementById(`b${m}-fire`).style.display = 'none';
+            document.getElementById(`b${m}-next`).style.display = 'inline-block';
+            if(!document.getElementById(`r${m}`).value) document.getElementById(`r${m}`).value = resIfFail;
+            return false;
+        }
+        return true;
     }
 
-    function s1_loop() {
-        s1_ctx.clearRect(0, 0, 800, 400);
-        
-        // Draw Target
-        s1_ctx.fillStyle = '#10b981';
-        s1_ctx.fillRect(s1_target.x, s1_target.y, s1_target.width, s1_target.height);
-        
-        // Update & Draw Drone
-        s1_drone.x += s1_drone.vx;
-        if(s1_drone.x > 850) s1_drone.x = -50; // loop drone
-        s1_ctx.fillStyle = '#94a3b8';
-        s1_ctx.fillRect(s1_drone.x, s1_drone.y, s1_drone.width, s1_drone.height);
+    // --- M1: INERTIA ---
+    let c1, ctx1, m1_anim, m1_att=3;
+    let drone = {x: 50, y: 40, vx: 4, w: 60, h: 20};
+    let drop = {active: false, x:0, y:0, vx:0, vy:0};
+    let t1 = {x: 650, y: 360, w: 70, h: 10};
 
-        // Update & Draw Payload
-        if(s1_payload.active) {
-            s1_payload.x += s1_payload.vx;
-            s1_payload.vy += 0.15; // Gravity
-            s1_payload.y += s1_payload.vy;
-
-            s1_ctx.beginPath();
-            s1_ctx.arc(s1_payload.x, s1_payload.y, s1_payload.radius, 0, Math.PI*2);
-            s1_ctx.fillStyle = '#ef4444';
-            s1_ctx.fill();
-
-            // Collision check
-            if(s1_payload.y >= s1_target.y) {
-                s1_payload.active = false; // hit ground
-                let error = Math.abs(s1_payload.x - (s1_target.x + s1_target.width/2));
-                if(error < s1_bestError) s1_bestError = error;
-                
-                let statusEl = document.getElementById('sim1Status');
-                if(error < s1_target.width/2) {
-                    statusEl.innerText = "Status: DIRECT HIT! Perfect inertia calculation.";
-                    statusEl.className = "success-text";
-                    document.getElementById('score1').value = "Perfect Hit (Error: " + Math.round(error) + "px)";
-                    document.getElementById('btnNext1').disabled = false;
-                } else {
-                    statusEl.innerText = `Status: Missed by ${Math.round(error)}px. Remember horizontal velocity!`;
-                    statusEl.className = "danger-text";
-                    if(s1_attempts === 0) {
-                        document.getElementById('score1').value = "Failed to hit. Best Error: " + Math.round(s1_bestError) + "px";
-                        document.getElementById('btnNext1').disabled = false;
-                    }
-                }
+    function initM1() { c1 = document.getElementById('c1'); ctx1 = c1.getContext('2d'); m1_loop(); }
+    function fireM1() {
+        if(drop.active || m1_att<=0) return;
+        m1_att--; drop = {active: true, x: drone.x+30, y: drone.y+20, vx: drone.vx, vy: 0};
+    }
+    function m1_loop() {
+        ctx1.clearRect(0,0,800,400);
+        // Target
+        ctx1.fillStyle = '#10b981'; ctx1.fillRect(t1.x, t1.y, t1.w, t1.h);
+        // Drone
+        drone.x += drone.vx; if(drone.x > 850) drone.x = -60;
+        ctx1.fillStyle = '#94a3b8'; ctx1.fillRect(drone.x, drone.y, drone.w, drone.h);
+        // Drop
+        if(drop.active) {
+            drop.x += drop.vx; drop.vy += 0.15; drop.y += drop.vy;
+            ctx1.beginPath(); ctx1.arc(drop.x, drop.y, 8, 0, Math.PI*2); ctx1.fillStyle = '#ef4444'; ctx1.fill();
+            if(drop.y >= t1.y) {
+                drop.active = false;
+                let err = Math.abs(drop.x - (t1.x + t1.w/2));
+                if(err <= t1.w/2) { passState(1, "DIRECT HIT!"); m1_att = 0; checkAttempts(1, 0, ""); } 
+                else { failState(1, `MISSED BY ${Math.round(err)}px`); checkAttempts(1, m1_att, "FAILED"); }
             }
         }
-        s1_anim = requestAnimationFrame(s1_loop);
+        m1_anim = requestAnimationFrame(m1_loop);
     }
 
-    // --- ENGINE 2: TORQUE (Statics) ---
-    let s2_ctx, s2_anim, s2_angle = 0, s2_targetAngle = 0.5, s2_userMassDist = null;
-    const S2_FULCRUM = { x: 400, y: 300 };
-    
-    function initSim2() {
-        const c = document.getElementById('sim2Canvas');
-        s2_ctx = c.getContext('2d');
+    // --- M2: TORQUE ---
+    let ctx2, m2_att=3, m2_ang=0, m2_targetAng=0, m2_testing=false;
+    function initM2() { ctx2 = document.getElementById('c2').getContext('2d'); drawM2(); }
+    function drawM2() {
+        if(m2_testing) return;
+        let dist = document.getElementById('i2-dist').value;
+        document.getElementById('s2-val').innerText = dist + "m";
+        ctx2.clearRect(0,0,800,400);
+        ctx2.fillStyle = '#f59e0b'; ctx2.beginPath(); ctx2.moveTo(400,280); ctx2.lineTo(370,340); ctx2.lineTo(430,340); ctx2.fill(); // Fulcrum
+        ctx2.save(); ctx2.translate(400,280); ctx2.rotate(m2_ang);
+        ctx2.fillStyle = '#475569'; ctx2.fillRect(-350, -10, 700, 20); // Beam
+        ctx2.fillStyle = '#ef4444'; ctx2.fillRect(-160 - 20, -50, 40, 40); ctx2.fillStyle='#fff'; ctx2.fillText('20kg', -173, -25); // Left (4m = 160px)
+        let pxRight = dist * 40;
+        ctx2.fillStyle = '#0ea5e9'; ctx2.fillRect(pxRight - 15, -40, 30, 30); ctx2.fillStyle='#fff'; ctx2.fillText('10kg', pxRight - 12, -20); // Right
+        ctx2.restore();
+    }
+    function fireM2() {
+        if(m2_att<=0 || m2_testing) return;
+        m2_att--; m2_testing = true;
+        let dist = parseFloat(document.getElementById('i2-dist').value);
+        let torque = -80 + (10 * dist);
+        m2_targetAng = torque * 0.01;
+        if(m2_targetAng > 0.3) m2_targetAng = 0.3; if(m2_targetAng < -0.3) m2_targetAng = -0.3;
         
-        c.addEventListener('mousedown', (e) => {
-            const rect = c.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            // Map mouse to distance from fulcrum (in abstract meters, 1m = 40px)
-            let dist = (mouseX - S2_FULCRUM.x) / 40;
-            if(dist > 0.5 && dist <= 8) {
-                s2_userMassDist = dist;
-                calculateTorque();
+        let frames = 0;
+        function animateTilt() {
+            m2_ang += (m2_targetAng - m2_ang) * 0.1;
+            drawM2Anim(dist);
+            frames++;
+            if(frames < 60) requestAnimationFrame(animateTilt);
+            else {
+                m2_testing = false;
+                if(Math.abs(torque) === 0) { passState(2, "EQUILIBRIUM ACHIEVED"); m2_att=0; checkAttempts(2,0,""); }
+                else { failState(2, "UNBALANCED SYSTEM"); m2_ang = 0; checkAttempts(2, m2_att, "FAILED"); drawM2(); }
             }
-        });
-        if(!s2_anim) s2_loop();
+        }
+        animateTilt();
+    }
+    function drawM2Anim(dist) {
+        ctx2.clearRect(0,0,800,400);
+        ctx2.fillStyle = '#f59e0b'; ctx2.beginPath(); ctx2.moveTo(400,280); ctx2.lineTo(370,340); ctx2.lineTo(430,340); ctx2.fill(); 
+        ctx2.save(); ctx2.translate(400,280); ctx2.rotate(m2_ang);
+        ctx2.fillStyle = '#475569'; ctx2.fillRect(-350, -10, 700, 20); 
+        ctx2.fillStyle = '#ef4444'; ctx2.fillRect(-180, -50, 40, 40); 
+        ctx2.fillStyle = '#0ea5e9'; ctx2.fillRect(dist*40 - 15, -40, 30, 30);
+        ctx2.restore();
     }
 
-    function resetSim2() {
-        s2_userMassDist = null;
-        calculateTorque();
+    // --- M3: ENERGY PARABOLA ---
+    let ctx3, m3_att=3, p3={x:100, y:300, vx:0, vy:0, active:false};
+    let t3 = {x: 700, y: 300, w: 40, h: 40};
+    function initM3() { ctx3 = document.getElementById('c3').getContext('2d'); drawM3(false); }
+    function drawM3(inAir) {
+        if(!inAir) {
+            let comp = parseInt(document.getElementById('i3-comp').value);
+            p3.x = 120 - comp; p3.y = 300;
+        }
+        ctx3.clearRect(0,0,800,400);
+        // Spring Base
+        ctx3.fillStyle = '#334155'; ctx3.fillRect(20, 290, 40, 30);
+        // Spring
+        ctx3.beginPath(); ctx3.moveTo(60, 305); ctx3.lineTo(p3.x, 305); ctx3.strokeStyle='#94a3b8'; ctx3.lineWidth=5; ctx3.stroke();
+        // Target Unit
+        ctx3.strokeStyle = '#10b981'; ctx3.strokeRect(t3.x, t3.y-t3.h, t3.w, t3.h);
+        // Projectile
+        ctx3.beginPath(); ctx3.arc(p3.x, p3.y, 10, 0, Math.PI*2); ctx3.fillStyle='#f59e0b'; ctx3.fill();
     }
-
-    function calculateTorque() {
-        // Torque = Force * Distance. Fixed left mass: 20kg at 4m (Torque = -80)
-        // User right mass: 10kg at userDist.
-        let netTorque = -80 + (s2_userMassDist !== null ? (10 * s2_userMassDist) : 0);
+    function fireM3() {
+        if(p3.active || m3_att<=0) return;
+        m3_att--; p3.active = true;
+        let comp = parseInt(document.getElementById('i3-comp').value);
+        p3.vx = comp * 0.35; p3.vy = -comp * 0.35; // 45 deg launch approx
         
-        // Map torque to target angle for visual tilting
-        s2_targetAngle = netTorque * 0.005;
-        // Clamp angle
-        if(s2_targetAngle > 0.4) s2_targetAngle = 0.4;
-        if(s2_targetAngle < -0.4) s2_targetAngle = -0.4;
+        function animateM3() {
+            p3.x += p3.vx; p3.vy += 0.25; p3.y += p3.vy; // gravity
+            drawM3(true);
+            if(p3.y > 400) { // hit floor
+                p3.active = false;
+                failState(3, "MISSED TARGET"); checkAttempts(3, m3_att, "FAILED"); drawM3(false);
+            } else if(p3.x > t3.x && p3.x < t3.x+t3.w && p3.y > t3.y-t3.h && p3.y < t3.y) {
+                p3.active = false;
+                passState(3, "CONTAINMENT SUCCESS"); m3_att=0; checkAttempts(3, 0, ""); drawM3(true);
+            } else { requestAnimationFrame(animateM3); }
+        }
+        animateM3();
+    }
 
-        let statusEl = document.getElementById('sim2Status');
-        if(Math.abs(netTorque) < 1) {
-            statusEl.innerText = "System State: EQUILIBRIUM ACHIEVED";
-            statusEl.className = "success-text";
-            document.getElementById('score2').value = `Balanced at ${s2_userMassDist.toFixed(1)}m`;
-            document.getElementById('btnNext2').disabled = false;
+    // --- M4: OPTICS ---
+    let ctx4, m4_att=3;
+    let l4 = {ex: 400, ey: 380, mx: 400, my: 200, tx: 750, ty: 200}; // Emitter, Mirror, Target
+    function initM4() { ctx4 = document.getElementById('c4').getContext('2d'); drawM4(); }
+    function drawM4() {
+        let ang = parseInt(document.getElementById('i4-ang').value);
+        document.getElementById('s4-val').innerText = ang + "°";
+        ctx4.clearRect(0,0,800,400);
+        // Emitter & Target
+        ctx4.fillStyle = '#0ea5e9'; ctx4.fillRect(l4.ex-10, l4.ey, 20, 20);
+        ctx4.fillStyle = '#10b981'; ctx4.fillRect(l4.tx, l4.ty-20, 20, 40);
+        // Mirror
+        ctx4.save(); ctx4.translate(l4.mx, l4.my); ctx4.rotate(ang * Math.PI/180);
+        ctx4.strokeStyle = '#f8fafc'; ctx4.lineWidth = 4;
+        ctx4.beginPath(); ctx4.moveTo(-40, 0); ctx4.lineTo(40, 0); ctx4.stroke();
+        ctx4.restore();
+    }
+    function fireM4() {
+        if(m4_att<=0) return;
+        m4_att--; drawM4();
+        let ang = parseInt(document.getElementById('i4-ang').value) * Math.PI/180;
+        
+        // Beam to mirror
+        ctx4.beginPath(); ctx4.moveTo(l4.ex, l4.ey); ctx4.lineTo(l4.mx, l4.my);
+        ctx4.strokeStyle = '#ef4444'; ctx4.lineWidth = 2; ctx4.stroke();
+        
+        // Calculate reflection. Incident vector: (0, -1). 
+        // Mirror normal vector is perpendicular to mirror angle.
+        let normalAng = ang - Math.PI/2; 
+        let incidentAng = -Math.PI/2;
+        let reflectAng = 2 * normalAng - incidentAng - Math.PI; 
+        
+        // Raycast
+        let rx = l4.mx + 800 * Math.cos(reflectAng);
+        let ry = l4.my + 800 * Math.sin(reflectAng);
+        
+        ctx4.beginPath(); ctx4.moveTo(l4.mx, l4.my); ctx4.lineTo(rx, ry); ctx4.stroke();
+
+        // Target hit logic (simplified vertical bounds check at target X)
+        let hitY = l4.my + Math.tan(reflectAng) * (l4.tx - l4.mx);
+        if(Math.cos(reflectAng) > 0 && hitY >= l4.ty-30 && hitY <= l4.ty+10) {
+            passState(4, "OPTICAL LINK ESTABLISHED"); m4_att=0; checkAttempts(4,0,"");
         } else {
-            statusEl.innerText = `System State: Unbalanced (Net Torque: ${netTorque.toFixed(0)})`;
-            statusEl.className = "danger-text";
-            document.getElementById('btnNext2').disabled = true;
+            failState(4, "SIGNAL LOST IN VOID"); checkAttempts(4, m4_att, "FAILED");
         }
     }
 
-    function s2_loop() {
-        s2_ctx.clearRect(0, 0, 800, 400);
+    // --- M5: WAVES ---
+    let ctx5, m5_att=3;
+    let t5_freq = 5.2, t5_amp = 90;
+    function initM5() { ctx5 = document.getElementById('c5').getContext('2d'); drawM5(); }
+    function drawM5() {
+        let freq = parseFloat(document.getElementById('i5-freq').value);
+        let amp = parseInt(document.getElementById('i5-amp').value);
+        ctx5.clearRect(0,0,800,400);
         
-        // Smooth rotation interpolation
-        s2_angle += (s2_targetAngle - s2_angle) * 0.1;
-
-        // Draw Fulcrum
-        s2_ctx.fillStyle = '#f59e0b';
-        s2_ctx.beginPath();
-        s2_ctx.moveTo(S2_FULCRUM.x, S2_FULCRUM.y);
-        s2_ctx.lineTo(S2_FULCRUM.x - 30, S2_FULCRUM.y + 60);
-        s2_ctx.lineTo(S2_FULCRUM.x + 30, S2_FULCRUM.y + 60);
-        s2_ctx.fill();
-
-        // Draw Beam (Rotated)
-        s2_ctx.save();
-        s2_ctx.translate(S2_FULCRUM.x, S2_FULCRUM.y);
-        s2_ctx.rotate(s2_angle);
+        // Target Wave
+        ctx5.strokeStyle = 'rgba(255,255,255,0.15)'; ctx5.lineWidth = 5; ctx5.beginPath();
+        for(let x=0; x<800; x++) { let y = 200 + Math.sin(x*0.01*t5_freq) * t5_amp; x===0? ctx5.moveTo(x,y) : ctx5.lineTo(x,y); } ctx5.stroke();
         
-        s2_ctx.fillStyle = '#475569';
-        s2_ctx.fillRect(-320, -10, 640, 20); // Beam
-
-        // Draw Fixed Mass (Left, 4m = 160px)
-        s2_ctx.fillStyle = '#ef4444';
-        s2_ctx.fillRect(-180, -50, 40, 40);
-        s2_ctx.fillStyle = '#fff'; s2_ctx.font = '14px sans-serif';
-        s2_ctx.fillText('20kg', -175, -25);
-
-        // Draw User Mass (Right)
-        if(s2_userMassDist !== null) {
-            let pxDist = s2_userMassDist * 40;
-            s2_ctx.fillStyle = '#10b981';
-            s2_ctx.fillRect(pxDist - 15, -40, 30, 30);
-            s2_ctx.fillStyle = '#fff';
-            s2_ctx.fillText('10kg', pxDist - 12, -20);
-        }
-
-        s2_ctx.restore();
-        s2_anim = requestAnimationFrame(s2_loop);
+        // User Wave
+        ctx5.strokeStyle = '#0ea5e9'; ctx5.lineWidth = 3; ctx5.beginPath();
+        for(let x=0; x<800; x++) { let y = 200 + Math.sin(x*0.01*freq) * amp; x===0? ctx5.moveTo(x,y) : ctx5.lineTo(x,y); } ctx5.stroke();
     }
-
-    // --- ENGINE 3: WAVES (Oscillation Synthesis) ---
-    let s3_ctx, s3_anim;
-    let s3_targetAmp = 80, s3_targetFreq = 0.03;
-    let s3_userAmp = 20, s3_userFreq = 0.01;
-    let s3_isDragging = false;
-    
-    function initSim3() {
-        const c = document.getElementById('sim3Canvas');
-        s3_ctx = c.getContext('2d');
+    function fireM5() {
+        if(m5_att<=0) return;
+        m5_att--;
+        let freq = parseFloat(document.getElementById('i5-freq').value);
+        let amp = parseInt(document.getElementById('i5-amp').value);
         
-        c.addEventListener('mousedown', () => s3_isDragging = true);
-        c.addEventListener('mouseup', () => s3_isDragging = false);
-        c.addEventListener('mouseleave', () => s3_isDragging = false);
-        c.addEventListener('mousemove', (e) => {
-            if(!s3_isDragging) return;
-            const rect = c.getBoundingClientRect();
-            let y = e.clientY - rect.top; // Amplitude mapped to vertical mouse
-            let x = e.clientX - rect.left; // Frequency mapped to horizontal mouse
-            
-            s3_userAmp = Math.max(10, Math.min(150, (200 - Math.abs(200 - y)))); 
-            s3_userFreq = Math.max(0.005, Math.min(0.08, x / 10000));
-            updateWaveScore();
-        });
-        if(!s3_anim) s3_loop();
-    }
-
-    function updateWaveScore() {
-        let diffA = Math.abs(s3_targetAmp - s3_userAmp) / s3_targetAmp;
-        let diffF = Math.abs(s3_targetFreq - s3_userFreq) / s3_targetFreq;
-        let matchPercent = Math.max(0, 100 - (diffA * 50 + diffF * 50));
+        let fDiff = Math.abs(freq - t5_freq) / t5_freq;
+        let aDiff = Math.abs(amp - t5_amp) / t5_amp;
         
-        const statEl = document.getElementById('sim3Status');
-        statEl.innerText = `Alignment: ${matchPercent.toFixed(1)}%`;
-        if(matchPercent > 92) {
-            statEl.className = "success-text";
-            document.getElementById('score3').value = `Phase Locked (${matchPercent.toFixed(1)}%)`;
+        if(fDiff < 0.05 && aDiff < 0.05) {
+            passState(5, "PHASE ALIGNMENT LOCKED"); m5_att=0; checkAttempts(5,0,"");
         } else {
-            statEl.className = "";
-            document.getElementById('score3').value = `Mismatched (${matchPercent.toFixed(1)}%)`;
+            failState(5, "DE-SYNC DETECTED"); checkAttempts(5, m5_att, "FAILED");
         }
     }
 
-    function s3_loop() {
-        s3_ctx.clearRect(0, 0, 800, 400);
+    // --- FINAL SUBMISSION ---
+    function finish() {
+        let r1 = document.getElementById('r1').value || "FAILED";
+        let r2 = document.getElementById('r2').value || "FAILED";
+        let r3 = document.getElementById('r3').value || "FAILED";
+        let r4 = document.getElementById('r4').value || "FAILED";
+        let r5 = document.getElementById('r5').value || "FAILED";
         
-        // Draw Center Line
-        s3_ctx.strokeStyle = '#334155'; s3_ctx.lineWidth = 1;
-        s3_ctx.beginPath(); s3_ctx.moveTo(0, 200); s3_ctx.lineTo(800, 200); s3_ctx.stroke();
-
-        // Draw Target Wave
-        s3_ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-        s3_ctx.lineWidth = 4;
-        s3_ctx.beginPath();
-        for(let x=0; x<800; x++) {
-            let y = 200 + Math.sin(x * s3_targetFreq) * s3_targetAmp;
-            if(x===0) s3_ctx.moveTo(x, y); else s3_ctx.lineTo(x, y);
-        }
-        s3_ctx.stroke();
-
-        // Draw User Wave
-        s3_ctx.strokeStyle = '#0ea5e9';
-        s3_ctx.lineWidth = 3;
-        s3_ctx.beginPath();
-        for(let x=0; x<800; x++) {
-            let y = 200 + Math.sin(x * s3_userFreq) * s3_userAmp;
-            if(x===0) s3_ctx.moveTo(x, y); else s3_ctx.lineTo(x, y);
-        }
-        s3_ctx.stroke();
-
-        s3_anim = requestAnimationFrame(s3_loop);
-    }
-
-    // --- SUBMISSION ---
-    function finalizeAssessment() {
-        const s1 = document.getElementById('score1').value || "No Hit";
-        const s2 = document.getElementById('score2').value || "Unbalanced";
-        const s3 = document.getElementById('score3').value || "Not Aligned";
-
-        let report = "--- BEE SKILL CENTER DIAGNOSTIC TELEMETRY ---\n\n";
-        report += "Module 1 (Kinematics & Inertia): " + s1 + "\n";
-        report += "Module 2 (Torque & Equilibrium): " + s2 + "\n";
-        report += "Module 3 (Wave Synthesis Match): " + s3 + "\n\n";
-        report += "EVALUATION: If candidate achieved 'Perfect Hit' and 'Equilibrium', their spatial/mechanical processing aligns with advanced prototyping tiers.";
-
-        document.getElementById('systemReport').value = report;
+        let count = [r1,r2,r3,r4,r5].filter(x => x === "PASSED").length;
+        
+        let rep = "BEE SKILL CENTER: ULTIMATE DIAGNOSTIC REPORT\n";
+        rep += "-------------------------------------------\n";
+        rep += "Final Logic Score: " + count + " / 5 Modules Mastered\n\n";
+        rep += "1. Kinematic Inertia:  " + r1 + "\n";
+        rep += "2. Static Equilibrium: " + r2 + "\n";
+        rep += "3. Elastic Potential:  " + r3 + "\n";
+        rep += "4. Geometric Optics:   " + r4 + "\n";
+        rep += "5. Wave Synthesis:     " + r5 + "\n\n";
+        rep += "System Notes: Assessment executed under strict 3-attempt constraints.";
+        
+        document.getElementById('systemReport').value = rep;
         document.getElementById('assessmentForm').submit();
         
-        document.getElementById('mod-3').classList.remove('active');
+        document.getElementById('mod-5').classList.remove('active');
         document.getElementById('mod-success').classList.add('active');
     }
 </script>
