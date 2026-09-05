@@ -3,392 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bee Skill Center | Interactive STEAM Physics Assessment</title>
+    <title>Bee Skill Center | Advanced Diagnostic Engine</title>
     <style>
         :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
             --primary: #f59e0b; /* Bee Yellow */
-            --secondary: #1e293b; /* Slate Dark */
-            --accent: #0ea5e9; /* Sky Blue */
-            --bg: #f8fafc;
-            --text: #334155;
+            --primary-hover: #fbbf24;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            max-width: 900px;
-            width: 100%;
-            border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-            padding: 2.5rem;
-            text-align: center;
-        }
-        h1 { color: var(--secondary); margin-bottom: 0.2rem; }
-        h1 span { color: var(--primary); }
-        h2 { color: var(--secondary); font-size: 1.25rem; margin-top: 0; }
-        p { line-height: 1.6; color: #64748b; font-size: 0.95rem; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { margin: 0; padding: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        .section { display: none; animation: fadeIn 0.4s ease-in-out; }
-        .section.active { display: block; }
+        .header { text-align: center; padding: 2rem 1rem; width: 100%; background: linear-gradient(180deg, rgba(30,41,59,1) 0%, rgba(15,23,42,1) 100%); border-bottom: 1px solid #334155; }
+        .header h1 { margin: 0; font-size: 2rem; letter-spacing: 1px; }
+        .header span { color: var(--primary); }
+        .header p { color: var(--text-muted); max-width: 600px; margin: 10px auto 0; line-height: 1.5; }
+
+        .container { width: 100%; max-width: 900px; padding: 2rem 1rem; position: relative; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .module { display: none; background: var(--surface); border-radius: 12px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid #334155; animation: slideUp 0.5s ease; }
+        .module.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .sim-box {
-            background: #f1f5f9;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 1.2rem;
-            margin: 1.2rem 0;
-            text-align: center;
-            position: relative;
-        }
-
-        canvas { background: white; border-radius: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); display: block; margin: 0 auto; }
-
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn-option {
-            padding: 12px; border: 2px solid #cbd5e1; background: white;
-            cursor: pointer; border-radius: 6px; font-weight: 600; font-size: 0.9rem; transition: 0.2s;
-        }
-        .btn-option:hover { border-color: var(--primary); background: #fffbeb; }
-        .btn-option.selected { border-color: var(--secondary); background: var(--secondary); color: white; }
-
-        .btn-primary {
-            background-color: var(--primary); color: white; border: none;
-            padding: 12px 30px; font-size: 1.05rem; border-radius: 6px;
-            cursor: pointer; font-weight: bold; transition: background 0.3s; margin-top: 1rem;
-        }
-        .btn-primary:hover { background-color: #d97706; }
+        .module h2 { margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 0.5rem; color: var(--primary); }
         
-        input[type="text"], input[type="number"] {
-            width: 60%; padding: 10px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 1rem;
-        }
+        canvas { background: #0b1120; border-radius: 8px; width: 100%; max-width: 800px; height: auto; cursor: crosshair; box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #334155; }
         
-        .progress-bar {
-            width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 2rem; overflow: hidden;
-        }
-        .progress-fill { height: 100%; background: var(--primary); width: 16%; transition: width 0.3s ease; }
+        .controls { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; }
+        
+        button { background: var(--primary); color: #000; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+        button:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        button:disabled { background: #334155; color: #64748b; cursor: not-allowed; transform: none; }
+        button.secondary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        button.secondary:hover { background: rgba(245, 158, 11, 0.1); }
+        
+        input[type="text"], input[type="number"] { width: 100%; max-width: 300px; padding: 0.75rem; border: 1px solid #475569; background: #0f172a; color: white; border-radius: 6px; margin: 0.5rem 0; font-size: 1rem; }
+        
+        .status-bar { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid #334155; font-family: monospace; font-size: 1.1rem; }
+        .success-text { color: var(--success); }
+        .danger-text { color: var(--danger); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="header">
+        <h1>Bee Skill Center <span>Diagnostics</span></h1>
+        <p>Interactive STEAM Evaluation Engine for ages 14-17.</p>
+    </div>
 
-    <form id="assessmentForm" action="https://formsubmit.co/aghozlan.81@gmail.com" method="POST">
-        
-        <input type="hidden" name="_subject" value="Comprehensive Visual Assessment - Bee Skill Center">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="Full_Visual_Expert_Report" id="expertReport">
-        
-        <div class="section active" id="sec-0">
-            <h1>Bee Skill Center <span>Interactive Assessment</span></h1>
-            <p>Welcome to our interactive diagnostic suite! You will navigate through 6 visual, simulation-based challenges testing your mental physics models, spatial reasoning, and systems mechanics. No rote memorization required.</p>
-            <input type="text" name="Student_Name" placeholder="Full Name" required><br>
-            <input type="number" name="Age" placeholder="Age (12 to 18)" min="12" max="18" required><br><br>
-            <button type="button" class="btn-primary" onclick="advance(0, 1)">Start Interactive Suite</button>
-        </div>
+    <div class="container">
+        <form id="assessmentForm" action="https://formsubmit.co/aghozlan.81@gmail.com" method="POST">
+            <input type="hidden" name="_subject" value="Pro Interactive Diagnostic Results - Bee Skill Center">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="System_Report" id="systemReport">
 
-        <div class="section" id="sec-1">
-            <h2>Challenge 1: The Pendulum Frequency Lab</h2>
-            <p>Observe the simulated pendulum oscillation. Change the string length or mass sliders to figure out which parameter determines how fast it swings back and forth.</p>
-            <div class="sim-box">
-                <canvas id="pendulumCanvas" width="400" height="180"></canvas>
-                <div style="margin-top: 10px; display: flex; justify-content: center; gap: 20px;">
-                    <label>Length: <input type="range" id="penLen" min="50" max="140" value="100" oninput="updatePendulumSim()"></label>
-                    <label>Mass: <input type="range" id="penMass" min="10" max="40" value="20" oninput="updatePendulumSim()"></label>
+            <!-- INTRO -->
+            <div class="module active" id="mod-0">
+                <h2>Candidate Profile</h2>
+                <p>Enter your details to initialize the physics engine. You will be tested on real-time spatial mechanics, inertia, and equilibrium.</p>
+                <input type="text" name="Student_Name" placeholder="Full Name" required><br>
+                <input type="number" name="Age" placeholder="Age" min="12" max="18" required><br><br>
+                <button type="button" onclick="startAssessment()">Initialize Engine</button>
+            </div>
+
+            <!-- SIM 1: INERTIA -->
+            <div class="module" id="mod-1">
+                <h2>Module 1: Inertial Trajectory</h2>
+                <p>A supply drone is moving at a constant velocity. You must drop the payload so it lands precisely on the green target pad. <strong>Consider the payload's horizontal inertia.</strong></p>
+                <canvas id="sim1Canvas" width="800" height="400"></canvas>
+                <div class="status-bar">
+                    <span id="sim1Status">Status: Awaiting Drop...</span>
+                    <span>Attempts left: <span id="sim1Attempts">3</span></span>
                 </div>
-            </div>
-            <p style="font-weight:600; margin:5px 0;">Based on simulation observation, what controls the swing speed?</p>
-            <div class="btn-group">
-                <button type="button" class="btn-option" onclick="setAns(1, 'Mass only', this)">Only the Mass (Weight)</button>
-                <button type="button" class="btn-option" onclick="setAns(1, 'Length only', this)">Only the Length</button>
-                <button type="button" class="btn-option" onclick="setAns(1, 'Both', this)">Both Length and Mass equally</button>
-                <button type="button" class="btn-option" onclick="setAns(1, 'None', this)">Neither factor affects speed</button>
-            </div>
-            <input type="hidden" name="Ex1_Variable_Isolation" id="ans1">
-            <br><button type="button" class="btn-primary" onclick="validateAndMove(1, 2)">Next Challenge</button>
-        </div>
-
-        <div class="section" id="sec-2">
-            <h2>Challenge 2: The Lever Balance Simulator</h2>
-            <p>Balance the beam! A heavy load is locked on the left. Drag the slider to find where the lighter load must sit on the right to achieve dynamic equilibrium ($Torque_{left} = Torque_{right}$</h3>).</p>
-            <div class="sim-box">
-                <canvas id="leverCanvas" width="400" height="160"></canvas>
-                <div style="margin-top: 10px;">
-                    <label>Right Position Distance: <input type="range" id="leverSlider" min="1" max="5" value="2" step="0.5" oninput="updateLeverSim()"></label>
-                    <div id="torqueStatus" style="font-weight: bold; margin-top: 5px; color: #d97706;">Status: Unbalanced</div>
+                <div class="controls">
+                    <button type="button" id="btnDrop" onclick="triggerDrop()">Drop Payload</button>
+                    <button type="button" class="secondary" onclick="resetSim1()">Reset Flight</button>
+                    <button type="button" id="btnNext1" onclick="nextModule(1, 2)" disabled>Proceed</button>
                 </div>
+                <input type="hidden" name="Mod1_Inertia_Score" id="score1">
             </div>
-            <p style="font-weight:600; margin:5px 0;">If Left block is 10kg at 2m distance, where must a 5kg block sit?</p>
-            <div class="btn-group">
-                <button type="button" class="btn-option" onclick="setAns(2, '1 meter', this)">1 meter away</button>
-                <button type="button" class="btn-option" onclick="setAns(2, '2 meters', this)">2 meters away</button>
-                <button type="button" class="btn-option" onclick="setAns(2, '4 meters', this)">4 meters away</button>
-                <button type="button" class="btn-option" onclick="setAns(2, '10 meters', this)">10 meters away</button>
-            </div>
-            <input type="hidden" name="Ex2_Proportional_Torque" id="ans2">
-            <br><button type="button" class="btn-primary" onclick="validateAndMove(2, 3)">Next Challenge</button>
-        </div>
 
-        <div class="section" id="sec-3">
-            <h2>Challenge 3: Spatial Net Folding</h2>
-            <p>Examine this 2D cross layout of a cubic box. If you mentally fold the vertical and horizontal panels upwards, which face lands directly opposite to the face marked <strong>"TOP"</strong>?</p>
-            <div class="sim-box" style="padding: 1rem;">
-                <svg width="180" height="180" viewBox="0 0 180 180" style="background:white; border-radius:6px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);">
-                    <rect x="60" y="0" width="60" height="60" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
-                    <text x="90" y="35" font-size="12" font-weight="bold" text-anchor="middle" fill="#1e293b">FRONT</text>
-                    
-                    <rect x="60" y="60" width="60" height="60" fill="#f59e0b" stroke="#334155" stroke-width="2"/>
-                    <text x="90" y="95" font-size="12" font-weight="bold" text-anchor="middle" fill="white">TOP</text>
-                    
-                    <rect x="0" y="60" width="60" height="60" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
-                    <text x="30" y="95" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e293b">LEFT</text>
-                    
-                    <rect x="120" y="60" width="60" height="60" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
-                    <text x="150" y="95" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e293b">RIGHT</text>
-                    
-                    <rect x="60" y="120" width="60" height="60" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
-                    <text x="90" y="155" font-size="12" font-weight="bold" text-anchor="middle" fill="#1e293b">BOTTOM</text>
+            <!-- SIM 2: TORQUE -->
+            <div class="module" id="mod-2">
+                <h2>Module 2: Dynamic Equilibrium</h2>
+                <p>The system is unbalanced. A heavy <strong>20kg</strong> mass is fixed on the left. Click on the right side of the beam to place a <strong>10kg</strong> mass to achieve perfect equilibrium ($\sum \tau = 0$).</p>
+                <canvas id="sim2Canvas" width="800" height="400"></canvas>
+                <div class="status-bar">
+                    <span id="sim2Status">System State: Unbalanced</span>
+                </div>
+                <div class="controls">
+                    <button type="button" class="secondary" onclick="resetSim2()">Clear Mass</button>
+                    <button type="button" id="btnNext2" onclick="nextModule(2, 3)" disabled>Proceed</button>
+                </div>
+                <input type="hidden" name="Mod2_Torque_Score" id="score2">
+            </div>
 
-                    <rect x="60" y="180" width="60" height="60" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
-                    <text x="90" y="215" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e293b">BACK</text>
-                </svg>
+            <!-- SIM 3: WAVES -->
+            <div class="module" id="mod-3">
+                <h2>Module 3: Wave Synthesis</h2>
+                <p>Adjust the properties of the blue wave to perfectly match the ghosted target wave. Click and drag the canvas horizontally for <strong>Frequency</strong> and vertically for <strong>Amplitude</strong>.</p>
+                <canvas id="sim3Canvas" width="800" height="400"></canvas>
+                <div class="status-bar">
+                    <span id="sim3Status">Alignment: 0%</span>
+                </div>
+                <div class="controls">
+                    <button type="button" id="btnSubmitSim" onclick="finalizeAssessment()">Complete Assessment</button>
+                </div>
+                <input type="hidden" name="Mod3_Wave_Score" id="score3">
             </div>
-            <div class="btn-group">
-                <button type="button" class="btn-option" onclick="setAns(3, 'BOTTOM', this)">The BOTTOM face</button>
-                <button type="button" class="btn-option" onclick="setAns(3, 'FRONT', this)">The FRONT face</button>
-                <button type="button" class="btn-option" onclick="setAns(3, 'BACK', this)">The BACK face</button>
-                <button type="button" class="btn-option" onclick="setAns(3, 'LEFT', this)">The LEFT face</button>
-            </div>
-            <input type="hidden" name="Ex3_Spatial_Folding" id="ans3">
-            <br><button type="button" class="btn-primary" onclick="validateAndMove(3, 4)">Next Challenge</button>
-        </div>
 
-        <div class="section" id="sec-4">
-            <h2>Challenge 4: Wave Pulses & Frequency</h2>
-            <p>Analyze the animation below. It shows two waves traveling across a medium. Observe the relationship between wavelength and frequency.</p>
-            <div class="sim-box">
-                <canvas id="waveCanvas" width="400" height="140"></canvas>
+            <!-- SUCCESS -->
+            <div class="module" id="mod-success">
+                <h2>Diagnostic Complete</h2>
+                <p>Your interaction telemetry and performance metrics have been compiled and transmitted to the lead instructor.</p>
+                <p style="color: var(--success); font-family: monospace;">> TRANSMISSION SECURE</p>
             </div>
-            <p style="font-weight:600; margin:5px 0;">If wave speed remains constant, what happens to frequency if you decrease the wavelength?</p>
-            <div class="btn-group">
-                <button type="button" class="btn-option" onclick="setAns(4, 'Frequency increases', this)">Frequency increases</button>
-                <button type="button" class="btn-option" onclick="setAns(4, 'Frequency decreases', this)">Frequency decreases</button>
-                <button type="button" class="btn-option" onclick="setAns(4, 'Stays constant', this)">Frequency stays completely constant</button>
-                <button type="button" class="btn-option" onclick="setAns(4, 'Drops to zero', this)">Frequency drops to zero</button>
-            </div>
-            <input type="hidden" name="Ex4_Wave_Intuition" id="ans4">
-            <br><button type="button" class="btn-primary" onclick="validateAndMove(4, 5)">Next Challenge</button>
-        </div>
-
-        <div class="section" id="sec-5">
-            <h2>Challenge 5: Skate Track Energy Dynamics</h2>
-            <p>A skater drops from a high ramp. Without friction, they reach equal height on the opposite side. With real-world friction, what primary energy conversion occurs?</p>
-            <div class="sim-box" style="padding: 1.5rem;">
-                <svg width="300" height="100" viewBox="0 0 300 100">
-                    <path d="M 20,20 Q 150,120 280,20" fill="none" stroke="#0ea5e9" stroke-width="4" />
-                    <circle cx="150" cy="70" r="10" fill="#f59e0b" />
-                    <text x="150" y="95" font-size="11" text-anchor="middle" fill="#334155">Potential & Kinetic Transfer</text>
-                </svg>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn-option" onclick="setAns(5, 'Thermal Energy', this)">Mechanical energy converts into thermal energy (Heat)</button>
-                <button type="button" class="btn-option" onclick="setAns(5, 'Created Energy', this)">Energy is permanently created out of nothing</button>
-                <button type="button" class="btn-option" onclick="setAns(5, 'Disappears', this)">Energy completely disappears from existence</button>
-                <button type="button" class="btn-option" onclick="setAns(5, 'Mass conversion', this)">Mass transforms directly into electricity</button>
-            </div>
-            <input type="hidden" name="Ex5_Energy_Conservation" id="ans5">
-            <br><button type="button" class="btn-primary" onclick="validateAndMove(5, 6)">Next Challenge</button>
-        </div>
-
-        <div class="section" id="sec-6">
-            <h2>Challenge 6: The Multi-Gear Network</h2>
-            <p>Study a train of 4 interlocked physical gears: <strong>Gear A ⟷ Gear B ⟷ Gear C ⟷ Gear D</strong>.</p>
-            <div class="sim-box">
-                <p style="font-size: 1.8rem; margin: 10px 0;">⚙️ ⟷ ⚙️ ⟷ ⚙️ ⟷ ⚙️</p>
-                <p style="font-size: 0.85rem; margin:0;">[ A (Left) ] &nbsp;&nbsp; [ B ] &nbsp;&nbsp; [ C ] &nbsp;&nbsp; [ D (Right) ]</p>
-            </div>
-            <p style="font-weight:600; margin:5px 0;">If Gear A rotates <strong>Clockwise</strong>, what direction does Gear D rotate?</p>
-            <div class="btn-group">
-                <button type="button" class="btn-option" onclick="setAns(6, 'Clockwise', this)">Clockwise (Same as Gear A)</button>
-                <button type="button" class="btn-option" onclick="setAns(6, 'Counter-Clockwise', this)">Counter-Clockwise (Opposite)</button>
-                <button type="button" class="btn-option" onclick="setAns(6, 'Locked', this)">Gears lock and stop moving</button>
-                <button type="button" class="btn-option" onclick="setAns(6, 'Perpendicular', this)">Spins vertically</button>
-            </div>
-            <input type="hidden" name="Ex6_Gear_Systems" id="ans6">
-            <br><button type="button" class="btn-primary" onclick="submitFinalAssessment()">Complete & Email Report</button>
-        </div>
-
-        <div class="section" id="sec-success">
-            <h2>Assessment Successfully Completed! 🎉</h2>
-            <p>Your interactive simulation results, detailed diagnostic scoring, and expert recommendation profile have been successfully compiled and sent straight to your inbox.</p>
-        </div>
-
-    </form>
-</div>
+        </form>
+    </div>
 
 <script>
-    // Navigation Control
-    function advance(current, next) {
-        document.getElementById('sec-' + current).classList.remove('active');
-        document.getElementById('sec-' + next).classList.add('active');
-        document.getElementById('progressFill').style.width = (next / 6) * 100 + '%';
+    // System Navigation
+    function startAssessment() {
+        const name = document.querySelector('input[name="Student_Name"]').value;
+        const age = document.querySelector('input[name="Age"]').value;
+        if(!name || !age) { alert("Please complete your profile."); return; }
+        document.getElementById('mod-0').classList.remove('active');
+        document.getElementById('mod-1').classList.add('active');
+        initSim1();
+    }
+    function nextModule(curr, next) {
+        document.getElementById(`mod-${curr}`).classList.remove('active');
+        document.getElementById(`mod-${next}`).classList.add('active');
+        if(next === 2) initSim2();
+        if(next === 3) initSim3();
     }
 
-    function setAns(exNum, val, btn) {
-        document.getElementById('ans' + exNum).value = val;
-        const buttons = btn.parentElement.getElementsByClassName('btn-option');
-        for(let b of buttons) { b.classList.remove('selected'); }
-        btn.classList.add('selected');
+    // --- ENGINE 1: INERTIA (Kinematics) ---
+    let s1_ctx, s1_anim, s1_drone, s1_payload, s1_target, s1_attempts = 3, s1_bestError = 999;
+    
+    function initSim1() {
+        const c = document.getElementById('sim1Canvas');
+        s1_ctx = c.getContext('2d');
+        resetSim1();
+        if(!s1_anim) s1_loop();
     }
 
-    function validateAndMove(current, next) {
-        if(!document.getElementById('ans' + current).value) {
-            alert("Please interact with the challenge and select an answer before proceeding.");
-            return;
+    function resetSim1() {
+        s1_drone = { x: 50, y: 50, vx: 3.5, width: 60, height: 20 };
+        s1_payload = { active: false, x: 0, y: 0, vx: 0, vy: 0, radius: 10, dropped: false };
+        s1_target = { x: 600, y: 350, width: 80, height: 10 };
+        document.getElementById('btnDrop').disabled = false;
+        document.getElementById('sim1Status').innerText = "Status: Airborne...";
+        document.getElementById('sim1Status').className = "";
+    }
+
+    function triggerDrop() {
+        if(s1_payload.dropped || s1_attempts <= 0) return;
+        s1_payload.active = true;
+        s1_payload.dropped = true;
+        s1_payload.x = s1_drone.x + s1_drone.width/2;
+        s1_payload.y = s1_drone.y + s1_drone.height;
+        s1_payload.vx = s1_drone.vx; // Inherit horizontal velocity
+        s1_payload.vy = 0;
+        document.getElementById('btnDrop').disabled = true;
+        s1_attempts--;
+        document.getElementById('sim1Attempts').innerText = s1_attempts;
+    }
+
+    function s1_loop() {
+        s1_ctx.clearRect(0, 0, 800, 400);
+        
+        // Draw Target
+        s1_ctx.fillStyle = '#10b981';
+        s1_ctx.fillRect(s1_target.x, s1_target.y, s1_target.width, s1_target.height);
+        
+        // Update & Draw Drone
+        s1_drone.x += s1_drone.vx;
+        if(s1_drone.x > 850) s1_drone.x = -50; // loop drone
+        s1_ctx.fillStyle = '#94a3b8';
+        s1_ctx.fillRect(s1_drone.x, s1_drone.y, s1_drone.width, s1_drone.height);
+
+        // Update & Draw Payload
+        if(s1_payload.active) {
+            s1_payload.x += s1_payload.vx;
+            s1_payload.vy += 0.15; // Gravity
+            s1_payload.y += s1_payload.vy;
+
+            s1_ctx.beginPath();
+            s1_ctx.arc(s1_payload.x, s1_payload.y, s1_payload.radius, 0, Math.PI*2);
+            s1_ctx.fillStyle = '#ef4444';
+            s1_ctx.fill();
+
+            // Collision check
+            if(s1_payload.y >= s1_target.y) {
+                s1_payload.active = false; // hit ground
+                let error = Math.abs(s1_payload.x - (s1_target.x + s1_target.width/2));
+                if(error < s1_bestError) s1_bestError = error;
+                
+                let statusEl = document.getElementById('sim1Status');
+                if(error < s1_target.width/2) {
+                    statusEl.innerText = "Status: DIRECT HIT! Perfect inertia calculation.";
+                    statusEl.className = "success-text";
+                    document.getElementById('score1').value = "Perfect Hit (Error: " + Math.round(error) + "px)";
+                    document.getElementById('btnNext1').disabled = false;
+                } else {
+                    statusEl.innerText = `Status: Missed by ${Math.round(error)}px. Remember horizontal velocity!`;
+                    statusEl.className = "danger-text";
+                    if(s1_attempts === 0) {
+                        document.getElementById('score1').value = "Failed to hit. Best Error: " + Math.round(s1_bestError) + "px";
+                        document.getElementById('btnNext1').disabled = false;
+                    }
+                }
+            }
         }
-        advance(current, next);
+        s1_anim = requestAnimationFrame(s1_loop);
     }
 
-    // SIMULATION 1: Pendulum
-    const penCanvas = document.getElementById('pendulumCanvas');
-    const penCtx = penCanvas.getContext('2d');
-    let angle = 0;
-    function updatePendulumSim() {
-        const len = document.getElementById('penLen').value;
-        const mass = document.getElementById('penMass').value;
-        penCtx.clearRect(0,0,400,180);
+    // --- ENGINE 2: TORQUE (Statics) ---
+    let s2_ctx, s2_anim, s2_angle = 0, s2_targetAngle = 0.5, s2_userMassDist = null;
+    const S2_FULCRUM = { x: 400, y: 300 };
+    
+    function initSim2() {
+        const c = document.getElementById('sim2Canvas');
+        s2_ctx = c.getContext('2d');
         
-        // Draw Pivot
-        penCtx.fillStyle = '#1e293b';
-        penCtx.fillRect(180, 20, 40, 10);
-        
-        // Simple harmonic visual mapping
-        let x = 200 + len * Math.sin(Date.now() * 0.005 * Math.sqrt(100/len));
-        let y = 30 + len * Math.cos(Date.now() * 0.005 * Math.sqrt(100/len));
-        
-        penCtx.beginPath();
-        penCtx.moveTo(200, 30);
-        penCtx.lineTo(x, y);
-        penCtx.strokeStyle = '#64748b';
-        penCtx.lineWidth = 2;
-        penCtx.stroke();
-        
-        penCtx.beginPath();
-        penCtx.arc(x, y, parseInt(mass)/2.5 + 5, 0, 2*Math.PI);
-        penCtx.fillStyle = '#f59e0b';
-        penCtx.fill();
-        penCtx.stroke();
+        c.addEventListener('mousedown', (e) => {
+            const rect = c.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            // Map mouse to distance from fulcrum (in abstract meters, 1m = 40px)
+            let dist = (mouseX - S2_FULCRUM.x) / 40;
+            if(dist > 0.5 && dist <= 8) {
+                s2_userMassDist = dist;
+                calculateTorque();
+            }
+        });
+        if(!s2_anim) s2_loop();
     }
-    setInterval(updatePendulumSim, 30);
 
-    // SIMULATION 2: Lever Balance
-    const levCanvas = document.getElementById('leverCanvas');
-    const levCtx = levCanvas.getContext('2d');
-    function updateLeverSim() {
-        const distR = parseFloat(document.getElementById('leverSlider').value);
-        levCtx.clearRect(0,0,400,160);
+    function resetSim2() {
+        s2_userMassDist = null;
+        calculateTorque();
+    }
+
+    function calculateTorque() {
+        // Torque = Force * Distance. Fixed left mass: 20kg at 4m (Torque = -80)
+        // User right mass: 10kg at userDist.
+        let netTorque = -80 + (s2_userMassDist !== null ? (10 * s2_userMassDist) : 0);
         
-        // Fulcrum
-        levCtx.beginPath();
-        levCtx.moveTo(200, 120);
-        levCtx.lineTo(185, 150);
-        levCtx.lineTo(215, 150);
-        levCtx.closePath();
-        levCtx.fillStyle = '#1e293b';
-        levCtx.fill();
-        
-        // Seesaw plank angle based on torque difference (Left: 10kg * 2m = 20; Right: 5kg * distR)
-        let torqueDiff = 20 - (5 * distR);
-        let angleDeg = torqueDiff * 0.04;
-        
-        levCtx.save();
-        levCtx.translate(200, 120);
-        levCtx.rotate(angleDeg);
-        levCtx.fillStyle = '#0ea5e9';
-        levCtx.fillRect(-120, -6, 240, 12);
-        levCtx.restore();
-        
-        const statusEl = document.getElementById('torqueStatus');
-        if(Math.abs(torqueDiff) < 0.2) {
-            statusEl.innerText = "Status: PERFECT BALANCE! (Equilibrium Reached)";
-            statusEl.style.color = "#16a34a";
+        // Map torque to target angle for visual tilting
+        s2_targetAngle = netTorque * 0.005;
+        // Clamp angle
+        if(s2_targetAngle > 0.4) s2_targetAngle = 0.4;
+        if(s2_targetAngle < -0.4) s2_targetAngle = -0.4;
+
+        let statusEl = document.getElementById('sim2Status');
+        if(Math.abs(netTorque) < 1) {
+            statusEl.innerText = "System State: EQUILIBRIUM ACHIEVED";
+            statusEl.className = "success-text";
+            document.getElementById('score2').value = `Balanced at ${s2_userMassDist.toFixed(1)}m`;
+            document.getElementById('btnNext2').disabled = false;
         } else {
-            statusEl.innerText = torqueDiff > 0 ? "Status: Left side is heavier (Tilting down)" : "Status: Right side is heavier (Tilting down)";
-            statusEl.style.color = "#d97706";
+            statusEl.innerText = `System State: Unbalanced (Net Torque: ${netTorque.toFixed(0)})`;
+            statusEl.className = "danger-text";
+            document.getElementById('btnNext2').disabled = true;
         }
     }
-    updateLeverSim();
 
-    // SIMULATION 4: Wave Canvas
-    const waveCanvas = document.getElementById('waveCanvas');
-    const waveCtx = waveCanvas.getContext('2d');
-    function drawWave() {
-        waveCtx.clearRect(0, 0, 400, 140);
-        waveCtx.beginPath();
-        waveCtx.moveTo(0, 70);
-        for(let x = 0; x < 400; x++) {
-            let y = 70 + 30 * Math.sin((x + Date.now()*0.1) * 0.03);
-            waveCtx.lineTo(x, y);
+    function s2_loop() {
+        s2_ctx.clearRect(0, 0, 800, 400);
+        
+        // Smooth rotation interpolation
+        s2_angle += (s2_targetAngle - s2_angle) * 0.1;
+
+        // Draw Fulcrum
+        s2_ctx.fillStyle = '#f59e0b';
+        s2_ctx.beginPath();
+        s2_ctx.moveTo(S2_FULCRUM.x, S2_FULCRUM.y);
+        s2_ctx.lineTo(S2_FULCRUM.x - 30, S2_FULCRUM.y + 60);
+        s2_ctx.lineTo(S2_FULCRUM.x + 30, S2_FULCRUM.y + 60);
+        s2_ctx.fill();
+
+        // Draw Beam (Rotated)
+        s2_ctx.save();
+        s2_ctx.translate(S2_FULCRUM.x, S2_FULCRUM.y);
+        s2_ctx.rotate(s2_angle);
+        
+        s2_ctx.fillStyle = '#475569';
+        s2_ctx.fillRect(-320, -10, 640, 20); // Beam
+
+        // Draw Fixed Mass (Left, 4m = 160px)
+        s2_ctx.fillStyle = '#ef4444';
+        s2_ctx.fillRect(-180, -50, 40, 40);
+        s2_ctx.fillStyle = '#fff'; s2_ctx.font = '14px sans-serif';
+        s2_ctx.fillText('20kg', -175, -25);
+
+        // Draw User Mass (Right)
+        if(s2_userMassDist !== null) {
+            let pxDist = s2_userMassDist * 40;
+            s2_ctx.fillStyle = '#10b981';
+            s2_ctx.fillRect(pxDist - 15, -40, 30, 30);
+            s2_ctx.fillStyle = '#fff';
+            s2_ctx.fillText('10kg', pxDist - 12, -20);
         }
-        waveCtx.strokeStyle = '#0ea5e9';
-        waveCtx.lineWidth = 3;
-        waveCtx.stroke();
+
+        s2_ctx.restore();
+        s2_anim = requestAnimationFrame(s2_loop);
     }
-    setInterval(drawWave, 30);
 
-    // Final Submission & Report Generator
-    function submitFinalAssessment() {
-        if(!document.getElementById('ans6').value) {
-            alert("Please complete the final gear challenge.");
-            return;
+    // --- ENGINE 3: WAVES (Oscillation Synthesis) ---
+    let s3_ctx, s3_anim;
+    let s3_targetAmp = 80, s3_targetFreq = 0.03;
+    let s3_userAmp = 20, s3_userFreq = 0.01;
+    let s3_isDragging = false;
+    
+    function initSim3() {
+        const c = document.getElementById('sim3Canvas');
+        s3_ctx = c.getContext('2d');
+        
+        c.addEventListener('mousedown', () => s3_isDragging = true);
+        c.addEventListener('mouseup', () => s3_isDragging = false);
+        c.addEventListener('mouseleave', () => s3_isDragging = false);
+        c.addEventListener('mousemove', (e) => {
+            if(!s3_isDragging) return;
+            const rect = c.getBoundingClientRect();
+            let y = e.clientY - rect.top; // Amplitude mapped to vertical mouse
+            let x = e.clientX - rect.left; // Frequency mapped to horizontal mouse
+            
+            s3_userAmp = Math.max(10, Math.min(150, (200 - Math.abs(200 - y)))); 
+            s3_userFreq = Math.max(0.005, Math.min(0.08, x / 10000));
+            updateWaveScore();
+        });
+        if(!s3_anim) s3_loop();
+    }
+
+    function updateWaveScore() {
+        let diffA = Math.abs(s3_targetAmp - s3_userAmp) / s3_targetAmp;
+        let diffF = Math.abs(s3_targetFreq - s3_userFreq) / s3_targetFreq;
+        let matchPercent = Math.max(0, 100 - (diffA * 50 + diffF * 50));
+        
+        const statEl = document.getElementById('sim3Status');
+        statEl.innerText = `Alignment: ${matchPercent.toFixed(1)}%`;
+        if(matchPercent > 92) {
+            statEl.className = "success-text";
+            document.getElementById('score3').value = `Phase Locked (${matchPercent.toFixed(1)}%)`;
+        } else {
+            statEl.className = "";
+            document.getElementById('score3').value = `Mismatched (${matchPercent.toFixed(1)}%)`;
         }
+    }
 
-        const a1 = document.getElementById('ans1').value;
-        const a2 = document.getElementById('ans2').value;
-        const a3 = document.getElementById('ans3').value;
-        const a4 = document.getElementById('ans4').value;
-        const a5 = document.getElementById('ans5').value;
-        const a6 = document.getElementById('ans6').value;
+    function s3_loop() {
+        s3_ctx.clearRect(0, 0, 800, 400);
+        
+        // Draw Center Line
+        s3_ctx.strokeStyle = '#334155'; s3_ctx.lineWidth = 1;
+        s3_ctx.beginPath(); s3_ctx.moveTo(0, 200); s3_ctx.lineTo(800, 200); s3_ctx.stroke();
 
-        let score = 0;
-        if(a1 === 'Length only') score++;
-        if(a2 === '4 meters') score++;
-        if(a3 === 'BOTTOM') score++;
-        if(a4 === 'Frequency increases') score++;
-        if(a5 === 'Thermal Energy') score++;
-        if(a6 === 'Clockwise') score++; // 4 gears: A(C) -> B(CC) -> C(C) -> D(CC? Wait: 4 gears alternate: C, CC, C, CC. Let's make sure rule aligns with correct logic: 4 gears means opposite direction, let's format report accurately based on standard mechanics).
+        // Draw Target Wave
+        s3_ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        s3_ctx.lineWidth = 4;
+        s3_ctx.beginPath();
+        for(let x=0; x<800; x++) {
+            let y = 200 + Math.sin(x * s3_targetFreq) * s3_targetAmp;
+            if(x===0) s3_ctx.moveTo(x, y); else s3_ctx.lineTo(x, y);
+        }
+        s3_ctx.stroke();
 
-        let profile = score >= 5 ? "Advanced STEAM Maker (Tier 1)" : (score >= 3 ? "Core Squad Candidate (Tier 2)" : "Foundation Track Support (Tier 3)");
+        // Draw User Wave
+        s3_ctx.strokeStyle = '#0ea5e9';
+        s3_ctx.lineWidth = 3;
+        s3_ctx.beginPath();
+        for(let x=0; x<800; x++) {
+            let y = 200 + Math.sin(x * s3_userFreq) * s3_userAmp;
+            if(x===0) s3_ctx.moveTo(x, y); else s3_ctx.lineTo(x, y);
+        }
+        s3_ctx.stroke();
 
-        let report = "BEE SKILL CENTER - COMPREHENSIVE VISUAL ASSESSMENT REPORT\n\n";
-        report += "Total Diagnostic Score: " + score + "/6\n";
-        report += "Assigned Cognitive Tier: " + profile + "\n\n";
-        report += "MODULE BREAKDOWN:\n";
-        report += "- Pendulum Variable Isolation: " + a1 + "\n";
-        report += "- Lever Torque Proportions: " + a2 + "\n";
-        report += "- Spatial 3D Net Folding: " + a3 + "\n";
-        report += "- Wave Frequency Mechanics: " + a4 + "\n";
-        report += "- Energy Conservation / Friction: " + a5 + "\n";
-        report += "- Multi-Gear Network Logic: " + a6 + "\n\n";
-        report += "RECOMMENDATION: Ready for winter community enrollment with tailored project path.";
+        s3_anim = requestAnimationFrame(s3_loop);
+    }
 
-        document.getElementById('expertReport').value = report;
+    // --- SUBMISSION ---
+    function finalizeAssessment() {
+        const s1 = document.getElementById('score1').value || "No Hit";
+        const s2 = document.getElementById('score2').value || "Unbalanced";
+        const s3 = document.getElementById('score3').value || "Not Aligned";
+
+        let report = "--- BEE SKILL CENTER DIAGNOSTIC TELEMETRY ---\n\n";
+        report += "Module 1 (Kinematics & Inertia): " + s1 + "\n";
+        report += "Module 2 (Torque & Equilibrium): " + s2 + "\n";
+        report += "Module 3 (Wave Synthesis Match): " + s3 + "\n\n";
+        report += "EVALUATION: If candidate achieved 'Perfect Hit' and 'Equilibrium', their spatial/mechanical processing aligns with advanced prototyping tiers.";
+
+        document.getElementById('systemReport').value = report;
         document.getElementById('assessmentForm').submit();
-        advance(6, 'success');
+        
+        document.getElementById('mod-3').classList.remove('active');
+        document.getElementById('mod-success').classList.add('active');
     }
 </script>
-
 </body>
 </html>
