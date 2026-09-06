@@ -412,8 +412,32 @@
         document.getElementById('systemReport').value = rep;
         document.getElementById('assessmentForm').submit();
         
-        document.getElementById('mod-5').classList.remove('active');
-        document.getElementById('mod-success').classList.add('active');
+       // --- FINAL SUBMISSION ---
+    function finish() {
+        let r1 = document.getElementById('r1').value || "FAILED";
+        let r2 = document.getElementById('r2').value || "FAILED";
+        let r3 = document.getElementById('r3').value || "FAILED";
+        let r4 = document.getElementById('r4').value || "FAILED";
+        let r5 = document.getElementById('r5').value || "FAILED";
+        
+        let count = [r1,r2,r3,r4,r5].filter(x => x === "PASSED").length;
+        
+        let rep = "BEE SKILL CENTER: ULTIMATE DIAGNOSTIC REPORT\n";
+        rep += "-------------------------------------------\n";
+        rep += "Final Logic Score: " + count + " / 5 Modules Mastered\n\n";
+        rep += "1. Kinematic Inertia:  " + r1 + "\n";
+        rep += "2. Static Equilibrium: " + r2 + "\n";
+        rep += "3. Elastic Potential:  " + r3 + "\n";
+        rep += "4. Geometric Optics:   " + r4 + "\n";
+        rep += "5. Wave Synthesis:     " + r5 + "\n\n";
+        rep += "System Notes: Assessment executed under strict 3-attempt constraints.";
+        
+        // Compile the report
+        document.getElementById('systemReport').value = rep;
+        
+        // Let the form submit normally without interrupting it with UI animations
+        document.getElementById('assessmentForm').submit();
+    }
     }
 </script>
 </body>
