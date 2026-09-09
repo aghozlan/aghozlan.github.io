@@ -3,145 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bee Skill Center | Ultimate Diagnostic Engine</title>
+    <title>Bee Skill Center | Advanced STEAM Engine</title>
     <style>
         :root {
-            --bg: #0f172a; --surface: #1e293b; --primary: #f59e0b; 
-            --primary-hover: #fbbf24; --text: #f8fafc; --text-muted: #94a3b8;
+            --bg: #090e17; --surface: #141e30; --primary: #f59e0b; 
+            --primary-hover: #fbbf24; --text: #e2e8f0; --text-muted: #64748b;
             --success: #10b981; --danger: #ef4444; --accent: #0ea5e9;
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { margin: 0; padding: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        .header { text-align: center; padding: 1.5rem 1rem; width: 100%; background: #0b1120; border-bottom: 1px solid #334155; }
-        .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; color: var(--text); }
-        .header span { color: var(--primary); }
+        .header { text-align: center; padding: 1.5rem 1rem; width: 100%; background: #0b1120; border-bottom: 1px solid #1e293b; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .header h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; color: var(--text); text-transform: uppercase; }
+        .header span { color: var(--primary); text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
         
-        .container { width: 100%; max-width: 900px; padding: 2rem 1rem; position: relative; }
+        .container { width: 100%; max-width: 950px; padding: 2rem 1rem; position: relative; }
         
-        .module { display: none; background: var(--surface); border-radius: 12px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid #334155; animation: fadeIn 0.4s ease; }
+        .module { display: none; background: var(--surface); border-radius: 12px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); border: 1px solid #1e293b; animation: fadeIn 0.5s ease; }
         .module.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { margin-top: 0; border-bottom: 2px solid #334155; padding-bottom: 0.5rem; color: var(--primary); font-size: 1.4rem; }
-        p { color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem; }
-        strong { color: var(--text); }
+        h2 { margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 0.8rem; color: var(--primary); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        p { color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; font-size: 1.05rem; }
+        strong { color: var(--accent); }
         
-        canvas { background: #0b1120; border-radius: 8px; width: 100%; max-width: 800px; height: 400px; box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #334155; display: block; margin: 0 auto; cursor: crosshair; }
+        canvas { background: #05080f; border-radius: 8px; width: 100%; max-width: 800px; height: 400px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); border: 1px solid #334155; display: block; margin: 0 auto; cursor: crosshair; }
         
-        .controls { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; align-items: center; background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155; }
+        .controls { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap; align-items: center; background: #0b1120; padding: 1.2rem; border-radius: 8px; border: 1px solid #1e293b; }
         
-        button { background: var(--primary); color: #000; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        button:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
-        button:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-        button.secondary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        button { background: var(--primary); color: #000; border: none; padding: 0.8rem 1.8rem; font-size: 1rem; font-weight: 800; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        button:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
+        button:disabled { background: #1e293b; color: #475569; cursor: not-allowed; box-shadow: none; }
+        button.secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+        button.secondary:hover:not(:disabled) { background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 15px rgba(14, 165, 233, 0.4); }
         
-        input[type="range"] { width: 200px; accent-color: var(--primary); cursor: pointer; }
-        input[type="text"], input[type="number"] { width: 100%; max-width: 300px; padding: 0.75rem; border: 1px solid #475569; background: #0f172a; color: white; border-radius: 6px; margin: 0.5rem 0; font-size: 1rem; }
+        .btn-submit { background: var(--success); color: #fff; font-size: 1.2rem; padding: 1.2rem 2.5rem; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); border: 2px solid #059669; margin-top: 1rem; animation: pulse 2s infinite; }
+        .btn-submit:hover { background: #059669; }
+        @keyframes pulse { 0% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); } 50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.8); } 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); } }
         
-        .status-bar { display: flex; justify-content: space-between; margin-top: 1rem; font-family: monospace; font-size: 1.1rem; padding: 0 0.5rem; }
-        .badge { background: #334155; padding: 4px 10px; border-radius: 4px; color: var(--primary); font-weight: bold; }
+        input[type="range"] { width: 220px; accent-color: var(--accent); cursor: pointer; }
+        input[type="text"], input[type="number"] { width: 100%; max-width: 350px; padding: 0.8rem; border: 1px solid #334155; background: #0b1120; color: white; border-radius: 6px; margin: 0.5rem 0; font-size: 1.1rem; }
+        input[type="text"]:focus, input[type="number"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+        
+        .status-bar { display: flex; justify-content: space-between; margin-top: 1.5rem; font-family: monospace; font-size: 1.2rem; padding: 0 0.5rem; }
+        .badge { background: #1e293b; padding: 5px 12px; border-radius: 4px; color: var(--accent); font-weight: bold; border: 1px solid #334155; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Bee Skill Center <span>Ultimate Diagnostics</span></h1>
+        <h1>Bee Skill Center <span>Simulation Engine</span></h1>
     </div>
 
     <div class="container">
-        <form id="assessmentForm" action="https://formsubmit.co/aghozlan.81@gmail.com" method="POST" target="_blank">
-            <input type="hidden" name="_subject" value="Ultimate Diagnostic Profile - Bee Skill Center">
+        <!-- NATIVE SUBMISSION FORM -->
+        <form id="assessmentForm" action="https://formsubmit.co/aghozlan.81@gmail.com" method="POST">
+            <input type="hidden" name="_subject" value="Advanced Diagnostic Profile - Bee Skill Center">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="System_Report" id="systemReport">
 
+            <!-- INIT -->
             <div class="module active" id="mod-0">
                 <h2>Candidate Initialization</h2>
-                <p>This assessment features 5 rigorous modules testing Kinematics, Statics, Energy, Optics, and Waves. <strong>You have exactly 3 attempts per module.</strong> Calculate carefully before testing your hypotheses.</p>
+                <p>Welcome to the active diagnostics suite. In each module, environmental variables are <strong>randomized</strong>. You must observe the telemetry, calculate the physics, and execute. <br><br><strong>Audio must be enabled. You have 3 attempts per simulation.</strong></p>
                 <input type="text" name="Student_Name" placeholder="Full Legal Name" required><br>
                 <input type="number" name="Age" placeholder="Age (12-18)" min="12" max="18" required><br><br>
-                <button type="button" onclick="startAssesment()">Initialize Engine</button>
+                <button type="button" onclick="startAssesment()">Initialize Engine & Audio</button>
             </div>
 
+            <!-- M1: INERTIA -->
             <div class="module" id="mod-1">
                 <h2>Module 1: Kinematic Inertia</h2>
-                <p>The drone moves horizontally at constant velocity. Release the payload to hit the green target. Calculate the horizontal momentum inheritance.</p>
+                <p>The drone is flying horizontally. Release the payload to hit the randomized green target zone. <em>Hint: The payload inherits the drone's horizontal velocity.</em></p>
                 <canvas id="c1" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="s1-msg">Awaiting Drop...</span>
+                    <span id="s1-msg" style="color:var(--text-muted)">System Ready...</span>
                     <span class="badge">Attempts: <span id="s1-att">3</span>/3</span>
                 </div>
                 <div class="controls">
                     <button type="button" id="b1-fire" onclick="fireM1()">Drop Payload</button>
-                    <button type="button" id="b1-next" class="secondary" onclick="nextMod(1, 2)" style="display:none;">Next Module</button>
+                    <button type="button" id="b1-next" class="secondary" onclick="nextMod(1, 2)" style="display:none;">Initialize Next Sequence</button>
                 </div>
                 <input type="hidden" id="r1">
             </div>
 
+            <!-- M2: TORQUE -->
             <div class="module" id="mod-2">
                 <h2>Module 2: Static Equilibrium</h2>
-                <p>A <strong>20kg</strong> mass is locked at 4 meters left of the fulcrum. Drag the slider to position a <strong>10kg</strong> mass on the right. Lock it in and test for perfect balance ($\sum \tau = 0$).</p>
+                <p>A heavy <strong>20kg mass</strong> is locked at a random distance on the left. Position the <strong>10kg mass</strong> on the right to achieve perfect rotational equilibrium ($\sum \tau = 0$).</p>
                 <canvas id="c2" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="s2-msg">Set distance and test...</span>
+                    <span id="s2-msg" style="color:var(--text-muted)">Telemetry active...</span>
                     <span class="badge">Attempts: <span id="s2-att">3</span>/3</span>
                 </div>
                 <div class="controls">
-                    <input type="range" id="i2-dist" min="1" max="10" step="0.5" value="2" oninput="drawM2()">
-                    <span style="font-family:monospace; color:var(--primary);" id="s2-val">2.0m</span>
+                    <input type="range" id="i2-dist" min="1" max="10" step="0.1" value="2" oninput="drawM2(); playClick();">
+                    <span style="font-family:monospace; color:var(--accent); font-size: 1.2rem; width: 60px;" id="s2-val">2.0m</span>
                     <button type="button" id="b2-fire" onclick="fireM2()">Test Balance</button>
-                    <button type="button" id="b2-next" class="secondary" onclick="nextMod(2, 3)" style="display:none;">Next Module</button>
+                    <button type="button" id="b2-next" class="secondary" onclick="nextMod(2, 3)" style="display:none;">Initialize Next Sequence</button>
                 </div>
                 <input type="hidden" id="r2">
             </div>
 
+            <!-- M3: ENERGY -->
             <div class="module" id="mod-3">
-                <h2>Module 3: Elastic Potential to Kinetic</h2>
-                <p>Set the compression of the spring cannon to launch the projectile exactly into the containment unit. Friction and air resistance are negligible.</p>
+                <h2>Module 3: Elastic Trajectory</h2>
+                <p>Set the spring cannon compression to hit the randomly placed containment unit. Energy converts from elastic potential to kinetic.</p>
                 <canvas id="c3" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="s3-msg">Awaiting Launch Parameters...</span>
+                    <span id="s3-msg" style="color:var(--text-muted)">Awaiting parameters...</span>
                     <span class="badge">Attempts: <span id="s3-att">3</span>/3</span>
                 </div>
                 <div class="controls">
-                    <label style="font-family:monospace;">Compression:</label>
-                    <input type="range" id="i3-comp" min="10" max="60" step="1" value="20" oninput="drawM3(false)">
+                    <label style="font-family:monospace; color:var(--text-muted);">Compression:</label>
+                    <input type="range" id="i3-comp" min="10" max="60" step="1" value="20" oninput="drawM3(false); playClick();">
                     <button type="button" id="b3-fire" onclick="fireM3()">Launch Projectile</button>
-                    <button type="button" id="b3-next" class="secondary" onclick="nextMod(3, 4)" style="display:none;">Next Module</button>
+                    <button type="button" id="b3-next" class="secondary" onclick="nextMod(3, 4)" style="display:none;">Initialize Next Sequence</button>
                 </div>
                 <input type="hidden" id="r3">
             </div>
 
+            <!-- M4: OPTICS -->
             <div class="module" id="mod-4">
                 <h2>Module 4: Geometric Optics</h2>
-                <p>Rotate the central mirror to bounce the laser from the bottom emitter to the right-side receiver. Consider the angle of incidence.</p>
+                <p>Rotate the central mirror to bounce the laser into the randomized receiver. Consider the law of reflection.</p>
                 <canvas id="c4" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="s4-msg">Adjust mirror angle...</span>
+                    <span id="s4-msg" style="color:var(--text-muted)">Adjusting optics...</span>
                     <span class="badge">Attempts: <span id="s4-att">3</span>/3</span>
                 </div>
                 <div class="controls">
-                    <input type="range" id="i4-ang" min="-60" max="60" step="1" value="0" oninput="drawM4()">
-                    <span style="font-family:monospace; color:var(--primary);" id="s4-val">0°</span>
+                    <input type="range" id="i4-ang" min="-60" max="60" step="1" value="0" oninput="drawM4(); playClick();">
+                    <span style="font-family:monospace; color:var(--accent); font-size: 1.2rem; width: 60px;" id="s4-val">0°</span>
                     <button type="button" id="b4-fire" onclick="fireM4()">Fire Laser</button>
-                    <button type="button" id="b4-next" class="secondary" onclick="nextMod(4, 5)" style="display:none;">Next Module</button>
+                    <button type="button" id="b4-next" class="secondary" onclick="nextMod(4, 5)" style="display:none;">Initialize Next Sequence</button>
                 </div>
                 <input type="hidden" id="r4">
             </div>
 
+            <!-- M5: WAVES -->
             <div class="module" id="mod-5">
-                <h2>Module 5: Wave Synthesis</h2>
-                <p>Match the Amplitude and Frequency of your blue wave to the ghosted target wave. You have 3 attempts to run the phase-alignment scanner.</p>
+                <h2>Module 5: Phase Synthesis</h2>
+                <p>Tune your blue wave's amplitude and frequency to perfectly match the randomized ghost signature.</p>
                 <canvas id="c5" width="800" height="400"></canvas>
                 <div class="status-bar">
-                    <span id="s5-msg">Tune wave parameters...</span>
+                    <span id="s5-msg" style="color:var(--text-muted)">Scanning frequencies...</span>
                     <span class="badge">Attempts: <span id="s5-att">3</span>/3</span>
                 </div>
-                <div class="controls">
-                    <label style="font-family:monospace;">Freq:</label><input type="range" id="i5-freq" min="1" max="10" step="0.1" value="2" oninput="drawM5()">
-                    <label style="font-family:monospace;">Amp:</label><input type="range" id="i5-amp" min="20" max="150" step="1" value="50" oninput="drawM5()">
+                <div class="controls" id="m5-controls">
+                    <label style="font-family:monospace; color:var(--text-muted);">Freq:</label><input type="range" id="i5-freq" min="1" max="10" step="0.1" value="2" oninput="drawM5(); playClick();">
+                    <label style="font-family:monospace; color:var(--text-muted);">Amp:</label><input type="range" id="i5-amp" min="20" max="150" step="1" value="50" oninput="drawM5(); playClick();">
                     <button type="button" id="b5-fire" onclick="fireM5()">Run Alignment Scan</button>
-                    <button type="button" id="b5-next" class="secondary" onclick="finish()" style="display:none;">Complete Profile</button>
+                </div>
+                
+                <!-- NATIVE SUBMIT BUTTON (Revealed after M5) -->
+                <div id="final-submit-container" style="display:none; text-align: center; margin-top: 2rem; border-top: 1px solid #334155; padding-top: 2rem;">
+                    <h3 style="color: var(--success); text-transform: uppercase; letter-spacing: 1px;">Diagnostic Profile Compiled</h3>
+                    <p>All telemetry recorded. Secure the data stream to complete the assessment.</p>
+                    <button type="submit" class="btn-submit">Transmit Data Securely</button>
                 </div>
                 <input type="hidden" id="r5">
             </div>
@@ -149,63 +168,96 @@
     </div>
 
 <script>
+    // --- AUDIO SYNTHESIS ENGINE ---
+    let actx;
+    function initAudio() { if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if(actx.state === 'suspended') actx.resume(); }
+    function playTone(freq, type, dur, vol=0.1) {
+        if(!actx) return;
+        let osc = actx.createOscillator(); let gain = actx.createGain();
+        osc.type = type; osc.frequency.setValueAtTime(freq, actx.currentTime);
+        gain.gain.setValueAtTime(vol, actx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+        osc.connect(gain); gain.connect(actx.destination);
+        osc.start(); osc.stop(actx.currentTime + dur);
+    }
+    function playClick() { playTone(800, 'sine', 0.05, 0.05); }
+    function playSuccess() { playTone(440, 'square', 0.1, 0.05); setTimeout(()=>playTone(660, 'square', 0.3, 0.05), 100); }
+    function playFail() { playTone(150, 'sawtooth', 0.4, 0.1); }
+    function playLaunch() { playTone(200, 'sine', 0.3, 0.1); setTimeout(()=>playTone(150, 'sine', 0.3, 0.1), 50); }
+
+    // --- VISUAL UTILS ---
+    function drawGrid(ctx) {
+        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+        for(let i=0; i<800; i+=40) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,400); ctx.stroke(); }
+        for(let i=0; i<400; i+=40) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(800,i); ctx.stroke(); }
+    }
+
     // --- GLOBAL SYSTEM ---
     function startAssesment() {
         const name = document.querySelector('input[name="Student_Name"]').value;
-        if(!name) { alert("Enter Name"); return; }
+        if(!name) { alert("Please enter your name to begin."); return; }
+        initAudio(); playSuccess();
         document.getElementById('mod-0').classList.remove('active');
         document.getElementById('mod-1').classList.add('active');
         initM1();
     }
     function nextMod(c, n) {
+        playClick();
         document.getElementById(`mod-${c}`).classList.remove('active');
         document.getElementById(`mod-${n}`).classList.add('active');
         if(n===2) initM2(); if(n===3) initM3(); if(n===4) initM4(); if(n===5) initM5();
     }
     function failState(m, msg, res) {
+        playFail();
         document.getElementById(`s${m}-msg`).innerText = msg;
         document.getElementById(`s${m}-msg`).style.color = 'var(--danger)';
         if(res) document.getElementById(`r${m}`).value = res;
     }
     function passState(m, msg) {
+        playSuccess();
         document.getElementById(`s${m}-msg`).innerText = msg;
         document.getElementById(`s${m}-msg`).style.color = 'var(--success)';
         document.getElementById(`r${m}`).value = "PASSED";
         document.getElementById(`b${m}-fire`).style.display = 'none';
-        document.getElementById(`b${m}-next`).style.display = 'inline-block';
+        
+        if(m < 5) document.getElementById(`b${m}-next`).style.display = 'inline-block';
+        else compileReport(); // Show final submit button
     }
     function checkAttempts(m, attempts, resIfFail) {
         document.getElementById(`s${m}-att`).innerText = attempts;
         if(attempts <= 0) {
             document.getElementById(`b${m}-fire`).style.display = 'none';
-            document.getElementById(`b${m}-next`).style.display = 'inline-block';
             if(!document.getElementById(`r${m}`).value) document.getElementById(`r${m}`).value = resIfFail;
+            if(m < 5) document.getElementById(`b${m}-next`).style.display = 'inline-block';
+            else compileReport();
             return false;
         }
         return true;
     }
 
-    // --- M1: INERTIA ---
+    // --- M1: INERTIA (RANDOMIZED) ---
     let c1, ctx1, m1_anim, m1_att=3;
     let drone = {x: 50, y: 40, vx: 4, w: 60, h: 20};
     let drop = {active: false, x:0, y:0, vx:0, vy:0};
-    let t1 = {x: 650, y: 360, w: 70, h: 10};
+    let t1 = {x: 500 + Math.random()*200, y: 360, w: 70, h: 10}; // Random target position
 
     function initM1() { c1 = document.getElementById('c1'); ctx1 = c1.getContext('2d'); m1_loop(); }
     function fireM1() {
         if(drop.active || m1_att<=0) return;
         m1_att--; drop = {active: true, x: drone.x+30, y: drone.y+20, vx: drone.vx, vy: 0};
+        playLaunch();
     }
     function m1_loop() {
-        ctx1.clearRect(0,0,800,400);
-        // Target
+        ctx1.clearRect(0,0,800,400); drawGrid(ctx1);
+        
+        ctx1.shadowBlur = 15; ctx1.shadowColor = '#10b981';
         ctx1.fillStyle = '#10b981'; ctx1.fillRect(t1.x, t1.y, t1.w, t1.h);
-        // Drone
+        
         drone.x += drone.vx; if(drone.x > 850) drone.x = -60;
-        ctx1.fillStyle = '#94a3b8'; ctx1.fillRect(drone.x, drone.y, drone.w, drone.h);
-        // Drop
+        ctx1.shadowBlur = 0; ctx1.fillStyle = '#94a3b8'; ctx1.fillRect(drone.x, drone.y, drone.w, drone.h);
+        
         if(drop.active) {
             drop.x += drop.vx; drop.vy += 0.15; drop.y += drop.vy;
+            ctx1.shadowBlur = 10; ctx1.shadowColor = '#ef4444';
             ctx1.beginPath(); ctx1.arc(drop.x, drop.y, 8, 0, Math.PI*2); ctx1.fillStyle = '#ef4444'; ctx1.fill();
             if(drop.y >= t1.y) {
                 drop.active = false;
@@ -217,28 +269,36 @@
         m1_anim = requestAnimationFrame(m1_loop);
     }
 
-    // --- M2: TORQUE ---
+    // --- M2: TORQUE (RANDOMIZED) ---
     let ctx2, m2_att=3, m2_ang=0, m2_targetAng=0, m2_testing=false;
-    function initM2() { ctx2 = document.getElementById('c2').getContext('2d'); drawM2(); }
+    let m2_leftDist = (2 + Math.random()*3).toFixed(1); // Random distance 2.0 to 5.0
+
+    function initM2() { ctx2 = document.getElementById('c2').getContext('2d'); document.getElementById('s2-msg').innerText = `Fixed: 20kg at ${m2_leftDist}m`; drawM2(); }
     function drawM2() {
         if(m2_testing) return;
         let dist = document.getElementById('i2-dist').value;
         document.getElementById('s2-val').innerText = dist + "m";
-        ctx2.clearRect(0,0,800,400);
-        ctx2.fillStyle = '#f59e0b'; ctx2.beginPath(); ctx2.moveTo(400,280); ctx2.lineTo(370,340); ctx2.lineTo(430,340); ctx2.fill(); // Fulcrum
+        ctx2.clearRect(0,0,800,400); drawGrid(ctx2);
+        
+        ctx2.shadowBlur = 10; ctx2.shadowColor = '#f59e0b';
+        ctx2.fillStyle = '#f59e0b'; ctx2.beginPath(); ctx2.moveTo(400,280); ctx2.lineTo(370,340); ctx2.lineTo(430,340); ctx2.fill(); 
         ctx2.save(); ctx2.translate(400,280); ctx2.rotate(m2_ang);
-        ctx2.fillStyle = '#475569'; ctx2.fillRect(-350, -10, 700, 20); // Beam
-        ctx2.fillStyle = '#ef4444'; ctx2.fillRect(-160 - 20, -50, 40, 40); ctx2.fillStyle='#fff'; ctx2.fillText('20kg', -173, -25); // Left (4m = 160px)
+        ctx2.shadowBlur = 0; ctx2.fillStyle = '#334155'; ctx2.fillRect(-380, -10, 760, 20); 
+        
+        let pxLeft = m2_leftDist * 40;
+        ctx2.fillStyle = '#ef4444'; ctx2.fillRect(-pxLeft - 20, -50, 40, 40); ctx2.fillStyle='#fff'; ctx2.font='14px monospace'; ctx2.fillText('20kg', -pxLeft-15, -25); 
+        
         let pxRight = dist * 40;
-        ctx2.fillStyle = '#0ea5e9'; ctx2.fillRect(pxRight - 15, -40, 30, 30); ctx2.fillStyle='#fff'; ctx2.fillText('10kg', pxRight - 12, -20); // Right
+        ctx2.fillStyle = '#0ea5e9'; ctx2.fillRect(pxRight - 15, -40, 30, 30); ctx2.fillStyle='#fff'; ctx2.fillText('10kg', pxRight - 12, -20); 
         ctx2.restore();
     }
     function fireM2() {
         if(m2_att<=0 || m2_testing) return;
-        m2_att--; m2_testing = true;
+        m2_att--; m2_testing = true; playLaunch();
+        
         let dist = parseFloat(document.getElementById('i2-dist').value);
-        let torque = -80 + (10 * dist);
-        m2_targetAng = torque * 0.01;
+        let torque = -(20 * m2_leftDist) + (10 * dist);
+        m2_targetAng = torque * 0.005;
         if(m2_targetAng > 0.3) m2_targetAng = 0.3; if(m2_targetAng < -0.3) m2_targetAng = -0.3;
         
         let frames = 0;
@@ -249,51 +309,51 @@
             if(frames < 60) requestAnimationFrame(animateTilt);
             else {
                 m2_testing = false;
-                if(Math.abs(torque) === 0) { passState(2, "EQUILIBRIUM ACHIEVED"); m2_att=0; checkAttempts(2,0,""); }
-                else { failState(2, "UNBALANCED SYSTEM"); m2_ang = 0; checkAttempts(2, m2_att, "FAILED"); drawM2(); }
+                if(Math.abs(torque) < 0.5) { passState(2, "EQUILIBRIUM ACHIEVED"); m2_att=0; checkAttempts(2,0,""); }
+                else { failState(2, "UNBALANCED SYSTEM"); m2_ang = 0; checkAttempts(2, m2_att, "FAILED"); setTimeout(drawM2, 1000); }
             }
         }
         animateTilt();
     }
     function drawM2Anim(dist) {
-        ctx2.clearRect(0,0,800,400);
+        ctx2.clearRect(0,0,800,400); drawGrid(ctx2);
+        ctx2.shadowBlur = 10; ctx2.shadowColor = '#f59e0b';
         ctx2.fillStyle = '#f59e0b'; ctx2.beginPath(); ctx2.moveTo(400,280); ctx2.lineTo(370,340); ctx2.lineTo(430,340); ctx2.fill(); 
         ctx2.save(); ctx2.translate(400,280); ctx2.rotate(m2_ang);
-        ctx2.fillStyle = '#475569'; ctx2.fillRect(-350, -10, 700, 20); 
-        ctx2.fillStyle = '#ef4444'; ctx2.fillRect(-180, -50, 40, 40); 
+        ctx2.shadowBlur = 0; ctx2.fillStyle = '#334155'; ctx2.fillRect(-380, -10, 760, 20); 
+        ctx2.fillStyle = '#ef4444'; ctx2.fillRect(-m2_leftDist*40 - 20, -50, 40, 40); 
         ctx2.fillStyle = '#0ea5e9'; ctx2.fillRect(dist*40 - 15, -40, 30, 30);
         ctx2.restore();
     }
 
-    // --- M3: ENERGY PARABOLA ---
+    // --- M3: ENERGY (RANDOMIZED) ---
     let ctx3, m3_att=3, p3={x:100, y:300, vx:0, vy:0, active:false};
-    let t3 = {x: 700, y: 300, w: 40, h: 40};
+    let t3 = {x: 450 + Math.random()*250, y: 300, w: 40, h: 40};
+
     function initM3() { ctx3 = document.getElementById('c3').getContext('2d'); drawM3(false); }
     function drawM3(inAir) {
-        if(!inAir) {
-            let comp = parseInt(document.getElementById('i3-comp').value);
-            p3.x = 120 - comp; p3.y = 300;
-        }
-        ctx3.clearRect(0,0,800,400);
-        // Spring Base
-        ctx3.fillStyle = '#334155'; ctx3.fillRect(20, 290, 40, 30);
-        // Spring
-        ctx3.beginPath(); ctx3.moveTo(60, 305); ctx3.lineTo(p3.x, 305); ctx3.strokeStyle='#94a3b8'; ctx3.lineWidth=5; ctx3.stroke();
-        // Target Unit
-        ctx3.strokeStyle = '#10b981'; ctx3.strokeRect(t3.x, t3.y-t3.h, t3.w, t3.h);
-        // Projectile
-        ctx3.beginPath(); ctx3.arc(p3.x, p3.y, 10, 0, Math.PI*2); ctx3.fillStyle='#f59e0b'; ctx3.fill();
+        if(!inAir) { let comp = parseInt(document.getElementById('i3-comp').value); p3.x = 120 - comp; p3.y = 300; }
+        ctx3.clearRect(0,0,800,400); drawGrid(ctx3);
+        
+        ctx3.fillStyle = '#1e293b'; ctx3.fillRect(20, 290, 40, 30);
+        ctx3.beginPath(); ctx3.moveTo(60, 305); ctx3.lineTo(p3.x, 305); ctx3.strokeStyle='#64748b'; ctx3.lineWidth=6; ctx3.stroke();
+        
+        ctx3.shadowBlur = 15; ctx3.shadowColor = '#10b981';
+        ctx3.strokeStyle = '#10b981'; ctx3.lineWidth=2; ctx3.strokeRect(t3.x, t3.y-t3.h, t3.w, t3.h);
+        
+        ctx3.shadowBlur = 10; ctx3.shadowColor = '#f59e0b';
+        ctx3.beginPath(); ctx3.arc(p3.x, p3.y, 10, 0, Math.PI*2); ctx3.fillStyle='#f59e0b'; ctx3.fill(); ctx3.shadowBlur = 0;
     }
     function fireM3() {
         if(p3.active || m3_att<=0) return;
-        m3_att--; p3.active = true;
+        m3_att--; p3.active = true; playLaunch();
         let comp = parseInt(document.getElementById('i3-comp').value);
-        p3.vx = comp * 0.35; p3.vy = -comp * 0.35; // 45 deg launch approx
+        p3.vx = comp * 0.35; p3.vy = -comp * 0.35; 
         
         function animateM3() {
-            p3.x += p3.vx; p3.vy += 0.25; p3.y += p3.vy; // gravity
+            p3.x += p3.vx; p3.vy += 0.25; p3.y += p3.vy; 
             drawM3(true);
-            if(p3.y > 400) { // hit floor
+            if(p3.y > 400) { 
                 p3.active = false;
                 failState(3, "MISSED TARGET"); checkAttempts(3, m3_att, "FAILED"); drawM3(false);
             } else if(p3.x > t3.x && p3.x < t3.x+t3.w && p3.y > t3.y-t3.h && p3.y < t3.y) {
@@ -304,45 +364,41 @@
         animateM3();
     }
 
-    // --- M4: OPTICS ---
+    // --- M4: OPTICS (RANDOMIZED) ---
     let ctx4, m4_att=3;
-    let l4 = {ex: 400, ey: 380, mx: 400, my: 200, tx: 750, ty: 200}; // Emitter, Mirror, Target
+    let l4 = {ex: 400, ey: 380, mx: 400, my: 200, tx: 750, ty: 50 + Math.random()*250}; 
+
     function initM4() { ctx4 = document.getElementById('c4').getContext('2d'); drawM4(); }
     function drawM4() {
         let ang = parseInt(document.getElementById('i4-ang').value);
         document.getElementById('s4-val').innerText = ang + "°";
-        ctx4.clearRect(0,0,800,400);
-        // Emitter & Target
+        ctx4.clearRect(0,0,800,400); drawGrid(ctx4);
+        
+        ctx4.shadowBlur = 15; ctx4.shadowColor = '#0ea5e9';
         ctx4.fillStyle = '#0ea5e9'; ctx4.fillRect(l4.ex-10, l4.ey, 20, 20);
-        ctx4.fillStyle = '#10b981'; ctx4.fillRect(l4.tx, l4.ty-20, 20, 40);
-        // Mirror
+        ctx4.shadowColor = '#10b981'; ctx4.fillStyle = '#10b981'; ctx4.fillRect(l4.tx, l4.ty-20, 20, 40);
+        
         ctx4.save(); ctx4.translate(l4.mx, l4.my); ctx4.rotate(ang * Math.PI/180);
-        ctx4.strokeStyle = '#f8fafc'; ctx4.lineWidth = 4;
+        ctx4.shadowColor = '#fff'; ctx4.strokeStyle = '#f8fafc'; ctx4.lineWidth = 4;
         ctx4.beginPath(); ctx4.moveTo(-40, 0); ctx4.lineTo(40, 0); ctx4.stroke();
-        ctx4.restore();
+        ctx4.restore(); ctx4.shadowBlur = 0;
     }
     function fireM4() {
         if(m4_att<=0) return;
-        m4_att--; drawM4();
+        m4_att--; drawM4(); playLaunch();
         let ang = parseInt(document.getElementById('i4-ang').value) * Math.PI/180;
         
-        // Beam to mirror
+        ctx4.shadowBlur = 10; ctx4.shadowColor = '#ef4444';
         ctx4.beginPath(); ctx4.moveTo(l4.ex, l4.ey); ctx4.lineTo(l4.mx, l4.my);
-        ctx4.strokeStyle = '#ef4444'; ctx4.lineWidth = 2; ctx4.stroke();
+        ctx4.strokeStyle = '#ef4444'; ctx4.lineWidth = 3; ctx4.stroke();
         
-        // Calculate reflection. Incident vector: (0, -1). 
-        // Mirror normal vector is perpendicular to mirror angle.
         let normalAng = ang - Math.PI/2; 
         let incidentAng = -Math.PI/2;
         let reflectAng = 2 * normalAng - incidentAng - Math.PI; 
         
-        // Raycast
-        let rx = l4.mx + 800 * Math.cos(reflectAng);
-        let ry = l4.my + 800 * Math.sin(reflectAng);
-        
-        ctx4.beginPath(); ctx4.moveTo(l4.mx, l4.my); ctx4.lineTo(rx, ry); ctx4.stroke();
+        let rx = l4.mx + 800 * Math.cos(reflectAng); let ry = l4.my + 800 * Math.sin(reflectAng);
+        ctx4.beginPath(); ctx4.moveTo(l4.mx, l4.my); ctx4.lineTo(rx, ry); ctx4.stroke(); ctx4.shadowBlur=0;
 
-        // Target hit logic (simplified vertical bounds check at target X)
         let hitY = l4.my + Math.tan(reflectAng) * (l4.tx - l4.mx);
         if(Math.cos(reflectAng) > 0 && hitY >= l4.ty-30 && hitY <= l4.ty+10) {
             passState(4, "OPTICAL LINK ESTABLISHED"); m4_att=0; checkAttempts(4,0,"");
@@ -351,41 +407,39 @@
         }
     }
 
-    // --- M5: WAVES ---
+    // --- M5: WAVES (RANDOMIZED) ---
     let ctx5, m5_att=3;
-    let t5_freq = 5.2, t5_amp = 90;
+    let t5_freq = (2 + Math.random()*6).toFixed(1); 
+    let t5_amp = Math.floor(40 + Math.random()*70); 
+
     function initM5() { ctx5 = document.getElementById('c5').getContext('2d'); drawM5(); }
     function drawM5() {
         let freq = parseFloat(document.getElementById('i5-freq').value);
         let amp = parseInt(document.getElementById('i5-amp').value);
-        ctx5.clearRect(0,0,800,400);
+        ctx5.clearRect(0,0,800,400); drawGrid(ctx5);
         
-        // Target Wave
         ctx5.strokeStyle = 'rgba(255,255,255,0.15)'; ctx5.lineWidth = 5; ctx5.beginPath();
         for(let x=0; x<800; x++) { let y = 200 + Math.sin(x*0.01*t5_freq) * t5_amp; x===0? ctx5.moveTo(x,y) : ctx5.lineTo(x,y); } ctx5.stroke();
         
-        // User Wave
+        ctx5.shadowBlur = 10; ctx5.shadowColor = '#0ea5e9';
         ctx5.strokeStyle = '#0ea5e9'; ctx5.lineWidth = 3; ctx5.beginPath();
         for(let x=0; x<800; x++) { let y = 200 + Math.sin(x*0.01*freq) * amp; x===0? ctx5.moveTo(x,y) : ctx5.lineTo(x,y); } ctx5.stroke();
+        ctx5.shadowBlur = 0;
     }
     function fireM5() {
         if(m5_att<=0) return;
-        m5_att--;
+        m5_att--; playLaunch();
         let freq = parseFloat(document.getElementById('i5-freq').value);
         let amp = parseInt(document.getElementById('i5-amp').value);
         
-        let fDiff = Math.abs(freq - t5_freq) / t5_freq;
-        let aDiff = Math.abs(amp - t5_amp) / t5_amp;
+        let fDiff = Math.abs(freq - t5_freq) / t5_freq; let aDiff = Math.abs(amp - t5_amp) / t5_amp;
         
-        if(fDiff < 0.05 && aDiff < 0.05) {
-            passState(5, "PHASE ALIGNMENT LOCKED"); m5_att=0; checkAttempts(5,0,"");
-        } else {
-            failState(5, "DE-SYNC DETECTED"); checkAttempts(5, m5_att, "FAILED");
-        }
+        if(fDiff < 0.05 && aDiff < 0.05) { passState(5, "PHASE ALIGNMENT LOCKED"); m5_att=0; checkAttempts(5,0,""); } 
+        else { failState(5, "DE-SYNC DETECTED"); checkAttempts(5, m5_att, "FAILED"); }
     }
 
-    // --- FIXED FINAL SUBMISSION ---
-    function finish() {
+    // --- NATIVE SUBMISSION COMPILER ---
+    function compileReport() {
         let r1 = document.getElementById('r1').value || "FAILED";
         let r2 = document.getElementById('r2').value || "FAILED";
         let r3 = document.getElementById('r3').value || "FAILED";
@@ -394,21 +448,22 @@
         
         let count = [r1,r2,r3,r4,r5].filter(x => x === "PASSED").length;
         
-        let rep = "BEE SKILL CENTER: ULTIMATE DIAGNOSTIC REPORT\n";
+        let rep = "BEE SKILL CENTER: ADVANCED DIAGNOSTIC REPORT\n";
         rep += "-------------------------------------------\n";
         rep += "Final Logic Score: " + count + " / 5 Modules Mastered\n\n";
         rep += "1. Kinematic Inertia:  " + r1 + "\n";
         rep += "2. Static Equilibrium: " + r2 + "\n";
         rep += "3. Elastic Potential:  " + r3 + "\n";
         rep += "4. Geometric Optics:   " + r4 + "\n";
-        rep += "5. Wave Synthesis:     " + r5 + "\n\n";
-        rep += "System Notes: Assessment executed under strict 3-attempt constraints.";
+        rep += "5. Phase Synthesis:    " + r5 + "\n\n";
+        rep += "System Notes: Randomized metrics and strict attempt constraints were active.";
         
-        // Compile the report
+        // Lock the report into the hidden field
         document.getElementById('systemReport').value = rep;
         
-        // Let the form submit normally without interrupting it with UI animations
-        document.getElementById('assessmentForm').submit();
+        // Hide the module controls and reveal the Native Submit button
+        document.getElementById('m5-controls').style.display = 'none';
+        document.getElementById('final-submit-container').style.display = 'block';
     }
 </script>
 </body>
