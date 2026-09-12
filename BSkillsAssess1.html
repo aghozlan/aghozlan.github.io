@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bee Skill Center — Physics Entrance Assessment</title>
+<meta name="description" content="Entrance aptitude assessment for the physics STEAM track at Bee Skill Center, Zarout–Jiyeh, Lebanon.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1F27; --ink-2:#16323C; --ink-3:#204A56;
+  --paper:#EDF1EF; --card:#FFFFFF; --card-2:#F7F9F8;
+  --honey:#F5A623; --honey-deep:#C87F0A; --nectar:#FFE9B8;
+  --teal:#127A72; --teal-deep:#0B5A55;
+  --alert:#C2412B; --good:#2E8B57; --warn:#B8860B;
+  --line:rgba(14,31,39,.14); --line-2:rgba(14,31,39,.08);
+  --txt:#10262F; --txt-2:#4A6470; --txt-3:#7B919B;
+  --sans:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --disp:"Space Grotesk","IBM Plex Sans",system-ui,sans-serif;
+  --ar:"IBM Plex Sans Arabic","Segoe UI",sans-serif;
+  --r:10px; --shadow:0 1px 2px rgba(14,31,39,.06),0 8px 24px -12px rgba(14,31,39,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--paper);color:var(--txt);line-height:1.55;font-size:16px;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+:focus-visible{outline:3px solid var(--honey);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:600;line-height:1.15;letter-spacing:-.015em}
+.hide{display:none !important}
+
+/* ---------- WELCOME ---------- */
+#welcome{min-height:100dvh;background:var(--ink);color:#EAF2F1;position:relative;overflow:hidden;display:flex;align-items:center}
+#combCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.wrap{width:min(1060px,92vw);margin:0 auto;position:relative;z-index:2}
+.w-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding:64px 0}
+.brandline{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.brandline svg{width:34px;height:34px;flex:none}
+.brandline b{font-family:var(--disp);font-size:15px;font-weight:600;letter-spacing:.02em}
+.brandline span{color:#8FB0AF;font-size:13.5px}
+#welcome h1{font-size:clamp(38px,6.2vw,66px);font-weight:700;letter-spacing:-.03em;line-height:1.02}
+#welcome h1 em{font-style:normal;display:block;color:var(--honey)}
+.lede{margin-top:22px;font-size:18px;color:#BCD2D1;max-width:46ch}
+.ar{font-family:var(--ar);direction:rtl;color:#7FA3A2;margin-top:14px;font-size:15px}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.fact{border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:7px 15px;font-size:13.5px;color:#CFE0DF}
+.fact b{color:var(--honey);font-weight:600}
+.panel{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:26px}
+.panel h3{font-size:16px;color:#fff;margin-bottom:14px}
+.rules{list-style:none;display:grid;gap:13px}
+.rules li{display:grid;grid-template-columns:26px 1fr;gap:11px;font-size:14.5px;color:#C4D8D7;align-items:start}
+.rules i{font-style:normal;width:26px;height:26px;border-radius:7px;background:rgba(245,166,35,.14);color:var(--honey);display:grid;place-items:center;font-size:13px;font-weight:600;font-family:var(--disp)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--honey);color:#20160A;font-family:var(--disp);font-weight:600;font-size:16px;padding:14px 26px;border-radius:9px;transition:transform .12s ease,background .12s ease;border:1px solid var(--honey-deep)}
+.btn:hover{background:#FFB733}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line);font-weight:500}
+.btn.ghost:hover{background:var(--card-2)}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.dark:hover{background:var(--ink-2)}
+.btn.sm{padding:9px 16px;font-size:14px}
+.start-row{margin-top:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.start-note{font-size:13px;color:#8FB0AF;max-width:30ch}
+
+/* ---------- SHELL ---------- */
+#shell{min-height:100dvh;display:flex;flex-direction:column}
+#topbar{position:sticky;top:0;z-index:40;background:rgba(237,241,239,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb{width:min(1080px,94vw);margin:0 auto;display:flex;align-items:center;gap:18px;padding:11px 0}
+.tb-id{font-family:var(--disp);font-weight:600;font-size:14px;white-space:nowrap}
+.tb-id small{display:block;font-weight:400;color:var(--txt-3);font-size:11.5px;letter-spacing:.02em}
+.comb{display:flex;gap:5px;flex:1;justify-content:center;flex-wrap:wrap}
+.cell{width:26px;height:29px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#DCE4E2;display:grid;place-items:center;font-size:10.5px;font-family:var(--disp);font-weight:600;color:#8DA1A8;transition:background .3s ease,color .3s}
+.cell.done{background:var(--honey);color:#3A2B0C}
+.cell.now{background:var(--ink);color:var(--honey);box-shadow:0 0 0 3px rgba(245,166,35,.3)}
+.clock{font-family:var(--disp);font-size:13px;color:var(--txt-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+#stage{flex:1;padding:34px 0 130px;background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);background-size:26px 26px}
+.col{width:min(860px,94vw);margin:0 auto}
+
+.st-head{margin-bottom:26px;border-left:3px solid var(--honey);padding-left:16px}
+.st-head .k{font-family:var(--disp);font-size:12.5px;color:var(--honey-deep);font-weight:600}
+.st-head h2{font-size:clamp(25px,4vw,33px);margin:3px 0 7px}
+.st-head p{color:var(--txt-2);font-size:15.5px;max-width:62ch}
+
+.q{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.q-n{font-family:var(--disp);font-size:12px;font-weight:600;color:var(--txt-3);margin-bottom:7px}
+.q-p{font-size:17px;font-weight:500;margin-bottom:5px;line-height:1.4}
+.q-h{font-size:14px;color:var(--txt-2);margin-bottom:14px}
+.opts{display:grid;gap:9px;margin-top:14px}
+.opt{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start;border:1px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;background:var(--card-2);transition:border-color .12s,background .12s;text-align:left;font-size:15px}
+.opt:hover{border-color:var(--ink-3);background:#fff}
+.opt .mark{width:22px;height:22px;border-radius:50%;border:2px solid #B9C7C6;display:grid;place-items:center;margin-top:1px}
+.opt .mark::after{content:"";width:10px;height:10px;border-radius:50%;background:transparent;transition:background .12s}
+.opt.sel{border-color:var(--honey);background:var(--nectar)}
+.opt.sel .mark{border-color:var(--honey-deep)}
+.opt.sel .mark::after{background:var(--honey-deep)}
+.opt.multi .mark{border-radius:5px}
+.opt.multi .mark::after{border-radius:2px}
+.opt.svgopt{grid-template-columns:1fr;justify-items:center;padding:10px}
+.opt.svgopt .mark{display:none}
+.opt.svgopt figcaption{font-size:13.5px;margin-top:6px;color:var(--txt-2)}
+.optgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.lik{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
+.lik button{border:1px solid var(--line);background:var(--card-2);border-radius:7px;padding:9px 4px;font-size:12.5px;line-height:1.25;color:var(--txt-2)}
+.lik button.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+textarea,input[type=text],input[type=number],input[type=email],select{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px 13px;background:var(--card-2);font-size:15px}
+textarea{min-height:96px;resize:vertical;font-family:var(--sans)}
+textarea:focus,input:focus,select:focus{background:#fff;border-color:var(--ink-3)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;font-size:13.5px;font-weight:500;color:var(--txt-2);margin-bottom:6px}
+.field.full{grid-column:1/-1}
+.wc{font-size:12px;color:var(--txt-3);margin-top:6px;text-align:right}
+
+/* sim shell */
+.sim{border:1px solid var(--line);border-radius:10px;background:linear-gradient(180deg,#F4F7F6,#EAEFEE);padding:14px;margin:14px 0}
+.sim canvas{width:100%;display:block;border-radius:7px;background:#fff;border:1px solid var(--line-2);touch-action:none}
+.sim svg{width:100%;display:block;border-radius:7px;background:#fff;border:1px solid var(--line-2)}
+.simbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:12px}
+.simbar .btn{padding:9px 16px;font-size:14px}
+.pill{font-family:var(--disp);font-size:12.5px;background:var(--ink);color:#CFE0DF;padding:5px 11px;border-radius:999px}
+.pill.hot{background:var(--honey);color:#20160A}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:12px}
+.sl label{display:flex;justify-content:space-between;font-size:13px;color:var(--txt-2);margin-bottom:4px;font-family:var(--disp)}
+.sl label b{color:var(--ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--honey);height:22px}
+table.log{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px;background:#fff;border-radius:7px;overflow:hidden}
+table.log th{background:var(--ink);color:#CFE0DF;font-family:var(--disp);font-weight:500;font-size:12px;padding:7px 9px;text-align:left}
+table.log td{padding:7px 9px;border-top:1px solid var(--line-2)}
+table.log tr.pick td{background:var(--nectar)}
+table.log tr.clickable{cursor:pointer}
+.tag{display:inline-block;font-size:11.5px;font-family:var(--disp);padding:2px 8px;border-radius:999px;background:var(--card-2);border:1px solid var(--line);color:var(--txt-2)}
+.tag.ok{background:#E4F3EA;color:var(--good);border-color:#BFE3CE}
+.tag.no{background:#FBE9E5;color:var(--alert);border-color:#F2C9C0}
+.note{background:var(--nectar);border:1px solid #EBCE86;border-radius:8px;padding:12px 14px;font-size:14px;margin:12px 0}
+.ideas{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.idea{background:var(--ink);color:#DCEAE9;font-size:13px;padding:5px 11px;border-radius:999px;display:flex;gap:7px;align-items:center}
+.idea button{color:#8FB0AF;font-size:15px;line-height:1}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+
+/* nav */
+#nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:45}
+.navin{width:min(860px,94vw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 0}
+.navmsg{font-size:13.5px;color:var(--txt-3)}
+.navmsg.warn{color:var(--alert);font-weight:500}
+
+/* report */
+#report{background:var(--card);min-height:100dvh}
+.rep{width:min(980px,94vw);margin:0 auto;padding:40px 0 80px}
+.rep-hero{background:var(--ink);color:#EAF2F1;border-radius:14px;padding:30px;display:grid;grid-template-columns:1fr auto;gap:26px;align-items:center}
+.rep-hero h2{font-size:29px;color:#fff}
+.rep-hero p{color:#A9C4C3;font-size:15px;margin-top:7px;max-width:52ch}
+.verdict{font-family:var(--disp);font-size:13px;font-weight:600;padding:7px 15px;border-radius:999px;display:inline-block;margin-bottom:11px}
+.score-ring{text-align:center}
+.score-ring b{font-family:var(--disp);font-size:52px;font-weight:700;color:var(--honey);display:block;line-height:1}
+.score-ring span{font-size:12px;color:#8FB0AF}
+.dims{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px}
+.dim{border:1px solid var(--line);border-radius:10px;padding:16px}
+.dim h4{font-size:15px;display:flex;justify-content:space-between;align-items:baseline;gap:9px}
+.dim h4 b{font-family:var(--disp);font-size:19px}
+.bar{height:7px;border-radius:4px;background:#E3E9E8;margin:9px 0 10px;position:relative}
+.bar i{display:block;height:100%;border-radius:4px}
+.bar u{position:absolute;top:-4px;width:2px;height:15px;background:var(--ink);opacity:.5;border-radius:1px}
+.chance{font-size:12px;color:var(--txt-3);margin-top:-4px;margin-bottom:8px}
+.dim p{font-size:13.5px;color:var(--txt-2)}
+.sec{margin-top:34px}
+.sec h3{font-size:20px;margin-bottom:13px;padding-bottom:8px;border-bottom:2px solid var(--honey);display:inline-block}
+.sec ul{padding-left:19px;display:grid;gap:8px;font-size:15px}
+.quote{border-left:3px solid var(--line);padding:4px 0 4px 14px;margin:9px 0;font-size:14.5px;color:var(--txt-2);font-style:italic}
+.flags{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.flag{font-size:13px;padding:6px 12px;border-radius:7px;background:var(--card-2);border:1px solid var(--line)}
+.flag.a{background:#FBE9E5;border-color:#F2C9C0}
+.flag.g{background:#E4F3EA;border-color:#BFE3CE}
+.sendbox{margin-top:34px;border:2px solid var(--ink);border-radius:12px;padding:22px;background:var(--card-2)}
+.sendbox h3{font-size:19px;margin-bottom:8px}
+.status{font-size:14.5px;padding:11px 14px;border-radius:8px;margin-top:14px}
+.status.ok{background:#E4F3EA;color:#1D6B41;border:1px solid #BFE3CE}
+.status.bad{background:#FBE9E5;color:#8E2A19;border:1px solid #F2C9C0}
+.status.busy{background:var(--nectar);border:1px solid #EBCE86}
+details.raw{margin-top:20px;font-size:13px}
+details.raw pre{background:var(--ink);color:#BCD2D1;padding:14px;border-radius:8px;overflow:auto;max-height:300px;font-size:11.5px;line-height:1.5}
+@media(max-width:820px){
+  .w-grid{grid-template-columns:1fr;gap:34px;padding:44px 0}
+  .dims,.fields{grid-template-columns:1fr}
+  .rep-hero{grid-template-columns:1fr;text-align:left}
+  .cell{width:21px;height:24px;font-size:9px}
+  .tb-id small{display:none}
+}
+@media print{
+  #topbar,#nav,.sendbox,.btn,details.raw{display:none !important}
+  body{background:#fff}
+  .rep-hero{background:#fff;color:#000;border:2px solid #000}
+  .rep-hero h2,.rep-hero p,.score-ring span{color:#000}
+  .dim,.sec{break-inside:avoid}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+</style>
+</head>
+<body>
+
+<!-- =================== WELCOME =================== -->
+<section id="welcome">
+  <canvas id="combCanvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="w-grid">
+      <div>
+        <div class="brandline">
+          <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <path d="M20 2 36 11v18L20 38 4 29V11z" stroke="#F5A623" stroke-width="2.2"/>
+            <path d="M20 11 28 15.5v9L20 29l-8-4.5v-9z" fill="#F5A623" opacity=".28"/>
+            <circle cx="20" cy="20" r="3.2" fill="#F5A623"/>
+          </svg>
+          <b>Bee Skill Center<span>Zarout · Jiyeh · Lebanon</span></b>
+        </div>
+        <h1>Physics is a workshop.<em>Let's see how you work.</em></h1>
+        <p class="lede">This is not a physics exam. Nothing to revise, nothing to memorise. It is a set of nine hands-on stations that show us how you observe, test, measure, build and think — so we can place you in the right group when we open in October 2026.</p>
+        <p class="ar">مركز بي لصقل المهارات — تقييم القبول لمسار الفيزياء التطبيقية</p>
+        <div class="facts">
+          <span class="fact"><b>9</b> stations</span>
+          <span class="fact"><b>16</b> live simulations</span>
+          <span class="fact"><b>40</b> min, roughly</span>
+          <span class="fact">ages <b>12–18</b></span>
+        </div>
+        <div class="start-row">
+          <button class="btn" id="startBtn">Start the assessment</button>
+          <p class="start-note">Works offline. Your report is generated on this device the moment you finish.</p>
+        </div>
+      </div>
+      <aside class="panel">
+        <h3>Before you begin</h3>
+        <ul class="rules">
+          <li><i>1</i><span>Work alone. A parent or friend helping changes what we see, and that helps nobody.</span></li>
+          <li><i>2</i><span>No calculator, no phone, no searching. Estimating roughly is a skill we are measuring.</span></li>
+          <li><i>3</i><span>Some tasks are meant to be hard. We watch <em>how</em> you attack them, not only whether you finish.</span></li>
+          <li><i>4</i><span>Play with every simulation. Pressing "run" ten times tells us more than answering fast.</span></li>
+          <li><i>5</i><span>If you truly do not know, pick what you think is most likely and move on. Blank tells us nothing.</span></li>
+          <li><i>6</i><span>Finish in one sitting. Closing this page loses your work.</span></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- =================== ASSESSMENT SHELL =================== -->
+<div id="shell" class="hide">
+  <header id="topbar">
+    <div class="tb">
+      <div class="tb-id">Bee Skill Center<small>Physics entrance assessment</small></div>
+      <div class="comb" id="comb"></div>
+      <div class="clock" id="clock">00:00</div>
+    </div>
+  </header>
+  <main id="stage"><div class="col" id="stationHost"></div></main>
+  <nav id="nav">
+    <div class="navin">
+      <button class="btn ghost sm" id="backBtn">Back</button>
+      <span class="navmsg" id="navMsg"></span>
+      <button class="btn" id="nextBtn">Continue</button>
+    </div>
+  </nav>
+</div>
+
+<!-- =================== REPORT =================== -->
+<div id="report" class="hide"><div class="rep" id="repHost"></div></div>
+
+<script>
+/* ===================================================================
+   BEE SKILL CENTER — PHYSICS ENTRANCE ASSESSMENT
+   Single-file app. No dependencies. No browser storage used.
+   =================================================================== */
+
+/* ------------------------- CONFIGURATION -------------------------- */
+const CFG = {
+  instructorEmail: "aghozlan.81@gmail.com",
+  centerName: "Bee Skill Center",
+  location: "Zarout – Jiyeh, Lebanon",
+  cohort: "Winter intake — October 2026",
+
+  /* Delivery. The app tries these in order, then falls back to file download.
+     A) FormSubmit  — zero setup. First submission sends YOU an activation
+        link; click it once and every later submission lands in your inbox.
+     B) Google Apps Script — paste a Web App URL here for full control.
+     C) Formspree — paste a form endpoint here if you prefer it.        */
+  formsubmit: "https://formsubmit.co/ajax/aghozlan.81@gmail.com",
+  googleScriptUrl: "",
+  formspreeUrl: "",
+
+  autoDownloadBackup: true,   // always drop a JSON copy on the student's device
+  minTextWords: 6             // below this a written answer counts as unattempted
+};
+/* URL overrides for testing: ?gs=<url>  ?fs=<url>  ?formsubmit=0 */
+(function(){ const p=new URLSearchParams(location.search);
+  if(p.get("gs")) CFG.googleScriptUrl=p.get("gs");
+  if(p.get("fs")) CFG.formspreeUrl=p.get("fs");
+  if(p.get("formsubmit")==="0") CFG.formsubmit="";
+})();
+
+/* --------------------------- DIMENSIONS --------------------------- */
+const DIMS = {
+  observe:{name:"Observation & physical intuition", short:"Observation",
+    why:"Noticing what actually happened, and having a working gut feeling for how objects behave.",
+    ref:"Force Concept Inventory (Hestenes et al.); NGSS practice 1"},
+  method:{name:"Scientific method & fair testing", short:"Fair testing",
+    why:"Changing one thing at a time, and knowing which evidence proves which claim.",
+    ref:"Control-of-Variables Strategy (Chen & Klahr); NGSS practice 3"},
+  data:{name:"Data & graph literacy", short:"Data",
+    why:"Reading a graph or table and pulling the story out of it.",
+    ref:"NGSS practice 4; AAAS Project 2061 benchmarks"},
+  spatial:{name:"Spatial & mechanical reasoning", short:"Mechanical",
+    why:"Seeing how gears, levers and structures move before you touch them. The strongest single predictor of kit-building success.",
+    ref:"Bennett Mechanical Comprehension framework"},
+  measure:{name:"Measurement & estimation", short:"Measurement",
+    why:"Reading instruments honestly and judging whether a number is sane.",
+    ref:"NGSS practice 5; metrology basics"},
+  solve:{name:"Problem solving & persistence", short:"Persistence",
+    why:"Staying with a hard problem, changing strategy instead of repeating it.",
+    ref:"Duckworth grit research; Polya problem-solving stages"},
+  create:{name:"Creativity & making", short:"Making",
+    why:"Generating many different ideas, and having hands that have already built things.",
+    ref:"Torrance divergent thinking (fluency / flexibility / originality)"},
+  team:{name:"Collaboration, drive & safety", short:"Teamwork",
+    why:"Behaving well on a shared bench, and wanting to be here.",
+    ref:"Situational judgement design; makerspace safety practice"}
+};
+const DIMKEYS = Object.keys(DIMS);
+
+/* ----------------------------- STATE ------------------------------ */
+const S = {
+  started:0, idx:0, ans:{}, tele:{}, lab:{}, profile:{},
+  stationTime:{}, stationEnter:0, changes:0
+};
+const $ = s => document.querySelector(s);
+const el = (t,a={},kids=[]) => {
+  const n = document.createElement(t);
+  for(const k in a){
+    if(k==="class") n.className=a[k];
+    else if(k==="html") n.innerHTML=a[k];
+    else if(k==="text") n.textContent=a[k];
+    else if(k.startsWith("on")) n.addEventListener(k.slice(2),a[k]);
+    else n.setAttribute(k,a[k]);
+  }
+  (Array.isArray(kids)?kids:[kids]).forEach(c=>c&&n.appendChild(typeof c==="string"?document.createTextNode(c):c));
+  return n;
+};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const words = t => (t||"").trim().split(/\s+/).filter(w=>w.length>1).length;
+const now = ()=>Date.now();
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function setAns(id,val){
+  if(S.ans[id]!==undefined && JSON.stringify(S.ans[id])!==JSON.stringify(val)) S.changes++;
+  S.ans[id]=val;
+  if(!S.tele[id]) S.tele[id]={};
+  const t=now();
+  S.tele[id].t = Math.round((t-S.stationEnter)/1000);
+  if(S.tele[id].dt===undefined) S.tele[id].dt = Math.round((t-(S.lastAt||S.stationEnter))/1000);
+  S.lastAt=t;
+  refreshNav();
+}
+function tele(id,k,v){ if(!S.tele[id]) S.tele[id]={}; S.tele[id][k]=v; }
+
+/* --------------------- HONEYCOMB HERO CANVAS ---------------------- */
+function drawComb(){
+  const c=$("#combCanvas"); if(!c) return;
+  const dpr=Math.min(2,devicePixelRatio||1);
+  const w=c.clientWidth,h=c.clientHeight;
+  c.width=w*dpr; c.height=h*dpr;
+  const x=c.getContext("2d"); x.scale(dpr,dpr); x.clearRect(0,0,w,h);
+  const R=34, dx=R*1.5, dy=R*Math.sqrt(3);
+  const cells=[];
+  for(let i=-1;i<w/dx+2;i++) for(let j=-1;j<h/dy+2;j++){
+    const cx=i*dx, cy=j*dy+(i%2?dy/2:0);
+    cells.push({cx,cy,d:Math.hypot(cx-w*0.22,cy-h*0.5)});
+  }
+  cells.sort((a,b)=>a.d-b.d);
+  let k=0;
+  const step=()=>{
+    const end=REDUCED?cells.length:Math.min(cells.length,k+9);
+    for(;k<end;k++){
+      const {cx,cy,d}=cells[k];
+      const f=clamp(1-d/(Math.max(w,h)*0.78),0,1);
+      x.beginPath();
+      for(let a=0;a<6;a++){const ang=Math.PI/180*(60*a);
+        const px=cx+R*0.92*Math.cos(ang), py=cy+R*0.92*Math.sin(ang);
+        a?x.lineTo(px,py):x.moveTo(px,py);}
+      x.closePath();
+      x.strokeStyle="rgba(245,166,35,"+(0.05+f*0.3)+")"; x.lineWidth=1; x.stroke();
+      if(f>0.72 && (k*7)%11<2){ x.fillStyle="rgba(245,166,35,.08)"; x.fill(); }
+    }
+    if(k<cells.length) requestAnimationFrame(step);
+  };
+  step();
+}
+
+/* ------------------------- ITEM RENDERERS ------------------------- */
+let qNum=0;
+function qShell(item){
+  qNum++; item.__n=qNum;
+  const box=el("div",{class:"q",id:"box_"+item.id});
+  const tagTxt = item.dim ? DIMS[item.dim].short : "Profile";
+  box.appendChild(el("div",{class:"q-n",text:"Question "+qNum+"  ·  "+tagTxt}));
+  box.appendChild(el("div",{class:"q-p",html:item.prompt}));
+  if(item.help) box.appendChild(el("div",{class:"q-h",html:item.help}));
+  return box;
+}
+function renderMC(item){
+  const box=qShell(item);
+  if(item.widget) item.widget(box,item);
+  const wrapClass = item.svg ? "optgrid" : "opts";
+  const wrap=el("div",{class:wrapClass});
+  item.options.forEach((o,i)=>{
+    const b=el("button",{class:"opt"+(item.svg?" svgopt":""),type:"button"});
+    if(item.svg){
+      const fig=el("figure",{});
+      fig.appendChild(el("div",{html:o.svg}));
+      fig.appendChild(el("figcaption",{text:o.t}));
+      b.appendChild(fig);
+    } else {
+      b.appendChild(el("span",{class:"mark"}));
+      b.appendChild(el("span",{html:o.t}));
+    }
+    b.addEventListener("click",()=>{
+      wrap.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));
+      b.classList.add("sel"); setAns(item.id,i);
+      if(item.after) item.after(i,box);
+    });
+    wrap.appendChild(b);
+  });
+  box.appendChild(wrap);
+  return box;
+}
+function renderMulti(item){
+  const box=qShell(item);
+  const wrap=el("div",{class:"opts"});
+  const picked=new Set();
+  item.options.forEach((o,i)=>{
+    const b=el("button",{class:"opt multi",type:"button"});
+    b.appendChild(el("span",{class:"mark"}));
+    b.appendChild(el("span",{html:o.t}));
+    b.addEventListener("click",()=>{
+      if(picked.has(i)){picked.delete(i);b.classList.remove("sel");}
+      else{picked.add(i);b.classList.add("sel");}
+      setAns(item.id,[...picked].sort((a,b)=>a-b));
+    });
+    wrap.appendChild(b);
+  });
+  box.appendChild(wrap); return box;
+}
+function renderLikert(item){
+  const box=qShell(item);
+  const labels=item.labels||["Never","Rarely","Sometimes","Often","Always"];
+  const wrap=el("div",{class:"lik"});
+  labels.forEach((L,i)=>{
+    const b=el("button",{type:"button",text:L});
+    b.addEventListener("click",()=>{wrap.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");setAns(item.id,i);});
+    wrap.appendChild(b);
+  });
+  box.appendChild(wrap); return box;
+}
+function renderText(item){
+  const box=qShell(item);
+  const ta=el("textarea",{placeholder:item.ph||"Write your answer in your own words…"});
+  const wc=el("div",{class:"wc",text:"0 words"});
+  ta.addEventListener("input",()=>{const w=words(ta.value);wc.textContent=w+" words";setAns(item.id,ta.value);});
+  box.appendChild(ta); box.appendChild(wc); return box;
+}
+function renderNum(item){
+  const box=qShell(item);
+  if(item.widget) item.widget(box,item);
+  const row=el("div",{class:"row"});
+  const inp=el("input",{type:"text",inputmode:"decimal",placeholder:item.ph||"Your number",style:"max-width:200px"});
+  inp.addEventListener("input",()=>setAns(item.id,inp.value.trim()));
+  row.appendChild(inp);
+  if(item.unit) row.appendChild(el("span",{class:"tag",text:item.unit}));
+  box.appendChild(row); return box;
+}
+function renderWidget(item){ const box=qShell(item); item.widget(box,item); return box; }
+
+const RENDER={mc:renderMC,multi:renderMulti,likert:renderLikert,text:renderText,num:renderNum,widget:renderWidget};
+
+/* ------------------------ STATION ENGINE -------------------------- */
+function buildComb(){
+  const c=$("#comb"); c.innerHTML="";
+  STATIONS.forEach((st,i)=>{
+    const d=el("div",{class:"cell"+(i<S.idx?" done":"")+(i===S.idx?" now":""),text:String(i+1),title:st.title});
+    c.appendChild(d);
+  });
+}
+function renderStation(){
+  const st=STATIONS[S.idx]; qNum=0;
+  S.stationEnter=now(); S.lastAt=now();
+  const host=$("#stationHost"); host.innerHTML="";
+  const head=el("div",{class:"st-head"});
+  head.appendChild(el("div",{class:"k",text:"Station "+(S.idx+1)+" of "+STATIONS.length}));
+  head.appendChild(el("h2",{text:st.title}));
+  head.appendChild(el("p",{html:st.intro}));
+  host.appendChild(head);
+  if(st.custom){ st.custom(host); }
+  else st.items.forEach(it=>host.appendChild(RENDER[it.type](it)));
+  buildComb(); refreshNav();
+  $("#backBtn").style.visibility = S.idx===0?"hidden":"visible";
+  $("#nextBtn").textContent = S.idx===STATIONS.length-1 ? "Finish & build my report" : "Continue";
+  window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"});
+}
+function requiredMissing(){
+  const st=STATIONS[S.idx];
+  if(st.gate) return st.gate();
+  const need=(st.items||[]).filter(i=>i.req!==false);
+  const miss=need.filter(i=>{
+    const v=S.ans[i.id];
+    if(v===undefined||v===null||v==="") return true;
+    if(Array.isArray(v)&&!v.length&&!i.allowEmpty) return true;
+    if(i.type==="text"&&words(v)<CFG.minTextWords) return true;
+    return false;
+  });
+  if(!miss.length) return "";
+  S.firstMissing=miss[0].id;
+  const ns=miss.map(i=>i.__n).filter(Boolean);
+  return ns.length
+    ? "Still open: question"+(ns.length>1?"s ":" ")+ns.join(", ")+" — tap to jump"
+    : miss.length+" item"+(miss.length>1?"s":"")+" still need an answer";
+}
+function refreshNav(){
+  const m=requiredMissing();
+  const n=$("#navMsg");
+  n.textContent=m||"";
+  n.className="navmsg"+(m?" warn":"");
+  n.style.cursor=m?"pointer":"default";
+  $("#nextBtn").disabled=!!m;
+}
+$("#navMsg")&&$("#navMsg").addEventListener("click",()=>{
+  const t=document.getElementById("box_"+S.firstMissing);
+  if(t){ t.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"center"});
+    t.style.transition="box-shadow .3s"; t.style.boxShadow="0 0 0 3px var(--honey)";
+    setTimeout(()=>t.style.boxShadow="",1600); }
+});
+function go(d){
+  S.stationTime[S.idx]=(S.stationTime[S.idx]||0)+Math.round((now()-S.stationEnter)/1000);
+  if(d>0 && S.idx===STATIONS.length-1){ finish(); return; }
+  S.idx=clamp(S.idx+d,0,STATIONS.length-1);
+  renderStation();
+}
+function tick(){
+  if(!S.started) return;
+  const s=Math.floor((now()-S.started)/1000);
+  $("#clock").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+}
+
+/* =================================================================
+   SIMULATION WIDGETS
+   ================================================================= */
+function mkCanvas(box,w,h){
+  const sim=el("div",{class:"sim"});
+  const c=el("canvas"); c.width=w; c.height=h; c.style.aspectRatio=w+"/"+h;
+  sim.appendChild(c); box.appendChild(sim);
+  return {sim,c,x:c.getContext("2d")};
+}
+function bar(sim){ const b=el("div",{class:"simbar"}); sim.appendChild(b); return b; }
+function pill(txt,hot){ return el("span",{class:"pill"+(hot?" hot":""),text:txt}); }
+function ball(x,cx,cy,r,fill,stroke){
+  x.beginPath(); x.arc(cx,cy,r,0,7); x.fillStyle=fill; x.fill();
+  if(stroke){x.lineWidth=2;x.strokeStyle=stroke;x.stroke();}
+}
+function ground(x,w,y){ x.strokeStyle="#0E1F27"; x.lineWidth=3; x.beginPath(); x.moveTo(0,y); x.lineTo(w,y); x.stroke(); }
+
+/* --- 1. RAMP RACE: same height, two angles ------------------------ */
+function simRamp(box,item){
+  const {sim,c,x}=mkCanvas(box,820,330);
+  const b=bar(sim);
+  const runs=pill("runs: 0");
+  let n=0,raf=0,t0=0;
+  const H=190, topY=60, floorY=topY+H;
+  const R1={ang:52,color:"#F5A623"}, R2={ang:24,color:"#127A72"};
+  R1.L=H/Math.sin(R1.ang*Math.PI/180); R2.L=H/Math.sin(R2.ang*Math.PI/180);
+  const g=520;
+  const acc=r=>g*Math.sin(r.ang*Math.PI/180);
+  const tEnd=r=>Math.sqrt(2*r.L/acc(r));
+  function draw(t){
+    x.clearRect(0,0,820,330);
+    x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,330);
+    ground(x,820,floorY);
+    [[R1,50],[R2,352]].forEach(([r,x0])=>{
+      const base=r.L*Math.cos(r.ang*Math.PI/180);
+      x.beginPath(); x.moveTo(x0,floorY); x.lineTo(x0,topY); x.lineTo(x0+base,floorY); x.closePath();
+      x.fillStyle="rgba(14,31,39,.07)"; x.fill();
+      x.strokeStyle="#0E1F27"; x.lineWidth=2.5; x.stroke();
+      const te=tEnd(r), tt=Math.min(t,te);
+      const d=0.5*acc(r)*tt*tt;
+      const px=x0+d*Math.cos(r.ang*Math.PI/180), py=topY+d*Math.sin(r.ang*Math.PI/180);
+      ball(x,px,py-14,13,r.color,"#0E1F27");
+      x.fillStyle="#4A6470"; x.font="13px 'IBM Plex Sans',sans-serif";
+      x.fillText(r.ang+"° slope",x0+4,topY-14);
+      if(t>=te){ x.fillStyle=r.color; x.font="600 15px 'Space Grotesk',sans-serif";
+        x.fillText("arrived "+te.toFixed(2)+" s",x0+4,floorY+26); }
+    });
+    x.fillStyle="#7B919B"; x.font="12px 'IBM Plex Sans',sans-serif";
+    x.fillText("Both balls start at the same height. Both released at the same moment.",60,28);
+  }
+  draw(0);
+  const run=()=>{ cancelAnimationFrame(raf); n++; runs.textContent="runs: "+n; tele(item.id,"runs",n);
+    t0=now(); const loop=()=>{ const t=(now()-t0)/1000;
+      draw(REDUCED?99:t); if(t<Math.max(tEnd(R1),tEnd(R2))+1.2) raf=requestAnimationFrame(loop); };
+    loop(); };
+  b.appendChild(el("button",{class:"btn sm",type:"button",text:"Release both balls",onclick:run}));
+  b.appendChild(runs);
+  b.appendChild(el("span",{class:"tag",text:"watch it more than once"}));
+}
+
+/* --- 2. DROP TUBE: air vs vacuum ---------------------------------- */
+function simDrop(box,item){
+  const {sim,c,x}=mkCanvas(box,820,320);
+  const b=bar(sim);
+  let vac=false,t0=0,raf=0,n=0;
+  const floorY=280;
+  function pos(t,k){ // k = drag coefficient
+    if(vac||k===0) return 0.5*420*t*t;
+    const vt=90/k; return vt*t - vt*vt/420*(1-Math.exp(-420*t/vt));
+  }
+  function draw(t){
+    x.clearRect(0,0,820,320); x.fillStyle=vac?"#0E1F27":"#F4F7F6"; x.fillRect(0,0,820,320);
+    x.strokeStyle=vac?"#2C4A55":"#C9D6D4"; x.lineWidth=2;
+    x.strokeRect(250,30,320,250);
+    x.fillStyle=vac?"#8FB0AF":"#4A6470"; x.font="13px 'IBM Plex Sans',sans-serif";
+    x.fillText(vac?"air pumped out (vacuum)":"tube full of air",256,22);
+    ground(x,820,floorY);
+    const yc=clamp(50+pos(t,0.4),50,floorY-11), yf=clamp(50+pos(t,2.6),50,floorY-11);
+    ball(x,330,yc,11,"#F5A623","#0E1F27");
+    x.save(); x.translate(490,yf); x.rotate(Math.sin(t*4)*0.3);
+    x.beginPath(); x.ellipse(0,0,16,6,0,0,7); x.fillStyle="#EAF2F1"; x.fill();
+    x.strokeStyle="#0E1F27"; x.lineWidth=1.6; x.stroke(); x.restore();
+    x.fillStyle=vac?"#8FB0AF":"#4A6470"; x.font="12px 'IBM Plex Sans',sans-serif";
+    x.fillText("metal coin",300,300); x.fillText("feather",468,300);
+  }
+  draw(0);
+  const run=()=>{cancelAnimationFrame(raf);n++;tele(item.id,"runs",n);t0=now();
+    const loop=()=>{const t=(now()-t0)/1000;draw(REDUCED?3:t);if(t<3.4)raf=requestAnimationFrame(loop);};loop();};
+  b.appendChild(el("button",{class:"btn sm",type:"button",text:"Drop both",onclick:run}));
+  const tg=el("button",{class:"btn ghost sm",type:"button",text:"Pump the air out"});
+  tg.addEventListener("click",()=>{vac=!vac;tg.textContent=vac?"Let the air back in":"Pump the air out";tele(item.id,"toggledVacuum",true);run();});
+  b.appendChild(tg);
+}
+
+/* --- 3. CART STOPS SUDDENLY -------------------------------------- */
+function simCart(box,item){
+  const {sim,c,x}=mkCanvas(box,820,300);
+  const b=bar(sim); let t0=0,raf=0,n=0;
+  const floorY=240, wallX=620;
+  function draw(t){
+    x.clearRect(0,0,820,300); x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,300);
+    ground(x,820,floorY);
+    x.fillStyle="#0E1F27"; x.fillRect(wallX,196,16,44);
+    const v=260, hitT=(wallX-160)/v;
+    const cx=t<hitT?100+v*t:100+v*hitT;
+    x.fillStyle="#127A72"; x.fillRect(cx,floorY-44,120,34);
+    ball(x,cx+18,floorY-10,10,"#0E1F27"); ball(x,cx+102,floorY-10,10,"#0E1F27");
+    let bx=cx+60,by=floorY-58;
+    if(t>hitT){ const dt=t-hitT; bx=cx+60+v*dt; by=floorY-58+0.5*700*dt*dt; }
+    if(by<floorY-12) ball(x,bx,by,14,"#F5A623","#0E1F27");
+    else ball(x,Math.min(bx,800),floorY-12,14,"#F5A623","#0E1F27");
+    x.fillStyle="#7B919B"; x.font="12px 'IBM Plex Sans',sans-serif";
+    x.fillText("A ball rests on a moving cart. The cart hits the wall and stops dead.",60,32);
+  }
+  draw(0);
+  const run=()=>{cancelAnimationFrame(raf);n++;tele(item.id,"runs",n);t0=now();
+    const loop=()=>{const t=(now()-t0)/1000;draw(REDUCED?2.4:t);if(t<2.8)raf=requestAnimationFrame(loop);};loop();};
+  b.appendChild(el("button",{class:"btn sm",type:"button",text:"Roll the cart",onclick:run}));
+  b.appendChild(el("span",{class:"tag",text:"predict before you press"}));
+}
+
+/* --- 4. SPOT THE CHANGE ------------------------------------------ */
+function simSpot(box,item){
+  const {sim,c,x}=mkCanvas(box,820,320);
+  const b=bar(sim);
+  const A={len:150,ang:30,bob:16,ruler:640};
+  const B={len:150,ang:30,bob:16,ruler:560};   // the ruler moved
+  let cur=A,label="Run A",t0=0,raf=0,seen={A:0,B:0};
+  function draw(p,t){
+    x.clearRect(0,0,820,320); x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,320);
+    x.fillStyle="#0E1F27"; x.fillRect(150,40,420,10);
+    const px=360, py=50;
+    const th=p.ang*Math.PI/180*Math.cos(t*2.4);
+    const bx=px+p.len*Math.sin(th), by=py+p.len*Math.cos(th);
+    x.strokeStyle="#0E1F27"; x.lineWidth=2; x.beginPath(); x.moveTo(px,py); x.lineTo(bx,by); x.stroke();
+    ball(x,bx,by,p.bob,"#F5A623","#0E1F27");
+    x.fillStyle="#127A72"; x.fillRect(p.ruler,150,22,120);
+    x.fillStyle="#fff"; for(let i=1;i<6;i++){x.fillRect(p.ruler,150+i*20,10,2);}
+    x.fillStyle="#4A6470"; x.font="12px 'IBM Plex Sans',sans-serif"; x.fillText("ruler",p.ruler-4,286);
+    ground(x,820,300);
+    x.fillStyle="#0E1F27"; x.font="600 15px 'Space Grotesk',sans-serif"; x.fillText(label,60,30);
+  }
+  draw(A,0);
+  const play=(p,L)=>{cancelAnimationFrame(raf);cur=p;label=L;seen[L.slice(-1)]++;tele(item.id,"views",seen.A+seen.B);
+    t0=now();const loop=()=>{const t=(now()-t0)/1000;draw(p,t);if(t<5)raf=requestAnimationFrame(loop);};loop();};
+  b.appendChild(el("button",{class:"btn sm",type:"button",text:"Play run A",onclick:()=>play(A,"Run A")}));
+  b.appendChild(el("button",{class:"btn dark sm",type:"button",text:"Play run B",onclick:()=>play(B,"Run B")}));
+  b.appendChild(el("span",{class:"tag",text:"exactly one thing is different"}));
+}
+
+/* --- 5. PENDULUM LAB (the fair-test core task) -------------------- */
+function pendulumLab(box,item){
+  const {sim,c,x}=mkCanvas(box,820,300);
+  S.lab.trials=S.lab.trials||[];
+  let L=60,M=100,A=20,running=false,t0=0,raf=0;
+  const st=el("div",{class:"sliders"});
+  const mk=(lab,min,max,val,unit,cb)=>{
+    const d=el("div",{class:"sl"});
+    const l=el("label",{html:lab+" <b>"+val+" "+unit+"</b>"});
+    const r=el("input",{type:"range",min:min,max:max,value:val,step:1});
+    r.addEventListener("input",()=>{l.innerHTML=lab+" <b>"+r.value+" "+unit+"</b>";cb(+r.value);});
+    d.appendChild(l);d.appendChild(r);st.appendChild(d);
+  };
+  mk("String length",20,100,L,"cm",v=>{L=v;draw(0)});
+  mk("Bob mass",20,200,M,"g",v=>{M=v;draw(0)});
+  mk("Release angle",5,40,A,"°",v=>{A=v;draw(0)});
+  sim.appendChild(st);
+  const b=bar(sim);
+  const status=pill("trials: "+S.lab.trials.length);
+  const tbl=el("table",{class:"log"});
+  function period(){ const Lm=L/100, T=2*Math.PI*Math.sqrt(Lm/9.81)*(1+Math.pow(A*Math.PI/180,2)/16);
+    return T*(1+(Math.random()-0.5)*0.012); }
+  function draw(t){
+    x.clearRect(0,0,820,300); x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,300);
+    x.fillStyle="#0E1F27"; x.fillRect(210,28,400,9);
+    const px=410,py=37,scale=2.3,Lp=L*scale*0.9;
+    const T=2*Math.PI*Math.sqrt((L/100)/9.81);
+    const th=A*Math.PI/180*Math.cos(2*Math.PI*t/T)*(running?1:1);
+    const bx=px+Lp*Math.sin(th), by=py+Lp*Math.cos(th);
+    x.strokeStyle="#4A6470"; x.setLineDash([4,4]); x.beginPath(); x.moveTo(px,py); x.lineTo(px,py+Lp+16); x.stroke(); x.setLineDash([]);
+    x.strokeStyle="#0E1F27"; x.lineWidth=2; x.beginPath(); x.moveTo(px,py); x.lineTo(bx,by); x.stroke();
+    const r=8+Math.sqrt(M)*0.75;
+    ball(x,bx,by,r,"#F5A623","#0E1F27");
+    x.fillStyle="#4A6470"; x.font="12px 'IBM Plex Sans',sans-serif";
+    x.fillText("length "+L+" cm   ·   mass "+M+" g   ·   angle "+A+"°",210,290);
+  }
+  draw(0);
+  const runBtn=el("button",{class:"btn sm",type:"button",text:"Run 5 swings & time it"});
+  runBtn.addEventListener("click",()=>{
+    if(running) return; running=true; runBtn.disabled=true; t0=now();
+    const T=2*Math.PI*Math.sqrt((L/100)/9.81), dur=REDUCED?0.2:T*5;
+    const loop=()=>{const t=(now()-t0)/1000; draw(t);
+      if(t<dur) raf=requestAnimationFrame(loop);
+      else{ running=false; runBtn.disabled=false; draw(0);
+        const p=period(), rec={L,M,A,T:+(p).toFixed(2),five:+(p*5).toFixed(2)};
+        S.lab.trials.push(rec); status.textContent="trials: "+S.lab.trials.length;
+        paint(); refreshNav(); }};
+    loop();
+  });
+  b.appendChild(runBtn); b.appendChild(status);
+  b.appendChild(el("span",{class:"tag",text:"minimum 5 trials"}));
+  sim.appendChild(tbl);
+  function paint(){
+    tbl.innerHTML="";
+    const hr=el("tr",{});["#","Length cm","Mass g","Angle °","Time of 5 swings","One swing"].forEach(h=>hr.appendChild(el("th",{text:h})));
+    tbl.appendChild(el("thead",{},hr));
+    const tb=el("tbody",{});
+    S.lab.trials.forEach((t,i)=>{
+      const tr=el("tr",{class:"clickable"});
+      [i+1,t.L,t.M,t.A,t.five.toFixed(2)+" s",t.T.toFixed(2)+" s"].forEach(v=>tr.appendChild(el("td",{text:String(v)})));
+      tr.addEventListener("click",()=>{
+        const sel=S.ans.q_proof||[];
+        const k=sel.indexOf(i);
+        if(k>=0) sel.splice(k,1); else { if(sel.length>=2) sel.shift(); sel.push(i); }
+        setAns("q_proof",sel.slice()); paint();
+      });
+      if((S.ans.q_proof||[]).includes(i)) tr.classList.add("pick");
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+  }
+  paint();
+}
+
+/* --- 6. MOTION → GRAPH MATCHING ---------------------------------- */
+function graphSVG(fn,label){
+  let pts=""; for(let i=0;i<=40;i++){const t=i/40; pts+=(20+t*120)+","+(100-fn(t)*76)+" ";}
+  return '<svg viewBox="0 0 160 120" width="150"><rect x="0" y="0" width="160" height="120" fill="#fff"/>'+
+    '<line x1="20" y1="100" x2="150" y2="100" stroke="#0E1F27" stroke-width="1.6"/>'+
+    '<line x1="20" y1="100" x2="20" y2="12" stroke="#0E1F27" stroke-width="1.6"/>'+
+    '<polyline points="'+pts+'" fill="none" stroke="#F5A623" stroke-width="2.6" stroke-linejoin="round"/>'+
+    '<text x="86" y="115" font-size="9" fill="#7B919B" text-anchor="middle" font-family="sans-serif">time</text>'+
+    '<text x="10" y="56" font-size="9" fill="#7B919B" text-anchor="middle" transform="rotate(-90 10 56)" font-family="sans-serif">distance</text></svg>';
+}
+function simMotion(profile){
+  return function(box,item){
+    const {sim,c,x}=mkCanvas(box,820,150);
+    const b=bar(sim); let t0=0,raf=0,n=0;
+    function draw(t){
+      const u=(t%4)/4, s=profile(u);
+      x.clearRect(0,0,820,150); x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,150);
+      x.strokeStyle="#C9D6D4"; x.lineWidth=2; x.beginPath(); x.moveTo(60,110); x.lineTo(760,110); x.stroke();
+      for(let i=0;i<=7;i++){x.fillStyle="#C9D6D4";x.fillRect(60+i*100,102,2,16);}
+      ball(x,60+s*700,88,15,"#F5A623","#0E1F27");
+      x.fillStyle="#7B919B"; x.font="12px 'IBM Plex Sans',sans-serif";
+      x.fillText("watch the trolley travel along the track",60,30);
+      x.fillText("start",52,140); x.fillText("end",748,140);
+    }
+    draw(0);
+    const run=()=>{cancelAnimationFrame(raf);n++;tele(item.id,"runs",n);t0=now();
+      const loop=()=>{const t=(now()-t0)/1000;draw(t);if(t<8)raf=requestAnimationFrame(loop);};loop();};
+    b.appendChild(el("button",{class:"btn sm",type:"button",text:"Play the motion",onclick:run}));
+    b.appendChild(el("span",{class:"tag",text:"repeats twice"}));
+  };
+}
+
+/* --- 7. GEAR TRAIN ------------------------------------------------ */
+function gearMarkup(gears){
+  let s='<svg viewBox="0 0 700 260">';
+  gears.forEach((g,i)=>{
+    let d="";
+    const teeth=g.teeth, ro=g.r, ri=g.r*0.8;
+    for(let k=0;k<teeth;k++){
+      const a0=(k/teeth)*Math.PI*2, a1=a0+Math.PI*2/teeth*0.45, a2=a0+Math.PI*2/teeth*0.5, a3=a0+Math.PI*2/teeth*0.95;
+      d+=(k?"L":"M")+(ro*Math.cos(a0))+","+(ro*Math.sin(a0))+"L"+(ro*Math.cos(a1))+","+(ro*Math.sin(a1))+
+         "L"+(ri*Math.cos(a2))+","+(ri*Math.sin(a2))+"L"+(ri*Math.cos(a3))+","+(ri*Math.sin(a3));
+    }
+    d+="Z";
+    s+='<g class="gear" data-dir="'+g.dir+'" data-sp="'+(24/g.teeth)+'" transform="translate('+g.x+','+g.y+')">'+
+       '<path d="'+d+'" fill="'+g.fill+'" stroke="#0E1F27" stroke-width="2"/>'+
+       '<circle r="'+(g.r*0.22)+'" fill="#EDF1EF" stroke="#0E1F27" stroke-width="2"/>'+
+       '<rect x="-2.5" y="'+(-g.r*0.78)+'" width="5" height="'+(g.r*0.5)+'" fill="#0E1F27"/></g>'+
+       '<text x="'+g.x+'" y="'+(g.y+g.r+24)+'" text-anchor="middle" font-size="16" font-family="sans-serif" fill="#0E1F27">'+g.label+' · '+g.teeth+' teeth</text>';
+  });
+  return s+'</svg>';
+}
+function simGears(box,item){
+  const sim=el("div",{class:"sim"});
+  sim.innerHTML=gearMarkup([
+    {x:130,y:115,r:78,teeth:18,dir:1,fill:"#F5A623",label:"A"},
+    {x:288,y:115,r:78,teeth:18,dir:-1,fill:"#127A72",label:"B"},
+    {x:446,y:115,r:78,teeth:18,dir:1,fill:"#F5A623",label:"C"},
+    {x:590,y:115,r:60,teeth:12,dir:-1,fill:"#C2412B",label:"D"}
+  ]);
+  box.appendChild(sim);
+  const b=bar(sim); let raf=0,on=false,ang=0,last=0;
+  const step=()=>{ const t=now(); const dt=(t-last)/1000; last=t; ang+=dt*70;
+    sim.querySelectorAll(".gear").forEach(g=>{
+      const d=+g.dataset.dir, sp=+g.dataset.sp;
+      g.setAttribute("transform",g.getAttribute("transform").replace(/ rotate\([^)]*\)/,"")+" rotate("+(ang*d*sp)+")");
+    });
+    if(on) raf=requestAnimationFrame(step); };
+  const btn=el("button",{class:"btn sm",type:"button",text:"Turn handle on gear A"});
+  btn.addEventListener("click",()=>{on=!on;btn.textContent=on?"Stop the gears":"Turn handle on gear A";
+    tele(item.id,"ran",true); if(on){last=now();step();}else cancelAnimationFrame(raf);});
+  b.appendChild(btn);
+  b.appendChild(el("span",{class:"tag",text:"gear A is driven clockwise"}));
+}
+
+/* --- 8. LEVER BALANCE (drag) ------------------------------------- */
+function leverLab(box,item){
+  const {sim,c,x}=mkCanvas(box,820,290);
+  const b=bar(sim);
+  const pivot=410, per=13; // px per cm
+  const fixed={d:-20,w:3}; let move={d:22,w:4}, drops=0, drag=false;
+  function torque(){ return fixed.w*Math.abs(fixed.d) - move.w*Math.abs(move.d); }
+  function draw(){
+    x.clearRect(0,0,820,290); x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,290);
+    const tq=clamp(torque()/40,-1,1), a=tq*0.22;
+    x.save(); x.translate(pivot,150); x.rotate(a);
+    x.fillStyle="#0E1F27"; x.fillRect(-330,-7,660,14);
+    for(let d=-25;d<=25;d+=5){ if(!d) continue; x.fillStyle="#8FB0AF"; x.fillRect(d*per-1,-14,2,7);
+      x.fillStyle="#EDF1EF"; x.font="10px sans-serif"; x.fillText(Math.abs(d),d*per-6,-18); }
+    const drawW=(o,col)=>{ const w=20+o.w*11,h=16+o.w*13;
+      x.fillStyle=col; x.fillRect(o.d*per-w/2,-7-h,w,h);
+      x.strokeStyle="#0E1F27"; x.lineWidth=2; x.strokeRect(o.d*per-w/2,-7-h,w,h);
+      x.fillStyle="#fff"; x.font="600 13px 'Space Grotesk',sans-serif"; x.textAlign="center";
+      x.fillText(o.w+" kg",o.d*per,-7-h/2+5); x.textAlign="left"; };
+    drawW(fixed,"#127A72"); drawW(move,"#F5A623");
+    x.restore();
+    x.beginPath(); x.moveTo(pivot,152); x.lineTo(pivot-26,215); x.lineTo(pivot+26,215); x.closePath();
+    x.fillStyle="#0E1F27"; x.fill();
+    ground(x,820,215);
+    x.fillStyle="#4A6470"; x.font="13px 'IBM Plex Sans',sans-serif";
+    x.fillText("drag the orange 2 kg block — marks are centimetres from the pivot",60,40);
+    x.fillStyle=Math.abs(torque())<2?"#2E8B57":"#7B919B"; x.font="600 14px 'Space Grotesk',sans-serif";
+    x.fillText(Math.abs(torque())<2?"balanced":"not balanced — "+(torque()>0?"the green side is winning":"the orange side is winning"),60,62);
+    x.fillStyle="#7B919B"; x.font="12px 'IBM Plex Sans',sans-serif";
+    x.fillText("orange block is "+move.d+" cm from the pivot",60,84);
+  }
+  draw();
+  const px=e=>{const r=c.getBoundingClientRect();return (e.clientX-r.left)*(820/r.width);};
+  c.addEventListener("pointerdown",e=>{drag=true;c.setPointerCapture(e.pointerId);});
+  c.addEventListener("pointermove",e=>{ if(!drag) return;
+    move.d=clamp(Math.round((px(e)-pivot)/per),4,25); draw(); });
+  c.addEventListener("pointerup",()=>{ if(!drag)return; drag=false; drops++;
+    tele(item.id,"drops",drops); setAns(item.id,move.d); draw(); });
+  b.appendChild(el("span",{class:"tag",text:"the green 3 kg block sits 20 cm to the left of the pivot"}));
+}
+
+/* --- 9. RULER + CYLINDER + TARGETS + TILT (static SVG) ----------- */
+function rulerSVG(box){
+  const sim=el("div",{class:"sim"});
+  let ticks="";
+  for(let mm=0;mm<=100;mm++){ const xp=50+mm*6.6, h=mm%10===0?26:(mm%5===0?17:10);
+    ticks+='<line x1="'+xp+'" y1="34" x2="'+xp+'" y2="'+(34+h)+'" stroke="#0E1F27" stroke-width="'+(mm%10===0?1.8:1)+'"/>';
+    if(mm%10===0) ticks+='<text x="'+xp+'" y="80" font-size="13" text-anchor="middle" font-family="sans-serif" fill="#0E1F27">'+(mm/10)+'</text>';
+  }
+  sim.innerHTML='<svg viewBox="0 0 780 150">'+
+    '<rect x="40" y="30" width="700" height="58" fill="#FFE9B8" stroke="#0E1F27" stroke-width="2" rx="3"/>'+ticks+
+    '<text x="700" y="24" font-size="13" font-family="sans-serif" fill="#7B919B">centimetres</text>'+
+    '<rect x="'+(50+10*6.6)+'" y="100" width="'+(64*6.6)+'" height="26" fill="#127A72" stroke="#0E1F27" stroke-width="2" rx="4"/>'+
+    '<text x="330" y="142" font-size="13" font-family="sans-serif" fill="#4A6470" text-anchor="middle">the green rod</text></svg>';
+  box.appendChild(sim);
+}
+function cylinderSVG(box){
+  const sim=el("div",{class:"sim"});
+  let m="";
+  for(let v=0;v<=50;v+=2){ const y=250-v*4, long=v%10===0;
+    m+='<line x1="'+(long?92:104)+'" y1="'+y+'" x2="118" y2="'+y+'" stroke="#0E1F27" stroke-width="1.4"/>';
+    if(long) m+='<text x="84" y="'+(y+5)+'" font-size="13" text-anchor="end" font-family="sans-serif" fill="#0E1F27">'+v+'</text>';
+  }
+  sim.innerHTML='<svg viewBox="0 0 420 290">'+
+    '<rect x="90" y="30" width="80" height="225" fill="#F4F7F6" stroke="#0E1F27" stroke-width="2.5" rx="5"/>'+
+    '<path d="M90 '+(250-37*4)+' q20 9 40 0 q20 -9 40 0 V253 H90 Z" fill="#8FD3E8" opacity=".85"/>'+
+    '<path d="M90 '+(250-37*4)+' q20 9 40 0 q20 -9 40 0" fill="none" stroke="#127A72" stroke-width="2.2"/>'+
+    m+'<text x="200" y="60" font-size="14" font-family="sans-serif" fill="#4A6470">millilitres (mL)</text>'+
+    '<text x="200" y="84" font-size="13" font-family="sans-serif" fill="#7B919B">read it the way a lab would</text></svg>';
+  box.appendChild(sim);
+}
+function targetSVG(shots){
+  let s='<svg viewBox="0 0 120 120" width="120"><circle cx="60" cy="60" r="52" fill="#fff" stroke="#C9D6D4" stroke-width="1.5"/>'+
+    '<circle cx="60" cy="60" r="34" fill="none" stroke="#C9D6D4" stroke-width="1.5"/>'+
+    '<circle cx="60" cy="60" r="16" fill="#FFE9B8" stroke="#C9D6D4" stroke-width="1.5"/><circle cx="60" cy="60" r="2.5" fill="#0E1F27"/>';
+  shots.forEach(p=>s+='<circle cx="'+(60+p[0])+'" cy="'+(60+p[1])+'" r="4.6" fill="#C2412B"/>');
+  return s+'</svg>';
+}
+function glassSVG(waterAngle,label){
+  const g='<g transform="rotate(-22 60 70)">';
+  let water;
+  if(waterAngle==="level") water='<path d="M22 96 L98 96 L98 62 L22 62 Z" fill="#8FD3E8" transform="rotate(22 60 70)"/>';
+  else if(waterAngle==="tilt") water='<path d="M22 96 L98 96 L98 58 L22 74 Z" fill="#8FD3E8"/>';
+  else if(waterAngle==="anti") water='<path d="M22 96 L98 96 L98 80 L22 52 Z" fill="#8FD3E8"/>';
+  else water='<path d="M40 96 L80 96 L80 50 L40 50 Z" fill="#8FD3E8"/>';
+  return '<svg viewBox="0 0 120 130" width="130">'+g+
+    '<clipPath id="cl'+label+'"><path d="M22 20 L98 20 L98 96 L22 96 Z"/></clipPath>'+
+    '<g clip-path="url(#cl'+label+')">'+water+'</g>'+
+    '<path d="M22 18 L22 96 L98 96 L98 18" fill="none" stroke="#0E1F27" stroke-width="3"/></g></svg>';
+}
+
+/* --- 10. PIPE PUZZLE (persistence & strategy) -------------------- */
+function pipePuzzle(box,item){
+  const sim=el("div",{class:"sim"});
+  const PATH={"0,0":{t:"s",sol:0},"0,1":{t:"e",sol:2},"1,1":{t:"e",sol:0},"1,2":{t:"e",sol:2},
+              "2,2":{t:"e",sol:0},"2,3":{t:"e",sol:2},"3,3":{t:"e",sol:0},
+              "1,0":{t:"s",sol:0,d:1},"2,1":{t:"e",sol:0,d:1},"3,2":{t:"s",sol:0,d:1}};
+  const G={}; let moves=0,solved=false,start=now(),gaveUp=false;
+  Object.keys(PATH).forEach(k=>{ let r; do{ r=Math.floor(Math.random()*4);}while(r===PATH[k].sol && !PATH[k].d);
+    G[k]={t:PATH[k].t,rot:r}; });
+  const conns=c=>{ if(c.t==="s") return c.rot%2===0?["W","E"]:["N","S"];
+    return [["N","E"],["E","S"],["S","W"],["W","N"]][c.rot%4]; };
+  const OPP={N:"S",S:"N",E:"W",W:"E"}, DR={N:[-1,0],S:[1,0],E:[0,1],W:[0,-1]};
+  function check(){
+    const seen=new Set(["0,0"]); const q=[[0,0]];
+    if(!G["0,0"]||!conns(G["0,0"]).includes("W")) return false;
+    while(q.length){ const [r,cc]=q.shift(); const cell=G[r+","+cc]; if(!cell) continue;
+      for(const d of conns(cell)){
+        if(r===3&&cc===3&&d==="E") return true;
+        const nr=r+DR[d][0], nc=cc+DR[d][1], k=nr+","+nc;
+        if(nr<0||nc<0||nr>3||nc>3||!G[k]||seen.has(k)) continue;
+        if(conns(G[k]).includes(OPP[d])){ seen.add(k); q.push([nr,nc]); }
+      } }
+    return false;
+  }
+  const grid=el("div",{style:"display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:420px;margin:0 auto;background:#0E1F27;padding:8px;border-radius:10px"});
+  const status=el("div",{class:"row",style:"justify-content:center;margin-top:12px"});
+  const mv=pill("moves: 0"), res=pill("water blocked");
+  function paint(){
+    grid.innerHTML="";
+    for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+      const k=r+","+c, cell=G[k];
+      const d=el("div",{style:"aspect-ratio:1;background:"+(cell?"#EDF1EF":"#16323C")+";border-radius:6px;display:grid;place-items:center;position:relative;"+(cell?"cursor:pointer":"")});
+      if(cell){
+        const svg=cell.t==="s"
+          ? '<svg viewBox="0 0 60 60" width="100%"><line x1="0" y1="30" x2="60" y2="30" stroke="#127A72" stroke-width="13" stroke-linecap="butt"/><line x1="0" y1="30" x2="60" y2="30" stroke="#8FD3E8" stroke-width="5"/></svg>'
+          : '<svg viewBox="0 0 60 60" width="100%"><path d="M30 0 L30 30 L60 30" fill="none" stroke="#127A72" stroke-width="13"/><path d="M30 0 L30 30 L60 30" fill="none" stroke="#8FD3E8" stroke-width="5"/></svg>';
+        d.innerHTML='<div style="width:100%;transform:rotate('+(cell.rot*90)+'deg);transition:transform .15s">'+svg+'</div>';
+        d.addEventListener("click",()=>{ if(solved) return; cell.rot=(cell.rot+1)%4; moves++;
+          mv.textContent="moves: "+moves; paint(); verify(); });
+      }
+      if(r===0&&c===0) d.appendChild(el("span",{style:"position:absolute;left:-3px;top:50%;transform:translate(-100%,-50%);color:#F5A623;font-size:11px;font-family:sans-serif",text:"tank"}));
+      if(r===3&&c===3) d.appendChild(el("span",{style:"position:absolute;right:-3px;top:50%;transform:translate(100%,-50%);color:#F5A623;font-size:11px;font-family:sans-serif",text:"turbine"}));
+      grid.appendChild(d);
+    }
+  }
+  function verify(){
+    if(check()){ solved=true; res.textContent="water flowing — turbine spinning"; res.className="pill hot";
+      setAns(item.id,{solved:true,moves,secs:Math.round((now()-start)/1000)});
+      tele(item.id,"moves",moves); }
+  }
+  paint();
+  status.appendChild(mv); status.appendChild(res);
+  sim.appendChild(grid); sim.appendChild(status);
+  const b=bar(sim); b.style.justifyContent="center";
+  b.appendChild(el("button",{class:"btn ghost sm",type:"button",text:"Shuffle and restart",onclick:()=>{
+    if(solved)return; Object.keys(G).forEach(k=>G[k].rot=Math.floor(Math.random()*4)); moves++;paint();verify();}}));
+  const gu=el("button",{class:"btn ghost sm",type:"button",text:"I cannot solve this — move on"});
+  gu.addEventListener("click",()=>{ if(solved) return; gaveUp=true;
+    setAns(item.id,{solved:false,moves,secs:Math.round((now()-start)/1000),gaveUp:true});
+    res.textContent="skipped"; gu.disabled=true; });
+  b.appendChild(gu);
+  box.appendChild(sim);
+}
+
+/* --- 11. ODD BALL BALANCE ---------------------------------------- */
+function oddBall(box,item){
+  const sim=el("div",{class:"sim"});
+  const heavy=Math.floor(Math.random()*9);
+  const state=Array(9).fill(0); let weighs=0,declared=null,declareMode=false;
+  const row=el("div",{style:"display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-bottom:12px"});
+  const log=el("div",{style:"font-size:13.5px;color:#4A6470;min-height:26px;text-align:center"});
+  const btns=[];
+  for(let i=0;i<9;i++){
+    const btn=el("button",{type:"button",class:"btn ghost sm",style:"width:54px;height:54px;border-radius:50%;padding:0;font-family:var(--disp)",text:String(i+1)});
+    btn.addEventListener("click",()=>{
+      if(declared!==null) return;
+      if(declareMode){ declared=i; setAns(item.id,{found:i===heavy,weighs,heavy:heavy+1,picked:i+1});
+        log.innerHTML = i===heavy? '<b style="color:#2E8B57">Correct — ball '+(i+1)+' is the heavy one.</b> You used '+weighs+' weighing'+(weighs===1?"":"s")+'.'
+          : '<b style="color:#C2412B">Not that one.</b> Ball '+(heavy+1)+' was the heavy one.';
+        btns.forEach(x=>x.disabled=true); return; }
+      state[i]=(state[i]+1)%3; paint();
+    });
+    btns.push(btn); row.appendChild(btn);
+  }
+  function paint(){ btns.forEach((b,i)=>{
+    b.style.background=state[i]===1?"#F5A623":state[i]===2?"#127A72":"";
+    b.style.color=state[i]?"#fff":"";
+    b.style.borderColor=state[i]?"transparent":"";
+  });}
+  const b=bar(sim); b.style.justifyContent="center";
+  const wb=el("button",{class:"btn sm",type:"button",text:"Put them on the balance"});
+  wb.addEventListener("click",()=>{
+    const L=state.reduce((a,v,i)=>v===1?a.concat(i):a,[]), R=state.reduce((a,v,i)=>v===2?a.concat(i):a,[]);
+    if(!L.length||L.length!==R.length){ log.textContent="Put the same number of balls on each side first."; return; }
+    weighs++; tele(item.id,"weighs",weighs);
+    const lw=L.length+(L.includes(heavy)?1:0), rw=R.length+(R.includes(heavy)?1:0);
+    log.innerHTML="Weighing "+weighs+": <b>"+(lw>rw?"orange side is heavier":rw>lw?"green side is heavier":"they balance exactly")+"</b>";
+  });
+  b.appendChild(wb);
+  const db=el("button",{class:"btn dark sm",type:"button",text:"I know which ball — point to it"});
+  db.addEventListener("click",()=>{ declareMode=true; log.textContent="Now click the heavy ball."; db.disabled=true; });
+  b.appendChild(db);
+  b.appendChild(el("span",{class:"tag",text:"a good solver needs 2 weighings"}));
+  sim.appendChild(el("div",{class:"q-h",style:"text-align:center",text:"Nine identical-looking balls. One is slightly heavier. Click a ball once for the orange pan, twice for the green pan, three times to take it off."}));
+  sim.appendChild(row); sim.appendChild(log);
+  box.appendChild(sim);
+}
+
+/* --- 12. STEADY HAND / TIMING ------------------------------------ */
+function steadyHand(box,item){
+  const {sim,c,x}=mkCanvas(box,820,170);
+  const b=bar(sim); let raf=0,t0=now(),go=false,tries=[],target=0.5;
+  function pos(){ return 0.5+0.44*Math.sin((now()-t0)/430); }
+  function draw(){
+    x.clearRect(0,0,820,170); x.fillStyle="#F4F7F6"; x.fillRect(0,0,820,170);
+    x.fillStyle="#E3E9E8"; x.fillRect(60,70,700,34);
+    x.fillStyle="#B7E2C7"; x.fillRect(60+700*(target-0.045),70,700*0.09,34);
+    x.fillStyle="#2E8B57"; x.fillRect(60+700*target-1.5,64,3,46);
+    const p=go?pos():0.06;
+    x.fillStyle="#C2412B"; x.fillRect(60+700*p-3,58,6,58);
+    x.fillStyle="#4A6470"; x.font="13px 'IBM Plex Sans',sans-serif";
+    x.fillText("stop the red needle inside the green band — three attempts",60,38);
+    x.fillText("attempts: "+tries.length+" / 3"+(tries.length?"   ·   best miss "+Math.min(...tries).toFixed(1)+"%":""),60,148);
+    if(go) raf=requestAnimationFrame(draw);
+  }
+  draw();
+  const btn=el("button",{class:"btn sm",type:"button",text:"Start the needle"});
+  btn.addEventListener("click",()=>{
+    if(tries.length>=3) return;
+    if(!go){ go=true; t0=now(); btn.textContent="Stop!"; btn.classList.remove("ghost"); draw(); }
+    else{ go=false; cancelAnimationFrame(raf);
+      const err=Math.abs(pos()-target)*100; tries.push(err);
+      setAns(item.id,tries.slice()); btn.textContent=tries.length>=3?"Done":"Start the needle"; draw(); if(tries.length>=3) btn.disabled=true; }
+  });
+  b.appendChild(btn);
+}
+
+/* --- 13. DIVERGENT THINKING (timed) ------------------------------ */
+function ideaStorm(box,item){
+  const sim=el("div",{class:"sim"});
+  const ideas=[]; let left=90,iv=null,started=false;
+  const head=el("div",{class:"row",style:"justify-content:space-between"});
+  const clock=pill("90 s"); head.appendChild(el("b",{style:"font-family:var(--disp)",text:"Ideas: 0"})); head.appendChild(clock);
+  const inp=el("input",{type:"text",placeholder:"one idea, then press Enter",disabled:"true"});
+  const chips=el("div",{class:"ideas"});
+  function paint(){ head.firstChild.textContent="Ideas: "+ideas.length; chips.innerHTML="";
+    ideas.forEach((t,i)=>{ const ch=el("span",{class:"idea"},[document.createTextNode(t)]);
+      ch.appendChild(el("button",{type:"button",text:"×",onclick:()=>{ideas.splice(i,1);setAns(item.id,ideas.slice());paint();}}));
+      chips.appendChild(ch); }); }
+  inp.addEventListener("keydown",e=>{ if(e.key!=="Enter") return; e.preventDefault();
+    const v=inp.value.trim(); if(v.length<2) return; ideas.push(v); inp.value=""; setAns(item.id,ideas.slice()); paint(); });
+  const b=bar(sim);
+  const st=el("button",{class:"btn sm",type:"button",text:"Start the 90 seconds"});
+  st.addEventListener("click",()=>{ if(started) return; started=true; st.disabled=true; inp.disabled=false; inp.focus();
+    iv=setInterval(()=>{ left--; clock.textContent=left+" s"; if(left<=10) clock.className="pill hot";
+      if(left<=0){ clearInterval(iv); inp.disabled=true; clock.textContent="time"; setAns(item.id,ideas.slice());
+        tele(item.id,"count",ideas.length); } },1000); });
+  b.appendChild(st);
+  b.appendChild(el("span",{class:"tag",text:"quantity first — wild ideas are welcome"}));
+  sim.appendChild(head); sim.appendChild(inp); sim.appendChild(chips);
+  box.appendChild(sim);
+}
+
+/* --- 14. CLICK-TO-ORDER ------------------------------------------ */
+function renderOrder(item){
+  const box=qShell(item);
+  const order=[]; const wrap=el("div",{class:"opts"});
+  const btns=item.options.map((o,i)=>{
+    const b=el("button",{class:"opt",type:"button"});
+    const m=el("span",{class:"mark",style:"border-radius:6px;font-size:12px;font-family:var(--disp);font-weight:600"});
+    b.appendChild(m); b.appendChild(el("span",{html:o.t}));
+    b.addEventListener("click",()=>{
+      const k=order.indexOf(i);
+      if(k>=0) order.splice(k,1); else order.push(i);
+      btns.forEach((bb,j)=>{ const p=order.indexOf(j);
+        bb.classList.toggle("sel",p>=0); bb.querySelector(".mark").textContent=p>=0?String(p+1):""; });
+      setAns(item.id,order.slice());
+    });
+    wrap.appendChild(b); return b;
+  });
+  box.appendChild(wrap);
+  box.appendChild(el("div",{class:"q-h",style:"margin-top:10px",text:"Click them in the order you would actually do them. Click again to remove."}));
+  return box;
+}
+RENDER.order=renderOrder;
+
+/* --- small chart for data reading -------------------------------- */
+function chartSVG(box){
+  const d=[[0,86],[2,72],[4,61],[6,53],[8,47],[10,43],[12,40]];
+  let pts=d.map(p=>(70+p[0]*46)+","+(250-(p[1]-30)*3.2)).join(" ");
+  let g="";
+  for(let v=30;v<=90;v+=10) g+='<line x1="70" y1="'+(250-(v-30)*3.2)+'" x2="620" y2="'+(250-(v-30)*3.2)+'" stroke="#E3E9E8"/>'+
+    '<text x="60" y="'+(255-(v-30)*3.2)+'" font-size="12" text-anchor="end" fill="#4A6470" font-family="sans-serif">'+v+'</text>';
+  for(let t=0;t<=12;t+=2) g+='<line x1="'+(70+t*46)+'" y1="58" x2="'+(70+t*46)+'" y2="250" stroke="#F1F4F3"/>'+
+    '<text x="'+(70+t*46)+'" y="270" font-size="12" text-anchor="middle" fill="#4A6470" font-family="sans-serif">'+t+'</text>';
+  const sim=el("div",{class:"sim"});
+  sim.innerHTML='<svg viewBox="0 0 660 300">'+g+
+    '<polyline points="'+pts+'" fill="none" stroke="#C2412B" stroke-width="3"/>'+
+    d.map(p=>'<circle cx="'+(70+p[0]*46)+'" cy="'+(250-(p[1]-30)*3.2)+'" r="4" fill="#C2412B"/>').join("")+
+    '<line x1="70" y1="250" x2="620" y2="250" stroke="#0E1F27" stroke-width="2"/>'+
+    '<line x1="70" y1="55" x2="70" y2="250" stroke="#0E1F27" stroke-width="2"/>'+
+    '<text x="345" y="292" font-size="13" text-anchor="middle" fill="#0E1F27" font-family="sans-serif">minutes after pouring</text>'+
+    '<text x="22" y="155" font-size="13" text-anchor="middle" fill="#0E1F27" font-family="sans-serif" transform="rotate(-90 22 155)">temperature °C</text>'+
+    '<text x="360" y="40" font-size="14" fill="#0E1F27" font-family="sans-serif">A cup of tea cooling on the bench</text></svg>';
+  box.appendChild(sim);
+}
+function shapeSVG(rot,mirror){
+  return '<svg viewBox="0 0 100 100" width="106"><g transform="translate(50,50) rotate('+rot+') scale('+(mirror?-1:1)+',1)">'+
+    '<path d="M-30 -24 L10 -24 L10 -6 L30 -6 L30 18 L-8 18 L-8 4 L-30 4 Z" fill="#F5A623" stroke="#0E1F27" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<circle cx="-18" cy="-12" r="5" fill="#0E1F27"/></g></svg>';
+}
+function frameSVG(kind){
+  const s='stroke="#0E1F27" stroke-width="6" stroke-linecap="round"';
+  const m={sq:'<path d="M20 80 L20 25 L80 25 L80 80" fill="none" '+s+'/><path d="M14 80 L86 80" '+s+'/>',
+    rect:'<path d="M30 82 L30 18 L70 18 L70 82" fill="none" '+s+'/><path d="M22 82 L78 82" '+s+'/>',
+    tri:'<path d="M50 18 L20 80 L80 80 Z" fill="none" '+s+'/>',
+    sqd:'<path d="M20 80 L20 25 L80 25 L80 80" fill="none" '+s+'/><path d="M14 80 L86 80" '+s+'/><path d="M20 25 L80 80" '+s+'/>'};
+  return '<svg viewBox="0 0 100 100" width="104">'+m[kind]+'</svg>';
+}
+function pulleySVG(kind){
+  const b='<rect x="20" y="6" width="60" height="6" fill="#0E1F27"/>';
+  const load='<rect x="40" y="78" width="26" height="18" fill="#127A72" stroke="#0E1F27" stroke-width="2"/>';
+  const wheel=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="10" fill="#F5A623" stroke="#0E1F27" stroke-width="2.4"/>';
+  let inner;
+  if(kind==="fixed") inner=wheel(50,24)+'<path d="M40 24 L40 78 M60 24 L60 60" stroke="#0E1F27" stroke-width="2" fill="none"/><path d="M60 60 L60 52" stroke="#0E1F27" stroke-width="2"/>';
+  else if(kind==="movable") inner=wheel(53,62)+'<path d="M43 62 L43 12 M63 62 L63 12" stroke="#0E1F27" stroke-width="2"/>'+'<path d="M53 72 L53 78" stroke="#0E1F27" stroke-width="2"/>';
+  else inner=wheel(35,24)+wheel(58,62)+'<path d="M25 24 L25 12 M45 24 L48 62 M68 62 L68 12" stroke="#0E1F27" stroke-width="2" fill="none"/><path d="M58 72 L58 78" stroke="#0E1F27" stroke-width="2"/>';
+  return '<svg viewBox="0 0 100 100" width="104">'+b+inner+load+'</svg>';
+}
+
+/* =================================================================
+   STATIONS / ITEM BANK
+   ================================================================= */
+const GRAPHS={lin:t=>t,accel:t=>t*t,decel:t=>1-Math.pow(1-t,2),flat:()=>0.5,down:t=>1-t,
+  step:t=>t<0.35?t/0.35*0.4:(t<0.65?0.4:0.4+(t-0.65)/0.35*0.6)};
+const G=k=>({svg:graphSVG(GRAPHS[k])});
+
+const STATIONS=[
+{ id:"profile", title:"Who is sitting at the bench?", intro:"Tell us who you are and what your hands have already done. Nothing here is right or wrong.",
+  custom(host){
+    const box=el("div",{class:"q"});
+    box.appendChild(el("div",{class:"q-p",text:"Your details"}));
+    const f=el("div",{class:"fields"});
+    const add=(k,label,type,opts,full)=>{
+      const d=el("div",{class:"field"+(full?" full":"")});
+      d.appendChild(el("label",{text:label}));
+      let inp;
+      if(type==="select"){ inp=el("select",{});
+        inp.appendChild(el("option",{value:"",text:"choose…"}));
+        opts.forEach(o=>inp.appendChild(el("option",{value:o,text:o})));
+      } else inp=el("input",{type:type});
+      inp.addEventListener("input",()=>{S.profile[k]=inp.value;refreshNav();});
+      inp.addEventListener("change",()=>{S.profile[k]=inp.value;refreshNav();});
+      d.appendChild(inp); f.appendChild(d);
+    };
+    add("name","Full name","text");
+    add("age","Age","select",["12","13","14","15","16","17","18"]);
+    add("school","School","text");
+    add("grade","Class / grade","select",["Grade 6","Grade 7","Grade 8","Grade 9","Grade 10","Grade 11","Grade 12","Other"]);
+    add("town","Town or village","text");
+    add("phone","Phone we can reach you on","text");
+    add("guardian","Parent or guardian name","text");
+    add("email","Email (yours or your parent's)","text");
+    add("lang","Language you are most comfortable working in","select",["Arabic","English","French","Arabic + English","Arabic + French"]);
+    add("physics","Have you studied physics at school yet?","select",["Not yet","One year","Two years","Three years or more"]);
+    box.appendChild(f); host.appendChild(box);
+    [ {id:"q_why",type:"text",dim:"team",w:2,prompt:"Why do you want to join the physics group at Bee Skill Center?",
+       help:"Two or three honest sentences. There is no answer we are fishing for.",ph:"Write freely…"},
+      {id:"q_exp",type:"multi",dim:"create",w:2,prompt:"Which of these have you actually done with your own hands?",
+       help:"Tick everything that is true. Ticking nothing is a perfectly normal answer at 12.",
+       options:[{t:"Used a screwdriver to open something"},{t:"Used a hot glue gun"},{t:"Cut wood, foam or thick card with a blade or saw"},
+         {t:"Connected a battery to a bulb or a motor"},{t:"Soldered two wires together"},{t:"Built something from a kit by following instructions"},
+         {t:"Taken apart a broken device just to look inside"},{t:"Sewn, knitted, moulded clay or done similar craft work"},
+         {t:"Repaired something at home that was broken"},{t:"None of these yet"}]},
+      {id:"q_curious",type:"likert",dim:"team",w:1,prompt:"When something at home breaks, I want to open it and see what is inside.",
+       labels:["Never","Rarely","Sometimes","Often","Always"]},
+      {id:"q_time",type:"mc",dim:"team",w:1,prompt:"Realistically, how much time can you give this each week?",
+       options:[{t:"Less than 1 hour"},{t:"1–2 hours"},{t:"3–4 hours"},{t:"5 hours or more"}]}
+    ].forEach(it=>host.appendChild(RENDER[it.type](it)));
+    STATIONS[0].items=STATIONS[0]._items;
+  },
+  _items:[{id:"q_why",type:"text"},{id:"q_exp",type:"multi"},{id:"q_curious",type:"likert"},{id:"q_time",type:"mc"}],
+  gate(){
+    const need=["name","age","school","grade","town","phone","guardian"];
+    const miss=need.filter(k=>!S.profile[k]);
+    if(miss.length) return "Fill in every detail field above ("+miss.length+" left)";
+    if(!S.ans.q_why||words(S.ans.q_why)<CFG.minTextWords) return "Write at least a sentence about why you want to join";
+    if(S.ans.q_exp===undefined) return "Tick your hands-on experience (or tick \"none of these yet\")";
+    if(S.ans.q_curious===undefined||S.ans.q_time===undefined) return "Two questions still need an answer";
+    return "";
+  }
+},
+
+{ id:"observe", title:"What did you actually see?", intro:"Four short experiments run on this page. Watch each one properly before you answer — you can replay them as often as you like.",
+  items:[
+  {id:"q_ramp1",type:"mc",dim:"observe",w:2,widget:simRamp,ans:0,
+   prompt:"Both balls start at the same height and are released together. Which one reaches the floor first?",
+   options:[{t:"The ball on the steep 52° ramp"},{t:"The ball on the gentle 24° ramp"},{t:"They arrive at the same moment"},{t:"It depends which ball is heavier"}]},
+  {id:"q_ramp2",type:"mc",dim:"observe",w:2,ans:2,
+   prompt:"At the moment each ball reaches the floor, which one is moving faster?",
+   help:"They started at the same height. Think about what the slope changed and what it did not.",
+   options:[{t:"The one on the steep ramp"},{t:"The one on the gentle ramp"},{t:"Both are moving at about the same speed"},{t:"Impossible to say without weighing them"}]},
+  {id:"q_drop",type:"mc",dim:"observe",w:2,widget:simDrop,ans:2,
+   prompt:"Press “Pump the air out”, then drop them again. With no air in the tube, what happens?",
+   options:[{t:"The coin still lands well before the feather"},{t:"The feather now lands first"},{t:"They land together"},{t:"The feather floats and never lands"}]},
+  {id:"q_dropwhy",type:"mc",dim:"observe",w:2,ans:1,
+   prompt:"So in normal air, the feather falls slowly mainly because…",
+   options:[{t:"it is light, so gravity pulls it less"},{t:"air pushes back on its wide, light shape"},{t:"feathers have almost no weight at all"},{t:"gravity is weaker near the top of the tube"}]},
+  {id:"q_cart",type:"mc",dim:"observe",w:2,widget:simCart,ans:1,
+   prompt:"A ball rests on a rolling cart. The cart hits the wall and stops instantly. Where does the ball go?",
+   help:"Answer from what you expect first — then run it and see whether you were right.",
+   options:[{t:"Straight down onto the cart floor"},{t:"Forward, off the front of the cart"},{t:"Backwards, off the rear of the cart"},{t:"Nowhere — it stays exactly where it was"}]},
+  {id:"q_spot",type:"mc",dim:"observe",w:2,widget:simSpot,ans:2,
+   prompt:"Play run A, then run B. Exactly one thing is different. What is it?",
+   options:[{t:"The string is longer in run B"},{t:"The bob is heavier in run B"},{t:"The ruler has been moved"},{t:"The bob is released from a higher angle"}]},
+  {id:"q_notice",type:"text",dim:"observe",w:2,
+   prompt:"Write one thing you noticed in any of these four experiments that nobody asked you about.",
+   help:"Anything at all — a detail, a doubt, a question. This tells us how your eyes work.",ph:"I noticed that…"}
+]},
+
+{ id:"fairtest", title:"The pendulum bench", intro:"A real lab task. Find out what actually changes how long a pendulum takes to swing. You have three things you can change and a stopwatch. Run at least five trials — how you organise them matters more to us than the answer.",
+  custom(host){
+    const box=el("div",{class:"q"});
+    box.appendChild(el("div",{class:"q-n",text:"Open task  ·  Fair testing"}));
+    box.appendChild(el("div",{class:"q-p",text:"Find out which of the three settings changes the swing time."}));
+    box.appendChild(el("div",{class:"q-h",html:"Set the sliders, press <b>Run 5 swings</b>, and the trial is written into the table. Timing 5 swings and dividing is what real labs do — a single swing is too short to time well. The stopwatch is slightly imprecise, exactly like a real one."}));
+    pendulumLab(box,{id:"q_lab"});
+    host.appendChild(box);
+    [
+    {id:"q_factor",type:"mc",dim:"method",w:3,ans:1,
+     prompt:"From your own trials: which setting changes the swing time?",
+     options:[{t:"The mass of the bob"},{t:"The length of the string"},{t:"The release angle"},{t:"All three, about equally"}]},
+    {id:"q_proofNote",type:"widget",dim:"method",req:false,
+     prompt:"Now prove it with your own data.",
+     help:"Scroll back up and click on <b>two rows</b> of your trial table — the pair that proves your answer above. Selected rows turn yellow.",
+     widget:(b)=>{ const p=el("div",{class:"note",html:"A pair only proves something if <b>one</b> setting differs between the two rows. If you never ran such a pair, go back and run one now."}); b.appendChild(p); }},
+    {id:"q_fair",type:"mc",dim:"method",w:3,ans:2,
+     prompt:"Another student wants to test whether the release angle matters. Which pair of runs is a fair test?",
+     options:[
+      {t:"60 cm, 100 g, 10°  &nbsp;vs&nbsp;  80 cm, 100 g, 30°"},
+      {t:"60 cm, 100 g, 10°  &nbsp;vs&nbsp;  60 cm, 180 g, 30°"},
+      {t:"60 cm, 100 g, 10°  &nbsp;vs&nbsp;  60 cm, 100 g, 30°"},
+      {t:"Any two runs will do, as long as the angle is different"}]},
+    {id:"q_repeat",type:"mc",dim:"method",w:2,ans:1,
+     prompt:"You run the identical setting twice and get 1.55 s and 1.57 s. What does that mean?",
+     options:[{t:"The pendulum is broken"},{t:"Every measurement carries small error — repeat and take an average"},
+       {t:"Gravity changed between the two runs"},{t:"One of the two numbers must be thrown away"}]},
+    {id:"q_design",type:"text",dim:"method",w:3,
+     prompt:"Design a test to find out whether a pendulum swings at a different rate at the top of a mountain than at the beach.",
+     help:"Say what you would change, what you would keep exactly the same, and what you would measure.",
+     ph:"I would keep … the same, change only … and measure …"}
+    ].forEach(it=>host.appendChild(RENDER[it.type](it)));
+  },
+  items:[{id:"q_factor"},{id:"q_fair"},{id:"q_repeat"},{id:"q_design",type:"text"}],
+  gate(){
+    const t=S.lab.trials||[];
+    if(t.length<5) return "Run at least 5 trials on the bench ("+t.length+" so far)";
+    if(S.ans.q_factor===undefined) return "Answer the question about which setting matters";
+    if((S.ans.q_proof||[]).length<2) return "Click two rows in your trial table as your proof";
+    if(S.ans.q_fair===undefined||S.ans.q_repeat===undefined) return "Two questions still need an answer";
+    if(!S.ans.q_design||words(S.ans.q_design)<CFG.minTextWords) return "Describe your mountain-versus-beach test";
+    return "";
+  }
+},
+
+{ id:"data", title:"Reading the evidence", intro:"Graphs and tables are how physics talks. Three trolleys move on this page — match each one to its graph — then read some real data.",
+  items:[
+  {id:"q_g1",type:"mc",dim:"data",w:2,svg:true,widget:simMotion(u=>u),ans:0,
+   prompt:"Which distance–time graph matches this motion?",
+   options:[Object.assign({t:"Graph A"},G("lin")),Object.assign({t:"Graph B"},G("accel")),Object.assign({t:"Graph C"},G("step")),Object.assign({t:"Graph D"},G("flat"))]},
+  {id:"q_g2",type:"mc",dim:"data",w:2,svg:true,widget:simMotion(u=>1-Math.pow(1-u,2)),ans:1,
+   prompt:"And this one — it starts fast and creeps to a stop. Which graph?",
+   options:[Object.assign({t:"Graph A"},G("accel")),Object.assign({t:"Graph B"},G("decel")),Object.assign({t:"Graph C"},G("lin")),Object.assign({t:"Graph D"},G("down"))]},
+  {id:"q_g3",type:"mc",dim:"data",w:2,svg:true,widget:simMotion(GRAPHS.step),ans:1,
+   prompt:"This trolley moves, waits, then moves again. Which graph?",
+   options:[Object.assign({t:"Graph A"},G("lin")),Object.assign({t:"Graph B"},G("step")),Object.assign({t:"Graph C"},G("accel")),Object.assign({t:"Graph D"},G("flat"))]},
+  {id:"q_read",type:"mc",dim:"data",w:2,widget:chartSVG,ans:1,
+   prompt:"From the cooling graph: what was the temperature 6 minutes after pouring?",
+   options:[{t:"about 61 °C"},{t:"about 53 °C"},{t:"about 47 °C"},{t:"about 40 °C"}]},
+  {id:"q_shape",type:"mc",dim:"data",w:2,ans:1,
+   prompt:"Look at the same cooling graph again. Which statement describes it best?",
+   options:[{t:"The tea cools by the same number of degrees every minute"},
+     {t:"The tea cools quickly at first, then more and more slowly"},
+     {t:"The tea cools slowly at first, then faster and faster"},
+     {t:"The tea stops cooling after 4 minutes"}]},
+  {id:"q_tbl",type:"mc",dim:"data",w:2,ans:2,
+   prompt:"A spring is loaded and its stretch measured. One reading was written down wrong. Which one?",
+   help:'<table class="log" style="margin-top:10px"><thead><tr><th>Reading</th><th>Load (g)</th><th>Stretch (mm)</th></tr></thead><tbody><tr><td>1</td><td>100</td><td>8</td></tr><tr><td>2</td><td>200</td><td>16</td></tr><tr><td>3</td><td>300</td><td>41</td></tr><tr><td>4</td><td>400</td><td>32</td></tr><tr><td>5</td><td>500</td><td>40</td></tr></tbody></table>',
+   options:[{t:"Reading 1"},{t:"Reading 2"},{t:"Reading 3"},{t:"Reading 5"}]},
+  {id:"q_trend",type:"mc",dim:"data",w:2,ans:1,
+   prompt:"Using the corrected pattern in that table, what stretch would a 700 g load give?",
+   options:[{t:"about 48 mm"},{t:"about 56 mm"},{t:"about 64 mm"},{t:"impossible to predict"}]},
+  {id:"q_rel",type:"mc",dim:"data",w:1,svg:true,ans:0,
+   prompt:"Which graph shows “the more people helping, the less time the job takes”?",
+   options:[Object.assign({t:"Graph A"},G("down")),Object.assign({t:"Graph B"},G("lin")),Object.assign({t:"Graph C"},G("flat")),Object.assign({t:"Graph D"},G("accel"))]}
+]},
+
+{ id:"mech", title:"Gears, levers and things that hold", intro:"This is the part of your brain that decides whether a build will work before you glue it. Play with the machines, then answer.",
+  items:[
+  {id:"q_gearC",type:"mc",dim:"spatial",w:2,widget:simGears,ans:0,
+   prompt:"You turn gear A clockwise. Which way does gear C turn?",
+   options:[{t:"Clockwise"},{t:"Anticlockwise"},{t:"It does not turn"},{t:"It changes direction as it goes"}]},
+  {id:"q_gearD",type:"mc",dim:"spatial",w:2,ans:3,
+   prompt:"Which gear completes the most full turns in one minute?",
+   help:"Look at the number of teeth written under each gear.",
+   options:[{t:"Gear A"},{t:"Gear B"},{t:"Gear C"},{t:"Gear D"}]},
+  {id:"q_lever",type:"widget",dim:"spatial",w:3,widget:leverLab,
+   prompt:"Balance the beam.",
+   help:"The green block is fixed 20 cm to the left of the pivot. Drag the orange block until the beam sits level, then let go."},
+  {id:"q_leverwhy",type:"mc",dim:"spatial",w:2,ans:1,
+   prompt:"What makes a beam balance?",
+   options:[{t:"Equal weight on both sides"},{t:"Weight multiplied by its distance from the pivot, equal on both sides"},
+     {t:"Equal distance on both sides"},{t:"The heavier block must always be closer to the pivot by the same amount"}]},
+  {id:"q_pulley",type:"mc",dim:"spatial",w:2,svg:true,ans:2,
+   prompt:"Which arrangement lets you lift the same green load with the smallest pull on the rope?",
+   options:[{t:"One fixed wheel",svg:pulleySVG("fixed")},{t:"One moving wheel",svg:pulleySVG("movable")},
+     {t:"Two wheels combined",svg:pulleySVG("two")},{t:"All three need the same pull",svg:'<svg viewBox="0 0 100 100" width="104"><text x="50" y="55" font-size="34" text-anchor="middle" fill="#7B919B" font-family="sans-serif">=</text></svg>'}]},
+  {id:"q_frame",type:"mc",dim:"spatial",w:2,svg:true,ans:2,
+   prompt:"You push sideways on the top of each frame. Which one keeps its shape?",
+   options:[{t:"Square",svg:frameSVG("sq")},{t:"Tall rectangle",svg:frameSVG("rect")},{t:"Triangle",svg:frameSVG("tri")},{t:"They all collapse equally",svg:'<svg viewBox="0 0 100 100" width="104"><text x="50" y="58" font-size="30" text-anchor="middle" fill="#7B919B" font-family="sans-serif">=</text></svg>'}]},
+  {id:"q_rot",type:"mc",dim:"spatial",w:2,svg:true,ans:1,
+   prompt:"Which shape is the target shape simply turned round — not flipped over?",
+   help:'<div style="display:flex;justify-content:center;margin:10px 0">'+shapeSVG(0,false)+'</div><div style="text-align:center;font-size:13px">the target</div>',
+   options:[{t:"Option A",svg:shapeSVG(0,true)},{t:"Option B",svg:shapeSVG(90,false)},{t:"Option C",svg:shapeSVG(180,true)},{t:"Option D",svg:shapeSVG(45,true)}]},
+  {id:"q_water",type:"mc",dim:"spatial",w:2,svg:true,ans:0,
+   prompt:"A half-full glass is tilted. Which picture shows the water correctly?",
+   options:[{t:"Option A",svg:glassSVG("level","a")},{t:"Option B",svg:glassSVG("tilt","b")},{t:"Option C",svg:glassSVG("anti","c")},{t:"Option D",svg:glassSVG("vert","d")}]},
+  {id:"q_ramp3",type:"mc",dim:"spatial",w:1,ans:1,
+   prompt:"You must roll a heavy barrel up onto a truck using a plank. To make the push easier you should…",
+   options:[{t:"use a shorter, steeper plank"},{t:"use a longer plank at a gentler slope"},
+     {t:"stand the plank almost vertical"},{t:"it makes no difference, the barrel weighs the same"}]}
+]},
+
+{ id:"measure", title:"Numbers you can trust", intro:"Half of practical physics is reading an instrument honestly and knowing when a number is nonsense. No calculator.",
+  items:[
+  {id:"q_ruler",type:"num",dim:"measure",w:3,widget:rulerSVG,unit:"cm",ans:6.4,tol:0.15,
+   prompt:"How long is the green rod?",help:"Look carefully at where it begins.",ph:"e.g. 4.7"},
+  {id:"q_cyl",type:"mc",dim:"measure",w:2,widget:cylinderSVG,ans:1,
+   prompt:"What volume of liquid is in the cylinder?",
+   help:"The small marks are every 2 mL. Read the bottom of the curved surface, at eye level.",
+   options:[{t:"36 mL"},{t:"37 mL"},{t:"38 mL"},{t:"40 mL"}]},
+  {id:"q_paper",type:"mc",dim:"measure",w:2,ans:1,
+   prompt:"You must find the thickness of one sheet of paper using an ordinary ruler. The sensible method is…",
+   options:[{t:"Measure one sheet as carefully as you can"},{t:"Measure a stack of 200 sheets and divide by 200"},
+     {t:"Guess — a ruler cannot do it"},{t:"Fold one sheet in half and measure that"}]},
+  {id:"q_target",type:"mc",dim:"measure",w:2,svg:true,ans:0,
+   prompt:"Four students each fired five shots. Whose shots are precise but not accurate?",
+   help:"Precise means the shots agree with each other. Accurate means they are on the true centre.",
+   options:[{t:"Student A",svg:targetSVG([[26,-20],[30,-16],[27,-23],[31,-19],[28,-17]])},
+     {t:"Student B",svg:targetSVG([[-22,10],[18,-14],[4,26],[-14,-20],[24,14]])},
+     {t:"Student C",svg:targetSVG([[2,-3],[-3,2],[1,4],[-2,-2],[3,1]])},
+     {t:"Student D",svg:targetSVG([[-30,26],[10,-30],[34,8],[-8,14],[22,30]])}]},
+  {id:"q_bike",type:"mc",dim:"measure",w:1,ans:1,
+   prompt:"The mass of an ordinary bicycle is closest to…",
+   options:[{t:"2 kg"},{t:"12 kg"},{t:"60 kg"},{t:"200 kg"}]},
+  {id:"q_bath",type:"mc",dim:"measure",w:2,ans:1,
+   prompt:"About how many 1.5-litre bottles would it take to fill a bathtub?",
+   help:"Estimate it. Do not calculate precisely — we want to see whether your sense of size is good.",
+   options:[{t:"about 10"},{t:"about 100"},{t:"about 1 000"},{t:"about 10 000"}]},
+  {id:"q_secs",type:"mc",dim:"measure",w:2,ans:2,
+   prompt:"Roughly how many seconds are there in one school day of 8 hours?",
+   options:[{t:"about 500"},{t:"about 3 000"},{t:"about 30 000"},{t:"about 300 000"}]},
+  {id:"q_honest",type:"mc",dim:"measure",w:2,ans:0,
+   prompt:"Your ruler is marked in millimetres and the rod ends just past the 12.4 cm mark. Which is the honest way to write the result?",
+   options:[{t:"12.4 cm"},{t:"12.43718 cm"},{t:"12 cm"},{t:"12.400000 cm"}]},
+  {id:"q_scale",type:"mc",dim:"measure",w:1,ans:2,
+   prompt:"A model car is built at 1 : 20. The real car is 4 m long. How long is the model?",
+   options:[{t:"80 cm"},{t:"40 cm"},{t:"20 cm"},{t:"5 cm"}]}
+]},
+
+{ id:"solve", title:"Problems that bite back", intro:"These are meant to be hard. We are watching how you attack them — whether you change your method, and whether you stay in the ring. Take your time.",
+  items:[
+  {id:"q_pipe",type:"widget",dim:"solve",w:4,widget:pipePuzzle,
+   prompt:"Get the water from the tank to the turbine.",
+   help:"Click a pipe to rotate it a quarter turn. Grey squares are solid rock — some pipes are decoys that lead nowhere."},
+  {id:"q_odd",type:"widget",dim:"solve",w:3,widget:oddBall,
+   prompt:"Nine balls, one is heavier. Find it.",
+   help:"You can weigh as many times as you like, but a good solver needs only two. Think before you touch the balance."},
+  {id:"q_seq",type:"mc",dim:"solve",w:2,ans:1,
+   prompt:"What number comes next?  <b>2, 6, 12, 20, 30, …</b>",
+   options:[{t:"38"},{t:"42"},{t:"40"},{t:"36"}]},
+  {id:"q_strategy",type:"mc",dim:"solve",w:2,ans:1,
+   prompt:"Your circuit has failed to work four times, and each time you did exactly the same thing. The best next move is…",
+   options:[{t:"Do it a fifth time, but more carefully"},{t:"Change one thing on purpose and watch what changes"},
+     {t:"Ask someone to give you the answer"},{t:"Decide the components are faulty and stop"}]},
+  {id:"q_sanity",type:"mc",dim:"solve",w:2,ans:1,
+   prompt:"A long calculation tells you a bicycle is travelling at 5 000 km/h. What do you do first?",
+   options:[{t:"Write it down — the maths is the maths"},{t:"Check the units and the size of each number you used"},
+     {t:"Start the whole calculation again from the beginning"},{t:"Copy a friend's answer instead"}]},
+  {id:"q_stuck",type:"text",dim:"solve",w:3,
+   prompt:"Tell us about a time you were properly stuck on something — school, a game, a repair, anything — and what you did next.",
+   help:"We are interested in what you did, not whether you succeeded.",ph:"I was stuck when…"}
+]},
+
+{ id:"make", title:"Hands, ideas and repairs", intro:"STEAM physics lives or dies on this station: can you produce many ideas, can you plan a repair, and are your hands steady enough for fine kit work?",
+  items:[
+  {id:"q_ideas",type:"widget",dim:"create",w:4,widget:ideaStorm,allowEmpty:true,
+   prompt:"Ninety seconds. List as many uses as you can for a broken bicycle wheel.",
+   help:"Quantity beats quality here. Silly ideas count. Press Enter after each one."},
+  {id:"q_designit",type:"text",dim:"create",w:4,
+   prompt:"Design a device that waters a house plant while your family is away for a week.",
+   help:"Name the parts you would use, say what each part does, and say the one thing most likely to go wrong.",
+   ph:"My device would use…"},
+  {id:"q_fix",type:"order",dim:"create",w:3,ans:[0,1,2,3,4],
+   prompt:"A battery-powered model car suddenly stops moving. Put your checks in the order you would really do them.",
+   options:[{t:"Check the battery is charged and the right way round"},{t:"Check the wires are still connected"},
+     {t:"Check the switch actually clicks"},{t:"Check the wheels and axle spin freely by hand"},
+     {t:"Unscrew the motor and replace it"}]},
+  {id:"q_missing",type:"mc",dim:"create",w:2,ans:1,
+   prompt:"Mid-build you discover the 3 cm spacer is missing from your kit. What do you do?",
+   options:[{t:"Stop and wait for the instructor"},{t:"Cut a straw or card to exactly 3 cm, fit it, and test it"},
+     {t:"Carry on without a spacer and hope"},{t:"Use the 6 cm spacer instead"}]},
+  {id:"q_hand",type:"widget",dim:"create",w:2,widget:steadyHand,
+   prompt:"Steady hand test — three attempts.",
+   help:"Soldering, wiring and fine assembly all need this. Stop the red needle inside the green band."},
+  {id:"q_built",type:"text",dim:"create",w:3,
+   prompt:"What is the most interesting thing you have ever made, fixed, or taken apart?",
+   help:"Tell us what went wrong as well as what went right. “Nothing yet” is an acceptable answer — say what you would like to make instead.",
+   ph:"I once…"}
+]},
+
+{ id:"team", title:"On a shared bench", intro:"Our sessions are noisy, collaborative and full of glue guns and batteries. Last station — how you behave around other people and around risk.",
+  items:[
+  {id:"q_sj1",type:"mc",dim:"team",w:2,ans:2,
+   prompt:"Half way through a build, a teammate suggests a design that is clearly better than yours. You…",
+   options:[{t:"Finish yours anyway — you started it"},{t:"Let them take over and stop contributing"},
+     {t:"Say so out loud, switch to their design, and help build it"},{t:"Agree but quietly keep working on your own version"}]},
+  {id:"q_sj2",type:"mc",dim:"team",w:2,ans:1,
+   prompt:"Your group's project fails in front of everyone on presentation day. The best thing to say is…",
+   options:[{t:"“It worked this morning, something must have been touched”"},
+     {t:"“Here is where it failed and here is what we would change”"},
+     {t:"“It was mostly Omar's part that broke”"},{t:"Say nothing and pack up quickly"}]},
+  {id:"q_sj3",type:"mc",dim:"team",w:2,ans:1,
+   prompt:"One member of your group does nothing for two sessions. You…",
+   options:[{t:"Report them to the instructor straight away"},
+     {t:"Ask them privately what is going on and offer them a specific job"},
+     {t:"Do their share yourself and say nothing"},{t:"Leave their part unfinished so everyone sees"}]},
+  {id:"q_sj4",type:"mc",dim:"team",w:2,ans:0,
+   prompt:"You accidentally snap a part that belongs to the shared kit and nobody saw. You…",
+   options:[{t:"Tell the instructor immediately so it can be replaced before the next group needs it"},
+     {t:"Put it back and say nothing"},{t:"Try to glue it and hope it holds"},{t:"Swap it with a good part from another box"}]},
+  {id:"q_safe1",type:"mc",dim:"team",w:2,ans:1,
+   prompt:"Hot glue lands on your hand. The first thing to do is…",
+   options:[{t:"Peel the glue off quickly"},{t:"Hold it under cool running water, then tell the instructor"},
+     {t:"Rub it with a cloth"},{t:"Carry on, it will cool by itself"}]},
+  {id:"q_safe2",type:"mc",dim:"team",w:2,ans:0,
+   prompt:"A wire in your battery circuit is getting hot and smells of burning. You…",
+   options:[{t:"Disconnect the battery first, then look for the short"},{t:"Blow on the wire to cool it"},
+     {t:"Touch it to see how hot it is"},{t:"Turn the switch off and leave it connected"}]},
+  {id:"q_help",type:"likert",dim:"team",w:1,prompt:"I enjoy explaining something I understand to someone who does not yet understand it.",
+   labels:["Never","Rarely","Sometimes","Often","Always"]},
+  {id:"q_retry",type:"likert",dim:"team",w:1,prompt:"When a plan of mine fails, I want to try again rather than switch to something else.",
+   labels:["Never","Rarely","Sometimes","Often","Always"]},
+  {id:"q_sat",type:"mc",dim:"team",w:1,ans:3,
+   prompt:"Sessions will run on fixed days including some Saturdays. How will you handle that?",
+   options:[{t:"I will probably miss a lot"},{t:"I will come when I can"},
+     {t:"I will come unless something important clashes"},{t:"I will arrange everything else around it"}]},
+  {id:"q_hope",type:"text",dim:"team",w:2,
+   prompt:"By the end of the programme, what do you hope to be able to build or understand?",
+   help:"Be as specific as you can. “Something with electricity” is fine; “a solar phone charger” is better.",ph:"I hope to…"}
+]}
+];
+
+/* =================================================================
+   SCORING
+   ================================================================= */
+const REASON=/\b(because|so that|so|if|then|would|could|instead|therefore|since|when|while|compare|test|measure|try|tried|change|changed|same|different|first|next|finally|problem|solve|check|build|built|design)\b/gi;
+function textScore(min,good){
+  return v=>{ const w=words(v); if(w<min) return clamp(w/Math.max(1,min)*0.3,0,0.3);
+    const base=0.3+clamp((w-min)/(good-min),0,1)*0.7;
+    const r=new Set(((v||"").match(REASON)||[]).map(s=>s.toLowerCase())).size;
+    return clamp(base*0.76+clamp(r/6,0,1)*0.24,0,1); };
+}
+const eq=a=>v=>v===a?1:0;
+function labStats(){
+  const t=S.lab.trials||[]; let oneVar=0,pairs=0,isolatedL=false,varied={L:0,M:0,A:0};
+  for(let i=1;i<t.length;i++){
+    const d=["L","M","A"].filter(k=>t[i][k]!==t[i-1][k]); pairs++;
+    if(d.length===1){oneVar++; varied[d[0]]++; if(d[0]==="L") isolatedL=true;}
+  }
+  return {n:t.length,ratio:pairs?oneVar/pairs:0,isolatedL,varied,oneVar,pairs};
+}
+function proofScore(){
+  const sel=S.ans.q_proof||[], t=S.lab.trials||[];
+  if(sel.length<2) return 0;
+  const a=t[sel[0]],b=t[sel[1]]; if(!a||!b) return 0;
+  const d=["L","M","A"].filter(k=>a[k]!==b[k]);
+  if(d.length===1&&d[0]==="L") return 1;
+  if(d.length===1) return 0.55;
+  return 0.1;
+}
+const SC=[
+ {id:"q_why",dim:"team",w:2,f:textScore(10,45)},
+ {id:"q_exp",dim:"create",w:2,f:v=>Array.isArray(v)?clamp(v.filter(i=>i!==9).length/6,0,1):0},
+ {id:"q_curious",dim:"team",w:1,f:v=>v/4},
+ {id:"q_time",dim:"team",w:1,f:v=>[0.15,0.5,0.85,1][v]??0},
+
+ {id:"q_ramp1",dim:"observe",w:2,f:eq(0)},{id:"q_ramp2",dim:"observe",w:2,f:eq(2)},
+ {id:"q_drop",dim:"observe",w:2,f:eq(2)},{id:"q_dropwhy",dim:"observe",w:2,f:eq(1)},
+ {id:"q_cart",dim:"observe",w:2,f:eq(1)},{id:"q_spot",dim:"observe",w:2,f:eq(2)},
+ {id:"q_notice",dim:"observe",w:2,f:textScore(8,35)},
+
+ {id:"q_lab",dim:"method",w:4,f:()=>{const s=labStats();
+   return clamp(s.ratio*0.65+(s.isolatedL?0.25:0)+clamp((s.n-4)/6,0,1)*0.10,0,1);}},
+ {id:"q_factor",dim:"method",w:3,f:eq(1)},
+ {id:"q_proof",dim:"method",w:3,f:proofScore},
+ {id:"q_fair",dim:"method",w:3,f:eq(2)},
+ {id:"q_repeat",dim:"method",w:2,f:eq(1)},
+ {id:"q_design",dim:"method",w:3,f:textScore(12,50)},
+
+ {id:"q_g1",dim:"data",w:2,f:eq(0)},{id:"q_g2",dim:"data",w:2,f:eq(1)},{id:"q_g3",dim:"data",w:2,f:eq(1)},
+ {id:"q_read",dim:"data",w:2,f:eq(1)},{id:"q_shape",dim:"data",w:2,f:eq(1)},
+ {id:"q_tbl",dim:"data",w:2,f:eq(2)},{id:"q_trend",dim:"data",w:2,f:eq(1)},{id:"q_rel",dim:"data",w:1,f:eq(0)},
+
+ {id:"q_gearC",dim:"spatial",w:2,f:eq(0)},{id:"q_gearD",dim:"spatial",w:2,f:eq(3)},
+ {id:"q_lever",dim:"spatial",w:3,f:v=>v===undefined?0:clamp(1-Math.abs(v-15)/12,0,1)},
+ {id:"q_leverwhy",dim:"spatial",w:2,f:eq(1)},{id:"q_pulley",dim:"spatial",w:2,f:eq(2)},
+ {id:"q_frame",dim:"spatial",w:2,f:eq(2)},{id:"q_rot",dim:"spatial",w:2,f:eq(1)},
+ {id:"q_water",dim:"spatial",w:2,f:eq(0)},{id:"q_ramp3",dim:"spatial",w:1,f:eq(1)},
+
+ {id:"q_ruler",dim:"measure",w:3,f:v=>{const n=parseFloat(String(v).replace(",","."));
+   if(isNaN(n))return 0; if(Math.abs(n-6.4)<=0.15)return 1; if(Math.abs(n-7.4)<=0.15)return 0.25; return 0;}},
+ {id:"q_cyl",dim:"measure",w:2,f:eq(1)},{id:"q_paper",dim:"measure",w:2,f:eq(1)},
+ {id:"q_target",dim:"measure",w:2,f:eq(0)},{id:"q_bike",dim:"measure",w:1,f:eq(1)},
+ {id:"q_bath",dim:"measure",w:2,f:eq(1)},{id:"q_secs",dim:"measure",w:2,f:eq(2)},
+ {id:"q_honest",dim:"measure",w:2,f:eq(0)},{id:"q_scale",dim:"measure",w:1,f:eq(2)},
+
+ {id:"q_pipe",dim:"solve",w:4,f:v=>{ if(!v) return 0; if(!v.solved) return v.gaveUp?0.12:0;
+   return v.moves<=22?1:v.moves<=40?0.85:0.7; }},
+ {id:"q_odd",dim:"solve",w:3,f:v=>{ if(!v) return 0; if(!v.found) return 0.15;
+   return v.weighs<=2?1:v.weighs===3?0.78:0.55; }},
+ {id:"q_seq",dim:"solve",w:2,f:eq(1)},{id:"q_strategy",dim:"solve",w:2,f:eq(1)},
+ {id:"q_sanity",dim:"solve",w:2,f:eq(1)},{id:"q_stuck",dim:"solve",w:3,f:textScore(12,50)},
+
+ {id:"q_ideas",dim:"create",w:4,f:v=>{ if(!Array.isArray(v)||!v.length) return 0;
+   const flu=clamp(v.length/12,0,1);
+   const ws=new Set(v.join(" ").toLowerCase().split(/\W+/).filter(w=>w.length>3));
+   const flex=clamp(ws.size/(v.length*1.9),0,1);
+   return clamp(flu*0.62+flex*0.38,0,1); }},
+ {id:"q_designit",dim:"create",w:4,f:textScore(15,60)},
+ {id:"q_fix",dim:"create",w:3,f:v=>{ if(!Array.isArray(v)||v.length<5) return v&&v.length?0.3:0;
+   let ok=0,tot=0; for(let i=0;i<5;i++)for(let j=i+1;j<5;j++){tot++; if(v.indexOf(i)<v.indexOf(j)) ok++;}
+   return clamp((ok/tot-0.5)*2,0,1); }},
+ {id:"q_missing",dim:"create",w:2,f:eq(1)},
+ {id:"q_hand",dim:"create",w:2,f:v=>{ if(!Array.isArray(v)||!v.length) return 0;
+   const avg=v.reduce((a,b)=>a+b,0)/v.length; return clamp(1-avg/11,0,1); }},
+ {id:"q_built",dim:"create",w:3,f:textScore(12,50)},
+
+ {id:"q_sj1",dim:"team",w:2,f:eq(2)},{id:"q_sj2",dim:"team",w:2,f:eq(1)},
+ {id:"q_sj3",dim:"team",w:2,f:eq(1)},{id:"q_sj4",dim:"team",w:2,f:eq(0)},
+ {id:"q_safe1",dim:"team",w:2,f:eq(1)},{id:"q_safe2",dim:"team",w:2,f:eq(0)},
+ {id:"q_help",dim:"team",w:1,f:v=>v/4},{id:"q_retry",dim:"team",w:1,f:v=>v/4},
+ {id:"q_sat",dim:"team",w:1,f:v=>[0,0.35,0.8,1][v]??0},{id:"q_hope",dim:"team",w:2,f:textScore(10,40)}
+];
+/* What each item would score by pure guessing. Lets the report say
+   "62, where chance alone gives 27" instead of leaving 62 unanchored. */
+const CHANCE={};
+["q_time","q_ramp1","q_ramp2","q_drop","q_dropwhy","q_cart","q_spot","q_factor","q_fair","q_repeat",
+ "q_g1","q_g2","q_g3","q_read","q_shape","q_tbl","q_trend","q_rel","q_gearC","q_gearD","q_leverwhy",
+ "q_pulley","q_frame","q_rot","q_water","q_ramp3","q_cyl","q_paper","q_target","q_bike","q_bath",
+ "q_secs","q_honest","q_scale","q_seq","q_strategy","q_sanity","q_missing","q_sj1","q_sj2","q_sj3",
+ "q_sj4","q_safe1","q_safe2","q_sat"].forEach(k=>CHANCE[k]=0.25);
+["q_curious","q_help","q_retry"].forEach(k=>CHANCE[k]=0.5);          // self-report, midpoint
+["q_why","q_notice","q_design","q_stuck","q_designit","q_built","q_hope"].forEach(k=>CHANCE[k]=0.3);
+CHANCE.q_proof=0.1; CHANCE.q_lever=0.22; CHANCE.q_odd=0.15; CHANCE.q_ruler=0.05; CHANCE.q_exp=0.2;
+
+function compute(){
+  const d={}; DIMKEYS.forEach(k=>d[k]={got:0,max:0,items:[],base:0});
+  SC.forEach(s=>{
+    const v=S.ans[s.id];
+    let sc=0; try{ sc=clamp(s.f(v),0,1);}catch(e){sc=0;}
+    if(!isFinite(sc)) sc=0;
+    d[s.dim].got+=sc*s.w; d[s.dim].max+=s.w;
+    d[s.dim].base+=(CHANCE[s.id]||0)*s.w;
+    d[s.dim].items.push({id:s.id,sc:+sc.toFixed(2),w:s.w});
+  });
+  const dims={},base={};
+  DIMKEYS.forEach(k=>{
+    dims[k]=Math.round(d[k].max?d[k].got/d[k].max*100:0);
+    base[k]=Math.round(d[k].max?d[k].base/d[k].max*100:0);
+  });
+  const W={observe:1.15,method:1.45,data:1.15,spatial:1.25,measure:1.05,solve:1.3,create:1.2,team:0.95};
+  let tw=0,ts=0,tb=0; DIMKEYS.forEach(k=>{ts+=dims[k]*W[k];tb+=base[k]*W[k];tw+=W[k];});
+  return {dims,base,overall:Math.round(ts/tw),overallBase:Math.round(tb/tw),detail:d};
+}
+function bandOf(v){ return v>=78?0:v>=60?1:v>=42?2:3; }
+const BANDS=[{l:"Strong",c:"#2E8B57"},{l:"Solid",c:"#127A72"},{l:"Developing",c:"#B8860B"},{l:"Needs foundation",c:"#C2412B"}];
+function tierOf(overall,age,dims){
+  const a=+age||15;
+  const T = a<=13 ? [68,54,42] : a<=15 ? [73,58,45] : [77,62,48];
+  let i = overall>=T[0]?0 : overall>=T[1]?1 : overall>=T[2]?2 : 3;
+  const low=DIMKEYS.filter(k=>dims[k]<35).length;
+  if(i===0&&low>=2) i=1;
+  if(dims.team<38&&i<2) i=Math.max(i,1);
+  return i;
+}
+const TIERS=[
+ {l:"Admit to the core physics cohort",c:"#2E8B57",
+  s:"Ready for the full STEAM physics track from day one. Place on the open bench with real kits and expect them to lead a build inside the first month."},
+ {l:"Admit with targeted support",c:"#127A72",
+  s:"Belongs in the cohort. One or two specific skills need scaffolding in the first weeks; named below. Do not slow the whole group for them — pair them instead."},
+ {l:"Start on the foundation track",c:"#B8860B",
+  s:"The curiosity and attitude are there but the reasoning tools are not yet. A term of guided, structured making with heavy scaffolding will very likely move them up. Re-assess after 10 sessions."},
+ {l:"Re-assess in six months",c:"#C2412B",
+  s:"Not yet able to work safely and productively in an open STEAM physics session. Offer a lighter club, a mentor, or an invitation to reapply next cycle — and say so kindly and specifically."}
+];
+
+/* --------------------- EXPERT COMMENT BANK ----------------------- */
+const COM={
+observe:["Reads a physical situation accurately and separates what happened from what they expected to happen. Replayed the simulations before committing.",
+ "Sees most of what is in front of them. A few intuitive traps still catch them — normal, and it corrects fast at the bench.",
+ "Watches without really looking. Answers follow everyday intuition rather than the evidence on the screen.",
+ "Did not extract the events from the simulations. Until this improves, demonstrations will not teach them much."],
+method:["Controls variables without being told to. Changed one thing at a time, repeated runs, and selected a genuinely probative pair of trials. This is the single best sign in the whole assessment.",
+ "Understands fair testing when asked about it, and mostly applied it. Some trials changed two things at once.",
+ "Explored the apparatus enthusiastically but unsystematically — settings changed together, so nothing was proved.",
+ "No testing strategy yet. Everything was varied at random and the conclusion was guessed rather than shown."],
+data:["Moves fluently between a moving object, a graph and a table, and spots a bad data point without hesitation.",
+ "Reads graphs and tables correctly. Extrapolating a trend or describing a curve's shape in words is the weaker edge.",
+ "Can read a single value off a graph but struggles to read the shape of it, which is where the physics lives.",
+ "Graphs are still decoration rather than information. Needs direct teaching before any data-logging activity."],
+spatial:["Excellent mechanical eye. Predicts gear direction, ratio, balance and stability before touching anything — the best predictor we have of success with build kits.",
+ "Solid mechanical sense. Reliable on gears and structures; torque and pulley advantage need one good bench session.",
+ "Mechanical reasoning is mostly trial and error. They will build, but they will build slowly and break parts.",
+ "Struggles to picture how parts move together. Start with big, slow, visible mechanisms before any fine assembly."],
+measure:["Reads instruments honestly, including the meniscus and the offset ruler, and their sense of real-world size is sound. Rare at this age.",
+ "Competent with instruments. Estimation of unfamiliar quantities is the softer spot.",
+ "Makes the classic reading errors and has little feel for whether an answer is the right size. Fixable with two focused sessions.",
+ "Measurement is currently guesswork. Every practical result they produce will need checking."],
+solve:["Attacks a hard problem with a plan, changes strategy when it fails, and stays with it. Did not reach for the exit.",
+ "Works persistently and gets there, though by more steps than necessary. Strategy improves once someone names the method aloud.",
+ "Tries hard but repeats the same failing approach. Needs to be taught, explicitly, to change one thing and observe.",
+ "Withdraws quickly from difficulty. This matters more than any wrong answer — it is the thing to work on first."],
+create:["Generates many genuinely different ideas, plans a repair in a sensible order, and already has real making experience in their hands.",
+ "Good ideas and real interest in building. Either the volume of ideas or the hands-on history is still thin.",
+ "Ideas come slowly and repeat one theme. Hands are inexperienced — which is a matter of opportunity, not ability.",
+ "Little evidence yet of divergent thinking or hands-on work. Start with high-success, highly structured builds."],
+team:["Handles conflict, credit and mistakes the way we want on a shared bench, treats safety seriously, and clearly wants to be here.",
+ "Positive, safe and cooperative. One or two answers suggest they would go quiet rather than speak up when something is wrong.",
+ "Willing, but conflict-avoidant or careless about safety in ways that need a direct conversation before the first session with tools.",
+ "Answers suggest they would hide a mistake, avoid a teammate problem, or mishandle a safety situation. Address explicitly before tool access."]};
+const REC={
+observe:["Give them the role of observer-recorder in group builds; their notes will be worth reading.",
+ "Ask them to say a prediction out loud before every demonstration, then check it. Ten seconds each time.",
+ "Run the same demonstration three times and ask for one new detail each round. Build the habit of looking twice.",
+ "Pair with a strong observer and use slow-motion video of the same event before discussing it."],
+method:["Trust them with open investigations early. Use them to model fair testing for the group.",
+ "One explicit lesson on 'change one thing only', then let them loose. This will close quickly.",
+ "Use printed trial tables with a locked column so only one variable can change. Remove the scaffold after four sessions.",
+ "Start with two-variable comparisons only, physically separated — two identical cars, one heavier. Build up slowly."],
+data:["Give them the data-logging and graphing role in projects; extend with real sensor data.",
+ "Practise describing curve shapes in sentences before numbers. 'Fast then slow' before gradients.",
+ "Start from graphs they draw of their own motion in the yard, then read graphs of others.",
+ "Daily two-minute graph reading at the start of sessions until it becomes automatic."],
+spatial:["Put them on gear trains, linkages and load-bearing structures. Let them lead the mechanical build.",
+ "One bench session on torque with a metre rule and masses will lift this whole dimension.",
+ "Use large transparent mechanisms — big gears, visible pulleys — before fine kit parts.",
+ "Begin with assembly from pictures and lots of hands-on play with big parts. Avoid fiddly kits at first."],
+measure:["Give them the calibration and quality-control role; they can check other groups' results.",
+ "Estimation warm-ups: guess first, measure second, compare. Five minutes per session.",
+ "Direct teaching of zero error, meniscus reading and repeated measurement, with a checklist on the bench.",
+ "Measuring stations with one instrument at a time, and a partner who reads it back to them."],
+solve:["Give them the hardest open challenge in the room and stay out of the way.",
+ "Teach the four steps out loud — understand, plan, try, look back — and name which step they are on.",
+ "Break challenges into visible stages with a small win at each. Praise the strategy change, not the answer.",
+ "Short, achievable tasks first, with an explicit rule that asking for a hint is allowed and costs nothing."],
+create:["Let them prototype freely and present to the group; they will raise everyone's ambition.",
+ "Timed idea storms at the start of design tasks, with a minimum count to hit.",
+ "Deliberate exposure: take three broken devices apart before designing anything.",
+ "Structured kits with clear instructions first, and free-build time only after two successes."],
+team:["Consider them for a bench captain or peer-mentor role by the second month.",
+ "Give them a defined speaking role in presentations so speaking up becomes routine.",
+ "A private conversation about honesty with breakages and about safety, before tool certification.",
+ "Do not issue tool access until the safety module is repeated and passed. Assign a steady partner."]};
+
+/* --------------------------- REPORT ------------------------------ */
+function radar(dims,base){
+  const c=el("canvas",{width:560,height:440,style:"width:100%;max-width:520px;display:block;margin:0 auto"});
+  const x=c.getContext("2d"), cx=280, cy=215, R=138;
+  const keys=DIMKEYS, n=keys.length;
+  const pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/n;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  [0.25,0.5,0.75,1].forEach(f=>{ x.beginPath();
+    for(let i=0;i<n;i++){const[px,py]=pt(i,R*f); i?x.lineTo(px,py):x.moveTo(px,py);} x.closePath();
+    x.strokeStyle=f===1?"#0E1F27":"#D7DFDD"; x.lineWidth=f===1?1.6:1; x.stroke(); });
+  for(let i=0;i<n;i++){const[px,py]=pt(i,R); x.beginPath();x.moveTo(cx,cy);x.lineTo(px,py);x.strokeStyle="#D7DFDD";x.stroke();}
+  if(base){
+    x.save(); x.setLineDash([5,4]); x.beginPath();
+    keys.forEach((k,i)=>{const[px,py]=pt(i,R*(base[k]/100)); i?x.lineTo(px,py):x.moveTo(px,py);});
+    x.closePath(); x.strokeStyle="#8DA1A8"; x.lineWidth=1.4; x.stroke(); x.restore();
+  }
+  x.beginPath();
+  keys.forEach((k,i)=>{const[px,py]=pt(i,R*Math.max(0.04,dims[k]/100)); i?x.lineTo(px,py):x.moveTo(px,py);});
+  x.closePath(); x.fillStyle="rgba(245,166,35,.32)"; x.fill();
+  x.strokeStyle="#C87F0A"; x.lineWidth=2.4; x.stroke();
+  keys.forEach((k,i)=>{const[px,py]=pt(i,R*Math.max(0.04,dims[k]/100));
+    x.beginPath();x.arc(px,py,4.2,0,7);x.fillStyle="#0E1F27";x.fill();});
+  x.font="600 12px 'Space Grotesk',sans-serif"; x.textAlign="center"; x.fillStyle="#10262F";
+  keys.forEach((k,i)=>{const[px,py]=pt(i,R+27);
+    x.fillText(DIMS[k].short,px,py+4);
+    x.font="11px 'IBM Plex Sans',sans-serif"; x.fillStyle="#7B919B";
+    x.fillText(dims[k],px,py+18); x.font="600 12px 'Space Grotesk',sans-serif"; x.fillStyle="#10262F";});
+  return c;
+}
+function behaviour(){
+  const L=labStats(), mins=Math.round((now()-S.started)/60000);
+  const pipe=S.ans.q_pipe||{}, odd=S.ans.q_odd||{};
+  const replays=["q_ramp1","q_drop","q_cart","q_spot","q_g1","q_g2","q_g3"]
+    .reduce((a,k)=>a+((S.tele[k]||{}).runs||(S.tele[k]||{}).views||0),0);
+  const rushed=SC.filter(s=>{const g=(S.tele[s.id]||{}).dt;return g!==undefined&&g<3;}).length;
+  const ideas=(S.ans.q_ideas||[]).length;
+  const hand=(S.ans.q_hand||[]);
+  return {mins,L,pipe,odd,replays,rushed,ideas,
+    handAvg:hand.length?+(hand.reduce((a,b)=>a+b,0)/hand.length).toFixed(1):null,
+    changes:S.changes,
+    stations:STATIONS.map((st,i)=>({t:st.title,s:S.stationTime[i]||0}))};
+}
+function flags(B,dims,R){
+  const out=[];
+  if(R&&R.overall<=R.overallBase+4) out.push(["a","Whole session sits at or below the guessing baseline — no reliable evidence either way"]);
+  if(R){ const flat=DIMKEYS.filter(k=>R.dims[k]<=R.base[k]+3);
+    if(flat.length>=4) out.push(["a",flat.length+" of 8 dimensions are at chance level — consider re-running with support"]); }
+  if(B.L.ratio>=0.75&&B.L.n>=6) out.push(["g","Ran a genuinely controlled investigation without being told to"]);
+  if(B.L.ratio<0.34) out.push(["a","Changed several settings at once — no fair test was performed"]);
+  if(B.pipe.solved&&B.pipe.moves<=22) out.push(["g","Solved the pipe puzzle efficiently ("+B.pipe.moves+" moves)"]);
+  if(B.pipe.gaveUp) out.push(["a","Gave up on the pipe puzzle after "+(B.pipe.secs||0)+" s"]);
+  if(B.odd.found&&B.odd.weighs<=2) out.push(["g","Found the heavy ball in the theoretical minimum of two weighings"]);
+  if(B.odd.found===false) out.push(["a","Did not identify the heavy ball"]);
+  if(B.replays>=14) out.push(["g","Replayed simulations "+B.replays+" times before answering — watches properly"]);
+  if(B.replays<=4) out.push(["a","Barely replayed the simulations ("+B.replays+" plays in total)"]);
+  if(B.rushed>=8) out.push(["a",B.rushed+" answers came within 3 seconds of the previous one — some guessing likely"]);
+  if(B.ideas>=14) out.push(["g","Produced "+B.ideas+" ideas in 90 seconds"]);
+  if(B.ideas<=4) out.push(["a","Only "+B.ideas+" idea"+(B.ideas===1?"":"s")+" in the 90-second storm"]);
+  if(B.handAvg!==null&&B.handAvg<=4) out.push(["g","Steady hands — average miss "+B.handAvg+"%"]);
+  if(B.handAvg!==null&&B.handAvg>=12) out.push(["a","Timing control is loose — average miss "+B.handAvg+"%"]);
+  if(B.mins<=14) out.push(["a","Completed everything in "+B.mins+" minute"+(B.mins===1?"":"s")+" — unusually fast"]);
+  if(dims.team>=80&&dims.solve<50) out.push(["","Wants it badly; the reasoning tools lag behind the motivation"]);
+  return out;
+}
+function interviewQs(dims,B){
+  const sorted=DIMKEYS.slice().sort((a,b)=>dims[a]-dims[b]);
+  const low=sorted[0], low2=sorted[1], high=sorted[sorted.length-1];
+  const q=[];
+  q.push("Show them the pendulum bench again and ask: “If I wanted to prove the mass makes no difference, which two runs would you do?” — listen for one variable changing. (weakest area: "+DIMS[low].short.toLowerCase()+")");
+  q.push("Ask them to talk you through how they attacked the "+(B.pipe.solved?"pipe puzzle":"nine-ball problem")+". You are listening for a method, not a result.");
+  q.push("Ask what they would build first if they had the whole kit cupboard and one Saturday. Their answer to “"+(S.ans.q_hope?String(S.ans.q_hope).slice(0,60):"")+"…” suggests where to push.");
+  q.push("Their strongest dimension is "+DIMS[high].short.toLowerCase()+" — give them one problem in it during the interview and watch their face.");
+  q.push("Probe "+DIMS[low2].short.toLowerCase()+" once more before deciding; a single assessment is thin evidence for a low score.");
+  return q;
+}
+
+function plainReport(R,B,tier){
+  const p=S.profile, L=[];
+  const line=s=>L.push(s);
+  line("BEE SKILL CENTER — PHYSICS ENTRANCE ASSESSMENT");
+  line(CFG.location+"  ·  "+CFG.cohort);
+  line("Generated "+new Date().toLocaleString());
+  line("");
+  line("STUDENT");
+  line("  Name        : "+(p.name||"—"));
+  line("  Age / class : "+(p.age||"—")+"  /  "+(p.grade||"—"));
+  line("  School      : "+(p.school||"—")+"   Town: "+(p.town||"—"));
+  line("  Phone       : "+(p.phone||"—")+"   Guardian: "+(p.guardian||"—"));
+  line("  Email       : "+(p.email||"—"));
+  line("  Language    : "+(p.lang||"—")+"   Physics studied: "+(p.physics||"—"));
+  line("");
+  line("RESULT");
+  line("  Overall aptitude index : "+R.overall+" / 100");
+  line("  Guessing baseline      : "+R.overallBase+" / 100   (a student answering at random scores about this)");
+  line("  Recommendation         : "+TIERS[tier].l.toUpperCase());
+  line("  "+TIERS[tier].s);
+  line("");
+  line("DIMENSION SCORES     (score / chance baseline)");
+  DIMKEYS.forEach(k=>{
+    const v=R.dims[k], b=bandOf(v);
+    line("  "+(DIMS[k].name+" ").padEnd(38,".")+" "+String(v).padStart(3)+"/100   chance "+String(R.base[k]).padStart(2)+"   "+BANDS[b].l);
+    line("      "+COM[k][b]);
+    line("      → "+REC[k][b]);
+  });
+  line("");
+  line("HOW THEY WORKED (behavioural evidence)");
+  line("  Total time on task        : "+B.mins+" min"+(B.mins===1?"":"s"));
+  line("  Pendulum trials run       : "+B.L.n+"   one-variable-at-a-time: "+Math.round(B.L.ratio*100)+"% of changes");
+  line("  Isolated the string length: "+(B.L.isolatedL?"yes":"no"));
+  line("  Proof pair chosen         : "+(proofScore()===1?"valid — differed only in length":proofScore()>0.5?"one variable, but not the decisive one":"invalid — more than one variable differed"));
+  line("  Pipe puzzle               : "+(B.pipe.solved?("solved in "+B.pipe.moves+" moves, "+B.pipe.secs+" s"):(B.pipe.gaveUp?"gave up":"not solved")));
+  line("  Nine-ball problem         : "+(B.odd.found?("found in "+B.odd.weighs+" weighing(s)"):"not found"));
+  line("  Simulation replays        : "+B.replays);
+  line("  Answered <3 s after the previous answer : "+B.rushed+" of "+SC.length);
+  line("  Ideas in 90 s             : "+B.ideas);
+  line("  Steady-hand average miss  : "+(B.handAvg===null?"not attempted":B.handAvg+"%"));
+  line("");
+  line("FLAGS");
+  flags(B,R.dims,R).forEach(f=>line("  ["+(f[0]==="g"?"+":f[0]==="a"?"!":" ")+"] "+f[1]));
+  line("");
+  line("WRITTEN ANSWERS (read these yourself — the machine only counted them)");
+  [["Why join",S.ans.q_why],["Noticed unprompted",S.ans.q_notice],["Mountain/beach test design",S.ans.q_design],
+   ["Time they were stuck",S.ans.q_stuck],["Plant watering design",S.ans.q_designit],
+   ["Made / fixed / took apart",S.ans.q_built],["Hopes to build",S.ans.q_hope]].forEach(([t,v])=>{
+    line("  · "+t+":"); line("    "+String(v||"—").replace(/\n+/g," ").slice(0,700));
+  });
+  line("");
+  line("IDEA STORM — broken bicycle wheel ("+B.ideas+" ideas)");
+  line("  "+((S.ans.q_ideas||[]).join(" | ")||"—"));
+  line("");
+  line("INTERVIEW PROMPTS");
+  interviewQs(R.dims,B).forEach((q,i)=>line("  "+(i+1)+". "+q));
+  line("");
+  line("TIME PER STATION (seconds)");
+  B.stations.forEach((s,i)=>line("  "+(i+1)+". "+s.t+" — "+s.s+" s"));
+  line("");
+  line("FRAMEWORKS THIS INSTRUMENT DRAWS ON");
+  line("  NGSS Science & Engineering Practices · AAAS Project 2061 benchmarks");
+  line("  Control-of-Variables Strategy (Chen & Klahr) · Force Concept Inventory (Hestenes)");
+  line("  Bennett Mechanical Comprehension framework · Torrance divergent thinking");
+  line("  Polya problem-solving stages · Duckworth persistence research");
+  line("  This is a placement instrument, not a validated psychometric test. Treat it as");
+  line("  structured evidence for a human decision, alongside an interview.");
+  return L.join("\n");
+}
+
+/* --------------------------- DELIVERY ---------------------------- */
+function download(name,text,type){
+  const b=new Blob([text],{type:type||"text/plain;charset=utf-8"});
+  const u=URL.createObjectURL(b), a=el("a",{href:u,download:name});
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000);
+}
+async function deliver(R,B,tier,txt,statusEl){
+  const p=S.profile;
+  const payload={
+    center:CFG.centerName, cohort:CFG.cohort, when:new Date().toISOString(),
+    student:p, overall:R.overall, tier:TIERS[tier].l, dims:R.dims,
+    behaviour:{minutes:B.mins,labTrials:B.L.n,fairTestRatio:+B.L.ratio.toFixed(2),isolatedLength:B.L.isolatedL,
+      pipe:B.pipe,oddBall:B.odd,replays:B.replays,rushed:B.rushed,ideas:B.ideas,handMiss:B.handAvg,edits:B.changes},
+    answers:S.ans, telemetry:S.tele, trials:S.lab.trials, report:txt
+  };
+  const results=[];
+  const set=(t,cls)=>{statusEl.className="status "+cls;statusEl.innerHTML=t;};
+  set("Sending your report to the centre…","busy");
+
+  if(CFG.googleScriptUrl){
+    try{ await fetch(CFG.googleScriptUrl,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+      results.push(["Centre server","sent"]); }catch(e){ results.push(["Centre server","failed"]); }
+  }
+  if(CFG.formspreeUrl){
+    try{ const r=await fetch(CFG.formspreeUrl,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
+      results.push(["Formspree",r.ok?"sent":"failed"]); }catch(e){ results.push(["Formspree","failed"]); }
+  }
+  if(CFG.formsubmit){
+    const body={ _subject:"Bee entrance assessment — "+(p.name||"unnamed")+" ("+R.overall+"/100, "+TIERS[tier].l+")",
+      _template:"table", _captcha:"false",
+      Student:p.name||"—", Age:p.age||"—", Class:p.grade||"—", School:p.school||"—", Town:p.town||"—",
+      Phone:p.phone||"—", Guardian:p.guardian||"—", Email:p.email||"—",
+      Overall:R.overall+"/100", Recommendation:TIERS[tier].l };
+    DIMKEYS.forEach(k=>body[DIMS[k].short]=R.dims[k]+"/100");
+    body["Full report"]=txt.slice(0,45000);
+    try{
+      const r=await fetch(CFG.formsubmit,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(body)});
+      const j=await r.json().catch(()=>({}));
+      results.push(["Email",(r.ok&&String(j.success)!=="false")?"sent":"failed"]);
+    }catch(e){ results.push(["Email","failed"]); }
+  }
+  if(CFG.autoDownloadBackup){
+    const safe=(p.name||"student").replace(/[^\w\u0600-\u06FF ]+/g,"").trim().replace(/\s+/g,"-").toLowerCase();
+    download("bee-assessment-"+safe+".json",JSON.stringify(payload,null,2),"application/json");
+    results.push(["Backup file","saved to this device"]);
+  }
+  const sent=results.some(r=>r[1]==="sent");
+  if(sent) set("<b>Your report has been sent to the centre.</b><br>"+results.map(r=>r[0]+": "+r[1]).join(" · ")+
+    "<br>A copy has also been saved to this device — keep it in case we ask for it.","ok");
+  else set("<b>The report could not be sent automatically from this device.</b><br>"+
+    "This usually means there is no internet connection, or the file is being opened directly from a folder rather than from a website. "+
+    "A copy has been saved to your downloads — send that file to <b>"+CFG.instructorEmail+"</b>, or use the buttons below.","bad");
+  return results;
+}
+
+/* --------------------------- FINISH ------------------------------ */
+function GUARD(e){ e.preventDefault(); e.returnValue=""; }
+function finish(){
+  window.removeEventListener("beforeunload",GUARD);
+  const R=compute(), B=behaviour(), tier=tierOf(R.overall,S.profile.age,R.dims);
+  const txt=plainReport(R,B,tier);
+  $("#shell").classList.add("hide"); $("#report").classList.remove("hide");
+  const h=$("#repHost"); h.innerHTML="";
+
+  const hero=el("div",{class:"rep-hero"});
+  const left=el("div",{});
+  left.appendChild(el("span",{class:"verdict",style:"background:"+TIERS[tier].c+";color:#fff",text:TIERS[tier].l}));
+  left.appendChild(el("h2",{text:(S.profile.name||"Assessment report")}));
+  left.appendChild(el("p",{text:(S.profile.age?S.profile.age+" years old · ":"")+(S.profile.grade||"")+(S.profile.school?" · "+S.profile.school:"")}));
+  left.appendChild(el("p",{text:TIERS[tier].s}));
+  hero.appendChild(left);
+  const ring=el("div",{class:"score-ring"});
+  ring.appendChild(el("b",{text:String(R.overall)}));
+  ring.appendChild(el("span",{text:"aptitude index / 100"}));
+  ring.appendChild(el("span",{style:"display:block;margin-top:7px",text:"guessing alone: "+R.overallBase}));
+  hero.appendChild(ring); h.appendChild(hero);
+
+  const chart=el("div",{class:"sec"});
+  chart.appendChild(el("h3",{text:"The profile"}));
+  chart.appendChild(radar(R.dims,R.base));
+  chart.appendChild(el("p",{style:"text-align:center;font-size:13px;color:#7B919B;margin-top:8px",text:"Solid shape: this student. Dashed ring: what answering at random would produce."}));
+  h.appendChild(chart);
+
+  const dims=el("div",{class:"dims"});
+  DIMKEYS.forEach(k=>{
+    const v=R.dims[k], b=bandOf(v);
+    const d=el("div",{class:"dim"});
+    const hh=el("h4",{}); hh.appendChild(el("span",{text:DIMS[k].name}));
+    hh.appendChild(el("b",{style:"color:"+BANDS[b].c,text:v}));
+    d.appendChild(hh);
+    const bar=el("div",{class:"bar"}); bar.appendChild(el("i",{style:"width:"+v+"%;background:"+BANDS[b].c}));
+    bar.appendChild(el("u",{style:"left:"+R.base[k]+"%",title:"what guessing alone would score"}));
+    d.appendChild(bar);
+    const gap=v-R.base[k];
+    d.appendChild(el("div",{class:"chance",
+      text:"guessing alone scores "+R.base[k]+" · this student is "+(gap>=0?"+"+gap:gap)+" on that"+
+        (gap<=3?" — treat this dimension as unevidenced":"")}));
+    d.appendChild(el("p",{text:COM[k][b]}));
+    d.appendChild(el("p",{style:"margin-top:8px;color:#10262F",html:"<b>Next step:</b> "+REC[k][b]}));
+    d.appendChild(el("p",{style:"margin-top:8px;font-size:12px;color:#7B919B",text:DIMS[k].ref}));
+    dims.appendChild(d);
+  });
+  const ds=el("div",{class:"sec"}); ds.appendChild(el("h3",{text:"Dimension by dimension"})); ds.appendChild(dims); h.appendChild(ds);
+
+  const bs=el("div",{class:"sec"}); bs.appendChild(el("h3",{text:"How they worked"}));
+  const ul=el("ul",{});
+  [["Time on task",B.mins+" minute"+(B.mins===1?"":"s")],
+   ["Pendulum trials",B.L.n+" runs · "+Math.round(B.L.ratio*100)+"% of changes were one variable at a time"],
+   ["Proof pair",proofScore()===1?"valid — the two runs differed only in length":proofScore()>0.5?"one variable isolated, but not the decisive one":"not a valid proof"],
+   ["Pipe puzzle",B.pipe.solved?("solved in "+B.pipe.moves+" moves and "+B.pipe.secs+" seconds"):(B.pipe.gaveUp?"gave up after "+(B.pipe.secs||0)+" seconds":"not solved")],
+   ["Nine-ball problem",B.odd.found?("found in "+B.odd.weighs+" weighing(s)"):"not identified"],
+   ["Simulation replays",B.replays+" plays"],
+   ["Snap answers",B.rushed+" of "+SC.length+" came under 3 seconds after the previous one"],
+   ["Idea storm",B.ideas+" ideas in 90 seconds"],
+   ["Steady hand",B.handAvg===null?"not attempted":"average miss "+B.handAvg+"%"]].forEach(([a,b])=>
+    ul.appendChild(el("li",{html:"<b>"+a+":</b> "+b})));
+  bs.appendChild(ul);
+  const fl=el("div",{class:"flags"});
+  flags(B,R.dims,R).forEach(f=>fl.appendChild(el("span",{class:"flag "+f[0],text:(f[0]==="g"?"✓ ":f[0]==="a"?"! ":"· ")+f[1]})));
+  bs.appendChild(fl); h.appendChild(bs);
+
+  const qs=el("div",{class:"sec"}); qs.appendChild(el("h3",{text:"What to ask at interview"}));
+  const ol=el("ul",{}); interviewQs(R.dims,B).forEach(q=>ol.appendChild(el("li",{text:q})));
+  qs.appendChild(ol); h.appendChild(qs);
+
+  const ws=el("div",{class:"sec"}); ws.appendChild(el("h3",{text:"In the student's own words"}));
+  [["Why they want to join",S.ans.q_why],["Something they noticed unprompted",S.ans.q_notice],
+   ["Their mountain-versus-beach test",S.ans.q_design],["A time they were stuck",S.ans.q_stuck],
+   ["Their plant-watering design",S.ans.q_designit],["The best thing they have made or fixed",S.ans.q_built],
+   ["What they hope to build here",S.ans.q_hope]].forEach(([t,v])=>{
+    ws.appendChild(el("p",{style:"font-weight:500;margin-top:12px",text:t}));
+    ws.appendChild(el("div",{class:"quote",text:String(v||"— left blank —")}));
+  });
+  ws.appendChild(el("p",{style:"font-weight:500;margin-top:12px",text:"Uses for a broken bicycle wheel"}));
+  ws.appendChild(el("div",{class:"quote",text:(S.ans.q_ideas||[]).join(" · ")||"—"}));
+  h.appendChild(ws);
+
+  const send=el("div",{class:"sendbox"});
+  send.appendChild(el("h3",{text:"Sending this to the centre"}));
+  send.appendChild(el("p",{style:"font-size:14.5px;color:#4A6470",html:"This report goes to <b>"+CFG.instructorEmail+"</b>. If the connection fails, download it and send the file yourself — nothing is lost."}));
+  const st=el("div",{class:"status busy",text:"Preparing…"}); send.appendChild(st);
+  const row=el("div",{class:"row",style:"margin-top:16px"});
+  row.appendChild(el("button",{class:"btn",type:"button",text:"Send again",onclick:e=>{e.target.disabled=true;deliver(R,B,tier,txt,st).then(()=>e.target.disabled=false);}}));
+  row.appendChild(el("button",{class:"btn ghost",type:"button",text:"Download the report",onclick:()=>
+    download("bee-report-"+((S.profile.name||"student").replace(/\s+/g,"-").toLowerCase())+".txt",txt)}));
+  row.appendChild(el("button",{class:"btn ghost",type:"button",text:"Print or save as PDF",onclick:()=>window.print()}));
+  row.appendChild(el("button",{class:"btn ghost",type:"button",text:"Open in my email app",onclick:()=>{
+    const body=txt.slice(0,1500)+"\n\n[Full report attached separately — the downloaded file]";
+    location.href="mailto:"+CFG.instructorEmail+"?subject="+encodeURIComponent("Bee entrance assessment — "+(S.profile.name||""))+"&body="+encodeURIComponent(body);}}));
+  row.appendChild(el("button",{class:"btn ghost",type:"button",text:"Copy report text",onclick:e=>{
+    navigator.clipboard.writeText(txt).then(()=>e.target.textContent="Copied").catch(()=>e.target.textContent="Copy failed");}}));
+  send.appendChild(row);
+  h.appendChild(send);
+
+  const raw=el("details",{class:"raw"});
+  raw.appendChild(el("summary",{text:"Show the full text report"}));
+  raw.appendChild(el("pre",{text:txt}));
+  h.appendChild(raw);
+  h.appendChild(el("p",{style:"margin-top:26px;font-size:12.5px;color:#7B919B",
+    html:"Instrument built for "+CFG.centerName+", "+CFG.location+". Informed by the NGSS science and engineering practices, Chen &amp; Klahr's control-of-variables work, the Bennett mechanical comprehension framework and Torrance divergent-thinking scoring. It is a placement tool, not a validated psychometric test — use it as structured evidence alongside a conversation with the student."}));
+
+  window.scrollTo(0,0);
+  deliver(R,B,tier,txt,st);
+}
+
+/* ------------------- INSTRUCTOR DEMO MODE -------------------------
+   Open the page with ?demo=1 to generate a sample report instantly and
+   test that email delivery is working. Nothing else is affected.      */
+function demoFill(){
+  S.started=now()-38*60000;
+  S.profile={name:"Sample Student (demo)",age:"15",school:"Jiyeh Public School",grade:"Grade 10",
+    town:"Zarout",phone:"—",guardian:"—",email:"—",lang:"Arabic + English",physics:"One year"};
+  const pick=(id,v)=>{S.ans[id]=v;S.tele[id]={t:14,dt:9};};
+  SC.forEach(s=>{
+    const r=Math.random();
+    if(CHANCE[s.id]===0.25) pick(s.id, r<0.62 ? (SCKEY[s.id]??0) : Math.floor(Math.random()*4));
+    else if(CHANCE[s.id]===0.5) pick(s.id, 2+Math.floor(Math.random()*3));
+    else if(CHANCE[s.id]===0.3) pick(s.id,"This is sample text written by the demo mode so that you can see how a written answer appears in the report, because the machine only counts the words and you read the meaning yourself.");
+  });
+  pick("q_exp",[0,1,3,5]); pick("q_ruler","6.4"); pick("q_lever",16);
+  pick("q_fix",[0,1,2,3,4]); pick("q_hand",[3.1,6.4,4.8]);
+  pick("q_ideas",["a clock face","a garden trellis","a pulley","a plant stand","a bird feeder","a wall hoop","a fan guard","a spinning toy"]);
+  pick("q_pipe",{solved:true,moves:26,secs:181}); pick("q_odd",{found:true,weighs:3,heavy:4,picked:4});
+  pick("q_proof",[0,1]);
+  S.lab.trials=[{L:40,M:100,A:20,T:1.27,five:6.35},{L:60,M:100,A:20,T:1.55,five:7.77},
+    {L:80,M:100,A:20,T:1.80,five:8.98},{L:80,M:180,A:20,T:1.79,five:8.96},
+    {L:80,M:180,A:35,T:1.84,five:9.20},{L:100,M:180,A:35,T:2.05,five:10.26}];
+  STATIONS.forEach((s,i)=>S.stationTime[i]=120+Math.floor(Math.random()*220));
+  S.changes=14;
+}
+/* Answer key, used only by demo mode to fake a plausible student. */
+const SCKEY={};
+(function(){
+  [["q_ramp1",0],["q_ramp2",2],["q_drop",2],["q_dropwhy",1],["q_cart",1],["q_spot",2],
+   ["q_factor",1],["q_fair",2],["q_repeat",1],["q_g1",0],["q_g2",1],["q_g3",1],["q_read",1],
+   ["q_shape",1],["q_tbl",2],["q_trend",1],["q_rel",0],["q_gearC",0],["q_gearD",3],
+   ["q_leverwhy",1],["q_pulley",2],["q_frame",2],["q_rot",1],["q_water",0],["q_ramp3",1],
+   ["q_cyl",1],["q_paper",1],["q_target",0],["q_bike",1],["q_bath",1],["q_secs",2],
+   ["q_honest",0],["q_scale",2],["q_seq",1],["q_strategy",1],["q_sanity",1],["q_missing",1],
+   ["q_sj1",2],["q_sj2",1],["q_sj3",1],["q_sj4",0],["q_safe1",1],["q_safe2",0],
+   ["q_sat",3],["q_time",2]].forEach(([k,v])=>SCKEY[k]=v);
+})();
+
+/* ----------------------------- INIT ------------------------------ */
+$("#startBtn").addEventListener("click",()=>{
+  S.started=now(); $("#welcome").classList.add("hide"); $("#shell").classList.remove("hide");
+  renderStation(); setInterval(tick,1000);
+  window.addEventListener("beforeunload",GUARD);
+});
+$("#nextBtn").addEventListener("click",()=>go(1));
+$("#backBtn").addEventListener("click",()=>go(-1));
+addEventListener("resize",()=>{ if(!$("#welcome").classList.contains("hide")) drawComb(); });
+drawComb();
+if(new URLSearchParams(location.search).get("demo")==="1"){
+  $("#welcome").classList.add("hide"); demoFill(); finish();
+}
+</script>
+</body>
+</html>
