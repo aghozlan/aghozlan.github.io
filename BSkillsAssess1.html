@@ -101,6 +101,8 @@ h1,h2,h3,h4{font-family:var(--disp);font-weight:600;line-height:1.15;letter-spac
 .opt.svgopt .mark{display:none}
 .opt.svgopt figcaption{font-size:13.5px;margin-top:6px;color:var(--txt-2)}
 .optgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.optgrid.tight{grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:7px}
+.opt.chip{grid-template-columns:1fr;padding:10px 12px;font-size:14px;align-items:center}
 .lik{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
 .lik button{border:1px solid var(--line);background:var(--card-2);border-radius:7px;padding:9px 4px;font-size:12.5px;line-height:1.25;color:var(--txt-2)}
 .lik button.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -213,11 +215,12 @@ details.raw pre{background:var(--ink);color:#BCD2D1;padding:14px;border-radius:8
           <b>Bee Skill Center<span>Zarout · Jiyeh · Lebanon</span></b>
         </div>
         <h1>Physics is a workshop.<em>Let's see how you work.</em></h1>
-        <p class="lede">This is not a physics exam. Nothing to revise, nothing to memorise. It is a set of nine hands-on stations that show us how you observe, test, measure, build and think — so we can place you in the right group when we open in October 2026.</p>
+        <p class="lede">This is not a physics exam. Nothing to revise, nothing to memorise, and nothing to write. It is nine hands-on stations that show us how you observe, test, measure, build and think — so we can place you in the right group when we open in October 2026.</p>
         <p class="ar">مركز بي لصقل المهارات — تقييم القبول لمسار الفيزياء التطبيقية</p>
         <div class="facts">
           <span class="fact"><b>9</b> stations</span>
-          <span class="fact"><b>16</b> live simulations</span>
+          <span class="fact"><b>18</b> things you can play with</span>
+          <span class="fact">nothing to <b>write</b></span>
           <span class="fact"><b>40</b> min, roughly</span>
           <span class="fact">ages <b>12–18</b></span>
         </div>
@@ -234,7 +237,8 @@ details.raw pre{background:var(--ink);color:#BCD2D1;padding:14px;border-radius:8
           <li><i>3</i><span>Some tasks are meant to be hard. We watch <em>how</em> you attack them, not only whether you finish.</span></li>
           <li><i>4</i><span>Play with every simulation. Pressing "run" ten times tells us more than answering fast.</span></li>
           <li><i>5</i><span>If you truly do not know, pick what you think is most likely and move on. Blank tells us nothing.</span></li>
-          <li><i>6</i><span>Finish in one sitting. Closing this page loses your work.</span></li>
+          <li><i>6</i><span>You will never be asked to write about yourself. Everything is tapping, dragging, building and choosing — so your English or Arabic is never what is being judged.</span></li>
+          <li><i>7</i><span>Finish in one sitting. Closing this page loses your work.</span></li>
         </ul>
       </aside>
     </div>
@@ -285,8 +289,7 @@ const CFG = {
   googleScriptUrl: "",
   formspreeUrl: "",
 
-  autoDownloadBackup: true,   // always drop a JSON copy on the student's device
-  minTextWords: 6             // below this a written answer counts as unattempted
+  autoDownloadBackup: true    // always drop a JSON copy on the student's device
 };
 /* URL overrides for testing: ?gs=<url>  ?fs=<url>  ?formsubmit=0 */
 (function(){ const p=new URLSearchParams(location.search);
@@ -431,20 +434,30 @@ function renderMC(item){
 }
 function renderMulti(item){
   const box=qShell(item);
-  const wrap=el("div",{class:"opts"});
+  const wrap=el("div",{class:item.grid?"optgrid tight":"opts"});
   const picked=new Set();
+  const counter=item.max?el("div",{class:"q-h",style:"margin:10px 0 0"}):null;
+  const tally=()=>{ if(counter) counter.textContent="Chosen "+picked.size+" of "+item.max+
+    (picked.size>item.max?" — remove one":""); };
   item.options.forEach((o,i)=>{
-    const b=el("button",{class:"opt multi",type:"button"});
-    b.appendChild(el("span",{class:"mark"}));
+    const b=el("button",{class:"opt multi"+(item.grid?" chip":""),type:"button"});
+    if(!item.grid) b.appendChild(el("span",{class:"mark"}));
     b.appendChild(el("span",{html:o.t}));
     b.addEventListener("click",()=>{
       if(picked.has(i)){picked.delete(i);b.classList.remove("sel");}
-      else{picked.add(i);b.classList.add("sel");}
-      setAns(item.id,[...picked].sort((a,b)=>a-b));
+      else{
+        if(item.max&&picked.size>=item.max){
+          const first=[...picked][0]; picked.delete(first);
+          wrap.children[first].classList.remove("sel");
+        }
+        picked.add(i); b.classList.add("sel");
+      }
+      tally(); setAns(item.id,[...picked].sort((a,b)=>a-b));
     });
     wrap.appendChild(b);
   });
-  box.appendChild(wrap); return box;
+  box.appendChild(wrap); if(counter){box.appendChild(counter);tally();}
+  return box;
 }
 function renderLikert(item){
   const box=qShell(item);
@@ -456,13 +469,6 @@ function renderLikert(item){
     wrap.appendChild(b);
   });
   box.appendChild(wrap); return box;
-}
-function renderText(item){
-  const box=qShell(item);
-  const ta=el("textarea",{placeholder:item.ph||"Write your answer in your own words…"});
-  const wc=el("div",{class:"wc",text:"0 words"});
-  ta.addEventListener("input",()=>{const w=words(ta.value);wc.textContent=w+" words";setAns(item.id,ta.value);});
-  box.appendChild(ta); box.appendChild(wc); return box;
 }
 function renderNum(item){
   const box=qShell(item);
@@ -476,7 +482,7 @@ function renderNum(item){
 }
 function renderWidget(item){ const box=qShell(item); item.widget(box,item); return box; }
 
-const RENDER={mc:renderMC,multi:renderMulti,likert:renderLikert,text:renderText,num:renderNum,widget:renderWidget};
+const RENDER={mc:renderMC,multi:renderMulti,likert:renderLikert,num:renderNum,widget:renderWidget};
 
 /* ------------------------ STATION ENGINE -------------------------- */
 function buildComb(){
@@ -510,7 +516,6 @@ function requiredMissing(){
     const v=S.ans[i.id];
     if(v===undefined||v===null||v==="") return true;
     if(Array.isArray(v)&&!v.length&&!i.allowEmpty) return true;
-    if(i.type==="text"&&words(v)<CFG.minTextWords) return true;
     return false;
   });
   if(!miss.length) return "";
@@ -1073,33 +1078,180 @@ function steadyHand(box,item){
   b.appendChild(btn);
 }
 
-/* --- 13. DIVERGENT THINKING (timed) ------------------------------ */
-function ideaStorm(box,item){
+/* --- 13. WORKSHOP HAZARD SCAN (replaces "what did you notice") ---- */
+const SPOTS=[
+ {h:1,x:118,y:196,r:30,n:"bare wire shorting the battery"},
+ {h:1,x:292,y:186,r:26,n:"beaker on the very edge of the bench"},
+ {h:1,x:445,y:182,r:26,n:"hot glue gun left on, lying on paper"},
+ {h:1,x:598,y:120,r:30,n:"overloaded shelf bending"},
+ {h:1,x:352,y:300,r:34,n:"liquid spilled on the floor"},
+ {h:1,x:716,y:196,r:30,n:"loose sleeve next to the spinning drill"},
+ {h:0,x:196,y:196,r:24,n:"closed toolbox"},
+ {h:0,x:520,y:196,r:22,n:"labelled jar"},
+ {h:0,x:640,y:206,r:22,n:"ruler on the bench"},
+ {h:0,x:60,y:120,r:24,n:"lamp, correctly plugged in"}];
+function hazardScan(box,item){
   const sim=el("div",{class:"sim"});
-  const ideas=[]; let left=90,iv=null,started=false;
-  const head=el("div",{class:"row",style:"justify-content:space-between"});
-  const clock=pill("90 s"); head.appendChild(el("b",{style:"font-family:var(--disp)",text:"Ideas: 0"})); head.appendChild(clock);
-  const inp=el("input",{type:"text",placeholder:"one idea, then press Enter",disabled:"true"});
-  const chips=el("div",{class:"ideas"});
-  function paint(){ head.firstChild.textContent="Ideas: "+ideas.length; chips.innerHTML="";
-    ideas.forEach((t,i)=>{ const ch=el("span",{class:"idea"},[document.createTextNode(t)]);
-      ch.appendChild(el("button",{type:"button",text:"×",onclick:()=>{ideas.splice(i,1);setAns(item.id,ideas.slice());paint();}}));
-      chips.appendChild(ch); }); }
-  inp.addEventListener("keydown",e=>{ if(e.key!=="Enter") return; e.preventDefault();
-    const v=inp.value.trim(); if(v.length<2) return; ideas.push(v); inp.value=""; setAns(item.id,ideas.slice()); paint(); });
-  const b=bar(sim);
-  const st=el("button",{class:"btn sm",type:"button",text:"Start the 90 seconds"});
-  st.addEventListener("click",()=>{ if(started) return; started=true; st.disabled=true; inp.disabled=false; inp.focus();
-    iv=setInterval(()=>{ left--; clock.textContent=left+" s"; if(left<=10) clock.className="pill hot";
-      if(left<=0){ clearInterval(iv); inp.disabled=true; clock.textContent="time"; setAns(item.id,ideas.slice());
-        tele(item.id,"count",ideas.length); } },1000); });
-  b.appendChild(st);
-  b.appendChild(el("span",{class:"tag",text:"quantity first — wild ideas are welcome"}));
-  sim.appendChild(head); sim.appendChild(inp); sim.appendChild(chips);
+  const picked=new Set();
+  const scene=
+   '<rect x="0" y="0" width="800" height="360" fill="#F4F7F6"/>'+
+   '<rect x="0" y="228" width="800" height="132" fill="#E6ECEA"/>'+
+   '<rect x="20" y="212" width="760" height="18" fill="#0E1F27"/>'+
+   '<rect x="40" y="230" width="14" height="100" fill="#2C4A55"/><rect x="746" y="230" width="14" height="100" fill="#2C4A55"/>'+
+   /* lamp (safe) */
+   '<path d="M60 96 L44 124 L76 124 Z" fill="#F5A623" stroke="#0E1F27" stroke-width="2"/>'+
+   '<line x1="60" y1="124" x2="60" y2="212" stroke="#0E1F27" stroke-width="3"/>'+
+   /* shelf, overloaded + bending */
+   '<path d="M540 132 q58 20 116 0" fill="none" stroke="#0E1F27" stroke-width="6"/>'+
+   '<rect x="556" y="100" width="26" height="34" fill="#127A72"/><rect x="586" y="96" width="26" height="38" fill="#C2412B"/>'+
+   '<rect x="616" y="102" width="26" height="32" fill="#127A72"/>'+
+   /* battery + bare wire short */
+   '<rect x="92" y="182" width="56" height="30" fill="#127A72" stroke="#0E1F27" stroke-width="2"/>'+
+   '<path d="M100 182 q18 -34 44 0" fill="none" stroke="#C2412B" stroke-width="4"/>'+
+   '<circle cx="122" cy="166" r="7" fill="#F5A623" opacity=".9"/>'+
+   /* toolbox (safe) */
+   '<rect x="172" y="188" width="48" height="24" fill="#8FB0AF" stroke="#0E1F27" stroke-width="2"/>'+
+   '<path d="M188 188 v-7 h16 v7" fill="none" stroke="#0E1F27" stroke-width="2"/>'+
+   /* beaker on edge */
+   '<path d="M278 172 L278 212 L306 212 L306 172" fill="#8FD3E8" stroke="#0E1F27" stroke-width="2"/>'+
+   /* glue gun on paper */
+   '<rect x="410" y="200" width="72" height="12" fill="#EAF2F1" stroke="#C9D6D4"/>'+
+   '<path d="M424 198 L462 198 L468 186 L424 186 Z" fill="#C2412B" stroke="#0E1F27" stroke-width="2"/>'+
+   '<rect x="432" y="198" width="10" height="12" fill="#0E1F27"/>'+
+   /* jar (safe) */
+   '<rect x="508" y="184" width="26" height="28" fill="#FFE9B8" stroke="#0E1F27" stroke-width="2"/>'+
+   '<rect x="508" y="180" width="26" height="6" fill="#0E1F27"/>'+
+   /* ruler (safe) */
+   '<rect x="606" y="202" width="70" height="10" fill="#F5A623" stroke="#0E1F27" stroke-width="1.6"/>'+
+   /* drill + loose sleeve */
+   '<rect x="690" y="180" width="46" height="24" fill="#2C4A55" stroke="#0E1F27" stroke-width="2"/>'+
+   '<rect x="736" y="188" width="26" height="7" fill="#0E1F27"/>'+
+   '<path d="M690 192 q-26 -6 -40 16 q22 12 42 2" fill="#F5A623" stroke="#0E1F27" stroke-width="2"/>'+
+   /* spill */
+   '<path d="M300 300 q34 -20 70 -6 q34 14 62 2 q-10 26 -66 26 q-54 0 -66 -22 Z" fill="#8FD3E8" opacity=".75" stroke="#127A72" stroke-width="2"/>';
+  let hot="";
+  SPOTS.forEach((sp,i)=>{ hot+='<g class="hz" data-i="'+i+'" style="cursor:pointer">'+
+    '<circle cx="'+sp.x+'" cy="'+sp.y+'" r="'+sp.r+'" fill="transparent"/>'+
+    '<circle class="ring" cx="'+sp.x+'" cy="'+sp.y+'" r="'+sp.r+'" fill="rgba(245,166,35,.28)" stroke="#C87F0A" stroke-width="3" opacity="0"/></g>'; });
+  sim.innerHTML='<svg viewBox="0 0 800 360">'+scene+hot+'</svg>';
+  const b=bar(sim); const count=pill("marked: 0");
+  b.appendChild(count);
+  b.appendChild(el("span",{class:"tag",text:"tap anything you think is unsafe or wrong"}));
+  sim.querySelectorAll(".hz").forEach(g=>{
+    g.addEventListener("click",()=>{
+      const i=+g.dataset.i, ring=g.querySelector(".ring");
+      if(picked.has(i)){picked.delete(i);ring.setAttribute("opacity","0");}
+      else{picked.add(i);ring.setAttribute("opacity","1");}
+      count.textContent="marked: "+picked.size;
+      setAns(item.id,[...picked].sort((a,b)=>a-b));
+    });
+  });
   box.appendChild(sim);
 }
 
-/* --- 14. CLICK-TO-ORDER ------------------------------------------ */
+/* --- 14. FAIR-TEST BUILDER (replaces the written test design) ----- */
+function testBuilder(box,item){
+  const sim=el("div",{class:"sim"});
+  const VARS=[{k:"place",l:"Where you test it",o:["At the beach","On the mountain"]},
+              {k:"len",l:"String length",o:["40 cm","70 cm"]},
+              {k:"mass",l:"Bob mass",o:["50 g","150 g"]}];
+  const cfg={A:{},B:{}};
+  const grid=el("div",{style:"display:grid;grid-template-columns:1fr 1fr;gap:14px"});
+  ["A","B"].forEach(side=>{
+    const col=el("div",{style:"background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px"});
+    col.appendChild(el("div",{style:"font-family:var(--disp);font-weight:600;margin-bottom:10px",text:"Test "+side}));
+    VARS.forEach(v=>{
+      col.appendChild(el("div",{style:"font-size:12.5px;color:var(--txt-2);margin-bottom:5px",text:v.l}));
+      const row=el("div",{style:"display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px"});
+      v.o.forEach((o,i)=>{
+        const b=el("button",{type:"button",class:"lik-opt",text:o,
+          style:"border:1px solid var(--line);background:var(--card-2);border-radius:7px;padding:8px 4px;font-size:12.5px"});
+        b.addEventListener("click",()=>{
+          cfg[side][v.k]=i;
+          [...row.children].forEach(c=>{c.style.background="var(--card-2)";c.style.color="";c.style.borderColor="var(--line)";});
+          b.style.background="#0E1F27"; b.style.color="#fff"; b.style.borderColor="#0E1F27";
+          if(Object.keys(cfg.A).length===3&&Object.keys(cfg.B).length===3) setAns(item.id,JSON.parse(JSON.stringify(cfg)));
+        });
+        row.appendChild(b);
+      });
+      col.appendChild(row);
+    });
+    grid.appendChild(col);
+  });
+  sim.appendChild(grid);
+  sim.appendChild(el("div",{class:"note",style:"margin-bottom:0",
+    html:"Set up <b>both</b> tests. When you are finished, the pair you have built should be able to prove whether the <b>place</b> changes the swing time — and prove nothing else."}));
+  box.appendChild(sim);
+}
+
+/* --- 15. LIGHTS OUT (persistence under a hidden rule) ------------- */
+function lightsOut(box,item){
+  const sim=el("div",{class:"sim"});
+  let G=Array(9).fill(true), moves=0, resets=0, solved=false, start=now(), gaveUp=false;
+  const flip=(g,i)=>{ const r=Math.floor(i/3),c=i%3;
+    [[r,c],[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([rr,cc])=>{
+      if(rr>=0&&rr<3&&cc>=0&&cc<3) g[rr*3+cc]=!g[rr*3+cc]; }); };
+  const scramble=()=>{ G=Array(9).fill(true);
+    const picks=new Set(); while(picks.size<5) picks.add(Math.floor(Math.random()*9));
+    picks.forEach(i=>flip(G,i));
+    if(G.every(v=>v)) flip(G,4); };
+  scramble();
+  const grid=el("div",{style:"display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:260px;margin:0 auto"});
+  const st=el("div",{class:"row",style:"justify-content:center;margin-top:12px"});
+  const mv=pill("moves: 0"), res=pill("lamps off");
+  function paint(){
+    grid.innerHTML="";
+    G.forEach((on,i)=>{
+      const d=el("button",{type:"button",style:"aspect-ratio:1;border-radius:10px;border:2px solid #0E1F27;"+
+        "background:"+(on?"#F5A623":"#16323C")+";box-shadow:"+(on?"0 0 16px rgba(245,166,35,.55)":"none")+";transition:background .12s"});
+      d.addEventListener("click",()=>{ if(solved) return; flip(G,i); moves++;
+        mv.textContent="moves: "+moves; paint(); verify(); });
+      grid.appendChild(d);
+    });
+  }
+  function verify(){
+    if(G.every(v=>v)){ solved=true; res.textContent="all nine lit"; res.className="pill hot";
+      setAns(item.id,{solved:true,moves,resets,secs:Math.round((now()-start)/1000)});
+      tele(item.id,"moves",moves); }
+  }
+  paint(); st.appendChild(mv); st.appendChild(res);
+  sim.appendChild(grid); sim.appendChild(st);
+  const b=bar(sim); b.style.justifyContent="center";
+  b.appendChild(el("button",{class:"btn ghost sm",type:"button",text:"Scramble again",onclick:()=>{
+    if(solved) return; resets++; scramble(); paint(); res.textContent="lamps off"; }}));
+  const gu=el("button",{class:"btn ghost sm",type:"button",text:"I cannot solve this — move on"});
+  gu.addEventListener("click",()=>{ if(solved) return; gaveUp=true;
+    setAns(item.id,{solved:false,moves,resets,secs:Math.round((now()-start)/1000),gaveUp:true});
+    res.textContent="skipped"; gu.disabled=true; });
+  b.appendChild(gu);
+  box.appendChild(sim);
+}
+
+/* --- 16. TOOL ICONS ---------------------------------------------- */
+function toolSVG(kind){
+  const S='stroke="#0E1F27" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"';
+  const m={
+   screwdriver:'<rect x="40" y="14" width="20" height="34" rx="5" fill="#C2412B" '+S+'/>'+
+     '<rect x="45" y="48" width="10" height="30" fill="#8FB0AF" '+S+'/><path d="M46 78 h8 v10 h-8 Z" fill="#0E1F27" '+S+'/>',
+   stripper:'<path d="M32 88 L48 50 M68 88 L52 50" fill="none" '+S+'/>'+
+     '<path d="M50 50 L34 20 M50 50 L66 20" fill="none" '+S+'/>'+
+     '<circle cx="50" cy="50" r="4" fill="#0E1F27"/>'+
+     '<path d="M40 34 a12 12 0 0 0 20 0" fill="none" stroke="#C2412B" stroke-width="3"/>',
+   iron:'<rect x="34" y="16" width="14" height="44" rx="4" fill="#127A72" '+S+'/>'+
+     '<path d="M48 38 L72 62" fill="none" stroke="#8FB0AF" stroke-width="6" stroke-linecap="round"/>'+
+     '<path d="M70 60 L82 74" fill="none" stroke="#C2412B" stroke-width="5" stroke-linecap="round"/>',
+   saw:'<rect x="18" y="18" width="16" height="26" rx="4" fill="#C2412B" '+S+'/>'+
+     '<path d="M26 44 L26 74 L84 74" fill="none" '+S+'/>'+
+     '<path d="M26 74 l6 8 l6 -8 l6 8 l6 -8 l6 8 l6 -8 l6 8 l6 -8 l6 8 l6 -8" fill="none" stroke="#0E1F27" stroke-width="2"/>',
+   spanner:'<path d="M62 20 a16 16 0 1 0 14 22 L86 54 L74 66 L62 54 a16 16 0 0 0 -22 -14 Z" fill="#8FB0AF" '+S+'/>'+
+     '<path d="M40 40 L20 78" stroke="#0E1F27" stroke-width="9" stroke-linecap="round"/>',
+   glue:'<path d="M26 40 L60 40 L70 26 L26 26 Z" fill="#C2412B" '+S+'/>'+
+     '<rect x="32" y="40" width="12" height="26" fill="#0E1F27" '+S+'/>'+
+     '<path d="M70 32 L84 32" stroke="#F5A623" stroke-width="5" stroke-linecap="round"/>'};
+  return '<svg viewBox="0 0 100 100" width="98">'+m[kind]+'</svg>';
+}
+
+/* --- 17. CLICK-TO-ORDER ------------------------------------------ */
 function renderOrder(item){
   const box=qShell(item);
   const order=[]; const wrap=el("div",{class:"opts"});
@@ -1202,8 +1354,17 @@ const STATIONS=[
     add("lang","Language you are most comfortable working in","select",["Arabic","English","French","Arabic + English","Arabic + French"]);
     add("physics","Have you studied physics at school yet?","select",["Not yet","One year","Two years","Three years or more"]);
     box.appendChild(f); host.appendChild(box);
-    [ {id:"q_why",type:"text",dim:"team",w:2,prompt:"Why do you want to join the physics group at Bee Skill Center?",
-       help:"Two or three honest sentences. There is no answer we are fishing for.",ph:"Write freely…"},
+    [ {id:"q_motiv",type:"multi",dim:"team",w:2,max:3,grid:true,
+       prompt:"Pick the three that are most true for you.",
+       help:"Choose exactly three. There is no clever answer — we are working out what actually pulls you here.",
+       options:[{t:"I want to understand why everyday things work the way they do"},
+         {t:"I want to build things that actually function"},
+         {t:"I like taking machines apart to see inside"},
+         {t:"I enjoy problems that are hard and take a long time"},
+         {t:"I want a certificate for my file"},
+         {t:"My parents want me to come"},
+         {t:"My friends are joining"},
+         {t:"It will look good on a university application"}]},
       {id:"q_exp",type:"multi",dim:"create",w:2,prompt:"Which of these have you actually done with your own hands?",
        help:"Tick everything that is true. Ticking nothing is a perfectly normal answer at 12.",
        options:[{t:"Used a screwdriver to open something"},{t:"Used a hot glue gun"},{t:"Cut wood, foam or thick card with a blade or saw"},
@@ -1217,12 +1378,12 @@ const STATIONS=[
     ].forEach(it=>host.appendChild(RENDER[it.type](it)));
     STATIONS[0].items=STATIONS[0]._items;
   },
-  _items:[{id:"q_why",type:"text"},{id:"q_exp",type:"multi"},{id:"q_curious",type:"likert"},{id:"q_time",type:"mc"}],
+  _items:[{id:"q_motiv",type:"multi"},{id:"q_exp",type:"multi"},{id:"q_curious",type:"likert"},{id:"q_time",type:"mc"}],
   gate(){
     const need=["name","age","school","grade","town","phone","guardian"];
     const miss=need.filter(k=>!S.profile[k]);
     if(miss.length) return "Fill in every detail field above ("+miss.length+" left)";
-    if(!S.ans.q_why||words(S.ans.q_why)<CFG.minTextWords) return "Write at least a sentence about why you want to join";
+    if(!S.ans.q_motiv||S.ans.q_motiv.length!==3) return "Pick exactly three reasons above";
     if(S.ans.q_exp===undefined) return "Tick your hands-on experience (or tick \"none of these yet\")";
     if(S.ans.q_curious===undefined||S.ans.q_time===undefined) return "Two questions still need an answer";
     return "";
@@ -1251,9 +1412,9 @@ const STATIONS=[
   {id:"q_spot",type:"mc",dim:"observe",w:2,widget:simSpot,ans:2,
    prompt:"Play run A, then run B. Exactly one thing is different. What is it?",
    options:[{t:"The string is longer in run B"},{t:"The bob is heavier in run B"},{t:"The ruler has been moved"},{t:"The bob is released from a higher angle"}]},
-  {id:"q_notice",type:"text",dim:"observe",w:2,
-   prompt:"Write one thing you noticed in any of these four experiments that nobody asked you about.",
-   help:"Anything at all — a detail, a doubt, a question. This tells us how your eyes work.",ph:"I noticed that…"}
+  {id:"q_hazard",type:"widget",dim:"observe",w:3,widget:hazardScan,
+   prompt:"Six things in this workshop are unsafe or wrong. Tap every one you can find.",
+   help:"Four other things are perfectly fine — tapping those costs you. Take your time and look at the whole bench."}
 ]},
 
 { id:"fairtest", title:"The pendulum bench", intro:"A real lab task. Find out what actually changes how long a pendulum takes to swing. You have three things you can change and a stopwatch. Run at least five trials — how you organise them matters more to us than the answer.",
@@ -1283,20 +1444,19 @@ const STATIONS=[
      prompt:"You run the identical setting twice and get 1.55 s and 1.57 s. What does that mean?",
      options:[{t:"The pendulum is broken"},{t:"Every measurement carries small error — repeat and take an average"},
        {t:"Gravity changed between the two runs"},{t:"One of the two numbers must be thrown away"}]},
-    {id:"q_design",type:"text",dim:"method",w:3,
-     prompt:"Design a test to find out whether a pendulum swings at a different rate at the top of a mountain than at the beach.",
-     help:"Say what you would change, what you would keep exactly the same, and what you would measure.",
-     ph:"I would keep … the same, change only … and measure …"}
+    {id:"q_builder",type:"widget",dim:"method",w:4,widget:testBuilder,
+     prompt:"Build a fair test of your own.",
+     help:"You want to know whether a pendulum swings differently at the beach and on the mountain. Set up the two tests below so that whatever difference you find can only have been caused by the place."}
     ].forEach(it=>host.appendChild(RENDER[it.type](it)));
   },
-  items:[{id:"q_factor"},{id:"q_fair"},{id:"q_repeat"},{id:"q_design",type:"text"}],
+  items:[{id:"q_factor"},{id:"q_fair"},{id:"q_repeat"},{id:"q_builder"}],
   gate(){
     const t=S.lab.trials||[];
     if(t.length<5) return "Run at least 5 trials on the bench ("+t.length+" so far)";
     if(S.ans.q_factor===undefined) return "Answer the question about which setting matters";
     if((S.ans.q_proof||[]).length<2) return "Click two rows in your trial table as your proof";
     if(S.ans.q_fair===undefined||S.ans.q_repeat===undefined) return "Two questions still need an answer";
-    if(!S.ans.q_design||words(S.ans.q_design)<CFG.minTextWords) return "Describe your mountain-versus-beach test";
+    if(!S.ans.q_builder) return "Finish setting up both of your own tests";
     return "";
   }
 },
@@ -1425,20 +1585,36 @@ const STATIONS=[
    prompt:"A long calculation tells you a bicycle is travelling at 5 000 km/h. What do you do first?",
    options:[{t:"Write it down — the maths is the maths"},{t:"Check the units and the size of each number you used"},
      {t:"Start the whole calculation again from the beginning"},{t:"Copy a friend's answer instead"}]},
-  {id:"q_stuck",type:"text",dim:"solve",w:3,
-   prompt:"Tell us about a time you were properly stuck on something — school, a game, a repair, anything — and what you did next.",
-   help:"We are interested in what you did, not whether you succeeded.",ph:"I was stuck when…"}
+  {id:"q_lights",type:"widget",dim:"solve",w:3,widget:lightsOut,
+   prompt:"Light all nine lamps at once.",
+   help:"Tapping a lamp flips it — and also flips the lamps directly above, below, left and right of it. Nobody is told the trick. Work it out."}
 ]},
 
 { id:"make", title:"Hands, ideas and repairs", intro:"STEAM physics lives or dies on this station: can you produce many ideas, can you plan a repair, and are your hands steady enough for fine kit work?",
   items:[
-  {id:"q_ideas",type:"widget",dim:"create",w:4,widget:ideaStorm,allowEmpty:true,
-   prompt:"Ninety seconds. List as many uses as you can for a broken bicycle wheel.",
-   help:"Quantity beats quality here. Silly ideas count. Press Enter after each one."},
-  {id:"q_designit",type:"text",dim:"create",w:4,
-   prompt:"Design a device that waters a house plant while your family is away for a week.",
-   help:"Name the parts you would use, say what each part does, and say the one thing most likely to go wrong.",
-   ph:"My device would use…"},
+  {id:"q_ideas",type:"multi",dim:"create",w:4,grid:true,
+   prompt:"Somebody gives you a bent, broken bicycle wheel. Tap every one of these that could <i>actually be made to work</i>.",
+   help:"Some are obvious, some sound strange but would genuinely work, and some are impossible. Tapping everything is not a strategy — wrong ones cost you.",
+   options:[{t:"A clock face"},{t:"Wall decoration"},{t:"A stand for a plant pot"},
+     {t:"A trellis for climbing beans"},{t:"The frame of a bird feeder"},{t:"A hanging shelf"},
+     {t:"A pulley to lift a bucket"},{t:"A gate for a chicken run"},{t:"A turntable for spin painting"},
+     {t:"A reel for winding up long cable"},{t:"The frame of a weaving loom"},{t:"A wind-speed indicator"},
+     {t:"A magnifying lens"},{t:"A working phone screen"},{t:"Cooling a room by spinning it by hand"},
+     {t:"Measuring the temperature outside"},{t:"A parachute"},{t:"Melting it down into glass"},
+     {t:"Powering a house by turning it by hand"},{t:"Filtering dirty water into drinking water"}]},
+  {id:"q_parts",type:"multi",dim:"create",w:3,grid:true,
+   prompt:"Your family is away for a week and a plant needs watering. Tap the parts you would actually use.",
+   help:"There is a working design hidden in this tray. Picking things that do nothing costs you.",
+   options:[{t:"A bottle or jar to hold the water"},{t:"A strip of cotton cloth or thick string"},
+     {t:"A thin tube or a drinking straw"},{t:"Something to stand the bottle higher than the pot"},
+     {t:"A knot, clamp or pin hole to slow the flow"},{t:"A magnet"},{t:"A mirror"},
+     {t:"A loudspeaker"},{t:"A hair dryer"},{t:"A thermometer"}]},
+  {id:"q_assemble",type:"order",dim:"create",w:2,
+   prompt:"Now put it together. Click the steps in the order you would really do them.",
+   options:[{t:"Fill the bottle with water"},{t:"Soak the cloth strip until it is completely wet"},
+     {t:"Put one end deep in the bottle and the other end into the soil"},
+     {t:"Stand the bottle higher than the pot"},
+     {t:"Run it for one day and check it before you travel"}]},
   {id:"q_fix",type:"order",dim:"create",w:3,ans:[0,1,2,3,4],
    prompt:"A battery-powered model car suddenly stops moving. Put your checks in the order you would really do them.",
    options:[{t:"Check the battery is charged and the right way round"},{t:"Check the wires are still connected"},
@@ -1451,10 +1627,14 @@ const STATIONS=[
   {id:"q_hand",type:"widget",dim:"create",w:2,widget:steadyHand,
    prompt:"Steady hand test — three attempts.",
    help:"Soldering, wiring and fine assembly all need this. Stop the red needle inside the green band."},
-  {id:"q_built",type:"text",dim:"create",w:3,
-   prompt:"What is the most interesting thing you have ever made, fixed, or taken apart?",
-   help:"Tell us what went wrong as well as what went right. “Nothing yet” is an acceptable answer — say what you would like to make instead.",
-   ph:"I once…"}
+  {id:"q_tool1",type:"mc",dim:"create",w:2,svg:true,ans:1,
+   prompt:"Which tool takes the plastic covering off the end of a wire without cutting the metal inside?",
+   options:[{t:"Screwdriver",svg:toolSVG("screwdriver")},{t:"Pliers with a cutting jaw",svg:toolSVG("stripper")},
+     {t:"Hacksaw",svg:toolSVG("saw")},{t:"Adjustable spanner",svg:toolSVG("spanner")}]},
+  {id:"q_tool2",type:"mc",dim:"create",w:2,svg:true,ans:2,
+   prompt:"Which one permanently joins two wires so that electricity passes through the joint?",
+   options:[{t:"Hot glue gun",svg:toolSVG("glue")},{t:"Adjustable spanner",svg:toolSVG("spanner")},
+     {t:"Soldering iron",svg:toolSVG("iron")},{t:"Hacksaw",svg:toolSVG("saw")}]}
 ]},
 
 { id:"team", title:"On a shared bench", intro:"Our sessions are noisy, collaborative and full of glue guns and batteries. Last station — how you behave around other people and around risk.",
@@ -1493,22 +1673,18 @@ const STATIONS=[
    prompt:"Sessions will run on fixed days including some Saturdays. How will you handle that?",
    options:[{t:"I will probably miss a lot"},{t:"I will come when I can"},
      {t:"I will come unless something important clashes"},{t:"I will arrange everything else around it"}]},
-  {id:"q_hope",type:"text",dim:"team",w:2,
-   prompt:"By the end of the programme, what do you hope to be able to build or understand?",
-   help:"Be as specific as you can. “Something with electricity” is fine; “a solar phone charger” is better.",ph:"I hope to…"}
+  {id:"q_project",type:"mc",dim:"team",w:1,
+   prompt:"If you could take one of these home finished at the end of the programme, which would you pick?",
+   help:"This one tells us where to put you, not whether you are good.",
+   options:[{t:"A solar charger for a phone"},{t:"A hydraulic arm made from syringes"},
+     {t:"An electric motor built from scratch"},{t:"A spaghetti bridge that holds a brick"},
+     {t:"A balloon-powered car"},{t:"I am not sure yet"}]}
 ]}
 ];
 
 /* =================================================================
    SCORING
    ================================================================= */
-const REASON=/\b(because|so that|so|if|then|would|could|instead|therefore|since|when|while|compare|test|measure|try|tried|change|changed|same|different|first|next|finally|problem|solve|check|build|built|design)\b/gi;
-function textScore(min,good){
-  return v=>{ const w=words(v); if(w<min) return clamp(w/Math.max(1,min)*0.3,0,0.3);
-    const base=0.3+clamp((w-min)/(good-min),0,1)*0.7;
-    const r=new Set(((v||"").match(REASON)||[]).map(s=>s.toLowerCase())).size;
-    return clamp(base*0.76+clamp(r/6,0,1)*0.24,0,1); };
-}
 const eq=a=>v=>v===a?1:0;
 function labStats(){
   const t=S.lab.trials||[]; let oneVar=0,pairs=0,isolatedL=false,varied={L:0,M:0,A:0};
@@ -1528,7 +1704,7 @@ function proofScore(){
   return 0.1;
 }
 const SC=[
- {id:"q_why",dim:"team",w:2,f:textScore(10,45)},
+ {id:"q_motiv",dim:"team",w:2,f:v=>Array.isArray(v)&&v.length?clamp(v.filter(i=>i<4).length/3,0,1):0},
  {id:"q_exp",dim:"create",w:2,f:v=>Array.isArray(v)?clamp(v.filter(i=>i!==9).length/6,0,1):0},
  {id:"q_curious",dim:"team",w:1,f:v=>v/4},
  {id:"q_time",dim:"team",w:1,f:v=>[0.15,0.5,0.85,1][v]??0},
@@ -1536,7 +1712,9 @@ const SC=[
  {id:"q_ramp1",dim:"observe",w:2,f:eq(0)},{id:"q_ramp2",dim:"observe",w:2,f:eq(2)},
  {id:"q_drop",dim:"observe",w:2,f:eq(2)},{id:"q_dropwhy",dim:"observe",w:2,f:eq(1)},
  {id:"q_cart",dim:"observe",w:2,f:eq(1)},{id:"q_spot",dim:"observe",w:2,f:eq(2)},
- {id:"q_notice",dim:"observe",w:2,f:textScore(8,35)},
+ {id:"q_hazard",dim:"observe",w:3,f:v=>{ if(!Array.isArray(v)) return 0;
+   const hit=v.filter(i=>i<6).length, fp=v.filter(i=>i>=6).length;
+   return clamp(hit/6-0.45*(fp/4),0,1); }},
 
  {id:"q_lab",dim:"method",w:4,f:()=>{const s=labStats();
    return clamp(s.ratio*0.65+(s.isolatedL?0.25:0)+clamp((s.n-4)/6,0,1)*0.10,0,1);}},
@@ -1544,7 +1722,11 @@ const SC=[
  {id:"q_proof",dim:"method",w:3,f:proofScore},
  {id:"q_fair",dim:"method",w:3,f:eq(2)},
  {id:"q_repeat",dim:"method",w:2,f:eq(1)},
- {id:"q_design",dim:"method",w:3,f:textScore(12,50)},
+ {id:"q_builder",dim:"method",w:4,f:v=>{ if(!v||!v.A||!v.B) return 0;
+   const dp=v.A.place!==v.B.place, dl=v.A.len!==v.B.len, dm=v.A.mass!==v.B.mass;
+   if(!dp) return 0.08;                       // proves nothing about place
+   const others=(dl?1:0)+(dm?1:0);
+   return others===0?1:others===1?0.4:0.2; }},
 
  {id:"q_g1",dim:"data",w:2,f:eq(0)},{id:"q_g2",dim:"data",w:2,f:eq(1)},{id:"q_g3",dim:"data",w:2,f:eq(1)},
  {id:"q_read",dim:"data",w:2,f:eq(1)},{id:"q_shape",dim:"data",w:2,f:eq(1)},
@@ -1568,27 +1750,32 @@ const SC=[
  {id:"q_odd",dim:"solve",w:3,f:v=>{ if(!v) return 0; if(!v.found) return 0.15;
    return v.weighs<=2?1:v.weighs===3?0.78:0.55; }},
  {id:"q_seq",dim:"solve",w:2,f:eq(1)},{id:"q_strategy",dim:"solve",w:2,f:eq(1)},
- {id:"q_sanity",dim:"solve",w:2,f:eq(1)},{id:"q_stuck",dim:"solve",w:3,f:textScore(12,50)},
+ {id:"q_sanity",dim:"solve",w:2,f:eq(1)},{id:"q_lights",dim:"solve",w:3,f:v=>{ if(!v) return 0;
+   if(!v.solved) return v.gaveUp?0.12:0;
+   return v.moves<=9?1:v.moves<=18?0.85:0.7; }},
 
  {id:"q_ideas",dim:"create",w:4,f:v=>{ if(!Array.isArray(v)||!v.length) return 0;
-   const flu=clamp(v.length/12,0,1);
-   const ws=new Set(v.join(" ").toLowerCase().split(/\W+/).filter(w=>w.length>3));
-   const flex=clamp(ws.size/(v.length*1.9),0,1);
-   return clamp(flu*0.62+flex*0.38,0,1); }},
- {id:"q_designit",dim:"create",w:4,f:textScore(15,60)},
+   const obv=v.filter(i=>i<6).length, unu=v.filter(i=>i>=6&&i<12).length, imp=v.filter(i=>i>=12).length;
+   return clamp(0.34*(obv/6)+0.66*(unu/6)-0.55*(imp/8),0,1); }},   // unusual-but-workable carries the signal
+ {id:"q_parts",dim:"create",w:3,f:v=>{ if(!Array.isArray(v)||!v.length) return 0;
+   const ok=v.filter(i=>i<5).length, bad=v.filter(i=>i>=5).length;
+   return clamp(ok/5-0.6*(bad/5),0,1); }},
+ {id:"q_assemble",dim:"create",w:2,f:v=>{ if(!Array.isArray(v)||v.length<5) return v&&v.length?0.3:0;
+   let ok=0,tot=0; for(let i=0;i<5;i++)for(let j=i+1;j<5;j++){tot++; if(v.indexOf(i)<v.indexOf(j)) ok++;}
+   return clamp((ok/tot-0.5)*2,0,1); }},
  {id:"q_fix",dim:"create",w:3,f:v=>{ if(!Array.isArray(v)||v.length<5) return v&&v.length?0.3:0;
    let ok=0,tot=0; for(let i=0;i<5;i++)for(let j=i+1;j<5;j++){tot++; if(v.indexOf(i)<v.indexOf(j)) ok++;}
    return clamp((ok/tot-0.5)*2,0,1); }},
  {id:"q_missing",dim:"create",w:2,f:eq(1)},
  {id:"q_hand",dim:"create",w:2,f:v=>{ if(!Array.isArray(v)||!v.length) return 0;
    const avg=v.reduce((a,b)=>a+b,0)/v.length; return clamp(1-avg/11,0,1); }},
- {id:"q_built",dim:"create",w:3,f:textScore(12,50)},
+ {id:"q_tool1",dim:"create",w:2,f:eq(1)},{id:"q_tool2",dim:"create",w:2,f:eq(2)},
 
  {id:"q_sj1",dim:"team",w:2,f:eq(2)},{id:"q_sj2",dim:"team",w:2,f:eq(1)},
  {id:"q_sj3",dim:"team",w:2,f:eq(1)},{id:"q_sj4",dim:"team",w:2,f:eq(0)},
  {id:"q_safe1",dim:"team",w:2,f:eq(1)},{id:"q_safe2",dim:"team",w:2,f:eq(0)},
  {id:"q_help",dim:"team",w:1,f:v=>v/4},{id:"q_retry",dim:"team",w:1,f:v=>v/4},
- {id:"q_sat",dim:"team",w:1,f:v=>[0,0.35,0.8,1][v]??0},{id:"q_hope",dim:"team",w:2,f:textScore(10,40)}
+ {id:"q_sat",dim:"team",w:1,f:v=>[0,0.35,0.8,1][v]??0},{id:"q_project",dim:"team",w:1,f:v=>[1,1,1,0.7,0.6,0.15][v]??0}
 ];
 /* What each item would score by pure guessing. Lets the report say
    "62, where chance alone gives 27" instead of leaving 62 unanchored. */
@@ -1599,7 +1786,12 @@ const CHANCE={};
  "q_secs","q_honest","q_scale","q_seq","q_strategy","q_sanity","q_missing","q_sj1","q_sj2","q_sj3",
  "q_sj4","q_safe1","q_safe2","q_sat"].forEach(k=>CHANCE[k]=0.25);
 ["q_curious","q_help","q_retry"].forEach(k=>CHANCE[k]=0.5);          // self-report, midpoint
-["q_why","q_notice","q_design","q_stuck","q_designit","q_built","q_hope"].forEach(k=>CHANCE[k]=0.3);
+["q_tool1","q_tool2"].forEach(k=>CHANCE[k]=0.25);
+CHANCE.q_motiv=0.50;   // picking 3 of 8 at random lands half intrinsic
+CHANCE.q_hazard=0.27;  // tapping roughly half the scene
+CHANCE.q_builder=0.29; // random config still stumbles onto a fair pair sometimes
+CHANCE.q_ideas=0.22; CHANCE.q_parts=0.20; CHANCE.q_project=0.74;
+CHANCE.q_lights=0; CHANCE.q_assemble=0;
 CHANCE.q_proof=0.1; CHANCE.q_lever=0.22; CHANCE.q_odd=0.15; CHANCE.q_ruler=0.05; CHANCE.q_exp=0.2;
 
 function compute(){
@@ -1745,9 +1937,15 @@ function behaviour(){
   const replays=["q_ramp1","q_drop","q_cart","q_spot","q_g1","q_g2","q_g3"]
     .reduce((a,k)=>a+((S.tele[k]||{}).runs||(S.tele[k]||{}).views||0),0);
   const rushed=SC.filter(s=>{const g=(S.tele[s.id]||{}).dt;return g!==undefined&&g<3;}).length;
-  const ideas=(S.ans.q_ideas||[]).length;
+  const so=S.ans.q_ideas||[];
+  const ideas=so.length, ideaUnu=so.filter(i=>i>=6&&i<12).length, ideaImp=so.filter(i=>i>=12).length;
+  const hz=S.ans.q_hazard||[];
+  const hzHit=hz.filter(i=>i<6).length, hzFp=hz.filter(i=>i>=6).length;
+  const lights=S.ans.q_lights||{}, builder=S.ans.q_builder||null;
+  const parts=S.ans.q_parts||[];
+  const partOk=parts.filter(i=>i<5).length, partBad=parts.filter(i=>i>=5).length;
   const hand=(S.ans.q_hand||[]);
-  return {mins,L,pipe,odd,replays,rushed,ideas,
+  return {mins,L,pipe,odd,replays,rushed,ideas,ideaUnu,ideaImp,hzHit,hzFp,lights,builder,partOk,partBad,
     handAvg:hand.length?+(hand.reduce((a,b)=>a+b,0)/hand.length).toFixed(1):null,
     changes:S.changes,
     stations:STATIONS.map((st,i)=>({t:st.title,s:S.stationTime[i]||0}))};
@@ -1766,8 +1964,19 @@ function flags(B,dims,R){
   if(B.replays>=14) out.push(["g","Replayed simulations "+B.replays+" times before answering — watches properly"]);
   if(B.replays<=4) out.push(["a","Barely replayed the simulations ("+B.replays+" plays in total)"]);
   if(B.rushed>=8) out.push(["a",B.rushed+" answers came within 3 seconds of the previous one — some guessing likely"]);
-  if(B.ideas>=14) out.push(["g","Produced "+B.ideas+" ideas in 90 seconds"]);
-  if(B.ideas<=4) out.push(["a","Only "+B.ideas+" idea"+(B.ideas===1?"":"s")+" in the 90-second storm"]);
+  if(B.ideaUnu>=5) out.push(["g","Saw "+B.ideaUnu+" of the 6 unusual-but-workable ideas — flexible thinker"]);
+  if(B.ideaUnu<=1) out.push(["a","Accepted only the obvious uses — thinking stayed inside the expected box"]);
+  if(B.ideaImp>=4) out.push(["a","Ticked "+B.ideaImp+" impossible ideas — enthusiasm outrunning judgement"]);
+  if(B.hzHit>=5&&B.hzFp===0) out.push(["g","Found "+B.hzHit+" of 6 workshop hazards with no false alarms"]);
+  if(B.hzHit<=2) out.push(["a","Spotted only "+B.hzHit+" of the 6 workshop hazards — safety briefing before tool access"]);
+  if(B.lights.solved&&B.lights.moves<=9) out.push(["g","Cracked the nine-lamp rule in "+B.lights.moves+" moves"]);
+  if(B.lights.gaveUp) out.push(["a","Abandoned the nine-lamp puzzle after "+(B.lights.secs||0)+" s and "+(B.lights.moves||0)+" moves"]);
+  if(B.lights.resets>=3) out.push(["","Re-scrambled the lamp puzzle "+B.lights.resets+" times — restarting rather than reasoning"]);
+  if(B.builder){ const b=B.builder, dp=b.A.place!==b.B.place,
+      oth=(b.A.len!==b.B.len?1:0)+(b.A.mass!==b.B.mass?1:0);
+    if(dp&&oth===0) out.push(["g","Built a textbook-clean fair test unaided"]);
+    else if(!dp) out.push(["a","Their own test kept the place identical — it could not have answered the question"]);
+    else out.push(["a","Their own test changed "+oth+" extra variable"+(oth>1?"s":"")+" alongside the place"]); }
   if(B.handAvg!==null&&B.handAvg<=4) out.push(["g","Steady hands — average miss "+B.handAvg+"%"]);
   if(B.handAvg!==null&&B.handAvg>=12) out.push(["a","Timing control is loose — average miss "+B.handAvg+"%"]);
   if(B.mins<=14) out.push(["a","Completed everything in "+B.mins+" minute"+(B.mins===1?"":"s")+" — unusually fast"]);
@@ -1780,7 +1989,8 @@ function interviewQs(dims,B){
   const q=[];
   q.push("Show them the pendulum bench again and ask: “If I wanted to prove the mass makes no difference, which two runs would you do?” — listen for one variable changing. (weakest area: "+DIMS[low].short.toLowerCase()+")");
   q.push("Ask them to talk you through how they attacked the "+(B.pipe.solved?"pipe puzzle":"nine-ball problem")+". You are listening for a method, not a result.");
-  q.push("Ask what they would build first if they had the whole kit cupboard and one Saturday. Their answer to “"+(S.ans.q_hope?String(S.ans.q_hope).slice(0,60):"")+"…” suggests where to push.");
+  const PJ=["a solar phone charger","a hydraulic syringe arm","a motor built from scratch","a spaghetti bridge","a balloon car","nothing in particular yet"];
+  q.push("They chose "+(PJ[S.ans.q_project]||"no project")+" as the thing they would most want to finish. Ask them why that one, and what they think the hard part would be.");
   q.push("Their strongest dimension is "+DIMS[high].short.toLowerCase()+" — give them one problem in it during the interview and watch their face.");
   q.push("Probe "+DIMS[low2].short.toLowerCase()+" once more before deciding; a single assessment is thin evidence for a low score.");
   return q;
@@ -1824,21 +2034,37 @@ function plainReport(R,B,tier){
   line("  Nine-ball problem         : "+(B.odd.found?("found in "+B.odd.weighs+" weighing(s)"):"not found"));
   line("  Simulation replays        : "+B.replays);
   line("  Answered <3 s after the previous answer : "+B.rushed+" of "+SC.length);
-  line("  Ideas in 90 s             : "+B.ideas);
+  line("  Workshop hazards found    : "+B.hzHit+" of 6   (false alarms: "+B.hzFp+" of 4)");
+  line("  Own fair test built       : "+(!B.builder?"not completed":
+      (B.builder.A.place!==B.builder.B.place
+        ? ((B.builder.A.len!==B.builder.B.len||B.builder.A.mass!==B.builder.B.mass)
+            ? "place varied, but other variables varied too" : "clean — only the place differed")
+        : "invalid — the place was kept the same")));
+  line("  Nine-lamp puzzle          : "+(B.lights.solved?("solved in "+B.lights.moves+" moves, "+B.lights.secs+" s"):
+      (B.lights.gaveUp?"gave up after "+(B.lights.secs||0)+" s":"not solved"))+
+      (B.lights.resets?"   re-scrambled "+B.lights.resets+"x":""));
+  line("  Idea sort                 : "+B.ideaUnu+"/6 unusual-but-workable spotted, "+B.ideaImp+"/8 impossible wrongly accepted");
+  line("  Plant-waterer parts       : "+B.partOk+"/5 correct, "+B.partBad+"/5 useless parts chosen");
   line("  Steady-hand average miss  : "+(B.handAvg===null?"not attempted":B.handAvg+"%"));
   line("");
   line("FLAGS");
   flags(B,R.dims,R).forEach(f=>line("  ["+(f[0]==="g"?"+":f[0]==="a"?"!":" ")+"] "+f[1]));
   line("");
-  line("WRITTEN ANSWERS (read these yourself — the machine only counted them)");
-  [["Why join",S.ans.q_why],["Noticed unprompted",S.ans.q_notice],["Mountain/beach test design",S.ans.q_design],
-   ["Time they were stuck",S.ans.q_stuck],["Plant watering design",S.ans.q_designit],
-   ["Made / fixed / took apart",S.ans.q_built],["Hopes to build",S.ans.q_hope]].forEach(([t,v])=>{
-    line("  · "+t+":"); line("    "+String(v||"—").replace(/\n+/g," ").slice(0,700));
-  });
-  line("");
-  line("IDEA STORM — broken bicycle wheel ("+B.ideas+" ideas)");
-  line("  "+((S.ans.q_ideas||[]).join(" | ")||"—"));
+  line("WHAT THEY CHOSE (no writing is asked of the student — these are their selections)");
+  const MOT=["understand why everyday things work","build things that function","take machines apart",
+    "enjoy long hard problems","wants a certificate","parents want it","friends are joining","university application"];
+  const PJ=["solar phone charger","hydraulic syringe arm","motor built from scratch","spaghetti bridge","balloon car","not sure yet"];
+  const EXP=["screwdriver","hot glue gun","cutting wood/foam","battery + bulb","soldering","kit building",
+    "taking things apart","craft work","home repairs","none yet"];
+  line("  Motivation (picked 3)  : "+((S.ans.q_motiv||[]).map(i=>MOT[i]).join("; ")||"—"));
+  line("  Project they want      : "+(PJ[S.ans.q_project]||"—"));
+  line("  Hands-on history       : "+((S.ans.q_exp||[]).map(i=>EXP[i]).join("; ")||"—"));
+  line("  Tool recognition       : wire stripping "+(S.ans.q_tool1===1?"correct":"wrong")+
+       ", soldering iron "+(S.ans.q_tool2===2?"correct":"wrong"));
+  line("  Unusual ideas accepted : "+((S.ans.q_ideas||[]).filter(i=>i>=6&&i<12)
+       .map(i=>["rope pulley","chicken-run gate","spin-painting turntable","cable reel","weaving loom","wind-speed indicator"][i-6]).join("; ")||"none"));
+  line("  Impossible ideas taken : "+((S.ans.q_ideas||[]).filter(i=>i>=12)
+       .map(i=>["lens","phone screen","cooling a room","thermometer","parachute","melt to glass","power a house","water filter"][i-12]).join("; ")||"none"));
   line("");
   line("INTERVIEW PROMPTS");
   interviewQs(R.dims,B).forEach((q,i)=>line("  "+(i+1)+". "+q));
@@ -1970,7 +2196,9 @@ function finish(){
    ["Nine-ball problem",B.odd.found?("found in "+B.odd.weighs+" weighing(s)"):"not identified"],
    ["Simulation replays",B.replays+" plays"],
    ["Snap answers",B.rushed+" of "+SC.length+" came under 3 seconds after the previous one"],
-   ["Idea storm",B.ideas+" ideas in 90 seconds"],
+   ["Workshop hazards",B.hzHit+" of 6 found, "+B.hzFp+" false alarms out of 4 safe objects"],
+   ["Nine-lamp puzzle",B.lights.solved?("solved in "+B.lights.moves+" moves"):(B.lights.gaveUp?"gave up":"not solved")],
+   ["Idea sort",B.ideaUnu+"/6 unusual-but-workable spotted · "+B.ideaImp+"/8 impossible accepted"],
    ["Steady hand",B.handAvg===null?"not attempted":"average miss "+B.handAvg+"%"]].forEach(([a,b])=>
     ul.appendChild(el("li",{html:"<b>"+a+":</b> "+b})));
   bs.appendChild(ul);
@@ -1982,16 +2210,27 @@ function finish(){
   const ol=el("ul",{}); interviewQs(R.dims,B).forEach(q=>ol.appendChild(el("li",{text:q})));
   qs.appendChild(ol); h.appendChild(qs);
 
-  const ws=el("div",{class:"sec"}); ws.appendChild(el("h3",{text:"In the student's own words"}));
-  [["Why they want to join",S.ans.q_why],["Something they noticed unprompted",S.ans.q_notice],
-   ["Their mountain-versus-beach test",S.ans.q_design],["A time they were stuck",S.ans.q_stuck],
-   ["Their plant-watering design",S.ans.q_designit],["The best thing they have made or fixed",S.ans.q_built],
-   ["What they hope to build here",S.ans.q_hope]].forEach(([t,v])=>{
+  const ws=el("div",{class:"sec"}); ws.appendChild(el("h3",{text:"What they chose"}));
+  ws.appendChild(el("p",{style:"font-size:14px;color:#4A6470;margin-bottom:6px",
+    text:"The student is never asked to write, so nothing here is filtered through their command of English or Arabic. These are their selections."}));
+  const MOT=["understand why everyday things work","build things that actually function","take machines apart to see inside",
+    "enjoy problems that are hard and long","wants a certificate","parents want them to come","friends are joining","looks good on an application"];
+  const PJ=["a solar phone charger","a hydraulic syringe arm","an electric motor from scratch","a spaghetti bridge","a balloon-powered car","not sure yet"];
+  const EXP=["screwdriver","hot glue gun","cutting wood or foam","battery and bulb","soldering","building from a kit",
+    "taking things apart","craft work","repairs at home","none yet"];
+  const UNU=["rope pulley","chicken-run gate","spin-painting turntable","cable reel","weaving loom frame","wind-speed indicator"];
+  const IMP=["magnifying lens","phone screen","cooling a room","thermometer","parachute","melting to glass","powering a house","water filter"];
+  [["Why they are here",(S.ans.q_motiv||[]).map(i=>MOT[i]).join(" · ")],
+   ["The project they most want to finish",PJ[S.ans.q_project]],
+   ["What their hands have already done",(S.ans.q_exp||[]).map(i=>EXP[i]).join(" · ")],
+   ["Unusual ideas they were willing to accept",(S.ans.q_ideas||[]).filter(i=>i>=6&&i<12).map(i=>UNU[i-6]).join(" · ")],
+   ["Impossible ideas they accepted",(S.ans.q_ideas||[]).filter(i=>i>=12).map(i=>IMP[i-12]).join(" · ")],
+   ["Workshop hazards",B.hzHit+" of 6 found, "+B.hzFp+" false alarms"],
+   ["Tool recognition",(S.ans.q_tool1===1?"knew the wire stripper":"missed the wire stripper")+" · "+
+     (S.ans.q_tool2===2?"knew the soldering iron":"missed the soldering iron")]].forEach(([t,v])=>{
     ws.appendChild(el("p",{style:"font-weight:500;margin-top:12px",text:t}));
-    ws.appendChild(el("div",{class:"quote",text:String(v||"— left blank —")}));
+    ws.appendChild(el("div",{class:"quote",text:v&&String(v).trim()?String(v):"— none —"}));
   });
-  ws.appendChild(el("p",{style:"font-weight:500;margin-top:12px",text:"Uses for a broken bicycle wheel"}));
-  ws.appendChild(el("div",{class:"quote",text:(S.ans.q_ideas||[]).join(" · ")||"—"}));
   h.appendChild(ws);
 
   const send=el("div",{class:"sendbox"});
@@ -2034,11 +2273,15 @@ function demoFill(){
     const r=Math.random();
     if(CHANCE[s.id]===0.25) pick(s.id, r<0.62 ? (SCKEY[s.id]??0) : Math.floor(Math.random()*4));
     else if(CHANCE[s.id]===0.5) pick(s.id, 2+Math.floor(Math.random()*3));
-    else if(CHANCE[s.id]===0.3) pick(s.id,"This is sample text written by the demo mode so that you can see how a written answer appears in the report, because the machine only counts the words and you read the meaning yourself.");
   });
   pick("q_exp",[0,1,3,5]); pick("q_ruler","6.4"); pick("q_lever",16);
-  pick("q_fix",[0,1,2,3,4]); pick("q_hand",[3.1,6.4,4.8]);
-  pick("q_ideas",["a clock face","a garden trellis","a pulley","a plant stand","a bird feeder","a wall hoop","a fan guard","a spinning toy"]);
+  pick("q_fix",[0,1,2,3,4]); pick("q_assemble",[0,1,2,3,4]); pick("q_hand",[3.1,6.4,4.8]);
+  pick("q_motiv",[0,1,3]); pick("q_project",1); pick("q_tool1",1); pick("q_tool2",2);
+  pick("q_hazard",[0,1,2,4,5,7]);                       // 5 of 6 hazards, 1 false alarm
+  pick("q_ideas",[0,1,2,3,4,6,8,9,11,13]);              // 4 unusual spotted, 1 impossible accepted
+  pick("q_parts",[0,1,2,3,9]);                          // 4 of 5 right, 1 useless
+  pick("q_lights",{solved:true,moves:14,resets:1,secs:96});
+  pick("q_builder",{A:{place:0,len:0,mass:1},B:{place:1,len:0,mass:1}});  // clean fair test
   pick("q_pipe",{solved:true,moves:26,secs:181}); pick("q_odd",{found:true,weighs:3,heavy:4,picked:4});
   pick("q_proof",[0,1]);
   S.lab.trials=[{L:40,M:100,A:20,T:1.27,five:6.35},{L:60,M:100,A:20,T:1.55,five:7.77},
@@ -2057,7 +2300,7 @@ const SCKEY={};
    ["q_cyl",1],["q_paper",1],["q_target",0],["q_bike",1],["q_bath",1],["q_secs",2],
    ["q_honest",0],["q_scale",2],["q_seq",1],["q_strategy",1],["q_sanity",1],["q_missing",1],
    ["q_sj1",2],["q_sj2",1],["q_sj3",1],["q_sj4",0],["q_safe1",1],["q_safe2",0],
-   ["q_sat",3],["q_time",2]].forEach(([k,v])=>SCKEY[k]=v);
+   ["q_sat",3],["q_time",2],["q_tool1",1],["q_tool2",2],["q_project",1]].forEach(([k,v])=>SCKEY[k]=v);
 })();
 
 /* ----------------------------- INIT ------------------------------ */
