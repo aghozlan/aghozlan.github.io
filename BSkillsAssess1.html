@@ -1835,6 +1835,41 @@ const TIERS=[
   s:"Not yet able to work safely and productively in an open STEAM physics session. Offer a lighter club, a mentor, or an invitation to reapply next cycle — and say so kindly and specifically."}
 ];
 
+/* ------------- SIX-LEVEL PROGRAMME MAP (Ghozlan curriculum) -------
+   Which dimensions each month leans on hardest, so the report can say
+   where this particular student will struggle before they get there. */
+const LEVELS=[
+ {n:1,t:"Magnetic Curiosity & Light Play", load:["observe","spatial"],
+  risk:"Will drift during free exploration and miss what the magnets are actually doing."},
+ {n:2,t:"Electric Beginnings",             load:["solve","team"],
+  risk:"Circuits fail constantly at first. Low persistence or shaky safety sense shows up here before anywhere else."},
+ {n:3,t:"Solar & Mechanical Explorations", load:["method","data"],
+  risk:"This is the fair-testing month. Without control of variables the marble-run and solar data mean nothing."},
+ {n:4,t:"Pressure & Power (hydraulics)",   load:["measure","spatial"],
+  risk:"Syringe areas, volumes and force ratios are all measurement. Leaks and air bubbles punish imprecise hands."},
+ {n:5,t:"Integrated Systems & Challenges", load:["solve","create"],
+  risk:"Three subsystems at once. Students who only follow instructions stall the moment nothing is prescribed."},
+ {n:6,t:"Creative Physics Projects",       load:["create","team"],
+  risk:"Self-directed month. Weak collaboration or thin idea generation leaves them with nothing to show."}
+];
+const ROLES={
+ observe:["Observer–Recorder","keeps the group's notes and calls out what actually happened"],
+ method :["Fair-Test Marshal","the one who says \u201cwe changed two things at once\u201d"],
+ data   :["Data & Graphs Lead","owns the measurement table and the wall graph"],
+ spatial:["Build Lead","sets out the mechanism and checks it before glue"],
+ measure:["Calibration Officer","checks every instrument and every reading the bench produces"],
+ solve  :["Troubleshooter","goes to whichever bench is stuck"],
+ create :["Design Lead","holds the idea and keeps the team ambitious"],
+ team   :["Bench Captain","safety, tools, and making sure the quiet one has a job"]
+};
+function placement(dims){
+  const sorted=DIMKEYS.slice().sort((a,b)=>dims[b]-dims[a]);
+  const role=ROLES[sorted[0]];
+  const watch=LEVELS.filter(L=>L.load.some(k=>dims[k]<50));
+  const strong=LEVELS.filter(L=>L.load.every(k=>dims[k]>=72));
+  return {role,watch,strong,top:sorted[0],low:sorted[sorted.length-1]};
+}
+
 /* --------------------- EXPERT COMMENT BANK ----------------------- */
 const COM={
 observe:["Reads a physical situation accurately and separates what happened from what they expected to happen. Replayed the simulations before committing.",
@@ -2066,6 +2101,13 @@ function plainReport(R,B,tier){
   line("  Impossible ideas taken : "+((S.ans.q_ideas||[]).filter(i=>i>=12)
        .map(i=>["lens","phone screen","cooling a room","thermometer","parachute","melt to glass","power a house","water filter"][i-12]).join("; ")||"none"));
   line("");
+  const PL=placement(R.dims);
+  line("PLACEMENT IN THE SIX-LEVEL PROGRAMME");
+  line("  First role on the bench : "+PL.role[0]+" — "+PL.role[1]);
+  line("  Stand closer during     : "+(PL.watch.length?PL.watch.map(L=>"L"+L.n+" "+L.t).join("; "):"no month flagged"));
+  PL.watch.forEach(L=>line("      L"+L.n+": "+L.risk));
+  line("  Can lead or peer-teach  : "+(PL.strong.length?PL.strong.map(L=>"L"+L.n+" "+L.t).join("; "):"not yet"));
+  line("");
   line("INTERVIEW PROMPTS");
   interviewQs(R.dims,B).forEach((q,i)=>line("  "+(i+1)+". "+q));
   line("");
@@ -2205,6 +2247,26 @@ function finish(){
   const fl=el("div",{class:"flags"});
   flags(B,R.dims,R).forEach(f=>fl.appendChild(el("span",{class:"flag "+f[0],text:(f[0]==="g"?"✓ ":f[0]==="a"?"! ":"· ")+f[1]})));
   bs.appendChild(fl); h.appendChild(bs);
+
+  const P=placement(R.dims);
+  const ps=el("div",{class:"sec"}); ps.appendChild(el("h3",{text:"Where they start in the six-level programme"}));
+  ps.appendChild(el("p",{style:"font-size:14.5px;color:#4A6470",
+    html:"Everyone runs all six levels with the cohort. What changes is the job they are given and where you stand closer."}));
+  ps.appendChild(el("p",{style:"font-weight:500;margin-top:14px",text:"First role on the bench"}));
+  ps.appendChild(el("div",{class:"quote",html:"<b>"+P.role[0]+"</b> — "+P.role[1]+
+    ". Their strongest dimension is "+DIMS[P.top].short.toLowerCase()+", so start them where that pays."}));
+  ps.appendChild(el("p",{style:"font-weight:500;margin-top:14px",text:"Months to stand closer"}));
+  const wl=el("ul",{});
+  if(!P.watch.length) wl.appendChild(el("li",{text:"None flagged — no month leans on a dimension they scored under 50 in."}));
+  P.watch.forEach(L=>wl.appendChild(el("li",{html:"<b>Level "+L.n+" — "+L.t+".</b> "+L.risk})));
+  ps.appendChild(wl);
+  if(P.strong.length){
+    ps.appendChild(el("p",{style:"font-weight:500;margin-top:14px",text:"Months where they can lead or peer-teach"}));
+    const sl=el("ul",{});
+    P.strong.forEach(L=>sl.appendChild(el("li",{text:"Level "+L.n+" — "+L.t})));
+    ps.appendChild(sl);
+  }
+  h.appendChild(ps);
 
   const qs=el("div",{class:"sec"}); qs.appendChild(el("h3",{text:"What to ask at interview"}));
   const ol=el("ul",{}); interviewQs(R.dims,B).forEach(q=>ol.appendChild(el("li",{text:q})));
