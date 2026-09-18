@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinematics Practice Quiz</title>
+    <title>Kinematics Worksheet 1 - Position & Trajectory</title>
     
     <!-- MathJax for rendering clean LaTeX -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -12,10 +12,10 @@
     <style>
         /* Base Styling */
         body {
-            font-family: "Times New Roman", Times, serif; /* Classic academic font */
+            font-family: "Times New Roman", Times, serif;
             background-color: #f4f4f9;
             color: #111;
-            line-height: 1.6;
+            line-height: 1.5;
             padding: 20px;
             margin: 0;
         }
@@ -24,7 +24,7 @@
             max-width: 850px;
             margin: 0 auto;
             background: #fff;
-            padding: 40px 50px;
+            padding: 30px 40px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
         }
@@ -34,21 +34,27 @@
             text-align: center;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .header h2 {
+            margin: 5px 0 0 0;
+            font-size: 16px;
+            font-weight: normal;
         }
 
         .student-info {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
-            font-size: 16px;
+            margin-top: 15px;
+            font-size: 15px;
         }
 
         .student-info div {
@@ -61,30 +67,39 @@
             font-weight: bold;
         }
 
-        /* Figure Styling */
+        /* Exercise Blocks */
+        .exercise {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .exercise-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .intro-text {
+            font-size: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Figures */
         .figure-container {
             text-align: center;
-            margin: 20px 0;
-            padding: 10px;
-        }
-        
-        .figure-caption {
-            font-size: 14px;
-            font-style: italic;
-            margin-top: 8px;
+            flex-shrink: 0;
+            margin-left: 20px;
         }
 
         /* Questions Styling */
-        .intro-text {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
         .question {
-            margin-bottom: 15px;
-            font-size: 16px;
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 10px;
+            font-size: 15px;
         }
 
         .question-text {
@@ -93,10 +108,9 @@
         }
 
         /* Space for student answers */
-        .workspace {
-            min-height: 120px;
-            width: 100%;
-        }
+        .workspace-small { min-height: 60px; }
+        .workspace-medium { min-height: 90px; }
+        .workspace-large { min-height: 120px; }
 
         /* Print Specific Styling */
         @media print {
@@ -111,11 +125,11 @@
                 max-width: 100%;
                 border-radius: 0;
             }
-            .workspace {
-                min-height: 140px; /* Expand space for printing */
-            }
-            /* Hide URL printing at bottom */
-            @page { margin: 2cm; }
+            /* Adjust spacing to fit pages perfectly */
+            .workspace-small { min-height: 70px; }
+            .workspace-medium { min-height: 100px; }
+            .workspace-large { min-height: 140px; }
+            @page { margin: 1.5cm; }
         }
     </style>
 </head>
@@ -126,71 +140,123 @@
         <!-- Header Section -->
         <div class="header">
             <h1>Physics Kinematics: 2D Motion</h1>
+            <h2>Worksheet 1: Position Vectors & Trajectory Equations</h2>
             <div class="student-info">
                 <span>Name: </span> <div></div>
                 <span style="margin-left: 20px;">Date: </span> <div style="flex-grow: 0; width: 150px;"></div>
             </div>
         </div>
 
-        <!-- Problem Statement -->
-        <div class="intro-text">
-            A particle \( M \) moves in a 2D Cartesian coordinate system \( (O; \vec{i}, \vec{j}) \). 
-            At time \( t = 0 \text{ s} \), the particle starts from the origin \( \vec{r}_0 = \vec{0} \) 
-            with an initial velocity \( \vec{v}_0 = 2 \vec{i} + 4 \vec{j} \text{ (m/s)} \). <br>
-            The particle is subjected to a constant acceleration vector \( \vec{a} = -2 \vec{j} \text{ (m/s}^2\text{)} \).
+        <!-- EXERCISE 1 -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 1: The Parabolic Path</div>
+            <div class="intro-text">
+                <div>
+                    A particle \( M \) moves in a Cartesian coordinate system \( (O; \vec{i}, \vec{j}) \). 
+                    Its position vector at any time \( t \geq 0 \) is given by:<br><br>
+                    <center>\( \vec{r}(t) = (2t)\vec{i} + (-5t^2 + 10t)\vec{j} \)</center><br>
+                    <em>(Units: \( \vec{r} \) in meters, \( t \) in seconds)</em>
+                </div>
+                <!-- SVG Figure 1 -->
+                <div class="figure-container">
+                    <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="20" y1="100" x2="180" y2="100" stroke="black" stroke-width="1.5" />
+                        <line x1="20" y1="100" x2="20" y2="10" stroke="black" stroke-width="1.5" />
+                        <polygon points="185,100 175,95 175,105" fill="black" />
+                        <polygon points="20,5 15,15 25,15" fill="black" />
+                        <path d="M 20,100 Q 80,-20 140,100" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4,4" />
+                        <text x="175" y="115" font-family="serif" font-style="italic" font-size="12">x</text>
+                        <text x="5" y="15" font-family="serif" font-style="italic" font-size="12">y</text>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="question">
+                <div class="question-text">1.1 Extract the parametric equations of motion \( x(t) \) and \( y(t) \).</div>
+                <div class="workspace-small"></div>
+            </div>
+            <div class="question">
+                <div class="question-text">1.2 Determine the equation of the trajectory \( y(x) \). What is the shape of the path?</div>
+                <div class="workspace-medium"></div>
+            </div>
+            <div class="question">
+                <div class="question-text">1.3 At what instant(s) \( t \) does the particle pass through the x-axis?</div>
+                <div class="workspace-medium"></div>
+            </div>
         </div>
 
-        <!-- Inline SVG Figure -->
-        <div class="figure-container">
-            <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-                <!-- Axes -->
-                <line x1="40" y1="160" x2="380" y2="160" stroke="black" stroke-width="1.5" /> <!-- X axis -->
-                <line x1="40" y1="160" x2="40" y2="20" stroke="black" stroke-width="1.5" />  <!-- Y axis -->
-                <polygon points="385,160 375,155 375,165" fill="black" /> <!-- X arrow -->
-                <polygon points="40,15 35,25 45,25" fill="black" />       <!-- Y arrow -->
-                <!-- Labels -->
-                <text x="375" y="185" font-family="serif" font-style="italic" font-size="16">x (m)</text>
-                <text x="15" y="30" font-family="serif" font-style="italic" font-size="16">y (m)</text>
-                <text x="25" y="175" font-family="serif" font-style="italic" font-size="16">O</text>
-                <!-- Trajectory Curve (Parabola) -->
-                <path d="M 40,160 Q 150,-40 260,160" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="5,5" />
-                <!-- Initial Velocity Vector -->
-                <line x1="40" y1="160" x2="90" y2="90" stroke="red" stroke-width="2" />
-                <polygon points="92,87 88,96 82,92" fill="red" transform="rotate(15 90 90)"/>
-                <text x="95" y="85" font-family="serif" font-style="italic" font-size="16" fill="red" font-weight="bold">v&#8407;&#8320;</text>
-            </svg>
-            <div class="figure-caption">Figure 1: Diagram of the particle's parabolic trajectory.</div>
+        <!-- EXERCISE 2 -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 2: Displacement & Specific Positions</div>
+            <div class="intro-text">
+                <div>
+                    A second particle moves such that its position vector is defined by:<br><br>
+                    <center>\( \vec{r}(t) = (4t)\vec{i} + (t^2 - 1)\vec{j} \)</center><br>
+                    <em>(Units: \( \vec{r} \) in meters, \( t \) in seconds)</em>
+                </div>
+                <!-- SVG Figure 2 -->
+                <div class="figure-container">
+                    <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="20" y1="60" x2="180" y2="60" stroke="black" stroke-width="1.5" />
+                        <line x1="20" y1="110" x2="20" y2="10" stroke="black" stroke-width="1.5" />
+                        <polygon points="185,60 175,55 175,65" fill="black" />
+                        <polygon points="20,5 15,15 25,15" fill="black" />
+                        <path d="M 20,80 Q 90,110 160,20" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4,4" />
+                        <text x="175" y="75" font-family="serif" font-style="italic" font-size="12">x</text>
+                        <text x="5" y="15" font-family="serif" font-style="italic" font-size="12">y</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-text">2.1 Calculate the position vectors of the particle at \( t_1 = 0 \text{ s} \) and \( t_2 = 2 \text{ s} \).</div>
+                <div class="workspace-small"></div>
+            </div>
+            <div class="question">
+                <div class="question-text">2.2 Calculate the displacement vector \( \Delta\vec{r} \) between \( t_1 \) and \( t_2 \), then find its magnitude.</div>
+                <div class="workspace-medium"></div>
+            </div>
+            <div class="question">
+                <div class="question-text">2.3 Determine the instant \( t \) when the particle reaches an ordinate of \( y = 3 \text{ m} \).</div>
+                <div class="workspace-small"></div>
+            </div>
         </div>
 
-        <!-- Questions -->
-        <div class="question">
-            <div class="question-text">1. Determine the parametric equations of motion \( x(t) \) and \( y(t) \).</div>
-            <div class="workspace"></div>
-        </div>
+        <!-- EXERCISE 3 -->
+        <div class="exercise">
+            <div class="exercise-title">Exercise 3: Linear Kinematics in 2D</div>
+            <div class="intro-text">
+                <div>
+                    The position vector of a third particle is given by the relation:<br><br>
+                    <center>\( \vec{r}(t) = (3t + 2)\vec{i} + (6t - 4)\vec{j} \)</center><br>
+                    <em>(Units: \( \vec{r} \) in meters, \( t \) in seconds)</em>
+                </div>
+                <!-- SVG Figure 3 -->
+                <div class="figure-container">
+                    <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="20" y1="80" x2="180" y2="80" stroke="black" stroke-width="1.5" />
+                        <line x1="40" y1="110" x2="40" y2="10" stroke="black" stroke-width="1.5" />
+                        <polygon points="185,80 175,75 175,85" fill="black" />
+                        <polygon points="40,5 35,15 45,15" fill="black" />
+                        <line x1="20" y1="110" x2="140" y2="20" stroke="#333" stroke-width="2" stroke-dasharray="4,4" />
+                        <text x="175" y="95" font-family="serif" font-style="italic" font-size="12">x</text>
+                        <text x="25" y="15" font-family="serif" font-style="italic" font-size="12">y</text>
+                    </svg>
+                </div>
+            </div>
 
-        <div class="question">
-            <div class="question-text">2. Deduce the position vector \( \vec{r}(t) \) of the particle at any instant \( t \).</div>
-            <div class="workspace"></div>
-        </div>
-
-        <div class="question">
-            <div class="question-text">3. Calculate the magnitude of the displacement vector \( ||\Delta\vec{r}|| \) between \( t_1 = 1 \text{ s} \) and \( t_2 = 3 \text{ s} \).</div>
-            <div class="workspace"></div>
-        </div>
-
-        <div class="question">
-            <div class="question-text">4. Find the equation of the trajectory \( y(x) \) and specify the geometric nature of the path.</div>
-            <div class="workspace"></div>
-        </div>
-
-        <div class="question">
-            <div class="question-text">5. At what instant(s) \( t \) does the particle pass through the x-axis?</div>
-            <div class="workspace"></div>
-        </div>
-
-        <div class="question" style="border: none;">
-            <div class="question-text">6. Determine the instant(s) when the particle reaches a vertical position (ordinate) of \( y = 3 \text{ m} \).</div>
-            <div class="workspace"></div>
+            <div class="question">
+                <div class="question-text">3.1 Write the parametric equations \( x(t) \) and \( y(t) \). What is the initial position \( (t=0) \)?</div>
+                <div class="workspace-small"></div>
+            </div>
+            <div class="question">
+                <div class="question-text">3.2 Find the equation of the trajectory \( y(x) \). Deduce the geometric nature of the path.</div>
+                <div class="workspace-medium"></div>
+            </div>
+            <div class="question">
+                <div class="question-text">3.3 Find the instant when the abscissa is \( x = 8 \text{ m} \), and deduce the ordinate at this instant.</div>
+                <div class="workspace-medium"></div>
+            </div>
         </div>
 
     </div>
