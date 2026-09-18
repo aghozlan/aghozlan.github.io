@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kinematics Worksheet 1 - Position & Trajectory</title>
     
-    <!-- MathJax for rendering clean LaTeX -->
+    <!-- MathJax Configuration to scale up LaTeX for A4 readability -->
+    <script>
+        MathJax = {
+            chtml: {
+                scale: 1.3 /* Increased to 130% for clearer A4 printing */
+            }
+        };
+    </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -15,16 +22,17 @@
             font-family: "Times New Roman", Times, serif;
             background-color: #f4f4f9;
             color: #111;
-            line-height: 1.5;
+            line-height: 1.6;
             padding: 20px;
             margin: 0;
+            font-size: 20px; /* Increased screen font size */
         }
 
         .worksheet-container {
-            max-width: 850px;
+            max-width: 900px;
             margin: 0 auto;
             background: #fff;
-            padding: 30px 40px;
+            padding: 40px 50px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
         }
@@ -33,28 +41,28 @@
         .header {
             text-align: center;
             border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 28px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .header h2 {
-            margin: 5px 0 0 0;
-            font-size: 16px;
+            margin: 8px 0 0 0;
+            font-size: 22px;
             font-weight: normal;
         }
 
         .student-info {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            font-size: 15px;
+            margin-top: 20px;
+            font-size: 20px;
         }
 
         .student-info div {
@@ -69,21 +77,21 @@
 
         /* Exercise Blocks */
         .exercise {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             page-break-inside: avoid;
         }
 
         .exercise-title {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
+            padding-bottom: 8px;
         }
 
         .intro-text {
-            font-size: 15px;
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -93,13 +101,14 @@
         .figure-container {
             text-align: center;
             flex-shrink: 0;
-            margin-left: 20px;
+            margin-left: 30px;
         }
 
         /* Questions Styling */
         .question {
-            margin-bottom: 10px;
-            font-size: 15px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            page-break-inside: avoid;
         }
 
         .question-text {
@@ -108,15 +117,20 @@
         }
 
         /* Space for student answers */
-        .workspace-small { min-height: 60px; }
-        .workspace-medium { min-height: 90px; }
-        .workspace-large { min-height: 120px; }
+        .workspace-small { min-height: 70px; }
+        .workspace-medium { min-height: 100px; }
+        .workspace-large { min-height: 130px; }
 
-        /* Print Specific Styling */
+        /* Print Specific Styling - Optimized for clear A4 size */
         @media print {
+            @page { 
+                size: A4; 
+                margin: 1.5cm; 
+            }
             body {
                 background-color: #fff;
                 padding: 0;
+                font-size: 16pt; /* Enlarged print font */
             }
             .worksheet-container {
                 box-shadow: none;
@@ -125,11 +139,16 @@
                 max-width: 100%;
                 border-radius: 0;
             }
-            /* Adjust spacing to fit pages perfectly */
-            .workspace-small { min-height: 70px; }
-            .workspace-medium { min-height: 100px; }
-            .workspace-large { min-height: 140px; }
-            @page { margin: 1.5cm; }
+            .header h1 { font-size: 22pt; }
+            .header h2 { font-size: 16pt; }
+            .exercise-title { font-size: 18pt; margin-bottom: 10px; }
+            .intro-text, .question { font-size: 16pt; }
+            .student-info { font-size: 16pt; margin-top: 15px; }
+            
+            /* Expand workspace to fill the A4 page smoothly */
+            .workspace-small { min-height: 80px; }
+            .workspace-medium { min-height: 120px; }
+            .workspace-large { min-height: 150px; }
         }
     </style>
 </head>
@@ -157,16 +176,16 @@
                     <center>\( \vec{r}(t) = (2t)\vec{i} + (-5t^2 + 10t)\vec{j} \)</center><br>
                     <em>(Units: \( \vec{r} \) in meters, \( t \) in seconds)</em>
                 </div>
-                <!-- SVG Figure 1 -->
+                <!-- SVG Figure 1 (Scaled up via width/height) -->
                 <div class="figure-container">
-                    <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="280" height="168" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
                         <line x1="20" y1="100" x2="180" y2="100" stroke="black" stroke-width="1.5" />
                         <line x1="20" y1="100" x2="20" y2="10" stroke="black" stroke-width="1.5" />
                         <polygon points="185,100 175,95 175,105" fill="black" />
                         <polygon points="20,5 15,15 25,15" fill="black" />
                         <path d="M 20,100 Q 80,-20 140,100" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4,4" />
-                        <text x="175" y="115" font-family="serif" font-style="italic" font-size="12">x</text>
-                        <text x="5" y="15" font-family="serif" font-style="italic" font-size="12">y</text>
+                        <text x="175" y="115" font-family="serif" font-style="italic" font-size="14">x</text>
+                        <text x="5" y="15" font-family="serif" font-style="italic" font-size="14">y</text>
                     </svg>
                 </div>
             </div>
@@ -194,16 +213,16 @@
                     <center>\( \vec{r}(t) = (4t)\vec{i} + (t^2 - 1)\vec{j} \)</center><br>
                     <em>(Units: \( \vec{r} \) in meters, \( t \) in seconds)</em>
                 </div>
-                <!-- SVG Figure 2 -->
+                <!-- SVG Figure 2 (Scaled up) -->
                 <div class="figure-container">
-                    <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="280" height="168" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
                         <line x1="20" y1="60" x2="180" y2="60" stroke="black" stroke-width="1.5" />
                         <line x1="20" y1="110" x2="20" y2="10" stroke="black" stroke-width="1.5" />
                         <polygon points="185,60 175,55 175,65" fill="black" />
                         <polygon points="20,5 15,15 25,15" fill="black" />
                         <path d="M 20,80 Q 90,110 160,20" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="4,4" />
-                        <text x="175" y="75" font-family="serif" font-style="italic" font-size="12">x</text>
-                        <text x="5" y="15" font-family="serif" font-style="italic" font-size="12">y</text>
+                        <text x="175" y="75" font-family="serif" font-style="italic" font-size="14">x</text>
+                        <text x="5" y="15" font-family="serif" font-style="italic" font-size="14">y</text>
                     </svg>
                 </div>
             </div>
@@ -223,7 +242,7 @@
         </div>
 
         <!-- EXERCISE 3 -->
-        <div class="exercise">
+        <div class="exercise" style="margin-bottom: 0;">
             <div class="exercise-title">Exercise 3: Linear Kinematics in 2D</div>
             <div class="intro-text">
                 <div>
@@ -231,16 +250,16 @@
                     <center>\( \vec{r}(t) = (3t + 2)\vec{i} + (6t - 4)\vec{j} \)</center><br>
                     <em>(Units: \( \vec{r} \) in meters, \( t \) in seconds)</em>
                 </div>
-                <!-- SVG Figure 3 -->
+                <!-- SVG Figure 3 (Scaled up) -->
                 <div class="figure-container">
-                    <svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="280" height="168" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
                         <line x1="20" y1="80" x2="180" y2="80" stroke="black" stroke-width="1.5" />
                         <line x1="40" y1="110" x2="40" y2="10" stroke="black" stroke-width="1.5" />
                         <polygon points="185,80 175,75 175,85" fill="black" />
                         <polygon points="40,5 35,15 45,15" fill="black" />
                         <line x1="20" y1="110" x2="140" y2="20" stroke="#333" stroke-width="2" stroke-dasharray="4,4" />
-                        <text x="175" y="95" font-family="serif" font-style="italic" font-size="12">x</text>
-                        <text x="25" y="15" font-family="serif" font-style="italic" font-size="12">y</text>
+                        <text x="175" y="95" font-family="serif" font-style="italic" font-size="14">x</text>
+                        <text x="25" y="15" font-family="serif" font-style="italic" font-size="14">y</text>
                     </svg>
                 </div>
             </div>
