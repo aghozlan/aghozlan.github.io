@@ -16,13 +16,12 @@
         };
     </script>
     <style>
-        /* Base styling */
+        /* STREAMING_CHUNK:Configuring Base and Print Styles... */
+        /* Grayscale & Print-friendly Base styling */
         :root {
             --text-color: #000;
             --bg-color: #fff;
-            --primary-blue: #004085;
-            --light-blue: #cce5ff;
-            --border-gray: #b8daff;
+            --border-color: #333;
         }
         body {
             font-family: "Times New Roman", Times, serif;
@@ -69,11 +68,12 @@
             .graphs-container {
                 page-break-inside: avoid;
             }
-            .summary-box {
+            .summary-box, .summary-box-full {
                 page-break-inside: avoid;
             }
         }
 
+        /* STREAMING_CHUNK:Styling Header and Sections... */
         /* Header styling */
         .header {
             text-align: center;
@@ -102,7 +102,7 @@
             position: absolute;
             top: 0;
             right: 0;
-            background-color: #0056b3;
+            background-color: #333;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -112,13 +112,14 @@
             font-family: inherit;
         }
         .btn-print:hover {
-            background-color: #003d82;
+            background-color: #000;
         }
 
         /* Section Titles */
         .section-title {
-            background-color: var(--primary-blue);
-            color: white;
+            background-color: #eaeaea;
+            color: #000;
+            border-left: 5px solid #000;
             padding: 8px 12px;
             font-weight: bold;
             font-size: 14pt;
@@ -127,6 +128,7 @@
             text-transform: uppercase;
         }
 
+        /* STREAMING_CHUNK:Styling the Grayscale Lesson Summary... */
         /* Lesson Summary Styling */
         .summary-grid {
             display: grid;
@@ -135,17 +137,24 @@
             margin-bottom: 20px;
         }
         .summary-box {
-            border: 1px solid var(--border-gray);
-            background-color: var(--light-blue);
+            border: 1px solid var(--border-color);
+            background-color: transparent; /* Non-filled for printing */
             padding: 10px 15px;
             border-radius: 5px;
         }
-        .summary-box h3 {
+        .summary-box-full {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .summary-box h3, .summary-box-full h3 {
             margin-top: 0;
             margin-bottom: 8px;
             font-size: 12pt;
-            color: var(--primary-blue);
-            border-bottom: 1px solid var(--primary-blue);
+            color: #000;
+            border-bottom: 1px dashed #777;
             padding-bottom: 3px;
         }
         .formula {
@@ -154,7 +163,21 @@
             font-weight: bold;
             margin: 8px 0;
         }
+        .text-content {
+            flex: 1;
+        }
+        .figure-content {
+            flex: 0 0 160px;
+            text-align: center;
+        }
+        .figure-caption {
+            font-size: 0.85rem;
+            font-style: italic;
+            margin-top: 5px;
+            color: #444;
+        }
 
+        /* STREAMING_CHUNK:Styling Exercises and Marking Scheme... */
         /* Exercise layout */
         .exercise {
             margin-bottom: 30px;
@@ -227,7 +250,8 @@
         }
         .ans-bold {
             font-weight: bold;
-            color: #b30000;
+            color: #444; /* Grayscale suitable for bold answers */
+            text-decoration: underline;
         }
         .ms-exercise {
             margin-bottom: 20px;
@@ -242,14 +266,15 @@
 <body>
 
 <div class="container">
+    <!-- STREAMING_CHUNK:Rendering Header... -->
     <div class="header">
         <button class="no-print btn-print" onclick="window.print()">Print / Save PDF</button>
         <h1>PHYSICS</h1>
-        <h2>Chapter XI: WORK AND ENERGY</h2>
+        <h2>Chapter I: WORK AND ENERGY</h2>
         <div class="gravity-note">Use: $g = 10 \text{ m/s}^2$</div>
     </div>
 
-    <!-- LESSON SUMMARY -->
+    <!-- STREAMING_CHUNK:Rendering Grayscale Lesson Summary... -->
     <div class="section-title">I. Lesson Summary</div>
     <div class="summary-grid">
         <div class="summary-box">
@@ -262,42 +287,107 @@
             • $W = 0$: Null Work (Force $\perp$ Displacement)
         </div>
         <div class="summary-box">
-            <h3>2. Kinetic Energy (KE)</h3>
+            <h3>2. Kinetic Energy (K.E)</h3>
             The energy an object possesses due to its motion.
-            <span class="formula">$KE = \frac{1}{2}mv^2$</span>
+            <span class="formula">$K.E = \frac{1}{2}mv^2$</span>
             • $m$: mass in kg<br>
             • $v$: speed in m/s<br>
-            • $KE$: Kinetic Energy in Joules (J)
+            • $K.E$: Kinetic Energy in Joules (J)
         </div>
         <div class="summary-box">
             <h3>3. Work-Energy Theorem</h3>
             The variation in kinetic energy of a particle between two points A and B is equal to the algebraic sum of the work done by all external forces applied to it.
-            <span class="formula">$\Delta KE = KE_B - KE_A = \sum W_{AB}(\vec{F}_{ext})$</span>
+            <span class="formula">$\Delta K.E = K.E_B - K.E_A = \sum W_{AB}(\vec{F}_{ext})$</span>
         </div>
         <div class="summary-box">
-            <h3>4. Gravitational Potential Energy (GPE)</h3>
-            The energy a system possesses due to its altitude relative to a chosen reference level (GPE = 0).
-            <span class="formula">$GPE = mgz$</span>
+            <h3>4. Gravitational Potential Energy ($P.E_g$)</h3>
+            The energy a system possesses due to its altitude relative to a chosen reference level ($P.E_g = 0$).
+            <span class="formula">$P.E_g = mgz$</span>
             • $z$: algebraic altitude from reference level (m)
         </div>
+
+        <!-- STREAMING_CHUNK:Adding Work Done by Weight... -->
+        <div class="summary-box summary-box-full">
+            <div class="text-content">
+                <h3>5. Work Done by Weight</h3>
+                The work done by gravity depends only on the initial and final height, independent of the path taken.
+                <span class="formula">$W = mg(h_1 - h_2)$</span>
+                • $h_1$: Initial height (m)<br>
+                • $h_2$: Final height (m)<br>
+                <em>Note: If $h_1 > h_2$ (falling), $W > 0$. If $h_1 < h_2$ (rising), $W < 0$.</em>
+            </div>
+            <div class="figure-content">
+                <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="5" y1="140" x2="145" y2="140" stroke="#000" stroke-width="2"/>
+                    <text x="105" y="148" font-size="10" font-family="serif">Ground</text>
+                    <line x1="20" y1="20" x2="80" y2="20" stroke="#000" stroke-dasharray="4"/>
+                    <text x="5" y="24" font-size="12" font-family="serif">h₁</text>
+                    <line x1="20" y1="90" x2="80" y2="90" stroke="#000" stroke-dasharray="4"/>
+                    <text x="5" y="94" font-size="12" font-family="serif">h₂</text>
+                    <rect x="40" y="5" width="15" height="15" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <rect x="40" y="75" width="15" height="15" fill="none" stroke="#000" stroke-dasharray="2" stroke-width="1.5"/>
+                    <line x1="65" y1="25" x2="65" y2="70" stroke="#000" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+                    <text x="72" y="52" font-size="12" font-family="serif">W</text>
+                    <defs>
+                        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#000" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+
+        <!-- STREAMING_CHUNK:Adding Elastic Potential Energy... -->
+        <div class="summary-box summary-box-full">
+            <div class="text-content">
+                <h3>6. Elastic Potential Energy ($P.E_e$)</h3>
+                The energy stored in compressible or stretchable objects (like a spring or rubber band).
+                <span class="formula">$P.E_e = \frac{1}{2} k x^2$</span>
+                • $k$: Spring constant (N/m), representing stiffness.<br>
+                • $x$: Displacement from the equilibrium position (m).<br>
+                <em>Note: Since $x$ is squared, $P.E_e$ is always positive.</em>
+            </div>
+            <div class="figure-content">
+                <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="20" y1="10" x2="20" y2="70" stroke="#000" stroke-width="3"/>
+                    <line x1="10" y1="70" x2="190" y2="70" stroke="#000" stroke-width="1"/>
+                    <line x1="90" y1="20" x2="90" y2="85" stroke="#000" stroke-dasharray="4"/>
+                    <text x="80" y="88" font-size="10" font-family="serif">x = 0</text>
+                    <path d="M 20 45 L 30 45 L 35 35 L 45 55 L 55 35 L 65 55 L 75 35 L 85 55 L 95 35 L 105 55 L 115 35 L 120 45 L 130 45" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <rect x="130" y="30" width="25" height="30" fill="none" stroke="#000" stroke-width="1.5"/>
+                    <line x1="90" y1="15" x2="142" y2="15" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+                    <text x="115" y="10" font-size="12" font-family="serif">x</text>
+                    <defs>
+                        <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                            <polygon points="0 0, 6 3, 0 6" fill="#000" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+
         <div class="summary-box">
-            <h3>5. Mechanical Energy (ME)</h3>
-            The mechanical energy of a system is the sum of its kinetic and potential energies.
-            <span class="formula">$ME = KE + GPE$</span>
+            <h3>7. Mechanical Energy (M.E)</h3>
+            The sum of an object's kinetic and potential energies.
+            <span class="formula">$M.E = K.E + P.E_g + P.E_e$</span>
         </div>
         <div class="summary-box">
-            <h3>6. Conservation & Variation of ME</h3>
-            • <b>Conserved:</b> If only conservative forces (like weight) do work, ME remains constant. $\Delta ME = 0 \Rightarrow ME_A = ME_B$.<br>
-            • <b>Non-Conserved:</b> If non-conservative forces (friction, air resistance) act, they vary the ME. $\Delta ME = \sum W_{nc}(\vec{f})$
+            <h3>8. Conservation of M.E</h3>
+            • <b>Conserved:</b> If only conservative forces (e.g., weight) do work. $\Delta M.E = 0 \Rightarrow M.E_A = M.E_B$.<br>
+            • <b>Non-Conserved:</b> If friction or drag acts, they vary M.E. $\Delta M.E = \sum W_{nc}$
         </div>
-        <div class="summary-box" style="grid-column: span 2;">
-            <h3>7. Mechanical Power</h3>
-            • <b>Average Power:</b> $P_{avg} = \frac{W}{\Delta t}$ (in Watts, W)<br>
-            • <b>Instantaneous Power:</b> $P = \vec{F} \cdot \vec{v} = F \cdot v \cdot \cos(\theta)$
+        <div class="summary-box summary-box-full">
+            <div class="text-content">
+                <h3>9. Mechanical Power</h3>
+                Power measures the rate at which work is done or energy is transferred.<br>
+                • <b>Average Power:</b> $P_{avg} = \frac{W}{\Delta t}$ (in Watts, W)<br>
+                • <b>Instantaneous Power:</b> $P = \vec{F} \cdot \vec{v} = F \cdot v \cdot \cos(\theta)$
+            </div>
         </div>
     </div>
 
-    <!-- WORKSHEET -->
+    <!-- STREAMING_CHUNK:Rendering Worksheet Exercises... -->
+    <div class="page-break"></div>
     <div class="section-title">II. Exercises</div>
     
     <!-- EXERCISE 1 -->
@@ -309,27 +399,22 @@
                 from a point O, $45 \text{ m}$ above the surface of the ground. The stone is thrown with an initial 
                 velocity $\vec{V}_0$ making an angle $\alpha$ with the horizontal and having a magnitude of $V_0 = 20 \text{ m/s}$.<br><br>
                 S is the highest point reached by the stone, and it is at an altitude of $H = 6.4 \text{ m}$ above point O.
-                Take the horizontal plane containing O as a reference level for gravitational potential energy (GPE = 0) 
+                Take the horizontal plane containing O as a reference level for gravitational potential energy ($P.E_g = 0$) 
                 and neglect air resistance.
             </div>
             <div class="exercise-figure">
                 <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Ground -->
                     <line x1="10" y1="180" x2="310" y2="180" stroke="black" stroke-width="3" />
                     <text x="140" y="195" font-size="12" font-family="Times New Roman">ground</text>
                     <text x="290" y="195" font-size="14" font-family="Times New Roman" font-weight="bold">A</text>
                     
-                    <!-- Castle / Mountain -->
                     <path d="M 10 180 L 10 90 L 80 90 L 120 180 Z" fill="none" stroke="black" stroke-width="1.5" />
                     
-                    <!-- Reference line -->
                     <line x1="80" y1="90" x2="310" y2="90" stroke="gray" stroke-dasharray="4,4" stroke-width="1" />
-                    <text x="275" y="85" font-size="10" font-family="Times New Roman">GPE=0</text>
+                    <text x="275" y="85" font-size="10" font-family="Times New Roman">P.Eg=0</text>
                     
-                    <!-- Stone path -->
                     <path d="M 70 85 Q 150 -10 295 175" fill="none" stroke="gray" stroke-dasharray="2,2" stroke-width="1.5" />
                     
-                    <!-- Points and labels -->
                     <circle cx="70" cy="85" r="3" fill="black" />
                     <text x="55" y="80" font-size="14" font-weight="bold" font-family="Times New Roman">O</text>
                     
@@ -337,19 +422,15 @@
                     <text x="145" y="20" font-size="14" font-weight="bold" font-family="Times New Roman">S</text>
                     <circle cx="295" cy="177" r="4" fill="gray" />
                     
-                    <!-- H indicator -->
                     <line x1="150" y1="25" x2="150" y2="90" stroke="black" stroke-width="0.5" stroke-dasharray="2,2" />
                     <text x="155" y="60" font-size="12" font-weight="bold" font-family="Times New Roman">H</text>
                     
-                    <!-- 45m indicator -->
                     <line x1="305" y1="90" x2="305" y2="180" stroke="black" stroke-width="0.5" stroke-dasharray="2,2" />
                     <text x="280" y="140" font-size="12" font-weight="bold" font-family="Times New Roman">45m</text>
                     
-                    <!-- Velocity vector -->
                     <line x1="70" y1="85" x2="110" y2="45" stroke="black" stroke-width="1.5" marker-end="url(#arrow)" />
                     <text x="90" y="35" font-size="12" font-weight="bold" font-family="Times New Roman">V₀</text>
                     
-                    <!-- Angle alpha -->
                     <path d="M 95 85 A 25 25 0 0 0 88 67" fill="none" stroke="black" stroke-width="1" />
                     <text x="100" y="75" font-size="12" font-family="Times New Roman">α</text>
                     
@@ -588,7 +669,6 @@
 
                     <line x1="20" y1="70" x2="130" y2="150" stroke="black" stroke-width="2" />
                     <line x1="130" y1="150" x2="310" y2="150" stroke="black" stroke-width="2" />
-                    <!-- Ground level text at BC -->
                     <line x1="250" y1="150" x2="310" y2="150" stroke="gray" stroke-dasharray="3,3" stroke-width="1.5" />
                     <text x="270" y="165" font-family="Times New Roman" font-size="12">ground</text>
 
@@ -633,7 +713,7 @@
         </div>
     </div>
 
-    <!-- MARKING SCHEME -->
+    <!-- STREAMING_CHUNK:Rendering Marking Scheme... -->
     <div class="page-break"></div>
     <div class="section-title">III. Marking Scheme / Answer Key</div>
     <div class="marking-scheme">
@@ -643,15 +723,15 @@
             <b>Exercise 1</b>
             <ol>
                 <li>The only force doing work is the weight (conservative force), as air resistance is neglected. <br>
-                    $ME_O = KE_O + GPE_O = \frac{1}{2}(15)(20^2) + 15(10)(45) = 3000 + 6750 = $ <span class="ans-bold">9750 J</span>.</li>
+                    $M.E_O = K.E_O + P.E_O = \frac{1}{2}(15)(20^2) + 15(10)(45) = 3000 + 6750 = $ <span class="ans-bold">9750 J</span>.</li>
                 <li>
                     <ol>
-                        <li>$z_S = 45 + 6.4 = 51.4 \text{ m}$. $GPE_S = mgz_S = 15(10)(51.4) = $ <span class="ans-bold">7710 J</span>.</li>
-                        <li>Conservation of ME: $ME_S = ME_O \Rightarrow KE_S + GPE_S = 9750 \Rightarrow \frac{1}{2}(15)V_S^2 + 7710 = 9750 \Rightarrow 7.5 V_S^2 = 2040 \Rightarrow V_S = \sqrt{272} \approx$ <span class="ans-bold">16.49 m/s</span>.</li>
+                        <li>$z_S = 45 + 6.4 = 51.4 \text{ m}$. $P.E_S = mgz_S = 15(10)(51.4) = $ <span class="ans-bold">7710 J</span>.</li>
+                        <li>Conservation of M.E: $M.E_S = M.E_O \Rightarrow K.E_S + P.E_S = 9750 \Rightarrow \frac{1}{2}(15)V_S^2 + 7710 = 9750 \Rightarrow 7.5 V_S^2 = 2040 \Rightarrow V_S = \sqrt{272} \approx$ <span class="ans-bold">16.49 m/s</span>.</li>
                         <li>$\cos(\alpha) = \frac{V_S}{V_0} = \frac{16.49}{20} = 0.8245 \Rightarrow \alpha = \cos^{-1}(0.8245) \approx$ <span class="ans-bold">34.46°</span>.</li>
                     </ol>
                 </li>
-                <li>$\Delta KE = \sum W \Rightarrow \frac{1}{2} m V_A^2 - \frac{1}{2} m V_0^2 = W(\vec{W}) \Rightarrow \frac{1}{2}(15)V_A^2 - 3000 = mgh \Rightarrow 7.5 V_A^2 - 3000 = 15(10)(45) \Rightarrow 7.5 V_A^2 = 9750 \Rightarrow V_A = \sqrt{1300} \approx$ <span class="ans-bold">36.05 m/s</span>.</li>
+                <li>$\Delta K.E = \sum W \Rightarrow \frac{1}{2} m V_A^2 - \frac{1}{2} m V_0^2 = W(\vec{W}) \Rightarrow \frac{1}{2}(15)V_A^2 - 3000 = mgh \Rightarrow 7.5 V_A^2 - 3000 = 15(10)(45) \Rightarrow 7.5 V_A^2 = 9750 \Rightarrow V_A = \sqrt{1300} \approx$ <span class="ans-bold">36.05 m/s</span>.</li>
             </ol>
         </div>
 
@@ -662,20 +742,20 @@
             <ol>
                 <li>
                     <ol>
-                        <li>Figure (1) shows the ME curve is a horizontal straight line ($\Delta ME = 0$). This implies there is no work done by non-conservative forces, hence no air resistance.</li>
-                        <li>At $z = 0$, $GPE = 0$, so $ME = KE_0 = 100 \text{ J}$. $\frac{1}{2}(2)V_0^2 = 100 \Rightarrow V_0 = \sqrt{100} = $ <span class="ans-bold">10 m/s</span>.</li>
+                        <li>Figure (1) shows the M.E curve is a horizontal straight line ($\Delta M.E = 0$). This implies there is no work done by non-conservative forces, hence no air resistance.</li>
+                        <li>At $z = 0$, $P.E_g = 0$, so $M.E = K.E_0 = 100 \text{ J}$. $\frac{1}{2}(2)V_0^2 = 100 \Rightarrow V_0 = \sqrt{100} = $ <span class="ans-bold">10 m/s</span>.</li>
                     </ol>
                 </li>
-                <li>$GPE = mgz = 2(10)z = 20z$. (Student must draw a straight line passing through origin (0,0) and point (5,100)).</li>
-                <li>$KE = ME - GPE = 100 - 20z$. (Student must draw a straight line from (0,100) down to (5,0)).</li>
-                <li>$Z_{max}$ corresponds to $KE = 0$. On the graph, this is where the KE line hits the z-axis: <span class="ans-bold">$Z_{max} = 5 \text{ m}$</span>.</li>
+                <li>$P.E_g = mgz = 2(10)z = 20z$. (Student must draw a straight line passing through origin (0,0) and point (5,100)).</li>
+                <li>$K.E = M.E - P.E_g = 100 - 20z$. (Student must draw a straight line from (0,100) down to (5,0)).</li>
+                <li>$Z_{max}$ corresponds to $K.E = 0$. On the graph, this is where the K.E line hits the z-axis: <span class="ans-bold">$Z_{max} = 5 \text{ m}$</span>.</li>
             </ol>
             <div style="margin-left: 20px;"><b>B)</b></div>
             <ol>
-                <li>As altitude increases, speed decreases, so KE decreases. Therefore, <span class="ans-bold">curve (a)</span> represents Kinetic Energy.</li>
-                <li>$ME = KE + GPE$. At $z=0, ME = 100+0 = 100 \text{ J}$. At $z=4, ME = 0+80 = 80 \text{ J}$. (Student draws a straight line connecting (0,100) and (4,80)).</li>
-                <li>The object stops ascending when $KE = 0$. According to curve (a), this occurs at <span class="ans-bold">$z = 4 \text{ m}$</span>.</li>
-                <li>Thermal Energy = $|\Delta ME| = |ME_f - ME_i| = |80 - 100| = $ <span class="ans-bold">20 J</span>.</li>
+                <li>As altitude increases, speed decreases, so K.E decreases. Therefore, <span class="ans-bold">curve (a)</span> represents Kinetic Energy.</li>
+                <li>$M.E = K.E + P.E_g$. At $z=0, M.E = 100+0 = 100 \text{ J}$. At $z=4, M.E = 0+80 = 80 \text{ J}$. (Student draws a straight line connecting (0,100) and (4,80)).</li>
+                <li>The object stops ascending when $K.E = 0$. According to curve (a), this occurs at <span class="ans-bold">$z = 4 \text{ m}$</span>.</li>
+                <li>Thermal Energy = $|\Delta M.E| = |M.E_f - M.E_i| = |80 - 100| = $ <span class="ans-bold">20 J</span>.</li>
             </ol>
         </div>
 
@@ -685,14 +765,14 @@
             <ol>
                 <li>
                     <ol>
-                        <li>$ME_A = KE_A + GPE_A = 0 + Mgh_A = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
-                        <li>$ME_B = KE_B + GPE_B = \frac{1}{2}(50)(\sqrt{90})^2 + 0 = 25(90) = 2250 \text{ J}$. Since $ME_B = ME_A$, mechanical energy is conserved, proving AB is <span class="ans-bold">frictionless</span>.</li>
+                        <li>$M.E_A = K.E_A + P.E_A = 0 + Mgh_A = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
+                        <li>$M.E_B = K.E_B + P.E_B = \frac{1}{2}(50)(\sqrt{90})^2 + 0 = 25(90) = 2250 \text{ J}$. Since $M.E_B = M.E_A$, mechanical energy is conserved, proving AB is <span class="ans-bold">frictionless</span>.</li>
                     </ol>
                 </li>
                 <li>
                     <ol>
                         <li>$W(\vec{N}) = \vec{N} \cdot \vec{BC} = 0 \text{ J}$ (perpendicular). $W(\vec{W}) = \vec{W} \cdot \vec{BC} = 0 \text{ J}$.<br>$W(\vec{f}) = -f \cdot BC = -40(5) = $ <span class="ans-bold">-200 J</span>.</li>
-                        <li>W-E Theorem: $\Delta KE = \sum W \Rightarrow KE_C - KE_B = -200 \Rightarrow \frac{1}{2}(50)V_C^2 - 2250 = -200 \Rightarrow 25V_C^2 = 2050 \Rightarrow V_C = \sqrt{82} \approx $ <span class="ans-bold">9.05 m/s</span>.</li>
+                        <li>W-E Theorem: $\Delta K.E = \sum W \Rightarrow K.E_C - K.E_B = -200 \Rightarrow \frac{1}{2}(50)V_C^2 - 2250 = -200 \Rightarrow 25V_C^2 = 2050 \Rightarrow V_C = \sqrt{82} \approx $ <span class="ans-bold">9.05 m/s</span>.</li>
                         <li>Converted into <span class="ans-bold">Thermal Energy</span> (Heat).</li>
                     </ol>
                 </li>
@@ -700,12 +780,12 @@
                     <ol>
                         <li>
                             <ol>
-                                <li>$ME_C = KE_C + GPE_C = 2050 + 0 = $ <span class="ans-bold">2050 J</span>.</li>
-                                <li>$GPE_D = Mgh_D = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
+                                <li>$M.E_C = K.E_C + P.E_C = 2050 + 0 = $ <span class="ans-bold">2050 J</span>.</li>
+                                <li>$P.E_D = Mgh_D = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
                             </ol>
                         </li>
-                        <li>Since CD is frictionless, ME is conserved. The skateboarder only has 2050 J of total energy, but requires 2250 J to reach D. Thus, <span class="ans-bold">he cannot reach D</span>.</li>
-                        <li>At point I, $V_I = 0$. $ME_I = ME_C = 2050 \text{ J}$. $GPE_I = 2050 \Rightarrow Mgh_I = 2050 \Rightarrow 50(10)h_I = 2050 \Rightarrow h_I = \frac{2050}{500} = $ <span class="ans-bold">4.1 m</span>.</li>
+                        <li>Since CD is frictionless, M.E is conserved. The skateboarder only has 2050 J of total energy, but requires 2250 J to reach D. Thus, <span class="ans-bold">he cannot reach D</span>.</li>
+                        <li>At point I, $V_I = 0$. $M.E_I = M.E_C = 2050 \text{ J}$. $P.E_I = 2050 \Rightarrow Mgh_I = 2050 \Rightarrow 50(10)h_I = 2050 \Rightarrow h_I = \frac{2050}{500} = $ <span class="ans-bold">4.1 m</span>.</li>
                     </ol>
                 </li>
             </ol>
@@ -717,24 +797,24 @@
             <ol>
                 <li>
                     <ol>
-                        <li>$\Delta ME = W_{nc} \Rightarrow ME_B - ME_A = -f \cdot AB$. <br>$ME_A = mgh_A = mg(AB\sin\alpha) = 1.5(10)(5)(0.25) = 18.75 \text{ J}$. $ME_B = \frac{1}{2}mV_B^2 = 0.5(1.5)(16) = 12 \text{ J}$. <br>$\Delta ME = 12 - 18.75 = -6.75 \text{ J}$. $-f(5) = -6.75 \Rightarrow f = $ <span class="ans-bold">1.35 N</span>.</li>
+                        <li>$\Delta M.E = W_{nc} \Rightarrow M.E_B - M.E_A = -f \cdot AB$. <br>$M.E_A = mgh_A = mg(AB\sin\alpha) = 1.5(10)(5)(0.25) = 18.75 \text{ J}$. $M.E_B = \frac{1}{2}mV_B^2 = 0.5(1.5)(16) = 12 \text{ J}$. <br>$\Delta M.E = 12 - 18.75 = -6.75 \text{ J}$. $-f(5) = -6.75 \Rightarrow f = $ <span class="ans-bold">1.35 N</span>.</li>
                         <li>$P(\vec{f}) = -f \cdot v = -1.35(2) = $ <span class="ans-bold">-2.7 W</span>.<br>
                             $P(\vec{N}) = 0$ (since $\vec{N} \perp \vec{v}$).<br>
                             $P(\vec{W}) = \vec{W} \cdot \vec{v} = mgv\sin\alpha = 1.5(10)(2)(0.25) = $ <span class="ans-bold">7.5 W</span>.</li>
                         <li>$P_{avg}(\vec{f}) = \frac{W(\vec{f})}{\Delta t} = \frac{-6.75}{2.5} = $ <span class="ans-bold">-2.7 W</span>.</li>
                     </ol>
                 </li>
-                <li>ME of (P) is conserved from C to D. $ME_C = ME_D \Rightarrow \frac{1}{2}MV_0^2 = Mgh_D$. <br>
+                <li>M.E of (P) is conserved from C to D. $M.E_C = M.E_D \Rightarrow \frac{1}{2}MV_0^2 = Mgh_D$. <br>
                     $h_D = l - l\cos\beta = l(1-\cos\beta) = 0.8(1-\cos\beta)$.<br>
                     $\frac{1}{2}(1.5^2) = 10(0.8(1-\cos\beta)) \Rightarrow 1.125 = 8(1-\cos\beta) \Rightarrow 1-\cos\beta = 0.1406 \Rightarrow \cos\beta = 0.859 \Rightarrow \beta \approx $ <span class="ans-bold">30.7°</span>.
                 </li>
                 <li>
                     <ol>
-                        <li>$ME_D = ME_C = \frac{1}{2}MV_0^2 = 0.5(2.5)(1.5^2) = $ <span class="ans-bold">2.8125 J</span>.</li>
-                        <li>Given $KE = GPE$. $ME = 2 \cdot GPE \Rightarrow 2.8125 = 2(Mgh) \Rightarrow 2.8125 = 2(2.5)(10)h \Rightarrow 50h = 2.8125 \Rightarrow h = $ <span class="ans-bold">0.05625 m</span>.<br>
-                        $ME = 2 \cdot KE \Rightarrow 2.8125 = 2(0.5 \cdot 2.5 \cdot V^2) \Rightarrow 2.5 V^2 = 2.8125 \Rightarrow V^2 = 1.125 \Rightarrow V = \sqrt{1.125} \approx $ <span class="ans-bold">1.06 m/s</span>.</li>
-                        <li>Ground level is at BC ($GPE = 0$). Falling from D to ground conserves ME.<br>
-                        $ME_{ground} = ME_D \Rightarrow \frac{1}{2} M V_{ground}^2 + 0 = 2.8125 \Rightarrow 0.5(2.5)V_{ground}^2 = 2.8125 \Rightarrow V_{ground}^2 = 2.25 \Rightarrow V_{ground} = $ <span class="ans-bold">1.5 m/s</span>.</li>
+                        <li>$M.E_D = M.E_C = \frac{1}{2}MV_0^2 = 0.5(2.5)(1.5^2) = $ <span class="ans-bold">2.8125 J</span>.</li>
+                        <li>Given $K.E = P.E_g$. $M.E = 2 \cdot P.E_g \Rightarrow 2.8125 = 2(Mgh) \Rightarrow 2.8125 = 2(2.5)(10)h \Rightarrow 50h = 2.8125 \Rightarrow h = $ <span class="ans-bold">0.05625 m</span>.<br>
+                        $M.E = 2 \cdot K.E \Rightarrow 2.8125 = 2(0.5 \cdot 2.5 \cdot V^2) \Rightarrow 2.5 V^2 = 2.8125 \Rightarrow V^2 = 1.125 \Rightarrow V = \sqrt{1.125} \approx $ <span class="ans-bold">1.06 m/s</span>.</li>
+                        <li>Ground level is at BC ($P.E_g = 0$). Falling from D to ground conserves M.E.<br>
+                        $M.E_{ground} = M.E_D \Rightarrow \frac{1}{2} M V_{ground}^2 + 0 = 2.8125 \Rightarrow 0.5(2.5)V_{ground}^2 = 2.8125 \Rightarrow V_{ground}^2 = 2.25 \Rightarrow V_{ground} = $ <span class="ans-bold">1.5 m/s</span>.</li>
                     </ol>
                 </li>
             </ol>
