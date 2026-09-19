@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter I: Work and Energy - Comprehensive Sheet</title>
+    <title>Chapter XI: Work and Energy - Comprehensive Sheet</title>
     <!-- MathJax for rendering LaTeX -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -16,45 +16,58 @@
         };
     </script>
     <style>
-        /* STREAMING_CHUNK:Configuring Base and Print Styles... */
-        /* Grayscale & Print-friendly Base styling */
+        /* STREAMING_CHUNK:Configuring Base and Fixes for Print Scaling... */
+        /* Universal box-sizing prevents padding from expanding the page width, stopping print shrinkage */
+        * {
+            box-sizing: border-box;
+        }
+        
         :root {
             --text-color: #000;
             --bg-color: #fff;
             --border-color: #333;
         }
+        
         body {
             font-family: "Times New Roman", Times, serif;
-            font-size: 12pt;
-            line-height: 1.4;
+            font-size: 13.5pt; /* Increased base font size for better readability */
+            line-height: 1.45;
             color: var(--text-color);
             background-color: #f4f4f9;
             margin: 0;
             padding: 20px;
         }
+        
         .container {
-            max-width: 210mm; /* A4 width */
+            width: 100%;
+            max-width: 210mm; /* Strict A4 width */
             margin: 0 auto;
             background: var(--bg-color);
-            padding: 20mm;
+            padding: 15mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         
-        /* Print styling for A4 margin and layout */
+        /* Print styling optimized for exact A4 rendering */
         @page {
             size: A4;
-            margin: 15mm;
+            margin: 15mm; /* Handles print margins natively */
         }
+        
         @media print {
             body {
                 background-color: var(--bg-color);
                 padding: 0;
+                margin: 0;
+                font-size: 13.5pt; /* Lock font size in print */
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
             .container {
                 box-shadow: none;
                 margin: 0;
                 padding: 0;
-                max-width: 100%;
+                max-width: none;
+                width: 100%;
             }
             .no-print {
                 display: none !important;
@@ -65,16 +78,12 @@
             .exercise {
                 page-break-inside: avoid;
             }
-            .graphs-container {
-                page-break-inside: avoid;
-            }
-            .summary-box, .summary-box-full {
+            .graphs-container, .summary-box, .summary-box-full {
                 page-break-inside: avoid;
             }
         }
 
         /* STREAMING_CHUNK:Styling Header and Sections... */
-        /* Header styling */
         .header {
             text-align: center;
             margin-bottom: 20px;
@@ -82,22 +91,10 @@
             padding-bottom: 10px;
             position: relative;
         }
-        .header h1 {
-            font-size: 16pt;
-            margin: 5px 0;
-            text-transform: uppercase;
-        }
-        .header h2 {
-            font-size: 14pt;
-            margin: 5px 0;
-        }
-        .gravity-note {
-            font-weight: bold;
-            text-align: right;
-            margin-top: -20px;
-        }
+        .header h1 { font-size: 18pt; margin: 5px 0; text-transform: uppercase; }
+        .header h2 { font-size: 15pt; margin: 5px 0; }
+        .gravity-note { font-weight: bold; text-align: right; margin-top: -20px; font-size: 12pt; }
 
-        /* Button styling */
         .btn-print {
             position: absolute;
             top: 0;
@@ -111,25 +108,21 @@
             border-radius: 4px;
             font-family: inherit;
         }
-        .btn-print:hover {
-            background-color: #000;
-        }
+        .btn-print:hover { background-color: #000; }
 
-        /* Section Titles */
         .section-title {
             background-color: #eaeaea;
             color: #000;
             border-left: 5px solid #000;
             padding: 8px 12px;
             font-weight: bold;
-            font-size: 14pt;
+            font-size: 15pt;
             margin-top: 20px;
             margin-bottom: 15px;
             text-transform: uppercase;
         }
 
         /* STREAMING_CHUNK:Styling the Grayscale Lesson Summary... */
-        /* Lesson Summary Styling */
         .summary-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -138,9 +131,10 @@
         }
         .summary-box {
             border: 1px solid var(--border-color);
-            background-color: transparent; /* Non-filled for printing */
+            background-color: transparent;
             padding: 10px 15px;
             border-radius: 5px;
+            font-size: 12pt; /* Slightly smaller for summary to fit nicely */
         }
         .summary-box-full {
             grid-column: span 2;
@@ -152,7 +146,7 @@
         .summary-box h3, .summary-box-full h3 {
             margin-top: 0;
             margin-bottom: 8px;
-            font-size: 12pt;
+            font-size: 13pt;
             color: #000;
             border-bottom: 1px dashed #777;
             padding-bottom: 3px;
@@ -163,28 +157,15 @@
             font-weight: bold;
             margin: 8px 0;
         }
-        .text-content {
-            flex: 1;
-        }
-        .figure-content {
-            flex: 0 0 160px;
-            text-align: center;
-        }
-        .figure-caption {
-            font-size: 0.85rem;
-            font-style: italic;
-            margin-top: 5px;
-            color: #444;
-        }
+        .text-content { flex: 1; }
+        .figure-content { flex: 0 0 160px; text-align: center; }
+        .figure-caption { font-size: 0.85rem; font-style: italic; margin-top: 5px; color: #444; }
 
         /* STREAMING_CHUNK:Styling Exercises and Marking Scheme... */
-        /* Exercise layout */
-        .exercise {
-            margin-bottom: 30px;
-        }
+        .exercise { margin-bottom: 30px; }
         .exercise-title {
             font-weight: bold;
-            font-size: 13pt;
+            font-size: 14pt;
             text-decoration: underline;
             margin-bottom: 10px;
         }
@@ -192,15 +173,15 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 15px;
+            gap: 20px;
         }
         .exercise-text {
-            flex: 1;
+            flex: 1.2;
             text-align: justify;
         }
         .exercise-figure {
-            width: 320px;
-            flex-shrink: 0;
+            flex: 1;
+            min-width: 250px;
             border: 1px solid #000;
             background: #fff;
             padding: 5px;
@@ -209,33 +190,20 @@
         .exercise-figure svg {
             width: 100%;
             height: auto;
+            display: block;
         }
 
-        /* Lists */
-        ol {
-            margin-top: 5px;
-            padding-left: 20px;
-        }
-        ol li {
-            margin-bottom: 5px;
-        }
-        ol ol {
-            list-style-type: decimal;
-            padding-left: 20px;
-        }
-        ol ol li {
-            margin-bottom: 4px;
-        }
-        ol ol ol {
-            list-style-type: lower-alpha;
-        }
+        ol { margin-top: 5px; padding-left: 20px; }
+        ol li { margin-bottom: 5px; }
+        ol ol { list-style-type: decimal; padding-left: 20px; }
+        ol ol li { margin-bottom: 4px; }
+        ol ol ol { list-style-type: lower-alpha; }
 
-        /* Graphs container */
         .graphs-container {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 15px;
+            margin-top: 15px;
         }
         .graph-box {
             width: 48%;
@@ -244,13 +212,10 @@
             background: #fff;
         }
 
-        /* Marking Scheme Styling */
-        .marking-scheme {
-            font-size: 11.5pt;
-        }
+        .marking-scheme { font-size: 12.5pt; }
         .ans-bold {
             font-weight: bold;
-            color: #444; /* Grayscale suitable for bold answers */
+            color: #222;
             text-decoration: underline;
         }
         .ms-exercise {
@@ -258,9 +223,7 @@
             border-bottom: 1px dashed #ccc;
             padding-bottom: 10px;
         }
-        .ms-exercise:last-child {
-            border-bottom: none;
-        }
+        .ms-exercise:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -270,7 +233,7 @@
     <div class="header">
         <button class="no-print btn-print" onclick="window.print()">Print / Save PDF</button>
         <h1>PHYSICS</h1>
-        <h2>Chapter I: WORK AND ENERGY</h2>
+        <h2>Chapter XI: WORK AND ENERGY</h2>
         <div class="gravity-note">Use: $g = 10 \text{ m/s}^2$</div>
     </div>
 
@@ -306,7 +269,6 @@
             • $z$: algebraic altitude from reference level (m)
         </div>
 
-        <!-- STREAMING_CHUNK:Adding Work Done by Weight... -->
         <div class="summary-box summary-box-full">
             <div class="text-content">
                 <h3>5. Work Done by Weight</h3>
@@ -337,7 +299,6 @@
             </div>
         </div>
 
-        <!-- STREAMING_CHUNK:Adding Elastic Potential Energy... -->
         <div class="summary-box summary-box-full">
             <div class="text-content">
                 <h3>6. Elastic Potential Energy ($P.E_e$)</h3>
@@ -357,11 +318,6 @@
                     <rect x="130" y="30" width="25" height="30" fill="none" stroke="#000" stroke-width="1.5"/>
                     <line x1="90" y1="15" x2="142" y2="15" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
                     <text x="115" y="10" font-size="12" font-family="serif">x</text>
-                    <defs>
-                        <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                            <polygon points="0 0, 6 3, 0 6" fill="#000" />
-                        </marker>
-                    </defs>
                 </svg>
             </div>
         </div>
@@ -376,69 +332,71 @@
             • <b>Conserved:</b> If only conservative forces (e.g., weight) do work. $\Delta M.E = 0 \Rightarrow M.E_A = M.E_B$.<br>
             • <b>Non-Conserved:</b> If friction or drag acts, they vary M.E. $\Delta M.E = \sum W_{nc}$
         </div>
-        <div class="summary-box summary-box-full">
-            <div class="text-content">
-                <h3>9. Mechanical Power</h3>
-                Power measures the rate at which work is done or energy is transferred.<br>
-                • <b>Average Power:</b> $P_{avg} = \frac{W}{\Delta t}$ (in Watts, W)<br>
-                • <b>Instantaneous Power:</b> $P = \vec{F} \cdot \vec{v} = F \cdot v \cdot \cos(\theta)$
-            </div>
-        </div>
     </div>
 
     <!-- STREAMING_CHUNK:Rendering Worksheet Exercises... -->
     <div class="page-break"></div>
     <div class="section-title">II. Exercises</div>
     
-    <!-- EXERCISE 1 -->
+    <!-- EXERCISE 1 with Redrawn Figure -->
     <div class="exercise">
         <div class="exercise-title">Exercise 1</div>
         <div class="exercise-layout">
             <div class="exercise-text">
-                During a siege, a catapult throws a stone (R) considered as a particle, of mass $m = 15 \text{ kg}$ 
-                from a point O, $45 \text{ m}$ above the surface of the ground. The stone is thrown with an initial 
-                velocity $\vec{V}_0$ making an angle $\alpha$ with the horizontal and having a magnitude of $V_0 = 20 \text{ m/s}$.<br><br>
-                S is the highest point reached by the stone, and it is at an altitude of $H = 6.4 \text{ m}$ above point O.
+                During a volcanic eruption, a volcano throws a rock (R) considered as a particle, of mass $m = 20 \text{ kg}$ 
+                from a point O, $36 \text{ m}$ above the surface of the ground. The rock is thrown with an initial 
+                velocity $\vec{V}_0$ making an angle $\alpha$ with the horizontal and having a magnitude of $V_0 = 24 \text{ m/s}$.<br><br>
+                S is the highest point reached by the rock, and it is at an altitude of $H = 3.4 \text{ m}$ above point O.
                 Take the horizontal plane containing O as a reference level for gravitational potential energy ($P.E_g = 0$) 
                 and neglect air resistance.
             </div>
             <div class="exercise-figure">
-                <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="10" y1="180" x2="310" y2="180" stroke="black" stroke-width="3" />
-                    <text x="140" y="195" font-size="12" font-family="Times New Roman">ground</text>
-                    <text x="290" y="195" font-size="14" font-family="Times New Roman" font-weight="bold">A</text>
+                <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ground -->
+                    <line x1="10" y1="210" x2="390" y2="210" stroke="black" stroke-width="4" />
+                    <text x="180" y="225" font-size="14" font-family="Times New Roman">ground</text>
+                    <text x="355" y="228" font-size="16" font-family="Times New Roman" font-weight="bold">A</text>
                     
-                    <path d="M 10 180 L 10 90 L 80 90 L 120 180 Z" fill="none" stroke="black" stroke-width="1.5" />
+                    <!-- Volcano Mountain Outline (accurate to worksheet) -->
+                    <path d="M 10 210 Q 50 160 80 120 L 140 120 Q 200 160 270 210" fill="none" stroke="black" stroke-width="2" />
+                    <path d="M 10 160 Q 60 140 85 170 Q 130 180 180 190" fill="none" stroke="gray" stroke-width="1.5" />
                     
-                    <line x1="80" y1="90" x2="310" y2="90" stroke="gray" stroke-dasharray="4,4" stroke-width="1" />
-                    <text x="275" y="85" font-size="10" font-family="Times New Roman">P.Eg=0</text>
+                    <!-- Point O on plateau -->
+                    <ellipse cx="110" cy="120" rx="20" ry="4" fill="gray" />
+                    <circle cx="110" cy="120" r="3" fill="black" />
+                    <text x="90" y="115" font-size="16" font-weight="bold" font-family="Times New Roman">O</text>
                     
-                    <path d="M 70 85 Q 150 -10 295 175" fill="none" stroke="gray" stroke-dasharray="2,2" stroke-width="1.5" />
+                    <!-- Reference Line (GPE=0) -->
+                    <line x1="110" y1="120" x2="390" y2="120" stroke="black" stroke-dasharray="4,4" stroke-width="1.2" />
+                    <text x="345" y="115" font-size="12" font-family="Times New Roman">GPE=0</text>
                     
-                    <circle cx="70" cy="85" r="3" fill="black" />
-                    <text x="55" y="80" font-size="14" font-weight="bold" font-family="Times New Roman">O</text>
+                    <!-- Total Height (36m) -->
+                    <line x1="375" y1="120" x2="375" y2="210" stroke="black" stroke-dasharray="3,3" stroke-width="1" />
+                    <path d="M 370 120 L 380 120 M 370 210 L 380 210" stroke="black" stroke-width="1.5" />
+                    <text x="340" y="170" font-size="16" font-weight="bold" font-family="Times New Roman">36m</text>
                     
-                    <circle cx="150" cy="25" r="3" fill="black" />
-                    <text x="145" y="20" font-size="14" font-weight="bold" font-family="Times New Roman">S</text>
-                    <circle cx="295" cy="177" r="4" fill="gray" />
+                    <!-- Trajectory Parabola -->
+                    <path d="M 110 120 C 150 40, 240 40, 360 210" fill="none" stroke="gray" stroke-dasharray="3,3" stroke-width="2" />
                     
-                    <line x1="150" y1="25" x2="150" y2="90" stroke="black" stroke-width="0.5" stroke-dasharray="2,2" />
-                    <text x="155" y="60" font-size="12" font-weight="bold" font-family="Times New Roman">H</text>
+                    <!-- Point S (Highest point) -->
+                    <circle cx="205" cy="65" r="4" fill="black" />
+                    <text x="190" y="55" font-size="16" font-weight="bold" font-family="Times New Roman">S</text>
                     
-                    <line x1="305" y1="90" x2="305" y2="180" stroke="black" stroke-width="0.5" stroke-dasharray="2,2" />
-                    <text x="280" y="140" font-size="12" font-weight="bold" font-family="Times New Roman">45m</text>
+                    <!-- Height H -->
+                    <line x1="205" y1="65" x2="205" y2="120" stroke="black" stroke-dasharray="2,2" stroke-width="1.2" />
+                    <path d="M 200 65 L 210 65 M 200 120 L 210 120" stroke="black" stroke-width="1.5" />
+                    <text x="210" y="98" font-size="16" font-weight="bold" font-family="Times New Roman">H</text>
                     
-                    <line x1="70" y1="85" x2="110" y2="45" stroke="black" stroke-width="1.5" marker-end="url(#arrow)" />
-                    <text x="90" y="35" font-size="12" font-weight="bold" font-family="Times New Roman">V₀</text>
+                    <!-- Velocity Vector V0 -->
+                    <line x1="110" y1="120" x2="160" y2="70" stroke="black" stroke-width="2" marker-end="url(#arrow)" />
+                    <text x="135" y="80" font-size="16" font-weight="bold" font-family="Times New Roman">V₀</text>
                     
-                    <path d="M 95 85 A 25 25 0 0 0 88 67" fill="none" stroke="black" stroke-width="1" />
-                    <text x="100" y="75" font-size="12" font-family="Times New Roman">α</text>
+                    <!-- Angle alpha -->
+                    <path d="M 140 120 A 30 30 0 0 0 133 97" fill="none" stroke="black" stroke-width="1.5" />
+                    <text x="145" y="112" font-size="14" font-weight="bold" font-family="Times New Roman">α</text>
                     
-                    <defs>
-                        <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                            <path d="M 0 0 L 6 3 L 0 6 z" fill="black" />
-                        </marker>
-                    </defs>
+                    <!-- Rock at A -->
+                    <ellipse cx="360" cy="207" rx="12" ry="6" fill="gray" stroke="black" />
                 </svg>
             </div>
         </div>
@@ -447,11 +405,11 @@
             <li>
                 <ol>
                     <li>Calculate the gravitational potential energy of the system [(R) - Earth] at point S.</li>
-                    <li>Apply the principle of the conservation of mechanical energy to determine the speed of the stone $V_S$ at the highest point S.</li>
+                    <li>Apply the principle of the conservation of mechanical energy to determine the speed of the rock $V_S$ at the highest point S.</li>
                     <li>Knowing that $V_S = V_0 \cos(\alpha)$, deduce the value of $\alpha$.</li>
                 </ol>
             </li>
-            <li>Apply the work-energy theorem to determine the speed $V_A$ of the stone as it reaches the ground.</li>
+            <li>Apply the work-energy theorem to determine the speed $V_A$ of the rock as it reaches the ground.</li>
         </ol>
     </div>
 
@@ -507,20 +465,20 @@
                     <text x="45" y="25" font-family="Times New Roman" font-weight="bold" font-size="12">Energy (J)</text>
                     <text x="260" y="195" font-family="Times New Roman" font-weight="bold" font-size="12">z (m)</text>
                     <text x="230" y="30" font-family="Times New Roman" font-weight="bold" font-size="12">Figure (1)</text>
-                    <text x="20" y="174" font-family="Times New Roman" font-size="10">20</text>
-                    <text x="20" y="144" font-family="Times New Roman" font-size="10">40</text>
-                    <text x="20" y="114" font-family="Times New Roman" font-size="10">60</text>
-                    <text x="20" y="84" font-family="Times New Roman" font-size="10">80</text>
-                    <text x="15" y="54" font-family="Times New Roman" font-size="10">100</text>
-                    <text x="15" y="24" font-family="Times New Roman" font-size="10">120</text>
-                    <text x="30" y="215" font-family="Times New Roman" font-size="10">0</text>
-                    <text x="77" y="215" font-family="Times New Roman" font-size="10">1</text>
-                    <text x="117" y="215" font-family="Times New Roman" font-size="10">2</text>
-                    <text x="157" y="215" font-family="Times New Roman" font-size="10">3</text>
-                    <text x="197" y="215" font-family="Times New Roman" font-size="10">4</text>
-                    <text x="237" y="215" font-family="Times New Roman" font-size="10">5</text>
+                    <text x="20" y="174" font-family="Times New Roman" font-size="12">2</text>
+                    <text x="20" y="144" font-family="Times New Roman" font-size="12">4</text>
+                    <text x="20" y="114" font-family="Times New Roman" font-size="12">6</text>
+                    <text x="20" y="84" font-family="Times New Roman" font-size="12">8</text>
+                    <text x="15" y="54" font-family="Times New Roman" font-size="12">10</text>
+                    <text x="15" y="24" font-family="Times New Roman" font-size="12">12</text>
+                    <text x="30" y="215" font-family="Times New Roman" font-size="12">0</text>
+                    <text x="77" y="215" font-family="Times New Roman" font-size="12">1</text>
+                    <text x="117" y="215" font-family="Times New Roman" font-size="12">2</text>
+                    <text x="157" y="215" font-family="Times New Roman" font-size="12">3</text>
+                    <text x="197" y="215" font-family="Times New Roman" font-size="12">4</text>
+                    <text x="237" y="215" font-family="Times New Roman" font-size="12">5</text>
                     <line x1="40" y1="50" x2="240" y2="50" stroke="black" stroke-width="3" />
-                    <text x="180" y="45" font-family="Times New Roman" font-weight="bold" font-size="12">ME</text>
+                    <text x="180" y="45" font-family="Times New Roman" font-weight="bold" font-size="14">ME</text>
                 </svg>
             </div>
             <div class="graph-box">
@@ -538,18 +496,18 @@
                     <text x="45" y="25" font-family="Times New Roman" font-weight="bold" font-size="12">Energy (J)</text>
                     <text x="260" y="195" font-family="Times New Roman" font-weight="bold" font-size="12">z (m)</text>
                     <text x="230" y="30" font-family="Times New Roman" font-weight="bold" font-size="12">Figure (2)</text>
-                    <text x="20" y="174" font-family="Times New Roman" font-size="10">20</text>
-                    <text x="20" y="144" font-family="Times New Roman" font-size="10">40</text>
-                    <text x="20" y="114" font-family="Times New Roman" font-size="10">60</text>
-                    <text x="20" y="84" font-family="Times New Roman" font-size="10">80</text>
-                    <text x="15" y="54" font-family="Times New Roman" font-size="10">100</text>
-                    <text x="15" y="24" font-family="Times New Roman" font-size="10">120</text>
-                    <text x="30" y="215" font-family="Times New Roman" font-size="10">0</text>
-                    <text x="77" y="215" font-family="Times New Roman" font-size="10">1</text>
-                    <text x="117" y="215" font-family="Times New Roman" font-size="10">2</text>
-                    <text x="157" y="215" font-family="Times New Roman" font-size="10">3</text>
-                    <text x="197" y="215" font-family="Times New Roman" font-size="10">4</text>
-                    <text x="237" y="215" font-family="Times New Roman" font-size="10">5</text>
+                    <text x="20" y="174" font-family="Times New Roman" font-size="12">2</text>
+                    <text x="20" y="144" font-family="Times New Roman" font-size="12">4</text>
+                    <text x="20" y="114" font-family="Times New Roman" font-size="12">6</text>
+                    <text x="20" y="84" font-family="Times New Roman" font-size="12">8</text>
+                    <text x="15" y="54" font-family="Times New Roman" font-size="12">10</text>
+                    <text x="15" y="24" font-family="Times New Roman" font-size="12">12</text>
+                    <text x="30" y="215" font-family="Times New Roman" font-size="12">0</text>
+                    <text x="77" y="215" font-family="Times New Roman" font-size="12">1</text>
+                    <text x="117" y="215" font-family="Times New Roman" font-size="12">2</text>
+                    <text x="157" y="215" font-family="Times New Roman" font-size="12">3</text>
+                    <text x="197" y="215" font-family="Times New Roman" font-size="12">4</text>
+                    <text x="237" y="215" font-family="Times New Roman" font-size="12">5</text>
                     <line x1="40" y1="50" x2="200" y2="200" stroke="black" stroke-width="3" />
                     <text x="95" y="100" font-family="Times New Roman" font-weight="bold" font-size="14">(a)</text>
                     <line x1="40" y1="200" x2="200" y2="80" stroke="black" stroke-width="3" />
@@ -570,9 +528,9 @@
         <div class="exercise-title">Exercise 3</div>
         <div class="exercise-layout">
             <div class="exercise-text">
-                Consider a skateboarder taken as a particle moving along a path ABCD in the vertical plane. The mass of the skateboarder and his equipment is $M = 50 \text{ kg}$. Along the track BC, whose length is $5 \text{ m}$, the skateboarder is acted upon by a constant friction force of magnitude $f = 40 \text{ N}$. The tracks AB and CD are frictionless.<br><br>
+                Consider a skier taken as a particle moving along a path ABCD in the vertical plane. The mass of the skier and his equipment is $M = 60 \text{ kg}$. Along the track BC, whose length is $4 \text{ m}$, the skier is acted upon by a constant friction force of magnitude $f = 60 \text{ N}$. The tracks AB and CD are frictionless.<br><br>
                 The horizontal plane containing BC is taken as a reference level for gravitational potential energy.<br><br>
-                The skateboarder starts from rest from point A at an altitude $h_A = 4.5 \text{ m}$ above the track BC.
+                The skier starts from rest from point A at an altitude $h_A = 3.5 \text{ m}$ above the track BC.
             </div>
             <div class="exercise-figure">
                 <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
@@ -594,35 +552,36 @@
                     <circle cx="280" cy="40" r="4" fill="black" />
                     <text x="285" y="35" font-weight="bold" font-family="Times New Roman">A</text>
 
-                    <!-- Skateboarder -->
+                    <!-- Skier drawing -->
                     <circle cx="265" cy="75" r="4" fill="black" />
                     <path d="M 265 75 L 260 95 L 270 95 Z" fill="black" />
-                    <line x1="255" y1="100" x2="275" y2="100" stroke="black" stroke-width="2" />
+                    <line x1="250" y1="100" x2="280" y2="100" stroke="black" stroke-width="1.5" />
+                    <line x1="250" y1="105" x2="280" y2="105" stroke="black" stroke-width="1.5" />
                     
                     <line x1="40" y1="40" x2="20" y2="40" stroke="black" stroke-dasharray="2,2" stroke-width="1" />
                     <line x1="20" y1="40" x2="20" y2="150" stroke="black" stroke-width="0.5" />
-                    <text x="5" y="100" font-size="10" font-family="Times New Roman" transform="rotate(-90 5,100)">h_D = 4.5m</text>
+                    <text x="5" y="100" font-size="10" font-family="Times New Roman" transform="rotate(-90 5,100)">h_D = 3.5m</text>
 
                     <line x1="280" y1="40" x2="300" y2="40" stroke="black" stroke-dasharray="2,2" stroke-width="1" />
                     <line x1="300" y1="40" x2="300" y2="150" stroke="black" stroke-width="0.5" />
-                    <text x="310" y="100" font-size="10" font-family="Times New Roman" transform="rotate(90 310,100)">h_A = 4.5m</text>
+                    <text x="310" y="100" font-size="10" font-family="Times New Roman" transform="rotate(90 310,100)">h_A = 3.5m</text>
                     
                     <line x1="105" y1="130" x2="215" y2="130" stroke="black" stroke-width="0.5" stroke-dasharray="2,2" />
-                    <text x="150" y="125" font-size="11" font-family="Times New Roman">5 m</text>
+                    <text x="150" y="125" font-size="11" font-family="Times New Roman">4 m</text>
                 </svg>
             </div>
         </div>
         <ol>
             <li>Along the track AB
                 <ol>
-                    <li>Determine the mechanical energy of the system Skateboarder-Earth when the skateboarder is at point A.</li>
-                    <li>The skateboarder reaches point B with a speed $V_B = \sqrt{90} \text{ m/s}$. Prove that the track AB is frictionless.</li>
+                    <li>Determine the mechanical energy of the system Skier-Earth when the skier is at point A.</li>
+                    <li>The skier reaches point B with a speed $V_B = \sqrt{70} \text{ m/s}$. Prove that the track AB is frictionless.</li>
                 </ol>
             </li>
             <li>Along the track BC
                 <ol>
-                    <li>Determine the work done by each of the external forces acting on the skateboarder between B and C.</li>
-                    <li>Deduce the speed of the skateboarder at C.</li>
+                    <li>Determine the work done by each of the external forces acting on the skier between B and C.</li>
+                    <li>Deduce the speed of the skier at C.</li>
                     <li>The kinetic energy lost between B and C is converted into another form of energy. Name it.</li>
                 </ol>
             </li>
@@ -630,12 +589,12 @@
                 <ol>
                     <li>Calculate:
                         <ol>
-                            <li>the mechanical energy of the system Skateboarder-Earth when the skateboarder is at point C.</li>
-                            <li>the gravitational potential energy of the system Skateboarder-Earth when the skateboarder is at point D.</li>
+                            <li>the mechanical energy of the system Skier-Earth when the skier is at point C.</li>
+                            <li>the gravitational potential energy of the system Skier-Earth when the skier is at point D.</li>
                         </ol>
                     </li>
-                    <li>Deduce that the skateboarder cannot reach point D.</li>
-                    <li>In reality, I is the highest point the skateboarder can reach before returning back. Determine the height $h_I$ of point I above the track BC.</li>
+                    <li>Deduce that the skier cannot reach point D.</li>
+                    <li>In reality, I is the highest point the skier can reach before returning back. Determine the height $h_I$ of point I above the track BC.</li>
                 </ol>
             </li>
         </ol>
@@ -646,15 +605,15 @@
         <div class="exercise-title">Exercise 4</div>
         <div class="exercise-layout">
             <div class="exercise-text">
-                An object (S), taken as a particle of mass $m = 1.5 \text{ kg}$, is released from rest at a point A of the track ABC.<br>
-                Given: $\sin(\alpha) = 0.25$; $\cos(\alpha) = 0.97$; $AB = 5 \text{ m}$ and BC is frictionless.<br>
+                An object (S), taken as a particle of mass $m = 2 \text{ kg}$, is released from rest at a point A of the track ABC.<br>
+                Given: $\sin(\alpha) = 0.2$; $\cos(\alpha) = 0.98$; $AB = 4 \text{ m}$ and BC is frictionless.<br>
                 The horizontal plane containing BC is taken as a reference level for gravitational potential energy.<br>
                 <ol>
                     <li>
                         <ol>
-                            <li>(S) reaches a point B with a speed $V_B = 4 \text{ m/s}$. Determine the magnitude of the constant friction force exerted by the track AB on (S).</li>
+                            <li>(S) reaches a point B with a speed $V_B = 3 \text{ m/s}$. Determine the magnitude of the constant friction force exerted by the track AB on (S).</li>
                             <li>Determine the instantaneous power of: the friction force, normal force, and the weight of (S), when the speed of (S) becomes $2 \text{ m/s}$.</li>
-                            <li>It takes the object $2.5 \text{ s}$ to move from A to B. Deduce the average power of the friction force acting on (S) between A and B.</li>
+                            <li>It takes the object $2.7 \text{ s}$ to move from A to B. Deduce the average power of the friction force acting on (S) between A and B.</li>
                         </ol>
                     </li>
                 </ol>
@@ -700,8 +659,8 @@
         </div>
         <div class="exercise-text">
             <ol start="2">
-                <li>The object (S) continues its motion and reaches a point C, where it collides with another object (P) of mass $M = 2.5 \text{ kg}$, attached to one end of an inextensible light vertical cord of length $l = 80 \text{ cm}$. The other end of the cord is attached to a fixed point O.<br>
-                Right after collision between (S) and (P), object (P) is ejected with a speed of $V_0 = 1.5 \text{ m/s}$. When (P) reaches point D, the cord is deviated by a maximum angle $\beta$. Determine the value of $\beta$.</li>
+                <li>The object (S) continues its motion and reaches a point C, where it collides with another object (P) of mass $M = 3 \text{ kg}$, attached to one end of an inextensible light vertical cord of length $l = 50 \text{ cm}$. The other end of the cord is attached to a fixed point O.<br>
+                Right after collision between (S) and (P), object (P) is ejected with a speed of $V_0 = 1.6 \text{ m/s}$. When (P) reaches point D, the cord is deviated by a maximum angle $\beta$. Determine the value of $\beta$.</li>
                 <li>As object (P) reaches point D, the cord is cut and (P) falls vertically downwards.
                     <ol>
                         <li>Determine the mechanical energy of the system [(P) - Earth] at point D.</li>
@@ -723,15 +682,15 @@
             <b>Exercise 1</b>
             <ol>
                 <li>The only force doing work is the weight (conservative force), as air resistance is neglected. <br>
-                    $M.E_O = K.E_O + P.E_O = \frac{1}{2}(15)(20^2) + 15(10)(45) = 3000 + 6750 = $ <span class="ans-bold">9750 J</span>.</li>
+                    $M.E_O = K.E_O + P.E_O = \frac{1}{2}(20)(24^2) + 20(10)(36) = 5760 + 7200 = $ <span class="ans-bold">12960 J</span>.</li>
                 <li>
                     <ol>
-                        <li>$z_S = 45 + 6.4 = 51.4 \text{ m}$. $P.E_S = mgz_S = 15(10)(51.4) = $ <span class="ans-bold">7710 J</span>.</li>
-                        <li>Conservation of M.E: $M.E_S = M.E_O \Rightarrow K.E_S + P.E_S = 9750 \Rightarrow \frac{1}{2}(15)V_S^2 + 7710 = 9750 \Rightarrow 7.5 V_S^2 = 2040 \Rightarrow V_S = \sqrt{272} \approx$ <span class="ans-bold">16.49 m/s</span>.</li>
-                        <li>$\cos(\alpha) = \frac{V_S}{V_0} = \frac{16.49}{20} = 0.8245 \Rightarrow \alpha = \cos^{-1}(0.8245) \approx$ <span class="ans-bold">34.46°</span>.</li>
+                        <li>$z_S = 36 + 3.4 = 39.4 \text{ m}$. $P.E_S = mgz_S = 20(10)(39.4) = $ <span class="ans-bold">7880 J</span>.</li>
+                        <li>Conservation of M.E: $M.E_S = M.E_O \Rightarrow K.E_S + P.E_S = 12960 \Rightarrow \frac{1}{2}(20)V_S^2 + 7880 = 12960 \Rightarrow 10 V_S^2 = 5080 \Rightarrow V_S = \sqrt{508} \approx$ <span class="ans-bold">22.54 m/s</span>.</li>
+                        <li>$\cos(\alpha) = \frac{V_S}{V_0} = \frac{22.54}{24} = 0.939 \Rightarrow \alpha = \cos^{-1}(0.939) \approx$ <span class="ans-bold">20.1°</span>.</li>
                     </ol>
                 </li>
-                <li>$\Delta K.E = \sum W \Rightarrow \frac{1}{2} m V_A^2 - \frac{1}{2} m V_0^2 = W(\vec{W}) \Rightarrow \frac{1}{2}(15)V_A^2 - 3000 = mgh \Rightarrow 7.5 V_A^2 - 3000 = 15(10)(45) \Rightarrow 7.5 V_A^2 = 9750 \Rightarrow V_A = \sqrt{1300} \approx$ <span class="ans-bold">36.05 m/s</span>.</li>
+                <li>$\Delta K.E = \sum W \Rightarrow \frac{1}{2} m V_A^2 - \frac{1}{2} m V_0^2 = W(\vec{W}) \Rightarrow \frac{1}{2}(20)V_A^2 - 5760 = mgh \Rightarrow 10 V_A^2 - 5760 = 20(10)(36) \Rightarrow 10 V_A^2 = 12960 \Rightarrow V_A = \sqrt{1296} = $ <span class="ans-bold">36 m/s</span>.</li>
             </ol>
         </div>
 
@@ -743,19 +702,19 @@
                 <li>
                     <ol>
                         <li>Figure (1) shows the M.E curve is a horizontal straight line ($\Delta M.E = 0$). This implies there is no work done by non-conservative forces, hence no air resistance.</li>
-                        <li>At $z = 0$, $P.E_g = 0$, so $M.E = K.E_0 = 100 \text{ J}$. $\frac{1}{2}(2)V_0^2 = 100 \Rightarrow V_0 = \sqrt{100} = $ <span class="ans-bold">10 m/s</span>.</li>
+                        <li>At $z = 0$, $P.E_g = 0$, so $M.E = K.E_0 = 10 \text{ J}$. $\frac{1}{2}(2)V_0^2 = 10 \Rightarrow V_0 = \sqrt{10} \approx $ <span class="ans-bold">3.16 m/s</span>.</li>
                     </ol>
                 </li>
-                <li>$P.E_g = mgz = 2(10)z = 20z$. (Student must draw a straight line passing through origin (0,0) and point (5,100)).</li>
-                <li>$K.E = M.E - P.E_g = 100 - 20z$. (Student must draw a straight line from (0,100) down to (5,0)).</li>
-                <li>$Z_{max}$ corresponds to $K.E = 0$. On the graph, this is where the K.E line hits the z-axis: <span class="ans-bold">$Z_{max} = 5 \text{ m}$</span>.</li>
+                <li>$P.E_g = mgz = 2(10)z = 20z$. (Student draws a straight line passing through origin (0,0) and e.g., (0.5, 10)).</li>
+                <li>$K.E = M.E - P.E_g = 10 - 20z$. (Student draws a straight line from (0,10) down to (0.5,0)).</li>
+                <li>$Z_{max}$ corresponds to $K.E = 0$. <span class="ans-bold">$Z_{max} = 0.5 \text{ m}$</span>.</li>
             </ol>
             <div style="margin-left: 20px;"><b>B)</b></div>
             <ol>
                 <li>As altitude increases, speed decreases, so K.E decreases. Therefore, <span class="ans-bold">curve (a)</span> represents Kinetic Energy.</li>
-                <li>$M.E = K.E + P.E_g$. At $z=0, M.E = 100+0 = 100 \text{ J}$. At $z=4, M.E = 0+80 = 80 \text{ J}$. (Student draws a straight line connecting (0,100) and (4,80)).</li>
+                <li>$M.E = K.E + P.E_g$. At $z=0, M.E = 10+0 = 10 \text{ J}$. At $z=4, M.E = 0+8 = 8 \text{ J}$. (Student draws a straight line connecting (0,10) and (4,8)).</li>
                 <li>The object stops ascending when $K.E = 0$. According to curve (a), this occurs at <span class="ans-bold">$z = 4 \text{ m}$</span>.</li>
-                <li>Thermal Energy = $|\Delta M.E| = |M.E_f - M.E_i| = |80 - 100| = $ <span class="ans-bold">20 J</span>.</li>
+                <li>Thermal Energy = $|\Delta M.E| = |M.E_f - M.E_i| = |8 - 10| = $ <span class="ans-bold">2 J</span>.</li>
             </ol>
         </div>
 
@@ -765,14 +724,14 @@
             <ol>
                 <li>
                     <ol>
-                        <li>$M.E_A = K.E_A + P.E_A = 0 + Mgh_A = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
-                        <li>$M.E_B = K.E_B + P.E_B = \frac{1}{2}(50)(\sqrt{90})^2 + 0 = 25(90) = 2250 \text{ J}$. Since $M.E_B = M.E_A$, mechanical energy is conserved, proving AB is <span class="ans-bold">frictionless</span>.</li>
+                        <li>$M.E_A = K.E_A + P.E_A = 0 + Mgh_A = 60(10)(3.5) = $ <span class="ans-bold">2100 J</span>.</li>
+                        <li>$M.E_B = K.E_B + P.E_B = \frac{1}{2}(60)(\sqrt{70})^2 + 0 = 30(70) = 2100 \text{ J}$. Since $M.E_B = M.E_A$, mechanical energy is conserved, proving AB is <span class="ans-bold">frictionless</span>.</li>
                     </ol>
                 </li>
                 <li>
                     <ol>
-                        <li>$W(\vec{N}) = \vec{N} \cdot \vec{BC} = 0 \text{ J}$ (perpendicular). $W(\vec{W}) = \vec{W} \cdot \vec{BC} = 0 \text{ J}$.<br>$W(\vec{f}) = -f \cdot BC = -40(5) = $ <span class="ans-bold">-200 J</span>.</li>
-                        <li>W-E Theorem: $\Delta K.E = \sum W \Rightarrow K.E_C - K.E_B = -200 \Rightarrow \frac{1}{2}(50)V_C^2 - 2250 = -200 \Rightarrow 25V_C^2 = 2050 \Rightarrow V_C = \sqrt{82} \approx $ <span class="ans-bold">9.05 m/s</span>.</li>
+                        <li>$W(\vec{N}) = \vec{N} \cdot \vec{BC} = 0 \text{ J}$ (perpendicular). $W(\vec{W}) = \vec{W} \cdot \vec{BC} = 0 \text{ J}$.<br>$W(\vec{f}) = -f \cdot BC = -60(4) = $ <span class="ans-bold">-240 J</span>.</li>
+                        <li>W-E Theorem: $\Delta K.E = \sum W \Rightarrow K.E_C - K.E_B = -240 \Rightarrow \frac{1}{2}(60)V_C^2 - 2100 = -240 \Rightarrow 30V_C^2 = 1860 \Rightarrow V_C = \sqrt{62} \approx $ <span class="ans-bold">7.87 m/s</span>.</li>
                         <li>Converted into <span class="ans-bold">Thermal Energy</span> (Heat).</li>
                     </ol>
                 </li>
@@ -780,12 +739,12 @@
                     <ol>
                         <li>
                             <ol>
-                                <li>$M.E_C = K.E_C + P.E_C = 2050 + 0 = $ <span class="ans-bold">2050 J</span>.</li>
-                                <li>$P.E_D = Mgh_D = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
+                                <li>$M.E_C = K.E_C + P.E_C = 1860 + 0 = $ <span class="ans-bold">1860 J</span>.</li>
+                                <li>$P.E_D = Mgh_D = 60(10)(3.5) = $ <span class="ans-bold">2100 J</span>.</li>
                             </ol>
                         </li>
-                        <li>Since CD is frictionless, M.E is conserved. The skateboarder only has 2050 J of total energy, but requires 2250 J to reach D. Thus, <span class="ans-bold">he cannot reach D</span>.</li>
-                        <li>At point I, $V_I = 0$. $M.E_I = M.E_C = 2050 \text{ J}$. $P.E_I = 2050 \Rightarrow Mgh_I = 2050 \Rightarrow 50(10)h_I = 2050 \Rightarrow h_I = \frac{2050}{500} = $ <span class="ans-bold">4.1 m</span>.</li>
+                        <li>Since CD is frictionless, M.E is conserved. The skier only has 1860 J of total energy, but requires 2100 J to reach D. Thus, <span class="ans-bold">they cannot reach D</span>.</li>
+                        <li>At point I, $V_I = 0$. $M.E_I = M.E_C = 1860 \text{ J}$. $P.E_I = 1860 \Rightarrow Mgh_I = 1860 \Rightarrow 60(10)h_I = 1860 \Rightarrow h_I = \frac{1860}{600} = $ <span class="ans-bold">3.1 m</span>.</li>
                     </ol>
                 </li>
             </ol>
@@ -797,24 +756,24 @@
             <ol>
                 <li>
                     <ol>
-                        <li>$\Delta M.E = W_{nc} \Rightarrow M.E_B - M.E_A = -f \cdot AB$. <br>$M.E_A = mgh_A = mg(AB\sin\alpha) = 1.5(10)(5)(0.25) = 18.75 \text{ J}$. $M.E_B = \frac{1}{2}mV_B^2 = 0.5(1.5)(16) = 12 \text{ J}$. <br>$\Delta M.E = 12 - 18.75 = -6.75 \text{ J}$. $-f(5) = -6.75 \Rightarrow f = $ <span class="ans-bold">1.35 N</span>.</li>
-                        <li>$P(\vec{f}) = -f \cdot v = -1.35(2) = $ <span class="ans-bold">-2.7 W</span>.<br>
+                        <li>$\Delta M.E = W_{nc} \Rightarrow M.E_B - M.E_A = -f \cdot AB$. <br>$M.E_A = mgh_A = mg(AB\sin\alpha) = 2(10)(4)(0.2) = 16 \text{ J}$. $M.E_B = \frac{1}{2}mV_B^2 = 0.5(2)(9) = 9 \text{ J}$. <br>$\Delta M.E = 9 - 16 = -7 \text{ J}$. $-f(4) = -7 \Rightarrow f = $ <span class="ans-bold">1.75 N</span>.</li>
+                        <li>$P(\vec{f}) = -f \cdot v = -1.75(2) = $ <span class="ans-bold">-3.5 W</span>.<br>
                             $P(\vec{N}) = 0$ (since $\vec{N} \perp \vec{v}$).<br>
-                            $P(\vec{W}) = \vec{W} \cdot \vec{v} = mgv\sin\alpha = 1.5(10)(2)(0.25) = $ <span class="ans-bold">7.5 W</span>.</li>
-                        <li>$P_{avg}(\vec{f}) = \frac{W(\vec{f})}{\Delta t} = \frac{-6.75}{2.5} = $ <span class="ans-bold">-2.7 W</span>.</li>
+                            $P(\vec{W}) = \vec{W} \cdot \vec{v} = mgv\sin\alpha = 2(10)(2)(0.2) = $ <span class="ans-bold">8 W</span>.</li>
+                        <li>$P_{avg}(\vec{f}) = \frac{W(\vec{f})}{\Delta t} = \frac{-7}{2.7} \approx $ <span class="ans-bold">-2.59 W</span>.</li>
                     </ol>
                 </li>
                 <li>M.E of (P) is conserved from C to D. $M.E_C = M.E_D \Rightarrow \frac{1}{2}MV_0^2 = Mgh_D$. <br>
-                    $h_D = l - l\cos\beta = l(1-\cos\beta) = 0.8(1-\cos\beta)$.<br>
-                    $\frac{1}{2}(1.5^2) = 10(0.8(1-\cos\beta)) \Rightarrow 1.125 = 8(1-\cos\beta) \Rightarrow 1-\cos\beta = 0.1406 \Rightarrow \cos\beta = 0.859 \Rightarrow \beta \approx $ <span class="ans-bold">30.7°</span>.
+                    $h_D = l - l\cos\beta = l(1-\cos\beta) = 0.5(1-\cos\beta)$.<br>
+                    $\frac{1}{2}(3)(1.6^2) = 3(10)(0.5(1-\cos\beta)) \Rightarrow 3.84 = 15(1-\cos\beta) \Rightarrow 1-\cos\beta = 0.256 \Rightarrow \cos\beta = 0.744 \Rightarrow \beta \approx $ <span class="ans-bold">41.9°</span>.
                 </li>
                 <li>
                     <ol>
-                        <li>$M.E_D = M.E_C = \frac{1}{2}MV_0^2 = 0.5(2.5)(1.5^2) = $ <span class="ans-bold">2.8125 J</span>.</li>
-                        <li>Given $K.E = P.E_g$. $M.E = 2 \cdot P.E_g \Rightarrow 2.8125 = 2(Mgh) \Rightarrow 2.8125 = 2(2.5)(10)h \Rightarrow 50h = 2.8125 \Rightarrow h = $ <span class="ans-bold">0.05625 m</span>.<br>
-                        $M.E = 2 \cdot K.E \Rightarrow 2.8125 = 2(0.5 \cdot 2.5 \cdot V^2) \Rightarrow 2.5 V^2 = 2.8125 \Rightarrow V^2 = 1.125 \Rightarrow V = \sqrt{1.125} \approx $ <span class="ans-bold">1.06 m/s</span>.</li>
+                        <li>$M.E_D = M.E_C = \frac{1}{2}MV_0^2 = 0.5(3)(1.6^2) = $ <span class="ans-bold">3.84 J</span>.</li>
+                        <li>Given $K.E = P.E_g$. $M.E = 2 \cdot P.E_g \Rightarrow 3.84 = 2(Mgh) \Rightarrow 3.84 = 2(3)(10)h \Rightarrow 60h = 3.84 \Rightarrow h = $ <span class="ans-bold">0.064 m</span>.<br>
+                        $M.E = 2 \cdot K.E \Rightarrow 3.84 = 2(0.5 \cdot 3 \cdot V^2) \Rightarrow 3 V^2 = 3.84 \Rightarrow V^2 = 1.28 \Rightarrow V = \sqrt{1.28} \approx $ <span class="ans-bold">1.13 m/s</span>.</li>
                         <li>Ground level is at BC ($P.E_g = 0$). Falling from D to ground conserves M.E.<br>
-                        $M.E_{ground} = M.E_D \Rightarrow \frac{1}{2} M V_{ground}^2 + 0 = 2.8125 \Rightarrow 0.5(2.5)V_{ground}^2 = 2.8125 \Rightarrow V_{ground}^2 = 2.25 \Rightarrow V_{ground} = $ <span class="ans-bold">1.5 m/s</span>.</li>
+                        $M.E_{ground} = M.E_D \Rightarrow \frac{1}{2} M V_{ground}^2 + 0 = 3.84 \Rightarrow 0.5(3)V_{ground}^2 = 3.84 \Rightarrow 1.5V_{ground}^2 = 3.84 \Rightarrow V_{ground}^2 = 2.56 \Rightarrow V_{ground} = $ <span class="ans-bold">1.6 m/s</span>.</li>
                     </ol>
                 </li>
             </ol>
@@ -825,3 +784,4 @@
 
 </body>
 </html>
+```eof
