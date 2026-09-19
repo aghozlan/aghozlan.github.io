@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work and Energy Worksheet</title>
+    <title>Chapter I: Work and Energy - Comprehensive Sheet</title>
     <!-- MathJax for rendering LaTeX -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -20,6 +20,9 @@
         :root {
             --text-color: #000;
             --bg-color: #fff;
+            --primary-blue: #004085;
+            --light-blue: #cce5ff;
+            --border-gray: #b8daff;
         }
         body {
             font-family: "Times New Roman", Times, serif;
@@ -41,7 +44,7 @@
         /* Print styling for A4 margin and layout */
         @page {
             size: A4;
-            margin: 15mm 15mm 15mm 15mm;
+            margin: 15mm;
         }
         @media print {
             body {
@@ -57,10 +60,16 @@
             .no-print {
                 display: none !important;
             }
+            .page-break {
+                page-break-before: always;
+            }
             .exercise {
                 page-break-inside: avoid;
             }
             .graphs-container {
+                page-break-inside: avoid;
+            }
+            .summary-box {
                 page-break-inside: avoid;
             }
         }
@@ -76,6 +85,7 @@
         .header h1 {
             font-size: 16pt;
             margin: 5px 0;
+            text-transform: uppercase;
         }
         .header h2 {
             font-size: 14pt;
@@ -103,6 +113,46 @@
         }
         .btn-print:hover {
             background-color: #003d82;
+        }
+
+        /* Section Titles */
+        .section-title {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Lesson Summary Styling */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .summary-box {
+            border: 1px solid var(--border-gray);
+            background-color: var(--light-blue);
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .summary-box h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 12pt;
+            color: var(--primary-blue);
+            border-bottom: 1px solid var(--primary-blue);
+            padding-bottom: 3px;
+        }
+        .formula {
+            display: block;
+            text-align: center;
+            font-weight: bold;
+            margin: 8px 0;
         }
 
         /* Exercise layout */
@@ -138,7 +188,7 @@
             height: auto;
         }
 
-        /* List styling to match standard physics sheets */
+        /* Lists */
         ol {
             margin-top: 5px;
             padding-left: 20px;
@@ -153,8 +203,11 @@
         ol ol li {
             margin-bottom: 4px;
         }
+        ol ol ol {
+            list-style-type: lower-alpha;
+        }
 
-        /* Specific container for Exercise 2 graphs */
+        /* Graphs container */
         .graphs-container {
             display: flex;
             justify-content: space-between;
@@ -167,6 +220,23 @@
             padding: 5px;
             background: #fff;
         }
+
+        /* Marking Scheme Styling */
+        .marking-scheme {
+            font-size: 11.5pt;
+        }
+        .ans-bold {
+            font-weight: bold;
+            color: #b30000;
+        }
+        .ms-exercise {
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+        }
+        .ms-exercise:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -174,11 +244,62 @@
 <div class="container">
     <div class="header">
         <button class="no-print btn-print" onclick="window.print()">Print / Save PDF</button>
-        <h1>WORKSHEET</h1>
+        <h1>PHYSICS</h1>
         <h2>Chapter XI: WORK AND ENERGY</h2>
         <div class="gravity-note">Use: $g = 10 \text{ m/s}^2$</div>
     </div>
 
+    <!-- LESSON SUMMARY -->
+    <div class="section-title">I. Lesson Summary</div>
+    <div class="summary-grid">
+        <div class="summary-box">
+            <h3>1. Work of a Constant Force</h3>
+            The work done by a constant force $\vec{F}$ moving an object from A to B is:
+            <span class="formula">$W_{AB}(\vec{F}) = \vec{F} \cdot \overrightarrow{AB} = F \cdot AB \cdot \cos(\alpha)$</span>
+            Where $\alpha$ is the angle between $\vec{F}$ and $\overrightarrow{AB}$.<br>
+            • $W > 0$: Motive Work<br>
+            • $W < 0$: Resistive Work (e.g., friction)<br>
+            • $W = 0$: Null Work (Force $\perp$ Displacement)
+        </div>
+        <div class="summary-box">
+            <h3>2. Kinetic Energy (KE)</h3>
+            The energy an object possesses due to its motion.
+            <span class="formula">$KE = \frac{1}{2}mv^2$</span>
+            • $m$: mass in kg<br>
+            • $v$: speed in m/s<br>
+            • $KE$: Kinetic Energy in Joules (J)
+        </div>
+        <div class="summary-box">
+            <h3>3. Work-Energy Theorem</h3>
+            The variation in kinetic energy of a particle between two points A and B is equal to the algebraic sum of the work done by all external forces applied to it.
+            <span class="formula">$\Delta KE = KE_B - KE_A = \sum W_{AB}(\vec{F}_{ext})$</span>
+        </div>
+        <div class="summary-box">
+            <h3>4. Gravitational Potential Energy (GPE)</h3>
+            The energy a system possesses due to its altitude relative to a chosen reference level (GPE = 0).
+            <span class="formula">$GPE = mgz$</span>
+            • $z$: algebraic altitude from reference level (m)
+        </div>
+        <div class="summary-box">
+            <h3>5. Mechanical Energy (ME)</h3>
+            The mechanical energy of a system is the sum of its kinetic and potential energies.
+            <span class="formula">$ME = KE + GPE$</span>
+        </div>
+        <div class="summary-box">
+            <h3>6. Conservation & Variation of ME</h3>
+            • <b>Conserved:</b> If only conservative forces (like weight) do work, ME remains constant. $\Delta ME = 0 \Rightarrow ME_A = ME_B$.<br>
+            • <b>Non-Conserved:</b> If non-conservative forces (friction, air resistance) act, they vary the ME. $\Delta ME = \sum W_{nc}(\vec{f})$
+        </div>
+        <div class="summary-box" style="grid-column: span 2;">
+            <h3>7. Mechanical Power</h3>
+            • <b>Average Power:</b> $P_{avg} = \frac{W}{\Delta t}$ (in Watts, W)<br>
+            • <b>Instantaneous Power:</b> $P = \vec{F} \cdot \vec{v} = F \cdot v \cdot \cos(\theta)$
+        </div>
+    </div>
+
+    <!-- WORKSHEET -->
+    <div class="section-title">II. Exercises</div>
+    
     <!-- EXERCISE 1 -->
     <div class="exercise">
         <div class="exercise-title">Exercise 1</div>
@@ -292,25 +413,19 @@
         <div class="graphs-container">
             <div class="graph-box">
                 <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Grid and Axes -->
                     <g stroke="#ccc" stroke-width="1">
-                        <!-- Vertical grid lines -->
                         <line x1="80" y1="20" x2="80" y2="200" /><line x1="120" y1="20" x2="120" y2="200" />
                         <line x1="160" y1="20" x2="160" y2="200" /><line x1="200" y1="20" x2="200" y2="200" />
                         <line x1="240" y1="20" x2="240" y2="200" /><line x1="280" y1="20" x2="280" y2="200" />
-                        <!-- Horizontal grid lines -->
                         <line x1="40" y1="170" x2="290" y2="170" /><line x1="40" y1="140" x2="290" y2="140" />
                         <line x1="40" y1="110" x2="290" y2="110" /><line x1="40" y1="80" x2="290" y2="80" />
                         <line x1="40" y1="50" x2="290" y2="50" /><line x1="40" y1="20" x2="290" y2="20" />
                     </g>
-                    <!-- Axes -->
                     <line x1="40" y1="20" x2="40" y2="200" stroke="black" stroke-width="2" marker-start="url(#arrow-rev)" />
                     <line x1="40" y1="200" x2="290" y2="200" stroke="black" stroke-width="2" marker-end="url(#arrow)" />
-                    <!-- Labels -->
                     <text x="45" y="25" font-family="Times New Roman" font-weight="bold" font-size="12">Energy (J)</text>
                     <text x="260" y="195" font-family="Times New Roman" font-weight="bold" font-size="12">z (m)</text>
                     <text x="230" y="30" font-family="Times New Roman" font-weight="bold" font-size="12">Figure (1)</text>
-                    <!-- Y Axis numbers -->
                     <text x="20" y="174" font-family="Times New Roman" font-size="10">20</text>
                     <text x="20" y="144" font-family="Times New Roman" font-size="10">40</text>
                     <text x="20" y="114" font-family="Times New Roman" font-size="10">60</text>
@@ -318,38 +433,30 @@
                     <text x="15" y="54" font-family="Times New Roman" font-size="10">100</text>
                     <text x="15" y="24" font-family="Times New Roman" font-size="10">120</text>
                     <text x="30" y="215" font-family="Times New Roman" font-size="10">0</text>
-                    <!-- X Axis numbers -->
                     <text x="77" y="215" font-family="Times New Roman" font-size="10">1</text>
                     <text x="117" y="215" font-family="Times New Roman" font-size="10">2</text>
                     <text x="157" y="215" font-family="Times New Roman" font-size="10">3</text>
                     <text x="197" y="215" font-family="Times New Roman" font-size="10">4</text>
                     <text x="237" y="215" font-family="Times New Roman" font-size="10">5</text>
-                    <!-- ME Line -->
                     <line x1="40" y1="50" x2="240" y2="50" stroke="black" stroke-width="3" />
                     <text x="180" y="45" font-family="Times New Roman" font-weight="bold" font-size="12">ME</text>
                 </svg>
             </div>
             <div class="graph-box">
                 <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Grid and Axes -->
                     <g stroke="#ccc" stroke-width="1">
-                        <!-- Vertical grid lines -->
                         <line x1="80" y1="20" x2="80" y2="200" /><line x1="120" y1="20" x2="120" y2="200" />
                         <line x1="160" y1="20" x2="160" y2="200" /><line x1="200" y1="20" x2="200" y2="200" />
                         <line x1="240" y1="20" x2="240" y2="200" /><line x1="280" y1="20" x2="280" y2="200" />
-                        <!-- Horizontal grid lines -->
                         <line x1="40" y1="170" x2="290" y2="170" /><line x1="40" y1="140" x2="290" y2="140" />
                         <line x1="40" y1="110" x2="290" y2="110" /><line x1="40" y1="80" x2="290" y2="80" />
                         <line x1="40" y1="50" x2="290" y2="50" /><line x1="40" y1="20" x2="290" y2="20" />
                     </g>
-                    <!-- Axes -->
                     <line x1="40" y1="20" x2="40" y2="200" stroke="black" stroke-width="2" marker-start="url(#arrow-rev)" />
                     <line x1="40" y1="200" x2="290" y2="200" stroke="black" stroke-width="2" marker-end="url(#arrow)" />
-                    <!-- Labels -->
                     <text x="45" y="25" font-family="Times New Roman" font-weight="bold" font-size="12">Energy (J)</text>
                     <text x="260" y="195" font-family="Times New Roman" font-weight="bold" font-size="12">z (m)</text>
                     <text x="230" y="30" font-family="Times New Roman" font-weight="bold" font-size="12">Figure (2)</text>
-                    <!-- Y Axis numbers -->
                     <text x="20" y="174" font-family="Times New Roman" font-size="10">20</text>
                     <text x="20" y="144" font-family="Times New Roman" font-size="10">40</text>
                     <text x="20" y="114" font-family="Times New Roman" font-size="10">60</text>
@@ -357,16 +464,13 @@
                     <text x="15" y="54" font-family="Times New Roman" font-size="10">100</text>
                     <text x="15" y="24" font-family="Times New Roman" font-size="10">120</text>
                     <text x="30" y="215" font-family="Times New Roman" font-size="10">0</text>
-                    <!-- X Axis numbers -->
                     <text x="77" y="215" font-family="Times New Roman" font-size="10">1</text>
                     <text x="117" y="215" font-family="Times New Roman" font-size="10">2</text>
                     <text x="157" y="215" font-family="Times New Roman" font-size="10">3</text>
                     <text x="197" y="215" font-family="Times New Roman" font-size="10">4</text>
                     <text x="237" y="215" font-family="Times New Roman" font-size="10">5</text>
-                    <!-- Lines a and b -->
                     <line x1="40" y1="50" x2="200" y2="200" stroke="black" stroke-width="3" />
                     <text x="95" y="100" font-family="Times New Roman" font-weight="bold" font-size="14">(a)</text>
-                    
                     <line x1="40" y1="200" x2="200" y2="80" stroke="black" stroke-width="3" />
                     <text x="180" y="115" font-family="Times New Roman" font-weight="bold" font-size="14">(b)</text>
 
@@ -381,7 +485,7 @@
     </div>
 
     <!-- EXERCISE 3 -->
-    <div class="exercise">
+    <div class="exercise page-break">
         <div class="exercise-title">Exercise 3</div>
         <div class="exercise-layout">
             <div class="exercise-text">
@@ -391,13 +495,9 @@
             </div>
             <div class="exercise-figure">
                 <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Ground/Reference -->
                     <line x1="20" y1="150" x2="300" y2="150" stroke="gray" stroke-dasharray="2,2" stroke-width="1" />
-                    
-                    <!-- Track -->
                     <path d="M 40 40 Q 60 140 100 140 L 220 140 Q 260 140 280 40" fill="none" stroke="black" stroke-width="3" />
                     
-                    <!-- Points -->
                     <circle cx="40" cy="40" r="4" fill="black" />
                     <text x="45" y="35" font-weight="bold" font-family="Times New Roman">D</text>
                     
@@ -413,12 +513,11 @@
                     <circle cx="280" cy="40" r="4" fill="black" />
                     <text x="285" y="35" font-weight="bold" font-family="Times New Roman">A</text>
 
-                    <!-- Skateboarder drawing (simple) -->
+                    <!-- Skateboarder -->
                     <circle cx="265" cy="75" r="4" fill="black" />
                     <path d="M 265 75 L 260 95 L 270 95 Z" fill="black" />
                     <line x1="255" y1="100" x2="275" y2="100" stroke="black" stroke-width="2" />
                     
-                    <!-- Heights -->
                     <line x1="40" y1="40" x2="20" y2="40" stroke="black" stroke-dasharray="2,2" stroke-width="1" />
                     <line x1="20" y1="40" x2="20" y2="150" stroke="black" stroke-width="0.5" />
                     <text x="5" y="100" font-size="10" font-family="Times New Roman" transform="rotate(-90 5,100)">h_D = 4.5m</text>
@@ -427,7 +526,6 @@
                     <line x1="300" y1="40" x2="300" y2="150" stroke="black" stroke-width="0.5" />
                     <text x="310" y="100" font-size="10" font-family="Times New Roman" transform="rotate(90 310,100)">h_A = 4.5m</text>
                     
-                    <!-- Track length BC -->
                     <line x1="105" y1="130" x2="215" y2="130" stroke="black" stroke-width="0.5" stroke-dasharray="2,2" />
                     <text x="150" y="125" font-size="11" font-family="Times New Roman">5 m</text>
                 </svg>
@@ -450,7 +548,7 @@
             <li>Along the track CD
                 <ol>
                     <li>Calculate:
-                        <ol style="list-style-type: lower-alpha;">
+                        <ol>
                             <li>the mechanical energy of the system Skateboarder-Earth when the skateboarder is at point C.</li>
                             <li>the gravitational potential energy of the system Skateboarder-Earth when the skateboarder is at point D.</li>
                         </ol>
@@ -482,21 +580,18 @@
             </div>
             <div class="exercise-figure">
                 <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Wall / Ceiling -->
                     <line x1="200" y1="20" x2="260" y2="20" stroke="black" stroke-width="4" />
-                    <!-- Hatching for ceiling -->
                     <line x1="205" y1="20" x2="215" y2="10" stroke="black" />
                     <line x1="225" y1="20" x2="235" y2="10" stroke="black" />
                     <line x1="245" y1="20" x2="255" y2="10" stroke="black" />
                     <text x="185" y="25" font-weight="bold" font-family="Times New Roman">O</text>
 
-                    <!-- Tracks -->
                     <line x1="20" y1="70" x2="130" y2="150" stroke="black" stroke-width="2" />
-                    <line x1="130" y1="150" x2="250" y2="150" stroke="black" stroke-width="2" />
+                    <line x1="130" y1="150" x2="310" y2="150" stroke="black" stroke-width="2" />
+                    <!-- Ground level text at BC -->
                     <line x1="250" y1="150" x2="310" y2="150" stroke="gray" stroke-dasharray="3,3" stroke-width="1.5" />
                     <text x="270" y="165" font-family="Times New Roman" font-size="12">ground</text>
 
-                    <!-- Block S -->
                     <rect x="30" y="55" width="20" height="20" fill="gray" transform="rotate(36 40 65)" />
                     <text x="45" y="45" font-weight="bold" font-family="Times New Roman">(S)</text>
                     <text x="15" y="75" font-weight="bold" font-family="Times New Roman">A</text>
@@ -504,25 +599,20 @@
                     <text x="125" y="165" font-weight="bold" font-family="Times New Roman">B</text>
                     <text x="220" y="165" font-weight="bold" font-family="Times New Roman">C</text>
 
-                    <!-- Angle alpha -->
                     <line x1="130" y1="150" x2="90" y2="150" stroke="black" stroke-dasharray="2,2" stroke-width="1" />
                     <path d="M 105 150 A 25 25 0 0 1 115 139" fill="none" stroke="black" stroke-width="1" />
                     <text x="100" y="145" font-family="Times New Roman">α</text>
 
-                    <!-- Pendulum string -->
                     <line x1="230" y1="20" x2="230" y2="140" stroke="black" stroke-width="1.5" />
                     <circle cx="230" cy="145" r="5" fill="black" />
                     <text x="210" y="140" font-weight="bold" font-family="Times New Roman">(P)</text>
 
-                    <!-- Swung pendulum -->
                     <line x1="230" y1="20" x2="280" y2="110" stroke="black" stroke-dasharray="2,2" stroke-width="1" />
                     <circle cx="280" cy="115" r="5" fill="black" />
                     <text x="290" y="115" font-weight="bold" font-family="Times New Roman">D</text>
 
-                    <!-- Arc -->
                     <path d="M 230 145 Q 260 145 280 115" fill="none" stroke="gray" stroke-dasharray="2,2" />
 
-                    <!-- Angle beta -->
                     <path d="M 230 60 A 40 40 0 0 0 245 47" fill="none" stroke="black" stroke-width="1" />
                     <text x="238" y="45" font-family="Times New Roman">β</text>
                 </svg>
@@ -541,6 +631,115 @@
                 </li>
             </ol>
         </div>
+    </div>
+
+    <!-- MARKING SCHEME -->
+    <div class="page-break"></div>
+    <div class="section-title">III. Marking Scheme / Answer Key</div>
+    <div class="marking-scheme">
+        
+        <!-- EX 1 ANSWERS -->
+        <div class="ms-exercise">
+            <b>Exercise 1</b>
+            <ol>
+                <li>The only force doing work is the weight (conservative force), as air resistance is neglected. <br>
+                    $ME_O = KE_O + GPE_O = \frac{1}{2}(15)(20^2) + 15(10)(45) = 3000 + 6750 = $ <span class="ans-bold">9750 J</span>.</li>
+                <li>
+                    <ol>
+                        <li>$z_S = 45 + 6.4 = 51.4 \text{ m}$. $GPE_S = mgz_S = 15(10)(51.4) = $ <span class="ans-bold">7710 J</span>.</li>
+                        <li>Conservation of ME: $ME_S = ME_O \Rightarrow KE_S + GPE_S = 9750 \Rightarrow \frac{1}{2}(15)V_S^2 + 7710 = 9750 \Rightarrow 7.5 V_S^2 = 2040 \Rightarrow V_S = \sqrt{272} \approx$ <span class="ans-bold">16.49 m/s</span>.</li>
+                        <li>$\cos(\alpha) = \frac{V_S}{V_0} = \frac{16.49}{20} = 0.8245 \Rightarrow \alpha = \cos^{-1}(0.8245) \approx$ <span class="ans-bold">34.46°</span>.</li>
+                    </ol>
+                </li>
+                <li>$\Delta KE = \sum W \Rightarrow \frac{1}{2} m V_A^2 - \frac{1}{2} m V_0^2 = W(\vec{W}) \Rightarrow \frac{1}{2}(15)V_A^2 - 3000 = mgh \Rightarrow 7.5 V_A^2 - 3000 = 15(10)(45) \Rightarrow 7.5 V_A^2 = 9750 \Rightarrow V_A = \sqrt{1300} \approx$ <span class="ans-bold">36.05 m/s</span>.</li>
+            </ol>
+        </div>
+
+        <!-- EX 2 ANSWERS -->
+        <div class="ms-exercise">
+            <b>Exercise 2</b>
+            <div style="margin-left: 20px;"><b>A)</b></div>
+            <ol>
+                <li>
+                    <ol>
+                        <li>Figure (1) shows the ME curve is a horizontal straight line ($\Delta ME = 0$). This implies there is no work done by non-conservative forces, hence no air resistance.</li>
+                        <li>At $z = 0$, $GPE = 0$, so $ME = KE_0 = 100 \text{ J}$. $\frac{1}{2}(2)V_0^2 = 100 \Rightarrow V_0 = \sqrt{100} = $ <span class="ans-bold">10 m/s</span>.</li>
+                    </ol>
+                </li>
+                <li>$GPE = mgz = 2(10)z = 20z$. (Student must draw a straight line passing through origin (0,0) and point (5,100)).</li>
+                <li>$KE = ME - GPE = 100 - 20z$. (Student must draw a straight line from (0,100) down to (5,0)).</li>
+                <li>$Z_{max}$ corresponds to $KE = 0$. On the graph, this is where the KE line hits the z-axis: <span class="ans-bold">$Z_{max} = 5 \text{ m}$</span>.</li>
+            </ol>
+            <div style="margin-left: 20px;"><b>B)</b></div>
+            <ol>
+                <li>As altitude increases, speed decreases, so KE decreases. Therefore, <span class="ans-bold">curve (a)</span> represents Kinetic Energy.</li>
+                <li>$ME = KE + GPE$. At $z=0, ME = 100+0 = 100 \text{ J}$. At $z=4, ME = 0+80 = 80 \text{ J}$. (Student draws a straight line connecting (0,100) and (4,80)).</li>
+                <li>The object stops ascending when $KE = 0$. According to curve (a), this occurs at <span class="ans-bold">$z = 4 \text{ m}$</span>.</li>
+                <li>Thermal Energy = $|\Delta ME| = |ME_f - ME_i| = |80 - 100| = $ <span class="ans-bold">20 J</span>.</li>
+            </ol>
+        </div>
+
+        <!-- EX 3 ANSWERS -->
+        <div class="ms-exercise">
+            <b>Exercise 3</b>
+            <ol>
+                <li>
+                    <ol>
+                        <li>$ME_A = KE_A + GPE_A = 0 + Mgh_A = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
+                        <li>$ME_B = KE_B + GPE_B = \frac{1}{2}(50)(\sqrt{90})^2 + 0 = 25(90) = 2250 \text{ J}$. Since $ME_B = ME_A$, mechanical energy is conserved, proving AB is <span class="ans-bold">frictionless</span>.</li>
+                    </ol>
+                </li>
+                <li>
+                    <ol>
+                        <li>$W(\vec{N}) = \vec{N} \cdot \vec{BC} = 0 \text{ J}$ (perpendicular). $W(\vec{W}) = \vec{W} \cdot \vec{BC} = 0 \text{ J}$.<br>$W(\vec{f}) = -f \cdot BC = -40(5) = $ <span class="ans-bold">-200 J</span>.</li>
+                        <li>W-E Theorem: $\Delta KE = \sum W \Rightarrow KE_C - KE_B = -200 \Rightarrow \frac{1}{2}(50)V_C^2 - 2250 = -200 \Rightarrow 25V_C^2 = 2050 \Rightarrow V_C = \sqrt{82} \approx $ <span class="ans-bold">9.05 m/s</span>.</li>
+                        <li>Converted into <span class="ans-bold">Thermal Energy</span> (Heat).</li>
+                    </ol>
+                </li>
+                <li>
+                    <ol>
+                        <li>
+                            <ol>
+                                <li>$ME_C = KE_C + GPE_C = 2050 + 0 = $ <span class="ans-bold">2050 J</span>.</li>
+                                <li>$GPE_D = Mgh_D = 50(10)(4.5) = $ <span class="ans-bold">2250 J</span>.</li>
+                            </ol>
+                        </li>
+                        <li>Since CD is frictionless, ME is conserved. The skateboarder only has 2050 J of total energy, but requires 2250 J to reach D. Thus, <span class="ans-bold">he cannot reach D</span>.</li>
+                        <li>At point I, $V_I = 0$. $ME_I = ME_C = 2050 \text{ J}$. $GPE_I = 2050 \Rightarrow Mgh_I = 2050 \Rightarrow 50(10)h_I = 2050 \Rightarrow h_I = \frac{2050}{500} = $ <span class="ans-bold">4.1 m</span>.</li>
+                    </ol>
+                </li>
+            </ol>
+        </div>
+
+        <!-- EX 4 ANSWERS -->
+        <div class="ms-exercise">
+            <b>Exercise 4</b>
+            <ol>
+                <li>
+                    <ol>
+                        <li>$\Delta ME = W_{nc} \Rightarrow ME_B - ME_A = -f \cdot AB$. <br>$ME_A = mgh_A = mg(AB\sin\alpha) = 1.5(10)(5)(0.25) = 18.75 \text{ J}$. $ME_B = \frac{1}{2}mV_B^2 = 0.5(1.5)(16) = 12 \text{ J}$. <br>$\Delta ME = 12 - 18.75 = -6.75 \text{ J}$. $-f(5) = -6.75 \Rightarrow f = $ <span class="ans-bold">1.35 N</span>.</li>
+                        <li>$P(\vec{f}) = -f \cdot v = -1.35(2) = $ <span class="ans-bold">-2.7 W</span>.<br>
+                            $P(\vec{N}) = 0$ (since $\vec{N} \perp \vec{v}$).<br>
+                            $P(\vec{W}) = \vec{W} \cdot \vec{v} = mgv\sin\alpha = 1.5(10)(2)(0.25) = $ <span class="ans-bold">7.5 W</span>.</li>
+                        <li>$P_{avg}(\vec{f}) = \frac{W(\vec{f})}{\Delta t} = \frac{-6.75}{2.5} = $ <span class="ans-bold">-2.7 W</span>.</li>
+                    </ol>
+                </li>
+                <li>ME of (P) is conserved from C to D. $ME_C = ME_D \Rightarrow \frac{1}{2}MV_0^2 = Mgh_D$. <br>
+                    $h_D = l - l\cos\beta = l(1-\cos\beta) = 0.8(1-\cos\beta)$.<br>
+                    $\frac{1}{2}(1.5^2) = 10(0.8(1-\cos\beta)) \Rightarrow 1.125 = 8(1-\cos\beta) \Rightarrow 1-\cos\beta = 0.1406 \Rightarrow \cos\beta = 0.859 \Rightarrow \beta \approx $ <span class="ans-bold">30.7°</span>.
+                </li>
+                <li>
+                    <ol>
+                        <li>$ME_D = ME_C = \frac{1}{2}MV_0^2 = 0.5(2.5)(1.5^2) = $ <span class="ans-bold">2.8125 J</span>.</li>
+                        <li>Given $KE = GPE$. $ME = 2 \cdot GPE \Rightarrow 2.8125 = 2(Mgh) \Rightarrow 2.8125 = 2(2.5)(10)h \Rightarrow 50h = 2.8125 \Rightarrow h = $ <span class="ans-bold">0.05625 m</span>.<br>
+                        $ME = 2 \cdot KE \Rightarrow 2.8125 = 2(0.5 \cdot 2.5 \cdot V^2) \Rightarrow 2.5 V^2 = 2.8125 \Rightarrow V^2 = 1.125 \Rightarrow V = \sqrt{1.125} \approx $ <span class="ans-bold">1.06 m/s</span>.</li>
+                        <li>Ground level is at BC ($GPE = 0$). Falling from D to ground conserves ME.<br>
+                        $ME_{ground} = ME_D \Rightarrow \frac{1}{2} M V_{ground}^2 + 0 = 2.8125 \Rightarrow 0.5(2.5)V_{ground}^2 = 2.8125 \Rightarrow V_{ground}^2 = 2.25 \Rightarrow V_{ground} = $ <span class="ans-bold">1.5 m/s</span>.</li>
+                    </ol>
+                </li>
+            </ol>
+        </div>
+
     </div>
 </div>
 
