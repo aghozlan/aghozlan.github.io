@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Energy Exam Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Big+Shoulders+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;700&display=swap">
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code','input','button']}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" async></script>
+<style>
+/* Layout: an exam "arena" — scoreboard type for headings, a long scrolling page with a sticky section bar; energy colours keep their series meaning (PE teal, KE amber, ME cobalt, heat red). */
+:root{
+  --bg:#F2F4F8; --surface:#FFFFFF; --surface2:#F6F8FB; --ink:#12203A; --muted:#4B576D; --line:#D3DAE4;
+  --pe:#0A7F7B; --ke:#C4620E; --me:#2A4BB8; --heat:#BE3439; --good:#1A7D45; --bad:#BE3439;
+  --pe-s:#DDF1EF; --ke-s:#FBEBDC; --me-s:#E3E9FA; --heat-s:#F8E1E2; --tip:#FFF5D6; --tip-l:#D9AF3C;
+  --board:#12203A; --board-ink:#F2F4F8;
+  --f-disp:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C121E; --surface:#141C2C; --surface2:#1A2336; --ink:#E8EDF6; --muted:#A3AEC3; --line:#2B3852;
+  --pe:#3FCBC3; --ke:#F5A34E; --me:#8EA4FF; --heat:#FF7A7E; --good:#55D58F; --bad:#FF7A7E;
+  --pe-s:#103230; --ke-s:#3A2813; --me-s:#1B2550; --heat-s:#3E1A1D; --tip:#2A2615; --tip-l:#8F7630;
+  --board:#E8EDF6; --board-ink:#0C121E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C121E; --surface:#141C2C; --surface2:#1A2336; --ink:#E8EDF6; --muted:#A3AEC3; --line:#2B3852;
+  --pe:#3FCBC3; --ke:#F5A34E; --me:#8EA4FF; --heat:#FF7A7E; --good:#55D58F; --bad:#FF7A7E;
+  --pe-s:#103230; --ke-s:#3A2813; --me-s:#1B2550; --heat-s:#3E1A1D; --tip:#2A2615; --tip-l:#8F7630;
+  --board:#E8EDF6; --board-ink:#0C121E; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6}
+h1,h2,h3{font-family:var(--f-disp);margin:0;line-height:1.02;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:clamp(2.8rem,8vw,5.2rem);font-weight:900;text-transform:uppercase}
+h2{font-size:clamp(2rem,5vw,3rem);font-weight:800;text-transform:uppercase}
+h3{font-size:1.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+p{margin:0;max-width:68ch}
+b,strong{font-weight:700}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--me);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pe{color:var(--pe)} .ke{color:var(--ke)} .me{color:var(--me)} .heat{color:var(--heat)}
+.chip{border-radius:6px;padding:0 .3em;font-weight:700}
+.chip.pe{background:var(--pe-s)} .chip.ke{background:var(--ke-s)} .chip.me{background:var(--me-s)} .chip.heat{background:var(--heat-s)}
+
+/* bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1180px;margin:0 auto;padding:8px 16px;display:flex;gap:10px 16px;align-items:center;flex-wrap:wrap}
+.logo{font-family:var(--f-disp);font-weight:900;font-size:1.35rem;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1 1 320px;min-width:0}
+.nav a{color:var(--ink);text-decoration:none;font-size:.92rem;padding:4px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.nav a:hover{border-color:var(--line)}
+.score-pill{font-family:var(--f-mono);font-size:.85rem;background:var(--board);color:var(--board-ink);padding:5px 12px;border-radius:999px;white-space:nowrap}
+
+main{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:24px 90px;display:grid;gap:64px}
+section{display:grid;gap:22px;min-width:0}
+.eyebrow{font-family:var(--f-mono);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.15rem;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:grid;gap:14px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.grid2>*,.grid3>*{min-width:0}
+.btn{border:1.5px solid var(--ink);background:transparent;border-radius:9px;padding:7px 14px;font-size:.95rem;font-weight:700}
+.btn:hover{background:var(--surface2)}
+.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.small{padding:4px 11px;font-size:.88rem}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ok{color:var(--good);font-weight:700} .no{color:var(--bad);font-weight:700}
+.trick{background:var(--tip);border:1.5px dashed var(--tip-l);border-radius:var(--r);padding:12px 16px;display:grid;gap:4px}
+.trick b.t{font-family:var(--f-disp);font-size:1.1rem;text-transform:uppercase;letter-spacing:.03em}
+.mjx{overflow-x:auto;overflow-y:hidden;max-width:100%}
+
+/* hero */
+.hero{display:grid;gap:18px;padding-top:8px}
+.hero h1 span{display:block}
+.hero h1 .thin{font-weight:700;color:var(--muted);font-size:.45em;letter-spacing:.06em}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{background:var(--board);color:var(--board-ink);border-radius:10px;padding:10px 16px;display:grid;min-width:140px}
+.stat b{font-family:var(--f-disp);font-size:2.2rem;line-height:1}
+.stat span{font-size:.85rem;opacity:.85}
+
+/* sandbox */
+.sandbox{display:grid;gap:14px}
+.trackwrap{overflow-x:auto;border-radius:10px;background:var(--surface2);border:1px solid var(--line);touch-action:none}
+#track{display:block;width:100%;min-width:620px;height:auto;user-select:none}
+#track text{font-family:var(--f-body);font-size:15px;fill:var(--muted)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 20px;align-items:center}
+.sl{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.sl label{font-size:.95rem;color:var(--muted)}
+.sl output{font-family:var(--f-mono);font-weight:700;min-width:4.5em;text-align:right}
+input[type=range]{width:100%;accent-color:var(--me)}
+.ledger{display:grid;gap:8px}
+.lrow{display:grid;grid-template-columns:5.5em 1fr 6.5em;gap:10px;align-items:center}
+.lrow .nm{font-weight:700}
+.lrow .trk{height:18px;border-radius:5px;background:var(--surface2);border:1px solid var(--line);overflow:hidden}
+.lrow .fill{height:100%;width:0;transition:width .12s}
+.lrow .v{font-family:var(--f-mono);text-align:right}
+.msg{min-height:1.6em;font-weight:700}
+
+/* course */
+.course{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.lesson{border-top:6px solid var(--ink)}
+.lesson.pe{border-top-color:var(--pe)} .lesson.ke{border-top-color:var(--ke)} .lesson.me{border-top-color:var(--me)} .lesson.heat{border-top-color:var(--heat)}
+.lesson{color:var(--ink)}
+.lesson .n{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
+.law{border:2px solid var(--ink);border-radius:10px;padding:10px 14px;background:var(--surface2);display:grid;gap:4px}
+.law .tag{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+ul.clean{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.qc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px dashed var(--line);padding-top:12px}
+.qc input,.part input.num{font-family:var(--f-mono);font-size:1rem;width:8.5em;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink)}
+.unit{font-family:var(--f-mono);color:var(--muted)}
+
+/* story */
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;border:2px solid var(--ink);border-radius:var(--r);overflow:hidden}
+.act{padding:18px 20px;display:grid;gap:8px;align-content:start;background:var(--surface)}
+.act + .act{border-left:2px solid var(--ink)}
+@media (max-width:820px){.act + .act{border-left:0;border-top:2px solid var(--ink)}}
+.act .num{font-family:var(--f-disp);font-size:3.2rem;font-weight:900;line-height:.9}
+.act .pts{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+
+/* radar */
+.radar{display:grid;gap:8px}
+.rbar{display:grid;grid-template-columns:minmax(150px,26ch) 1fr 3.5em;gap:12px;align-items:center;background:none;border:0;padding:6px 8px;border-radius:8px;text-align:left}
+.rbar:hover{background:var(--surface2)}
+.rbar[aria-pressed="true"]{background:var(--me-s)}
+.rbar .lab{font-size:.95rem}
+.rbar .lab small{display:block;color:var(--muted);font-size:.82rem}
+.rbar .tr{height:22px;background:var(--surface2);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.rbar .fl{height:100%;background:var(--me)}
+.rbar .fl.hot{background:var(--ke)}
+.rbar .ct{font-family:var(--f-mono);font-weight:700;text-align:right}
+@media (max-width:600px){.rbar{grid-template-columns:1fr 3em}.rbar .tr{grid-column:1 / -1;grid-row:2}}
+
+/* justify trainer */
+.jt{display:grid;gap:14px}
+.jitem{display:grid;gap:10px}
+.jstep{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--surface2);border-radius:9px;padding:8px 12px;text-align:left;font-size:.98rem}
+.opt:hover{border-color:var(--ink)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 13%,var(--surface))}
+.opt:disabled{cursor:default}
+.jnav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);background:transparent}
+.dot.done{background:var(--good);border-color:var(--good)}
+.dot.half{background:var(--ke);border-color:var(--ke)}
+.dot.cur{outline:2px solid var(--me);outline-offset:2px}
+
+/* bank */
+.bankwrap{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.bankwrap{grid-template-columns:1fr}}
+.blist{display:grid;gap:8px;position:sticky;top:76px}
+@media (max-width:860px){.blist{position:static;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
+.bitem{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;text-align:left;display:grid;gap:2px}
+.bitem:hover{border-color:var(--ink)}
+.bitem[aria-current="true"]{border-color:var(--ink);box-shadow:inset 5px 0 0 var(--ink)}
+.bitem .yr{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.bitem .tt{font-weight:700;font-size:.98rem}
+.bitem.dim{opacity:.35}
+.bitem .sc{font-family:var(--f-mono);font-size:.8rem}
+.filterline{font-size:.92rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.paper{background:var(--surface);border:2px solid var(--ink);border-radius:6px;padding:22px;display:grid;gap:14px;min-width:0}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px 18px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.phead h3{font-size:1.6rem}
+.phead .meta{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.clock{font-family:var(--f-mono);font-weight:700;font-size:1.1rem;padding:4px 10px;border-radius:8px;background:var(--surface2);border:1px solid var(--line)}
+.clock.late{color:var(--bad)}
+.pbody{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);gap:18px;align-items:start}
+@media (max-width:700px){.pbody{grid-template-columns:1fr}}
+.fig{width:100%;height:auto;display:block;max-width:420px;margin:0 auto}
+.fig .ink{stroke:var(--ink);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.fig .thin{stroke:var(--muted);fill:none;stroke-width:1.6;stroke-dasharray:4 5}
+.fig .gnd{stroke:var(--ink);stroke-width:3.2}
+.fig .ref{stroke:var(--me);stroke-width:2;stroke-dasharray:7 5;fill:none}
+.fig .fric{stroke:var(--heat);stroke-width:2;fill:none}
+.fig .ap{stroke:var(--pe);stroke-width:2.4;fill:none}
+.fig .ak{stroke:var(--ke);stroke-width:2.6;fill:none}
+.fig .dot{fill:var(--ink)}
+.fig .ball{fill:var(--ke)}
+.fig .water{fill:var(--me-s);stroke:var(--me);stroke-width:1.5}
+.fig .solid{fill:var(--line);stroke:var(--ink);stroke-width:1.5}
+.fig .soft{fill:var(--pe-s);stroke:var(--pe);stroke-width:1.8}
+.fig text{fill:var(--ink);font-family:var(--f-body);font-size:16px}
+.fig text.m{fill:var(--muted);font-size:14px}
+.fig text.r{fill:var(--me);font-size:14px;font-weight:700}
+.fig text.p{fill:var(--pe);font-weight:700}
+.fig text.h{fill:var(--heat);font-size:14px;font-weight:700}
+.fig text.b{font-weight:700}
+.given{background:var(--surface2);border-radius:8px;padding:10px 14px;display:grid;gap:4px;font-size:.98rem}
+.parts{display:grid;gap:0}
+.part{display:grid;gap:8px;padding:12px 0;border-top:1px dashed var(--line)}
+.part.head{border-top:2px solid var(--line);padding:14px 0 4px}
+.part.head p{font-weight:700}
+.pq{display:grid;grid-template-columns:3.4em 1fr auto;gap:8px;align-items:baseline}
+.pq .pn{font-family:var(--f-mono);font-weight:700}
+.pq .pm{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);white-space:nowrap}
+.prow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-left:3.4em}
+@media (max-width:560px){.prow{padding-left:0}.pq{grid-template-columns:2.8em 1fr}.pq .pm{grid-column:2}}
+.key{background:var(--surface2);border-left:4px solid var(--me);border-radius:0 8px 8px 0;padding:10px 14px;display:grid;gap:4px;margin-left:3.4em}
+@media (max-width:560px){.key{margin-left:0}}
+.key .src{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.selfm{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.9rem;color:var(--muted)}
+.ptotal{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:2px solid var(--ink);padding-top:12px}
+.board{background:var(--board);color:var(--board-ink);border-radius:10px;padding:8px 16px;font-family:var(--f-disp);font-size:1.8rem;font-weight:800;letter-spacing:.03em}
+.board small{font-family:var(--f-body);font-size:.85rem;font-weight:400;opacity:.85;margin-left:8px}
+.mcq{display:flex;gap:6px;flex-wrap:wrap}
+
+/* mistakes */
+.museum{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.exhibit{display:grid;gap:10px}
+.exhibit .task{font-size:.98rem;color:var(--muted)}
+.wline{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface2);border-radius:8px;padding:7px 12px;font-family:var(--f-mono);font-size:.92rem;line-height:1.45}
+.wline:hover{border-color:var(--ink)}
+.wline.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--surface))}
+.wline.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 13%,var(--surface))}
+.exp{font-size:.95rem}
+
+/* memory */
+.memo{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mc{border:1px solid var(--line);border-top:5px solid var(--ink);border-radius:10px;padding:12px 14px;background:var(--surface);display:grid;gap:6px;color:var(--ink)}
+.mc.pe{border-top-color:var(--pe)} .mc.ke{border-top-color:var(--ke)} .mc.me{border-top-color:var(--me)} .mc.heat{border-top-color:var(--heat)}
+.mc .lb{font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mc p{font-size:.95rem}
+table.v{border-collapse:collapse;width:100%;font-size:.97rem}
+table.v td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+table.v td:first-child{font-weight:700;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--board);color:var(--board-ink);padding:9px 18px;border-radius:999px;font-weight:700;transition:transform .3s;z-index:40}
+.toast.show{transform:translate(-50%,0)}
+.foot{color:var(--muted);font-size:.9rem;display:grid;gap:4px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+@media (max-width:560px){body{font-size:17px}.card,.paper{padding:16px}}
+</style>
+
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="context-stroke"/></marker>
+</defs></svg>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="logo">Energy Exam Lab</div>
+    <nav class="nav" aria-label="Sections">
+      <a href="#sandbox">Track</a><a href="#story">Storyline</a><a href="#course">Course</a><a href="#radar">Exam radar</a><a href="#justify">Justify</a><a href="#bank">Official bank</a><a href="#mistakes">Mistakes</a><a href="#memory">Memory card</a>
+    </nav>
+    <span class="score-pill" id="pill">0 / 12 papers · 0 pts</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" aria-labelledby="t1">
+  <span class="eyebrow">Grade 12 SE · Physics · Unit I · Chapter 1</span>
+  <h1 id="t1"><span>Work &amp;</span><span>Mechanical Energy</span><span class="thin">The exam edition</span></h1>
+  <p class="lead">Mechanical energy appeared in 10 of the last 12 official SE/LH physics papers, almost always as Exercise 1 and worth up to 7.5 of the 20 points. The storyline barely changes from year to year. Learn it here once, then solve every one of those ten exercises as it was set.</p>
+  <div class="stats">
+    <div class="stat"><b>10 / 12</b><span>papers with an ME exercise</span></div>
+    <div class="stat"><b>6–7.5</b><span>points out of 20</span></div>
+    <div class="stat"><b>5 / 5</b><span>papers since 2019 with "choose with justification"</span></div>
+    <div class="stat"><b>g = 10</b><span>every paper, every year</span></div>
+  </div>
+</section>
+
+<!-- ============ SANDBOX ============ -->
+<section id="sandbox" aria-labelledby="t2">
+  <span class="eyebrow">Warm-up · drag the ball</span>
+  <h2 id="t2">The energy track</h2>
+  <p class="lead">A small cart starts at A, 5 m above the ground (the reference level). Drag it along the track. Its GPE and KE always add up to the same ME, until you switch on friction.</p>
+  <div class="card sandbox">
+    <div class="trackwrap"><svg id="track" viewBox="0 0 820 360" role="img" aria-label="A roller track with hills; drag the cart along it">
+      <line x1="10" y1="320" x2="810" y2="320" style="stroke:var(--me);stroke-width:2;stroke-dasharray:7 5"/>
+      <text x="14" y="345">ground · reference level · GPE = 0</text>
+      <g id="hgrid"></g>
+      <path id="tpath" d="M40 95 C 80 120, 170 320, 250 320 S 360 162, 420 162 S 500 275, 540 275 S 660 50, 720 50 S 780 140, 800 140" style="fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round"/>
+      <path id="nogo" d="" style="fill:none;stroke:var(--heat);stroke-width:7;stroke-dasharray:3 9;stroke-linecap:round;opacity:.85"/>
+      <text x="30" y="80" style="font-weight:700;fill:var(--ink)">A</text>
+      <line id="hline" x1="0" y1="0" x2="0" y2="320" style="stroke:var(--pe);stroke-width:2;stroke-dasharray:4 4"/>
+      <text id="hlab" x="0" y="0" style="fill:var(--pe);font-weight:700">h</text>
+      <g id="cart" tabindex="0" role="slider" aria-label="Cart position along the track" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="cursor:grab">
+        <circle r="17" style="fill:var(--ke);stroke:var(--ink);stroke-width:3"/>
+        <circle r="5" style="fill:var(--ink)"/>
+      </g>
+    </svg></div>
+    <div class="ctrls">
+      <div class="sl"><label for="sm">Mass m</label><input type="range" id="sm" min="1" max="10" step="1" value="2"><output id="smo">2 kg</output></div>
+      <div class="sl"><label for="sv">Speed at A</label><input type="range" id="sv" min="0" max="8" step="1" value="0"><output id="svo">0 m/s</output></div>
+      <div class="gb" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn small" id="fr" aria-pressed="false">Friction: off</button>
+        <button class="btn small solid" id="run">Release from A</button>
+        <button class="btn small" id="rst">Back to A</button>
+      </div>
+    </div>
+    <div class="ledger" aria-live="polite">
+      <div class="lrow"><span class="nm pe">GPE</span><div class="trk"><div class="fill" id="bPE" style="background:var(--pe)"></div></div><span class="v" id="vPE">0 J</span></div>
+      <div class="lrow"><span class="nm ke">KE</span><div class="trk"><div class="fill" id="bKE" style="background:var(--ke)"></div></div><span class="v" id="vKE">0 J</span></div>
+      <div class="lrow"><span class="nm me">ME</span><div class="trk"><div class="fill" id="bME" style="background:var(--me)"></div></div><span class="v" id="vME">0 J</span></div>
+      <div class="lrow"><span class="nm heat">Heat</span><div class="trk"><div class="fill" id="bQ" style="background:var(--heat)"></div></div><span class="v" id="vQ">0 J</span></div>
+    </div>
+    <p class="mono" id="hv">h = 5.00 m · v = 0.00 m/s · distance from A = 0.0 m</p>
+    <p class="msg" id="smsg"></p>
+    <div class="grid3">
+      <div class="trick"><b class="t">Try 1</b><p>Speed 0 at A. Can the cart get over the last hill (6 m)? Find the highest point it reaches and read its KE there.</p></div>
+      <div class="trick"><b class="t">Try 2</b><p>Set the speed at A to 5 m/s. Now it clears the hill. Why? Compare ME at A with mgh at the top.</p></div>
+      <div class="trick"><b class="t">Try 3</b><p>Switch friction on (f = 3 N). Watch ME fall and heat rise by f × distance, exactly as in the 2017 paper.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORYLINE ============ -->
+<section id="story" aria-labelledby="t3">
+  <span class="eyebrow">What every ME exercise looks like</span>
+  <h2 id="t3">One storyline, three acts</h2>
+  <div class="acts">
+    <div class="act"><span class="num">1</span><h3>Calculate at A</h3><p>KE(A), GPE(A), then ME(A). If it is "released from rest", KE(A) = 0, and you must say why.</p><span class="pts">≈ 2.5 to 3.5 pts · every paper</span></div>
+    <div class="act"><span class="num">2</span><h3>No friction</h3><p>"Why is ME conserved?" Because friction (air resistance) is neglected. Then ME(A) = ME(B) gives a speed or a height.</p><span class="pts">≈ 2 to 3 pts · 8 of 10 papers</span></div>
+    <div class="act"><span class="num">3</span><h3>In reality</h3><p>ME decreases. Find the new ME, the loss, the friction force f, or the form it takes: thermal energy.</p><span class="pts">≈ 1.5 to 2.5 pts · 6 of 10 papers</span></div>
+  </div>
+  <div class="grid2">
+    <div class="trick"><b class="t">Newer twist since 2019</b><p>Act 2 or 3 is often asked as <b>"Choose with justification"</b>: a), b) or c). Since 2022 the data may also come in a <b>table</b> of speeds, heights or energies.</p></div>
+    <div class="trick"><b class="t">Official wording</b><p>"considered as a particle" · "the system [(S), Earth]" · "Take the horizontal plane passing through … as a reference level for gravitational potential energy; g = 10 m/s²".</p></div>
+  </div>
+</section>
+
+<!-- ============ COURSE ============ -->
+<section id="course" aria-labelledby="t4">
+  <span class="eyebrow">The course · as in the national textbook, Chapter 1</span>
+  <h2 id="t4">Everything you need, nothing more</h2>
+  <div class="course">
+    <article class="card lesson">
+      <span class="n">1 · Work</span><h3>Sweating is not working</h3>
+      <p>A force does work only if its point of application <b>moves</b> and it acts, totally or partly, <b>in the direction of motion</b>. Pushing a wall that does not move: 0 J. The weight and the normal force on a pram rolling along a flat road: 0 J.</p>
+      <div class="law"><span class="tag">Definition</span><p>The work of a constant force \(F\) causing a displacement \(d\) parallel to \(F\):</p><div class="mjx">\[W = F \times d \qquad \text{J} = \text{N}\times\text{m}\]</div></div>
+      <p><b>Work of the weight</b>: \(W = m\,g\,h\) for a height change \(h\), whatever the path. The 2019 paper asks exactly this.</p>
+      <div class="qc" data-a="4800" data-id="c1"><span>Diver, 80 kg, falls 6 m to the water. Work of the weight?</span><input aria-label="answer" inputmode="decimal"><span class="unit">J</span><button class="btn small solid">Check</button><span class="fb"></span></div>
+    </article>
+    <article class="card lesson pe">
+      <span class="n">2 · Energy &amp; GPE</span><h3>Stored by position</h3>
+      <p>A system has <b>energy</b> if it is able to do work. Lift a stone: your work is stored in the system [stone, Earth] as <span class="chip pe">gravitational potential energy</span>.</p>
+      <div class="law"><span class="tag">Formula</span><div class="mjx">\[GPE = m\,g\,h\]</div><p>\(h\) is measured from the <b>reference level</b>, where GPE = 0. Below it, GPE &lt; 0.</p></div>
+      <div class="qc" data-a="1530" data-id="c2"><span>Sled + child, 85 kg, at A 1.8 m above the reference. GPE(A)?</span><input aria-label="answer" inputmode="decimal"><span class="unit">J</span><button class="btn small solid">Check</button><span class="fb"></span></div>
+    </article>
+    <article class="card lesson ke">
+      <span class="n">3 · KE</span><h3>Stored by speed</h3>
+      <p>The <span class="chip ke">kinetic energy</span> of an object is the energy it possesses by virtue of its motion. Speed counts twice: double the speed and the KE is multiplied by 4.</p>
+      <div class="law"><span class="tag">Formula</span><div class="mjx">\[KE = \tfrac12\,m\,v^2 \qquad v = \sqrt{\frac{2\,KE}{m}}\]</div><p>Mass in kg (100 g = 0.1 kg), speed in m/s (km/h ÷ 3.6).</p></div>
+      <div class="qc" data-a="144" data-id="c3"><span>Ball, 2 kg, launched at 12 m/s. KE?</span><input aria-label="answer" inputmode="decimal"><span class="unit">J</span><button class="btn small solid">Check</button><span class="fb"></span></div>
+    </article>
+    <article class="card lesson me">
+      <span class="n">4 · ME</span><h3>Two pockets, one wallet</h3>
+      <p>The <span class="chip me">mechanical energy</span> of a system at an instant is the sum of its kinetic and potential energies at that instant.</p>
+      <div class="law"><span class="tag">Definition and principle</span><div class="mjx">\[ME = KE + GPE\]</div><p>In the absence of friction and air resistance, the ME of a system <b>remains constant</b>: a gain in one form equals the loss in the other.</p></div>
+      <div class="qc" data-a="6" data-id="c4"><span>From rest at 1.8 m, no friction. Speed at the bottom (reference)?</span><input aria-label="answer" inputmode="decimal"><span class="unit">m/s</span><button class="btn small solid">Check</button><span class="fb"></span></div>
+    </article>
+    <article class="card lesson heat">
+      <span class="n">5 · Friction</span><h3>ME leaks out as heat</h3>
+      <p>With friction or air resistance, ME is <b>not</b> conserved: it decreases. The lost ME appears as <span class="chip heat">thermal energy (heat)</span>.</p>
+      <div class="law"><span class="tag">Two ways the papers write it</span><div class="mjx">\[ME_{B} - ME_{C} = f \times BC \quad (2017)\]</div><div class="mjx">\[\Delta ME = ME_{f} - ME_{i} = -f \times d \quad (2015)\]</div></div>
+      <div class="qc" data-a="0.75" data-id="c5"><span>ME(B) = 1.5 J, stops at C on the reference, BC = 2 m. f?</span><input aria-label="answer" inputmode="decimal"><span class="unit">N</span><button class="btn small solid">Check</button><span class="fb"></span></div>
+    </article>
+    <article class="card lesson">
+      <span class="n">6 · Bridge to Ch. 2–3</span><h3>Efficiency</h3>
+      <p>Energy exercises on power plants reuse \(mgh\). Water falling through a height \(h\) loses GPE, and the plant turns part of it into electrical energy.</p>
+      <div class="law"><span class="tag">Efficiency</span><div class="mjx">\[r = \frac{\text{useful energy (or power)}}{\text{received energy (or power)}}\]</div></div>
+      <div class="qc" data-a="40000000" data-id="c6"><span>Markaba plant: useful 14 × 10⁶ J each second, r = 35 %. Received energy each second?</span><input aria-label="answer" inputmode="decimal" placeholder="e.g. 4e7"><span class="unit">J</span><button class="btn small solid">Check</button><span class="fb"></span></div>
+    </article>
+  </div>
+  <div class="grid3">
+    <div class="trick"><b class="t">Say why it is zero</b><p>"KE(A) = 0 because it is released from rest." "GPE(C) = 0 since C is on the reference level." "KE(B) = 0 at the maximum height." The marking keys give marks for the reason.</p></div>
+    <div class="trick"><b class="t">Highest point</b><p>v = 0, so KE = 0 and ME = GPE. This gives \(h_{max} = \dfrac{ME}{m\,g}\).</p></div>
+    <div class="trick"><b class="t">Not in your syllabus</b><p>Elastic energy ½ k x² is not required in SE. A drawn bow or a spring is only named as stored potential energy.</p></div>
+  </div>
+</section>
+
+<!-- ============ RADAR ============ -->
+<section id="radar" aria-labelledby="t5">
+  <span class="eyebrow">What the examiners ask · 10 ME exercises, 2015–2024</span>
+  <h2 id="t5">Exam radar</h2>
+  <p class="lead">Each bar counts how many of the ten official ME exercises used that move. Click a bar to show only the exercises in the bank that contain it.</p>
+  <div class="card radar" id="radarList"></div>
+</section>
+
+<!-- ============ JUSTIFY ============ -->
+<section id="justify" aria-labelledby="t6">
+  <span class="eyebrow">Trainer · two steps, like the marking key</span>
+  <h2 id="t6">Choose with justification</h2>
+  <p class="lead">Every ME exercise since 2019 has this question type. The key gives marks only when the letter <b>and</b> the reason are right. Pick the answer, then pick the reason a corrector would accept.</p>
+  <div class="card jt">
+    <div class="jnav"><div class="dots" id="jdots"></div><span class="mono" id="jscore">0 / 0</span></div>
+    <div id="jbox" class="jitem"></div>
+    <div class="jnav"><button class="btn small" id="jprev">← Previous</button><button class="btn small solid" id="jnext">Next →</button></div>
+  </div>
+</section>
+
+<!-- ============ BANK ============ -->
+<section id="bank" aria-labelledby="t7">
+  <span class="eyebrow">Official SE/LH papers · questions as set, answers and marks from the official keys</span>
+  <h2 id="t7">The official bank</h2>
+  <p class="lead">All ten ME exercises from 2015 to 2024, plus two hydroelectric questions that use mgh. Type numbers to check them instantly. For written answers, reveal the official key and mark yourself honestly. In the real exam you have about 20 minutes per exercise; start the clock to train.</p>
+  <div class="filterline" id="flt" hidden><span id="fltTxt"></span><button class="btn small" id="fltClear">Show all</button></div>
+  <div class="bankwrap">
+    <div class="blist" id="blist"></div>
+    <article class="paper" id="paper" aria-live="polite"></article>
+  </div>
+</section>
+
+<!-- ============ MISTAKES ============ -->
+<section id="mistakes" aria-labelledby="t8">
+  <span class="eyebrow">Spot the error · each answer sheet has exactly one wrong line</span>
+  <h2 id="t8">The mistake museum</h2>
+  <p class="lead">These are the errors that cost the most marks. Click the line that a corrector would cross out.</p>
+  <div class="museum" id="museum"></div>
+</section>
+
+<!-- ============ MEMORY ============ -->
+<section id="memory" aria-labelledby="t9">
+  <span class="eyebrow">Before the exam</span>
+  <h2 id="t9">Memory card</h2>
+  <div class="memo">
+    <div class="mc"><span class="lb">Work</span><div class="mjx">\(W = F\,d\)</div><p>F constant and parallel to d. Weight: \(W = mgh\), any path.</p></div>
+    <div class="mc pe"><span class="lb">Gravitational PE</span><div class="mjx">\(GPE = m\,g\,h\)</div><p>h from the reference level. Zero on it.</p></div>
+    <div class="mc ke"><span class="lb">Kinetic energy</span><div class="mjx">\(KE = \tfrac12 m v^2\)</div><p>m in kg, v in m/s. \(v = \sqrt{2KE/m}\).</p></div>
+    <div class="mc me"><span class="lb">Mechanical energy</span><div class="mjx">\(ME = KE + GPE\)</div><p>No friction: ME(A) = ME(B).</p></div>
+    <div class="mc heat"><span class="lb">With friction</span><div class="mjx">\(ME_i - ME_f = f\,d\)</div><p>The loss becomes thermal energy.</p></div>
+    <div class="mc"><span class="lb">Efficiency</span><div class="mjx">\(r = \dfrac{\text{useful}}{\text{received}}\)</div><p>Energy or power, same formula.</p></div>
+  </div>
+  <div class="card">
+    <h3>Decode the verbs</h3>
+    <div class="tablewrap"><table class="v">
+      <tr><td>Calculate</td><td>Formula, numbers substituted, result with its unit.</td></tr>
+      <tr><td>Deduce</td><td>Use the result you just found, in one line.</td></tr>
+      <tr><td>Determine</td><td>Several steps: write ME, cancel what is zero and say why, solve.</td></tr>
+      <tr><td>Show that</td><td>Reach the given value. Use it in the next questions even if you could not prove it.</td></tr>
+      <tr><td>Why? / Justify</td><td>One sentence with the physical reason: "friction is neglected", "same height", "on the reference level".</td></tr>
+      <tr><td>Specify / Indicate</td><td>The value or the name, with a short reason.</td></tr>
+      <tr><td>Choose with justification</td><td>The letter and the reason. The letter alone earns very little.</td></tr>
+    </table></div>
+  </div>
+  <div class="foot">
+    <p>Built from the national textbook (Physics, Secondary 3, Humanities and Sociology-Economics, Chapter 1) and the official SE/LH physics papers and marking keys of 2015, 2016 (two sessions), 2017 (two sessions), 2018, 2019, 2021 (two sessions), 2022 (two sessions) and 2024.</p>
+    <p>Numerical answers accept about ±2 %. Write large numbers as 40000000, 4e7 or 4×10^7. Progress is saved only in this browser.</p>
+  </div>
+</section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const typeset=el=>{ if(window.MathJax&&MathJax.typesetPromise){ MathJax.typesetPromise(el?[el]:undefined).catch(()=>{}); } else { setTimeout(()=>typeset(el),400); } };
+const fmt=(x,d=2)=>{ if(!isFinite(x)) return "—"; const r=Math.round(x*10**d)/10**d; return r.toLocaleString("en-US",{maximumFractionDigits:d}).replace(/,/g," "); };
+let tt; function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove("show"),1700); }
+
+/* ---------- store ---------- */
+let S={bank:{},j:{},mus:{},qc:{}};
+try{ const r=localStorage.getItem("eel-ch1"); if(r) S=Object.assign(S,JSON.parse(r)); }catch(e){}
+const save=()=>{ try{ localStorage.setItem("eel-ch1",JSON.stringify(S)); }catch(e){} };
+
+function parseNum(s){
+  s=String(s).trim().replace(/\s/g,"").replace(/−/g,"-").replace(/,/g,".");
+  if(!s) return NaN;
+  s=s.replace(/^10\^/,"1e").replace(/[×x*]10\^?/i,"e");
+  let v=Number(s); if(isNaN(v)) v=parseFloat(s); return v;
+}
+const close=(v,a,tol)=> a===0 ? Math.abs(v)<0.01 : Math.abs(v-a)<=Math.abs(a)*(tol||0.02);
+
+/* ---------- quick checks ---------- */
+$$(".qc").forEach(q=>{
+  const inp=$("input",q), fb=$(".fb",q), a=+q.dataset.a;
+  if(S.qc[q.dataset.id]){ inp.value=S.qc[q.dataset.id]; fb.innerHTML='<span class="ok">Correct</span>'; }
+  const go=()=>{ const v=parseNum(inp.value); if(isNaN(v)){ fb.innerHTML='<span class="no">Type a number.</span>'; return; }
+    if(close(v,a)){ fb.innerHTML='<span class="ok">Correct</span>'; S.qc[q.dataset.id]=inp.value; save(); } else fb.innerHTML='<span class="no">Not yet.</span> Check units and the formula.'; };
+  $("button",q).onclick=go; inp.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); });
+});
+
+/* ---------- sandbox ---------- */
+const svgT=$("#track"), path=$("#tpath"), cart=$("#cart");
+const PX=45, Y0=320, G=10, F_ON=3;
+const L=path.getTotalLength(), N=700, P=[];
+for(let i=0;i<=N;i++){ const p=path.getPointAtLength(L*i/N); P.push({x:p.x,y:p.y,h:(Y0-p.y)/PX,s:(L*i/N)/PX}); }
+let hg=""; for(let h=1;h<=6;h++){ const y=Y0-h*PX; hg+='<line x1="10" x2="810" y1="'+y+'" y2="'+y+'" style="stroke:var(--line);stroke-width:1"/><text x="784" y="'+(y-4)+'" style="font-size:13px">'+h+' m</text>'; }
+$("#hgrid").innerHTML=hg;
+let SB={m:2,v0:0,fric:false,i:0,run:false};
+const ME0=()=>SB.m*G*P[0].h+0.5*SB.m*SB.v0*SB.v0;
+function avail(i){ return ME0()-(SB.fric?F_ON*P[i].s:0)-SB.m*G*P[i].h; }
+function reach(){ let k=0; while(k<N && avail(k+1)>=0) k++; return k; }
+function drawSB(){
+  const R=reach(); if(SB.i>R) SB.i=R;
+  const p=P[SB.i]; cart.setAttribute("transform","translate("+p.x+","+(p.y-17)+")");
+  cart.setAttribute("aria-valuenow",Math.round(SB.i/N*100));
+  $("#hline").setAttribute("x1",p.x); $("#hline").setAttribute("x2",p.x); $("#hline").setAttribute("y1",p.y);
+  $("#hlab").setAttribute("x",p.x+6); $("#hlab").setAttribute("y",(p.y+Y0)/2); $("#hlab").textContent="h = "+p.h.toFixed(2)+" m";
+  let d=""; if(R<N){ d="M"+P[R].x+" "+P[R].y; for(let k=R+1;k<=N;k+=3) d+=" L"+P[k].x+" "+P[k].y; }
+  $("#nogo").setAttribute("d",d);
+  const E0=ME0(), PE=SB.m*G*p.h, Q=SB.fric?F_ON*p.s:0, KE=Math.max(0,E0-Q-PE), ME=PE+KE, v=Math.sqrt(2*KE/SB.m);
+  const w=x=>Math.max(0,Math.min(100,x/E0*100))+"%";
+  $("#bPE").style.width=w(PE); $("#bKE").style.width=w(KE); $("#bME").style.width=w(ME); $("#bQ").style.width=w(Q);
+  $("#vPE").textContent=fmt(PE,1)+" J"; $("#vKE").textContent=fmt(KE,1)+" J"; $("#vME").textContent=fmt(ME,1)+" J"; $("#vQ").textContent=fmt(Q,1)+" J";
+  $("#hv").textContent="h = "+p.h.toFixed(2)+" m · v = "+v.toFixed(2)+" m/s · distance from A = "+p.s.toFixed(1)+" m";
+  let msg="";
+  if(SB.i===R && R<N) msg="Turning point: KE = 0 here. The cart cannot go further (red dashes): it would need more ME than it has.";
+  else if(SB.i===N) msg="It cleared every hill and reached the end of the track.";
+  else if(SB.i===0) msg=SB.v0? "At A: launched, so KE(A) = ½ m V² is not zero." : "At A: released from rest, so KE(A) = 0 and ME = GPE(A).";
+  $("#smsg").textContent=msg; $("#smsg").className="msg "+(SB.i===R&&R<N?"heat":"");
+}
+function nearest(evt){
+  const pt=svgT.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY;
+  const q=pt.matrixTransform(svgT.getScreenCTM().inverse());
+  let best=0,bd=1e9; for(let i=0;i<=N;i++){ const dx=P[i].x-q.x, dy=P[i].y-q.y, dd=dx*dx+dy*dy; if(dd<bd){bd=dd;best=i;} } return best;
+}
+let drag=false;
+cart.addEventListener("pointerdown",e=>{ drag=true; SB.run=false; cart.setPointerCapture(e.pointerId); cart.style.cursor="grabbing"; });
+cart.addEventListener("pointermove",e=>{ if(!drag) return; const n=nearest(e); const R=reach();
+  if(SB.fric && n<SB.i){ /* with friction the distance travelled only grows: no going back */ } else SB.i=Math.min(n,R); drawSB(); });
+cart.addEventListener("pointerup",()=>{ drag=false; cart.style.cursor="grab"; });
+svgT.addEventListener("pointerdown",e=>{ if(e.target.closest("#cart")) return; SB.run=false; const n=nearest(e), R=reach(); if(!(SB.fric&&n<SB.i)) SB.i=Math.min(n,R); drawSB(); });
+cart.addEventListener("keydown",e=>{ const R=reach(); if(e.key==="ArrowRight"||e.key==="ArrowUp"){ SB.i=Math.min(R,SB.i+7); e.preventDefault(); } if((e.key==="ArrowLeft"||e.key==="ArrowDown") && !SB.fric){ SB.i=Math.max(0,SB.i-7); e.preventDefault(); } drawSB(); });
+$("#sm").oninput=e=>{ SB.m=+e.target.value; $("#smo").textContent=SB.m+" kg"; drawSB(); };
+$("#sv").oninput=e=>{ SB.v0=+e.target.value; $("#svo").textContent=SB.v0+" m/s"; drawSB(); };
+$("#fr").onclick=e=>{ SB.fric=!SB.fric; e.target.setAttribute("aria-pressed",SB.fric); e.target.textContent="Friction: "+(SB.fric?"on · f = 3 N":"off"); SB.i=0; drawSB(); };
+$("#rst").onclick=()=>{ SB.run=false; SB.i=0; drawSB(); };
+let lastT=0;
+function frame(t){ if(!SB.run) return; const dt=Math.min(.05,(t-lastT)/1000||.016); lastT=t;
+  const R=reach(); const p=P[SB.i]; const KE=Math.max(0,ME0()-(SB.fric?F_ON*p.s:0)-SB.m*G*p.h); let v=Math.sqrt(2*KE/SB.m); if(v<0.6) v=0.6;
+  const ds=v*dt*2.2; const step=Math.max(1,Math.round(ds/(L/N/PX))); SB.i=Math.min(R,SB.i+step); drawSB();
+  if(SB.i>=R){ SB.run=false; return; } requestAnimationFrame(frame); }
+$("#run").onclick=()=>{ SB.i=0; SB.run=true; lastT=performance.now(); requestAnimationFrame(frame); };
+drawSB();
+
+/* ---------- figures ---------- */
+const A='marker-end="url(#arw)"', A2='marker-start="url(#arw)" marker-end="url(#arw)"';
+const FIG={
+throw15:`<svg class="fig" viewBox="0 0 320 260" role="img" aria-label="Ball launched upward from O, 1 m above the ground">
+ <line class="gnd" x1="20" y1="230" x2="300" y2="230"/><line class="ref" x1="20" y1="230" x2="300" y2="230"/>
+ <text class="r" x="24" y="252">ground · GPE = 0</text>
+ <line class="thin" x1="150" y1="180" x2="150" y2="90"/>
+ <circle class="dot" cx="150" cy="180" r="6"/><text class="b" x="162" y="196">O</text>
+ <circle class="ball" cx="150" cy="90" r="8"/><text class="b" x="164" y="86">A</text><text class="m" x="164" y="104">h_max</text>
+ <circle cx="230" cy="105" r="6" style="fill:none;stroke:var(--heat);stroke-width:2"/><text class="h" x="244" y="102">A′</text><text class="h" x="244" y="119">real</text>
+ <line class="ak" x1="122" y1="180" x2="122" y2="138" ${A}/><text class="b" x="96" y="150" style="fill:var(--ke)">V₀</text>
+ <line class="ap" x1="48" y1="230" x2="48" y2="180" ${A2}/><text class="p" x="56" y="211">1 m</text>
+ <line class="ap" x1="268" y1="230" x2="268" y2="107" ${A2}/><text class="p" x="276" y="170">H</text></svg>`,
+para16:`<svg class="fig" viewBox="0 0 320 280" role="img" aria-label="Parachutist falling from a helicopter">
+ <rect class="solid" x="118" y="14" width="74" height="24" rx="11"/><line class="ink" x1="96" y1="10" x2="214" y2="10"/><line class="ink" x1="155" y1="10" x2="155" y2="14"/>
+ <circle class="dot" cx="155" cy="54" r="6"/><text class="b" x="168" y="58">A · 1000 m · rest</text>
+ <line class="thin" x1="155" y1="60" x2="155" y2="240"/>
+ <circle class="dot" cx="155" cy="120" r="6"/><text class="b" x="168" y="118">B · 920 m</text><text class="m" x="168" y="136">40 m/s, opens parachute</text>
+ <path class="soft" d="M120 186 Q155 150 190 186 Z"/><line class="ink" x1="122" y1="186" x2="155" y2="212" style="stroke-width:1.4"/><line class="ink" x1="188" y1="186" x2="155" y2="212" style="stroke-width:1.4"/><circle class="dot" cx="155" cy="214" r="6"/>
+ <line class="gnd" x1="20" y1="250" x2="300" y2="250"/><line class="ref" x1="20" y1="250" x2="300" y2="250"/>
+ <text class="r" x="24" y="272">ground · GPE = 0</text><text class="m" x="190" y="242">6 m/s</text></svg>`,
+track:(h,bc,note)=>`<svg class="fig" viewBox="0 0 340 210" role="img" aria-label="Track ABC: incline AB then horizontal BC">
+ <line class="ref" x1="10" y1="160" x2="330" y2="160"/><text class="r" x="330" y="200" text-anchor="end">reference level through BC</text>
+ <path class="ink" d="M90 34 L170 160 L320 160"/>
+ <path class="fric" d="M170 165 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l8 -4 l8 4 l2 1"/>
+ <circle class="ball" cx="92" cy="24" r="9"/><text class="b" x="106" y="28">A (rest)</text>
+ <text class="b" x="164" y="150" text-anchor="end">B</text><text class="b" x="316" y="150">C</text>
+ <line class="ap" x1="22" y1="160" x2="22" y2="34" ${A2}/><text class="p" x="28" y="104">${h}</text>
+ <text class="h" x="245" y="184" text-anchor="middle">${bc}</text><text class="m" x="140" y="80">${note}</text></svg>`,
+stone18:`<svg class="fig" viewBox="0 0 320 290" role="img" aria-label="Stone thrown up from a platform above the sea">
+ <rect class="solid" x="40" y="132" width="70" height="128"/><circle class="dot" cx="118" cy="128" r="6"/><text class="b" x="74" y="122" text-anchor="middle">A</text>
+ <path class="thin" d="M118 128 L118 52 Q122 40 132 52 L200 254"/>
+ <circle class="ball" cx="118" cy="50" r="8"/><text class="b" x="134" y="44">B (highest point)</text>
+ <line class="ak" x1="140" y1="122" x2="140" y2="84" ${A}/><text class="b" x="146" y="102" style="fill:var(--ke)">V_A</text>
+ <path class="water" d="M10 258 q15 -8 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 V284 H10 Z"/>
+ <circle class="dot" cx="200" cy="254" r="6"/><text class="b" x="212" y="250">C</text><text class="r" x="196" y="280">sea level · GPE = 0</text>
+ <line class="ap" x1="24" y1="256" x2="24" y2="132" ${A2}/><text class="p" x="6" y="122">h_A = 30 m</text></svg>`,
+diver19:`<svg class="fig" viewBox="0 0 340 280" role="img" aria-label="Diver jumping from a board into a pool">
+ <rect class="solid" x="10" y="112" width="104" height="8"/><rect class="solid" x="22" y="120" width="12" height="122"/>
+ <path class="thin" d="M110 108 Q 150 30 196 108 Q 222 168 232 244"/>
+ <line style="stroke:var(--muted);stroke-width:1.4;stroke-dasharray:2 4" x1="110" y1="108" x2="196" y2="108"/>
+ <circle class="dot" cx="110" cy="108" r="6"/><text class="b" x="96" y="98" text-anchor="end">A</text>
+ <circle class="dot" cx="152" cy="70" r="6"/><text class="b" x="160" y="60">B · 7 m</text>
+ <circle class="dot" cx="196" cy="108" r="6"/><text class="b" x="206" y="104">A′</text>
+ <path class="water" d="M10 246 q15 -7 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 V272 H10 Z"/>
+ <circle class="dot" cx="232" cy="244" r="6"/><text class="b" x="244" y="240">D</text><text class="r" x="330" y="268" text-anchor="end">water · GPE = 0</text>
+ <line class="ap" x1="290" y1="244" x2="290" y2="110" ${A2}/><text class="p" x="296" y="180">6 m</text></svg>`,
+pend21:`<svg class="fig" viewBox="0 0 320 210" role="img" aria-label="Pendulum released from horizontal, bouncing on a plate">
+ <rect class="solid" x="140" y="24" width="40" height="8"/><circle class="dot" cx="160" cy="40" r="5"/><text class="b" x="150" y="20">O</text>
+ <line class="ink" x1="160" y1="40" x2="280" y2="40" style="stroke-width:1.8"/><circle class="ball" cx="280" cy="40" r="8"/><text class="b" x="292" y="36">A</text>
+ <path class="thin" d="M280 40 A120 120 0 0 1 160 160"/><path class="thin" d="M160 160 A120 120 0 0 1 60 106" style="stroke:var(--heat)"/>
+ <circle class="dot" cx="60" cy="106" r="6"/><text class="h" x="22" y="100">B</text>
+ <rect x="138" y="160" width="44" height="7" style="fill:var(--ink)"/><text class="m" x="190" y="158">plate P</text><text class="b" x="146" y="190">C</text>
+ <line class="gnd" x1="10" y1="168" x2="310" y2="168"/><line class="ref" x1="10" y1="168" x2="310" y2="168"/><text class="r" x="310" y="204" text-anchor="end">ground · GPE = 0</text>
+ <line class="ap" x1="304" y1="166" x2="304" y2="44" ${A2}/><text class="p" x="262" y="112">1 m</text></svg>`,
+launch22:`<svg class="fig" viewBox="0 0 320 250" role="img" aria-label="Ball launched from A, top B, lands at C">
+ <path class="thin" d="M50 140 Q150 30 280 215"/>
+ <circle class="ball" cx="50" cy="140" r="8"/><text class="b" x="36" y="132" text-anchor="end">A</text>
+ <circle class="dot" cx="129" cy="99" r="6"/><text class="b" x="122" y="86">B</text>
+ <circle class="dot" cx="280" cy="215" r="6"/><text class="b" x="290" y="210">C</text>
+ <line class="ak" x1="58" y1="134" x2="88" y2="104" ${A}/><text class="b" x="74" y="122" style="fill:var(--ke)">V_A</text>
+ <line class="gnd" x1="10" y1="217" x2="310" y2="217"/><line class="ref" x1="10" y1="217" x2="310" y2="217"/><text class="r" x="12" y="240">ground · GPE = 0</text>
+ <line class="ap" x1="20" y1="215" x2="20" y2="144" ${A2}/><text class="p" x="24" y="186">3 m</text>
+ <line class="ap" x1="129" y1="215" x2="129" y2="106" ${A2}/><text class="p" x="134" y="170">h_B</text></svg>`,
+ramps22:`<svg class="fig" viewBox="0 0 360 220" role="img" aria-label="A curved ramp and a plane ramp between the same heights">
+ <path class="ink" d="M24 40 C 60 160, 110 110, 150 90 L170 90"/><circle class="ball" cx="24" cy="32" r="8"/><text class="b" x="36" y="30">A</text><circle class="dot" cx="150" cy="90" r="6"/><text class="b" x="146" y="80">B</text>
+ <path class="ink" d="M206 40 L326 90 L346 90"/><circle class="ball" cx="206" cy="32" r="8"/><text class="b" x="218" y="30">A</text><circle class="dot" cx="326" cy="90" r="6"/><text class="b" x="322" y="80">B</text>
+ <line class="gnd" x1="10" y1="170" x2="350" y2="170"/><line class="ref" x1="10" y1="170" x2="350" y2="170"/>
+ <text class="m" x="20" y="195">Doc. 1 · curved</text><text class="m" x="206" y="195">Doc. 2 · plane</text><text class="r" x="350" y="214" text-anchor="end">ground · GPE = 0</text>
+ <line class="ap" x1="190" y1="168" x2="190" y2="42" ${A2}/><text class="p" x="160" y="132">3.25 m</text>
+ <line class="ap" x1="170" y1="168" x2="170" y2="94" ${A2}/></svg>`,
+juggle24:`<svg class="fig" viewBox="0 0 320 250" role="img" aria-label="Juggler's ball from A through B, C, D to F">
+ <path class="thin" d="M60 150 C 80 60, 240 60, 260 150"/>
+ <circle class="ball" cx="60" cy="150" r="8"/><text class="b" x="46" y="146" text-anchor="end">A</text>
+ <circle class="dot" cx="97" cy="99" r="6"/><text class="b" x="80" y="94" text-anchor="end">B</text>
+ <circle class="dot" cx="160" cy="82" r="6"/><text class="b" x="154" y="70">C</text>
+ <circle class="dot" cx="223" cy="99" r="6"/><text class="b" x="240" y="94">D</text>
+ <circle class="dot" cx="260" cy="150" r="6"/><text class="b" x="274" y="146">F</text>
+ <line style="stroke:var(--muted);stroke-width:1.4;stroke-dasharray:2 4" x1="60" y1="150" x2="260" y2="150"/>
+ <line class="gnd" x1="10" y1="230" x2="310" y2="230"/><line class="ref" x1="10" y1="230" x2="310" y2="230"/><text class="r" x="12" y="248">ground · GPE = 0</text>
+ <line class="ap" x1="30" y1="228" x2="30" y2="154" ${A2}/><text class="p" x="36" y="198">1.6 m</text></svg>`,
+hydro:`<svg class="fig" viewBox="0 0 340 230" role="img" aria-label="Lake behind a dam, penstock down to the turbine-generator">
+ <path class="water" d="M10 40 H120 L132 110 H10 Z"/><text class="b" x="20" y="64">lake water</text>
+ <path class="solid" d="M120 30 L140 30 L150 120 L120 120 Z"/><text class="m" x="128" y="24">dam</text>
+ <path class="ink" d="M140 100 L270 190" style="stroke-width:8;stroke:var(--line)"/><path class="ink" d="M140 100 L270 190"/>
+ <text class="m" x="196" y="128" transform="rotate(34 196 128)">penstock</text>
+ <rect class="soft" x="262" y="178" width="66" height="32" rx="6"/><text class="b" x="270" y="198" style="font-size:13px">turbine-gen.</text>
+ <line class="gnd" x1="10" y1="212" x2="330" y2="212"/>
+ <line class="ap" x1="30" y1="210" x2="30" y2="112" ${A2}/><text class="p" x="38" y="168">h</text></svg>`
+};
+
+/* ---------- moves ---------- */
+const MOVES=[
+ ["M1","Calculate KE, GPE, ME at a point","the opening of every exercise",10],
+ ["M2","Conservation gives a speed or height","ME(A) = ME(B)",8],
+ ["M3","\u201cWhy is ME conserved?\u201d","or \u201cdeduce air resistance is negligible\u201d",7],
+ ["M4","ME not conserved: loss, ΔME, %, f","\u201cin reality …\u201d",6],
+ ["M5","Choose with justification","every ME exercise since 2019",5,true],
+ ["M6","Show that / deduce that","use the given value afterwards",5],
+ ["M7","Highest point: KE = 0","then h = ME / mg",3],
+ ["M8","Read a table of V, h, GPE, KE","new since 2022",2,true],
+ ["M9","Form of the lost energy","thermal energy (heat)",2],
+ ["M10","Work of the weight","W = mgh",1],
+ ["M11","Find the mass from GPE","m = GPE / gh",1]
+];
+
+/* ---------- official bank ---------- */
+const N_=(n,q,a,u,m,k,o)=>Object.assign({n,q,t:"num",a,u,m,k},o||{});
+const T_=(n,q,m,k)=>({n,q,t:"text",m,k});
+const C_=(n,q,ch,c,m,k)=>({n,q,t:"mcq",ch,c,m,k});
+const H_=q=>({t:"head",q});
+const BANK=[
+{id:"2015-1",yr:"2015 · 1st session",title:"Conservation and non-conservation of ME",pts:7,moves:["M1","M2","M3","M4","M7"],fig:FIG.throw15,
+ intro:"A ball considered as a particle of mass m = 0.5 kg, is launched vertically upward from a point O, 1 m above the ground, with a speed V₀ = 6 m/s.",
+ take:"The horizontal plane passing through the ground as a gravitational potential energy reference; g = 10 m/s².",
+ parts:[H_("1) Calculate at the point O:"),
+  N_("1-a","the kinetic energy of the ball;",9,"J",1,"\\(KE_O = \\tfrac12 m V_0^2 = \\tfrac12\\times0.5\\times36 = 9\\ \\text{J}\\)"),
+  N_("1-b","the gravitational potential energy of the system (S) [ball, Earth];",5,"J",1,"\\(GPE = mgh = 0.5\\times10\\times1 = 5\\ \\text{J}\\)"),
+  N_("1-c","the mechanical energy of (S).",14,"J",0.5,"\\(ME = GPE + KE = 14\\ \\text{J}\\)"),
+  H_("2) Neglecting air resistance. The ball reaches its maximum height h_max at a point A above the ground."),
+  N_("2-a","Specify, at A, the value of the mechanical energy of (S).",14,"J",0.75,"No air resistance, so ME is conserved: \\(ME_A = ME_O = 14\\ \\text{J}\\)."),
+  N_("2-b","Determine, at A, the gravitational potential energy of (S).",14,"J",0.75,"\\(ME_A = GPE_A + KE_A\\), but \\(KE_A = 0\\) (maximum height), so \\(GPE_A = 14\\ \\text{J}\\)."),
+  N_("2-c","Deduce h_max.",2.8,"m",0.5,"\\(GPE_A = m g h_{max} \\Rightarrow h_{max} = \\dfrac{14}{0.5\\times10} = 2.8\\ \\text{m}\\)"),
+  H_("3) In reality, the ball reaches a point A′ of height H = 2.5 m above the ground with a zero speed."),
+  N_("3-a","Determine, at A′, the mechanical energy of (S).",12.5,"J",0.5,"\\(KE_{A'} = 0\\) (V = 0), so \\(ME_{A'} = mgH = 0.5\\times10\\times2.5 = 12.5\\ \\text{J}\\)"),
+  N_("3-b","Calculate the variation ΔME of the mechanical energy of (S) between O and A′.",-1.5,"J",1,"\\(\\Delta ME = ME_{A'} - ME_O = 12.5 - 14 = -1.5\\ \\text{J}\\)"),
+  N_("3-c","Calculate OA′.",1.5,"m",0.5,"\\(OA' = 2.5 - 1 = 1.5\\ \\text{m}\\)"),
+  N_("3-d","The air resistance is a force of constant magnitude f. Knowing that ΔME = − f × OA′, calculate f.",1,"N",0.5,"\\(-1.5 = -f\\times1.5 \\Rightarrow f = 1\\ \\text{N}\\)")]},
+{id:"2016-1",yr:"2016 · 1st session",title:"The fall of a parachutist",pts:7,moves:["M1","M4","M9"],fig:FIG.para16,
+ intro:"A parachutist (S), of total mass M = 100 kg, falls without initial velocity from a stationary helicopter at an altitude h_A = 1000 m. When the parachutist reaches a speed of 40 m/s at an altitude h_B = 920 m, he opens his parachute and then reaches the ground with a speed of 6 m/s.",
+ take:"The horizontal plane passing through the ground as a gravitational potential energy reference (GPE = 0); g = 10 m/s².",
+ parts:[H_("1) The parachutist is at the altitude h_A = 1000 m."),
+  N_("1-a","Calculate the gravitational potential energy of the system [(S), Earth].",1000000,"J",1,"\\(GPE(A) = M g h_A = 100\\times10\\times1000 = 1\\,000\\,000\\ \\text{J}\\)"),
+  N_("1-b","Determine the mechanical energy of the system [(S), Earth].",1000000,"J",1.5,"\\(KE(A) = 0\\) (falls without initial velocity), so \\(ME(A) = 1\\,000\\,000\\ \\text{J}\\)."),
+  H_("2) The parachutist is at the altitude h_B = 920 m."),
+  N_("2-a","Calculate the gravitational potential energy of the system [(S), Earth].",920000,"J",0.5,"\\(GPE(B) = 100\\times10\\times920 = 920\\,000\\ \\text{J}\\)"),
+  N_("2-b","Calculate the kinetic energy of (S).",80000,"J",1,"\\(KE(B) = \\tfrac12\\times100\\times40^2 = 80\\,000\\ \\text{J}\\)"),
+  N_("2-c","Deduce the mechanical energy of the system [(S), Earth].",1000000,"J",1,"\\(ME(B) = 80\\,000 + 920\\,000 = 1\\,000\\,000\\ \\text{J}\\)"),
+  N_("3","Determine the mechanical energy of the system [(S), Earth] when (S) reaches the ground.",1800,"J",1,"\\(GPE = 0\\) (on the reference); \\(KE = \\tfrac12\\times100\\times6^2 = 1800\\ \\text{J}\\), so \\(ME_{ground} = 1800\\ \\text{J}\\)."),
+  C_("4-a","Specify in which phase of fall, before or after opening the parachute, there is a loss of mechanical energy.",["before opening","after opening"],1,0.5,"After opening, because \\(ME(B) = 10^6\\ \\text{J} &gt; ME_{ground} = 1800\\ \\text{J}\\), while ME(A) = ME(B)."),
+  C_("4-b","In what form of energy does this loss appear?",["kinetic energy","heat (thermal energy)","nuclear energy"],1,0.5,"Heat, or thermal energy.")]},
+{id:"2016-2h",yr:"2016 · 2nd session",title:"Hydroelectric plant (Ex. 1, part 5)",pts:2.5,moves:["M1"],fig:FIG.hydro,
+ intro:"In a hydroelectric power plant, a quantity (Q) of water of mass m = 10⁴ kg falls in each second from a height h = 100 m above the axis of the turbine, which is taken as a reference level of gravitational potential energy.",
+ take:"g = 10 m/s². Efficiency r = Eₑ / GPE = 0.6, where Eₑ is the electric energy furnished.",
+ parts:[N_("5-a","Calculate the gravitational potential energy GPE of the system [(Q), Earth] when (Q) is at the height h.",1e7,"J",1,"\\(GPE = mgh = 10^4\\times10\\times100 = 10^7\\ \\text{J}\\)"),
+  N_("5-b-i","Calculate the electric energy furnished by this power plant in one second.",6e6,"J",0.75,"\\(E_e = 0.6\\times10^7 = 6\\times10^6\\ \\text{J}\\)"),
+  N_("5-b-ii","Deduce the electric energy furnished in one day.",5.184e11,"J",0.75,"1 day = 24 × 3600 = 86 400 s; \\(E = 6\\times10^6\\times86\\,400 = 5.184\\times10^{11}\\ \\text{J}\\)")]},
+{id:"2017-1",yr:"2017 · 1st session",title:"Mechanical energy · track ABC",pts:7,moves:["M1","M2","M3","M4"],fig:FIG.track("h = 1.5 m","friction f on BC = 2 m","no friction"),
+ intro:"Consider a track ABC situated in a vertical plane, formed of an inclined part AB and a horizontal part BC of length BC = 2 m. A solid (S), considered as a particle of mass m = 0.1 kg, is released from rest from point A. (S) is submitted to a friction force of constant magnitude f, only along BC.",
+ take:"The horizontal plane passing through BC is the reference level for gravitational potential energy. h = 1.5 m; g = 10 m/s².",
+ parts:[H_("1) At point A:"),
+  N_("1-1","Calculate the value of the kinetic energy KE(A) of the solid (S).",0,"J",0.5,"\\(KE(A) = \\tfrac12 m V_A^2 = 0\\ \\text{J}\\) (released from rest)."),
+  N_("1-2","Calculate the value of the gravitational potential energy PEg(A) of the system [(S) – Earth].",1.5,"J",1,"\\(PE_g(A) = mgh = 0.1\\times10\\times1.5 = 1.5\\ \\text{J}\\)"),
+  N_("1-3","Deduce the value of the mechanical energy ME(A) of the system [(S) – Earth].",1.5,"J",1,"\\(ME(A) = PE_g(A) + KE(A) = 1.5\\ \\text{J}\\)"),
+  H_("2) The solid (S) reaches point B with a speed V_B."),
+  T_("2-1","The mechanical energy of the system [(S) – Earth] is conserved between A and B. Why?",0.5,"Because there is no friction between A and B."),
+  N_("2-2","Deduce the value of the mechanical energy ME(B).",1.5,"J",0.5,"\\(ME(B) = ME(A) = 1.5\\ \\text{J}\\)"),
+  N_("2-3","Determine the speed V_B.",5.48,"m/s",1.5,"\\(PE_g(B) = 0\\) (B on the reference), so \\(1.5 = \\tfrac12\\times0.1\\times V_B^2 \\Rightarrow V_B = \\sqrt{30} \\approx 5.5\\ \\text{m/s}\\)"),
+  H_("3) The solid (S) continues along BC and reaches point C with a zero speed (V_C = 0)."),
+  N_("3-1","Calculate the mechanical energy ME(C).",0,"J",1,"\\(PE_g(C) = 0\\) (on the reference) and \\(KE(C) = 0\\) (V_C = 0), so \\(ME(C) = 0\\ \\text{J}\\)."),
+  N_("3-2","Calculate f knowing that ME(B) – ME(C) = f × BC.",0.75,"N",1,"\\(f = \\dfrac{1.5 - 0}{2} = 0.75\\ \\text{N}\\)")]},
+{id:"2018-1",yr:"2018 · 1st session",title:"Mechanical energy · stone above the sea",pts:7.5,moves:["M1","M2","M3","M4","M7","M9"],fig:FIG.stone18,
+ intro:"A girl standing on a platform throws a stone, considered as a particle of mass m = 0.1 kg, vertically upwards from point A found at a height h_A = 30 m above sea level, with a speed V_A = 12 m/s. The stone reaches its maximum height at point B, then falls down to reach point C at sea level.",
+ take:"The sea level as a gravitational potential energy reference for the system [stone, Earth]; g = 10 m/s².",
+ parts:[H_("1) Calculate, at point A, at the launching instant:"),
+  N_("1-1","the kinetic energy of the stone;",7.2,"J",1,"\\(KE(A) = \\tfrac12\\times0.1\\times12^2 = 7.2\\ \\text{J}\\)"),
+  N_("1-2","the gravitational potential energy of the system [stone, Earth];",30,"J",1,"\\(GPE(A) = 0.1\\times10\\times30 = 30\\ \\text{J}\\)"),
+  N_("1-3","the mechanical energy of the system [stone, Earth].",37.2,"J",1,"\\(ME(A) = 7.2 + 30 = 37.2\\ \\text{J}\\)"),
+  H_("2) In this part, air resistance is neglected."),
+  N_("2-1","Specify the value of the mechanical energy of the system [stone, Earth] at point B.",37.2,"J",1,"\\(ME_B = ME_A = 37.2\\ \\text{J}\\), because air resistance is neglected."),
+  N_("2-2","Determine the maximum height h_B reached by the stone above sea level.",37.2,"m",1,"\\(KE_B = 0\\) (maximum height): \\(37.2 = 0.1\\times10\\times h_B \\Rightarrow h_B = 37.2\\ \\text{m}\\)"),
+  N_("2-3","Determine the speed V_C of the stone as it reaches point C.",27.28,"m/s",1,"\\(GPE_C = 0\\) (reference): \\(37.2 = \\tfrac12\\times0.1\\times V_C^2 \\Rightarrow V_C = \\sqrt{744} \\approx 27.3\\ \\text{m/s}\\)"),
+  H_("3) In reality air resistance is not neglected. The stone reaches point C with a speed V_C = 21 m/s."),
+  N_("3-1","Calculate the new value of the mechanical energy of the system [stone, Earth] at point C.",22.05,"J",0.5,"\\(ME_{new} = \\tfrac12\\times0.1\\times21^2 + 0 = 22.05\\ \\text{J}\\)"),
+  N_("3-2","Calculate the decrease in the mechanical energy between points A and C.",15.15,"J",0.5,"\\(37.2 - 22.05 = 15.15\\ \\text{J}\\)"),
+  C_("3-3","In what form of energy does this decrease in mechanical energy appear?",["kinetic energy","thermal energy","chemical energy"],1,0.5,"Thermal energy.")]},
+{id:"2019-2",yr:"2019 · 2nd session",title:"Diver's jump",pts:7,moves:["M1","M3","M5","M10"],fig:FIG.diver19,
+ intro:"A diver, considered as a particle of mass m = 80 kg, jumps from the board at point A situated at a height h_A = 6 m above the surface of the water, with a speed V_A = 5 m/s, passes through point A′ of height h_A′ = h_A and reaches the surface of water at point D.",
+ take:"The surface of water as a reference level for gravitational potential energy; g = 10 m/s².",
+ parts:[H_("1) Calculate at point A:"),
+  N_("1-1","the kinetic energy KE_A of the diver;",1000,"J",1,"\\(KE_A = \\tfrac12\\times80\\times5^2 = 1000\\ \\text{J}\\)"),
+  N_("1-2","the gravitational potential energy GPE_A of the system (diver, Earth);",4800,"J",1,"\\(GPE_A = 80\\times10\\times6 = 4800\\ \\text{J}\\)"),
+  N_("1-3","the mechanical energy ME_A of the system (diver, Earth).",5800,"J",0.75,"\\(ME_A = 1000 + 4800 = 5800\\ \\text{J}\\)"),
+  H_("2) The diver attains point B, at a height h_B = 7 m, with a kinetic energy KE_B = 200 J."),
+  N_("2-1","Determine the mechanical energy ME_B of the system (diver, Earth) at point B.",5800,"J",0.75,"\\(ME_B = 200 + 80\\times10\\times7 = 5800\\ \\text{J}\\)"),
+  T_("2-2","Deduce that air resistance is negligible.",0.5,"ME_A = ME_B = 5800 J: the mechanical energy is conserved between A and B, thus air resistance is negligible."),
+  H_("3) Choose with justification the correct answer."),
+  C_("3-1","During the motion between B and D, the kinetic energy of the diver:",["a) increases","b) decreases","c) remains the same"],0,0.75,"a) Between B and D, GPE decreases and ME is conserved, so KE increases."),
+  C_("3-2","GPE_A and GPE_A′ are such that:",["a) GPE_A < GPE_A′","b) GPE_A = GPE_A′","c) GPE_A > GPE_A′"],1,0.75,"b) Equal, since h_A = h_A′."),
+  C_("3-3","The speeds V_A and V_A′ are such that:",["a) V_A < V_A′","b) V_A = V_A′","c) V_A > V_A′"],1,0.75,"b) \\(ME_A = ME_{A'}\\) and \\(GPE_A = GPE_{A'}\\), so \\(KE_A = KE_{A'}\\), hence \\(V_A = V_{A'}\\)."),
+  C_("3-4","The work W done by the weight of the diver between A′ and D is:",["a) 1000 J","b) 4800 J","c) 5600 J"],1,0.75,"b) \\(W = mgh_{A'} = 80\\times10\\times6 = 4800\\ \\text{J}\\)")]},
+{id:"2021-1",yr:"2021 · 1st session",title:"Motion of a sled",pts:7,moves:["M1","M2","M4","M5","M6"],fig:FIG.track("h_A = 1.8 m","stops at C","no friction on AB"),
+ intro:"A child sitting on a sled slides on a track ABC, located in a vertical plane. The system (Child, Sled), considered as a particle (S) of mass m = 85 kg, is at rest at point A of height h_A = 1.8 m above the horizontal part BC. (S) slides down without friction on the inclined part AB.",
+ take:"The horizontal plane containing BC as the reference level for gravitational potential energy of the system [(S), Earth]; g = 10 m/s².",
+ parts:[N_("1","Calculate the value of the gravitational potential energy GPE(A) of the system [(S), Earth] at A.",1530,"J",1,"\\(GPE(A) = 85\\times10\\times1.8 = 1530\\ \\text{J}\\)"),
+  N_("2","Deduce the value of the mechanical energy ME(A).",1530,"J",1,"\\(ME_A = 0 + 1530 = 1530\\ \\text{J}\\) (at rest, so KE_A = 0)."),
+  T_("3","Show, using the conservation of mechanical energy between A and B, that KE(B) = 1530 J.",1,"\\(ME_A = ME_B = KE_B + GPE_B\\). B is on the reference, so \\(GPE_B = 0\\). Then \\(KE_B = ME_A = 1530\\ \\text{J}\\)."),
+  N_("4","Deduce the value of the speed V_B of (S) at B.",6,"m/s",1,"\\(V_B = \\sqrt{\\dfrac{2\\times1530}{85}} = 6\\ \\text{m/s}\\)"),
+  H_("5) (S) continues on BC and stops at C. Choose with justification the correct answer."),
+  C_("5-1","Between B and C, the kinetic energy of (S):",["a) increases","b) decreases","c) remains the same"],1,0.75,"b) Decreases: V_B = 6 m/s and V_C = 0 (it stops at C)."),
+  C_("5-2","Between B and C, the GPE of the system [(S), Earth]:",["a) increases","b) decreases","c) remains the same"],2,0.75,"c) Remains the same: all along BC, (S) is on the reference level (GPE = 0)."),
+  C_("5-3","The mechanical energy ME(C) is:",["a) 0 J","b) 1530 J","c) 6 J"],0,0.75,"a) \\(ME_C = KE_C + GPE_C = 0 + 0 = 0\\ \\text{J}\\)"),
+  C_("5-4","The loss in mechanical energy between B and C is:",["a) 1524 J","b) 1530 J","c) 6 J"],1,0.75,"b) \\(ME_B - ME_C = 1530 - 0 = 1530\\ \\text{J}\\)")]},
+{id:"2021-2",yr:"2021 · 2nd session",title:"Bouncing of a ball",pts:7.5,moves:["M1","M2","M3","M4","M6","M7"],fig:FIG.pend21,
+ intro:"A ball taken as a particle (S) of mass m = 100 g hangs from an inextensible massless string, of length 1 m, attached to a fixed point O. The string is shifted by 90°, and (S) is released from rest from point A, of height h_A = 1 m above the ground. (S) reaches the ground at point C. Air resistance is neglected.",
+ take:"The horizontal plane containing C as the reference level for GPE of the system [(S) – String – Earth]; g = 10 m/s².",
+ parts:[N_("1","Calculate the kinetic energy KE_A of (S) at A.",0,"J",1,"\\(KE_A = \\tfrac12 m v^2 = 0\\ \\text{J}\\) (released from rest)."),
+  N_("2","Calculate the gravitational potential energy GPE_A of the system at A.",1,"J",1,"\\(GPE_A = 0.1\\times10\\times1 = 1\\ \\text{J}\\) (100 g = 0.1 kg)."),
+  T_("3","Show that the mechanical energy at A is ME_A = 1 J.",1,"\\(ME_A = KE_A + GPE_A = 0 + 1 = 1\\ \\text{J}\\)"),
+  T_("4","The mechanical energy is conserved during the motion from A to C. Why?",0.5,"Because air resistance is neglected."),
+  H_("5) At C, (S) collides with a plate (P). The system loses 55 % of its mechanical energy, then (S) bounces back to a new maximum height h_B."),
+  N_("5-1","Calculate the mechanical energy of the system after the collision.",0.45,"J",1,"\\(ME' = 0.45\\times1 = 0.45\\ \\text{J}\\)"),
+  T_("5-2","Deduce that h_B = 0.45 m.",1,"At B, KE = 0: \\(0.45 = 0.1\\times10\\times h_B \\Rightarrow h_B = 0.45\\ \\text{m}\\)"),
+  N_("6","Calculate the ratio h_B / h_A.",0.45,"",1,"\\(\\dfrac{0.45}{1} = 0.45\\)"),
+  C_("7","(S) is suitable for a sports game if h_B / h_A = 0.54. Is it suitable?",["yes","no"],1,1,"No, since 0.45 ≠ 0.54.")]},
+{id:"2022-1",yr:"2022 · 1st session",title:"Launching a ball",pts:7.5,moves:["M1","M2","M3","M5","M6","M8"],fig:FIG.launch22,
+ intro:"A ball (S), considered as a particle, of mass m = 2 kg is launched with an initial speed V_A = 12 m/s from point A at a height h_A = 3 m above the ground. (S) reaches the ground at C with a speed V_C. Neglect air resistance.<div class='tablewrap' style='margin-top:8px'><table class='v' style='text-align:center'><tr><td>Position</td><td>A</td><td>B</td><td>C</td></tr><tr><td>V (m/s)</td><td>12</td><td>10</td><td>V_C</td></tr><tr><td>h (m)</td><td>3</td><td>h_B</td><td>0</td></tr></table></div>",
+ take:"The ground as the reference level for GPE of the system [(S), Earth]; g = 10 m/s².",
+ parts:[H_("1) Calculate at the instant of launching (S) at A:"),
+  N_("1-1","the kinetic energy of (S);",144,"J",1.5,"\\(KE_A = \\tfrac12\\times2\\times12^2 = 144\\ \\text{J}\\)"),
+  N_("1-2","the gravitational potential energy of the system [(S), Earth].",60,"J",1.5,"\\(GPE_A = 2\\times10\\times3 = 60\\ \\text{J}\\)"),
+  T_("2","Deduce that the mechanical energy at A is ME_A = 204 J.",0.5,"\\(ME_A = 144 + 60 = 204\\ \\text{J}\\)"),
+  T_("3","The mechanical energy of the system is conserved. Why?",0.5,"Because air resistance is neglected."),
+  T_("4-1","Show that the kinetic energy of (S) at B is 100 J.",0.5,"\\(KE_B = \\tfrac12\\times2\\times10^2 = 100\\ \\text{J}\\)"),
+  N_("4-2","Deduce the value of the GPE of the system at B.",104,"J",1,"\\(ME_A = ME_B\\): \\(204 = 100 + GPE_B \\Rightarrow GPE_B = 104\\ \\text{J}\\)"),
+  N_("4-3","Calculate the value of h_B.",5.2,"m",1,"\\(h_B = \\dfrac{104}{2\\times10} = 5.2\\ \\text{m}\\)"),
+  C_("4-4","Specify the correct statement.",["a) V_C < V_A","b) V_C > V_A","c) V_C = V_A"],1,1,"b) At C, GPE = 0 so \\(KE_C = ME = KE_A + GPE_A\\); since \\(GPE_A &gt; 0\\), \\(KE_C &gt; KE_A\\), so \\(V_C &gt; V_A\\) (V_C ≈ 14.28 m/s).")]},
+{id:"2022-2",yr:"2022 · 2nd session",title:"Motion on two different ramps",pts:6,moves:["M1","M2","M5","M6"],fig:FIG.ramps22,
+ intro:"A block (S), considered as a particle of mass m = 0.5 kg, is released from rest at point A at a height h_A = 3.25 m above the ground. (S) slides without friction along a ramp AB and reaches point B, at a height h_B = 2 m, with a speed V_B. First case: a curved ramp (Doc. 1).",
+ take:"The ground as a reference level for the GPE of the system [(S), Earth]; g = 10 m/s².",
+ parts:[H_("1) First case: curved ramp"),
+  N_("1-1a","Calculate the GPE of the system at A.",16.25,"J",1,"\\(GPE_A = 0.5\\times10\\times3.25 = 16.25\\ \\text{J}\\)"),
+  N_("1-1b","Calculate the GPE of the system at B.",10,"J",0.5,"\\(GPE_B = 0.5\\times10\\times2 = 10\\ \\text{J}\\)"),
+  T_("1-2","Deduce that the mechanical energy at A is ME_A = 16.25 J.",1,"Released from rest, so \\(KE_A = 0\\); \\(ME_A = 0 + 16.25 = 16.25\\ \\text{J}\\)."),
+  N_("1-3","Determine KE_B by applying the conservation of mechanical energy.",6.25,"J",1,"No friction: \\(ME_A = ME_B\\); \\(16.25 = KE_B + 10 \\Rightarrow KE_B = 6.25\\ \\text{J}\\)"),
+  T_("1-4","Show that the speed of (S) at B is V_B = 5 m/s.",1,"\\(6.25 = \\tfrac12\\times0.5\\times V_B^2 \\Rightarrow V_B = \\sqrt{25} = 5\\ \\text{m/s}\\)"),
+  H_("2) Second case: plane ramp (Doc. 2), same A and B heights. Choose the correct answer and justify without calculation."),
+  C_("2","The speed of (S) at B is:",["a) V_B < 5 m/s","b) V_B = 5 m/s","c) V_B > 5 m/s"],1,1.5,"b) In both cases ME does not change and GPE_B is the same (same height), so KE_B is the same and V_B = 5 m/s.")]},
+{id:"2024-1",yr:"2024 · 1st session",title:"Juggler's ball",pts:6.5,moves:["M1","M3","M5","M6","M8","M11"],fig:FIG.juggle24,
+ intro:"A juggler throws a ball, considered as a particle of mass m, upwards from point A at altitude h_A above the ground. The ball passes through B, C, D and reaches F, the juggler's other hand, with h_F = h_A = 1.6 m.<div class='tablewrap' style='margin-top:8px'><table class='v' style='text-align:center'><tr><td>Position</td><td>A</td><td>B</td><td>D</td><td>F</td></tr><tr><td>GPE (J)</td><td>2.4</td><td>3</td><td>3</td><td>…</td></tr><tr><td>KE (J)</td><td>2.7</td><td>2.1</td><td>2.1</td><td>2.7</td></tr></table></div>",
+ take:"The ground as a reference level for gravitational potential energy; g = 10 m/s².",
+ parts:[H_("1) Choose with justification the correct answer."),
+  C_("1-1","The GPE of the system (Ball – Earth) during the motion from A to C:",["a) increases","b) decreases","c) remains the same"],0,1,"a) GPE = mgh; the altitude increases (m and g the same), so GPE increases."),
+  C_("1-2","GPE_A and GPE_F are:",["a) GPE_A < GPE_F","b) GPE_A = GPE_F","c) GPE_A > GPE_F"],1,1,"b) GPE = mgh, and h_A = h_F with m and g the same."),
+  H_("2) Using the table:"),
+  N_("2-1","Indicate the value of the GPE of the system at F.",2.4,"J",0.5,"\\(GPE_F = GPE_A = 2.4\\ \\text{J}\\)"),
+  T_("2-2","Show that the mass of the ball is m = 0.15 kg.",1,"\\(GPE_A = m g h_A\\): \\(2.4 = m\\times10\\times1.6 \\Rightarrow m = 0.15\\ \\text{kg}\\)"),
+  N_("2-3","Deduce the speed of the ball at point A.",6,"m/s",1,"\\(2.7 = \\tfrac12\\times0.15\\times V_A^2 \\Rightarrow V_A = 6\\ \\text{m/s}\\)"),
+  N_("2-4","Calculate the mechanical energy at A, B, D and F (one value).",5.1,"J",1,"\\(ME_A = 2.4 + 2.7\\), \\(ME_B = ME_D = 3 + 2.1\\), \\(ME_F = 2.4 + 2.7\\): all equal 5.1 J."),
+  T_("2-5","Deduce that air resistance on the ball is negligible.",1,"The mechanical energy of the system (ball, Earth) is constant, therefore air resistance is negligible.")]},
+{id:"2024-3h",yr:"2024 · 1st session",title:"Markaba hydro plant (Ex. 3, energy part)",pts:4,moves:[],fig:FIG.hydro,
+ intro:"Document 3 is a simplified diagram of the hydroelectric power plant at Markaba. Water from the Qaraoun lake is brought to the plant through penstocks to the turbine-generator.",
+ take:"Efficiency r = provided useful energy ÷ received energy = 35 %.",
+ parts:[C_("3","Indicate the form of energy stored in the system (Lake water – Earth).",["kinetic energy","gravitational potential energy","electrical energy"],1,1,"Gravitational potential energy."),
+  C_("4-1","When water flows through a penstock from the lake to the turbine, there is a conversion of:",["a) KE of water into electrical energy","b) GPE of (lake water – Earth) into KE of water","c) electrical energy into KE of water"],1,0.75,"b) GPE of the system (lake water – Earth) into kinetic energy of the water."),
+  C_("4-2","At the turbine-generator system, there is a conversion of:",["a) KE of the water into electrical energy","b) KE of water into GPE","c) electrical into mechanical energy"],0,0.75,"a) Kinetic (mechanical) energy of the water into electrical energy."),
+  N_("5","Useful electrical energy: 14 × 10⁶ J each second. Calculate the energy received each second.",4e7,"J",1.5,"\\(E_{received} = \\dfrac{14\\times10^6}{0.35} = 40\\times10^6\\ \\text{J}\\) each second.")]}
+];
+const MEcount=BANK.filter(b=>!/h$/.test(b.id)).length;
+
+/* ---------- bank UI ---------- */
+let cur=BANK[3].id, moveFilter=null;
+function exState(id){ return S.bank[id]||(S.bank[id]={}); }
+function exScore(ex){ const st=exState(ex.id); let s=0; ex.parts.forEach((p,i)=>{ if(st[i]!=null) s+=st[i]; }); return Math.round(s*100)/100; }
+function exDone(ex){ const st=exState(ex.id); return ex.parts.every((p,i)=>p.t==="head"||st[i]!=null); }
+function pill(){
+  const done=BANK.filter(exDone).length; let pts=0; BANK.forEach(b=>pts+=exScore(b));
+  $("#pill").textContent=done+" / "+BANK.length+" exercises · "+fmt(pts,2)+" pts";
+}
+function drawList(){
+  $("#blist").innerHTML=BANK.map(b=>{
+    const dim=moveFilter&&!b.moves.includes(moveFilter);
+    return '<button class="bitem'+(dim?' dim':'')+'" data-ex="'+b.id+'" aria-current="'+(b.id===cur)+'"><span class="yr"><span>'+b.yr+'</span><span class="sc">'+(exDone(b)?'✓ ':'')+fmt(exScore(b),2)+' / '+b.pts+'</span></span><span class="tt">'+b.title+'</span></button>';
+  }).join("");
+  $$(".bitem").forEach(x=>x.onclick=()=>{ cur=x.dataset.ex; stopClock(); drawList(); drawPaper(); if(window.innerWidth<860) $("#paper").scrollIntoView({behavior:"smooth",block:"start"}); });
+}
+let clockT=null, clockLeft=0;
+function stopClock(){ clearInterval(clockT); clockT=null; }
+function drawPaper(){
+  const ex=BANK.find(b=>b.id===cur), st=exState(ex.id), pp=$("#paper");
+  let h='<div class="phead"><div><span class="meta">'+ex.yr+' · SE/LH · '+ex.pts+' pts</span><h3>'+ex.title+'</h3></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="clock" id="clk">20:00</span><button class="btn small" id="clkBtn">Start the clock</button><button class="btn small" id="resetEx">Reset</button></div></div>';
+  h+='<div class="pbody"><div style="display:grid;gap:10px;min-width:0"><p>'+ex.intro+'</p><div class="given"><b>Take:</b><span>'+ex.take+'</span></div></div><div>'+ex.fig+'</div></div><div class="parts">';
+  ex.parts.forEach((p,i)=>{
+    if(p.t==="head"){ h+='<div class="part head"><p>'+p.q+'</p></div>'; return; }
+    h+='<div class="part" data-i="'+i+'"><div class="pq"><span class="pn">'+p.n+')</span><span>'+p.q+'</span><span class="pm">'+p.m+' pt</span></div><div class="prow">';
+    if(p.t==="num") h+='<input class="num" aria-label="answer '+p.n+'" inputmode="decimal"><span class="unit">'+p.u+'</span><button class="btn small solid chk">Check</button>';
+    if(p.t==="mcq") h+='<div class="mcq">'+p.ch.map((c,j)=>'<button class="opt" data-j="'+j+'">'+c+'</button>').join("")+'</div>';
+    h+='<button class="btn small rv">Official key</button><span class="fb"></span></div>';
+    h+='<div class="key" hidden><span class="src">Official key</span><div>'+p.k+'</div>'+(p.t==="text"?'<div class="selfm">Mark yourself: <button class="btn small" data-f="1">Full '+p.m+'</button><button class="btn small" data-f="0.5">Half</button><button class="btn small" data-f="0">Zero</button></div>':'')+'</div></div>';
+  });
+  h+='</div><div class="ptotal"><span class="board" id="exb">'+fmt(exScore(ex),2)+' / '+ex.pts+'<small>points</small></span><span class="lead" style="font-size:.95rem">Paper total marks as in the official key.</span></div>';
+  pp.innerHTML=h;
+  $$(".part[data-i]",pp).forEach(el=>{
+    const i=+el.dataset.i, p=ex.parts[i], fb=$(".fb",el), key=$(".key",el);
+    const setScore=v=>{ st[i]=v; save(); $("#exb").innerHTML=fmt(exScore(ex),2)+' / '+ex.pts+'<small>points</small>'; drawList(); pill(); };
+    $(".rv",el).onclick=()=>{ key.hidden=!key.hidden; if(!key.hidden) typeset(key); };
+    if(p.t==="num"){
+      const inp=$("input",el);
+      const go=()=>{ const v=parseNum(inp.value); if(isNaN(v)){ fb.innerHTML='<span class="no">Type a number.</span>'; return; }
+        if(close(v,p.a)){ fb.innerHTML='<span class="ok">Correct · +'+p.m+'</span>'; if(st[i]==null||st[i]<p.m){ setScore(p.m); toast("+"+p.m+" pt"); } }
+        else { fb.innerHTML='<span class="no">Not yet.</span>'; if(st[i]==null) setScore(0); } };
+      $(".chk",el).onclick=go; inp.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); });
+      if(st[i]===p.m) fb.innerHTML='<span class="ok">Solved</span>';
+    }
+    if(p.t==="mcq"){
+      const os=$$(".opt",el);
+      const lock=j=>{ os.forEach((o,k)=>{ o.disabled=true; if(k===p.c) o.classList.add("right"); else if(k===j) o.classList.add("wrong"); }); key.hidden=false; typeset(key); };
+      if(st[i]!=null){ lock(st[i]>0?p.c:-1); fb.innerHTML=st[i]>0?'<span class="ok">Correct</span>':'<span class="no">Missed</span>'; }
+      os.forEach((o,j)=>o.onclick=()=>{ const ok=j===p.c; lock(j); fb.innerHTML=ok?'<span class="ok">Correct · +'+p.m+'</span> Now read the justification.':'<span class="no">Not this one.</span> Read the justification.'; setScore(ok?p.m:0); if(ok) toast("+"+p.m+" pt"); });
+    }
+    if(p.t==="text"){
+      $$(".selfm button",el).forEach(b=>{ if(st[i]!=null && Math.abs(st[i]-p.m*b.dataset.f)<1e-9) b.classList.add("solid");
+        b.onclick=()=>{ setScore(p.m*(+b.dataset.f)); $$(".selfm button",el).forEach(x=>x.classList.toggle("solid",x===b)); }; });
+      if(st[i]!=null) fb.innerHTML='<span class="mono">self-marked '+st[i]+'</span>';
+    }
+  });
+  $("#resetEx").onclick=()=>{ S.bank[ex.id]={}; save(); stopClock(); drawList(); drawPaper(); pill(); };
+  clockLeft=20*60; const clk=$("#clk");
+  $("#clkBtn").onclick=e=>{ if(clockT){ stopClock(); e.target.textContent="Start the clock"; return; } e.target.textContent="Pause";
+    clockT=setInterval(()=>{ clockLeft--; const m=Math.floor(Math.abs(clockLeft)/60), s=Math.abs(clockLeft)%60; clk.textContent=(clockLeft<0?"+":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"); clk.classList.toggle("late",clockLeft<0); if(clockLeft===0) toast("20 minutes: in the exam, move on to the next exercise"); },1000); };
+  typeset(pp);
+}
+
+/* ---------- radar ---------- */
+$("#radarList").innerHTML=MOVES.map(m=>'<button class="rbar" data-m="'+m[0]+'" aria-pressed="false"><span class="lab">'+m[1]+'<small>'+m[2]+'</small></span><span class="tr"><span class="fl'+(m[4]?' hot':'')+'" style="display:block;width:'+(m[3]*10)+'%"></span></span><span class="ct">'+m[3]+'/10</span></button>').join("")+'<p class="lead" style="font-size:.95rem">Amber bars are the newer trends. From the ten ME exercises of 2015 (1st), 2016 (1st), 2017 (1st), 2018 (1st), 2019 (2nd), 2021 (both sessions), 2022 (both sessions) and 2024 (1st).</p>';
+$$(".rbar").forEach(b=>b.onclick=()=>{
+  const m=b.dataset.m; moveFilter = moveFilter===m? null : m;
+  $$(".rbar").forEach(x=>x.setAttribute("aria-pressed",x.dataset.m===moveFilter));
+  const f=$("#flt"); f.hidden=!moveFilter;
+  if(moveFilter){ const mv=MOVES.find(x=>x[0]===m); $("#fltTxt").textContent="Highlighting exercises with: "+mv[1]; const first=BANK.find(x=>x.moves.includes(m)); if(first){ cur=first.id; drawPaper(); } $("#bank").scrollIntoView({behavior:"smooth"}); }
+  drawList();
+});
+$("#fltClear").onclick=()=>{ moveFilter=null; $("#flt").hidden=true; $$(".rbar").forEach(x=>x.setAttribute("aria-pressed","false")); drawList(); };
+
+/* ---------- justify trainer ---------- */
+const J=[
+ {q:"A ball rises from A to C. Air resistance is neglected. The GPE of the system (ball, Earth):",ch:["a) increases","b) decreases","c) remains the same"],c:0,
+  r:["Because the speed of the ball decreases.","GPE = mgh; the height increases while m and g stay the same.","Because the ME is conserved."],rc:1,src:"2024 · 1st, Q1-1"},
+ {q:"A diver passes A and later A′, at the same height. Air resistance is negligible. The speeds V_A and V_A′:",ch:["a) V_A < V_A′","b) V_A = V_A′","c) V_A > V_A′"],c:1,
+  r:["Same height gives the same GPE; ME conserved gives the same KE, so the same speed.","The diver accelerates while falling.","The speed is always the same in free fall."],rc:0,src:"2019 · 2nd, Q3-3"},
+ {q:"A sled slides on the horizontal part BC, which is the reference level, and stops at C. Its GPE between B and C:",ch:["a) increases","b) decreases","c) remains the same"],c:2,
+  r:["Because the sled stops.","Because friction acts on BC.","All along BC it is on the reference level: GPE = 0 at every point."],rc:2,src:"2021 · 1st, Q5-2"},
+ {q:"Same sled between B and C. Its kinetic energy:",ch:["a) increases","b) decreases","c) remains the same"],c:1,
+  r:["V_B = 6 m/s and V_C = 0, since it stops at C.","GPE decreases along BC.","ME is conserved along BC."],rc:0,src:"2021 · 1st, Q5-1"},
+ {q:"Two frictionless ramps, one curved and one plane, go from the same A (3.25 m) to the same B (2 m). V_B on the plane ramp, compared with 5 m/s on the curved one:",ch:["a) smaller","b) equal","c) greater"],c:1,
+  r:["The plane ramp is shorter, so the block is faster.","ME is the same and GPE_B is the same (same height), so KE_B and V_B are the same.","The curved ramp is steeper at the start."],rc:1,src:"2022 · 2nd, Q2"},
+ {q:"A ball launched at 12 m/s from 3 m above the ground lands on the ground (no air). Compare V_C with V_A:",ch:["a) V_C < V_A","b) V_C > V_A","c) V_C = V_A"],c:1,
+  r:["KE_C = ME = KE_A + GPE_A with GPE_A > 0, so KE_C > KE_A.","Because ME is conserved, speeds are equal.","Because the ball slows down while going up."],rc:0,src:"2022 · 1st, Q4-4"},
+ {q:"A table gives ME = 5.1 J at A, B, D and F for a juggler's ball. Air resistance on the ball is:",ch:["a) negligible","b) not negligible","c) impossible to decide"],c:0,
+  r:["The ball moves slowly.","The mechanical energy of the system is constant.","GPE_A = GPE_F."],rc:1,src:"2024 · 1st, Q2-5"},
+ {q:"Parachutist: ME = 10⁶ J at A and at B (920 m), but only 1800 J at the ground. The loss of ME happens:",ch:["a) before the parachute opens","b) after the parachute opens"],c:1,
+  r:["ME(A) = ME(B), but ME(B) > ME(ground).","Because the speed decreases to 6 m/s.","Because the parachutist falls from very high."],rc:0,src:"2016 · 1st, Q4-a"},
+ {q:"Work done by the weight of an 80 kg diver from A′ (6 m above the water) to the water surface D:",ch:["a) 1000 J","b) 4800 J","c) 5600 J"],c:1,
+  r:["W = KE_A = ½ m V_A².","W = mgh_A′ = 80 × 10 × 6.","W = ME_A − GPE_A."],rc:1,src:"2019 · 2nd, Q3-4"}
+];
+let ji=0;
+function jScore(){ let s=0,n=0; J.forEach((x,i)=>{ const v=S.j[i]; if(v){ n++; s+=v.a+v.r; } }); return {s,n}; }
+function drawJ(){
+  const it=J[ji], st=S.j[ji];
+  $("#jdots").innerHTML=J.map((x,i)=>{ const v=S.j[i]; const c=v? (v.a&&v.r?"done":"half"):""; return '<button class="dot '+c+(i===ji?' cur':'')+'" data-i="'+i+'" aria-label="Question '+(i+1)+'"></button>'; }).join("");
+  $$("#jdots .dot").forEach(d=>d.onclick=()=>{ ji=+d.dataset.i; drawJ(); });
+  const sc=jScore(); $("#jscore").textContent="letters + reasons right: "+sc.s+" / "+(J.length*2);
+  let h='<span class="jstep">Question '+(ji+1)+' of '+J.length+' · from '+it.src+'</span><p style="font-size:1.08rem">'+it.q+'</p><span class="jstep">Step 1 · your answer</span><div class="opts" id="ja">'+it.ch.map((c,j)=>'<button class="opt" data-j="'+j+'">'+c+'</button>').join("")+'</div>';
+  h+='<div id="jrw" hidden style="display:grid;gap:10px"><span class="jstep">Step 2 · the justification a corrector accepts</span><div class="opts" id="jr" style="grid-template-columns:1fr">'+it.r.map((c,j)=>'<button class="opt" data-j="'+j+'">'+c+'</button>').join("")+'</div></div><p class="exp" id="jfb"></p>';
+  $("#jbox").innerHTML=h;
+  const A_=$$("#ja .opt"), R_=$$("#jr .opt");
+  const showA=j=>{ A_.forEach((o,k)=>{ o.disabled=true; if(k===it.c) o.classList.add("right"); else if(k===j) o.classList.add("wrong"); }); $("#jrw").hidden=false; };
+  const showR=j=>{ R_.forEach((o,k)=>{ o.disabled=true; if(k===it.rc) o.classList.add("right"); else if(k===j) o.classList.add("wrong"); }); };
+  if(st){ showA(st.aj); showR(st.rj); $("#jfb").innerHTML=(st.a&&st.r)?'<span class="ok">Full marks on this one.</span>':'<span class="no">Partly right.</span> The green answers are what the key accepts.'; return; }
+  let aj=null;
+  A_.forEach((o,j)=>o.onclick=()=>{ aj=j; showA(j); $("#jfb").innerHTML=j===it.c?'<span class="ok">Right letter.</span> Now justify it.':'<span class="no">Not that letter.</span> Still pick the right reason: it shows why.'; });
+  R_.forEach((o,j)=>o.onclick=()=>{ showR(j); const a=aj===it.c?1:0, r=j===it.rc?1:0; S.j[ji]={a,r,aj,rj:j}; save();
+    $("#jfb").innerHTML=(a&&r)?'<span class="ok">Letter and reason both right.</span>':(r?'<span class="ok">Good reason.</span> Now you know why the letter is green.':'<span class="no">That reason would not get the mark.</span> The green one would.');
+    drawDotsOnly(); });
+}
+function drawDotsOnly(){ const sc=jScore(); $("#jscore").textContent="letters + reasons right: "+sc.s+" / "+(J.length*2); $$("#jdots .dot").forEach((d,i)=>{ const v=S.j[i]; d.className="dot "+(v?(v.a&&v.r?"done":"half"):"")+(i===ji?" cur":""); }); }
+$("#jprev").onclick=()=>{ ji=(ji-1+J.length)%J.length; drawJ(); };
+$("#jnext").onclick=()=>{ ji=(ji+1)%J.length; drawJ(); };
+
+/* ---------- museum ---------- */
+const MU=[
+ {task:"m = 100 g, h = 2 m above the reference. Calculate GPE.",lines:["GPE = m g h","GPE = 100 × 10 × 2","GPE = 2000 J"],w:1,why:"100 g must be written 0.1 kg. GPE = 0.1 × 10 × 2 = 2 J. (2021-2 used m = 100 g.)"},
+ {task:"A 1000 kg car moves at 72 km/h. Calculate KE.",lines:["v = 72 km/h","KE = ½ m v²","KE = ½ × 1000 × 72² = 2 592 000 J"],w:2,why:"Convert first: 72 ÷ 3.6 = 20 m/s, so KE = ½ × 1000 × 20² = 200 000 J."},
+ {task:"Stone thrown up from A; B is its highest point (no air). Write ME at B.",lines:["ME_B = ME_A (air resistance neglected)","ME_B = KE_B + GPE_B","KE_B = ½ m V_A²","so ME_B = ½ m V_A² + m g h_B"],w:2,why:"At the highest point v = 0, so KE_B = 0 and ME_B = GPE_B = m g h_B."},
+ {task:"ME_O = 14 J and ME_A′ = 12.5 J. Calculate the variation ΔME between O and A′.",lines:["ΔME = ME_final − ME_initial","ΔME = 14 − 12.5","ΔME = 1.5 J"],w:1,why:"Final minus initial: ΔME = 12.5 − 14 = −1.5 J. The minus sign says ME decreased (2015)."},
+ {task:"Track ABC; the reference is the plane through BC. Calculate ME at B, where V_B ≈ 5.5 m/s and m = 0.1 kg.",lines:["ME_B = KE_B + GPE_B","GPE_B = m g h = 0.1 × 10 × 1.5 = 1.5 J","ME_B = 1.5 + 1.5 = 3 J"],w:1,why:"B is on the reference level, so GPE_B = 0 and ME_B = KE_B = 1.5 J. Using A's height at B is a classic slip."},
+ {task:"Explain why ME is conserved between A and B.",lines:["Because the speed increases","while the height decreases."],w:0,why:"That describes the motion, not the cause. The key wants the condition: \u201cbecause friction (air resistance) is neglected.\u201d Both lines miss it; the first is the one to cross out."}
+];
+$("#museum").innerHTML=MU.map((m,i)=>'<div class="card exhibit" data-i="'+i+'"><span class="eyebrow">Exhibit '+(i+1)+'</span><p class="task">'+m.task+'</p><div style="display:grid;gap:6px">'+m.lines.map((l,j)=>'<button class="wline" data-j="'+j+'">'+l+'</button>').join("")+'</div><p class="exp" hidden></p></div>').join("");
+$$(".exhibit").forEach(ex=>{
+  const i=+ex.dataset.i, m=MU[i], ls=$$(".wline",ex), p=$(".exp",ex);
+  const reveal=j=>{ ls.forEach((l,k)=>{ l.disabled=true; if(k===m.w) l.classList.add("wrong"); else if(k===j) l.classList.add("right"); }); p.hidden=false; p.innerHTML=(j===m.w?'<span class="ok">Spotted.</span> ':'<span class="no">That line is fine.</span> The red one is the error. ')+m.why; };
+  if(S.mus[i]!=null) reveal(S.mus[i]);
+  ls.forEach((l,j)=>l.onclick=()=>{ S.mus[i]=j; save(); reveal(j); });
+});
+
+/* ---------- boot ---------- */
+drawList(); drawPaper(); drawJ(); pill();
+const hm=(location.hash||"").replace("#","");
+if(/^\d{4}-\d/.test(hm)){ const b=BANK.find(x=>x.id===hm); if(b){ cur=b.id; drawList(); drawPaper(); } }
+})();
+</script>
+
+</body>
+</html>
