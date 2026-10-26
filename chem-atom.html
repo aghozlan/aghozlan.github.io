@@ -1,83 +1,430 @@
-\documentclass[12pt, a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\geometry{margin=1in}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{xcolor}
-\usepackage{tcolorbox}
-\usepackage{amsmath}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-width=1.0">
+<title>Grade 9 Chemistry: Compact Worksheet</title>
+<style>
+    /* Ultra-Compact Print & PDF Setup */
+    @page {
+        size: A4;
+        margin: 8mm 10mm; /* Minimal margins */
+        background-color: #ffffff;
+    }
+    
+    /* Base Typography - Tighter line height and slightly smaller font */
+    body {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        font-size: 10.5pt; 
+        line-height: 1.25;
+        color: #000000;
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+    }
 
-\title{\vspace{-2cm}\textbf{Official Grade 9 Chemistry}\\ \large Brevet Aligned Curriculum: Atomic Structure, Ions, \& Isotopes}
-\author{}
-\date{}
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
 
-\begin{document}
-\maketitle
-\vspace{-1.5cm}
+    @media screen {
+        body {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+        .page-break {
+            border-top: 2px dashed #cbd5e0;
+            margin: 20px 0;
+            padding-top: 10px;
+        }
+        .page-break::after {
+            content: "PAGE BREAK";
+            display: block;
+            text-align: center;
+            color: #a0aec0;
+            font-size: 8pt;
+            font-weight: bold;
+            margin-top: -20px;
+            background: #fff;
+            width: 100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    
+    @media print {
+        .page-break {
+            page-break-before: always;
+        }
+    }
 
-\noindent\textbf{Name:} \makebox[2.5in]{\hrulefill} \hfill \textbf{Date:} \makebox[1.5in]{\hrulefill} \hfill \textbf{Section:} \makebox[0.8in]{\hrulefill}
+    /* Headings - highly condensed */
+    h1, h2, h3 {
+        color: #1a365d;
+        page-break-after: avoid;
+        margin-top: 6px;
+        margin-bottom: 4px;
+    }
+    
+    h1 {
+        font-size: 14pt;
+        text-align: center;
+        border-bottom: 1.5px solid #2b6cb0;
+        padding-bottom: 3px;
+        text-transform: uppercase;
+    }
 
-\vspace{0.5cm}
-\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black,title=\textbf{Engage: Neon Signs \& Salty Fries}]
-Have you ever looked at a glowing red neon sign? That bright light comes from pure Neon gas—atoms zooming around unchanged. But what about the salt (NaCl) on your french fries? That salt dissolves in your mouth into tiny charged particles called \textbf{ions}, helping your nervous system send electrical signals! 
-\end{tcolorbox}
+    .subtitle {
+        text-align: center;
+        font-size: 9.5pt;
+        color: #4a5568;
+        margin-bottom: 8px;
+        font-style: italic;
+    }
 
-\section*{Part 1: The Anatomy of an Atom}
-Every atom consists of a central dense \textbf{nucleus} and a vast \textbf{electron cloud}.
+    h2 {
+        font-size: 11.5pt;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 2px;
+        margin-top: 10px;
+    }
 
-\begin{table}[h]
-\centering
-\begin{tabular}{@{}llccc@{}}
-\toprule
-\textbf{Particle} & \textbf{Symbol} & \textbf{Location} & \textbf{Relative Mass} & \textbf{Relative Charge} \\ \midrule
-Proton & $p^+$ & Nucleus & 1 amu & 1+ \\
-Neutron & $n^0$ & Nucleus & 1 amu & 0 \\
-Electron & $e^-$ & Electron Cloud & Negligible ($\sim$0) & 1- \\ \bottomrule
-\end{tabular}
-\end{table}
+    /* Math & Symbols Formatting */
+    .math {
+        font-family: 'Times New Roman', serif;
+        font-style: italic;
+        font-weight: bold;
+    }
+    
+    .symbol {
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+    }
 
-\noindent\textbf{Important Charge Rules for $^A_Z X$:}
-\begin{itemize}
-    \item \textbf{Charge of nucleus:} $q_{\text{nucleus}} = Z \times 1+ = +Z$
-    \item \textbf{Charge of electron cloud:} $q_{\text{cloud}} = \text{Number of } e^- \times 1-$
-    \item \textbf{Total charge (Neutral Atom):} $q_{\text{total}} = (+Z) + (-Z) = 0$
-\end{itemize}
+    /* Layout Elements - tight padding */
+    .box {
+        border: 1px solid #cbd5e0;
+        background-color: #f7fafc;
+        padding: 5px 8px;
+        border-radius: 3px;
+        margin: 5px 0;
+        page-break-inside: avoid;
+    }
 
-\section*{Part 2: The Charge Game (Neutral vs. Ions)}
-Atoms gain or lose electrons to become stable, forming charged particles called \textbf{Ions}.
-\begin{itemize}
-    \item \textbf{CATIONS (+):} Atoms that \textbf{lose} electrons (e.g., metals). Example: Na loses 1 $e^-$ $\rightarrow$ Na$^+$.
-    \item \textbf{ANIONS (-):} Atoms that \textbf{gain} electrons (e.g., non-metals). Example: F gains 1 $e^-$ $\rightarrow$ F$^-$.
-\end{itemize}
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 5px 0;
+        page-break-inside: avoid;
+    }
+    
+    th, td {
+        border: 1px solid #a0aec0;
+        padding: 3px 5px;
+        text-align: center;
+    }
+    
+    th {
+        background-color: #edf2f7;
+        font-weight: bold;
+    }
 
-\section*{Part 3: Isotopes - The Atom's Twins}
-\textbf{Isotopes} are atoms of the \textit{same element} with the \textbf{same atomic number $Z$} but a \textbf{different mass number $A$} (different number of neutrons).
+    /* Grid/Column */
+    .row-layout {
+        display: table;
+        width: 100%;
+        margin: 3px 0;
+    }
+    
+    .col {
+        display: table-cell;
+        width: 50%;
+        vertical-align: top;
+        padding: 0 5px;
+    }
 
-\begin{table}[h]
-\centering
-\begin{tabular}{@{}lccc@{}}
-\toprule
-\textbf{Isotope} & \textbf{Protons ($Z$)} & \textbf{Neutrons ($A-Z$)} & \textbf{Abundance} \\ \midrule
-Chlorine-35 ($^{35}_{17}\text{Cl}$) & 17 & 18 & 75\% (Highest Abundance) \\
-Chlorine-37 ($^{37}_{17}\text{Cl}$) & 17 & 20 & 25\% (Heaviest Atom) \\ \bottomrule
-\end{tabular}
-\end{table}
+    .col-left { padding-left: 0; padding-right: 4px; }
+    .col-right { padding-left: 4px; padding-right: 0; }
 
-\noindent \textbf{Average Mass Formula:} Average A = $\frac{(A_1 \times \%_1) + (A_2 \times \%_2)}{100} = \frac{(35 \times 75) + (37 \times 25)}{100} = 35.5$
+    /* Exam Practice Space - Compacted */
+    .question-block {
+        margin-bottom: 8px;
+        page-break-inside: avoid;
+    }
+    
+    .dotted-lines {
+        border-bottom: 1px dotted #718096;
+        height: 18px; /* Reduced from 25px */
+        width: 100%;
+        margin-top: 3px;
+    }
+    
+    /* Marking Scheme */
+    .ms-header {
+        color: #c53030;
+        font-size: 13pt;
+        text-align: center;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #c53030;
+    }
+    
+    .pts {
+        float: right;
+        color: #c53030;
+        font-weight: bold;
+        font-size: 9pt;
+    }
+    
+    .ms-box {
+        border: 1px solid #fed7d7;
+        background-color: #fff5f5;
+        padding: 4px 8px;
+        border-radius: 3px;
+        margin: 4px 0;
+        page-break-inside: avoid;
+        font-size: 9.5pt;
+    }
+</style>
+</head>
+<body>
 
-\vspace{0.5cm}
-\hrule
-\section*{Brevet-Style Challenge}
-\textit{Apply your knowledge to solve the following official exam-style questions. Show all justifications.}
+    <!-- ==================== PAGE 1: THEORY SUMMARY ==================== -->
+    <h1>Official Grade 9 Chemistry</h1>
+    <div class="subtitle">Brevet Aligned Curriculum: Atomic Structure, Ions, & Isotopes</div>
 
-\vspace{0.3cm}
-\noindent \textbf{1.} An atom of Aluminum (Al) has $Z = 13$ and $A = 27$. Determine the composition of the neutral atom. \\
-\rule{\textwidth}{0.4pt}\vspace{0.5cm}
+    <table style="border:none; margin-bottom: 5px;">
+        <tr>
+            <td style="text-align:left; border:none; padding:0;"><b>Name:</b> _____________________________</td>
+            <td style="text-align:center; border:none; padding:0;"><b>Date:</b> __________________</td>
+            <td style="text-align:right; border:none; padding:0;"><b>Section:</b> _______</td>
+        </tr>
+    </table>
 
-\noindent \textbf{2.} Aluminum loses 3 electrons to form the Aluminum ion. Is it a cation or anion? Justify and calculate its total relative charge. \\
-\rule{\textwidth}{0.4pt}\vspace{0.5cm}
+    <div class="box">
+        <b>Engage:</b> Pure Neon gas inside glowing signs consists of stable, unchanged atoms. But the salt (<span class="symbol">NaCl</span>) on your fries dissolves in your mouth into tiny charged particles called <b>ions</b>, letting your body send electrical signals! An atom's behavior depends entirely on its protons, neutrons, and electrons.
+    </div>
 
-\noindent \textbf{3.} Copper naturally exists as two isotopes: $^{63}_{29}\text{Cu}$ (69\%) and $^{65}_{29}\text{Cu}$ (31\%). Which is the heaviest? Calculate the average mass number. \\
-\rule{\textwidth}{0.4pt}
-\end{document}
+    <h2>Part 1: The Anatomy of an Atom</h2>
+    <div class="row-layout">
+        <div class="col col-left">
+            <table>
+                <tr>
+                    <th>Particle</th>
+                    <th>Location</th>
+                    <th>Mass</th>
+                    <th>Charge</th>
+                </tr>
+                <tr>
+                    <td>Proton (<span class="math">p<sup>+</sup></span>)</td>
+                    <td>Nucleus</td>
+                    <td>1 amu</td>
+                    <td>1+</td>
+                </tr>
+                <tr>
+                    <td>Neutron (<span class="math">n<sup>0</sup></span>)</td>
+                    <td>Nucleus</td>
+                    <td>1 amu</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Electron (<span class="math">e<sup>-</sup></span>)</td>
+                    <td>Cloud</td>
+                    <td>~0</td>
+                    <td>1-</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col col-right">
+            <div class="box">
+                <b>Representation:</b> <span class="math"><sup>A</sup><sub>Z</sub>X</span><br>
+                &bull; <span class="math">Z</span> = Atomic Number (Protons)<br>
+                &bull; <span class="math">A</span> = Mass Number (Protons + Neutrons)<br>
+                <b>Charge Rules:</b><br>
+                &bull; <span class="math">q<sub>nucleus</sub> = Z &times; 1+</span><br>
+                &bull; <span class="math">q<sub>cloud</sub> = Number of e<sup>-</sup> &times; 1-</span><br>
+                &bull; Neutral Atom: <span class="math">q<sub>total</sub> = 0</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Part 2: Neutral Atoms vs. Ions</h2>
+    <p style="margin: 3px 0;">Atoms gain or lose electrons to become stable (like noble gases), becoming charged <b>Ions</b>.</p>
+    <div class="row-layout">
+        <div class="col col-left">
+            <div class="box" style="border-left: 4px solid #c53030;">
+                <b>CATIONS (+)</b>: Atoms that <b>lose</b> electrons (usually metals). Losing negatives makes them positive.<br>
+                <i>Ex:</i> <span class="symbol">Na</span> loses 1 e<sup>-</sup> &rarr; <span class="math">Na<sup>+</sup></span>
+            </div>
+        </div>
+        <div class="col col-right">
+            <div class="box" style="border-left: 4px solid #2b6cb0;">
+                <b>ANIONS (-)</b>: Atoms that <b>gain</b> electrons (usually non-metals). Gaining negatives makes them negative.<br>
+                <i>Ex:</i> <span class="symbol">F</span> gains 1 e<sup>-</sup> &rarr; <span class="math">F<sup>-</sup></span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Part 3: Isotopes (The Atom's Twins)</h2>
+    <div class="box">
+        <b>Definition:</b> Isotopes are atoms of the <i>same element</i> that have the <b>same atomic number <span class="math">Z</span></b> but a <b>different mass number <span class="math">A</span></b> (different number of neutrons).<br>
+        <b>Example:</b> Chlorine-35 (75% abundance) and Chlorine-37 (25% abundance).<br>
+        <b>Average Mass Formula:</b> <span class="math">Average A = [ (A<sub>1</sub> &times; %<sub>1</sub>) + (A<sub>2</sub> &times; %<sub>2</sub>) ] / 100</span>
+    </div>
+
+    <!-- ==================== PAGE 2: EXERCISES SET 1 & 2 COMBINED ==================== -->
+    <div class="page-break"></div>
+    
+    <table style="border:none; margin-bottom: 5px;">
+        <tr>
+            <td style="text-align:left; border:none; padding:0;"><b>Name:</b> _____________________________</td>
+            <td style="text-align:right; border:none; padding:0;"><b>Brevet-Style Challenge</b> (Sets 1 & 2)</td>
+        </tr>
+    </table>
+    
+    <p style="margin: 5px 0 10px 0; font-style: italic;">Solve the following official exam-style questions. Show all justifications.</p>
+
+    <!-- Combined column layout for exercises to save maximum space -->
+    <div class="row-layout">
+        <div class="col col-left">
+            <div class="question-block">
+                <b>1.</b> Aluminum (<span class="symbol">Al</span>): <span class="math">Z = 13</span>, <span class="math">A = 27</span>.<br>
+                Determine the composition of the neutral atom.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+
+            <div class="question-block">
+                <b>2.</b> Calculate the relative charge of the nucleus of the Aluminum atom.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+
+            <div class="question-block">
+                <b>3.</b> Aluminum loses 3 electrons to form an ion.<br>
+                a) Is it a cation or an anion? Justify.
+                <div class="dotted-lines"></div>
+                b) Write the symbol of the Aluminum ion.
+                <div class="dotted-lines"></div>
+                c) Calculate the total relative charge of this ion.
+                <div class="dotted-lines"></div>
+            </div>
+            
+            <div class="question-block">
+                <b>4.</b> Copper isotopes: <span class="math"><sup>63</sup><sub>29</sub>Cu</span> (69%) & <span class="math"><sup>65</sup><sub>29</sub>Cu</span> (31%).<br>
+                a) Justify that these are isotopes.
+                <div class="dotted-lines"></div>
+                b) Which is the heaviest? Explain.
+                <div class="dotted-lines"></div>
+                c) Calculate the average mass number.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+        </div>
+
+        <div class="col col-right">
+            <div class="question-block">
+                <b>5.</b> Neutral atom X: relative charge of electron cloud is 16-.<br>
+                a) Deduce the atomic number <span class="math">Z</span>.
+                <div class="dotted-lines"></div>
+                b) If <span class="math">A = 32</span>, find the number of neutrons.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+
+            <div class="question-block">
+                <b>6.</b> Magnesium (<span class="math">Z = 12</span>) forms the <span class="math">Mg<sup>2+</sup></span> ion.<br>
+                a) Is this a cation or anion? Justify.
+                <div class="dotted-lines"></div>
+                b) Determine the number of electrons in this ion.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+
+            <div class="question-block">
+                <b>7.</b> Neutral atom Y has 15 protons and 16 neutrons.<br>
+                a) Write its representation <span class="math"><sup>A</sup><sub>Z</sub>Y</span>.
+                <div class="dotted-lines"></div>
+                b) Prove the total charge is zero.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+
+            <div class="question-block">
+                <b>8.</b> <i>"The mass of an atom is almost entirely concentrated in its electron cloud."</i><br>
+                True or False? Correct it if false.
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+                <div class="dotted-lines"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 3: MARKING SCHEME ==================== -->
+    <div class="page-break"></div>
+    
+    <h1 class="ms-header">Teacher's Marking Scheme</h1>
+    <div class="subtitle">Official Brevet Point Distribution Guide &mdash; Sets 1 & 2</div>
+    
+    <div class="row-layout">
+        <!-- Column 1: Set 1 Answers -->
+        <div class="col col-left">
+            <h3 style="margin-top: 0; text-align: center;">Set 1 Answers</h3>
+            <div class="ms-box">
+                <b>1. Al atom composition:</b> <span class="pts">1.5 pts</span><br>
+                &bull; Protons = Z = 13 <i>(0.5)</i><br>
+                &bull; Electrons = Protons = 13 <i>(0.5)</i><br>
+                &bull; Neutrons = A - Z = 27 - 13 = 14 <i>(0.5)</i>
+            </div>
+            <div class="ms-box">
+                <b>2. Charge of nucleus:</b> <span class="pts">1.0 pt</span><br>
+                q<sub>nucleus</sub> = Z &times; 1+ = 13 &times; 1+ = 13+ <i>(1.0)</i>
+            </div>
+            <div class="ms-box">
+                <b>3. Aluminum Ion:</b> <span class="pts">2.0 pts</span><br>
+                a) <b>Cation</b> <i>(0.5)</i>; formed by <b>loss of electrons</b> <i>(0.5)</i>.<br>
+                b) Symbol: <span class="math">Al<sup>3+</sup></span> <i>(0.5)</i><br>
+                c) Total charge = 3+ <i>(0.5)</i>
+            </div>
+            <div class="ms-box">
+                <b>4. Copper Isotopes:</b> <span class="pts">3.5 pts</span><br>
+                a) Same element, <b>same Z</b> (29), <b>different A</b> (63, 65) <i>(1.0)</i>.<br>
+                b) <span class="math"><sup>65</sup><sub>29</sub>Cu</span> is heaviest; greater mass number (more neutrons) <i>(1.0)</i>.<br>
+                c) Average A = [(63 &times; 69) + (65 &times; 31)] / 100 <i>(0.5)</i><br>
+                = [4347 + 2015] / 100 = <b>63.62</b> <i>(1.0)</i>
+            </div>
+        </div>
+        
+        <!-- Column 2: Set 2 Answers -->
+        <div class="col col-right">
+            <h3 style="margin-top: 0; text-align: center;">Set 2 Answers</h3>
+            <div class="ms-box">
+                <b>5. Unknown Atom X:</b> <span class="pts">2.0 pts</span><br>
+                a) q<sub>cloud</sub> = -16, electrons = 16. Neutral atom: protons (Z) = electrons. <b>Z = 16</b> <i>(1.0)</i><br>
+                b) Neutrons = A - Z = 32 - 16 = <b>16</b> <i>(1.0)</i>
+            </div>
+            <div class="ms-box">
+                <b>6. Magnesium Ion:</b> <span class="pts">2.0 pts</span><br>
+                a) <b>Cation</b> <i>(0.5)</i>; positive charge indicates it <b>lost 2 electrons</b> <i>(0.5)</i>.<br>
+                b) Neutral Mg (12 e<sup>-</sup>) lost 2 = <b>10 e<sup>-</sup></b> <i>(1.0)</i>
+            </div>
+            <div class="ms-box">
+                <b>7. Atom Y:</b> <span class="pts">2.5 pts</span><br>
+                a) A = 15 + 16 = 31. Representation: <span class="math"><sup>31</sup><sub>15</sub>Y</span> <i>(1.5)</i><br>
+                b) q<sub>nucleus</sub> = 15+, q<sub>cloud</sub> = 15-. <br>
+                q<sub>total</sub> = (+15) + (-15) = <b>0</b> <i>(1.0)</i>
+            </div>
+            <div class="ms-box">
+                <b>8. True/False:</b> <span class="pts">1.5 pts</span><br>
+                <b>False.</b> <i>(0.5)</i><br>
+                <b>Correction:</b> Mass is almost entirely concentrated in the <b>nucleus</b>. <i>(1.0)</i>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
