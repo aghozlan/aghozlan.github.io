@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HILAL · The Physics of a Ramadan Evening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Lalezar&family=Manrope:wght@400;500;700;800&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--glass:rgba(10,14,34,.66);--line:rgba(232,193,112,.18);--gold:#e8c170;--gold2:#ffdf9a;--em:#3ff0a8;--teal:#6fe3e0;--txt:#f3eee2;--mut:#a9a7bf}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#050716;overflow:hidden;color:var(--txt);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#c{position:fixed;inset:0;display:block;touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.ar{font-family:"Reem Kufi",sans-serif;direction:rtl}
+.geo{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23e8c170' stroke-opacity='.13' stroke-width='1'%3E%3Crect x='12' y='12' width='24' height='24'/%3E%3Crect x='12' y='12' width='24' height='24' transform='rotate(45 24 24)'/%3E%3Cpath d='M0 24H6M42 24H48M24 0V6M24 42V48'/%3E%3C/g%3E%3C/svg%3E")}
+
+/* panel */
+#ui{position:fixed;top:14px;right:14px;width:318px;max-height:calc(100% - 28px);overflow:auto;background:var(--glass);
+  -webkit-backdrop-filter:blur(14px) saturate(1.25);backdrop-filter:blur(14px) saturate(1.25);border:1px solid var(--line);
+  border-radius:20px;padding:14px 16px 14px;box-shadow:0 24px 60px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s;scrollbar-width:thin}
+#ui.hide{transform:translateX(calc(100% + 30px));opacity:0;pointer-events:none}
+#ui h2{margin:0;font:700 13px Manrope;letter-spacing:.2em;display:flex;align-items:center;justify-content:space-between;color:var(--gold)}
+#ui h2 .ar{font-size:17px;letter-spacing:0}
+#close{border:0;background:none;color:var(--mut);font-size:18px;padding:0 2px}
+#verdict{margin:10px 0 4px;border-radius:14px;padding:12px 12px 11px;border:1px solid var(--line);position:relative;overflow:hidden}
+#verdict .top{display:flex;align-items:center;gap:12px}
+#vcat{font:400 44px/1 Lalezar;width:54px;height:54px;border-radius:12px;display:grid;place-items:center;color:#081018;flex:none;transition:background .4s}
+#vtxt b{display:block;font-size:13.5px;line-height:1.3}
+#vtxt .ar{display:block;font-size:14px;color:var(--gold2);margin-top:3px}
+#vq{font:11px "JetBrains Mono",monospace;color:var(--mut);margin-top:8px;line-height:1.55}
+#vq em{color:var(--txt);font-style:normal}
+.sec{border-top:1px solid var(--line);padding:10px 0 3px}
+.lab{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase;margin-bottom:6px}
+.lab output{font:600 12px "JetBrains Mono",monospace;color:var(--txt);text-transform:none;letter-spacing:0}
+input[type=range]{width:100%;accent-color:var(--gold);margin:0 0 3px;height:18px}
+.note{font-size:11px;color:var(--mut);margin:0 0 3px;line-height:1.45}
+.pre{display:flex;gap:5px;margin:2px 0 4px}
+.pre button{flex:1;font-size:10.5px;padding:5px 0;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.pre button.on{border-color:var(--gold);color:var(--gold2);background:rgba(232,193,112,.1)}
+.tog{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tog button{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px;padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.tog button::after{content:"";width:26px;height:14px;border-radius:9px;background-color:rgba(255,255,255,.15);transition:.2s;background-image:radial-gradient(circle at 7px 7px,#fff 5px,transparent 5.5px)}
+.tog button[aria-pressed=true]::after{background-color:var(--gold);background-image:radial-gradient(circle at 19px 7px,#fff 5px,transparent 5.5px)}
+#fire{width:100%;margin-top:10px;padding:11px;border-radius:12px;border:0;font-weight:800;font-size:13px;letter-spacing:.04em;
+  background:linear-gradient(135deg,#e8c170,#ff9d5c);color:#1b1006;box-shadow:0 8px 24px rgba(232,193,112,.3)}
+#fire .ar{font-size:15px;margin-inline-start:6px}
+#open{position:fixed;top:14px;right:14px;padding:9px 14px;border-radius:12px;border:1px solid var(--line);background:var(--glass);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font:500 15px "Reem Kufi";display:none}
+#open.show{display:block}
+
+/* timeline */
+#tl{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(760px,calc(100vw - 380px));background:var(--glass);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:9px 14px 10px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+#play{width:38px;height:38px;border-radius:50%;border:1px solid var(--gold);background:rgba(232,193,112,.12);color:var(--gold2);font-size:15px}
+#tlmid{position:relative}
+#tlabel{font-size:12px;display:flex;justify-content:space-between;margin-bottom:3px;gap:10px}
+#tlabel b{color:var(--gold2);font-weight:700}
+#tlabel span{color:var(--mut);font-family:"JetBrains Mono",monospace;font-size:11px;white-space:nowrap}
+#time{margin:0}
+#marks{position:relative;height:13px;font-size:9.5px;color:var(--mut)}
+#marks i{position:absolute;top:0;transform:translateX(-50%);font-style:normal;white-space:nowrap}
+#marks i::before{content:"";position:absolute;left:50%;top:-6px;width:1px;height:5px;background:currentColor}
+#spd{display:flex;gap:4px}
+#spd button{font-size:10.5px;padding:4px 7px;border-radius:7px;border:1px solid var(--line);background:none;color:var(--mut)}
+#spd button.on{color:var(--gold2);border-color:var(--gold)}
+
+/* HUD */
+#hud{position:fixed;left:16px;top:14px;width:min(380px,calc(100vw - 32px));font:11px/1.6 "JetBrains Mono",monospace;background:rgba(6,9,24,.58);
+  border:1px solid rgba(111,227,224,.22);border-radius:12px;padding:9px 12px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:opacity .3s;pointer-events:none}
+#hud.off{opacity:0}
+#hud .r{display:grid;grid-template-columns:70px 1fr;gap:8px}
+#hud b{color:var(--teal);font-weight:600}
+#hud em{color:var(--gold2);font-style:normal}
+#hud .ttl{font:700 10.5px Manrope;letter-spacing:.22em;color:var(--gold);margin-bottom:3px}
+
+/* titles */
+#intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;animation:intro 6.5s ease forwards;text-align:center}
+#intro .ar{font:700 min(20vh,160px)/1.1 "Aref Ruqaa",serif;background:linear-gradient(180deg,#fff3cf,#e8c170 60%,#b8863b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(232,193,112,.45))}
+#intro b{font:800 min(4.6vh,34px) Manrope;letter-spacing:.5em;color:#fff;margin-top:2px;padding-left:.5em}
+#intro em{font-style:normal;font-size:min(2.4vh,17px);color:#e9e2cf;letter-spacing:.14em;margin-top:6px}
+#intro small{font:12px "JetBrains Mono",monospace;color:var(--teal);margin-top:14px}
+@keyframes intro{0%{opacity:0;transform:scale(1.05);filter:blur(8px)}14%{opacity:1;transform:none;filter:none}72%{opacity:1}100%{opacity:0;filter:blur(4px)}}
+#brand{position:fixed;left:18px;bottom:16px;pointer-events:none;text-shadow:0 2px 16px rgba(0,0,0,.8);display:flex;align-items:flex-end;gap:10px}
+#brand .ar{font:700 46px/1 "Aref Ruqaa";color:var(--gold2)}
+#brand b{display:block;font:800 12px Manrope;letter-spacing:.38em;color:#fff}
+#brand span{font-size:11.5px;color:#d9d3c2}
+#call{position:fixed;left:0;right:0;top:9%;text-align:center;pointer-events:none;opacity:0;transition:opacity 2.2s,transform 2.2s;transform:translateY(10px)}
+#call.show{opacity:1;transform:none}
+#call .ar{font:700 min(11vh,92px)/1.15 "Aref Ruqaa";background:linear-gradient(180deg,#fff6da,#f0c873 55%,#c48b3c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(240,200,115,.55))}
+#call div:last-child{font:600 12.5px Manrope;letter-spacing:.24em;color:#f3e7c9;text-transform:uppercase;margin-top:2px}
+#call.miss .ar{background:linear-gradient(180deg,#e8ecff,#a9b6e8);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 18px rgba(160,180,255,.4))}
+
+@media (max-width:760px){
+  #ui{top:auto;bottom:96px;left:10px;right:10px;width:auto;max-height:56%}
+  #ui.hide{transform:translateY(calc(100% + 120px))}
+  #open{top:12px;right:12px}
+  #tl{width:calc(100vw - 20px);bottom:10px;padding:8px 10px;gap:8px}
+  #spd{display:none}
+  #hud{font-size:9.5px;top:58px;left:10px;width:calc(100vw - 20px)}
+  #hud .r{grid-template-columns:56px 1fr}
+  #brand{display:none}
+  #call{top:16%}
+}
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="Interactive simulation of a Ramadan evening: sky physics and crescent visibility"></canvas>
+
+<div id="intro"><div class="ar">هلال</div><b>HILAL</b><em>the physics of a Ramadan evening</em><small>will the crescent be seen tonight?</small></div>
+<div id="call"><div class="ar" id="callar">رمضان كريم</div><div id="callen">Ramadan Kareem</div></div>
+<div id="brand"><div class="ar">هلال</div><div><b>HILAL</b><span>the physics of a Ramadan evening</span></div></div>
+
+<div id="hud"><div class="ttl">LIVE PHYSICS · فيزياء</div><div id="hudb"></div></div>
+
+<div id="tl">
+  <button id="play" aria-label="Play or pause">❚❚</button>
+  <div id="tlmid">
+    <div id="tlabel"><b id="tname">Before sunset</b><span id="tval">−8 min · sun +0.8°</span></div>
+    <input type="range" id="time" min="-10" max="80" step="0.05" value="-8" aria-label="Minutes after sunset">
+    <div id="marks"></div>
+  </div>
+  <div id="spd"><button data-s="0.5">½×</button><button data-s="1" class="on">1×</button><button data-s="2">2×</button><button data-s="4">4×</button></div>
+</div>
+
+<button id="open" aria-label="Open controls">⚙ الهلال</button>
+<aside id="ui" class="geo" aria-label="Controls">
+  <h2><span>HILAL · CROSSING THE SKY</span><span class="ar">رصد الهلال</span><button id="close" aria-label="Hide controls">✕</button></h2>
+  <div id="verdict">
+    <div class="top"><div id="vcat">A</div><div id="vtxt"><b id="ven">—</b><span class="ar" id="var">—</span></div></div>
+    <div id="vq"></div>
+  </div>
+  <div class="sec">
+    <div class="lab">Moon age <output id="agev">22 h</output></div>
+    <input type="range" id="age" min="4" max="72" step="0.5" value="22" aria-label="Moon age in hours after conjunction">
+    <p class="note">Hours since new moon (conjunction). The Moon pulls ahead of the Sun by about 0.51° every hour.</p>
+  </div>
+  <div class="sec">
+    <div class="lab">Ecliptic angle <output id="eclv">62°</output></div>
+    <input type="range" id="ecl" min="12" max="85" step="0.5" value="62" aria-label="Angle of ecliptic to horizon">
+    <div class="pre" id="seasons"><button data-a="74">Spring</button><button data-a="55">Summer</button><button data-a="28">Autumn</button><button data-a="45">Winter</button></div>
+    <p class="note">How steeply the Sun–Moon path meets the horizon at sunset (Beirut, 33.9°N). Steep means a higher Moon and an easier sighting.</p>
+  </div>
+  <div class="sec">
+    <div class="lab">Moon latitude β <output id="betv">+0.0°</output></div>
+    <input type="range" id="bet" min="-5" max="5" step="0.1" value="0" aria-label="Lunar ecliptic latitude">
+  </div>
+  <div class="sec">
+    <div class="lab">Haze · aerosols <output id="turv">×2.0</output></div>
+    <input type="range" id="tur" min="0.5" max="7" step="0.1" value="2" aria-label="Haze">
+    <p class="note">More aerosols means more Mie scattering: a brighter, whiter twilight that can hide the crescent.</p>
+  </div>
+  <div class="sec">
+    <div class="lab">Wind <output id="winv">3.0 m/s</output></div>
+    <input type="range" id="win" min="0" max="14" step="0.1" value="3" aria-label="Wind">
+  </div>
+  <div class="sec">
+    <div class="tog">
+      <button data-k="hud" aria-pressed="true">Physics HUD</button>
+      <button data-k="sound" aria-pressed="true">Sound</button>
+      <button data-k="venus" aria-pressed="true">Venus</button>
+      <button data-k="loop" aria-pressed="true">Loop evening</button>
+    </div>
+    <button id="fire">Fire the iftar cannon<span class="ar">مدفع الإفطار</span></button>
+  </div>
+</aside>
+
+<script>
+'use strict';
+(() => {
+const $ = s => document.querySelector(s);
+const TAU = Math.PI * 2, D2R = Math.PI / 180;
+const cv = $('#c'), ctx = cv.getContext('2d');
+const mk = () => document.createElement('canvas');
+const skyCv = mk(), skyX = skyCv.getContext('2d');
+const moonCv = mk(), moonX = moonCv.getContext('2d');
+const cityC = mk(), vigC = mk();
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- constants: atmosphere & astronomy ---------- */
+const LAT = 33.9;                                   // Beirut
+const RATE = 0.25 * Math.cos(LAT * D2R);            // °/min the Sun sinks at sunset (equinox approx.)
+const AZR = RATE / Math.tan((90 - LAT) * D2R);      // °/min sideways drift to the north
+const TR = [0.046, 0.108, 0.265];                   // Rayleigh optical depth at 680/550/440 nm  (∝ λ⁻⁴)
+const TM0 = [0.017, 0.020, 0.024];                  // Mie (aerosol) optical depth per unit haze  (∝ λ^-1.3)
+const TO = [0.014, 0.038, 0.002];                   // ozone Chappuis band (absorbs orange/green) — high layer, grazing path
+const SUN = [0.92, 1.0, 0.98];
+const FLOOR = [0.00012, 0.00016, 0.00034], LPOL = [0.0008, 0.0005, 0.0002];
+const KM = 0.011, KS = 0.0005;                      // lunar & stellar luminance scale
+const MOON_SCALE = 7;                               // drawn 7× larger than true size
+const WIDEN = 3.5;                                  // crescent drawn 3.5× wider so it survives the pixel grid
+const CANNON_D = 1200;                              // m from the cannon to the rooftop
+
+const ST = { t: -8, play: true, speed: 1, age: 22, ecl: 62, beta: 0, turb: 2, wind: 3, hud: true, sound: true, venus: true, loop: true };
+
+let W, H, DPR, U, FW, HY, P, SX0, PT, PB, BOT, SH = 40;
+const SW = 200;
+let skyImg, skyL = new Float32Array(0), EXPO = 50, Ymean = 0.004, skyB = 0.5, dark = 0;
+let G = {}, realT = 0, lastT = -99, seen = false, missed = false, firedThisLoop = false, moonContrast = 0, maxSeen = 0;
+let stars = [], windows = [], ropes = [], pigeons = [], rings = [], smoke = [], sfx = [], events = [], sparks = [];
+let SIL = {}, lamp = { th: 0.2, om: 0, hx: 0, hy: 0 }, cannon = { x: 0, y: 0, flash: 0, fired: -99 };
+let parapet = null, mosque = {}, lighthouse = {};
+let shake = 0;
+
+/* ---------- helpers ---------- */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const spriteCache = {};
+function spr(c) {
+  let s = spriteCache[c]; if (s) return s; s = mk(); s.width = s.height = 64; const x = s.getContext('2d');
+  const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.12, `rgba(${c},1)`); g.addColorStop(0.3, `rgba(${c},.35)`); g.addColorStop(0.6, `rgba(${c},.07)`); g.addColorStop(1, `rgba(${c},0)`);
+  x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (spriteCache[c] = s);
+}
+const smokeSpr = (() => { const s = mk(); s.width = s.height = 96; const x = s.getContext('2d'); const g = x.createRadialGradient(48, 48, 0, 48, 48, 48);
+  g.addColorStop(0, 'rgba(200,195,210,.85)'); g.addColorStop(.5, 'rgba(170,165,185,.35)'); g.addColorStop(1, 'rgba(160,155,180,0)'); x.fillStyle = g; x.fillRect(0, 0, 96, 96); return s; })();
+
+// air mass (Kasten–Young), extended below the horizon for twilight paths
+function am(h) { return h >= 0 ? 1 / (Math.sin(h * D2R) + 0.50572 * Math.pow(h + 6.07995, -1.6364)) : 38 + 5 * (-h); }
+// atmospheric refraction (Sæmundsson), degrees, for a true altitude h
+function refr(h) { h = Math.max(h, -1.9); return 1.02 / Math.tan((h + 10.3 / (h + 5.11)) * D2R) / 60; }
+const tone = x => 1 - Math.exp(-Math.pow(Math.max(0, x), 0.55));
+
+/* ---------- geometry of the evening ---------- */
+function geometry(t) {
+  const hs = -0.833 - RATE * t, azS = AZR * t;
+  const ld = 0.508 * ST.age, a = ST.ecl * D2R, b = ST.beta;
+  const ARCV = ld * Math.sin(a) + b * Math.cos(a), DAZ = ld * Math.cos(a) - b * Math.sin(a);
+  const hm = hs + ARCV, azM = azS - DAZ;
+  const cosE = Math.sin(hs * D2R) * Math.sin(hm * D2R) + Math.cos(hs * D2R) * Math.cos(hm * D2R) * Math.cos(DAZ * D2R);
+  const eps = Math.acos(clamp(cosE, -1, 1)) / D2R;
+  const Wc = 15.5 * (1 - Math.cos(eps * D2R));                           // crescent width, arcmin (Yallop W')
+  const q = (ARCV - (11.8371 - 6.3226 * Wc + 0.7319 * Wc * Wc - 0.1018 * Wc * Wc * Wc)) / 10;
+  const lag = ARCV / RATE, tb = lag * 4 / 9;
+  const hsA = hs + refr(hs), hmA = hm + refr(hm);
+  const vl = 0.508 * 22 + ld * 0 + 24, vA = a - 0.06;                    // Venus ~ 35° along the ecliptic
+  const hv = hs + vl * Math.sin(vA), azV = azS - vl * Math.cos(vA);
+  return { t, hs, azS, hm, azM, ARCV, DAZ, eps, Wc, q, lag, tb, hsA, hmA, hv: hv + refr(hv), azV,
+    illum: (1 - Math.cos(eps * D2R)) / 2,
+    sx: SX0 + azS * P, sy: HY - hsA * P, mx: SX0 + azM * P, my: HY - hmA * P, vx: SX0 + azV * P, vy: HY - (hv + refr(hv)) * P };
+}
+const CAT = [
+  ['A', 0.216, 'Easily visible to the naked eye', 'يُرى بالعين المجرّدة بسهولة', '#3ff0a8'],
+  ['B', -0.014, 'Visible in perfect conditions', 'يُرى في ظروف جوّية مثالية', '#a6ec6a'],
+  ['C', -0.160, 'May need binoculars to find first', 'قد يحتاج إلى منظار لإيجاده', '#ffd166'],
+  ['D', -0.232, 'Only with binoculars or a telescope', 'لا يُرى إلا بمنظار أو تلسكوب', '#ff9f5a'],
+  ['E', -0.293, 'Not visible even with a telescope', 'لا يُرى حتى بالتلسكوب', '#ff6b6b'],
+  ['F', -1e9, 'Not visible: below the Danjon limit', 'غير مرئي — دون حدّ دانجون', '#c38bff']];
+const catOf = g => g.eps < 7 || g.ARCV < 0 ? CAT[5] : CAT.find(c => g.q > c[1]);
+
+/* ---------- sky: single scattering, computed per pixel ---------- */
+function computeSky(g) {
+  const hs = g.hs, sH = Math.sin(hs * D2R), cH = Math.cos(hs * D2R), tM = TM0.map(v => v * ST.turb);
+  const d = skyImg.data; let ysum = 0, top = 0, topN = 0;
+  const gg = 0.76, g2 = gg * gg, hgK = (1 - g2) / (4 * Math.PI);
+  for (let j = 0; j < SH; j++) {
+    const e = Math.max(0.15, (HY - (j + 0.5) * HY / SH) / P), sE = Math.sin(e * D2R), cE = Math.cos(e * D2R);
+    const mv = am(e), heff = hs + Math.min(e, 40) * 0.5 * clamp((12 - hs) / 12, 0, 1), ms = am(heff), mo = hs >= 0 ? Math.min(am(hs), 40) : 40;
+    const tw = hs >= 0 ? 1 : Math.exp((hs + Math.min(e, 30) * 0.1) * 0.42), lp = Math.exp(-e / 4);
+    const ext = [], sf = [];
+    for (let c = 0; c < 3; c++) { ext[c] = SUN[c] * Math.exp(-(TR[c] + tM[c]) * ms - TO[c] * mo) * tw; sf[c] = (1 - Math.exp(-(TR[c] + tM[c]) * mv)) / (TR[c] + tM[c]); }
+    for (let i = 0; i < SW; i++) {
+      const az = ((i + 0.5) * W / SW - SX0) / P;
+      const cT = sE * sH + cE * cH * Math.cos((az - g.azS) * D2R);
+      const pr = 0.0597 * (1 + cT * cT), pm = hgK / Math.pow(1 + g2 - 2 * gg * cT, 1.5);
+      const k = (j * SW + i) * 3, o = (j * SW + i) * 4;
+      let r = 0, gr = 0, b = 0;
+      for (let c = 0; c < 3; c++) {
+        const L = ext[c] * (TR[c] * pr + tM[c] * pm) * sf[c] + FLOOR[c] + LPOL[c] * lp;
+        skyL[k + c] = L; if (c === 0) r = L; else if (c === 1) gr = L; else b = L;
+      }
+      const Y = 0.2 * r + 0.7 * gr + 0.1 * b; ysum += Y;
+      let R = tone(r * EXPO), Gc = tone(gr * EXPO), B = tone(b * EXPO);
+      const l = 0.3 * R + 0.59 * Gc + 0.11 * B;                         // anime grade: saturation + cool shadows
+      R = l + (R - l) * 1.3; Gc = l + (Gc - l) * 1.3; B = l + (B - l) * 1.3 + 0.03 * (1 - l);
+      d[o] = clamp(R, 0, 1) * 255; d[o + 1] = clamp(Gc, 0, 1) * 255; d[o + 2] = clamp(B, 0, 1) * 255; d[o + 3] = 255;
+      if (j < SH * 0.35) { top += l; topN++; }
+    }
+  }
+  skyX.putImageData(skyImg, 0, 0);
+  Ymean = ysum / (SW * SH); skyB = top / Math.max(1, topN);
+}
+function skyAt(x, y) {
+  const i = clamp(Math.floor(x / W * SW), 0, SW - 1), j = clamp(Math.floor(y / HY * SH), 0, SH - 1), k = (j * SW + i) * 3;
+  return [skyL[k], skyL[k + 1], skyL[k + 2]];
+}
+
+/* ---------- the crescent: Lommel–Seeliger shading + earthshine ---------- */
+const MOONTEX = (() => { const n = 128, a = new Float32Array(n * n), R = rng(5), blobs = [];
+  for (let i = 0; i < 9; i++) blobs.push([R() * 1.6 - 0.8, R() * 1.6 - 0.8, 0.12 + R() * 0.28, 0.12 + R() * 0.14]);
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) { const u = x / n * 2 - 1, v = y / n * 2 - 1; let al = 1 + (R() - 0.5) * 0.06;
+    for (const [bx, by, br, bd] of blobs) { const dd = Math.hypot(u - bx, v - by); if (dd < br) al -= bd * (1 - dd / br); }
+    a[y * n + x] = al; } return { n, a }; })();
+function renderMoon(g, rm) {
+  const SSF = 3, size = Math.ceil((rm * 2 + 6) * SSF); if (moonCv.width !== size) { moonCv.width = moonCv.height = size; }
+  const img = moonX.createImageData(size, size), d = img.data, c0 = size / 2, R = rm * SSF;
+  let ux = g.sx - g.mx, uy = -(g.sy - g.my); const ul = Math.hypot(ux, uy) || 1; ux /= ul; uy /= ul;
+  // drawn crescent width ×WIDEN (it would be < 1 px on screen); brightness & cusps use the true geometry
+  const epsV = Math.acos(clamp(1 - WIDEN * (1 - Math.cos(g.eps * D2R)), -1, 1)) / D2R;
+  const i = (180 - epsV) * D2R, sx = Math.sin(i) * ux, sy = Math.sin(i) * uy, sz = Math.cos(i);
+  const span = 90 * Math.pow(clamp((g.eps - 7) / 10, 0, 1), 0.6) + 4;     // Danjon: cusps shorten as ε → 7°
+  const es = 0.004 * (1 + Math.cos(g.eps * D2R)) / 2;                   // earthshine ∝ Earth's phase seen from the Moon
+  const Ls = skyAt(g.mx, g.my), mM = am(Math.max(g.hm, 0)), tM = TM0.map(v => v * ST.turb);
+  const ext = [0, 1, 2].map(c => Math.exp(-(TR[c] + tM[c] + TO[c]) * mM));
+  const base = [tone(Ls[0] * EXPO), tone(Ls[1] * EXPO), tone(Ls[2] * EXPO)], tint = [0.82, 0.94, 1.12];
+  let maxd = 0; const T = MOONTEX;
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const nx = (x + 0.5 - c0) / R, ny = -(y + 0.5 - c0) / R, r2 = nx * nx + ny * ny; if (r2 > 1.04) continue;
+    const nz = Math.sqrt(Math.max(0, 1 - r2)), edge = clamp((1 - Math.sqrt(r2)) * R + 0.5, 0, 1);
+    const mu0 = nx * sx + ny * sy + nz * sz, mu = nz;
+    const al = T.a[Math.floor((ny * -0.5 + 0.5) * (T.n - 1)) * T.n + Math.floor((nx * 0.5 + 0.5) * (T.n - 1))] || 1;
+    let lit = mu0 > 0 ? mu0 / (mu0 + mu + 1e-4) : 0;
+    if (lit > 0) { const ang = Math.acos(clamp((nx * ux + ny * uy) / Math.sqrt(r2 || 1), -1, 1)) / D2R; lit *= 1 - sstep(span - 8, span + 4, ang); }
+    const o = (y * size + x) * 4;
+    for (let c = 0; c < 3; c++) {
+      const Lm = KM * (lit * al + es * al * tint[c] * mu) * ext[c];
+      const v = (tone((Ls[c] + Lm) * EXPO) - base[c]) * edge * 255 * 2.4;
+      d[o + c] = clamp(v, 0, 255); if (c === 1 && v / 2.4 > maxd) maxd = v / 2.4;
+    }
+    d[o + 3] = 255;
+  }
+  moonX.putImageData(img, 0, 0); return maxd / 255;
+}
+
+/* ---------- audio ---------- */
+let AC = null, master = null, noiseBuf = null;
+function ensureAudio() { if (!ST.sound) return; try { if (!AC) { AC = new (window.AudioContext || window.webkitAudioContext)(); const comp = AC.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 5;
+  master = AC.createGain(); master.gain.value = 0.8; master.connect(comp); comp.connect(AC.destination);
+  noiseBuf = AC.createBuffer(1, AC.sampleRate * 3, AC.sampleRate); const dd = noiseBuf.getChannelData(0); for (let i = 0; i < dd.length; i++) dd[i] = Math.random() * 2 - 1; }
+  if (AC.state === 'suspended') AC.resume(); } catch (e) { AC = null; } }
+function boom(vol, delay) {
+  if (!AC || !ST.sound || AC.state !== 'running') return; const t = AC.currentTime + (delay || 0);
+  const n = AC.createBufferSource(); n.buffer = noiseBuf; const lp = AC.createBiquadFilter(); lp.type = 'lowpass';
+  lp.frequency.setValueAtTime(700, t); lp.frequency.exponentialRampToValueAtTime(90, t + 2);
+  const g = AC.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + 3);
+  n.connect(lp).connect(g).connect(master); n.start(t, Math.random()); n.stop(t + 3.2);
+  const o = AC.createOscillator(); o.frequency.setValueAtTime(58, t); o.frequency.exponentialRampToValueAtTime(24, t + 0.8);
+  const og = AC.createGain(); og.gain.setValueAtTime(vol, t); og.gain.exponentialRampToValueAtTime(0.0001, t + 1.1); o.connect(og).connect(master); o.start(t); o.stop(t + 1.2);
+}
+
+/* ---------- scene ---------- */
+function resize() {
+  W = innerWidth; H = innerHeight; DPR = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  U = Math.min(H / 900, W / 620); FW = W > 760 ? W - 340 : W;
+  BOT = W > 760 ? H : H - 84; HY = Math.round(BOT * 0.6); P = HY / 34; SX0 = FW * (W > 760 ? 0.66 : 0.6); PT = BOT * 0.835; PB = BOT * 0.93;
+  SH = Math.max(24, Math.round(SW * HY / W)); skyCv.width = SW; skyCv.height = SH; skyImg = skyX.createImageData(SW, SH); skyL = new Float32Array(SW * SH * 3);
+  build();
+}
+function build() {
+  const R = rng(3);
+  /* stars, fixed on the sky and setting with it */
+  if (!stars.length) { const S = rng(9); for (let i = 0; i < 260; i++) stars.push({ az: (S() - 0.5) * 120, alt: 1 + Math.pow(S(), 0.9) * 40, m: -0.5 + 6 * Math.pow(S(), 0.55), ph: S() * TAU }); }
+  /* city silhouettes */
+  cityC.width = Math.round(W * DPR); cityC.height = Math.round(H * DPR);
+  const x = cityC.getContext('2d'); x.setTransform(DPR, 0, 0, DPR, 0, 0); x.clearRect(0, 0, W, H);
+  windows = []; const base = BOT * 0.87, col = '#110c22';
+  const bld = (bx, bw, top, opts = {}) => {
+    x.fillStyle = opts.c || col; x.fillRect(bx, top, bw, base - top);
+    if (opts.tank) { x.fillRect(bx + bw * 0.2, top - 9 * U, 10 * U, 9 * U); x.fillRect(bx + bw * 0.2 + 1 * U, top - 12 * U, 8 * U, 3 * U); }
+    if (opts.dish) { x.beginPath(); x.ellipse(bx + bw * 0.7, top - 5 * U, 5 * U, 3 * U, -0.6, 0, TAU); x.fill(); x.fillRect(bx + bw * 0.7 - 0.6 * U, top - 5 * U, 1.2 * U, 5 * U); }
+    if (opts.ant) { x.fillRect(bx + bw * 0.5, top - 18 * U, 1.2 * U, 18 * U); x.fillRect(bx + bw * 0.5 - 5 * U, top - 14 * U, 10 * U, 1 * U); }
+    if (opts.arch) { x.beginPath(); for (let k = 0; k < 3; k++) { const ax = bx + bw * (0.22 + k * 0.28); x.moveTo(ax - 5 * U, top); x.arc(ax, top, 5 * U, Math.PI, 0); } x.fill(); }
+    for (let wy = top + 6 * U; wy < base - 6 * U; wy += 9 * U) for (let wx = bx + 4 * U; wx < bx + bw - 6 * U; wx += 8 * U)
+      if (R() < 0.36) windows.push({ x: wx, y: wy, w: 3.4 * U, h: 4.8 * U, thr: R(), c: R() < 0.82 ? '255,200,120' : R() < 0.5 ? '255,236,200' : '120,230,190', f: R() * 10 });
+  };
+  // cannon hill (left) with an old fort
+  x.fillStyle = '#0f0b1f'; x.beginPath(); x.moveTo(-5, base); x.lineTo(-5, HY - 0.02 * H);
+  x.quadraticCurveTo(FW * 0.08, HY - 0.07 * H, FW * 0.16, HY - 0.035 * H); x.quadraticCurveTo(FW * 0.2, HY - 0.01 * H, FW * 0.24, HY + 0.02 * H); x.lineTo(FW * 0.24, base); x.fill();
+  const fx0 = FW * 0.05, fy0 = HY - 0.065 * H; x.fillRect(fx0, fy0 - 14 * U, 46 * U, 16 * U);
+  for (let k = 0; k < 6; k++) x.fillRect(fx0 + k * 8 * U, fy0 - 19 * U, 5 * U, 5 * U);
+  cannon = { x: fx0 + 60 * U, y: fy0 - 4 * U, ang: -0.5, flash: 0, fired: cannon.fired || -99 };
+  x.save(); x.translate(cannon.x, cannon.y); x.rotate(cannon.ang); x.fillRect(-4 * U, -3.2 * U, 26 * U, 6.4 * U); x.restore();
+  x.beginPath(); x.arc(cannon.x, cannon.y + 3 * U, 5 * U, 0, TAU); x.fill();
+  // old city blocks
+  let px = FW * 0.12;
+  while (px < FW * 0.56) {
+    const bw = (26 + R() * 46) * U, top = HY - H * (R() * 0.07) + H * 0.04;
+    if (Math.abs(px - FW * 0.3) > 120 * U) bld(px, bw, top, { tank: R() < .5, dish: R() < .4, ant: R() < .25, arch: R() < .2, c: R() < .5 ? '#130e26' : '#100b20' });
+    px += bw + R() * 4 * U;
+  }
+  // mosque with dome and two Ottoman-style minarets
+  const mx = FW * 0.3, mtop = HY - 0.005 * H;
+  mosque = { x: mx, domeY: mtop - 36 * U, r: 50 * U, minY: mtop - 205 * U, mins: [mx - 98 * U, mx + 98 * U] };
+  x.fillStyle = '#120d25'; x.fillRect(mx - 120 * U, mtop, 240 * U, base - mtop);
+  x.fillRect(mx - 62 * U, mtop - 22 * U, 124 * U, 24 * U);
+  x.beginPath(); x.arc(mx, mtop - 22 * U, 50 * U, Math.PI, 0); x.fill();
+  x.fillRect(mx - 1.4 * U, mtop - 96 * U, 2.8 * U, 26 * U);
+  for (const sd of [-1, 1]) { x.beginPath(); x.arc(mx + sd * 84 * U, mtop, 22 * U, Math.PI, 0); x.fill(); }
+  for (const mxx of mosque.mins) {
+    x.fillRect(mxx - 7 * U, mtop - 180 * U, 14 * U, 180 * U + (base - mtop));
+    for (const by of [mtop - 120 * U, mtop - 168 * U]) { x.fillRect(mxx - 11 * U, by, 22 * U, 5 * U); x.beginPath(); x.moveTo(mxx - 11 * U, by + 5 * U); x.lineTo(mxx + 11 * U, by + 5 * U); x.lineTo(mxx + 7 * U, by + 10 * U); x.lineTo(mxx - 7 * U, by + 10 * U); x.fill(); }
+    x.beginPath(); x.moveTo(mxx - 7 * U, mtop - 180 * U); x.lineTo(mxx, mtop - 214 * U); x.lineTo(mxx + 7 * U, mtop - 180 * U); x.fill();
+    x.fillRect(mxx - 0.8 * U, mtop - 224 * U, 1.6 * U, 12 * U);
+  }
+  // crescent finials (drawn later, lit)
+  // Corniche: low buildings, palms and the lighthouse
+  px = FW * 0.56;
+  while (px < W) { const bw = (22 + R() * 40) * U, top = HY + H * (0.13 + R() * 0.05); bld(px, bw, top, { tank: R() < .4, dish: R() < .3 }); px += bw + R() * 22 * U; }
+  for (let k = 0; k < 6; k++) { const pxx = FW * (0.6 + k * 0.07) + R() * 20 * U, py = HY + H * 0.14 - 40 * U * (0.7 + R() * 0.5);
+    x.strokeStyle = '#0e0a1c'; x.lineWidth = 2.2 * U; x.beginPath(); x.moveTo(pxx, HY + H * 0.16); x.quadraticCurveTo(pxx + 4 * U, (py + HY + H * 0.16) / 2, pxx + 2 * U, py); x.stroke();
+    x.fillStyle = '#0e0a1c'; for (let f = 0; f < 7; f++) { const a = -Math.PI / 2 + (f - 3) * 0.48; x.beginPath(); x.moveTo(pxx + 2 * U, py); x.quadraticCurveTo(pxx + 2 * U + Math.cos(a) * 12 * U, py + Math.sin(a) * 9 * U - 4 * U, pxx + 2 * U + Math.cos(a) * 20 * U, py + Math.sin(a) * 6 * U + 7 * U); x.lineTo(pxx + 2 * U + Math.cos(a) * 9 * U, py + 1 * U); x.fill(); } }
+  const lhx = Math.min(FW * 0.9, FW - 30 * U), lht = HY - 70 * U; lighthouse = { x: lhx, y: lht };
+  x.fillStyle = '#120d24'; x.beginPath(); x.moveTo(lhx - 9 * U, base); x.lineTo(lhx - 6 * U, lht); x.lineTo(lhx + 6 * U, lht); x.lineTo(lhx + 9 * U, base); x.fill();
+  x.fillRect(lhx - 8 * U, lht - 3 * U, 16 * U, 3 * U); x.fillRect(lhx - 5 * U, lht - 12 * U, 10 * U, 9 * U);
+  x.beginPath(); x.moveTo(lhx - 6 * U, lht - 12 * U); x.lineTo(lhx, lht - 18 * U); x.lineTo(lhx + 6 * U, lht - 12 * U); x.fill();
+  x.fillStyle = 'rgba(255,255,255,.06)'; for (let k = 0; k < 4; k++) x.fillRect(lhx - 8 * U, lht + (20 + k * 30) * U, 16 * U, 8 * U);
+
+  /* rooftop parapet with an eight-pointed-star (khatam) lattice */
+  parapet = new Path2D(); parapet.rect(-2, PT, W + 4, PB - PT);
+  const sR = 13 * U, step = 46 * U, cyS = (PT + PB) / 2 + 2 * U;
+  for (let cx = step / 2; cx < W; cx += step) {
+    for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8 + Math.PI / 8, r = k % 2 ? sR * 0.62 : sR; const X = cx + Math.cos(a) * r, Y = cyS + Math.sin(a) * r; k ? parapet.lineTo(X, Y) : parapet.moveTo(X, Y); }
+    parapet.closePath();
+  }
+
+  /* children (seen from behind) as paths, so the sky and the lantern can rim-light them */
+  const gx = FW * (W > 760 ? 0.3 : 0.24), bx = FW * (W > 760 ? 0.42 : 0.56), fy = BOT * 0.988, k = U * 1.0;
+  const mG = new DOMMatrix().translate(gx, fy).scale(k), mB = new DOMMatrix().translate(bx, fy).scale(k);
+  const girl = new Path2D('M-24 0C-26-50-31-100-27-128Q-31-140-23-147C-23-170-18-192 0-193C18-192 23-170 23-147Q31-140 27-128C31-100 26-50 24 0Z');
+  const gArm = new Path2D('M22-136Q36-122 42-104');
+  const boy = new Path2D('M-22 0C-24-50-26-95-22-118Q-24-132-14-138L12-138Q22-132 22-118C24-95 22-50 22 0Z M21-156A15 15 0 1 1-9-156A15 15 0 1 1 21-156Z M-9-162A15 10 0 0 1 21-162Z');
+  const bArm = new Path2D('M16-128Q34-136 42-148');
+  SIL = { body: new Path2D(), arm: new Path2D(), w: 8 * k, gx, bx, fy, k };
+  SIL.body.addPath(girl, mG); SIL.body.addPath(boy, mB); SIL.arm.addPath(gArm, mG); SIL.arm.addPath(bArm, mB);
+  const hp = mG.transformPoint(new DOMPoint(42, -104)); lamp.hx = hp.x; lamp.hy = hp.y;
+  const pv = mB.transformPoint(new DOMPoint(52, -150)); SIL.pivot = { x: pv.x, y: pv.y };
+  const hd = mB.transformPoint(new DOMPoint(0, -200)); SIL.head = { x: hd.x, y: hd.y };
+  const gh = mG.transformPoint(new DOMPoint(0, -230)); SIL.ghead = { x: gh.x, y: gh.y };
+
+  /* string lights: Verlet ropes */
+  const oldR = ropes; ropes = [];
+  const mkRope = (x0, y0, x1, y1, n, slack, deco) => {
+    const pts = [], len = Math.hypot(x1 - x0, y1 - y0) * slack, rest = len / (n - 1);
+    for (let i = 0; i < n; i++) { const t = i / (n - 1), X = lerp(x0, x1, t), Y = lerp(y0, y1, t) + Math.sin(Math.PI * t) * len * 0.12; pts.push({ x: X, y: Y, px: X, py: Y, pin: i === 0 || i === n - 1, m: 1, load: 0 }); }
+    const orn = [];
+    if (deco) for (let i = 3; i < n - 2; i += 3) { const p = pts[i], L = (16 + (i % 2) * 14) * U; orn.push({ i, x: p.x, y: p.y + L, px: p.x, py: p.y + L, L, kind: ['moon', 'star', 'fanous'][(i / 3 | 0) % 3] }); }
+    ropes.push({ pts, rest, orn, bulb: (i) => ['255,214,140', '255,240,205', '120,240,200'][i % 3] });
+  };
+  mkRope(-6, H * 0.06, FW * 0.62, -6, 30, 1.07, true);
+  mkRope(FW * 0.36, -6, W + 6, H * 0.2, 30, 1.06, true);
+  if (oldR.length) {/* keep pigeons consistent */}
+  /* pigeons perch on the first string */
+  if (!pigeons.length) for (let i = 0; i < 12; i++) pigeons.push({ node: 6 + i * 1.6 | 0, x: 0, y: 0, vx: 0, vy: 0, state: 'perch', t: 0, ph: Math.random() * TAU, back: 0 });
+  for (const p of pigeons) { const n = ropes[0].pts[p.node]; p.x = n.x; p.y = n.y; }
+
+  /* vignette */
+  vigC.width = Math.round(W * DPR); vigC.height = Math.round(H * DPR); const v = vigC.getContext('2d'); v.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const vg = v.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.5, Math.max(W, H) * 0.8);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(2,2,12,.55)'); v.fillStyle = vg; v.fillRect(0, 0, W, H);
+  buildMarks();
+}
+
+/* ---------- events ---------- */
+function fireCannon() {
+  ensureAudio(); cannon.fired = realT; cannon.flash = 1;
+  const dir = [Math.cos(cannon.ang), Math.sin(cannon.ang)];
+  rings.push({ x: cannon.x + dir[0] * 26 * U, y: cannon.y + dir[1] * 26 * U, dx: dir[0], dy: dir[1], v0: 70 * U, R0: 9 * U, age: 0,
+    parts: Array.from({ length: 90 }, () => ({ u: Math.random() * TAU, v: Math.random() * TAU })) });
+  for (let i = 0; i < 14; i++) smoke.push({ x: cannon.x + dir[0] * 22 * U, y: cannon.y + dir[1] * 22 * U, vx: dir[0] * rand(20, 60) * U + rand(-10, 10) * U, vy: dir[1] * rand(20, 60) * U + rand(-10, 4) * U, r: rand(6, 14) * U, age: 0, life: rand(5, 9) });
+  const delay = CANNON_D / 343;
+  events.push({ t: realT + delay, kind: 'boom' });
+}
+function onBoom() {
+  boom(1.3, 0); boom(0.35, 0.42); boom(0.18, 0.95);                    // direct sound + echoes off the old city
+  if (!RM) shake = 14;
+  sfx.push({ x: clamp(cannon.x + 110 * U, 120 * U, FW - 120 * U), y: cannon.y - 70 * U, text: 'بوووم!', size: 64 * U, age: 0, life: 1.6, c: '255,190,110', rot: -0.1 });
+  sfx.push({ bubble: true, x: SIL.ghead.x - 30 * U, y: SIL.ghead.y, text: 'مدفع الإفطار!', size: 16 * U, age: -0.4, life: 2.6 });
+  lamp.om += 1.4;
+  for (const p of pigeons) if (p.state === 'perch') { p.state = 'fly'; p.t = 0; p.vx = rand(-1, 1) * 120 * U; p.vy = -rand(160, 260) * U; p.back = rand(11, 17); }
+}
+
+/* ---------- simulation ---------- */
+const VERLET_DT = 1 / 60; let vAcc = 0;
+function stepPhysics(rdt) {
+  // timeline
+  if (ST.play) {
+    const prev = ST.t; ST.t += rdt * 1.15 * ST.speed;
+    if (prev < 0 && ST.t >= 0 && !firedThisLoop) { fireCannon(); firedThisLoop = true; }
+    if (ST.t > 80) { if (ST.loop) restartEvening(); else { ST.t = 80; ST.play = false; syncPlay(); } }
+    timeI.value = ST.t;
+  }
+  for (let i = events.length - 1; i >= 0; i--) if (realT >= events[i].t) { const e = events[i]; events.splice(i, 1); if (e.kind === 'boom') onBoom(); }
+
+  // Verlet ropes with fixed step
+  vAcc += rdt;
+  while (vAcc >= VERLET_DT) { vAcc -= VERLET_DT; verlet(VERLET_DT); }
+
+  // lantern in the girl's hand: driven, damped pendulum   θ'' = −(g/L)sinθ − (a_hand/L)cosθ − bθ' + wind
+  const L = 0.24, gw = 9.81, hand = Math.sin(realT * 1.3) * 0.6;
+  const wf = 0.015 * ST.wind * ST.wind * (1 + 0.4 * Math.sin(realT * 0.9));
+  lamp.om += (-(gw / L) * Math.sin(lamp.th) - (hand / L) * Math.cos(lamp.th) - 0.35 * lamp.om - wf * Math.cos(lamp.th) / L) * rdt;
+  lamp.th += lamp.om * rdt;
+
+  // pigeons: perch on the wire (their weight bends it), flee the boom, flock (boids), come home
+  const flying = pigeons.filter(p => p.state !== 'perch');
+  for (const p of pigeons) {
+    p.ph += rdt * (p.state === 'perch' ? 2 : 16);
+    if (p.state === 'perch') { const n = ropes[0].pts[p.node]; p.x = n.x; p.y = n.y; continue; }
+    p.t += rdt; let ax = 0, ay = 0;
+    const target = p.state === 'home' ? ropes[0].pts[p.node] : { x: FW * 0.42 + Math.cos(realT * 0.4) * FW * 0.25, y: H * 0.25 + Math.sin(realT * 0.7) * H * 0.08 };
+    ax += (target.x - p.x) * (p.state === 'home' ? 2.2 : 0.35); ay += (target.y - p.y) * (p.state === 'home' ? 2.2 : 0.35);
+    let cx = 0, cy = 0, avx = 0, avy = 0, n = 0;
+    for (const o of flying) { if (o === p) continue; const dx = o.x - p.x, dy = o.y - p.y, d = Math.hypot(dx, dy); if (d < 120 * U) { cx += o.x; cy += o.y; avx += o.vx; avy += o.vy; n++;
+      if (d < 22 * U && d > 0) { ax -= dx / d * 900 * U / (d / U + 1) * 6; ay -= dy / d * 900 * U / (d / U + 1) * 6; } } }
+    if (n && p.state === 'fly') { ax += (cx / n - p.x) * 0.8 + (avx / n - p.vx) * 1.2; ay += (cy / n - p.y) * 0.8 + (avy / n - p.vy) * 1.2; }
+    p.vx += ax * rdt; p.vy += ay * rdt;
+    const sp = Math.hypot(p.vx, p.vy), mx = (p.state === 'home' ? 160 : 230) * U; if (sp > mx) { p.vx *= mx / sp; p.vy *= mx / sp; }
+    if (p.state === 'home') { p.vx *= 0.97; p.vy *= 0.97; }
+    p.x += p.vx * rdt; p.y += p.vy * rdt;
+    if (p.state === 'fly' && p.t > p.back) p.state = 'home';
+    if (p.state === 'home') { const nd = ropes[0].pts[p.node]; if (Math.hypot(nd.x - p.x, nd.y - p.y) < 8 * U) { p.state = 'perch'; nd.py -= 2.5; } }
+  }
+  for (const r of rings) r.age += rdt; rings = rings.filter(r => r.age < 9);
+  for (let i = smoke.length - 1; i >= 0; i--) { const m = smoke[i]; m.age += rdt; if (m.age > m.life) { smoke.splice(i, 1); continue; }
+    m.vx += (ST.wind * 4 * U - m.vx) * 0.4 * rdt; m.vy += (-6 * U - m.vy) * 0.4 * rdt; m.x += m.vx * rdt; m.y += m.vy * rdt; m.r += rdt * 5 * U; }
+  cannon.flash *= Math.exp(-rdt * 9);
+}
+function verlet(h) {
+  const gpx = 9.81 * 120 * U;
+  for (let ri = 0; ri < ropes.length; ri++) { const r = ropes[ri];
+    for (const p of r.pts) p.load = 0;
+    if (ri === 0) for (const b of pigeons) if (b.state === 'perch') r.pts[b.node].load += 1;
+    for (let i = 0; i < r.pts.length; i++) { const p = r.pts[i]; if (p.pin) continue;
+      const wind = ST.wind * Math.abs(ST.wind) * 1.6 * U * (0.6 + 0.4 * Math.sin(realT * 0.8 + p.x * 0.01)) * (1 + 0.3 * Math.sin(realT * 2.3 + i));
+      const vx = (p.x - p.px) * 0.995, vy = (p.y - p.py) * 0.995; p.px = p.x; p.py = p.y;
+      p.x += vx + wind * h * h; p.y += vy + gpx * (1 + p.load * 0.9) * h * h; }
+    for (const o of r.orn) { const vx = (o.x - o.px) * 0.99, vy = (o.y - o.py) * 0.99; o.px = o.x; o.py = o.y; o.x += vx + ST.wind * Math.abs(ST.wind) * 2.4 * U * h * h; o.y += vy + gpx * h * h; }
+    for (let it = 0; it < 14; it++) {
+      for (let i = 0; i < r.pts.length - 1; i++) { const a = r.pts[i], b = r.pts[i + 1]; const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, df = (d - r.rest) / d;
+        const wa = a.pin ? 0 : b.pin ? 1 : 0.5, wb = b.pin ? 0 : a.pin ? 1 : 0.5; a.x += dx * df * wa; a.y += dy * df * wa; b.x -= dx * df * wb; b.y -= dy * df * wb; }
+      for (const o of r.orn) { const a = r.pts[o.i]; const dx = o.x - a.x, dy = o.y - a.y, d = Math.hypot(dx, dy) || 1, df = (d - o.L) / d;
+        o.x -= dx * df * 0.8; o.y -= dy * df * 0.8; if (!a.pin) { a.x += dx * df * 0.2; a.y += dy * df * 0.2; } }
+    }
+  }
+}
+function restartEvening() { ST.t = -8; firedThisLoop = false; seen = false; missed = false; maxSeen = 0; callEl.classList.remove('show', 'miss'); }
+
+/* ---------- rendering ---------- */
+function drawSil(dx, dy, col) {
+  ctx.save(); ctx.translate(dx, dy); ctx.fillStyle = col; ctx.strokeStyle = col; ctx.fill(SIL.body);
+  ctx.lineWidth = SIL.w; ctx.lineCap = 'round'; ctx.stroke(SIL.arm); ctx.restore();
+}
+function drawFanous(x, y, s, th, glow, hue) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(th); ctx.scale(s, s);
+  if (glow > 0.01) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = glow; ctx.drawImage(spr('255,170,80'), -60, -10, 120, 120); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; }
+  ctx.strokeStyle = '#3a2a14'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(0, 2, 3, 0, TAU); ctx.stroke();
+  ctx.fillStyle = '#2a1d0e'; ctx.beginPath(); ctx.moveTo(-9, 16); ctx.quadraticCurveTo(0, 2, 9, 16); ctx.fill();
+  const panels = hue || ['255,90,90', '90,220,160', '255,200,90'];
+  for (let k = 0; k < 3; k++) { const x0 = -10 + k * 6.7; const gr = ctx.createLinearGradient(0, 16, 0, 44);
+    gr.addColorStop(0, `rgba(${panels[k]},${0.35 + glow * 0.6})`); gr.addColorStop(1, `rgba(${panels[k]},${0.2 + glow * 0.4})`);
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(x0, 16); ctx.lineTo(x0 + 6.7, 16); ctx.lineTo(x0 + 6.7 - (k === 2 ? 2 : 0), 44); ctx.lineTo(x0 + (k === 0 ? 2 : 0), 44); ctx.fill(); }
+  ctx.fillStyle = `rgba(255,236,190,${0.4 + glow * 0.6})`; ctx.beginPath(); ctx.ellipse(0, 31, 2.2, 4, 0, 0, TAU); ctx.fill();
+  ctx.strokeStyle = '#4a3416'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(-10, 16); ctx.lineTo(10, 16); ctx.lineTo(8, 44); ctx.lineTo(-8, 44); ctx.closePath();
+  ctx.moveTo(-3.3, 16); ctx.lineTo(-2.6, 44); ctx.moveTo(3.3, 16); ctx.lineTo(2.6, 44); ctx.stroke();
+  ctx.fillStyle = '#2a1d0e'; ctx.beginPath(); ctx.moveTo(-8, 44); ctx.lineTo(8, 44); ctx.lineTo(0, 54); ctx.fill();
+  ctx.restore();
+}
+function crescentPath(x, y, r, rot) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.beginPath(); ctx.arc(0, 0, r, 0.35 * Math.PI, 1.65 * Math.PI, false); ctx.arc(r * 0.42, 0, r * 0.8, 1.72 * Math.PI, 0.28 * Math.PI, true); ctx.closePath(); ctx.restore(); }
+function star8(x, y, r) { ctx.beginPath(); for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8, rr = k % 2 ? r * 0.55 : r; ctx[k ? 'lineTo' : 'moveTo'](x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath(); }
+
+function render(rdt) {
+  G = geometry(ST.t);
+  // eye adaptation (exposure follows mean sky luminance, partially)
+  const target = 50 * clamp(Math.pow(0.004 / Math.max(Ymean, 1e-6), 0.25), 0.7, 2.3);
+  EXPO += (target - EXPO) * Math.min(1, rdt * 2.5);
+  computeSky(G);
+  dark = clamp((0.62 - skyB) / 0.5, 0, 1);
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  shake *= Math.exp(-rdt * 7); ctx.save(); if (shake > 0.3) ctx.translate(rand(-1, 1) * shake, rand(-1, 1) * shake);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(skyCv, 0, 0, SW, SH, 0, 0, W, HY + 1);
+
+  // stars: visible only when brighter than the sky behind them (limiting magnitude emerges)
+  ctx.globalCompositeOperation = 'lighter';
+  for (const s of stars) {
+    const alt = s.alt - RATE * ST.t, az = s.az + AZR * ST.t; if (alt < 0.5) continue;
+    const X = SX0 + az * P, Y = HY - (alt + refr(alt)) * P; if (X < 0 || X > W || Y < 0) continue;
+    const Lst = KS * Math.pow(10, -0.4 * s.m) * Math.exp(-0.22 * am(alt)), Ls = skyAt(X, Y), Lsk = 0.2 * Ls[0] + 0.7 * Ls[1] + 0.1 * Ls[2];
+    let a = clamp(Math.log10(Lst / (Lsk * 0.06)) * 0.9, 0, 1); if (a <= 0) continue;
+    a *= 1 + 0.4 * Math.sin(realT * 9 + s.ph) * clamp(1 / Math.sin(Math.max(alt, 3) * D2R) / 12, 0, 1);     // scintillation near horizon
+    const r = (3.2 + Math.max(0, 4 - s.m) * 1.5) * U; ctx.globalAlpha = clamp(a * 1.25, 0, 1); ctx.drawImage(spr('225,232,255'), X - r, Y - r, r * 2, r * 2);
+  }
+  // Venus, the evening star
+  if (ST.venus && G.hv > 0) { const Lv = KS * Math.pow(10, 0.4 * 4.2) * Math.exp(-0.22 * am(G.hv)), Ls = skyAt(G.vx, G.vy), Lsk = 0.2 * Ls[0] + 0.7 * Ls[1] + 0.1 * Ls[2];
+    const a = clamp(Math.log10(Lv / (Lsk * 0.06)) * 0.7, 0, 1); if (a > 0) { const r = 9 * U; ctx.globalAlpha = a; ctx.drawImage(spr('255,248,225'), G.vx - r, G.vy - r, r * 2, r * 2);
+      ctx.globalAlpha = a * 0.5; ctx.fillStyle = 'rgba(255,250,235,.8)'; ctx.fillRect(G.vx - r * 1.8, G.vy - 0.5, r * 3.6, 1); ctx.fillRect(G.vx - 0.5, G.vy - r * 1.8, 1, r * 3.6); } }
+  // the crescent
+  const rm = Math.max(14, 0.26 * P * MOON_SCALE);
+  moonContrast = 0;
+  if (G.hmA > -0.6 && G.mx > -rm && G.mx < W + rm) {
+    moonContrast = renderMoon(G, rm);
+    const ms2 = rm * 2 + 6; ctx.globalCompositeOperation = 'lighter';
+    for (const [ox, oy, a] of [[0, 0, 1], [0.7, 0, 0.6], [-0.7, 0, 0.6], [0, 0.7, 0.6], [0, -0.7, 0.6]]) { ctx.globalAlpha = a; ctx.drawImage(moonCv, G.mx - rm - 3 + ox, G.my - rm - 3 + oy, ms2, ms2); }
+    ctx.globalAlpha = 0.45; ctx.drawImage(moonCv, G.mx - ms2 * 0.75, G.my - ms2 * 0.75, ms2 * 1.5, ms2 * 1.5);       // halo (aureole)
+  }
+  // the Sun, flattened by differential refraction
+  if (G.hsA > -2) {
+    const rs = rm, ms = am(Math.max(G.hs, -1)), tM = TM0.map(v => v * ST.turb);
+    const col = [0, 1, 2].map(c => Math.round(255 * tone(SUN[c] * Math.exp(-(TR[c] + tM[c] + TO[c]) * ms) * 30)));
+    const top = G.hs + 0.267, bot = G.hs - 0.267, flat = clamp(((top + refr(top)) - (bot + refr(bot))) / 0.534, 0.6, 1);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, HY); ctx.clip();
+    ctx.globalAlpha = 0.85; const gr = rs * 7; ctx.drawImage(spr(col.join(',')), G.sx - gr, G.sy - gr, gr * 2, gr * 2);
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.fillStyle = `rgb(${col.join(',')})`;
+    ctx.beginPath(); ctx.ellipse(G.sx, G.sy, rs, rs * flat, 0, 0, TAU); ctx.fill();
+    ctx.restore(); ctx.globalCompositeOperation = 'lighter';
+  }
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+
+  // sea: Fresnel-weighted mirror of the sky + sun glitter (Cox–Munk slope statistics)
+  const seaB = BOT * 0.87;
+  let gr = ctx.createLinearGradient(0, HY, 0, seaB); gr.addColorStop(0, '#0d1230'); gr.addColorStop(1, '#05071a'); ctx.fillStyle = gr; ctx.fillRect(0, HY, W, seaB - HY);
+  for (let y = 0; y < seaB - HY; y += 2) {
+    const dep = (y + 2) / P, srcY = HY - dep * P * 0.9; if (srcY < 0) break;
+    const fres = 0.02 + 0.98 * Math.pow(1 - Math.sin(Math.max(dep, 0.5) * D2R), 5);
+    ctx.globalAlpha = clamp(fres * 0.9, 0, 0.8); const off = Math.sin(y * 0.3 + realT * 1.4) * (1 + y * 0.03);
+    ctx.drawImage(skyCv, 0, srcY / HY * SH, SW, 1, off, HY + y, W, 2);
+  }
+  ctx.globalAlpha = 1;
+  if (G.hsA > -0.5) {
+    const sig2 = 0.003 + 0.00512 * Math.max(0.5, ST.wind), sig = Math.sqrt(sig2), ms = am(Math.max(G.hs, 0)), tM = TM0.map(v => v * ST.turb);
+    const col = [0, 1, 2].map(c => Math.round(255 * clamp(tone(SUN[c] * Math.exp(-(TR[c] + tM[c] + TO[c]) * ms) * 30) * 1.1, 0, 1))).join(',');
+    ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = `rgb(${col})`;
+    const vis = sstep(-0.5, 0.6, G.hsA);
+    for (let y = 1; y < seaB - HY; y += 2) {
+      const dep = y / P, beta = ((dep - Math.max(G.hsA, 0)) / 2) * D2R;              // facet tilt needed to mirror the sun
+      const I = Math.exp(-Math.pow(Math.tan(beta), 2) / sig2) * vis; if (I < 0.02) continue;
+      const half = P * (Math.max(dep, 0.3) + Math.max(G.hsA, 0) * 0.5) * sig * 9;
+      const n = Math.min(14, 2 + I * 10 | 0);
+      for (let k = 0; k < n; k++) { const gx = G.sx + (Math.random() + Math.random() + Math.random() - 1.5) * half; ctx.globalAlpha = I * Math.random(); ctx.fillRect(gx, HY + y, 2 + Math.random() * 6 * U, 1.3); }
+    }
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  }
+  ctx.fillStyle = 'rgba(255,220,180,.08)'; ctx.fillRect(0, HY, W, 1);
+
+  // lighthouse beam (visible only because the air scatters it)
+  const lh = lighthouse, ph = realT * 0.55;
+  if (dark > 0.15) {
+    ctx.globalCompositeOperation = 'lighter';
+    for (const o of [0, Math.PI]) { const a = ph + o, side = Math.sin(a), toward = Math.cos(a), len = Math.abs(side) * W * 0.5, dir = Math.sign(side) || 1;
+      if (len > 4) { const g2 = ctx.createLinearGradient(lh.x, lh.y, lh.x + dir * len, lh.y); g2.addColorStop(0, `rgba(255,236,190,${0.35 * dark * (0.4 + ST.turb / 7)})`); g2.addColorStop(1, 'rgba(255,236,190,0)');
+        ctx.fillStyle = g2; ctx.beginPath(); ctx.moveTo(lh.x, lh.y - 8 * U); ctx.lineTo(lh.x + dir * len, lh.y - 8 * U - 22 * U); ctx.lineTo(lh.x + dir * len, lh.y - 8 * U + 18 * U); ctx.closePath(); ctx.fill(); }
+      if (toward > 0.85) { const f = (toward - 0.85) / 0.15 * dark; ctx.globalAlpha = f; const r = 40 * U; ctx.drawImage(spr('255,240,200'), lh.x - r, lh.y - 8 * U - r, r * 2, r * 2); ctx.globalAlpha = 1; } }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  // city
+  ctx.drawImage(cityC, 0, 0, W, H);
+  // windows light up as it gets dark; mosque lights after Maghrib
+  ctx.globalCompositeOperation = 'lighter';
+  for (const w of windows) { const on = sstep(w.thr * 0.85, w.thr * 0.85 + 0.1, dark); if (on < 0.02) continue; ctx.fillStyle = `rgba(${w.c},${on * (0.65 + 0.1 * Math.sin(realT * 0.7 + w.f))})`; ctx.fillRect(w.x, w.y, w.w, w.h); }
+  const mon = sstep(0, 3, ST.t);
+  if (mon > 0) {
+    for (const mxx of mosque.mins) for (const [by, c] of [[mosque.minY + 85 * U, '120,255,190'], [mosque.minY + 37 * U, '255,214,140']]) for (let k = 0; k < 7; k++) {
+      const x0 = mxx - 10 * U + k * 3.3 * U; ctx.globalAlpha = mon * (0.7 + 0.3 * Math.sin(realT * 3 + k)); ctx.drawImage(spr(c), x0 - 4 * U, by - 4 * U, 8 * U, 8 * U); }
+    ctx.globalAlpha = mon * 0.22 * dark; const dr = mosque.r * 1.9; ctx.drawImage(spr('255,200,140'), mosque.x - dr, mosque.domeY - 10 * U - dr * 0.7, dr * 2, dr * 1.4);
+    for (let k = 0; k <= 12; k++) { const a = Math.PI + k / 12 * Math.PI, X = mosque.x + Math.cos(a) * mosque.r, Y = mosque.domeY + 14 * U + Math.sin(a) * mosque.r; ctx.globalAlpha = mon; ctx.drawImage(spr('255,214,140'), X - 3.5 * U, Y - 3.5 * U, 7 * U, 7 * U); }
+  }
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = `rgba(255,214,140,${0.5 + mon * 0.5})`;
+  for (const fxp of [...mosque.mins.map(m => [m, mosque.minY - 26 * U, 4.5 * U]), [mosque.x, mosque.domeY - 66 * U, 6 * U]]) { crescentPath(fxp[0], fxp[1], fxp[2], -Math.PI / 2 + 0.2); ctx.fill(); }
+
+  // cannon: muzzle flash, vortex ring, smoke
+  if (cannon.flash > 0.02) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = cannon.flash; const r = 70 * U * cannon.flash + 10; ctx.drawImage(spr('255,200,120'), cannon.x + 24 * U * Math.cos(cannon.ang) - r, cannon.y + 24 * U * Math.sin(cannon.ang) - r, r * 2, r * 2); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; }
+  const smokeLit = 0.25 + 0.75 * (1 - dark);
+  for (const m of smoke) { const a = Math.sin(Math.PI * Math.min(1, m.age / m.life * 1.05)) * 0.35 * smokeLit; ctx.globalAlpha = a; ctx.drawImage(smokeSpr, m.x - m.r, m.y - m.r, m.r * 2, m.r * 2); }
+  for (const r of rings) {
+    // Helmholtz/Kelvin: the vortex ring carries its own circulation, slows down and grows as it entrains air
+    const travel = r.v0 * Math.log(1 + 0.6 * r.age) / 0.6, R = r.R0 * (1 + 0.35 * r.age), rc = R * 0.32;
+    const cx = r.x + r.dx * travel + ST.wind * 3 * U * r.age, cy = r.y + r.dy * travel - 4 * U * r.age, nx = -r.dy, ny = r.dx;
+    const a = Math.max(0, 1 - r.age / 9) * 0.5 * smokeLit;
+    for (const q of r.parts) { q.v += rdt * 4 / (1 + r.age * 0.4); const rr = R + rc * Math.cos(q.v);
+      const X = cx + nx * rr * Math.cos(q.u) + r.dx * rc * Math.sin(q.v), Y = cy + ny * rr * Math.cos(q.u) + rr * Math.sin(q.u) * 0.28 + r.dy * rc * Math.sin(q.v);
+      const s = (4 + r.age * 2.2) * U; ctx.globalAlpha = a; ctx.drawImage(smokeSpr, X - s, Y - s, s * 2, s * 2); }
+  }
+  ctx.globalAlpha = 1;
+
+  // pigeons
+  ctx.fillStyle = '#0b0915'; ctx.strokeStyle = '#0b0915'; ctx.lineCap = 'round';
+  for (const p of pigeons) {
+    if (p.state === 'perch') { ctx.beginPath(); ctx.ellipse(p.x, p.y - 4.5 * U, 5.5 * U, 4 * U, 0, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.arc(p.x + 4.5 * U, p.y - 8.5 * U, 2.4 * U, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(p.x - 5 * U, p.y - 4 * U); ctx.lineTo(p.x - 10 * U, p.y - 1 * U); ctx.lineTo(p.x - 5 * U, p.y - 2 * U); ctx.fill(); continue; }
+    const f = Math.sin(p.ph) * 7 * U, dir = Math.sign(p.vx) || 1;
+    ctx.lineWidth = 2 * U; ctx.beginPath(); ctx.moveTo(p.x - 6 * U, p.y - f); ctx.quadraticCurveTo(p.x - 2 * U, p.y - f * 0.3 - 2 * U, p.x, p.y); ctx.quadraticCurveTo(p.x + 2 * U, p.y - f * 0.3 - 2 * U, p.x + 6 * U, p.y - f); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(p.x, p.y + 1 * U, 4 * U, 2.2 * U, 0, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.arc(p.x + dir * 4 * U, p.y, 1.8 * U, 0, TAU); ctx.fill();
+  }
+
+  // rooftop: parapet with star lattice (sky and sea show through), floor, ledge
+  const amb = 1 - dark, horizonCol = (() => { const L = skyAt(clamp(G.sx, 0, W - 1), HY - 3); return L.map(v => Math.round(255 * tone(v * EXPO))); })();
+  const stone = `rgb(${Math.round(lerp(22, 92, amb * 0.7))},${Math.round(lerp(18, 66, amb * 0.7))},${Math.round(lerp(34, 70, amb * 0.7))})`;
+  ctx.fillStyle = stone; ctx.fill(parapet, 'evenodd');
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, PT, W, 4 * U);
+  ctx.fillStyle = `rgba(${horizonCol.join(',')},${0.35 * amb})`; ctx.fillRect(0, PT - 1, W, 2);
+  gr = ctx.createLinearGradient(0, PB, 0, H); gr.addColorStop(0, `rgb(${Math.round(lerp(16, 70, amb * .6))},${Math.round(lerp(12, 48, amb * .6))},${Math.round(lerp(26, 54, amb * .6))})`); gr.addColorStop(1, '#07060d');
+  ctx.fillStyle = gr; ctx.fillRect(0, PB, W, H - PB);
+  ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 1; ctx.beginPath(); for (let k = -20; k < 21; k++) { ctx.moveTo(W / 2 + k * 30 * U, PB); ctx.lineTo(W / 2 + k * 90 * U, H); } ctx.stroke();
+  // iftar on the ledge: dates, a glass of jallab, a brass dallah
+  const lx = FW * 0.08;
+  ctx.fillStyle = '#120c18'; ctx.beginPath(); ctx.ellipse(lx, PT - 2 * U, 24 * U, 4 * U, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#3a1a10'; for (let k = 0; k < 7; k++) { ctx.beginPath(); ctx.ellipse(lx - 15 * U + k * 5 * U, PT - 6 * U - (k % 2) * 2 * U, 3.6 * U, 2.2 * U, 0.3, 0, TAU); ctx.fill(); }
+  ctx.fillStyle = 'rgba(120,30,40,.85)'; ctx.fillRect(lx + 34 * U, PT - 22 * U, 11 * U, 20 * U); ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(lx + 34 * U, PT - 22 * U, 2 * U, 20 * U);
+  ctx.fillStyle = '#d9c9a0'; for (let k = 0; k < 4; k++) ctx.fillRect(lx + 35 * U + k * 2.4 * U, PT - 21 * U, 1.4 * U, 1 * U);
+  ctx.fillStyle = '#1a120a'; ctx.beginPath(); ctx.moveTo(lx + 62 * U, PT - 2 * U); ctx.quadraticCurveTo(lx + 56 * U, PT - 22 * U, lx + 64 * U, PT - 30 * U); ctx.lineTo(lx + 72 * U, PT - 30 * U);
+  ctx.quadraticCurveTo(lx + 80 * U, PT - 22 * U, lx + 74 * U, PT - 2 * U); ctx.fill(); ctx.beginPath(); ctx.moveTo(lx + 64 * U, PT - 30 * U); ctx.lineTo(lx + 68 * U, PT - 40 * U); ctx.lineTo(lx + 72 * U, PT - 30 * U); ctx.fill();
+  ctx.lineWidth = 2 * U; ctx.strokeStyle = '#1a120a'; ctx.beginPath(); ctx.moveTo(lx + 62 * U, PT - 22 * U); ctx.quadraticCurveTo(lx + 48 * U, PT - 30 * U, lx + 44 * U, PT - 36 * U); ctx.stroke();
+  ctx.fillStyle = `rgba(232,193,112,${0.25 + 0.4 * amb})`; ctx.fillRect(lx + 63 * U, PT - 28 * U, 1.4 * U, 20 * U);
+
+  // lantern-light star projections on the parapet (pinhole optics, inverse-square falloff)
+  const lampOn = 0.35 + 0.65 * dark, lpx = lamp.hx + Math.sin(lamp.th) * 14 * U, lpy = lamp.hy + Math.cos(lamp.th) * 30 * U;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, PT + 4 * U, W, PB - PT - 4 * U); ctx.clip(); ctx.globalCompositeOperation = 'lighter';
+  for (let k = 0; k < 14; k++) { const a = k / 14 * TAU + lamp.th * 1.6, D = (70 + (k % 3) * 34) * U; const X = lpx + Math.cos(a) * D * 1.4 + Math.sin(lamp.th) * 80 * U, Y = lpy + Math.sin(a) * D * 0.45;
+    const I = lampOn * 0.75 * Math.pow(70 * U / D, 2); ctx.fillStyle = `rgba(255,${190 + (k % 3) * 20},${110 + (k % 2) * 60},${I})`; star8(X, Y, (4 + D / U * 0.03) * U); ctx.fill(); }
+  const gl = ctx.createRadialGradient(lpx, lpy, 0, lpx, lpy, 220 * U); gl.addColorStop(0, `rgba(255,170,80,${0.32 * lampOn})`); gl.addColorStop(1, 'rgba(255,170,80,0)'); ctx.fillStyle = gl; ctx.fillRect(lpx - 220 * U, PT, 440 * U, PB - PT);
+  ctx.restore();
+
+  // telescope tracking the Moon
+  const pv = SIL.pivot, ang = Math.atan2(G.my - pv.y, G.mx - pv.x), tl = 84 * U, ex = pv.x - Math.cos(ang) * 26 * U, ey = pv.y - Math.sin(ang) * 26 * U;
+  ctx.strokeStyle = '#0a0812'; ctx.lineWidth = 2.4 * U; ctx.beginPath();
+  for (const lgx of [-30, 0, 30]) { ctx.moveTo(pv.x, pv.y); ctx.lineTo(pv.x + lgx * U, SIL.fy - 2); } ctx.stroke();
+  ctx.lineCap = 'round'; ctx.lineWidth = 11 * U; ctx.strokeStyle = `rgba(${horizonCol.join(',')},${0.5 * amb + 0.08})`; ctx.beginPath(); ctx.moveTo(ex, ey - 1.5 * U); ctx.lineTo(pv.x + Math.cos(ang) * (tl - 26 * U), pv.y + Math.sin(ang) * (tl - 26 * U) - 1.5 * U); ctx.stroke();
+  ctx.strokeStyle = '#0d0a16'; ctx.lineWidth = 10 * U; ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(pv.x + Math.cos(ang) * (tl - 26 * U), pv.y + Math.sin(ang) * (tl - 26 * U)); ctx.stroke();
+  ctx.lineWidth = 13 * U; ctx.beginPath(); ctx.moveTo(pv.x + Math.cos(ang) * (tl - 34 * U), pv.y + Math.sin(ang) * (tl - 34 * U)); ctx.lineTo(pv.x + Math.cos(ang) * (tl - 24 * U), pv.y + Math.sin(ang) * (tl - 24 * U)); ctx.stroke();
+
+  // children: rim light from the western sky, then from the lantern
+  const rimSky = 0.85 * (1 - dark * 0.85);
+  drawSil(0, -2.5 * U, `rgba(${horizonCol.join(',')},${rimSky})`);
+  drawSil(1.8 * U, -0.5 * U, `rgba(255,170,90,${0.45 * lampOn})`);
+  drawSil(0, 0, '#0a0812');
+  // hijab fold line & kufi detail
+  ctx.strokeStyle = `rgba(${horizonCol.join(',')},${0.25 * rimSky})`; ctx.lineWidth = 1.2 * U; ctx.beginPath(); ctx.moveTo(SIL.gx - 20 * U, SIL.fy - 146 * U); ctx.quadraticCurveTo(SIL.gx, SIL.fy - 132 * U, SIL.gx + 20 * U, SIL.fy - 146 * U); ctx.stroke();
+  // the girl's fanous
+  ctx.strokeStyle = '#1b130a'; ctx.lineWidth = 1.2 * U; ctx.beginPath(); ctx.moveTo(lamp.hx, lamp.hy); ctx.lineTo(lamp.hx + Math.sin(-lamp.th) * -10 * U, lamp.hy + Math.cos(lamp.th) * 10 * U); ctx.stroke();
+  drawFanous(lamp.hx, lamp.hy, 0.85 * U, -lamp.th, lampOn, ['255,90,110', '80,230,170', '255,205,90']);
+
+  // string lights + hanging ornaments (crescents, stars, small fanous)
+  for (let ri = 0; ri < ropes.length; ri++) { const r = ropes[ri];
+    ctx.strokeStyle = '#120c14'; ctx.lineWidth = 1.4 * U; ctx.beginPath(); ctx.moveTo(r.pts[0].x, r.pts[0].y); for (const p of r.pts) ctx.lineTo(p.x, p.y); ctx.stroke();
+    for (const o of r.orn) { const a = r.pts[o.i]; ctx.lineWidth = 0.9 * U; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(o.x, o.y); ctx.stroke();
+      const th = Math.atan2(o.x - a.x, o.y - a.y), on = sstep(0, 2, ST.t - o.i * 0.08);
+      if (o.kind === 'fanous') drawFanous(o.x, o.y - 2 * U, 0.55 * U, -th, on * (0.6 + 0.4 * dark));
+      else { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = on * (0.4 + 0.5 * dark); const gr2 = 26 * U; ctx.drawImage(spr('255,205,120'), o.x - gr2, o.y + 6 * U - gr2, gr2 * 2, gr2 * 2); ctx.restore();
+        ctx.fillStyle = on > 0.3 ? `rgb(255,${Math.round(200 + 30 * on)},${Math.round(120 + 40 * on)})` : '#3a2c18';
+        if (o.kind === 'moon') { crescentPath(o.x, o.y + 8 * U, 8 * U, -th + 0.3); ctx.fill(); } else { star8(o.x, o.y + 8 * U, 7 * U); ctx.fill(); } } }
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 1; i < r.pts.length - 1; i++) { const p = r.pts[i], on = sstep(0, 1.2, ST.t - i * 0.05 - ri * 0.6); if (on < 0.01) continue;
+      const c = r.bulb(i + ri), fl = 0.85 + 0.15 * Math.sin(realT * 7 + i * 1.7) * Math.sin(realT * 3.1 + i); ctx.globalAlpha = on * fl * (0.55 + 0.45 * dark); const rr = 13 * U; ctx.drawImage(spr(c), p.x - rr, p.y + 3 * U - rr, rr * 2, rr * 2); }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  }
+  ctx.restore(); // shake
+
+  if (ST.hud) drawHUD();
+  drawSFX(rdt);
+  ctx.drawImage(vigC, 0, 0, W, H);
+}
+
+function drawHUD() {
+  ctx.save(); ctx.font = '600 10.5px "JetBrains Mono", monospace'; ctx.textAlign = 'left';
+  // altitude grid
+  ctx.strokeStyle = 'rgba(111,227,224,.16)'; ctx.fillStyle = 'rgba(111,227,224,.65)'; ctx.setLineDash([2, 6]); ctx.lineWidth = 1;
+  for (let a = 5; a < 34; a += 5) { const y = HY - a * P; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(FW, y); ctx.stroke(); ctx.fillText(a + '°', 8, y - 3); }
+  ctx.setLineDash([]); ctx.fillText('0° horizon', 8, HY - 3);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, HY + 2); ctx.clip();
+  // ecliptic through Sun and Moon
+  const ex = Math.cos(ST.ecl * D2R), ey = -Math.sin(ST.ecl * D2R);
+  ctx.strokeStyle = 'rgba(232,193,112,.5)'; ctx.setLineDash([6, 5]); ctx.beginPath(); ctx.moveTo(G.sx + ex * 400, G.sy + ey * 400); ctx.lineTo(G.sx - ex * 900, G.sy - ey * 900); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(232,193,112,.85)'; ctx.fillText('ecliptic', G.sx - ex * 260 + 8, G.sy - ey * 260);
+  // ARCV & DAZ
+  const rmh = Math.max(14, 0.26 * P * MOON_SCALE) + 6, ux = (G.sx - G.mx) / (Math.hypot(G.sx - G.mx, G.sy - G.my) || 1), uy = (G.sy - G.my) / (Math.hypot(G.sx - G.mx, G.sy - G.my) || 1);
+  ctx.strokeStyle = '#6fe3e0'; ctx.fillStyle = '#6fe3e0'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(G.mx, G.my + rmh); ctx.lineTo(G.mx, G.sy); ctx.lineTo(G.sx, G.sy); ctx.stroke();
+  ctx.textAlign = 'right'; ctx.fillText(`ARCV ${G.ARCV.toFixed(1)}°`, G.mx - 6, (G.my + G.sy) / 2); ctx.textAlign = 'left';
+  ctx.fillText(`DAZ ${G.DAZ.toFixed(1)}°`, (G.mx + G.sx) / 2 - 24, G.sy + 14);
+  // elongation arc
+  ctx.strokeStyle = '#ffdf9a'; ctx.fillStyle = '#ffdf9a'; ctx.beginPath(); ctx.moveTo(G.sx, G.sy); ctx.lineTo(G.mx + ux * rmh, G.my + uy * rmh); ctx.stroke();
+  ctx.fillText(`ε = ${G.eps.toFixed(1)}°`, (G.sx + G.mx) / 2 + 14, (G.sy + G.my) / 2 + 4);
+  ctx.restore();
+  const rm = Math.max(14, 0.26 * P * MOON_SCALE);
+  ctx.fillText(`${(G.illum * 100).toFixed(2)}% lit · W ${G.Wc.toFixed(2)}′`, G.mx + rm + 8, G.my - 4);
+  ctx.fillStyle = 'rgba(255,223,154,.6)'; ctx.fillText(`Moon ×${MOON_SCALE} size, crescent ×${WIDEN} width`, G.mx + rm + 8, G.my + 9);
+  // Sun's diurnal path
+  ctx.strokeStyle = 'rgba(255,170,90,.6)'; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(G.sx, G.sy); ctx.lineTo(G.sx + AZR * 40 * P, G.sy + RATE * 40 * P); ctx.stroke(); ctx.setLineDash([]);
+  if (G.hsA > -1.5) { ctx.fillStyle = 'rgba(255,190,120,.9)'; ctx.fillText(`Sun ${G.hsA.toFixed(1)}° · refraction lifts it ${(refr(G.hs) * 60).toFixed(0)}′`, G.sx + 24, G.sy - 14); }
+  // telescope line of sight
+  ctx.strokeStyle = 'rgba(111,227,224,.25)'; ctx.setLineDash([2, 5]); ctx.beginPath(); ctx.moveTo(SIL.pivot.x, SIL.pivot.y); ctx.lineTo(G.mx, G.my); ctx.stroke(); ctx.setLineDash([]);
+  // sound front from the cannon
+  const st = realT - cannon.fired, dpx = Math.hypot(SIL.bx - cannon.x, SIL.fy - cannon.y);
+  if (st > 0 && st < CANNON_D / 343 + 0.6) { const r = st * 343 / CANNON_D * dpx;
+    ctx.strokeStyle = `rgba(255,214,140,${0.7 * (1 - st / 4.6)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cannon.x, cannon.y, r, -1.2, 1.5); ctx.stroke();
+    ctx.fillStyle = '#ffdf9a'; ctx.fillText(`sound front · ${(st * 343).toFixed(0)} m of ${CANNON_D} m`, cannon.x + r * 0.55 + 6, cannon.y + r * 0.6); }
+  for (const r of rings) if (r.age < 6) { ctx.fillStyle = `rgba(220,215,235,${0.8 * (1 - r.age / 6)})`; const tr = r.v0 * Math.log(1 + 0.6 * r.age) / 0.6; ctx.fillText('vortex ring', r.x + r.dx * tr + 26 * U, r.y + r.dy * tr - 10); }
+  ctx.restore();
+}
+function drawSFX(rdt) {
+  for (let i = sfx.length - 1; i >= 0; i--) { const f = sfx[i]; f.age += rdt; if (f.age > f.life) { sfx.splice(i, 1); continue; } if (f.age < 0) continue;
+    const t = f.age / f.life, a = t < 0.7 ? 1 : 1 - (t - 0.7) / 0.3; ctx.save(); ctx.globalAlpha = a;
+    if (f.bubble) {
+      ctx.translate(f.x, f.y - f.age * 5 * U); ctx.font = `700 ${f.size}px "Reem Kufi", sans-serif`; ctx.direction = 'rtl';
+      const tw = ctx.measureText(f.text).width, pw = tw + 26 * U, phh = f.size * 2.1;
+      ctx.fillStyle = '#fffaf0'; ctx.strokeStyle = '#120c18'; ctx.lineWidth = 2 * U; ctx.beginPath(); ctx.ellipse(0, 0, pw / 2, phh / 2, 0, 0, TAU);
+      ctx.moveTo(pw * 0.1, phh * 0.42); ctx.lineTo(pw * 0.24, phh * 0.9); ctx.lineTo(pw * 0.26, phh * 0.36); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#120c18'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(f.text, 0, 1);
+    } else {
+      const pop = 1 + 0.8 * Math.exp(-f.age * 15), j = Math.exp(-f.age * 5) * 4;
+      ctx.translate(f.x + rand(-j, j), f.y - f.age * 12 * U + rand(-j, j)); ctx.rotate(f.rot); ctx.scale(pop, pop);
+      ctx.font = `400 ${f.size}px Lalezar, sans-serif`; ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 2; ctx.beginPath();
+      for (let k = 0; k < 14; k++) { const an = k / 14 * TAU; ctx.moveTo(Math.cos(an) * f.size * 1.5, Math.sin(an) * f.size * 0.75); ctx.lineTo(Math.cos(an) * f.size * 2.2, Math.sin(an) * f.size * 1.05); } ctx.stroke();
+      ctx.lineWidth = f.size * 0.2; ctx.strokeStyle = '#120a14'; ctx.strokeText(f.text, 0, 0);
+      const g = ctx.createLinearGradient(0, -f.size / 2, 0, f.size / 2); g.addColorStop(0, '#fff'); g.addColorStop(1, `rgb(${f.c})`); ctx.fillStyle = g; ctx.fillText(f.text, 0, 0);
+    }
+    ctx.restore(); }
+}
+
+/* ---------- narrative: sighting or not ---------- */
+const callEl = $('#call'), callAr = $('#callar'), callEn = $('#callen');
+function story() {
+  if (ST.t <= 0 || seen || missed) return;
+  const c = catOf(geometry(0))[0];
+  const show = (ar, en, miss) => { callAr.textContent = ar; callEn.textContent = en; callEl.classList.toggle('miss', !!miss); callEl.classList.add('show'); };
+  if ((c === 'A' || c === 'B') && moonContrast > 0.085 && G.hmA > 0.3) {          // naked-eye sighting: contrast passes the eye's threshold
+    seen = true; sfx.push({ bubble: true, x: SIL.head.x + 30 * U, y: SIL.head.y, text: 'الهلال! رأيته!', size: 17 * U, age: 0, life: 3.4 });
+    show('رمضان كريم', 'The crescent is seen with the naked eye · Ramadan begins tomorrow');
+  } else if ((c === 'C' || c === 'D') && ST.t >= G.tb && G.hmA > 0.3) {             // too faint for the eye, found with the telescope
+    seen = true; sfx.push({ bubble: true, x: SIL.head.x + 30 * U, y: SIL.head.y, text: 'رأيته بالتلسكوب!', size: 17 * U, age: 0, life: 3.4 });
+    show('هلال رمضان', 'Found through the telescope · too faint for the naked eye');
+  } else if (G.hmA < 0.2 || ST.t > 75) {
+    missed = true; show('لم يُرَ الهلال', 'No crescent tonight · Sha‘ban completes 30 days', true);
+  }
+}
+
+/* ---------- UI ---------- */
+const hudb = $('#hudb'), timeI = $('#time');
+function fmtT(t) { const s = t < 0 ? '−' : '+'; return `${s}${Math.abs(t).toFixed(0)} min`; }
+function phaseName(g) {
+  if (g.t < 0) return 'Before sunset · قبل الغروب';
+  if (g.hs > -6) return 'Maghrib · civil twilight · المغرب';
+  if (g.hs > -12) return 'Nautical twilight · الشفق';
+  return 'Night · Ramadan evening · ليل';
+}
+function buildMarks() {
+  const g = geometry(0), m = $('#marks'), pct = t => ((t + 10) / 90 * 100).toFixed(2) + '%';
+  const list = [[0, 'Maghrib'], [g.tb, 'best time'], [(6 - 0.833) / RATE, '−6°'], [(12 - 0.833) / RATE, '−12°']];
+  if (g.lag > 0 && g.lag < 80) list.push([g.lag, 'moonset']);
+  list.sort((a, b) => a[0] - b[0]);
+  let last = -99; m.innerHTML = list.filter(([t]) => t >= -10 && t <= 80).map(([t, l]) => { const lab = (t - last) < 7 ? '' : l; last = lab ? t : last; return `<i style="left:${pct(t)}">${lab}</i>`; }).join('');
+}
+function updatePanel() {
+  const g0 = geometry(0), c = catOf(g0);
+  $('#vcat').textContent = c[0]; $('#vcat').style.background = c[4]; $('#ven').textContent = c[2]; $('#var').textContent = c[3];
+  $('#verdict').style.background = `linear-gradient(135deg, ${c[4]}22, transparent 70%)`;
+  const tb = g0.tb, h = (-0.833 - RATE * tb);
+  $('#vq').innerHTML = `Yallop q = <em>${g0.q >= 0 ? '+' : ''}${g0.q.toFixed(3)}</em> · ARCV ${g0.ARCV.toFixed(1)}° · W′ ${g0.Wc.toFixed(2)}′<br>lag ${g0.lag.toFixed(0)} min · best time sunset + ${tb.toFixed(0)} min (sun ${h.toFixed(1)}°)`;
+}
+function updateHUD() {
+  const g = G, lim = -2.5 * Math.log10((() => { const L = skyAt(W * 0.4, HY * 0.3); return (0.2 * L[0] + 0.7 * L[1] + 0.1 * L[2]) * 0.06 / KS; })());
+  const flat = (() => { const top = g.hs + 0.267, bot = g.hs - 0.267; return ((top + refr(top)) - (bot + refr(bot))) / 0.534; })();
+  hudb.innerHTML =
+    `<div class="r"><b>sun</b><span>h = ${g.hsA.toFixed(2)}° (true ${g.hs.toFixed(2)}°) · disc ${(flat * 100).toFixed(0)}% round</span></div>` +
+    `<div class="r"><b>moon</b><span>h = ${g.hmA.toFixed(1)}° · ε = ${g.eps.toFixed(1)}° · ${(g.illum * 100).toFixed(2)}% lit</span></div>` +
+    `<div class="r"><b>sky</b><span>Rayleigh ∝ λ⁻⁴ · blue/red = ${(TR[2] / TR[0]).toFixed(1)}× · haze ×${ST.turb.toFixed(1)}</span></div>` +
+    `<div class="r"><b>contrast</b><span>crescent ΔL = <em>${moonContrast.toFixed(3)}</em> (eye needs ≈ 0.085)</span></div>` +
+    `<div class="r"><b>stars</b><span>limiting magnitude ≈ <em>${isFinite(lim) ? lim.toFixed(1) : '—'}</em></span></div>` +
+    `<div class="r"><b>cannon</b><span>${CANNON_D} m ÷ 343 m/s = <em>${(CANNON_D / 343).toFixed(2)} s</em> delay + echoes</span></div>` +
+    `<div class="r"><b>fanous</b><span>T = 2π√(L/g) = ${(TAU * Math.sqrt(0.24 / 9.81)).toFixed(2)} s · θ = ${(lamp.th / D2R).toFixed(0)}°</span></div>` +
+    `<div class="r"><b>wires</b><span>Verlet rope, ${ropes[0] ? ropes[0].pts.length : 0} nodes · ${pigeons.filter(p => p.state === 'perch').length} pigeons sagging it</span></div>`;
+  $('#tname').textContent = phaseName(g); $('#tval').textContent = `${fmtT(g.t)} · sun ${g.hsA >= 0 ? '+' : ''}${g.hsA.toFixed(1)}°`;
+}
+const bind = (id, key, fmt, cb) => { const el = $('#' + id); el.oninput = () => { ST[key] = +el.value; $('#' + id + 'v').textContent = fmt(ST[key]); updatePanel(); buildMarks(); cb && cb(); }; $('#' + id + 'v').textContent = fmt(ST[key]); };
+bind('age', 'age', v => `${v.toFixed(1)} h · ε ${(0.508 * v).toFixed(1)}°`);
+bind('ecl', 'ecl', v => v.toFixed(1) + '°', () => syncSeasons());
+bind('bet', 'beta', v => (v >= 0 ? '+' : '') + v.toFixed(1) + '°');
+bind('tur', 'turb', v => '×' + v.toFixed(1));
+bind('win', 'wind', v => v.toFixed(1) + ' m/s');
+function syncSeasons() { for (const b of document.querySelectorAll('#seasons button')) b.classList.toggle('on', Math.abs(+b.dataset.a - ST.ecl) < 0.6); }
+for (const b of document.querySelectorAll('#seasons button')) b.onclick = () => { ST.ecl = +b.dataset.a; $('#ecl').value = ST.ecl; $('#eclv').textContent = ST.ecl.toFixed(1) + '°'; syncSeasons(); updatePanel(); buildMarks(); };
+syncSeasons();
+for (const b of document.querySelectorAll('.tog button')) b.onclick = () => { const k = b.dataset.k; ST[k] = !ST[k]; b.setAttribute('aria-pressed', ST[k]); if (k === 'hud') $('#hud').classList.toggle('off', !ST.hud); if (k === 'sound') ensureAudio(); };
+$('#fire').onclick = fireCannon;
+const playB = $('#play'); function syncPlay() { playB.textContent = ST.play ? '❚❚' : '▶'; }
+playB.onclick = () => { ensureAudio(); if (!ST.play && ST.t >= 80) restartEvening(); ST.play = !ST.play; syncPlay(); };
+timeI.oninput = () => { const nt = +timeI.value; if (ST.t < 0 && nt >= 0 && !firedThisLoop) { fireCannon(); firedThisLoop = true; } if (nt < 0) { firedThisLoop = false; } if (nt < ST.t - 1) { seen = false; missed = false; callEl.classList.remove('show', 'miss'); } ST.t = nt; };
+timeI.addEventListener('pointerdown', () => { ST.play = false; syncPlay(); ensureAudio(); });
+for (const b of document.querySelectorAll('#spd button')) b.onclick = () => { ST.speed = +b.dataset.s; for (const x of document.querySelectorAll('#spd button')) x.classList.toggle('on', x === b); };
+$('#close').onclick = () => { $('#ui').classList.add('hide'); $('#open').classList.add('show'); };
+$('#open').onclick = () => { $('#ui').classList.remove('hide'); $('#open').classList.remove('show'); };
+if (innerWidth < 760) { $('#ui').classList.add('hide'); $('#open').classList.add('show'); ST.hud = false; $('#hud').classList.add('off'); document.querySelector('.tog [data-k=hud]').setAttribute('aria-pressed', false); }
+cv.addEventListener('pointerdown', () => ensureAudio());
+addEventListener('keydown', e => { if (e.target.tagName === 'INPUT') return; const k = e.key.toLowerCase();
+  if (k === ' ') { e.preventDefault(); playB.click(); } else if (k === 'f') fireCannon(); else if (k === 'h') document.querySelector('.tog [data-k=hud]').click(); });
+addEventListener('resize', resize);
+
+/* ---------- loop ---------- */
+let last = performance.now(), hudT = 0;
+function frame(now) {
+  const rdt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now; realT += rdt;
+  stepPhysics(rdt); render(rdt); story();
+  hudT -= rdt; if (hudT <= 0) { if (ST.hud) updateHUD(); else { $('#tname').textContent = phaseName(G); $('#tval').textContent = `${fmtT(G.t)} · sun ${G.hsA >= 0 ? '+' : ''}${G.hsA.toFixed(1)}°`; } hudT = 0.15; }
+  requestAnimationFrame(frame);
+}
+resize(); updatePanel();
+if (document.fonts && document.fonts.load) { document.fonts.load('40px Lalezar', 'بوووم!').catch(() => {}); document.fonts.load('700 16px "Reem Kufi"', 'الهلال! رأيته مدفع الإفطار').catch(() => {}); }
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
