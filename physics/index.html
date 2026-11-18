@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Physics with Mr. Ghozlan</title>
+<meta name="description" content="Worksheets, lessons, practice sheets and exam practice for Ahmad Ghozlan's physics classes, sorted by grade and lesson.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f7fb; --panel:#ffffff; --ink:#1b2333; --muted:#5b6678; --line:#dfe5ee; --soft:#eef3f9;
+  --accent:#1f6fb2; --ok:#1e8e3e; --warn:#d35400; --shadow:0 1px 2px rgba(16,24,40,.06), 0 4px 14px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0f141c; --panel:#171e2a; --ink:#e6ebf2; --muted:#9aa6b8; --line:#283244; --soft:#1d2635; --accent:#5aa7ea; --shadow:none; } }
+:root[data-theme="dark"] { --bg:#0f141c; --panel:#171e2a; --ink:#e6ebf2; --muted:#9aa6b8; --line:#283244; --soft:#1d2635; --accent:#5aa7ea; --shadow:none; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif; font-size:16px; line-height:1.45; }
+a { color:inherit; }
+button { font:inherit; color:inherit; cursor:pointer; }
+.wrap { max-width:1180px; margin:0 auto; padding:0 16px; }
+
+/* top bar */
+.top { position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+.top .wrap { display:flex; align-items:center; gap:12px; height:62px; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; white-space:nowrap; }
+.brand .logo { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#1f6fb2,#7d3c98); display:grid; place-items:center; color:#fff; font-size:18px; }
+.brand small { display:block; font-weight:500; color:var(--muted); font-size:12px; }
+.search { flex:1; max-width:440px; margin-left:auto; position:relative; }
+.search input { width:100%; padding:10px 12px 10px 36px; border-radius:12px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font:inherit; }
+.search span { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); }
+.iconbtn { border:1px solid var(--line); background:var(--panel); border-radius:10px; width:40px; height:40px; display:grid; place-items:center; flex:0 0 auto; }
+
+/* hero */
+.hero { padding:28px 0 8px; display:grid; grid-template-columns:1.4fr 1fr; gap:18px; align-items:stretch; }
+.hero h1 { font-size:clamp(26px, 4vw, 38px); line-height:1.1; margin:0 0 8px; letter-spacing:-.02em; }
+.hero p { color:var(--muted); margin:0 0 14px; max-width:60ch; }
+.stats { display:flex; gap:10px; flex-wrap:wrap; }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px 14px; min-width:110px; box-shadow:var(--shadow); }
+.stat b { display:block; font-size:22px; } .stat span { color:var(--muted); font-size:13px; }
+.resume { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px; }
+.resume h3 { margin:0; font-size:15px; color:var(--muted); font-weight:600; }
+.resume .empty { color:var(--muted); font-size:14px; }
+.mini { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; background:var(--soft); text-decoration:none; border:0; width:100%; text-align:left; }
+.mini .g { font-size:12px; font-weight:700; color:#fff; border-radius:7px; padding:2px 7px; flex:0 0 auto; }
+
+/* grade picker */
+.grades { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:10px; margin:18px 0 6px; }
+.gcard { text-align:left; border:2px solid var(--line); background:var(--panel); border-radius:16px; padding:12px 14px; box-shadow:var(--shadow); position:relative; }
+.gcard[aria-pressed="true"] { border-color:var(--c, var(--accent)); box-shadow:0 0 0 3px color-mix(in srgb, var(--c, var(--accent)) 22%, transparent); }
+.gcard .gl { font-weight:800; font-size:17px; } .gcard .gn { color:var(--muted); font-size:13px; }
+.bar { height:6px; background:var(--soft); border-radius:6px; margin-top:8px; overflow:hidden; } .bar i { display:block; height:100%; background:var(--c, var(--accent)); width:0; transition:width .3s; }
+.gcard .pc { font-size:12px; color:var(--muted); margin-top:4px; }
+
+/* filters */
+.filters { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:12px 0; }
+.chip { border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:6px 12px; font-size:14px; }
+.chip[aria-pressed="true"] { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.filters .sp { flex:1; }
+.count { color:var(--muted); font-size:14px; }
+
+/* new strip */
+.section-title { font-size:20px; margin:22px 0 10px; display:flex; align-items:center; gap:8px; }
+.newstrip { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; }
+
+/* units / lessons */
+.unit { margin:22px 0 4px; }
+.unit > h2 { font-size:22px; margin:0 0 4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.unit > h2 .tag { font-size:12px; color:#fff; border-radius:8px; padding:3px 8px; }
+.lesson { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:14px; margin:12px 0; box-shadow:var(--shadow); }
+.lhead { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.lhead h3 { margin:0; font-size:18px; }
+.lhead .ring { margin-left:auto; font-size:13px; color:var(--muted); }
+.obj { margin:8px 0 4px; }
+.obj summary { cursor:pointer; color:var(--accent); font-weight:600; font-size:14px; }
+.obj ul { list-style:none; padding:0; margin:8px 0 0; display:grid; gap:4px; }
+.obj label { display:flex; gap:8px; align-items:flex-start; font-size:14px; padding:4px 6px; border-radius:8px; }
+.obj label:hover { background:var(--soft); }
+.obj input { margin-top:3px; accent-color:var(--ok); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:10px; margin-top:10px; }
+.card { border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; flex-direction:column; gap:6px; background:var(--panel); position:relative; }
+.card.done { background:color-mix(in srgb, var(--ok) 7%, var(--panel)); border-color:color-mix(in srgb, var(--ok) 40%, var(--line)); }
+.card .t { display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:12px; }
+.type { border-radius:999px; padding:2px 8px; font-weight:700; background:var(--soft); }
+.type.lesson { color:#1f6fb2; } .type.practice { color:#0e7c6b; } .type.exam { color:#c0392b; }
+.new { background:#f6b93b; color:#3d2a00; border-radius:999px; padding:2px 8px; font-weight:800; }
+.card h4 { margin:0; font-size:16px; }
+.card p { margin:0; color:var(--muted); font-size:14px; flex:1; }
+.meta { font-size:12px; color:var(--muted); }
+.acts { display:flex; gap:6px; flex-wrap:wrap; }
+.btn { border:1px solid var(--line); background:var(--soft); border-radius:10px; padding:7px 11px; font-size:14px; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.btn.ok { color:var(--ok); }
+.card.done .btn.ok { background:var(--ok); color:#fff; border-color:var(--ok); }
+.vers { display:flex; gap:6px; flex-wrap:wrap; }
+.vers button { width:40px; height:40px; border-radius:10px; border:1px solid var(--line); background:var(--soft); font-weight:800; }
+.vers button.done { background:var(--ok); color:#fff; border-color:var(--ok); }
+
+/* tips */
+.tips { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin:10px 0 30px; }
+.tip { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; font-size:14px; }
+.tip b { display:block; margin-bottom:4px; }
+.empty-state { text-align:center; color:var(--muted); padding:30px; }
+
+/* viewer */
+.viewer { position:fixed; inset:0; z-index:50; background:rgba(10,14,20,.6); display:none; }
+.viewer.open { display:flex; flex-direction:column; }
+.vbar { background:var(--panel); border-bottom:1px solid var(--line); display:flex; gap:8px; align-items:center; padding:8px 12px; flex-wrap:wrap; }
+.vbar .vt { font-weight:700; flex:1; min-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.viewer iframe { flex:1; width:100%; border:0; background:#fff; }
+footer { color:var(--muted); font-size:13px; padding:24px 0 40px; border-top:1px solid var(--line); margin-top:20px; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns:1fr; } .grades { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .newstrip, .tips { grid-template-columns:repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 560px) {
+  .brand small { display:none; } .search { max-width:none; }
+  .newstrip, .tips { grid-template-columns:1fr; }
+  .top .wrap { height:auto; padding-top:8px; padding-bottom:8px; flex-wrap:wrap; } .search { order:3; flex-basis:100%; }
+  .vbar { gap:6px; padding:6px 8px; } .vbar .btn { padding:6px 8px; font-size:13px; } .vbar .vt { flex-basis:100%; order:-1; font-size:14px; }
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <a class="brand" href="./"><span class="logo">⚛</span><span>Physics with Mr. Ghozlan<small>Worksheets · lessons · exam practice</small></span></a>
+  <label class="search"><span>🔎</span><input id="q" type="search" placeholder="Search a lesson, a sheet or a word (e.g. density, projectile)" aria-label="Search"></label>
+  <button class="iconbtn" id="theme" title="Light or dark mode" aria-label="Light or dark mode">◐</button>
+</div></div>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Your physics, all in one place.</h1>
+      <p>Every confirmed lesson sheet, practice sheet and exam practice paper, sorted by grade, unit and lesson. Open a sheet on your phone, print it as a PDF,
+        tick what you finished and check the objectives you master.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="resume">
+      <h3>Continue where you left off</h3>
+      <div id="recent"><div class="empty">The sheets you open will appear here.</div></div>
+    </div>
+  </section>
+
+  <div class="grades" id="grades" role="group" aria-label="Choose your grade"></div>
+
+  <div class="filters" id="filters" role="group" aria-label="Filter by type"></div>
+
+  <div id="content"></div>
+
+  <h2 class="section-title">💡 How to work with a sheet</h2>
+  <div class="tips">
+    <div class="tip"><b>1 · Read the notes first</b>The first page of a lesson sheet is your exam card: rules, formulas and units.</div>
+    <div class="tip"><b>2 · Try alone</b>Solve the exercises without help first. Write every step and every unit.</div>
+    <div class="tip"><b>3 · Check the objectives</b>Tick each objective only when you can explain it to a friend.</div>
+    <div class="tip"><b>4 · Practise like an exam</b>Use the exam practice papers with a timer, then ask in class about what was hard.</div>
+  </div>
+
+  <footer id="foot"></footer>
+</main>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Sheet viewer">
+  <div class="vbar">
+    <button class="btn" id="vclose">← Back</button>
+    <div class="vt" id="vtitle"></div>
+    <button class="btn ok" id="vdone">✓ Mark as done</button>
+    <button class="btn" id="vprint">🖨 Print</button>
+    <a class="btn" id="vpdf" target="_blank" rel="noopener">⬇ PDF</a>
+    <a class="btn" id="vnew" target="_blank" rel="noopener">↗ New tab</a>
+  </div>
+  <iframe id="vframe" title="Sheet"></iframe>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // ---------- safe storage (works even when storage is blocked) ----------
+  var mem = {};
+  function load(k, d) { try { var v = localStorage.getItem("phys." + k); return v ? JSON.parse(v) : d; } catch (e) { return mem[k] || d; } }
+  function save(k, v) { mem[k] = v; try { localStorage.setItem("phys." + k, JSON.stringify(v)); } catch (e) {} }
+
+  var state = { grade: load("grade", "all"), type: "all", q: "", todo: false };
+  var done = load("done", {}), objs = load("objs", {}), recent = load("recent", []);
+  var DATA, byId = {}, lessonById = {}, gradeById = {};
+
+  // ---------- theme ----------
+  var root = document.documentElement, th = load("theme", null);
+  if (th) root.setAttribute("data-theme", th);
+  document.getElementById("theme").onclick = function () {
+    var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark"; root.setAttribute("data-theme", next); save("theme", next);
+  };
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function isNew(d) { return (new Date(DATA.updated) - new Date(d)) / 864e5 <= 10; }
+  function typeOf(id) { return DATA.types.filter(function (t) { return t.id === id; })[0] || { label: id, icon: "📄" }; }
+
+  fetch("catalog.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(init)
+    .catch(function () { document.getElementById("content").innerHTML = '<div class="empty-state">The catalog could not be loaded. Please refresh the page.</div>'; });
+
+  function init(d) {
+    DATA = d;
+    d.grades.forEach(function (g) { gradeById[g.id] = g; });
+    d.lessons.forEach(function (l) { lessonById[l.id] = l; });
+    d.resources.forEach(function (r) { byId[r.id] = r; r.grade = lessonById[r.lesson].grade; });
+    if (state.grade !== "all" && !gradeById[state.grade]) state.grade = "all";
+    document.getElementById("foot").innerHTML = "© " + esc(d.teacher) + " · Physics · Lebanon. Last update: " + esc(d.updated) +
+      ' · Student versions only. · <a href="../">All interactive labs</a>';
+    stats(); grades(); filters(); render(); recentList();
+    var m = location.hash.match(/^#r=([\w-]+)/); if (m && byId[m[1]]) openViewer(m[1]);
+    var g = location.hash.match(/^#g=([\w-]+)/); if (g && gradeById[g[1]]) { state.grade = g[1]; grades(); render(); }
+  }
+
+  function stats() {
+    var nL = DATA.lessons.length, nR = DATA.resources.length, nD = DATA.resources.filter(function (r) { return done[r.id]; }).length;
+    document.getElementById("stats").innerHTML =
+      '<div class="stat"><b>' + nR + '</b><span>sheets</span></div><div class="stat"><b>' + nL + '</b><span>lessons</span></div>' +
+      '<div class="stat"><b>' + DATA.grades.length + '</b><span>grades</span></div><div class="stat"><b>' + nD + '</b><span>done by you</span></div>';
+  }
+
+  function progress(gid) {
+    var rs = DATA.resources.filter(function (r) { return gid === "all" || r.grade === gid; });
+    var n = rs.filter(function (r) { return done[r.id]; }).length;
+    return { n: n, t: rs.length, p: rs.length ? Math.round(100 * n / rs.length) : 0 };
+  }
+
+  function grades() {
+    var el = document.getElementById("grades");
+    var items = [{ id: "all", label: "All grades", note: "Everything", color: "#1b2333" }].concat(DATA.grades);
+    el.innerHTML = items.map(function (g) {
+      var p = progress(g.id);
+      return '<button class="gcard" style="--c:' + g.color + '" data-g="' + g.id + '" aria-pressed="' + (state.grade === g.id) + '">' +
+        '<div class="gl">' + esc(g.label) + '</div><div class="gn">' + esc(g.note) + '</div>' +
+        '<div class="bar"><i style="width:' + p.p + '%"></i></div><div class="pc">' + p.n + ' / ' + p.t + ' done</div></button>';
+    }).join("");
+    el.querySelectorAll(".gcard").forEach(function (b) {
+      b.onclick = function () { state.grade = b.dataset.g; save("grade", state.grade); grades(); render(); };
+    });
+  }
+
+  function filters() {
+    var el = document.getElementById("filters");
+    var items = [{ id: "all", label: "All types", icon: "" }].concat(DATA.types);
+    el.innerHTML = items.map(function (t) {
+      return '<button class="chip" data-t="' + t.id + '" aria-pressed="' + (state.type === t.id) + '">' + (t.icon ? t.icon + " " : "") + esc(t.label) + '</button>';
+    }).join("") + '<button class="chip" id="todo" aria-pressed="' + state.todo + '">⏳ Not done yet</button><span class="sp"></span><span class="count" id="count"></span>';
+    el.querySelectorAll("[data-t]").forEach(function (b) { b.onclick = function () { state.type = b.dataset.t; filters(); render(); }; });
+    document.getElementById("todo").onclick = function () { state.todo = !state.todo; filters(); render(); };
+  }
+
+  document.getElementById("q").addEventListener("input", function (e) { state.q = e.target.value.trim().toLowerCase(); render(); });
+
+  function match(r) {
+    if (state.grade !== "all" && r.grade !== state.grade) return false;
+    if (state.type !== "all" && r.type !== state.type) return false;
+    if (state.todo && done[r.id]) return false;
+    if (state.q) {
+      var l = lessonById[r.lesson], g = gradeById[r.grade];
+      var hay = [r.title, r.desc, r.group || "", l.title, l.unit, g.label, typeOf(r.type).label].concat(l.objectives).join(" ").toLowerCase();
+      return state.q.split(/\s+/).every(function (w) { return hay.indexOf(w) >= 0; });
+    }
+    return true;
+  }
+
+  function card(r) {
+    var t = typeOf(r.type), l = lessonById[r.lesson];
+    return '<div class="card' + (done[r.id] ? " done" : "") + '" id="c-' + r.id + '">' +
+      '<div class="t"><span class="type ' + r.type + '">' + t.icon + " " + esc(t.label) + '</span>' + (isNew(r.date) ? '<span class="new">NEW</span>' : "") + '</div>' +
+      '<h4>' + esc(r.title) + '</h4><p>' + esc(r.desc) + '</p>' +
+      '<div class="meta">' + esc(gradeById[r.grade].short) + " · " + esc(l.title) + " · " + (r.pages ? r.pages + " pages · " : "") + esc(r.date) + '</div>' +
+      '<div class="acts"><button class="btn primary" data-open="' + r.id + '">Open</button>' +
+      '<a class="btn" href="' + esc(r.pdf) + '" target="_blank" rel="noopener">⬇ PDF</a>' +
+      '<button class="btn ok" data-done="' + r.id + '">' + (done[r.id] ? "✓ Done" : "Mark done") + '</button></div></div>';
+  }
+
+  function groupCard(name, rs) {
+    var r0 = rs[0], t = typeOf(r0.type), l = lessonById[r0.lesson], allDone = rs.every(function (r) { return done[r.id]; });
+    var anyNew = rs.some(function (r) { return isNew(r.date); });
+    return '<div class="card' + (allDone ? " done" : "") + '">' +
+      '<div class="t"><span class="type ' + r0.type + '">' + t.icon + " " + esc(t.label) + '</span>' + (anyNew ? '<span class="new">NEW</span>' : "") + '</div>' +
+      '<h4>' + esc(name) + '</h4><p>' + esc(r0.desc) + ' · ' + rs.length + ' versions: open one and train with a timer.</p>' +
+      '<div class="meta">' + esc(gradeById[r0.grade].short) + " · " + esc(l.title) + '</div>' +
+      '<div class="vers">' + rs.map(function (r) {
+        var v = r.title.split("Version ").pop();
+        return '<button class="' + (done[r.id] ? "done" : "") + '" data-open="' + r.id + '" title="' + esc(r.title) + '">' + esc(v) + '</button>';
+      }).join("") + '</div></div>';
+  }
+
+  function render() {
+    var rs = DATA.resources.filter(match);
+    document.getElementById("count").textContent = rs.length + " sheet" + (rs.length === 1 ? "" : "s");
+    var out = "";
+    if (state.grade === "all" && state.type === "all" && !state.q && !state.todo) {
+      var latest = DATA.resources.slice().sort(function (a, b) { return b.date.localeCompare(a.date); }).slice(0, 4);
+      out += '<h2 class="section-title">✨ Recently added</h2><div class="newstrip">' + latest.map(card).join("") + '</div>';
+    }
+    if (!rs.length) { document.getElementById("content").innerHTML = out + '<div class="empty-state">No sheet matches. Try another word or clear the filters.</div>'; bind(); return; }
+    var gl = state.grade === "all" ? DATA.grades : [gradeById[state.grade]];
+    gl.forEach(function (g) {
+      var gr = rs.filter(function (r) { return r.grade === g.id; }); if (!gr.length) return;
+      var lessons = DATA.lessons.filter(function (l) { return l.grade === g.id; }).sort(function (a, b) { return a.order - b.order; });
+      var units = []; lessons.forEach(function (l) { if (units.indexOf(l.unit) < 0) units.push(l.unit); });
+      units.forEach(function (u) {
+        var ul = lessons.filter(function (l) { return l.unit === u && gr.some(function (r) { return r.lesson === l.id; }); });
+        if (!ul.length) return;
+        out += '<section class="unit"><h2><span class="tag" style="background:' + g.color + '">' + esc(g.label) + '</span>' + esc(u) + '</h2>';
+        ul.forEach(function (l) {
+          var lr = gr.filter(function (r) { return r.lesson === l.id; });
+          var nObj = l.objectives.length, okObj = l.objectives.filter(function (o, i) { return objs[l.id + ":" + i]; }).length;
+          out += '<div class="lesson" id="l-' + l.id + '"><div class="lhead"><h3>' + esc(l.title) + '</h3><span class="ring">' +
+            okObj + "/" + nObj + ' objectives mastered</span></div>' +
+            '<details class="obj"><summary>What you should know</summary><ul>' + l.objectives.map(function (o, i) {
+              var k = l.id + ":" + i;
+              return '<li><label><input type="checkbox" data-obj="' + k + '"' + (objs[k] ? " checked" : "") + '> ' + esc(o) + '</label></li>';
+            }).join("") + '</ul></details><div class="grid">';
+          var groups = {}, singles = [];
+          lr.forEach(function (r) { if (r.group) (groups[r.group] = groups[r.group] || []).push(r); else singles.push(r); });
+          out += singles.map(card).join("") + Object.keys(groups).map(function (k) { return groupCard(k, groups[k]); }).join("");
+          out += '</div></div>';
+        });
+        out += '</section>';
+      });
+    });
+    document.getElementById("content").innerHTML = out; bind();
+  }
+
+  function bind() {
+    document.querySelectorAll("[data-open]").forEach(function (b) { b.onclick = function () { openViewer(b.dataset.open); }; });
+    document.querySelectorAll("[data-done]").forEach(function (b) { b.onclick = function () { toggleDone(b.dataset.done); }; });
+    document.querySelectorAll("[data-obj]").forEach(function (c) {
+      c.onchange = function () { objs[c.dataset.obj] = c.checked; save("objs", objs);
+        var lid = c.dataset.obj.split(":")[0], l = lessonById[lid];
+        var ok = l.objectives.filter(function (o, i) { return objs[lid + ":" + i]; }).length;
+        document.querySelector("#l-" + lid + " .ring").textContent = ok + "/" + l.objectives.length + " objectives mastered"; };
+    });
+  }
+
+  function toggleDone(id) { done[id] = !done[id]; if (!done[id]) delete done[id]; save("done", done); stats(); grades(); render(); vdoneLabel(); }
+
+  // ---------- viewer ----------
+  var V = document.getElementById("viewer"), F = document.getElementById("vframe"), cur = null;
+  function vdoneLabel() { if (cur) document.getElementById("vdone").textContent = done[cur] ? "✓ Done" : "✓ Mark as done"; }
+  function openViewer(id) {
+    var r = byId[id]; cur = id;
+    F.src = r.html; document.getElementById("vtitle").textContent = gradeById[r.grade].short + " · " + r.title;
+    document.getElementById("vpdf").href = r.pdf; document.getElementById("vnew").href = r.html;
+    V.classList.add("open"); document.body.style.overflow = "hidden"; vdoneLabel();
+    history.replaceState(null, "", "#r=" + id);
+    recent = [id].concat(recent.filter(function (x) { return x !== id; })).slice(0, 4); save("recent", recent); recentList();
+  }
+  function closeViewer() { V.classList.remove("open"); document.body.style.overflow = ""; F.src = "about:blank"; cur = null; history.replaceState(null, "", location.pathname); }
+  document.getElementById("vclose").onclick = closeViewer;
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && cur) closeViewer(); });
+  document.getElementById("vdone").onclick = function () { if (cur) toggleDone(cur); };
+  document.getElementById("vprint").onclick = function () { try { F.contentWindow.focus(); F.contentWindow.print(); } catch (e) { window.open(byId[cur].pdf, "_blank"); } };
+
+  function recentList() {
+    var el = document.getElementById("recent"), ids = recent.filter(function (id) { return byId[id]; });
+    if (!ids.length) return;
+    el.innerHTML = ids.map(function (id) { var r = byId[id], g = gradeById[r.grade];
+      return '<button class="mini" data-open="' + id + '"><span class="g" style="background:' + g.color + '">' + esc(g.short) + '</span><span>' + esc(r.title) +
+        '<br><small style="color:var(--muted)">' + esc(lessonById[r.lesson].title) + '</small></span></button>'; }).join("");
+    el.querySelectorAll("[data-open]").forEach(function (b) { b.onclick = function () { openViewer(b.dataset.open); }; });
+  }
+})();
+</script>
+</body>
+</html>

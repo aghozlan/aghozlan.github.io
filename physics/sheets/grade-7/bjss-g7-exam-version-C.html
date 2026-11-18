@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BJSS Physics Exam Grade 7 Version C</title>
+
+
+<style>
+
+:root { --ink:#1d2433; --muted:#4a5568; --blue:#1f6fb2; --blue-soft:#e8f1fb; --sun:#f6b93b; --sun-soft:#fff6e0;
+        --green:#1e8e3e; --red:#d63031; --line:#c9d3df; }
+* { box-sizing: border-box; }
+html { background:#eef1f5; }
+body { margin:0 auto; max-width:880px; background:#fff; color:var(--ink);
+       font-family:"Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size:12pt; line-height:1.35; padding:22px 30px 30px; }
+p { margin:4px 0; }
+header.top { display:flex; align-items:center; gap:10px; border-bottom:4px solid var(--blue); padding-bottom:6px; }
+.head-text { flex:1; }
+.head-art { flex:0 0 190px; position:relative; }
+.head-art svg { display:block; width:100%; height:auto; }
+.bubble { position:absolute; right:-4px; top:-2px; background:#fff; border:2px solid var(--blue); border-radius:10px;
+          padding:2px 8px; font-size:12pt; font-weight:700; color:var(--blue); }
+.kicker { font-size:12pt; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); font-weight:700; }
+h1 { font-size:20pt; margin:2px 0 6px; line-height:1.15; }
+.fields { display:flex; flex-wrap:wrap; gap:6px 22px; font-size:12pt; }
+.blank { display:inline-block; min-width:140px; border-bottom:1px solid var(--ink); }
+.box { border:1.5px solid var(--line); border-left:7px solid var(--blue); background:var(--blue-soft);
+       padding:6px 12px; margin:10px 0; break-inside:avoid; }
+.fact { border:2px dashed var(--sun); background:var(--sun-soft); border-radius:12px; padding:6px 12px; margin:8px 0; break-inside:avoid; }
+.fact b.t { color:#9a6400; margin-right:4px; }
+.teaser { border:2px solid #6c3483; background:#f5eefa; border-radius:12px; padding:6px 10px; margin-top:6px; }
+.teaser b { color:#6c3483; }
+section.exercise { margin-top:14px; }
+.ex-head { display:flex; align-items:center; gap:10px; margin-bottom:4px; break-after:avoid; }
+.ex-num { flex:0 0 auto; background:var(--blue); color:#fff; font-weight:800; font-size:17pt; width:38px; height:38px;
+          border-radius:10px; text-align:center; line-height:38px; }
+.ex-head h2 { margin:0; font-size:16pt; line-height:1.2; }
+.ex-head .sub { display:block; font-size:12pt; font-weight:500; color:var(--muted); }
+.grid { display:grid; gap:7px; margin:6px 0; }
+.g4 { grid-template-columns:repeat(4, minmax(0,1fr)); }
+.g3 { grid-template-columns:repeat(3, minmax(0,1fr)); }
+.g2 { grid-template-columns:repeat(2, minmax(0,1fr)); }
+.span2 { grid-column:span 2; margin:0; align-self:center; }
+.card { border:1.5px solid var(--line); border-radius:10px; padding:4px; background:#fff; break-inside:avoid; }
+.card.note { display:block; padding:8px; line-height:1.9; align-self:center; }
+.card > svg, figure > svg { display:block; width:100%; height:auto; }
+.cap { font-size:12pt; text-align:center; margin-top:2px; line-height:1.25; }
+.cap b { color:var(--blue); }
+.check { display:flex; justify-content:center; gap:8px; margin-top:2px; font-size:12pt; align-items:center; }
+.check b { color:var(--blue); margin-right:2px; }
+.check span::before { content:""; display:inline-block; width:13px; height:13px; border:2px solid var(--ink); border-radius:3px; margin-right:3px; vertical-align:-2px; }
+figure { margin:6px 0; break-inside:avoid; }
+figure.panel { border:1.5px solid var(--line); border-radius:10px; padding:4px; }
+figcaption { font-size:12pt; color:var(--muted); text-align:center; margin-top:2px; }
+ol.q { padding-left:24px; margin:4px 0; }
+ol.q > li { margin:3px 0; }
+ol.q.inline { display:flex; flex-wrap:wrap; gap:4px 34px; padding-left:24px; }
+.ans { display:block; border-bottom:1.3px dotted #8a96a6; height:1.3em; }
+.fill { display:inline-block; min-width:100px; border-bottom:1.3px dotted #8a96a6; height:1.1em; }
+.part { font-weight:700; font-size:13pt; margin:8px 0 2px; break-after:avoid; }
+.part span { display:inline-block; background:var(--blue); color:#fff; border-radius:6px; padding:0 7px; margin-right:6px; }
+.part span.plain { background:none; color:var(--ink); font-weight:400; padding:0; font-size:12pt; }
+.row { display:flex; gap:12px; align-items:flex-start; break-inside:avoid; }
+.row > .grow { flex:1; min-width:0; }
+.row > .side { flex:0 0 50%; }
+.row > .side.wide { flex-basis:57%; }
+.row > .side.narrow { flex-basis:42%; }
+.key h3 { color:var(--green); font-size:14pt; margin:10px 0 4px; break-after:avoid; }
+.key ul { padding-left:20px; margin:4px 0; }
+.key li { margin:2px 0; }
+@media (max-width:680px) { body { padding:14px; } .g4 { grid-template-columns:repeat(2,1fr); } .row, header.top { flex-direction:column; }
+  .row > .side { width:100%; } .head-art { flex-basis:auto; width:200px; } }
+@page { size:A4; margin:10mm 10mm; }
+@media print { html { background:#fff; } body { max-width:none; padding:0; }
+  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+
+figure.narrow > svg { width:82%; margin:0 auto; }
+figure.slim > svg { width:62%; margin:0 auto; }
+section.exercise { break-inside:auto; }
+.ex-head + * { break-before:avoid; }
+
+.g4.det { grid-template-columns:repeat(3, minmax(0,1fr)) minmax(0,1.5fr); }
+table.data { border-collapse:collapse; margin:6px auto; font-size:12pt; }
+table.data th, table.data td { border:1.3px solid var(--ink); padding:4px 10px; text-align:center; min-width:70px; }
+table.data th { background:var(--blue-soft); }
+table.data td.f { background:#fff; min-width:90px; }
+.formula { font-size:15pt; font-weight:700; text-align:center; color:var(--blue); margin:2px 0; }
+.leg1 { color:#0a8f4a; font-weight:700; } .leg2 { color:#1f6fb2; font-weight:700; }
+.pair { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:8px; align-items:center; width:70%; margin:0 auto; break-inside:avoid; }
+.pair3 { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.85fr) minmax(0,0.85fr); gap:8px; align-items:center; }
+
+.row > .side.scr { flex-basis:58%; }
+.row .grow table.data th, .row .grow table.data td { min-width:0; padding:4px 6px; }
+.row .grow table.data td.f { width:22%; height:40px; }
+table.data { break-inside:avoid; }
+.newpage { break-before:page; }
+table.data td.t { min-width:70px; }
+
+.keep { break-inside:avoid; }
+.concept { border:2px solid var(--line); border-radius:14px; padding:8px 12px; margin:10px 0; break-inside:avoid; }
+.concept.ser { border-color:#f0b35a; background:#fffaf1; }
+.concept.par { border-color:#9dbbe0; background:#f6f9fe; }
+.concept h2 { margin:0 0 4px; font-size:16pt; }
+.concept.ser h2 { color:#b36b00; } .concept.par h2 { color:var(--blue); }
+.idea { display:flex; gap:10px; align-items:flex-start; margin:4px 0; }
+.idea .ic { flex:0 0 34px; height:34px; border-radius:50%; color:#fff; font-weight:800; text-align:center; line-height:34px; font-size:14pt; }
+.ser .ic { background:#f39c12; } .par .ic { background:var(--blue); }
+.law { font-weight:700; text-align:center; font-size:13pt; margin:6px 0 2px; padding:4px; border-radius:8px; background:#fff; border:1.5px dashed var(--line); }
+.red { color:#d63031; font-weight:700; } .bl { color:#1f6fb2; font-weight:700; }
+.opts { display:flex; justify-content:center; gap:10px; margin-top:2px; font-size:12pt; }
+.opts span::before { content:""; display:inline-block; width:13px; height:13px; border:2px solid var(--ink); border-radius:3px; margin-right:4px; vertical-align:-2px; }
+
+.concept { padding:6px 10px; margin:8px 0; }
+.concept .grid { gap:5px; margin:4px 0; }
+.concept .card { padding:2px; border:none; background:transparent; }
+.concept .idea { margin:2px 0; line-height:1.3; }
+.concept .law { margin:4px 0 0; padding:2px; }
+.concept h2 { font-size:15pt; margin:0 0 2px; }
+.concept.par { break-inside:auto; } .concept.par .grid { break-inside:avoid; }
+figure.w72 > svg { width:72%; margin:0 auto; }
+.cards { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin:8px 0; }
+.tk { border:2px solid var(--line); border-radius:12px; padding:4px 10px 6px; break-inside:avoid; }
+.tk.s { border-color:#9aa3ad; background:#f6f7f8; } .tk.l { border-color:#7cc4f0; background:#f1f9fe; } .tk.p { border-color:#e3c27a; background:#fffaf0; }
+.tk h3 { margin:0; font-size:14pt; text-align:center; }
+.tk > svg { display:block; height:54px; width:auto; margin:2px auto; }
+.tk ul { margin:2px 0 0; padding-left:16px; } .tk li { margin:1px 0; line-height:1.3; }
+.yes { color:#1e8e3e; font-weight:800; } .no { color:#d63031; font-weight:800; }
+.sec { display:flex; align-items:center; gap:10px; margin:12px 0 4px; break-after:avoid; }
+.sec .ex-num { background:#0e7c6b; }
+.sec h2 { margin:0; font-size:16pt; }
+.def { border-left:7px solid #0e7c6b; background:#e9f7f4; padding:5px 12px; border-radius:6px; margin:6px 0; break-inside:avoid; }
+.work { border:2px solid #0e7c6b; border-radius:10px; padding:5px 10px; margin:6px 0; background:#fff; break-inside:avoid; }
+.work b.t { color:#0e7c6b; }
+.steps { padding-left:22px; margin:4px 0; } .steps li { margin:2px 0; }
+.solids { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:7px; margin:6px 0; }
+.sc { border:1.5px solid var(--line); border-radius:10px; padding:4px 6px 6px; break-inside:avoid; }
+.sc h4 { margin:0; text-align:center; font-size:13pt; color:#0e7c6b; }
+.sc > svg { display:block; width:100%; height:92px; }
+.sc .f { text-align:center; font-size:14pt; margin:2px 0; }
+.sc .ex { font-size:12pt; line-height:1.3; }
+.match { width:100%; border-collapse:collapse; font-size:12pt; }
+.match td { border:1.3px solid var(--line); padding:3px 8px; }
+.pts { float:right; font-weight:700; color:#0e7c6b; }
+.assess { border:3px solid #0e7c6b; border-radius:14px; padding:6px 12px 8px; margin-top:8px; }
+.assess h2 { margin:0 0 2px; font-size:17pt; color:#0e7c6b; }
+.score { float:right; border:2px solid #0e7c6b; border-radius:8px; padding:2px 10px; font-weight:800; font-size:14pt; }
+.screen-only { border:2px dashed #0e7c6b; border-radius:12px; padding:8px 12px; margin:10px 0; background:#f3fbf9; }
+.screen-only h3 { margin:0 0 4px; color:#0e7c6b; }
+.lab-btn { font:inherit; font-size:12pt; padding:5px 10px; margin:3px; border-radius:8px; border:2px solid #0e7c6b; background:#fff; cursor:pointer; }
+.lab-btn:hover { background:#e9f7f4; }
+@media print { .screen-only { display:none !important; } }
+
+figure.w80 > svg { width:80%; margin:0 auto; }
+.g4 { grid-template-columns:repeat(4, minmax(0,1fr)); }
+figure.w64 > svg { width:64%; margin:0 auto; }
+.row > .side.pr { flex-basis:53%; } .row > .side.pr > svg { width:100%; display:block; }
+.row > .side.ov { flex-basis:40%; }
+.assess { break-before:page; }
+.pts { margin-left:12px; }
+.rules { width:100%; border-collapse:collapse; font-size:12pt; margin:6px 0; }
+.rules th, .rules td { border:1.5px solid var(--line); padding:4px 8px; vertical-align:top; }
+.rules th { background:#e8f1fb; }
+.rules th.s { background:#fff1dc; color:#b36b00; } .rules th.p { background:#e3eefb; color:#1f6fb2; }
+.rules td.h { font-weight:700; background:#f7f9fc; width:17%; }
+.think { border-left:7px solid #8e44ad; background:#f5eefa; padding:5px 12px; border-radius:6px; margin:6px 0; break-inside:avoid; }
+.think b.t { color:#6c3483; }
+.eq { display:block; border-bottom:1.3px dotted #8a96a6; height:1.5em; margin-top:2px; }
+.eqlab { font-weight:700; font-size:12pt; color:#c0392b; }
+.data-line { background:#fff8e6; border:1.5px solid #f0c36d; border-radius:8px; padding:3px 10px; margin:4px 0; }
+
+body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+.cmp { width:100%; border-collapse:collapse; font-size:12pt; margin:6px 0; break-inside:avoid; }
+.cmp th, .cmp td { border:1.5px solid #c9d3df; padding:3px 7px; vertical-align:middle; text-align:center; }
+.cmp th { color:#fff; font-size:13pt; } .cmp th.dc { background:#1f6fb2; } .cmp th.ac { background:#d35400; } .cmp th.k { background:#1d2433; }
+.cmp td.k { background:#f2f4f7; font-weight:700; text-align:left; width:19%; }
+.cmp td > svg { display:block; height:84px; width:auto; margin:0 auto; }
+.four { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin:6px 0; }
+.four div { border:2px solid #d35400; border-radius:10px; padding:4px 8px; background:#fff7f0; break-inside:avoid; }
+.four h4 { margin:0; color:#d35400; font-size:13pt; }
+.four .f { text-align:center; font-size:13pt; margin:3px 0; }
+.mx { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:6px 0; }
+.mx div { border-radius:10px; padding:5px 10px; break-inside:avoid; }
+.mx .m { border:2px solid #c0392b; background:#fff1f0; } .mx .e { border:2px solid #1e8e3e; background:#effaf2; }
+.mx h4 { margin:0 0 2px; font-size:13pt; } .mx .m h4 { color:#c0392b; } .mx .e h4 { color:#1e8e3e; }
+.sets { font-size:12pt; text-align:center; font-weight:700; color:#1d2433; margin-top:2px; }
+.scr6 { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:5px; }
+.scr6 .card, .g3 .card, .g4 .card { text-align:center; }
+.lab-sim { border:2px dashed #d35400; border-radius:12px; padding:8px 12px; margin:10px 0; background:#fffaf5; }
+.lab-sim h3 { margin:0 0 4px; color:#d35400; }
+.lab-sim label { margin-right:10px; white-space:nowrap; }
+.lab-sim select, .lab-sim input { font:inherit; font-size:12pt; }
+@media print { .lab-sim { display:none !important; } }
+.pts { float:right; font-weight:700; color:#0e7c6b; margin-left:10px; }
+table.ms { border-collapse:collapse; width:100%; font-size:12pt; margin:4px 0; }
+table.ms th, table.ms td { border:1.3px solid #c9d3df; padding:3px 7px; vertical-align:top; }
+table.ms th { background:#e9f7f4; text-align:left; } table.ms td.p { width:52px; text-align:center; font-weight:700; color:#0e7c6b; }
+table.ms tr.tot td { background:#f2f4f7; font-weight:700; }
+sub { font-size:100%; vertical-align:-0.3em; line-height:0; }
+
+.pair2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.pair2 svg { display:block; height:92px; width:auto; margin:0 auto; }
+.ex1 .card { padding:2px; } .ex1 { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:4px; }
+.tf { width:100%; border-collapse:collapse; font-size:12pt; }
+.tf td, .tf th { border:1.3px solid #c9d3df; padding:3px 8px; vertical-align:top; }
+.tf th { background:#fff3e8; text-align:left; }
+.tf td.c { width:46px; text-align:center; font-weight:700; }
+.tf td.fix { width:34%; }
+.ex-head h2 { flex:1; } .ex-head h2 .pts { float:right; margin-left:12px; color:#0e7c6b; }
+.tk3 { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin:8px 0; }
+.tk { border:2px solid #c9d3df; border-radius:12px; padding:5px 10px; break-inside:avoid; }
+.tk h3 { margin:0 0 2px; font-size:14pt; } .tk p { margin:3px 0; line-height:1.3; }
+.tk.m { border-color:#1f6fb2; background:#f1f7fd; } .tk.m h3 { color:#1f6fb2; }
+.tk.s { border-color:#0e7c6b; background:#eefaf7; }
+.tk.d { border-color:#d35400; background:#fff7f0; } .tk.d h3 { color:#d35400; }
+.tk > svg { display:block; height:100px; width:auto; margin:0 auto; }
+.tk .big { text-align:center; font-size:18pt; margin:4px 0; }
+.tk .conv { text-align:center; font-weight:700; background:#fff; border:1.5px dashed #d35400; border-radius:6px; padding:2px; }
+.rule { border:2px solid #6c3483; background:#f5eefa; border-radius:10px; padding:6px 10px; line-height:1.5; }
+.rule b { color:#6c3483; }
+table.rho td, table.rho th { padding:2px 8px; }
+figure.w64 > svg { width:64%; margin:0 auto; display:block; } figure.w80 > svg { width:80%; margin:0 auto; display:block; }
+.row > .side > svg { width:100%; display:block; }
+.screen-only { border:2px dashed #0e7c6b; border-radius:12px; padding:8px 12px; margin:10px 0; background:#f3fbf9; }
+.screen-only h3 { margin:0 0 4px; color:#0e7c6b; }
+.lab-btn { font:inherit; font-size:12pt; padding:4px 8px; margin:3px; border-radius:8px; border:2px solid #0e7c6b; background:#fff; }
+@media print { .screen-only { display:none !important; } }
+figure.w48 > svg { width:48%; margin:0 auto; display:block; }
+.rule { margin:6px 0; }
+.home { border:3px solid #6c3483; border-radius:16px; padding:6px 14px 10px; margin-top:12px; break-inside:avoid; }
+.home h2 { margin:0 0 4px; color:#6c3483; font-size:16pt; } .home ol { margin:4px 0; padding-left:22px; } .home li { margin:2px 0; }
+@page { size:A4; margin:10mm 10mm 16mm 10mm; }
+header.exam { display:flex; align-items:center; gap:14px; border:3px solid #0e7c6b; border-radius:14px; padding:8px 14px; background:linear-gradient(90deg,#e9f7f4,#fff 60%); }
+header.exam .logo { flex:0 0 76px; height:76px; border-radius:50%; background:#0e7c6b; display:flex; align-items:center; justify-content:center; border:4px solid #f6b93b; }
+header.exam .logo span { color:#fff; font-weight:800; font-size:17pt; letter-spacing:.04em; }
+header.exam .title { flex:1; }
+header.exam .school { font-size:12pt; font-weight:700; color:#0e7c6b; letter-spacing:.06em; text-transform:uppercase; }
+header.exam h1 { margin:0; font-size:22pt; line-height:1.15; }
+header.exam .topic { font-size:13pt; color:#4a5568; font-weight:600; }
+table.meta { border-collapse:collapse; font-size:12pt; }
+table.meta th, table.meta td { border:1.5px solid #0e7c6b; padding:2px 8px; text-align:left; }
+table.meta th { background:#0e7c6b; color:#fff; }
+table.meta td.ver { font-size:16pt; font-weight:800; color:#d35400; text-align:center; }
+.idline { display:flex; gap:20px; flex-wrap:wrap; margin:8px 2px; font-size:12pt; }
+.quote { display:flex; gap:12px; align-items:center; border:2px solid #f6b93b; background:#fff8e6; border-radius:14px; padding:6px 12px; margin:6px 0; break-inside:avoid; }
+.quote .art { flex:0 0 22%; } .quote .art svg { display:block; width:100%; height:auto; }
+.quote .q { margin:0; font-size:14pt; font-style:italic; color:#5d4300; line-height:1.4; }
+.quote .sig { margin:4px 0 0; text-align:right; font-weight:700; color:#0e7c6b; }
+.instr { margin:4px 0; font-size:12pt; }
+.conv { width:100%; border-collapse:collapse; font-size:12pt; margin:4px 0; }
+.conv td { border:1.3px solid #c9d3df; padding:8px 8px; }
+.good { text-align:center; font-weight:700; color:#0e7c6b; font-size:14pt; margin:10px 0 0; }
+footer.pagefoot { margin-top:10px; text-align:center; font-size:12pt; color:#4a5568; border-top:2px solid #0e7c6b; padding-top:4px; }
+@media print { footer.pagefoot { display:none; } }
+.card > svg { display:block; width:100%; height:auto; }
+section.exercise { margin-top:6px; }
+.good { margin-top:6px; }
+.quote { padding:4px 12px; margin:4px 0; } .quote .art { flex-basis:19%; } .quote .q { font-size:13pt; line-height:1.3; }
+header.exam { padding:5px 12px; } header.exam .logo { flex-basis:64px; height:64px; }
+.idline { margin:5px 2px; }
+.grid.g4 .card { padding:4px; }
+
+</style>
+<style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-SVG-styles">
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+  stroke-width: 3;
+}
+</style></head>
+<body>
+
+<header class="exam">
+  <div class="logo"><span>BJSS</span></div>
+  <div class="title">
+    <div class="school">BJSS · Physics Department</div>
+    <h1>Physics Exam · Grade 7</h1>
+    <div class="topic">Free surface of liquids · Volume</div>
+  </div>
+  <table class="meta">
+    <tbody><tr><th>Version</th><td class="ver">C</td></tr>
+    <tr><th>Duration</th><td>40 min</td></tr>
+    <tr><th>Mark</th><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 20</td></tr>
+  </tbody></table>
+</header>
+<div class="idline">
+  <span><b>Name:</b> <span class="blank" style="min-width:230px"></span></span>
+  <span><b>Class:</b> <span class="blank" style="min-width:80px"></span></span>
+  <span><b>Date:</b> <span class="blank" style="min-width:110px"></span></span>
+</div>
+
+<div class="quote">
+  <div class="art"><svg viewBox="16.0 -4.7 396.0 270.7" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><circle cx="300" cy="70" r="40" fill="#f9d56e"></circle><line x1="352.0" y1="70.0" x2="368.0" y2="70.0" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="342.1" y1="100.6" x2="355.0" y2="110.0" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="316.1" y1="119.5" x2="321.0" y2="134.7" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="283.9" y1="119.5" x2="279.0" y2="134.7" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="257.9" y1="100.6" x2="245.0" y2="110.0" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="248.0" y1="70.0" x2="232.0" y2="70.0" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="257.9" y1="39.4" x2="245.0" y2="30.0" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="283.9" y1="20.5" x2="279.0" y2="5.3" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="316.1" y1="20.5" x2="321.0" y2="5.3" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><line x1="342.1" y1="39.4" x2="355.0" y2="30.0" stroke="#f5b041" stroke-width="5" stroke-linecap="round"></line><path transform="translate(40,40) scale(1)" d="M0,-14 L4,-4 L14,-4 L6,3 L9,14 L0,7 L-9,14 L-6,3 L-14,-4 L-4,-4 Z" fill="#f39c12"></path><path transform="translate(240,160) scale(0.7)" d="M0,-14 L4,-4 L14,-4 L6,3 L9,14 L0,7 L-9,14 L-6,3 L-14,-4 L-4,-4 Z" fill="#f39c12"></path><path transform="translate(360,150) scale(0.8)" d="M0,-14 L4,-4 L14,-4 L6,3 L9,14 L0,7 L-9,14 L-6,3 L-14,-4 L-4,-4 Z" fill="#f39c12"></path><rect x="40" y="226" width="220" height="22" rx="4" fill="#5dade2"></rect><rect x="40" y="246" width="220" height="10" fill="#2e86c1"></rect><polygon points="115.4,235.9 184.6,216.1 184.6,235.9" fill="#c8935a" stroke="#8a5a2b" stroke-width="2"></polygon><polygon points="60.6,95.6 115.4,235.9 184.6,216.1 156.7,68.0" fill="#eef6fb"></polygon><polygon points="73.2,128.0 115.4,235.9 184.6,216.1 168.0,128.0" fill="#8fd0f5"></polygon><line x1="73.2" y1="128" x2="168.0" y2="128" stroke="#0d47a1" stroke-width="3.5"></line><path d="M60.6,95.6 L115.4,235.9 L184.6,216.1 L156.7,68.0" fill="none" stroke="#2f3e4e" stroke-width="4" stroke-linejoin="round"></path><g transform="translate(150,182) rotate(-16)"><circle cx="-16" cy="0" r="6" fill="#123"></circle><circle cx="16" cy="0" r="6" fill="#123"></circle><path d="M-14,16 q14,14 28,0" stroke="#123" stroke-width="4" fill="none" stroke-linecap="round"></path><circle cx="-30" cy="12" r="6" fill="#f5b7b1"></circle><circle cx="30" cy="12" r="6" fill="#f5b7b1"></circle></g><path d="M330,256 l10,-48 h52 l10,48 z" fill="#d35400"></path><rect x="334" y="200" width="64" height="12" rx="3" fill="#e67e22"></rect><path d="M366,200 C366,170 366,150 366,128" stroke="#27ae60" stroke-width="6" fill="none"></path><path d="M366,160 C340,150 330,130 338,116 C356,122 366,140 366,160 Z" fill="#2ecc71"></path><path d="M366,145 C392,136 400,116 394,102 C376,108 366,126 366,145 Z" fill="#27ae60"></path></svg></div>
+  <div class="txt">
+    <p class="q">“Tilt the glass as much as you like: the water stays <b>calm</b> and <b>level</b>.
+      Be like water today: calm, confident and ready. Every drop of effort counts, and we believe in you!”</p>
+    <p class="sig">— Your physics teacher</p>
+  </div>
+</div>
+<p class="instr"><b>Instructions:</b> answer on this sheet · use a pencil and a ruler for drawings · write the unit with every result · a calculator is allowed.</p>
+
+<!-- ============================ EXERCISE 1 ============================ -->
+<section class="exercise">
+  <div class="ex-head"><div class="ex-num">1</div><h2><span class="pts">/ 6</span>Water at rest<span class="sub">The free surface of a liquid.</span></h2></div>
+  <ol class="q">
+    <li>Complete: the free surface of a liquid at rest is always <span class="fill" style="min-width:110px"></span> and <span class="fill" style="min-width:110px"></span>.</li>
+    <li>Each container holds water at rest. With your ruler, <b>draw the free surface passing through A</b>, then color the water.
+      <div class="grid g4">
+        <div class="card"><svg viewBox="-10.0 97.4 320.0 191.6" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="0" y="260" width="300" height="14" fill="#c8935a"></rect><rect x="0" y="274" width="300" height="5" fill="#8a5a2b"></rect><polygon points="151.3,260.0 87.4,236.7 87.4,260.0" fill="#c8935a" stroke="#8a5a2b" stroke-width="2"></polygon><polygon points="114.9,108.4 87.4,236.7 151.3,260.0 212.6,144.0" fill="#eef6fb"></polygon><path d="M114.9,108.4 L87.4,236.7 L151.3,260.0 L212.6,144.0" fill="none" stroke="#2f3e4e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="98.6" cy="184.2" r="6" fill="#d63031" stroke="#fff" stroke-width="1.5"></circle><text x="70.7" y="194.2" font-size="34" font-weight="700" text-anchor="middle" fill="#d63031">A</text></svg><div class="cap"><b>a.</b> tilted glass</div></div>
+        <div class="card"><svg viewBox="-10.0 97.4 320.0 191.6" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="0" y="260" width="300" height="14" fill="#c8935a"></rect><rect x="0" y="274" width="300" height="5" fill="#8a5a2b"></rect><polygon points="139.6,260.0 219.1,217.7 219.1,260.0" fill="#c8935a" stroke="#8a5a2b" stroke-width="2"></polygon><polygon points="80.9,149.6 139.6,260.0 219.1,217.7 160.4,107.4" fill="#eef6fb"></polygon><path d="M80.9,149.6 L139.6,260.0 L219.1,217.7 L160.4,107.4" fill="none" stroke="#2f3e4e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="205.0" cy="191.3" r="6" fill="#d63031" stroke="#fff" stroke-width="1.5"></circle><text x="232.8" y="207.2" font-size="34" font-weight="700" text-anchor="middle" fill="#d63031">A</text></svg><div class="cap"><b>b.</b> beaker on a wedge</div></div>
+        <div class="card"><svg viewBox="-10.0 97.4 320.0 191.6" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="0" y="260" width="300" height="14" fill="#c8935a"></rect><rect x="0" y="274" width="300" height="5" fill="#8a5a2b"></rect><polygon points="50.0,233.0 75.0,233.0 105.0,260.0 242.0,260.0 250.0,252.0 250.0,184.0 242.0,176.0 105.0,176.0 75.0,203.0 50.0,203.0" fill="#eef6fb"></polygon><path d="M50.0,233.0 L75.0,233.0 L105.0,260.0 L242.0,260.0 L250.0,252.0 L250.0,184.0 L242.0,176.0 L105.0,176.0 L75.0,203.0 L50.0,203.0 L50.0,233.0 Z" fill="none" stroke="#2f3e4e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><line x1="50.0" y1="233.0" x2="50.0" y2="203.0" stroke="#d63031" stroke-width="9" stroke-linecap="round"></line><circle cx="250.0" cy="222.2" r="6" fill="#d63031" stroke="#fff" stroke-width="1.5"></circle><text x="278.0" y="235.3" font-size="34" font-weight="700" text-anchor="middle" fill="#d63031">A</text></svg><div class="cap"><b>c.</b> closed bottle lying down</div></div>
+        <div class="card"><svg viewBox="-10.0 97.4 320.0 191.6" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="0" y="260" width="300" height="14" fill="#c8935a"></rect><rect x="0" y="274" width="300" height="5" fill="#8a5a2b"></rect><polygon points="188.9,260.0 82.6,231.5 82.6,260.0" fill="#c8935a" stroke="#8a5a2b" stroke-width="2"></polygon><polygon points="111.1,125.3 82.6,231.5 188.9,260.0 217.4,153.7" fill="#eef6fb"></polygon><path d="M111.1,125.3 L82.6,231.5 L188.9,260.0 L217.4,153.7" fill="none" stroke="#2f3e4e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="93.1" cy="192.6" r="6" fill="#d63031" stroke="#fff" stroke-width="1.5"></circle><text x="65.1" y="204.6" font-size="34" font-weight="700" text-anchor="middle" fill="#d63031">A</text></svg><div class="cap"><b>d.</b> jar on a wedge</div></div>
+      </div></li>
+    <li>True or false? Correct the false statement.
+      <table class="tf">
+        <tbody><tr><th>Statement</th><th>T/F</th><th>Correction</th></tr>
+        <tr><td>a. A liquid at rest has a horizontal free surface, whatever the shape of its container.</td><td class="c"></td><td class="fix"></td></tr>
+        <tr><td>b. In a tilted bottle, the water surface is parallel to the bottom of the bottle.</td><td class="c"></td><td class="fix"></td></tr>
+      </tbody></table></li>
+  </ol>
+</section>
+
+<!-- ============================ EXERCISE 2 ============================ -->
+<section class="exercise">
+  <div class="ex-head"><div class="ex-num">2</div><h2><span class="pts">/ 4</span>Communicating vessels<span class="sub">Branches joined at the bottom and open at the top.</span></h2></div>
+  <div class="row">
+    <div class="side" style="flex-basis:34%"><svg viewBox="0.0 -0.9 510.0 320.9" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="10" y="296" width="490" height="14" fill="#c8935a"></rect><polygon points="40.0,60.0 40.0,290.0 470.0,290.0 470.0,110.0 400.0,110.0 400.0,260.0 320.0,260.0 320.0,60.0 290.0,60.0 290.0,260.0 210.0,260.0 210.0,90.0 150.0,90.0 150.0,260.0 70.0,260.0 70.0,60.0" fill="#eef6fb"></polygon><rect x="40" y="260" width="430" height="30" fill="#8fd0f5"></rect><rect x="290" y="160" width="30" height="101" fill="#8fd0f5"></rect><line x1="290" y1="160" x2="320" y2="160" stroke="#0d47a1" stroke-width="3.5"></line><path d="M40.0,60.0 L40.0,290.0 L470.0,290.0 L470.0,110.0 M400.0,110.0 L400.0,260.0 L320.0,260.0 L320.0,60.0 M290.0,60.0 L290.0,260.0 L210.0,260.0 L210.0,90.0 M150.0,90.0 L150.0,260.0 L70.0,260.0 L70.0,60.0" fill="none" stroke="#2f3e4e" stroke-width="4" stroke-linejoin="round"></path><circle cx="290" cy="160" r="6" fill="#d63031"></circle><text x="268.0" y="172.0" font-size="37" font-weight="700" text-anchor="middle" fill="#d63031">A</text><text x="55.0" y="46.0" font-size="37" font-weight="700" text-anchor="middle" fill="#1f6fb2">1</text><text x="180.0" y="76.0" font-size="37" font-weight="700" text-anchor="middle" fill="#1f6fb2">2</text><text x="305.0" y="46.0" font-size="37" font-weight="700" text-anchor="middle" fill="#1f6fb2">3</text><text x="435.0" y="96.0" font-size="37" font-weight="700" text-anchor="middle" fill="#1f6fb2">4</text></svg></div>
+    <div class="grow">
+      <ol class="q">
+        <li>The water is at rest. Its surface in one branch passes through A. <b>Draw the water surface in the other branches</b> and color the water.</li>
+        <li>Complete: in communicating vessels, a liquid at rest reaches the same <span class="fill" style="min-width:110px"></span> in all the branches.</li>
+        <li>Walid, a mason, uses a transparent hose full of water to mark two points at the same height on two walls. Why does it work? <span class="ans"></span><span class="ans"></span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ EXERCISE 3 ============================ -->
+<section class="exercise">
+  <div class="ex-head"><div class="ex-num">3</div><h2><span class="pts">/ 4</span>Volume and its units</h2></div>
+  <ol class="q">
+    <li>The SI unit of volume is the <span class="fill" style="min-width:140px"></span>.
+      The instrument used to measure the volume of a liquid is the <span class="fill" style="min-width:180px"></span>.</li>
+    <li>Convert:
+      <table class="conv">
+        <tbody><tr><td>5 L = <span class="fill" style="min-width:70px"></span> mL</td><td>250 mL = <span class="fill" style="min-width:70px"></span> L</td><td>1 dm³ = <span class="fill" style="min-width:70px"></span> cm³</td></tr>
+        <tr><td>3 m³ = <span class="fill" style="min-width:70px"></span> L</td><td>330 mL = <span class="fill" style="min-width:70px"></span> cm³</td><td>6000 cm³ = <span class="fill" style="min-width:70px"></span> dm³</td></tr>
+      </tbody></table></li>
+  </ol>
+</section>
+
+<!-- ============================ EXERCISE 4 ============================ -->
+<section class="exercise">
+  <div class="ex-head"><div class="ex-num">4</div><h2><span class="pts">/ 3</span>Read the graduated cylinder<span class="sub">The first figure is a zoom of a graduated cylinder.</span></h2></div>
+  <div class="row">
+    <div class="side" style="flex-basis:46%"><div class="grid g2"><div class="card"><svg viewBox="5.0 -6.0 250.0 299.5" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><defs><clipPath id="lnC"><circle cx="130" cy="130" r="110"></circle></clipPath></defs><circle cx="130" cy="130" r="110" fill="#eef6fb"></circle><g clip-path="url(#lnC)"><path d="M15,114.0 Q130,146.0 245,114.0 V245 H15 Z" fill="#8fd0f5"></path><path d="M15,114.0 Q130,146.0 245,114.0" fill="none" stroke="#0d47a1" stroke-width="3.5"></path><line x1="100" y1="256.0" x2="130" y2="256.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="247.0" x2="162" y2="247.0" stroke="#1d2433" stroke-width="2.8"></line><line x1="100" y1="238.0" x2="130" y2="238.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="229.0" x2="130" y2="229.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="220.0" x2="130" y2="220.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="211.0" x2="130" y2="211.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="202.0" x2="130" y2="202.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="193.0" x2="130" y2="193.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="184.0" x2="130" y2="184.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="175.0" x2="130" y2="175.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="166.0" x2="130" y2="166.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="157.0" x2="162" y2="157.0" stroke="#1d2433" stroke-width="2.8"></line><text x="90.0" y="168.0" font-size="32" font-weight="700" text-anchor="end" fill="#1d2433" paint-order="stroke" stroke="#eef6fb" stroke-width="6">70</text><line x1="100" y1="148.0" x2="130" y2="148.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="139.0" x2="130" y2="139.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="130.0" x2="130" y2="130.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="121.0" x2="130" y2="121.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="112.0" x2="130" y2="112.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="103.0" x2="130" y2="103.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="94.0" x2="130" y2="94.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="85.0" x2="130" y2="85.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="76.0" x2="130" y2="76.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="67.0" x2="162" y2="67.0" stroke="#1d2433" stroke-width="2.8"></line><text x="90.0" y="78.0" font-size="32" font-weight="700" text-anchor="end" fill="#1d2433" paint-order="stroke" stroke="#eef6fb" stroke-width="6">80</text><line x1="100" y1="58.0" x2="130" y2="58.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="49.0" x2="130" y2="49.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="40.0" x2="130" y2="40.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="31.0" x2="130" y2="31.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="22.0" x2="130" y2="22.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="13.0" x2="130" y2="13.0" stroke="#1d2433" stroke-width="1.6"></line><line x1="100" y1="4.0" x2="130" y2="4.0" stroke="#1d2433" stroke-width="1.6"></line></g><circle cx="130" cy="130" r="110" fill="none" stroke="#56616e" stroke-width="6"></circle><text x="130.0" y="276.0" font-size="30" font-weight="700" text-anchor="middle" fill="#1d2433">mL</text></svg></div><div class="card"><svg viewBox="10.0 20.0 286.5 290.0" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="20" y="30" width="90" height="270" fill="#eef6fb"></rect><path d="M20,158 Q65.0,182 110,158 V300 H20 Z" fill="#8fd0f5"></path><path d="M20,158 Q65.0,182 110,158" fill="none" stroke="#0d47a1" stroke-width="3.5"></path><line x1="20" y1="30" x2="20" y2="300" stroke="#2f3e4e" stroke-width="4"></line><line x1="110" y1="30" x2="110" y2="300" stroke="#2f3e4e" stroke-width="4"></line><line x1="20" y1="44" x2="44" y2="44" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="62" x2="44" y2="62" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="80" x2="66" y2="80" stroke="#1d2433" stroke-width="2.4"></line><line x1="20" y1="98" x2="44" y2="98" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="116" x2="44" y2="116" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="134" x2="44" y2="134" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="152" x2="44" y2="152" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="170" x2="66" y2="170" stroke="#1d2433" stroke-width="2.4"></line><line x1="20" y1="188" x2="44" y2="188" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="206" x2="44" y2="206" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="224" x2="44" y2="224" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="242" x2="44" y2="242" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="260" x2="66" y2="260" stroke="#1d2433" stroke-width="2.4"></line><line x1="20" y1="278" x2="44" y2="278" stroke="#1d2433" stroke-width="1.4"></line><line x1="20" y1="296" x2="44" y2="296" stroke="#1d2433" stroke-width="1.4"></line><line x1="196" y1="75" x2="65.0" y2="170" stroke="#d63031" stroke-width="2.5" stroke-dasharray="8 6"></line><path d="M198,75 Q220,58 242,75 Q220,92 198,75 Z" fill="#fff" stroke="#1d2433" stroke-width="2.5"></path><circle cx="214" cy="75" r="7" fill="#1f6fb2"></circle><circle cx="214" cy="75" r="3" fill="#111"></circle><text x="256.0" y="88.0" font-size="40" font-weight="700" text-anchor="start" fill="#d63031">B</text><line x1="196" y1="170" x2="65.0" y2="170" stroke="#d63031" stroke-width="2.5" stroke-dasharray="8 6"></line><path d="M198,170 Q220,153 242,170 Q220,187 198,170 Z" fill="#fff" stroke="#1d2433" stroke-width="2.5"></path><circle cx="214" cy="170" r="7" fill="#1f6fb2"></circle><circle cx="214" cy="170" r="3" fill="#111"></circle><text x="256.0" y="183.0" font-size="40" font-weight="700" text-anchor="start" fill="#d63031">C</text><line x1="196" y1="265" x2="65.0" y2="170" stroke="#d63031" stroke-width="2.5" stroke-dasharray="8 6"></line><path d="M198,265 Q220,248 242,265 Q220,282 198,265 Z" fill="#fff" stroke="#1d2433" stroke-width="2.5"></path><circle cx="214" cy="265" r="7" fill="#1f6fb2"></circle><circle cx="214" cy="265" r="3" fill="#111"></circle><text x="256.0" y="278.0" font-size="40" font-weight="700" text-anchor="start" fill="#d63031">A</text></svg></div></div></div>
+    <div class="grow">
+      <ol class="q">
+        <li>Find the graduation value (the volume of one small division). <span class="ans"></span><span class="ans"></span></li>
+        <li>Give the volume of the water in mL, then in cm³. <span class="ans"></span></li>
+        <li>Look at the second figure. Which eye reads the volume correctly? <span class="fill" style="min-width:60px"></span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ EXERCISE 5 ============================ -->
+<section class="exercise">
+  <div class="ex-head"><div class="ex-num">5</div><h2><span class="pts">/ 3</span>Volume of solids</h2></div>
+  <div class="row">
+    <div class="side" style="flex-basis:32%"><svg viewBox="13.3 -25.9 380.7 438.9" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><rect x="80" y="20" width="70" height="328" fill="#eef6fb"></rect><path d="M80,184.0 Q115.0,196.0 150,184.0 V348 H80 Z" fill="#8fd0f5"></path><path d="M80,184.0 Q115.0,196.0 150,184.0" fill="none" stroke="#0d47a1" stroke-width="3"></path><line x1="80" y1="340.0" x2="104" y2="340.0" stroke="#1d2433" stroke-width="2.2"></line><line x1="80" y1="334.0" x2="92" y2="334.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="328.0" x2="92" y2="328.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="322.0" x2="92" y2="322.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="316.0" x2="92" y2="316.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="310.0" x2="104" y2="310.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="320.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">10</text><line x1="80" y1="304.0" x2="92" y2="304.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="298.0" x2="92" y2="298.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="292.0" x2="92" y2="292.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="286.0" x2="92" y2="286.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="280.0" x2="104" y2="280.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="290.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">20</text><line x1="80" y1="274.0" x2="92" y2="274.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="268.0" x2="92" y2="268.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="262.0" x2="92" y2="262.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="256.0" x2="92" y2="256.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="250.0" x2="104" y2="250.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="260.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">30</text><line x1="80" y1="244.0" x2="92" y2="244.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="238.0" x2="92" y2="238.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="232.0" x2="92" y2="232.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="226.0" x2="92" y2="226.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="220.0" x2="104" y2="220.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="230.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">40</text><line x1="80" y1="214.0" x2="92" y2="214.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="208.0" x2="92" y2="208.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="202.0" x2="92" y2="202.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="196.0" x2="92" y2="196.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="190.0" x2="104" y2="190.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="200.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">50</text><line x1="80" y1="184.0" x2="92" y2="184.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="178.0" x2="92" y2="178.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="172.0" x2="92" y2="172.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="166.0" x2="92" y2="166.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="160.0" x2="104" y2="160.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="170.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">60</text><line x1="80" y1="154.0" x2="92" y2="154.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="148.0" x2="92" y2="148.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="142.0" x2="92" y2="142.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="136.0" x2="92" y2="136.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="130.0" x2="104" y2="130.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="140.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">70</text><line x1="80" y1="124.0" x2="92" y2="124.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="118.0" x2="92" y2="118.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="112.0" x2="92" y2="112.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="106.0" x2="92" y2="106.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="100.0" x2="104" y2="100.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="110.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">80</text><line x1="80" y1="94.0" x2="92" y2="94.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="88.0" x2="92" y2="88.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="82.0" x2="92" y2="82.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="76.0" x2="92" y2="76.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="70.0" x2="104" y2="70.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="80.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">90</text><line x1="80" y1="64.0" x2="92" y2="64.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="58.0" x2="92" y2="58.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="52.0" x2="92" y2="52.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="46.0" x2="92" y2="46.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="80" y1="40.0" x2="104" y2="40.0" stroke="#1d2433" stroke-width="2.2"></line><text x="72.0" y="50.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">100</text><path d="M80,20 V348 Q80,354 88,354 H142 Q150,354 150,348 V20" fill="none" stroke="#2f3e4e" stroke-width="3.5"></path><path d="M66,356 h98" stroke="#2f3e4e" stroke-width="7" stroke-linecap="round"></path><text x="115.0" y="12.0" font-size="28" font-weight="600" text-anchor="middle" fill="#1d2433">mL</text><rect x="300" y="20" width="70" height="328" fill="#eef6fb"></rect><path d="M300,160.0 Q335.0,172.0 370,160.0 V348 H300 Z" fill="#8fd0f5"></path><path d="M300,160.0 Q335.0,172.0 370,160.0" fill="none" stroke="#0d47a1" stroke-width="3"></path><polygon points="309.5,322.9 316.3,309.3 333.3,305.1 352.0,311.0 361.4,324.6 355.4,339.9 338.4,345.0 318.0,341.6" fill="#8a8f98" stroke="#4d525a" stroke-width="2.5" stroke-linejoin="round"></polygon><line x1="335.0" y1="306" x2="335.0" y2="-10" stroke="#555" stroke-width="2"></line><line x1="300" y1="340.0" x2="324" y2="340.0" stroke="#1d2433" stroke-width="2.2"></line><line x1="300" y1="334.0" x2="312" y2="334.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="328.0" x2="312" y2="328.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="322.0" x2="312" y2="322.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="316.0" x2="312" y2="316.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="310.0" x2="324" y2="310.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="320.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">10</text><line x1="300" y1="304.0" x2="312" y2="304.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="298.0" x2="312" y2="298.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="292.0" x2="312" y2="292.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="286.0" x2="312" y2="286.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="280.0" x2="324" y2="280.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="290.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">20</text><line x1="300" y1="274.0" x2="312" y2="274.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="268.0" x2="312" y2="268.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="262.0" x2="312" y2="262.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="256.0" x2="312" y2="256.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="250.0" x2="324" y2="250.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="260.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">30</text><line x1="300" y1="244.0" x2="312" y2="244.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="238.0" x2="312" y2="238.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="232.0" x2="312" y2="232.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="226.0" x2="312" y2="226.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="220.0" x2="324" y2="220.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="230.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">40</text><line x1="300" y1="214.0" x2="312" y2="214.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="208.0" x2="312" y2="208.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="202.0" x2="312" y2="202.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="196.0" x2="312" y2="196.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="190.0" x2="324" y2="190.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="200.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">50</text><line x1="300" y1="184.0" x2="312" y2="184.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="178.0" x2="312" y2="178.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="172.0" x2="312" y2="172.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="166.0" x2="312" y2="166.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="160.0" x2="324" y2="160.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="170.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">60</text><line x1="300" y1="154.0" x2="312" y2="154.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="148.0" x2="312" y2="148.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="142.0" x2="312" y2="142.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="136.0" x2="312" y2="136.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="130.0" x2="324" y2="130.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="140.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">70</text><line x1="300" y1="124.0" x2="312" y2="124.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="118.0" x2="312" y2="118.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="112.0" x2="312" y2="112.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="106.0" x2="312" y2="106.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="100.0" x2="324" y2="100.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="110.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">80</text><line x1="300" y1="94.0" x2="312" y2="94.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="88.0" x2="312" y2="88.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="82.0" x2="312" y2="82.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="76.0" x2="312" y2="76.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="70.0" x2="324" y2="70.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="80.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">90</text><line x1="300" y1="64.0" x2="312" y2="64.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="58.0" x2="312" y2="58.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="52.0" x2="312" y2="52.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="46.0" x2="312" y2="46.0" stroke="#1d2433" stroke-width="1.3"></line><line x1="300" y1="40.0" x2="324" y2="40.0" stroke="#1d2433" stroke-width="2.2"></line><text x="292.0" y="50.0" font-size="28" font-weight="600" text-anchor="end" fill="#1d2433">100</text><path d="M300,20 V348 Q300,354 308,354 H362 Q370,354 370,348 V20" fill="none" stroke="#2f3e4e" stroke-width="3.5"></path><path d="M286,356 h98" stroke="#2f3e4e" stroke-width="7" stroke-linecap="round"></path><text x="335.0" y="12.0" font-size="28" font-weight="600" text-anchor="middle" fill="#1d2433">mL</text><text x="115.0" y="395.0" font-size="30" font-weight="700" text-anchor="middle" fill="#1d2433">Before</text><text x="335.0" y="395.0" font-size="30" font-weight="700" text-anchor="middle" fill="#1d2433">After</text></svg></div>
+    <div class="grow">
+      <p class="part"><span>A</span> Ali measures the volume of a stone.</p>
+      <ol class="q">
+        <li>Read the volume of water before (V₁) and after (V₂). <span class="ans"></span></li>
+        <li>Calculate the volume of the stone in cm³. <span class="ans"></span><span class="ans"></span></li>
+      </ol>
+      <div class="row" style="align-items:center">
+        <div class="grow">
+          <p class="part"><span>B</span> A small box is a cube of side 4 cm. Calculate its volume.</p>
+          <span class="ans"></span><span class="ans"></span>
+        </div>
+        <div class="side" style="flex-basis:34%"><svg viewBox="24.6 18.0 207.4 256.8" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Roboto, Arial, sans-serif" role="img"><polygon points="40,80 92,28 222,28 170,80" fill="#f6f6f6" stroke="#1d2433" stroke-width="3"></polygon><polygon points="170,80 222,28 222,158 170,210" fill="#e2e2e2" stroke="#1d2433" stroke-width="3"></polygon><rect x="40" y="80" width="130" height="130" fill="#fff" stroke="#1d2433" stroke-width="3"></rect><circle cx="72" cy="112" r="9" fill="#1d2433"></circle><circle cx="105" cy="145" r="9" fill="#1d2433"></circle><circle cx="138" cy="178" r="9" fill="#1d2433"></circle><line x1="40" y1="220" x2="170" y2="220" stroke="#d63031" stroke-width="3"></line><text x="105.0" y="256.0" font-size="34" font-weight="700" text-anchor="middle" fill="#d63031">a = 4 cm</text></svg></div>
+      </div>
+    </div>
+  </div>
+  <p class="good">Well done! Check your answers and your units. ★</p>
+</section>
+
+<footer class="pagefoot">BJSS · Physics Exam · Grade 7 · Version C</footer>
+
+
+</body></html>
