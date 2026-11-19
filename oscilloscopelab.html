@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OscilloscopeLab — Ahmad Ghozlan</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23060b08'/%3E%3Cpath d='M3 16h5l3-8 5 16 4-12 3 4h6' fill='none' stroke='%2334d399' stroke-width='2.5'/%3E%3C/svg%3E">
+<meta name="description" content="A real analog dual-trace oscilloscope simulator: from the luminous spot to RLC resonance. Grade 9 → Grade 12 Physics.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.neon-border { box-shadow: 0 0 10px rgba(16,185,129,0.5), inset 0 0 10px rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.5); }
+.neon-text-blue { text-shadow: 0 0 10px rgba(56,189,248,0.8); }
+.neon-text-green { text-shadow: 0 0 14px rgba(52,211,153,0.85); }
+.glass-panel { background: rgba(24,24,27,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+canvas { touch-action: none; }
+input[type="file"] { display: none; }
+.custom-file-upload { display: inline-block; cursor: pointer; }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ── 5E progress rail ── */
+.e5 { display:flex; gap:4px; }
+.e5 a { flex:1; text-align:center; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#71717a; padding:6px 2px 4px; border-bottom:3px solid #27272a; transition:all .3s; text-decoration:none; }
+.e5 a.on { color:#e4e4e7; border-color:#38bdf8; }
+.e5 a.done { color:#34d399; border-color:#10b981; }
+
+/* ══════════ THE INSTRUMENT ══════════ */
+.scope {
+  --panel:#d5d9dd; --panel2:#bfc5cb; --ink:#1d2b4a; --ink2:#41506e; --blue:#2c4f8c;
+  background: linear-gradient(180deg,#e2e5e8 0%,var(--panel) 40%,var(--panel2) 100%);
+  border-radius: 18px; padding: 14px; color: var(--ink);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px #8d959e, inset 0 1px 0 #fff, inset 0 -3px 0 #9aa2ab;
+  position: relative;
+}
+.scope::before { content:''; position:absolute; left:10px; right:10px; top:-8px; height:10px; border-radius:10px 10px 0 0; background:linear-gradient(#5a6068,#3a3f46); z-index:-1; }
+.brandline { display:flex; justify-content:space-between; align-items:baseline; padding:0 4px 8px; }
+.brandline .b1 { font-weight:900; letter-spacing:.18em; font-size:13px; color:var(--blue); }
+.brandline .b2 { font-size:10px; font-weight:700; letter-spacing:.12em; color:var(--ink2); }
+.scope-grid { display:grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 1024px) { .scope-grid { grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); } }
+.bezel { background: linear-gradient(145deg,#2b2f35,#14161a); border-radius: 16px; padding: 12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.8), 0 1px 0 #fff; }
+.crt-wrap { position:relative; border-radius: 22px / 18px; overflow:hidden; background:#060b08; box-shadow: inset 0 0 40px rgba(0,0,0,.95); }
+#scopeCanvas { display:block; width:100%; height:auto; }
+.crt-glass { position:absolute; inset:0; pointer-events:none; border-radius: inherit;
+  background: radial-gradient(120% 90% at 30% 10%, rgba(255,255,255,.07), transparent 40%), radial-gradient(140% 120% at 50% 50%, transparent 62%, rgba(0,0,0,.55) 100%); }
+.under-screen { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; margin-top:10px; }
+.panel-sec { border: 1.5px solid #8f99a6; border-radius: 10px; padding: 8px 8px 6px; position: relative; background: rgba(255,255,255,.18); }
+.panel-sec > .sec-title { position:absolute; top:-8px; left:10px; background: var(--panel); padding: 0 6px; font-size: 9.5px; font-weight: 900; letter-spacing: .14em; color: var(--blue); }
+.ctrl-row { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:flex-start; justify-content:space-around; }
+.knob-box { display:flex; flex-direction:column; align-items:center; user-select:none; -webkit-user-select:none; }
+.knob-box svg { touch-action:none; cursor:grab; outline:none; }
+.knob-box svg:focus-visible { filter: drop-shadow(0 0 4px #38bdf8); }
+.knob-lbl { font-size: 9px; font-weight: 800; letter-spacing: .08em; text-align:center; color: var(--ink); margin-top: -2px; line-height:1.15; }
+.knob-val { font-family:'JetBrains Mono',monospace; font-size:10px; color:#0f172a; background:#e9edf1; border:1px solid #9aa4b0; border-radius:4px; padding:0 5px; margin-top:2px; min-width:58px; text-align:center; }
+.pbtn { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9px; font-weight:800; letter-spacing:.06em; color:var(--ink); cursor:pointer; user-select:none; -webkit-user-select:none; background:none; border:0; padding:0; }
+.pbtn .cap { width:38px; height:20px; border-radius:4px; background: linear-gradient(#f3f4f6,#c9ced4); border:1px solid #7b8490; box-shadow: 0 2px 0 #6b7380, inset 0 1px 0 #fff; transition: transform .06s, box-shadow .06s; }
+.pbtn:active .cap, .pbtn.held .cap { transform: translateY(2px); box-shadow: 0 0 0 #6b7380, inset 0 1px 2px rgba(0,0,0,.3); }
+.led { display:inline-block; width:8px; height:8px; border-radius:50%; background:#3b1d1d; box-shadow: inset 0 1px 1px rgba(0,0,0,.6); }
+.pbtn .led { width:7px; height:7px; border-radius:50%; background:#3b1d1d; box-shadow: inset 0 1px 1px rgba(0,0,0,.6); }
+.pbtn.on .led, .led.on { background:#ff3b30; box-shadow: 0 0 6px #ff3b30, 0 0 12px rgba(255,59,48,.6); }
+.led.g.on { background:#34d399; box-shadow: 0 0 6px #34d399, 0 0 12px rgba(52,211,153,.6); }
+.led.a.on { background:#fbbf24; box-shadow: 0 0 6px #fbbf24, 0 0 12px rgba(251,191,36,.6); }
+.lever { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.lever .track { display:flex; flex-direction:column; background:#2a2f36; border-radius:6px; padding:2px; box-shadow: inset 0 1px 3px rgba(0,0,0,.8); }
+.lever button { font-size:8.5px; font-weight:900; letter-spacing:.06em; color:#9ca3af; background:transparent; border:0; padding:3px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+.lever button.sel { background: linear-gradient(#fafafa,#cfd4da); color:#111827; box-shadow: 0 1px 0 #000; }
+.power { display:flex; align-items:center; gap:8px; }
+.power button { width:46px; height:46px; border-radius:10px; background: linear-gradient(#3f4650,#22272e); border:1px solid #111; box-shadow: 0 3px 0 #0b0d10, inset 0 1px 0 #6b7280; color:#e5e7eb; font-size:9px; font-weight:900; letter-spacing:.08em; cursor:pointer; }
+.power button:active { transform: translateY(2px); box-shadow:0 1px 0 #0b0d10; }
+.bnc { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px; font-weight:900; color:var(--ink); }
+.bnc i { width:26px; height:26px; border-radius:50%; background: radial-gradient(circle at 50% 50%, #111 0 4px, #c8ccd0 5px 8px, #8a9097 9px 10px, #d9dde1 11px 13px); box-shadow: 0 1px 2px rgba(0,0,0,.5); display:block; position:relative; }
+.bnc i.lit::after { content:''; position:absolute; inset:-4px; border-radius:50%; border:3px solid var(--wire); box-shadow: 0 0 8px var(--wire); }
+.uncal { font-size:8px; font-weight:900; color:#b91c1c; letter-spacing:.1em; display:flex; align-items:center; gap:3px; }
+
+/* ── Bench / schematic ── */
+.bench { background: radial-gradient(120% 120% at 0% 0%, #1b2a22 0%, #0f1713 70%); border:1px solid #234032; }
+.probe-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800; border:2px solid var(--c); color: var(--c); background: rgba(0,0,0,.35); cursor:pointer; transition: all .15s; }
+.probe-chip.armed { background: var(--c); color:#0b0b0b; box-shadow: 0 0 16px var(--c); }
+.schem svg { width:100%; height:auto; }
+.schem .node { cursor:pointer; }
+.schem .node circle.hit { fill: transparent; }
+.schem .node:hover circle.dot { r: 7; }
+.gbf { background: linear-gradient(#2e3640,#1a1f26); border:1px solid #3e4a57; border-radius: 12px; }
+.seg7 { font-family:'JetBrains Mono',monospace; background:#0b1210; color:#ff5a3c; text-shadow:0 0 8px rgba(255,90,60,.8); border-radius:6px; padding:4px 10px; letter-spacing:.06em; border:1px solid #2a2f2e; }
+input[type=range].rng { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:6px; background:#3f3f46; outline:none; }
+input[type=range].rng::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#e4e4e7; border:3px solid #10b981; cursor:pointer; }
+input[type=range].rng::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:#e4e4e7; border:3px solid #10b981; cursor:pointer; }
+.chip { font-size:11px; font-weight:800; padding:5px 10px; border-radius:999px; border:1px solid #3f3f46; color:#a1a1aa; background:#18181b; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.chip:hover { border-color:#71717a; color:#e4e4e7; }
+.chip.sel { border-color:#38bdf8; color:#0b0b0b; background:#38bdf8; }
+.chip.done { border-color:#10b981; color:#34d399; }
+.chip.sel.done { background:#10b981; color:#0b0b0b; }
+.obj { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#a1a1aa; padding:3px 0; }
+.obj .tick { width:18px; height:18px; flex:0 0 18px; border-radius:50%; border:2px solid #52525b; display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; transition:all .25s; }
+.obj.ok { color:#d1fae5; }
+.obj.ok .tick { border-color:#10b981; background:#10b981; color:#052e1a; transform: scale(1.1); }
+.toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(30px); opacity:0; z-index:200; background:#18181b; border:1px solid #3f3f46; color:#e4e4e7; padding:10px 16px; border-radius:12px; font-size:14px; font-weight:600; transition: all .3s; box-shadow:0 10px 30px rgba(0,0,0,.6); max-width: 92vw; text-align:center; pointer-events:none; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.hotspot { position:absolute; transform:translate(-50%,-50%); width:26px; height:26px; border-radius:50%; background:rgba(56,189,248,.18); border:2px solid #38bdf8; color:#e0f2fe; font-size:12px; font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 0 14px rgba(56,189,248,.7); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { box-shadow:0 0 6px rgba(56,189,248,.6); } 50% { box-shadow:0 0 18px rgba(56,189,248,1); } }
+.chat-msg { padding:8px 12px; border-radius:12px; font-size:13px; line-height:1.5; max-width:88%; white-space:pre-wrap; }
+.chat-msg.user { background:#1e3a5f; color:#e0f2fe; margin-left:auto; border-bottom-right-radius:4px; }
+.chat-msg.ai { background:#1f2937; color:#e5e7eb; border-bottom-left-radius:4px; }
+#coachPanel { transition: transform .3s ease, opacity .3s ease; }
+#coachPanel.closed { transform: translateY(20px); opacity:0; pointer-events:none; }
+.formula { font-family:'JetBrains Mono',monospace; background:#0b1210; border:1px solid #1f3b2e; color:#6ee7b7; border-radius:10px; padding:8px 12px; font-size:13px; }
+table.nb { width:100%; border-collapse:collapse; font-size:12px; }
+table.nb th { text-align:left; color:#a1a1aa; font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:6px; border-bottom:1px solid #3f3f46; }
+table.nb td { padding:6px; border-bottom:1px solid #27272a; color:#e4e4e7; font-family:'JetBrains Mono',monospace; }
+.num-in { background:#09090b; border:1px solid #3f3f46; border-radius:10px; padding:8px 10px; color:#fff; width:100%; font-family:'JetBrains Mono',monospace; }
+.num-in:focus { outline:none; border-color:#38bdf8; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ═══ HEADER (Section F) ═══ -->
+<header class="w-full bg-zinc-900 border-b border-zinc-800 shadow-2xl sticky top-0 z-50">
+  <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-emerald-500 to-rose-500"></div>
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="p-2 bg-zinc-800 rounded-lg border border-zinc-700 neon-border shrink-0">
+        <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 12h3l2-6 3 12 3-9 2 3h7"/></svg>
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-lg sm:text-xl font-black tracking-wide text-white truncate">Interactive <span class="text-emerald-400">Physics</span> Lab</h1>
+        <p class="text-xs text-zinc-400 truncate">Grade 9 → 12 — The Oscilloscope: from the luminous spot to RLC resonance</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="soundBtn" onclick="toggleSound()" title="Sound" class="glass-panel w-9 h-9 rounded-full text-base">🔇</button>
+      <div id="studentBadge" class="hidden glass-panel px-3 py-1.5 rounded-full items-center gap-2 max-w-[44vw]">
+        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+        <span id="displayStudentName" class="text-sm font-bold text-emerald-300 truncate" dir="auto"></span>
+      </div>
+    </div>
+  </div>
+  <nav id="e5rail" class="hidden max-w-6xl mx-auto px-4 pb-1 e5">
+    <a href="#engage" data-k="engage">Engage</a><a href="#explore" data-k="explore">Explore</a><a href="#explain" data-k="explain">Explain</a><a href="#elaborate" data-k="elaborate">Elaborate</a><a href="#evaluate" data-k="evaluate">Evaluate</a>
+  </nav>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+
+<!-- ═══ LOGIN (Section G) ═══ -->
+<section id="stage-login" class="max-w-lg mx-auto">
+  <div class="text-center mb-6">
+    <p class="text-xs font-black tracking-[.3em] text-emerald-400 uppercase">OscilloscopeLab</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-white mt-2 leading-tight">It draws voltage against time.<br><span class="text-emerald-400 neon-text-green">Learn to read it.</span></h2>
+    <p class="text-sm text-zinc-400 mt-3">A full analog dual-trace oscilloscope, real circuits on a bench, 16 missions from the first luminous spot to RLC resonance.</p>
+  </div>
+  <div class="glass-panel p-8 rounded-3xl shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="inline-flex w-14 h-14 rounded-full bg-blue-500/20 border border-blue-500/40 items-center justify-center text-2xl">📟</div>
+      <h2 class="text-2xl font-black text-white mt-3">Lab Login</h2>
+      <p class="text-sm text-zinc-400 mt-1">Select your section and name to begin.</p>
+    </div>
+    <div class="space-y-5">
+      <div>
+        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Section</label>
+        <select id="sectionSelect" onchange="loadStudents()" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer">
+          <option value="" disabled selected>Select Section...</option>
+          <option value="9A">Class 9A</option><option value="9B">Class 9B</option><option value="9C">Class 9C</option><option value="9D">Class 9D</option>
+          <option value="G12">Grade 12 / Guest</option>
+        </select>
+      </div>
+      <div id="rosterWrap">
+        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Student Name</label>
+        <select id="studentSelect" dir="rtl" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 cursor-pointer font-semibold text-base" disabled>
+          <option value="" disabled selected>Select a section first...</option>
+        </select>
+      </div>
+      <div id="guestWrap" class="hidden">
+        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Full Name</label>
+        <input id="guestName" dir="auto" maxlength="60" placeholder="Type your full name" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-semibold text-base">
+      </div>
+      <button id="enterBtn" onclick="startLab()" class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5">Enter Laboratory 🚀</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LAB ═══ -->
+<div id="stage-lab" class="hidden space-y-14">
+
+<!-- ENGAGE -->
+<section id="engage" class="reveal scroll-mt-28">
+  <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
+    <div>
+      <p class="text-xs font-black tracking-[.25em] text-sky-400 uppercase">1 · Engage</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-white">Inside the tube</h2>
+      <p class="text-sm text-zinc-400 mt-1 max-w-2xl">Every trace you will ever see starts here: electrons fired from a hot cathode, bent by two pairs of plates, crashing into a phosphor screen. Rotate the tube, tap the glowing points, then make a prediction.</p>
+    </div>
+  </div>
+  <div class="glass-panel p-4 sm:p-6 rounded-3xl border border-zinc-800 shadow-2xl relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="grid lg:grid-cols-[1fr_320px] gap-5">
+      <div>
+        <div id="crt3dWrap" class="relative w-full rounded-2xl overflow-hidden border border-zinc-700 bg-black" style="aspect-ratio: 16/10;">
+          <canvas id="crt3d" class="absolute inset-0 w-full h-full block"></canvas>
+          <div id="hotspots" class="absolute inset-0 pointer-events-none"></div>
+          <div id="hsCard" class="hidden absolute left-3 bottom-3 right-3 sm:right-auto sm:max-w-sm glass-panel rounded-2xl p-4 text-sm"></div>
+          <div id="crt3dFallback" class="hidden absolute inset-0 flex items-center justify-center text-center p-6 text-zinc-400 text-sm">3D view needs WebGL. Everything else in the lab still works.</div>
+        </div>
+        <p class="text-xs text-zinc-500 mt-2">Drag to rotate · pinch/scroll to zoom · tap a <span class="text-sky-400 font-bold">●</span> for its job.</p>
+      </div>
+      <div class="space-y-4">
+        <div class="bg-zinc-900/80 rounded-2xl border border-zinc-700 p-4">
+          <p class="text-xs font-bold text-zinc-400 uppercase mb-2">🔮 Predict before you look</p>
+          <p class="text-sm text-white font-semibold mb-3">The <span class="text-sky-400">upper Y-plate</span> is made positive (+). Electrons are negative. Where will the spot go?</p>
+          <div id="predictOpts" class="grid grid-cols-2 gap-2"></div>
+          <p id="predictFb" class="text-xs mt-3 hidden"></p>
+        </div>
+        <div id="crtControls" class="bg-zinc-900/80 rounded-2xl border border-zinc-700 p-4 space-y-4 opacity-40 pointer-events-none transition-opacity">
+          <div>
+            <div class="flex justify-between text-xs font-bold text-zinc-400 uppercase"><span>Voltage on Y-plates</span><span class="mono text-sky-300" id="uyVal">0 V</span></div>
+            <input id="uySlider" type="range" class="rng mt-2" min="-20" max="20" step="1" value="0">
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold text-zinc-400 uppercase"><span>Voltage on X-plates</span><span class="mono text-emerald-300" id="uxVal">0 V</span></div>
+            <input id="uxSlider" type="range" class="rng mt-2" min="-20" max="20" step="1" value="0">
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button class="chip" id="crtSweepBtn">⟶ Sweep (sawtooth on X)</button>
+            <button class="chip" id="crtAcBtn">∿ AC on Y</button>
+          </div>
+          <p class="text-xs text-zinc-500">Sweep + AC together = the sinusoid you'll see on the real scope. Hit both.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPLORE -->
+<section id="explore" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-emerald-400 uppercase">2 · Explore</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white">The bench</h2>
+  <p class="text-sm text-zinc-400 mt-1 mb-5 max-w-3xl">A real analog dual-trace oscilloscope. Every knob works the way it does on the one in our lab: turn it, and it clicks into place. Pick a mission, wire the probes onto the circuit, and make the trace appear.</p>
+
+  <!-- Mission control -->
+  <div class="glass-panel rounded-3xl border border-zinc-800 p-4 sm:p-6 mb-6 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <h3 class="text-xl font-bold text-emerald-400 flex items-center gap-2"><span class="p-1.5 bg-emerald-500/20 rounded-lg text-sm">🛰</span> Mission Control</h3>
+      <div class="bg-zinc-900/80 px-4 py-2 rounded-xl border border-zinc-700 text-sm font-bold">Mission points: <span id="mPoints" class="text-emerald-400">0</span><span class="text-zinc-500">/<span id="mMax">160</span></span></div>
+    </div>
+    <div id="levelTabs" class="flex flex-wrap gap-2 mb-3"></div>
+    <div id="missionChips" class="flex gap-2 overflow-x-auto pb-2 mb-3"></div>
+    <div class="grid md:grid-cols-[1.2fr_1fr] gap-5">
+      <div>
+        <h4 id="mTitle" class="text-lg font-black text-white"></h4>
+        <p id="mStory" class="text-sm text-zinc-400 mt-1 leading-relaxed"></p>
+        <div id="mObjs" class="mt-3"></div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <button id="mLoadBtn" class="chip">🔌 Load this mission's circuit</button>
+          <button id="mHintBtn" class="chip">💡 Hint</button>
+          <button class="chip" onclick="openCoach()">🤖 Ask the Scope Coach</button>
+        </div>
+        <p id="mHint" class="hidden mt-3 text-sm text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3"></p>
+      </div>
+      <div class="bg-zinc-900/70 rounded-2xl border border-zinc-700 p-4">
+        <p class="text-xs font-bold text-zinc-400 uppercase mb-2">Your measurement</p>
+        <div id="mQuestion"></div>
+        <p id="mFeedback" class="text-sm mt-3"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE OSCILLOSCOPE -->
+  <div class="scope" id="scopeInstrument">
+    <div class="brandline"><span class="b1">GHOZLAND · OS-2020</span><span class="b2">DUAL TRACE OSCILLOSCOPE · 20 MHz</span></div>
+    <div class="scope-grid">
+      <!-- left: CRT -->
+      <div>
+        <div class="bezel">
+          <div class="crt-wrap">
+            <canvas id="scopeCanvas" width="880" height="704"></canvas>
+            <div class="crt-glass"></div>
+          </div>
+        </div>
+        <div class="under-screen">
+          <div class="power">
+            <button id="powerBtn" aria-label="Power">POWER</button>
+            <div class="flex flex-col items-center gap-1"><span class="led" id="powerLed"></span><span style="font-size:8px;font-weight:900;letter-spacing:.1em">ON</span></div>
+          </div>
+          <div id="kIntensity"></div><div id="kFocus"></div><div id="kIllum"></div>
+          <div class="flex gap-3">
+            <button class="pbtn" id="bBeamFind"><span class="led"></span><span class="cap"></span>BEAM FIND</button>
+            <button class="pbtn on" id="bReadout"><span class="led"></span><span class="cap"></span>READOUT</button>
+          </div>
+        </div>
+        <div class="under-screen" style="justify-content:space-around">
+          <div class="bnc" id="bncCal"><i style="--wire:#f472b6"></i>CAL 2Vpp ⎍</div>
+          <div class="bnc" id="bncGnd"><i style="--wire:#a3a3a3"></i>⏚</div>
+          <div class="bnc" id="bncCh1"><i style="--wire:#facc15"></i>CH1 (Y₁)</div>
+          <div class="bnc" id="bncCh2"><i style="--wire:#22d3ee"></i>CH2 (Y₂)</div>
+          <div class="flex items-center gap-2"><span class="led g" id="trigLed"></span><span style="font-size:9px;font-weight:900">TRIG'D</span></div>
+        </div>
+      </div>
+      <!-- right: controls -->
+      <div class="flex flex-col gap-4 pt-2">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="panel-sec"><span class="sec-title">CH1 · Y₁</span>
+            <div class="ctrl-row"><div id="kV1"></div></div>
+            <div class="ctrl-row mt-1"><div id="kVar1"></div><div id="kPos1"></div></div>
+            <div class="ctrl-row mt-1 items-center"><div id="lev1"></div>
+              <div class="flex flex-col gap-2 items-center"><button class="pbtn" id="bX10_1"><span class="led"></span><span class="cap"></span>PROBE ×10</button><span class="uncal" id="uncal1">UNCAL <span class="led"></span></span></div>
+            </div>
+          </div>
+          <div class="panel-sec"><span class="sec-title">CH2 · Y₂</span>
+            <div class="ctrl-row"><div id="kV2"></div></div>
+            <div class="ctrl-row mt-1"><div id="kVar2"></div><div id="kPos2"></div></div>
+            <div class="ctrl-row mt-1 items-center"><div id="lev2"></div>
+              <div class="flex flex-col gap-2 items-center"><button class="pbtn" id="bInv"><span class="led"></span><span class="cap"></span>CH2 INV</button><button class="pbtn" id="bX10_2"><span class="led"></span><span class="cap"></span>PROBE ×10</button><span class="uncal" id="uncal2">UNCAL <span class="led"></span></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-sec"><span class="sec-title">VERTICAL MODE</span>
+          <div class="ctrl-row" id="modeBtns"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="panel-sec"><span class="sec-title">HORIZONTAL</span>
+            <div class="ctrl-row"><div id="kTime"></div></div>
+            <div class="ctrl-row mt-1"><div id="kTVar"></div><div id="kXPos"></div></div>
+            <div class="ctrl-row mt-1"><button class="pbtn on" id="bSweep"><span class="led"></span><span class="cap"></span>SWEEP</button><button class="pbtn" id="bMag"><span class="led"></span><span class="cap"></span>×10 MAG</button><span class="uncal" id="uncalT">UNCAL <span class="led"></span></span></div>
+          </div>
+          <div class="panel-sec"><span class="sec-title">TRIGGER</span>
+            <div class="ctrl-row"><div id="kLevel"></div></div>
+            <div class="ctrl-row mt-2" id="trigBtns"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bench row -->
+  <div class="grid lg:grid-cols-[1.4fr_1fr] gap-5 mt-6">
+    <div class="bench rounded-3xl p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h3 class="text-lg font-black text-emerald-300">🧪 Circuit bench</h3>
+        <select id="expSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></select>
+      </div>
+      <p id="expDesc" class="text-xs text-zinc-400 mb-3"></p>
+      <div class="flex flex-wrap gap-2 mb-3" id="probeChips">
+        <button class="probe-chip" style="--c:#facc15" data-p="ch1">● Y₁ (CH1)</button>
+        <button class="probe-chip" style="--c:#22d3ee" data-p="ch2">● Y₂ (CH2)</button>
+        <button class="probe-chip" style="--c:#d4d4d8" data-p="gnd">⏚ Ground clip</button>
+        <button class="chip" id="unplugAll">Unplug all</button>
+      </div>
+      <p id="probeHelp" class="text-xs text-zinc-500 mb-2">Tap a probe, then tap a terminal on the circuit.</p>
+      <div class="schem bg-black/40 rounded-2xl border border-emerald-900/40 p-2" id="schem"></div>
+      <div id="faultBox" class="hidden mt-3 text-sm text-rose-200 bg-rose-500/10 border border-rose-500/40 rounded-xl p-3"></div>
+      <div id="expCtrls" class="mt-4 grid sm:grid-cols-2 gap-3"></div>
+    </div>
+    <div class="space-y-5">
+      <div class="glass-panel rounded-3xl p-5 border border-zinc-800">
+        <h3 class="text-sm font-black text-zinc-300 uppercase tracking-wider mb-3">⏱ Stopwatch</h3>
+        <div id="swDisplay" class="seg7 text-4xl text-center py-3">00:00.00</div>
+        <div class="grid grid-cols-3 gap-2 mt-3">
+          <button id="swStart" class="bg-emerald-600 hover:bg-emerald-500 rounded-xl py-2 font-bold text-sm">Start</button>
+          <button id="swLap" class="bg-zinc-800 hover:bg-zinc-700 rounded-xl py-2 font-bold text-sm border border-zinc-700">Lap</button>
+          <button id="swReset" class="bg-zinc-800 hover:bg-zinc-700 rounded-xl py-2 font-bold text-sm border border-zinc-700">Reset</button>
+        </div>
+        <div id="swLaps" class="mono text-xs text-zinc-400 mt-2 space-y-0.5"></div>
+      </div>
+      <div class="glass-panel rounded-3xl p-5 border border-zinc-800">
+        <h3 class="text-sm font-black text-zinc-300 uppercase tracking-wider mb-2">📏 Graticule ruler</h3>
+        <p class="text-xs text-zinc-500 mb-3">Real scopes have no ruler. You count divisions on the grid. When your eyes need help, switch this on and tap two points on the screen.</p>
+        <button id="rulerBtn" class="chip">📏 Ruler: OFF</button>
+        <p id="rulerOut" class="mono text-sm text-emerald-300 mt-3"></p>
+      </div>
+      <div class="glass-panel rounded-3xl p-5 border border-zinc-800 text-sm text-zinc-400 space-y-1">
+        <h3 class="text-sm font-black text-zinc-300 uppercase tracking-wider mb-2">🧭 Scope etiquette</h3>
+        <p>• Find the trace first: <b class="text-zinc-200">GND coupling</b> → centre it with POS.</p>
+        <p>• VAR knobs fully clockwise (<b class="text-zinc-200">CAL</b>) or your readings are wrong.</p>
+        <p>• A bright still spot burns the phosphor. Keep intensity low.</p>
+        <p>• The ground clip goes on the circuit's earth point <b class="text-zinc-200">only</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPLAIN -->
+<section id="explain" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-sky-400 uppercase">3 · Explain</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white">The lab notebook</h2>
+  <p class="text-sm text-zinc-400 mt-1 mb-5 max-w-3xl">Readings turn into laws. The notebook copies the instrument settings for you. You only type what <b class="text-zinc-200">your eyes</b> read on the grid.</p>
+  <div class="grid lg:grid-cols-[1fr_1.1fr] gap-5">
+    <div class="glass-panel rounded-3xl p-5 border border-zinc-800 space-y-3">
+      <h3 class="text-xl font-bold text-sky-400">📐 The five readings</h3>
+      <div class="formula">U = y × S<sub>v</sub>  <span class="text-zinc-500">y = vertical deflection (div), S<sub>v</sub> = V/div</span></div>
+      <div class="formula">T = x × S<sub>h</sub>  ·  f = 1 / T  <span class="text-zinc-500">x = divisions per period</span></div>
+      <div class="formula">U<sub>eff</sub> = U<sub>m</sub> / √2  <span class="text-zinc-500">(sinusoidal only)</span></div>
+      <div class="formula">|φ| = 2π · d / T  <span class="text-zinc-500">d = time shift between two traces</span></div>
+      <div class="formula">τ = RC · τ = L/(R+r) · T₀ = 2π√(LC) · f₀ = 1 / (2π√(LC))</div>
+      <p class="text-xs text-zinc-500">Simplifications on this bench: ideal generator (no internal resistance), 0.7 V diode drop, ideal capacitor, and coil resistance r included where shown.</p>
+    </div>
+    <div class="glass-panel rounded-3xl p-5 border border-zinc-800">
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="chip sel" data-nb="tf">G9 · T &amp; f</button>
+        <button class="chip" data-nb="res">G12 · Resonance curve</button>
+      </div>
+      <p id="nbIntro" class="text-xs text-zinc-400 mb-3"></p>
+      <div class="flex gap-2 items-end mb-3">
+        <div class="flex-1"><label id="nbInLabel" class="block text-[10px] font-bold text-zinc-400 uppercase mb-1"></label><input id="nbIn" class="num-in" inputmode="decimal" placeholder="e.g. 4"></div>
+        <button id="nbRecord" class="bg-sky-600 hover:bg-sky-500 rounded-xl px-4 py-2.5 font-bold text-sm">＋ Record</button>
+      </div>
+      <p id="nbMsg" class="text-xs text-amber-300 mb-2"></p>
+      <div class="overflow-x-auto"><table class="nb" id="nbTable"></table></div>
+      <div class="relative w-full bg-black rounded-2xl overflow-hidden border border-zinc-700 mt-4"><canvas id="nbGraph" width="640" height="320" class="w-full h-auto"></canvas></div>
+      <p id="nbConclusion" class="text-sm text-emerald-300 mt-3"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ELABORATE: bonus game (Section J) -->
+<section id="elaborate" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-amber-400 uppercase">4 · Elaborate</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white mb-5">Bonus challenge</h2>
+  <div class="bg-gradient-to-br from-yellow-900/30 to-orange-900/30 p-1 rounded-3xl border border-yellow-500/30">
+    <div class="bg-zinc-900/90 rounded-[1.4rem] p-5 sm:p-6 backdrop-blur-xl">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4">
+        <div>
+          <h3 class="text-2xl font-black text-yellow-400 flex items-center gap-3"><span class="text-3xl">🎯</span> Ghost Match</h3>
+          <p class="text-sm text-zinc-400 mt-1" id="gameInstr">A ghost trace was recorded by another student. Set VOLTS/DIV, TIME/DIV and POSITION so your live trace lands exactly on it.</p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="bg-zinc-800 px-4 py-2 rounded-xl border border-zinc-700 text-sm font-bold">Score: <span id="bonusScore" class="text-yellow-400 text-lg">0</span><span class="text-zinc-500">/3</span></div>
+          <div class="bg-zinc-800 px-4 py-2 rounded-xl border border-zinc-700 text-sm font-bold">Level: <span id="bonusLevel" class="text-orange-400">1</span><span class="text-zinc-500">/3</span></div>
+        </div>
+      </div>
+      <div class="relative w-full bg-black rounded-2xl overflow-hidden border border-yellow-900/50 flex justify-center items-center touch-none">
+        <canvas id="bonusCanvas" width="750" height="330" class="w-full max-w-[750px] h-auto"></canvas>
+      </div>
+      <div id="gameCtrls" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4"></div>
+      <div class="flex items-center justify-between mt-4 gap-3 flex-wrap">
+        <button onclick="window.toggleBonusHint()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-bold rounded-xl border border-zinc-700 transition-colors">💡 Hint</button>
+        <p class="text-xs text-zinc-500 italic">Signal fixed → shrink V/div and the trace grows taller. Shrink T/div and the waves spread out.</p>
+      </div>
+      <div id="bonusComplete" class="hidden mt-4 p-5 bg-emerald-900/30 rounded-2xl border border-emerald-500/40 text-center">
+        <p class="text-2xl font-black text-emerald-400">🏆 Challenge Complete! You read a scope like an engineer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVALUATE -->
+<section id="evaluate" class="reveal scroll-mt-28 space-y-8">
+  <div>
+    <p class="text-xs font-black tracking-[.25em] text-rose-400 uppercase">5 · Evaluate</p>
+    <h2 class="text-2xl sm:text-3xl font-black text-white">Show what you can do</h2>
+  </div>
+  <!-- Drawing mission (Section K) -->
+  <div class="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 p-1 rounded-3xl border border-indigo-500/30">
+    <div class="bg-zinc-900/90 rounded-[1.4rem] p-6 md:p-8 backdrop-blur-xl">
+      <h3 class="text-2xl font-black text-indigo-400 mb-4">Practical Challenge: Draw and Capture! 📸</h3>
+      <div class="space-y-4 text-zinc-300 text-sm leading-relaxed mb-6">
+        <p>Get a <strong>white paper, pencil, and ruler</strong> and draw the following:</p>
+        <ul class="list-disc list-inside space-y-2 text-indigo-200">
+          <li>An oscilloscope screen grid of <strong>10 × 8 divisions</strong> (1 div = 1 cm).</li>
+          <li>The trace of a sinusoidal voltage <strong>U<sub>m</sub> = 6 V, f = 50 Hz</strong>, with <strong>S<sub>v</sub> = 2 V/div</strong> and <strong>S<sub>h</sub> = 5 ms/div</strong>.</li>
+          <li>Mark and label <strong>U<sub>m</sub></strong> and one period <strong>T</strong> on your drawing, and write the calculation of <strong>U<sub>eff</sub></strong>.</li>
+          <li><strong>Write your full name and section by hand on the same paper.</strong></li>
+        </ul>
+        <p class="text-emerald-400 font-bold mt-4">Take a clear photo of your drawing using the button below!</p>
+      </div>
+      <div class="flex flex-col items-center p-8 border-2 border-dashed border-indigo-500/50 rounded-2xl bg-indigo-950/20 hover:bg-indigo-900/40 transition-colors">
+        <label for="cameraInput" class="custom-file-upload flex flex-col items-center gap-3 cursor-pointer">
+          <div class="w-16 h-16 bg-indigo-500 rounded-full flex justify-center items-center shadow-lg shadow-indigo-500/50 hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <span class="font-bold text-indigo-300 text-lg">Take a Photo of Your Drawing</span>
+          <span class="text-xs text-zinc-500">(Opens your mobile camera)</span>
+        </label>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
+        <div id="imagePreviewContainer" class="hidden mt-6 flex flex-col items-center">
+          <p class="text-emerald-400 font-bold text-sm mb-2">✓ Photo captured!</p>
+          <img id="imagePreview" src="" alt="Your drawing" class="max-w-[200px] rounded-lg border-2 border-emerald-500/50 shadow-lg">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Quiz (Section L) + HOT -->
+  <div class="glass-panel p-6 md:p-8 rounded-3xl border border-zinc-800 shadow-2xl">
+    <h3 class="text-2xl font-black text-rose-400 mb-6">Knowledge Evaluation</h3>
+    <div id="quizContainer" class="space-y-8"></div>
+    <div class="mt-8 space-y-6">
+      <h4 class="text-lg font-black text-rose-300">Think deeper (higher order)</h4>
+      <div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800">
+        <p class="font-bold text-white mb-3"><span class="text-rose-500">H1 · Analyze.</span> A classmate sees a sinusoid that keeps sliding sideways and will not stand still, and its top is cut off by the edge of the screen. Name the <u>two</u> controls you would change, which way, and explain why each fixes the problem.</p>
+        <textarea id="hot1" dir="auto" rows="4" class="num-in" style="font-family:inherit" placeholder="Write your reasoning…"></textarea>
+      </div>
+      <div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800">
+        <p class="font-bold text-white mb-3"><span class="text-rose-500">H2 · Create.</span> You have a generator, a 1 kΩ resistor, an <u>unknown</u> capacitor and this oscilloscope. Design a method to find the capacitance: draw the circuit in words, say where Y₁, Y₂ and the ground go, what you read on the screen, and the formula you use.</p>
+        <textarea id="hot2" dir="auto" rows="4" class="num-in" style="font-family:inherit" placeholder="Write your method…"></textarea>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-zinc-800">
+      <button id="submitBtn" onclick="submitFinalWork()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-black text-lg py-4 rounded-xl shadow-lg shadow-emerald-500/20 hover:scale-[1.02] transition-transform flex justify-center items-center gap-2">Submit Answers and Drawing 📤</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- SUCCESS (Section M) -->
+<section id="stage-success" class="hidden glass-panel p-10 rounded-3xl max-w-lg mx-auto text-center border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)]">
+  <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full mb-6 neon-border">
+    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+  </div>
+  <h2 class="text-3xl font-black text-white mb-2">Great job, Champion!</h2>
+  <p id="successMsg" class="text-zinc-400 mb-6 text-sm">Your answers and drawing have been submitted to your teacher.</p>
+  <div class="bg-zinc-900/80 rounded-xl p-4 text-sm font-bold border border-zinc-800 mb-6">
+    <div class="flex justify-between text-zinc-300 py-1"><span>Quiz Score:</span><span id="finalScoreText" class="text-emerald-400">0/5</span></div>
+    <div class="flex justify-between text-zinc-300 py-1"><span>Missions:</span><span id="finalMissionText" class="text-sky-400">0</span></div>
+    <div class="flex justify-between text-zinc-300 py-1"><span>Bonus Challenge:</span><span id="finalBonusText" class="text-yellow-400">0/3</span></div>
+    <div class="flex justify-between text-zinc-300 py-1"><span>Drawing:</span><span class="text-blue-400">Uploaded ✓</span></div>
+  </div>
+  <button id="dlResults" class="hidden chip mx-auto mb-4">⬇ Download my results</button>
+  <p id="successFoot" class="text-xs text-zinc-500">Results are now visible on your teacher's dashboard.</p>
+</section>
+</main>
+
+<!-- Scope Coach (AI tutor) -->
+<button id="coachFab" onclick="openCoach()" class="hidden fixed right-4 bottom-4 z-[90] bg-gradient-to-r from-sky-500 to-emerald-500 text-black font-black rounded-full px-4 py-3 shadow-xl shadow-emerald-500/30">🤖 Scope Coach</button>
+<div id="coachPanel" class="closed fixed right-3 bottom-3 left-3 sm:left-auto sm:w-[380px] z-[95] glass-panel rounded-2xl border border-zinc-700 shadow-2xl flex flex-col" style="max-height:min(560px,80vh)">
+  <div class="flex items-center justify-between p-3 border-b border-zinc-800">
+    <div><p class="font-black text-white text-sm">🤖 Scope Coach</p><p class="text-[11px] text-zinc-400">It can see your knob settings. It won't give you the answer.</p></div>
+    <button onclick="closeCoach()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-300">✕</button>
+  </div>
+  <div id="coachLog" class="flex-1 overflow-y-auto p-3 space-y-2" style="min-height:180px"></div>
+  <div class="p-3 border-t border-zinc-800 flex gap-2">
+    <input id="coachIn" dir="auto" class="num-in" style="font-family:inherit" placeholder="Ask about what you see…" maxlength="400">
+    <button id="coachSend" class="bg-sky-600 hover:bg-sky-500 rounded-xl px-4 font-bold text-sm">Send</button>
+  </div>
+</div>
+
+<div id="loadingOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex-col justify-center items-center">
+  <div class="w-16 h-16 border-4 border-zinc-700 border-t-emerald-500 rounded-full animate-spin"></div>
+  <p class="text-white mt-4 font-bold animate-pulse">Submitting your work...</p>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const rosters = {"9A":["إبراهيم فادي احمد مطر","أروى خالد محمود العريض","ابتسام محمد علي الجعجع","احمد عمر احمد الصالح","اماني بلال حامد ابو الهدى","امجد علي نايف حميد","براءة خالد محمود نوفل","تولين ايمن محمد قدسيه","جواد محمود غازي حسن","جود وسام جابر الصالح","حسن حسام علي العلي","حمزة هشام محمد نصر","خلود خالد اسماعيل قاسم","دانيال محمد عادل جواد","ريان ساري علي زيداني","ريان عفيف علي السيد","ريماس ايمن وليد الاشوح","سارة موسى محمد حمود","سامر احمد علي عبدالله","سلفانا ابراهيم عبد السلام قصقص","سلمان خالد ناصر عيشه","سيلين اسامة عبد الفتاح توسكا","سيلين عادل اسماعيل ابراهيم","عبد الرحمن الياس محمد الحسين","عزيزه مروان حسن حسن","علي محمود ديب حمّاد","كرم نادر احمد غيث","لارا خضر علي شراب","ليا محمد ابراهيم الحلو","ليمار خضر عبدالله بلاوني","لين محمود احمد احمد","مالك احمد علي الحاج علي","محمد ايمن وليد الاشوح","محمود محمد مصطفى ابو مايهه","ملك طارق محمود الاشقر","ملك محمد حسن ابو حمد","ميرا اياد وحيد حسن","نغم محمد جمعة بلال","نور ماهر مفيد العلي","هادي باسم عبد الرؤوف الحاج داود","ياسمين محمد شحادة ديب"],"9B":["إسراء خالد محمود مطر","أية احمد محمد مكية","ادم احمد غازي الجمل","ادم فادي كامل عبدالله","اميره محمد احمد الهندي","بلال زياد محمود عيسى","جاد سمير ابراهيم العلي","جمانه علي \"محي الدين\" دمشقي","حلا محمد اكرم عجاوي","حنان محمد جمال عبد اللطيف","حنين غسان محمد ابو ليل","دانيه حسين محمد حسين","رؤى رضوان اسعد ديب","رفيف محمد احمد ندوه","رهف محمود محمد دراج","رهف يوسف جمعة جمعة","روان احمد شحادة ديب","زهرة ابراهيم عارف ظاهر","ساره بهاء ابراهيم العيسى","سناء جهاد فؤاد الفقير","عبد الرحمن وليد احمد نفاع","عبد الهادي رضوان عيسى","عصام مصطفى منير توسكا","علاء علي غالب الساري","عمار احمد عصام كروم","عمر احمد جمال الاشبه","عمر حسان عمر كروم","غزل بلال \"محمد خضر\" عمر","ليا محمد خالد محمد","لينا احمد علي علي","محمد \"أحمد قاسم\" الصباهي","محمد زياد محمد عبود","محمد \"نور الدين\" علي قطف","محمود احمد محمود قدورة","محمود \"محمد علي\" محمد خليل","مريم محمد عبد الرحمن عبد الهادي","مطر علي احمد مطر","ملاك بسام احمد حشاش","ملك يوسف شحادة ديب","نادين سليمان صلاح نجم","نور محمد وليد الصالح","وسام هشام امين الطه","يوسف نضال يوسف العيساوي"],"9C":["إسراء مصطفى ممدوح سعد الدين","إسلام وليد عبد المطلب بلاوني","أسينات طلال زياد العباسي","آيه هاني سعود الميناوي","اروى محمد علي علي","امينة جميل علي الغرابلي","تالا احمد ابراهيم عطور","جميل احمد جميل الطاهره","حسين علاء احمد صيداوي","حمزة ابراهيم محمود ابو جبل","حمزه خليل محمد عثمان","خالد احمد صبحي رمضان","خليل ابراهيم حسين بلاوني","راما احمد محمد خزعل","راما حسان \"محمد تيسير\" منصور","رماس ايمن كايد خضره","رهف بسام محمد بلاوني","زياد طارق زياد الهبطه","سيرين عماد احمد عبد الحليم","ضحى محمد حسن حسن","عائشه خالد عزات يحيى","عبد الرحمن احمد موسى محمد","عبد الرحمن اسماعيل سميح حمو","عبدالرحمن جهاد عبد ابراهيم","علي محمد عبد بشر","عمر احمد محمد اسماعيل","عمر عبدالله عطا ابو شليح","فرح علي محمد ملحم","فيروز احسان عبدالله شاهين","قمر ابراهيم فوزي الميعاري","لميس سعيد محمد الخطيب","مجد فراس حسن سعيد","محمد رامي نزيه رمضان","محمد عبد المجيد محمد سالم","ملاك احمد محمد احمد","منى احسان عبدالله شاهين","مورة عدنان محمود فوراني","ميرا محمد خالد عبد الغني","نبيل محمود نبيل درويش","نورا خليل محمود المتولي","يوسف منتصر احمد جمعة"],"9D":["أشرف محمد حكمت غيث","احمد حسن \"محي الدين\" قاسم","احمد حسين محمد شعيب","ادم زياد علي وهبه","بلال احمد عيسى أبو الشباب","حسن عبد الوهاب حسن ابو شقير","حسن محمد حسن الفاعور","حلا حسن حسين الحسين","خالد وليد محمود العريض","رنا محمود محمد يعقوب","رهف اسماعيل علي لوباني","رهف سمير لطفي فهد","روان علي عبدالله بلاوني","رين سامر سعدو الحاج","سحر بسام احمد القط","سدره المنتهى احمد مختار الخالد","سعيد محمد سعيد سعيد","شيماء علي احمد محمد","عائشه وسام عبد الرحمن حمو","عمر احمد محمد عزيمه","عمر مالك جمعة بلال","غنى خضر فؤاد احمد","قمر محمد خالد ابو سعد","لمار محمد محمود حسين","ليا شادي ابراهيم عبد الهادي","ليال سعيد جهاد عكيله","ليان حسن احمد ابو عرب","ليان \"محمد خير\" احمد","لين زياد عاطف ابو الشباب","لين هاني احمد العيسى","ماجد بلال ماجد الخطيب","محمد امير فتان فضه","محمد سعيد محمود جربوع","محمد مصطفى ابراهيم الفقير","محمد وليد مصطفى خطاب","مرام جمال محمد ناصر","مريم يوسف فوزي الحاج","ملك ربيع علي عبد الرحمن","نور علي \"محمد زيد\" راجح","هبة فؤاد علي منصور","وليد محمد سرحان العلي","يارا يوسف محمد حسن"]};
+
+// ════════════════════════════════════════════════════════════════
+// OscilloscopeLab — Ahmad Ghozlan · aghozlan.github.io
+// ════════════════════════════════════════════════════════════════
+// ── Config ──────────────────────────────────────────────────────
+// Submission: dedicated sheet (deploy OscilloscopeLab_AppScript.js, paste URL here)
+const GOOGLE_SCRIPT_URL = "PASTE_OSCILLOSCOPE_APPS_SCRIPT_URL";
+// AI tutor: this lab's own script once deployed (action:'ai', Groq key in Script Properties);
+// until then the SynapseLab script's ai route. If both fail, the built-in offline coach answers.
+const SYNAPSE_AI_URL = 'https://script.google.com/macros/s/AKfycbzTDERohf666RJoXbhx5hK7hTxaOQa63CDFeEKiVeSL8o4u7iBZ0uVyuiFKiMDwggmU/exec';
+const TUTOR_URL = GOOGLE_SCRIPT_URL.startsWith('PASTE') ? SYNAPSE_AI_URL : GOOGLE_SCRIPT_URL;
+const LAB_NAME = "Oscilloscope Lab — from the spot to RLC";
+const LAB_ID   = "oscilloscopelab";
+const LAB_START = Date.now();
+
+// ── Small utils ─────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const frac = x => x - Math.floor(x);
+const TAU = Math.PI * 2;
+function sig(v, n = 3) { if (!isFinite(v)) return '—'; if (v === 0) return '0'; return String(+v.toPrecision(n)); }
+function fmtV(v) { const a = Math.abs(v); if (a >= 1) return sig(v) + ' V'; if (a >= 1e-3) return sig(v * 1e3) + ' mV'; return '0 V'; }
+function fmtT(s) { if (s >= 1) return sig(s) + ' s'; if (s >= 1e-3) return sig(s * 1e3) + ' ms'; return sig(s * 1e6) + ' µs'; }
+function fmtF(f) { if (f >= 1e3) return sig(f / 1e3, 4) + ' kHz'; return sig(f, 4) + ' Hz'; }
+function fmtR(r) { return r >= 1e3 ? sig(r / 1e3) + ' kΩ' : sig(r) + ' Ω'; }
+function fmtC(c) { return c >= 1e-6 ? sig(c * 1e6) + ' µF' : sig(c * 1e9) + ' nF'; }
+function fmtL(l) { return l >= 1 ? sig(l) + ' H' : sig(l * 1e3) + ' mH'; }
+let _toastT = null;
+function toast(msg, ms = 2600) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), ms); }
+function gauss() { return (Math.random() + Math.random() + Math.random() - 1.5) * 1.15; }
+
+// ── Sound (off by default) ──────────────────────────────────────
+let soundOn = false, actx = null;
+function toggleSound() { soundOn = !soundOn; $('soundBtn').textContent = soundOn ? '🔊' : '🔇'; if (soundOn) { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); click(1); } catch (e) { soundOn = false; } } }
+function click(kind = 0) {
+  if (!soundOn || !actx) return;
+  try {
+    const t = actx.currentTime, len = kind === 2 ? 0.05 : 0.018;
+    const buf = actx.createBuffer(1, Math.floor(actx.sampleRate * len), actx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, kind === 2 ? 2 : 6);
+    const src = actx.createBufferSource(); src.buffer = buf;
+    const f = actx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = kind === 2 ? 900 : kind === 1 ? 2400 : 3800; f.Q.value = 1.2;
+    const g = actx.createGain(); g.gain.value = kind === 2 ? 0.5 : 0.28;
+    src.connect(f); f.connect(g); g.connect(actx.destination); src.start(t);
+  } catch (e) {}
+}
+
+// ════════════════════════════════════════════════════════════════
+// KNOB COMPONENT — detented or continuous, drag / tap / wheel / keys
+// ════════════════════════════════════════════════════════════════
+class Knob {
+  constructor(host, o) {
+    this.o = Object.assign({ size: 78, min: 0, max: 1, value: 0.5, steps: null, index: 0, cap: 'gray', label: '', fmt: null, onChange: () => {} }, o);
+    this.host = typeof host === 'string' ? $(host) : host;
+    this.idx = this.o.index; this.val = this.o.value;
+    this.render(); this.bind(); this.update(false);
+  }
+  get n() { return this.o.steps ? this.o.steps.length : 0; }
+  angleOf() { if (this.o.steps) return -150 + 300 * this.idx / (this.n - 1); return -150 + 300 * (this.val - this.o.min) / (this.o.max - this.o.min); }
+  render() {
+    const S = this.o.size, c = S / 2, rs = this.o.steps ? S * 0.29 : S * 0.33, rb = rs * 0.82;
+    const capFill = { gray: ['#f5f6f7', '#9aa3ad'], black: ['#4b5563', '#0b0d10'], red: ['#fca5a5', '#991b1b'], blue: ['#bfdbfe', '#1e3a8a'] }[this.o.cap];
+    const gid = 'kg' + Math.random().toString(36).slice(2, 8);
+    let ticks = '';
+    if (this.o.steps) {
+      this.o.steps.forEach((s, i) => {
+        const a = (-150 + 300 * i / (this.n - 1)) * Math.PI / 180, r1 = rs + 2, r2 = rs + 6, rl = rs + 13;
+        ticks += `<line x1="${c + r1 * Math.sin(a)}" y1="${c - r1 * Math.cos(a)}" x2="${c + r2 * Math.sin(a)}" y2="${c - r2 * Math.cos(a)}" stroke="#1d2b4a" stroke-width="1.2"/>`;
+        ticks += `<text x="${c + rl * Math.sin(a)}" y="${c - rl * Math.cos(a) + 3}" text-anchor="middle" font-size="${this.o.lblSize || 8}" font-weight="800" fill="${s.col || '#1d2b4a'}" font-family="Plus Jakarta Sans,sans-serif">${s.lab}</text>`;
+      });
+      (this.o.bands || []).forEach(b => {   // coloured unit bands (V / mV, s / ms / µs)
+        const a1 = (-150 + 300 * b.from / (this.n - 1) - 5) * Math.PI / 180, a2 = (-150 + 300 * b.to / (this.n - 1) + 5) * Math.PI / 180, r = rs + 21;
+        ticks += `<path d="M ${c + r * Math.sin(a1)} ${c - r * Math.cos(a1)} A ${r} ${r} 0 ${(a2 - a1) > Math.PI ? 1 : 0} 1 ${c + r * Math.sin(a2)} ${c - r * Math.cos(a2)}" stroke="${b.col}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      });
+    } else {
+      for (let i = 0; i <= 10; i++) { const a = (-150 + 30 * i) * Math.PI / 180, r1 = rs + 2, r2 = rs + (i % 5 === 0 ? 7 : 4.5); ticks += `<line x1="${c + r1 * Math.sin(a)}" y1="${c - r1 * Math.cos(a)}" x2="${c + r2 * Math.sin(a)}" y2="${c - r2 * Math.cos(a)}" stroke="#1d2b4a" stroke-width="1.1"/>`; }
+    }
+    this.host.className = 'knob-box';
+    this.host.innerHTML = `<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}" tabindex="0" role="slider" aria-label="${this.o.label.replace(/<[^>]+>/g, '')}">
+      <defs><radialGradient id="${gid}" cx="40%" cy="32%" r="75%"><stop offset="0" stop-color="${capFill[0]}"/><stop offset="1" stop-color="${capFill[1]}"/></radialGradient></defs>
+      ${ticks}
+      <circle cx="${c}" cy="${c + 1.5}" r="${rs}" fill="rgba(0,0,0,.35)"/>
+      <circle cx="${c}" cy="${c}" r="${rs}" fill="#2a2f36"/>
+      <g class="rot"><circle cx="${c}" cy="${c}" r="${rb}" fill="url(#${gid})" stroke="#111" stroke-width=".8"/>
+        ${Array.from({ length: 18 }, (_, i) => { const a = i * 20 * Math.PI / 180; return `<line x1="${c + rb * 0.9 * Math.sin(a)}" y1="${c - rb * 0.9 * Math.cos(a)}" x2="${c + rb * Math.sin(a)}" y2="${c - rb * Math.cos(a)}" stroke="rgba(0,0,0,.35)" stroke-width="1"/>`; }).join('')}
+        <line x1="${c}" y1="${c - rb * 0.2}" x2="${c}" y2="${c - rb * 0.95}" stroke="${this.o.cap === 'gray' ? '#111' : '#fff'}" stroke-width="2.6" stroke-linecap="round"/></g>
+    </svg><div class="knob-lbl">${this.o.label}</div><div class="knob-val"></div>`;
+    this.svg = this.host.querySelector('svg'); this.rot = this.host.querySelector('.rot'); this.vEl = this.host.querySelector('.knob-val'); this.c = c;
+    if (this.o.hideVal) this.vEl.style.display = 'none';
+  }
+  bind() {
+    let down = null, moved = false, lastAng = 0;
+    const ang = e => { const r = this.svg.getBoundingClientRect(); const x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; return Math.atan2(x, -y) * 180 / Math.PI; };
+    this.svg.addEventListener('pointerdown', e => { e.preventDefault(); this.svg.setPointerCapture(e.pointerId); down = { x: e.clientX, y: e.clientY }; moved = false; lastAng = this.angleOf(); this.svg.focus({ preventScroll: true }); });
+    this.svg.addEventListener('pointermove', e => {
+      if (!down) return;
+      if (!moved && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 5) return;
+      moved = true;
+      let a = clamp(ang(e), -150, 150);
+      if (Math.abs(a - lastAng) > 200) return;       // never jump across the dead zone
+      lastAng = a; this.setAngle(a);
+    });
+    const up = e => {
+      if (!down) return;
+      if (!moved) { const r = this.svg.getBoundingClientRect(); this.nudge(e.clientX < r.left + r.width / 2 ? -1 : 1); }
+      down = null;
+    };
+    this.svg.addEventListener('pointerup', up); this.svg.addEventListener('pointercancel', () => { down = null; });
+    this.svg.addEventListener('wheel', e => { e.preventDefault(); this.nudge(e.deltaY < 0 ? 1 : -1); }, { passive: false });
+    this.svg.addEventListener('keydown', e => { if (['ArrowRight', 'ArrowUp'].includes(e.key)) { e.preventDefault(); this.nudge(1); } if (['ArrowLeft', 'ArrowDown'].includes(e.key)) { e.preventDefault(); this.nudge(-1); } });
+  }
+  setAngle(a) {
+    if (this.o.steps) { const i = Math.round((a + 150) / 300 * (this.n - 1)); if (i !== this.idx) { this.idx = i; click(0); this.update(true); } }
+    else { this.val = this.o.min + (a + 150) / 300 * (this.o.max - this.o.min); this.update(true); }
+  }
+  nudge(d) {
+    if (this.o.steps) { const i = clamp(this.idx + d, 0, this.n - 1); if (i !== this.idx) { this.idx = i; click(0); this.update(true); } }
+    else { this.val = clamp(this.val + d * (this.o.max - this.o.min) / 40, this.o.min, this.o.max); click(0); this.update(true); }
+  }
+  set(v, fire = false) { if (this.o.steps) this.idx = clamp(v, 0, this.n - 1); else this.val = clamp(v, this.o.min, this.o.max); this.update(fire); }
+  get value() { return this.o.steps ? this.o.steps[this.idx].v : this.val; }
+  update(fire) {
+    this.rot.setAttribute('transform', `rotate(${this.angleOf()} ${this.c} ${this.c})`);
+    this.vEl.textContent = this.o.fmt ? this.o.fmt(this.value, this.idx) : (this.o.steps ? this.o.steps[this.idx].lab : sig(this.val));
+    this.svg.setAttribute('aria-valuetext', this.vEl.textContent);
+    if (fire) this.o.onChange(this.value, this.idx);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// INSTRUMENT STATE
+// ════════════════════════════════════════════════════════════════
+const VDIV = [5, 2, 1, .5, .2, .1, .05, .02, .01, .005];
+const VDIV_LAB = ['5', '2', '1', '.5', '.2', '.1', '50', '20', '10', '5'];
+const TDIV = ['XY', .5, .2, .1, .05, .02, .01, 5e-3, 2e-3, 1e-3, 5e-4, 2e-4, 1e-4, 5e-5, 2e-5, 1e-5, 5e-6, 2e-6, 1e-6, 5e-7];
+const TDIV_LAB = ['X-Y', '.5', '.2', '.1', '50', '20', '10', '5', '2', '1', '.5', '.2', '.1', '50', '20', '10', '5', '2', '1', '.5'];
+const FOCUS_OPT = 0.56;
+const S = {
+  power: false, powerAt: -1e9, offAt: -1e9,
+  intensity: 0.5, focus: FOCUS_OPT, illum: 0.35, readout: true, beamFind: false,
+  ch: [{ vi: 2, vvar: 1, pos: 0, coup: 'DC', x10: false }, { vi: 2, vvar: 1, pos: 0, coup: 'DC', x10: false, inv: false }],
+  mode: 'CH1', ti: 9, tvar: 1, xpos: 0, mag: false, sweepOn: true,
+  trig: { src: 'CH1', slope: 1, level: 0, mode: 'AUTO' },
+  exp: 'none', p: {}, probe: { ch1: null, ch2: null, gnd: null },
+  // engine
+  t: 0, phase: 'armed', sweepStart: 0, holdEnd: 0, armedSince: 0, lastTrig: -1e9, sweepAlt: 0,
+  version: 0
+};
+const Sv = ci => VDIV[S.ch[ci].vi];
+const Sh = () => (TDIV[S.ti] === 'XY' ? null : TDIV[S.ti]);
+const isXY = () => TDIV[S.ti] === 'XY';
+const warm = () => S.power ? clamp((performance.now() / 1000 - S.powerAt - 0.6) / 2.4, 0, 1) : 0;
+
+// ════════════════════════════════════════════════════════════════
+// SIGNAL MODELS
+// ════════════════════════════════════════════════════════════════
+const WAVE = {
+  sine: ph => Math.sin(TAU * ph),
+  square: ph => (frac(ph) < 0.5 ? 1 : -1),
+  triangle: ph => { ph = frac(ph); return ph < 0.5 ? 4 * ph - 1 : 3 - 4 * ph; }
+};
+const sq01 = (t, f) => (frac(t * f) < 0.5 ? 1 : 0);
+// periodic steady state of a first-order circuit driven by a 0/E square wave
+function sqExp(t, f, Ef, tau) {
+  const T = 1 / f, p = frac(t * f) * T, a = Math.exp(-T / (2 * tau));
+  const Hi = Ef / (1 + a), Lo = Hi * a;
+  return p < T / 2 ? Ef + (Lo - Ef) * Math.exp(-p / tau) : Hi * Math.exp(-(p - T / 2) / tau);
+}
+// normalised step response of u_C in a series RLC (0 → 1)
+function rlcStep(tp, R, L, C) {
+  const l = R / (2 * L), w0 = 1 / Math.sqrt(L * C);
+  if (l < w0 * 0.999) { const w = Math.sqrt(w0 * w0 - l * l); return 1 - Math.exp(-l * tp) * (Math.cos(w * tp) + l / w * Math.sin(w * tp)); }
+  if (l > w0 * 1.001) { const d = Math.sqrt(l * l - w0 * w0), s1 = -l + d, s2 = -l - d; return 1 - (s2 * Math.exp(s1 * tp) - s1 * Math.exp(s2 * tp)) / (s2 - s1); }
+  return 1 - (1 + w0 * tp) * Math.exp(-w0 * tp);
+}
+const MAINS_VP = 12 * Math.SQRT2;
+const mainsV = t => { const th = TAU * 50 * t; return MAINS_VP * (Math.sin(th) + 0.04 * Math.sin(3 * th)) / 0.96; };
+function rlcPhasor(p) {
+  const w = TAU * p.f, X = p.L * w - 1 / (p.C * w), Rt = p.R + p.r, Z = Math.hypot(Rt, X);
+  return { w, X, Rt, Z, Im: p.Um / Z, phi: Math.atan2(X, Rt) }; // phi = phase of u relative to i
+}
+
+// ── Schematic helpers (Lebanese/French symbols) ─────────────────
+const SY = {
+  R: l => `<rect x="-20" y="-7" width="40" height="14" fill="#0b1210" stroke="#e5e7eb" stroke-width="2"/><text x="0" y="-12" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="800">${l}</text>`,
+  C: l => `<line x1="-20" y1="0" x2="-4" y2="0" stroke="#e5e7eb" stroke-width="2"/><line x1="4" y1="0" x2="20" y2="0" stroke="#e5e7eb" stroke-width="2"/><line x1="-4" y1="-12" x2="-4" y2="12" stroke="#e5e7eb" stroke-width="3"/><line x1="4" y1="-12" x2="4" y2="12" stroke="#e5e7eb" stroke-width="3"/><text x="0" y="-16" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="800">${l}</text>`,
+  L: l => `<path d="M-20 0 h4 a4 5 0 0 1 8 0 a4 5 0 0 1 8 0 a4 5 0 0 1 8 0 a4 5 0 0 1 8 0 h4" fill="none" stroke="#e5e7eb" stroke-width="2"/><text x="0" y="-12" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="800">${l}</text>`,
+  D: l => `<line x1="-20" y1="0" x2="20" y2="0" stroke="#e5e7eb" stroke-width="2"/><path d="M-7 -9 L7 0 L-7 9 Z" fill="#e5e7eb"/><line x1="7" y1="-9" x2="7" y2="9" stroke="#e5e7eb" stroke-width="3"/><text x="0" y="-13" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="800">${l}</text>`
+};
+function genSym(x, y, label, kind = '~') {
+  const inner = kind === '~' ? `<path d="M${x - 11} ${y} q5.5 -10 11 0 t11 0" fill="none" stroke="#e5e7eb" stroke-width="2"/>` : kind === 'sq' ? `<path d="M${x - 11} ${y + 5} v-10 h11 v10 h11 v-10" fill="none" stroke="#e5e7eb" stroke-width="2"/>` : `<text x="${x}" y="${y + 5}" text-anchor="middle" fill="#e5e7eb" font-size="14" font-weight="900">=</text>`;
+  return `<circle cx="${x}" cy="${y}" r="20" fill="#0b1210" stroke="#e5e7eb" stroke-width="2"/>${inner}<text x="${x - 28}" y="${y + 4}" text-anchor="end" fill="#a7f3d0" font-size="11" font-weight="800">${label}</text>`;
+}
+const nodeSvg = (id, x, y, lab) => `<g class="node" data-node="${id}"><circle class="hit" cx="${x}" cy="${y}" r="16"/><circle class="dot" cx="${x}" cy="${y}" r="5.5" fill="#34d399" stroke="#052e1a" stroke-width="2"/><text x="${x + (lab.dx || 0)}" y="${y + (lab.dy || -11)}" text-anchor="middle" fill="#d1fae5" font-size="13" font-weight="900">${lab.t}</text></g>`;
+// series loop: generator on the left between A (top-left) and M (bottom-left); components distributed top → right → bottom
+function seriesLoop(gen, comps, nodes) {
+  const L = 60, T = 40, Rr = 330, B = 170;
+  const pts = [[L, T], [Rr, T], [Rr, B], [L, B]], segs = [];
+  let total = 0; for (let i = 0; i < 3; i++) { const l = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]); segs.push(l); total += l; }
+  const at = s => { for (let i = 0; i < 3; i++) { if (s <= segs[i] || i === 2) { const k = s / segs[i]; return { x: pts[i][0] + (pts[i + 1][0] - pts[i][0]) * k, y: pts[i][1] + (pts[i + 1][1] - pts[i][1]) * k, rot: [0, 90, 180][i] }; } s -= segs[i]; } };
+  let svg = `<svg viewBox="0 0 380 210"><path d="M${L} ${T} H${Rr} V${B} H${L}" fill="none" stroke="#9ca3af" stroke-width="2"/>`;
+  svg += `<line x1="${L}" y1="${T}" x2="${L}" y2="${(T + B) / 2 - 20}" stroke="#9ca3af" stroke-width="2"/><line x1="${L}" y1="${(T + B) / 2 + 20}" x2="${L}" y2="${B}" stroke="#9ca3af" stroke-width="2"/>`;
+  svg += genSym(L, (T + B) / 2, gen.label, gen.kind);
+  const n = comps.length, posOf = i => total * (i + 0.5) / n, nodePos = [];
+  comps.forEach((c, i) => { const p = at(posOf(i)); svg += `<g transform="translate(${p.x} ${p.y}) rotate(${p.rot})"><rect x="-22" y="-14" width="44" height="28" fill="#0f1713"/>${SY[c.t](p.rot === 180 ? '' : c.l)}</g>`; if (p.rot === 180) svg += `<text x="${p.x}" y="${p.y + 26}" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="800">${c.l}</text>`; });
+  for (let i = 1; i < n; i++) nodePos.push(at(total * i / n));
+  svg += nodeSvg(nodes[0], L, T, { t: nodes[0], dx: -2, dy: -10 });
+  nodes.slice(1, -1).forEach((id, i) => { const p = nodePos[i]; const lab = p.x >= Rr - 1 ? { t: id, dx: 16, dy: 5 } : p.y >= B - 1 ? { t: id, dy: 24 } : { t: id }; svg += nodeSvg(id, p.x, p.y, lab); });
+  svg += nodeSvg(nodes[nodes.length - 1], L, B, { t: nodes[nodes.length - 1], dy: 24 });
+  return svg + `<g id="probeMarks"></g></svg>`;
+}
+function twoTerminal(symbolSvg, nP, nN, labP, labN) {
+  return `<svg viewBox="0 0 380 210"><path d="M150 50 H290 M150 160 H290" stroke="#9ca3af" stroke-width="2"/>${symbolSvg}
+    ${nodeSvg(nP, 290, 50, { t: labP, dx: 22, dy: 5 })}${nodeSvg(nN, 290, 160, { t: labN, dx: 22, dy: 5 })}<g id="probeMarks"></g></svg>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+// THE BENCH — experiments (V(t) returns node potentials, ref = earth)
+// ════════════════════════════════════════════════════════════════
+const LOG = (min, max) => ({ log: true, min, max });
+const EXP = {
+  none: {
+    name: '— Nothing connected —', lvl: 'G9', desc: 'Probes hanging in the air. A floating input picks up 50 Hz hum from the room wiring. Try 5 mV/div!',
+    nodes: [], earth: null, per: () => 0.02, V: () => ({}), svg: () => `<svg viewBox="0 0 380 120"><text x="190" y="64" text-anchor="middle" fill="#6b7280" font-size="14">No circuit on the bench.</text><g id="probeMarks"></g></svg>`, ctrls: []
+  },
+  battery: {
+    name: 'Battery (DC)', lvl: 'G9', desc: 'A flat cell. Constant voltage: the trace should not change with time.',
+    nodes: ['P', 'N'], earth: null, def: { E: 4.5, mystery: false }, per: () => null,
+    V: (t, p) => ({ P: p.E, N: 0 }),
+    svg: p => twoTerminal(`<g transform="translate(150 105)"><line x1="0" y1="-55" x2="0" y2="-10" stroke="#9ca3af" stroke-width="2"/><line x1="-18" y1="-10" x2="18" y2="-10" stroke="#e5e7eb" stroke-width="3"/><line x1="-9" y1="2" x2="9" y2="2" stroke="#e5e7eb" stroke-width="6"/><line x1="0" y1="2" x2="0" y2="55" stroke="#9ca3af" stroke-width="2"/><text x="-26" y="0" text-anchor="end" fill="#fcd34d" font-size="13" font-weight="800">${p.mystery ? '🩹 ? V' : p.E + ' V'}</text></g>`, 'P', 'N', '+', '−'),
+    ctrls: [{ k: 'E', lab: 'Cell voltage', type: 'buttons', opts: [1.5, 3, 4.5, 6, 9], unit: 'V' }]
+  },
+  dc: {
+    name: 'Variable DC supply 0–12 V', lvl: 'G9', desc: 'Turn the supply knob and watch the line rise. U = y × Sv.',
+    nodes: ['P', 'N'], earth: null, def: { U: 3 }, per: () => null,
+    V: (t, p) => ({ P: p.U, N: 0 }),
+    svg: p => twoTerminal(`<rect x="70" y="70" width="80" height="70" rx="8" fill="#1f2937" stroke="#e5e7eb" stroke-width="2"/><text x="110" y="100" text-anchor="middle" fill="#fcd34d" font-size="12" font-weight="800">DC</text><text x="110" y="120" text-anchor="middle" fill="#ff5a3c" font-size="13" font-family="JetBrains Mono">${(+p.U).toFixed(1)} V</text><path d="M150 50 V80 M150 160 V130" stroke="#9ca3af" stroke-width="2"/>`, 'P', 'N', '+', '−'),
+    ctrls: [{ k: 'U', lab: 'Supply voltage', type: 'range', min: 0, max: 12, step: 0.1, unit: 'V' }]
+  },
+  gbf: {
+    name: 'Low-frequency generator (LFG)', lvl: 'G9', desc: 'Sine, square or triangle; choose the frequency, the amplitude Um and a DC offset.',
+    nodes: ['O', 'C'], earth: 'C', def: { wave: 'sine', f: 50, Um: 4, off: 0, mystery: false }, per: p => 1 / p.f,
+    V: (t, p) => ({ O: p.off + p.Um * WAVE[p.wave](p.f * t), C: 0 }),
+    svg: p => twoTerminal(`<rect x="40" y="65" width="110" height="80" rx="10" fill="#1f2937" stroke="#e5e7eb" stroke-width="2"/><text x="95" y="88" text-anchor="middle" fill="#a7f3d0" font-size="12" font-weight="900">LFG</text><text x="95" y="112" text-anchor="middle" fill="#ff5a3c" font-size="13" font-family="JetBrains Mono">${p.mystery ? '🩹 taped' : fmtF(p.f)}</text><text x="95" y="132" text-anchor="middle" fill="#9ca3af" font-size="11">${p.wave}</text><path d="M150 50 V75 M150 160 V135" stroke="#9ca3af" stroke-width="2"/>`, 'O', 'C', 'OUT', 'COM ⏚'),
+    ctrls: [{ k: 'wave', lab: 'Waveform', type: 'buttons', opts: ['sine', 'square', 'triangle'] }, { k: 'f', lab: 'Frequency', type: 'range', ...LOG(0.5, 100000), unit: 'Hz', fmt: fmtF }, { k: 'Um', lab: 'Amplitude Um', type: 'range', min: 0, max: 10, step: 0.1, unit: 'V' }, { k: 'off', lab: 'DC offset', type: 'range', min: -5, max: 5, step: 0.1, unit: 'V' }]
+  },
+  mains: {
+    name: 'Mains 220 V → transformer 12 V', lvl: 'G9', desc: 'Lebanese mains (50 Hz) stepped down to 12 V rms. The real waveform is slightly flat-topped, just like the wall socket.',
+    nodes: ['S1', 'S2'], earth: null, def: {}, per: () => 0.02,
+    V: t => ({ S1: mainsV(t), S2: 0 }),
+    svg: () => twoTerminal(`<g><circle cx="40" cy="105" r="16" fill="#0b1210" stroke="#e5e7eb" stroke-width="2"/><text x="40" y="110" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="900">220V</text><path d="M56 105 H80" stroke="#9ca3af" stroke-width="2"/><rect x="80" y="70" width="70" height="70" rx="6" fill="#1f2937" stroke="#e5e7eb" stroke-width="2"/><path d="M100 78 v54 M130 78 v54" stroke="#fcd34d" stroke-width="3"/><text x="115" y="155" text-anchor="middle" fill="#a7f3d0" font-size="10">220/12 V</text><path d="M150 50 V80 M150 160 V130" stroke="#9ca3af" stroke-width="2"/></g>`, 'S1', 'S2', 'S1', 'S2'),
+    ctrls: []
+  },
+  cal: {
+    name: "Scope's own CAL terminal", lvl: 'G9', desc: 'A built-in 1 kHz square wave, 0 → 2 V. Engineers use it to check the scope tells the truth.',
+    nodes: ['K', 'G'], earth: 'G', def: {}, per: () => 1e-3,
+    V: t => ({ K: 2 * sq01(t, 1000), G: 0 }),
+    svg: () => twoTerminal(`<rect x="60" y="70" width="90" height="70" rx="8" fill="#334155" stroke="#e5e7eb" stroke-width="2"/><text x="105" y="100" text-anchor="middle" fill="#f9a8d4" font-size="12" font-weight="900">CAL</text><text x="105" y="120" text-anchor="middle" fill="#cbd5e1" font-size="11">2 Vpp ⎍ 1 kHz</text><path d="M150 50 V80 M150 160 V130" stroke="#9ca3af" stroke-width="2"/>`, 'K', 'G', 'CAL', '⏚'),
+    ctrls: []
+  },
+  rect: {
+    name: 'Half-wave rectifier (+ smoothing C)', lvl: 'Bridge', desc: '12 V transformer → diode → load R. Add the capacitor and the hump becomes almost flat, with a small ripple.',
+    nodes: ['A', 'K', 'M'], earth: null, def: { cap: false, R: 1000, C: 220e-6 }, per: () => 0.02,
+    V: (t, p) => {
+      const vA = mainsV(t), src = Math.max(0, vA - 0.7);
+      if (!p.cap) return { A: vA, K: src, M: 0 };
+      const tp = (Math.floor(t * 50 - 0.25) + 0.25) / 50, Vp = MAINS_VP - 0.7;
+      return { A: vA, K: Math.max(src, Vp * Math.exp(-(t - tp) / (p.R * p.C))), M: 0 };
+    },
+    svg: p => `<svg viewBox="0 0 380 210"><path d="M60 40 H130 M170 40 H300 V80 M300 130 V170 H60" fill="none" stroke="#9ca3af" stroke-width="2"/>${p.cap ? '<path d="M230 40 V80 M230 130 V170" stroke="#9ca3af" stroke-width="2"/><g transform="translate(230 105) rotate(90)"><rect x="-22" y="-14" width="44" height="28" fill="#0f1713"/>' + SY.C('') + '</g><text x="246" y="108" fill="#fcd34d" font-size="11" font-weight="800">C</text>' : ''}<g transform="translate(150 40)"><rect x="-22" y="-14" width="44" height="28" fill="#0f1713"/>${SY.D('D')}</g><g transform="translate(300 105) rotate(90)"><rect x="-22" y="-14" width="44" height="28" fill="#0f1713"/>${SY.R('')}</g><text x="318" y="108" fill="#fcd34d" font-size="11" font-weight="800">R</text><line x1="60" y1="40" x2="60" y2="85" stroke="#9ca3af" stroke-width="2"/><line x1="60" y1="125" x2="60" y2="170" stroke="#9ca3af" stroke-width="2"/>${genSym(60, 105, '12 V~')}${nodeSvg('A', 60, 40, { t: 'A' })}${nodeSvg('K', 200, 40, { t: 'K' })}${nodeSvg('M', 60, 170, { t: 'M', dy: 24 })}<g id="probeMarks"></g></svg>`,
+    ctrls: [{ k: 'cap', lab: 'Smoothing capacitor', type: 'toggle' }, { k: 'C', lab: 'C', type: 'range', ...LOG(10e-6, 2200e-6), fmt: fmtC }, { k: 'R', lab: 'Load R', type: 'range', ...LOG(100, 10000), fmt: fmtR }]
+  },
+  gen2: {
+    name: 'Two generators → Lissajous', lvl: 'Bridge', desc: 'LFG-1 on Y₁, LFG-2 on Y₂, common ground. Put TIME/DIV on X-Y and watch the figures dance.',
+    nodes: ['G1', 'G2', 'M'], earth: 'M', def: { f1: 100, f2: 200, U1: 3, U2: 3, ph: 0.25, mystery: false }, per: p => 1 / Math.max(p.f1, p.f2), rep: p => 1 / Math.min(p.f1, p.f2),
+    V: (t, p) => ({ G1: p.U1 * Math.sin(TAU * p.f1 * t), G2: p.U2 * Math.sin(TAU * p.f2 * t + TAU * p.ph), M: 0 }),
+    svg: p => `<svg viewBox="0 0 380 210"><path d="M80 40 V75 M80 135 V170 H260 V135 M260 75 V40" fill="none" stroke="#9ca3af" stroke-width="2"/>${genSym(80, 105, '')}${genSym(260, 105, '')}<text x="80" y="200" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="800">LFG-1 ${fmtF(p.f1)}</text><text x="260" y="200" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="800">LFG-2 ${p.mystery ? '🩹 ?' : fmtF(p.f2)}</text>${nodeSvg('G1', 80, 40, { t: 'G1' })}${nodeSvg('G2', 260, 40, { t: 'G2' })}${nodeSvg('M', 170, 170, { t: 'M', dy: -12 })}<g id="probeMarks"></g></svg>`,
+    ctrls: [{ k: 'f1', lab: 'f₁ (LFG-1)', type: 'range', ...LOG(10, 2000), fmt: fmtF }, { k: 'f2', lab: 'f₂ (LFG-2)', type: 'range', ...LOG(10, 2000), fmt: fmtF }, { k: 'ph', lab: 'Phase of LFG-2', type: 'range', min: 0, max: 1, step: 0.01, fmt: v => Math.round(v * 360) + '°' }]
+  },
+  rc: {
+    name: 'RC circuit — square wave', lvl: 'G12', desc: 'Square generator (0 → E) feeds R then C. Y₁ on A shows u_G, Y₂ on B shows u_C charging and discharging.',
+    nodes: ['A', 'B', 'M'], earth: 'M', def: { f: 50, E: 5, R: 1000, C: 1e-6, mystery: false }, per: p => 1 / p.f,
+    V: (t, p) => ({ A: p.E * sq01(t, p.f), B: sqExp(t, p.f, p.E, p.R * p.C), M: 0 }),
+    svg: p => seriesLoop({ label: 'E ⎍', kind: 'sq' }, [{ t: 'R', l: 'R = ' + fmtR(p.R) }, { t: 'C', l: p.mystery ? 'C = ?' : 'C = ' + fmtC(p.C) }], ['A', 'B', 'M']),
+    ctrls: [{ k: 'f', lab: 'Generator frequency', type: 'range', ...LOG(1, 5000), fmt: fmtF }, { k: 'E', lab: 'E', type: 'range', min: 1, max: 10, step: 0.5, unit: 'V' }, { k: 'R', lab: 'R', type: 'range', ...LOG(100, 100000), fmt: fmtR }, { k: 'C', lab: 'C', type: 'range', ...LOG(10e-9, 100e-6), fmt: fmtC, hideIfMystery: true }]
+  },
+  rl: {
+    name: 'RL circuit — square wave', lvl: 'G12', desc: 'A coil (L, r) in series with R. Y₂ on B reads u_R = R·i: the image of the current. The coil makes the current rise slowly.',
+    nodes: ['A', 'B', 'M'], earth: 'M', def: { f: 50, E: 5, R: 100, L: 0.2, r: 10, mystery: false }, per: p => 1 / p.f,
+    V: (t, p) => ({ A: p.E * sq01(t, p.f), B: sqExp(t, p.f, p.E * p.R / (p.R + p.r), p.L / (p.R + p.r)), M: 0 }),
+    svg: p => seriesLoop({ label: 'E ⎍', kind: 'sq' }, [{ t: 'L', l: p.mystery ? '(L = ?, r = ' + p.r + ' Ω)' : '(' + fmtL(p.L) + ', ' + p.r + ' Ω)' }, { t: 'R', l: 'R = ' + fmtR(p.R) }], ['A', 'B', 'M']),
+    ctrls: [{ k: 'f', lab: 'Generator frequency', type: 'range', ...LOG(1, 5000), fmt: fmtF }, { k: 'R', lab: 'R', type: 'range', ...LOG(10, 10000), fmt: fmtR }, { k: 'L', lab: 'L', type: 'range', ...LOG(0.01, 1), fmt: fmtL, hideIfMystery: true }]
+  },
+  rlcfree: {
+    name: 'RLC — free damped oscillations', lvl: 'G12', desc: 'A low-frequency square wave charges C, then lets it discharge through the coil. Each edge rings: watch u_C oscillate and die away.',
+    nodes: ['A', 'B', 'M'], earth: 'M', def: { f: 10, E: 5, R: 10, L: 0.1, r: 10, C: 1e-6, mystery: false }, per: p => 1 / p.f, fast: p => TAU * Math.sqrt(p.L * p.C),
+    V: (t, p) => { const T = 1 / p.f, ph = frac(t * p.f) * T, Rt = p.R + p.r; const u = ph < T / 2 ? p.E * rlcStep(ph, Rt, p.L, p.C) : p.E * (1 - rlcStep(ph - T / 2, Rt, p.L, p.C)); return { A: p.E * sq01(t, p.f), B: u, M: 0 }; },
+    svg: p => seriesLoop({ label: 'E ⎍', kind: 'sq' }, [{ t: 'R', l: 'R = ' + fmtR(p.R) }, { t: 'L', l: '(' + fmtL(p.L) + ', ' + p.r + ' Ω)' }, { t: 'C', l: p.mystery ? 'C = ?' : 'C = ' + fmtC(p.C) }], ['A', 'D', 'B', 'M']),
+    ctrls: [{ k: 'f', lab: 'Generator frequency', type: 'range', ...LOG(1, 200), fmt: fmtF }, { k: 'R', lab: 'R (damping)', type: 'range', ...LOG(1, 5000), fmt: fmtR }, { k: 'L', lab: 'L', type: 'range', ...LOG(0.01, 1), fmt: fmtL }, { k: 'C', lab: 'C', type: 'range', ...LOG(0.1e-6, 10e-6), fmt: fmtC, hideIfMystery: true }]
+  },
+  rlcac: {
+    name: 'RLC series — forced (AC)', lvl: 'G12', desc: 'Sinusoidal generator, coil, capacitor, resistor. Y₁ on A gives u_G; Y₂ on B gives u_R, the image of i. Measure the phase shift and hunt resonance.',
+    nodes: ['A', 'D', 'B', 'M'], earth: 'M', def: { f: 300, Um: 4, R: 100, L: 0.1, r: 10, C: 1e-6, mystery: false }, per: p => 1 / p.f,
+    V: (t, p) => { const z = rlcPhasor(p), wt = z.w * t, ia = wt - z.phi; const uR = p.R * z.Im * Math.sin(ia), uC = z.Im / (p.C * z.w) * Math.sin(ia - Math.PI / 2); return { A: p.Um * Math.sin(wt), D: uR + uC, B: uR, M: 0 }; },
+    svg: p => seriesLoop({ label: 'u_G ~', kind: '~' }, [{ t: 'L', l: '(' + fmtL(p.L) + ', ' + p.r + ' Ω)' }, { t: 'C', l: p.mystery ? 'C = ?' : 'C = ' + fmtC(p.C) }, { t: 'R', l: 'R = ' + fmtR(p.R) }], ['A', 'D', 'B', 'M']),
+    ctrls: [{ k: 'f', lab: 'Generator frequency', type: 'range', ...LOG(20, 5000), fmt: fmtF }, { k: 'Um', lab: 'Um', type: 'range', min: 0.5, max: 8, step: 0.1, unit: 'V' }, { k: 'R', lab: 'R', type: 'range', ...LOG(10, 2000), fmt: fmtR }, { k: 'C', lab: 'C', type: 'range', ...LOG(0.1e-6, 10e-6), fmt: fmtC, hideIfMystery: true }]
+  }
+};
+
+// ── Channel voltage pipeline: node → probe → ×10 → coupling → noise ──
+const AC_TAU = 0.15;           // input coupling capacitor time-constant (s)
+const chState = [{ mean: 0, tr: [] }, { mean: 0, tr: [] }];
+let FAULT = '';
+function hum(t) { return 0.012 * Math.sin(TAU * 50 * t) + 0.004 * Math.sin(TAU * 150 * t + 1); }
+function rawCh(ci, V, t) {
+  const tip = ci === 0 ? S.probe.ch1 : S.probe.ch2, g = S.probe.gnd;
+  if (!tip) return hum(t);
+  let v = (V[tip] ?? 0) - (g ? (V[g] ?? 0) : 0);
+  if (!g) v += hum(t) * 6;
+  return v;
+}
+function nodeV(t) { if (FAULT) return {}; return EXP[S.exp].V(t, S.p); }
+function computeFault() {
+  const e = EXP[S.exp], g = S.probe.gnd;
+  FAULT = (e.earth && g && g !== e.earth) ? `⚠ Earth short! The generator's ground and the oscilloscope's ground are both connected to the mains earth. Clipping ⏚ on <b>${g}</b> short-circuits part of the circuit. Move the ground clip to <b>${e.earth}</b>.` : '';
+  const fb = $('faultBox'); if (fb) { fb.innerHTML = FAULT; fb.classList.toggle('hidden', !FAULT); }
+}
+function channelMean(ci) {
+  const e = EXP[S.exp], P = e.rep ? e.rep(S.p) : e.per(S.p);
+  if (!P || S.exp === 'none') { const V = nodeV(S.t); const tip = ci === 0 ? S.probe.ch1 : S.probe.ch2; if (!tip) return 0; return (V[tip] ?? 0) - (S.probe.gnd ? (V[S.probe.gnd] ?? 0) : 0); }
+  let s = 0; const N = 400;
+  for (let i = 0; i < N; i++) { const t = (i + 0.5) / N * P; const V = nodeV(t); const tip = ci === 0 ? S.probe.ch1 : S.probe.ch2; if (tip) s += (V[tip] ?? 0) - (S.probe.gnd ? (V[S.probe.gnd] ?? 0) : 0); }
+  return s / N;
+}
+function configChanged() {          // called whenever circuit / probes / params change
+  S.version++; computeFault();
+  for (let ci = 0; ci < 2; ci++) {
+    const m = channelMean(ci), st = chState[ci];
+    if (S.ch[ci].coup === 'AC' && Math.abs(m - st.mean) > 1e-6) { st.tr.push({ t0: S.t, d: m - st.mean }); if (st.tr.length > 6) st.tr.shift(); }
+    st.mean = m;
+  }
+}
+function chVolts(ci, V, t) {
+  const c = S.ch[ci];
+  if (c.coup === 'GND') return 0;
+  let v = rawCh(ci, V, t);
+  if (c.coup === 'AC') { v -= chState[ci].mean; for (const tr of chState[ci].tr) { const dt = t - tr.t0; if (dt >= 0 && dt < AC_TAU * 8) v += tr.d * Math.exp(-dt / AC_TAU); } }
+  if (c.x10) v /= 10;
+  return v + gauss() * 0.0006;
+}
+const gainOf = ci => S.ch[ci].vvar / Sv(ci);           // div per volt
+function sigPeriod() { const e = EXP[S.exp]; if (FAULT) return 0.02; const p = (e.fast && e.fast(S.p)) || e.per(S.p); return p || 0.02; }
+
+// ════════════════════════════════════════════════════════════════
+// CRT RENDERER — phosphor buffer + bloom, real-time beam integration
+// ════════════════════════════════════════════════════════════════
+const CV = { W: 880, H: 704, gx: 40, gy: 32, d: 80 };       // 10 × 8 div of 80 px
+let scv, sctx, phos, pctx, glowS, gsctx, glowL, glctx;
+function initCRT() {
+  scv = $('scopeCanvas'); sctx = scv.getContext('2d');
+  phos = document.createElement('canvas'); phos.width = CV.W; phos.height = CV.H; pctx = phos.getContext('2d');
+  glowS = document.createElement('canvas'); glowS.width = CV.W / 4; glowS.height = CV.H / 4; gsctx = glowS.getContext('2d');
+  glowL = document.createElement('canvas'); glowL.width = CV.W / 12; glowL.height = CV.H / 12; glctx = glowL.getContext('2d');
+}
+const px = x => CV.gx + (x + 5) * CV.d;
+const py = y => CV.gy + (4 - y) * CV.d;
+// beam drawing with energy model: brightness ∝ dwell time / distance travelled
+const K_ENERGY = 45000;
+let beamW = 2, beamI = 1;
+function strokeRun(pts, a) {
+  if (pts.length < 2 || a < 0.004) return;
+  pctx.globalAlpha = Math.min(1, a);
+  pctx.beginPath(); pctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) pctx.lineTo(pts[i][0], pts[i][1]);
+  if (pts.length === 2 && Math.abs(pts[0][0] - pts[1][0]) < 0.01 && Math.abs(pts[0][1] - pts[1][1]) < 0.01) pctx.lineTo(pts[0][0] + 0.01, pts[0][1]);
+  pctx.stroke();
+}
+// trace a set of beams over [ta,tb] with n samples; xOf(t) gives x-div (null → XY)
+function drawBeams(ta, tb, n, xOf, w = 1) {
+  const beams = beamList();
+  if (!beams.length) return;
+  const dt = (tb - ta) / n, runs = beams.map(() => ({ pts: [], aSum: 0, k: 0 })), prev = beams.map(() => null);
+  const bf = S.beamFind, sc = bf ? 0.22 : 1;
+  for (let i = 0; i <= n; i++) {
+    const t = ta + dt * i, V = nodeV(t), v1 = chVolts(0, V, t), v2 = chVolts(1, V, t);
+    beams.forEach((b, bi) => {
+      let x, y;
+      if (b === 'XY') { x = v1 * gainOf(0) + S.xpos; y = v2 * gainOf(1) + S.ch[1].pos; }
+      else {
+        x = xOf(t) + S.xpos;
+        if (b === 0) y = v1 * gainOf(0) + S.ch[0].pos;
+        else if (b === 1) y = (S.ch[1].inv ? -v2 : v2) * gainOf(1) + S.ch[1].pos;
+        else y = v1 * gainOf(0) + (S.ch[1].inv ? -v2 : v2) * gainOf(1) + S.ch[0].pos;
+      }
+      x = x * sc + gauss() * 0.006; y = y * sc + gauss() * 0.006;
+      const X = px(clamp(x, -6.5, 6.5)), Y = py(clamp(y, -5.5, 5.5)), r = runs[bi];
+      const off = Math.abs(x) > 6.4 || Math.abs(y) > 5.4;
+      if (prev[bi] && !off) {
+        const len = Math.hypot(X - prev[bi][0], Y - prev[bi][1]);
+        const a = beamI * K_ENERGY * dt * w / (len + 1.2);
+        if (r.k) { const avg = r.aSum / r.k; if (a < avg * 0.4 || a > avg * 2.5) { strokeRun(r.pts, avg); r.pts = []; r.aSum = 0; r.k = 0; } }   // fast edges stay faint
+        r.aSum += a; r.k++;
+        if (!r.pts.length) r.pts.push(prev[bi]);
+        r.pts.push([X, Y]);
+        if (r.pts.length >= 6) { strokeRun(r.pts, r.aSum / r.k); r.pts = [[X, Y]]; r.aSum = 0; r.k = 0; }
+      } else if (r.pts.length) { strokeRun(r.pts, r.aSum / Math.max(1, r.k)); r.pts = []; r.aSum = 0; r.k = 0; }
+      prev[bi] = off ? null : [X, Y];
+    });
+  }
+  runs.forEach(r => { if (r.pts.length > 1) strokeRun(r.pts, r.aSum / Math.max(1, r.k)); });
+}
+function beamList() {
+  if (isXY()) return ['XY'];
+  if (S.mode === 'CH1') return [0];
+  if (S.mode === 'CH2') return [1];
+  if (S.mode === 'ADD') return ['ADD'];
+  return [0, 1]; // DUAL (chopped at slow sweeps, alternate visually equivalent here)
+}
+// trigger signal in divisions (without POS), or LINE
+function trigVal(t) {
+  if (S.trig.src === 'LINE') return Math.sin(TAU * 50 * t) * 3;
+  const ci = S.trig.src === 'CH2' ? 1 : 0, V = nodeV(t);
+  return chVolts(ci, V, t) * gainOf(ci);
+}
+function findTrigger(t0, t1) {
+  if (!(t1 > t0)) return null;
+  const P = S.trig.src === 'LINE' ? 0.02 : sigPeriod();
+  let h = Math.min(P / 80, (t1 - t0) / 4); h = Math.max(h, (t1 - t0) / 4000);
+  let prev = trigVal(t0) - S.trig.level;
+  for (let i = 1, t = t0 + h; i <= 4000 && t <= t1; i++, t = t0 + h * i) {
+    const cur = trigVal(t) - S.trig.level;
+    if ((S.trig.slope > 0 && prev < 0 && cur >= 0) || (S.trig.slope < 0 && prev > 0 && cur <= 0)) return t - h * cur / (cur - prev || 1);
+    prev = cur;
+  }
+  return null;
+}
+// one frame of real time
+function simulate(dtReal) {
+  const t0 = S.t, tEnd = t0 + dtReal;
+  if (!S.power) { S.t = tEnd; return; }
+  const P = sigPeriod();
+  // continuous beam: X-Y or sweep OFF (spot / vertical segment)
+  if (isXY() || !S.sweepOn) {
+    let ta = t0, w = 1;
+    if (P && dtReal > 4 * P) { w = dtReal / (4 * P); ta = tEnd - 4 * P; }
+    const n = clamp(Math.ceil((tEnd - ta) / P * 140), 10, 900);
+    drawBeams(ta, tEnd, n, () => 0, w);
+    S.t = tEnd; return;
+  }
+  const sweepDur = 10 * Sh() / S.tvar / (S.mag ? 10 : 1);
+  const hold = Math.max(sweepDur * 0.12, 15e-6);
+  const autoTO = 0.08;
+  const cycle = sweepDur + hold + (S.trig.mode === 'NORM' || P < 0.08 ? Math.min(P, 0.08) * 0.5 : 0);
+  const MAXS = 6, fast = dtReal / cycle > MAXS, w = fast ? (dtReal / cycle) / MAXS : 1;
+  let t = t0, drawn = 0, guard = 0;
+  const xAt = t => { const x = -5 + 10 * (t - S.sweepStart) / sweepDur; return S.mag ? x * 10 : x; };
+  while (t < tEnd && guard++ < 200) {
+    if (S.phase === 'holdoff') { if (t >= S.holdEnd) { S.phase = 'armed'; S.armedSince = t; } else { t = Math.min(tEnd, S.holdEnd); continue; } }
+    if (S.phase === 'armed') {
+      if (S.trig.mode === 'AUTO' && t - S.armedSince >= autoTO) { S.phase = 'sweep'; S.sweepStart = t; continue; }
+      const limit = Math.min(tEnd, S.trig.mode === 'AUTO' ? Math.max(S.armedSince + autoTO, t) : tEnd);
+      const tt = findTrigger(t, limit);
+      if (tt !== null) { S.phase = 'sweep'; S.sweepStart = tt; S.lastTrig = performance.now(); t = tt; }
+      else if (S.trig.mode === 'AUTO' && limit - S.armedSince >= autoTO - 1e-9) { S.phase = 'sweep'; S.sweepStart = limit; t = limit; }
+      else { t = limit; continue; }
+    }
+    if (S.phase === 'sweep') {
+      const end = S.sweepStart + sweepDur, segEnd = Math.min(tEnd, end);
+      const frac01 = (segEnd - t) / sweepDur;
+      const n = clamp(Math.ceil(Math.max(420 * frac01 * (S.mag ? 6 : 1), (segEnd - t) / P * 70)), 2, 1600);
+      if (segEnd > t) drawBeams(t, segEnd, n, xAt, w);
+      t = segEnd;
+      if (t >= end - 1e-12) {
+        S.phase = 'holdoff'; S.holdEnd = t + hold; drawn++;
+        if (fast && drawn >= MAXS) { S.phase = 'armed'; S.armedSince = tEnd; t = tEnd; }
+      }
+    }
+  }
+  S.t = tEnd;
+}
+// compose the CRT image
+let lastStill = { x: 0, y: 0, since: 0 }, burnWarned = false;
+function renderCRT(dt) {
+  const W = CV.W, H = CV.H, wm = warm();
+  // phosphor decay (P31, ~70 ms)
+  pctx.globalCompositeOperation = 'destination-out';
+  pctx.globalAlpha = 1; pctx.fillStyle = `rgba(0,0,0,${1 - Math.exp(-dt / 0.07)})`; pctx.fillRect(0, 0, W, H);
+  pctx.globalCompositeOperation = 'lighter';
+  beamW = 1.6 + 10 * Math.abs(S.focus - FOCUS_OPT) + S.intensity * 1.1;
+  beamI = (0.03 + 1.7 * S.intensity * S.intensity) * wm * (S.beamFind ? 2.5 : 1);
+  pctx.lineWidth = beamW; pctx.lineCap = 'round'; pctx.lineJoin = 'round';
+  pctx.strokeStyle = 'rgb(70,255,140)';
+  simulate(dt);
+  pctx.globalAlpha = 1; pctx.globalCompositeOperation = 'source-over';
+  // tube face
+  const g = sctx.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * 0.62);
+  g.addColorStop(0, S.power ? '#0d1a14' : '#0b100d'); g.addColorStop(1, '#030605');
+  sctx.globalCompositeOperation = 'source-over'; sctx.fillStyle = g; sctx.fillRect(0, 0, W, H);
+  // graticule (etched, edge-lit when illum > 0)
+  const il = S.power ? S.illum : 0;
+  const gc = `rgba(${Math.round(120 + 135 * il)},${Math.round(130 + 60 * il)},${Math.round(110 - 40 * il)},${0.18 + 0.55 * il})`;
+  sctx.strokeStyle = gc; sctx.lineWidth = 1.2; sctx.beginPath();
+  for (let i = 0; i <= 10; i++) { sctx.moveTo(px(i - 5), py(4)); sctx.lineTo(px(i - 5), py(-4)); }
+  for (let j = 0; j <= 8; j++) { sctx.moveTo(px(-5), py(j - 4)); sctx.lineTo(px(5), py(j - 4)); }
+  sctx.stroke();
+  sctx.beginPath();
+  for (let k = -25; k <= 25; k++) { const x = px(k / 5); sctx.moveTo(x, py(0) - 6); sctx.lineTo(x, py(0) + 6); }
+  for (let k = -20; k <= 20; k++) { const y = py(k / 5); sctx.moveTo(px(0) - 6, y); sctx.lineTo(px(0) + 6, y); }
+  sctx.stroke();
+  sctx.fillStyle = gc; sctx.font = 'bold 15px JetBrains Mono, monospace';
+  sctx.fillText('100', px(-5) - 34, py(2.5) + 5); sctx.fillText('90', px(-5) - 28, py(2.25) + 5); sctx.fillText('10', px(-5) - 28, py(-2.25) + 5); sctx.fillText('0%', px(-5) - 28, py(-2.5) + 5);
+  sctx.setLineDash([4, 6]); sctx.beginPath(); [2.5, 2.25, -2.25, -2.5].forEach(y => { sctx.moveTo(px(-5), py(y)); sctx.lineTo(px(5), py(y)); }); sctx.stroke(); sctx.setLineDash([]);
+  // bloom from the phosphor
+  gsctx.clearRect(0, 0, glowS.width, glowS.height); gsctx.drawImage(phos, 0, 0, glowS.width, glowS.height);
+  glctx.clearRect(0, 0, glowL.width, glowL.height); glctx.drawImage(glowS, 0, 0, glowL.width, glowL.height);
+  sctx.globalCompositeOperation = 'lighter';
+  sctx.imageSmoothingEnabled = true;
+  sctx.globalAlpha = 0.55 + 0.3 * S.intensity; sctx.drawImage(glowL, 0, 0, W, H);
+  sctx.globalAlpha = 0.85; sctx.drawImage(glowS, 0, 0, W, H);
+  sctx.globalAlpha = 1; sctx.drawImage(phos, 0, 0);
+  // power-off collapse dot
+  const since = performance.now() / 1000 - S.offAt;
+  if (!S.power && since < 0.7) { const a = 1 - since / 0.7; sctx.fillStyle = `rgba(210,255,225,${a})`; sctx.beginPath(); sctx.arc(W / 2, H / 2, 3 + 14 * a, 0, TAU); sctx.fill(); }
+  // on-screen readout (like a Hameg CRT readout)
+  sctx.globalCompositeOperation = 'lighter';
+  if (S.power && S.readout && wm > 0.5) {
+    sctx.font = 'bold 19px JetBrains Mono, monospace'; sctx.fillStyle = `rgba(90,255,150,${0.55 * wm})`;
+    const cpl = c => c.coup === 'DC' ? '=' : c.coup === 'AC' ? '~' : '⏚';
+    const vs = ci => (S.ch[ci].vvar < 0.99 ? '>' : '') + (VDIV[S.ch[ci].vi] >= 1 ? VDIV[S.ch[ci].vi] + 'V' : VDIV[S.ch[ci].vi] * 1000 + 'mV') + cpl(S.ch[ci]) + (S.ch[ci].x10 ? ' ×10' : '');
+    sctx.fillText('CH1 ' + vs(0), px(-5) + 8, py(4) + 24);
+    if (S.mode !== 'CH1' || isXY()) sctx.fillText('CH2 ' + vs(1) + (S.ch[1].inv ? ' INV' : ''), px(-5) + 8, py(4) + 48);
+    const tlab = isXY() ? 'X-Y' : !S.sweepOn ? 'SWEEP OFF' : (S.tvar < 0.99 ? '>' : '') + fmtT(Sh()).replace(' ', '') + (S.mag ? ' ×10' : '');
+    sctx.textAlign = 'right'; sctx.fillText(tlab, px(5) - 8, py(4) + 24);
+    if (!isXY() && S.sweepOn) sctx.fillText(`${S.trig.src} ${S.trig.slope > 0 ? '↗' : '↘'} ${S.trig.mode}`, px(5) - 8, py(-4) - 12);
+    sctx.textAlign = 'left';
+  }
+  // ruler overlay
+  if (ruler.on) drawRuler();
+  sctx.globalCompositeOperation = 'source-over';
+  // LEDs
+  $('trigLed').classList.toggle('on', S.power && !isXY() && S.sweepOn && performance.now() - S.lastTrig < 250);
+  // burn-in watchdog: still bright spot
+  const stillSpot = S.power && (isXY() || !S.sweepOn) && S.intensity > 0.78 && spotIsStill();
+  if (stillSpot) { if (!lastStill.since) lastStill.since = performance.now(); if (performance.now() - lastStill.since > 4000 && !burnWarned) { burnWarned = true; toast('⚠ Turn the INTENSITY down! A bright spot that stays still burns the phosphor.', 4200); } }
+  else lastStill.since = 0;
+}
+function spotIsStill() {
+  const V = nodeV(S.t), a = rawCh(0, V, S.t), b = rawCh(0, nodeV(S.t + sigPeriod() / 4), S.t + sigPeriod() / 4);
+  return Math.abs(a - b) * gainOf(0) < 0.05;
+}
+
+// ── Graticule ruler ─────────────────────────────────────────────
+const ruler = { on: false, a: null, b: null };
+function drawRuler() {
+  sctx.globalCompositeOperation = 'source-over';
+  const mk = (p, c) => { sctx.fillStyle = c; sctx.beginPath(); sctx.arc(px(p.x), py(p.y), 7, 0, TAU); sctx.fill(); };
+  if (ruler.a) mk(ruler.a, '#fbbf24');
+  if (ruler.a && ruler.b) {
+    mk(ruler.b, '#fbbf24'); sctx.strokeStyle = '#fbbf24'; sctx.setLineDash([8, 6]); sctx.lineWidth = 2; sctx.beginPath();
+    sctx.moveTo(px(ruler.a.x), py(ruler.a.y)); sctx.lineTo(px(ruler.b.x), py(ruler.a.y)); sctx.lineTo(px(ruler.b.x), py(ruler.b.y)); sctx.stroke(); sctx.setLineDash([]);
+  }
+}
+function setupRuler() {
+  $('rulerBtn').onclick = () => { ruler.on = !ruler.on; ruler.a = ruler.b = null; $('rulerBtn').textContent = '📏 Ruler: ' + (ruler.on ? 'ON' : 'OFF'); $('rulerBtn').classList.toggle('sel', ruler.on); $('rulerOut').textContent = ruler.on ? 'Tap point 1 on the screen…' : ''; };
+  scv.addEventListener('pointerdown', e => {
+    if (!ruler.on) return;
+    const r = scv.getBoundingClientRect(), X = (e.clientX - r.left) * CV.W / r.width, Y = (e.clientY - r.top) * CV.H / r.height;
+    const p = { x: Math.round(((X - CV.gx) / CV.d - 5) * 10) / 10, y: Math.round((4 - (Y - CV.gy) / CV.d) * 10) / 10 };
+    if (!ruler.a || ruler.b) { ruler.a = p; ruler.b = null; $('rulerOut').textContent = 'Tap point 2…'; }
+    else { ruler.b = p; const dx = Math.abs(ruler.b.x - ruler.a.x), dy = Math.abs(ruler.b.y - ruler.a.y); $('rulerOut').textContent = `Δx = ${dx.toFixed(1)} div   Δy = ${dy.toFixed(1)} div`; }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// FRONT PANEL WIRING
+// ════════════════════════════════════════════════════════════════
+const K = {};
+const vdivSteps = VDIV.map((v, i) => ({ v: i, lab: VDIV_LAB[i], col: i >= 6 ? '#6b7280' : '#1d2b4a' }));
+const tdivSteps = TDIV.map((v, i) => ({ v: i, lab: TDIV_LAB[i], col: i === 0 ? '#b91c1c' : i <= 3 ? '#1d2b4a' : i <= 12 ? '#2c4f8c' : '#6b7280' }));
+const fmtVdiv = i => (VDIV[i] >= 1 ? VDIV[i] + ' V' : VDIV[i] * 1000 + ' mV') + '/div';
+function buildPanel() {
+  const isMobile = window.innerWidth < 640;
+  const big = isMobile ? 120 : 112;
+  K.intensity = new Knob('kIntensity', { label: 'INTEN', size: 62, min: 0, max: 1, value: S.intensity, fmt: v => Math.round(v * 100) + '%', onChange: v => { S.intensity = v; } });
+  K.focus = new Knob('kFocus', { label: 'FOCUS', size: 62, min: 0, max: 1, value: S.focus, fmt: v => Math.abs(v - FOCUS_OPT) < 0.06 ? 'sharp' : 'blurred', onChange: v => { S.focus = v; } });
+  K.illum = new Knob('kIllum', { label: 'SCALE ILLUM', size: 62, min: 0, max: 1, value: S.illum, fmt: v => Math.round(v * 100) + '%', onChange: v => { S.illum = v; } });
+  for (let ci = 0; ci < 2; ci++) {
+    const n = ci + 1;
+    K['v' + n] = new Knob('kV' + n, { label: 'VOLTS/DIV', size: big, steps: vdivSteps, index: S.ch[ci].vi, cap: 'black', lblSize: 8.5, bands: [{ from: 0, to: 5, col: '#1d2b4a' }, { from: 6, to: 9, col: '#9ca3af' }], fmt: (v, i) => fmtVdiv(i), onChange: (v, i) => { S.ch[ci].vi = i; } });
+    K['var' + n] = new Knob('kVar' + n, { label: 'VAR', size: 52, min: 0.4, max: 1, value: 1, cap: 'red', hideVal: true, onChange: v => { S.ch[ci].vvar = v > 0.985 ? 1 : v; if (v > 0.985) K['var' + n].val = 1; updateLeds(); } });
+    K['pos' + n] = new Knob('kPos' + n, { label: '⇕ POSITION', size: 58, min: -8, max: 8, value: 0, fmt: v => (v >= 0 ? '+' : '') + v.toFixed(1) + ' div', onChange: v => { S.ch[ci].pos = Math.abs(v) < 0.08 ? 0 : v; } });
+    buildLever('lev' + n, ['AC', 'GND', 'DC'], () => S.ch[ci].coup, v => { if (S.ch[ci].coup !== 'AC' && v === 'AC') chState[ci].mean = channelMean(ci); S.ch[ci].coup = v; click(1); });
+    $('bX10_' + n).onclick = () => { S.ch[ci].x10 = !S.ch[ci].x10; click(1); updateLeds(); };
+  }
+  K.time = new Knob('kTime', { label: 'TIME/DIV', size: big + 14, steps: tdivSteps, index: S.ti, cap: 'black', lblSize: 7.5, bands: [{ from: 1, to: 3, col: '#1d2b4a' }, { from: 4, to: 12, col: '#2c4f8c' }, { from: 13, to: 19, col: '#9ca3af' }], fmt: (v, i) => i === 0 ? 'X-Y' : fmtT(TDIV[i]) + '/div', onChange: (v, i) => { S.ti = i; S.phase = 'armed'; S.armedSince = S.t; } });
+  K.tvar = new Knob('kTVar', { label: 'SWP VAR', size: 52, min: 0.4, max: 1, value: 1, cap: 'red', hideVal: true, onChange: v => { S.tvar = v > 0.985 ? 1 : v; if (v > 0.985) K.tvar.val = 1; updateLeds(); } });
+  K.xpos = new Knob('kXPos', { label: '⇔ POSITION', size: 58, min: -6, max: 6, value: 0, fmt: v => (v >= 0 ? '+' : '') + v.toFixed(1) + ' div', onChange: v => { S.xpos = Math.abs(v) < 0.08 ? 0 : v; } });
+  K.level = new Knob('kLevel', { label: 'LEVEL', size: 66, min: -4, max: 4, value: 0, fmt: v => (v >= 0 ? '+' : '') + v.toFixed(1) + ' div', onChange: v => { S.trig.level = v; } });
+  // mode buttons
+  const modes = [['CH1', 'CH1'], ['CH2', 'CH2'], ['DUAL', 'DUAL'], ['ADD', 'ADD']];
+  $('modeBtns').innerHTML = modes.map(([k, l]) => `<button class="pbtn" data-mode="${k}"><span class="led"></span><span class="cap"></span>${l}</button>`).join('');
+  $('modeBtns').querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; click(1); updateLeds(); });
+  // trigger buttons
+  $('trigBtns').innerHTML = `<button class="pbtn" id="bSrc"><span class="led"></span><span class="cap"></span><span id="srcLab">SRC CH1</span></button>
+    <button class="pbtn" id="bSlope"><span class="led"></span><span class="cap"></span><span id="slopeLab">SLOPE +</span></button>
+    <button class="pbtn" id="bTMode"><span class="led"></span><span class="cap"></span><span id="tmodeLab">AUTO</span></button>`;
+  $('bSrc').onclick = () => { const o = ['CH1', 'CH2', 'LINE']; S.trig.src = o[(o.indexOf(S.trig.src) + 1) % 3]; click(1); updateLeds(); };
+  $('bSlope').onclick = () => { S.trig.slope *= -1; click(1); updateLeds(); };
+  $('bTMode').onclick = () => { S.trig.mode = S.trig.mode === 'AUTO' ? 'NORM' : 'AUTO'; click(1); updateLeds(); };
+  $('bInv').onclick = () => { S.ch[1].inv = !S.ch[1].inv; click(1); updateLeds(); };
+  $('bSweep').onclick = () => { S.sweepOn = !S.sweepOn; click(1); updateLeds(); };
+  $('bMag').onclick = () => { S.mag = !S.mag; click(1); updateLeds(); };
+  $('bReadout').onclick = () => { S.readout = !S.readout; click(1); updateLeds(); };
+  const bf = $('bBeamFind');
+  const bfOn = e => { e.preventDefault(); S.beamFind = true; bf.classList.add('held', 'on'); click(1); };
+  const bfOff = () => { S.beamFind = false; bf.classList.remove('held', 'on'); };
+  bf.addEventListener('pointerdown', bfOn); bf.addEventListener('pointerup', bfOff); bf.addEventListener('pointerleave', bfOff); bf.addEventListener('pointercancel', bfOff);
+  $('powerBtn').onclick = () => {
+    S.power = !S.power; click(2);
+    if (S.power) { S.powerAt = performance.now() / 1000; S.phase = 'armed'; S.armedSince = S.t; } else { S.offAt = performance.now() / 1000; pctx.clearRect(0, 0, CV.W, CV.H); }
+    updateLeds();
+  };
+  updateLeds();
+}
+function buildLever(id, opts, get, set) {
+  const host = $(id);
+  host.className = 'lever';
+  host.innerHTML = `<div class="track">${opts.map(o => `<button data-v="${o}">${o}</button>`).join('')}</div>`;
+  host.querySelectorAll('button').forEach(b => b.onclick = () => { set(b.dataset.v); refreshLevers(); });
+  host._refresh = () => host.querySelectorAll('button').forEach(b => b.classList.toggle('sel', b.dataset.v === get()));
+  host._refresh();
+}
+function refreshLevers() { ['lev1', 'lev2'].forEach(i => $(i)._refresh && $(i)._refresh()); }
+function updateLeds() {
+  $('powerLed').classList.toggle('on', S.power);
+  $('modeBtns').querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode && !isXY()));
+  $('bInv').classList.toggle('on', S.ch[1].inv);
+  $('bX10_1').classList.toggle('on', S.ch[0].x10); $('bX10_2').classList.toggle('on', S.ch[1].x10);
+  $('bSweep').classList.toggle('on', S.sweepOn); $('bMag').classList.toggle('on', S.mag); $('bReadout').classList.toggle('on', S.readout);
+  $('srcLab').textContent = 'SRC ' + S.trig.src; $('slopeLab').textContent = 'SLOPE ' + (S.trig.slope > 0 ? '+' : '−'); $('tmodeLab').textContent = S.trig.mode;
+  $('bTMode').classList.toggle('on', S.trig.mode === 'NORM');
+  $('uncal1').querySelector('.led').classList.toggle('on', S.ch[0].vvar < 0.99);
+  $('uncal2').querySelector('.led').classList.toggle('on', S.ch[1].vvar < 0.99);
+  $('uncalT').querySelector('.led').classList.toggle('on', S.tvar < 0.99);
+  refreshLevers();
+  // BNC lights show which probe is plugged
+  $('bncCh1').querySelector('i').classList.toggle('lit', !!S.probe.ch1);
+  $('bncCh2').querySelector('i').classList.toggle('lit', !!S.probe.ch2);
+  $('bncCal').querySelector('i').classList.toggle('lit', S.exp === 'cal' && (S.probe.ch1 === 'K' || S.probe.ch2 === 'K'));
+  $('bncGnd').querySelector('i').classList.toggle('lit', !!S.probe.gnd);
+}
+// Programmatic panel set (missions use this to "mess up" or reset the scope)
+function panelSet(o) {
+  if ('intensity' in o) { S.intensity = o.intensity; K.intensity.set(o.intensity); }
+  if ('focus' in o) { S.focus = o.focus; K.focus.set(o.focus); }
+  if ('pos1' in o) { S.ch[0].pos = o.pos1; K.pos1.set(o.pos1); }
+  if ('pos2' in o) { S.ch[1].pos = o.pos2; K.pos2.set(o.pos2); }
+  if ('xpos' in o) { S.xpos = o.xpos; K.xpos.set(o.xpos); }
+  if ('ti' in o) { S.ti = o.ti; K.time.set(o.ti); }
+  if ('v1' in o) { S.ch[0].vi = o.v1; K.v1.set(o.v1); }
+  if ('v2' in o) { S.ch[1].vi = o.v2; K.v2.set(o.v2); }
+  if ('sweepOn' in o) S.sweepOn = o.sweepOn;
+  if ('mode' in o) S.mode = o.mode;
+  updateLeds();
+}
+
+// ════════════════════════════════════════════════════════════════
+// BENCH UI — circuit select, probes, generator controls
+// ════════════════════════════════════════════════════════════════
+let armedProbe = null;
+const PROBE_COL = { ch1: '#facc15', ch2: '#22d3ee', gnd: '#d4d4d8' };
+function buildBench() {
+  const sel = $('expSelect');
+  const groups = { G9: 'Grade 9', Bridge: 'Grade 10–11 bridge', G12: 'Grade 12' };
+  sel.innerHTML = Object.entries(groups).map(([g, gl]) => `<optgroup label="${gl}">${Object.entries(EXP).filter(([, e]) => e.lvl === g).map(([k, e]) => `<option value="${k}">${e.name}</option>`).join('')}</optgroup>`).join('');
+  sel.onchange = () => loadExp(sel.value);
+  document.querySelectorAll('#probeChips [data-p]').forEach(b => b.onclick = () => { armedProbe = armedProbe === b.dataset.p ? null : b.dataset.p; refreshProbeChips(); });
+  $('unplugAll').onclick = () => { S.probe = { ch1: null, ch2: null, gnd: null }; armedProbe = null; click(1); afterWiring(); };
+  loadExp('none');
+}
+function refreshProbeChips() {
+  document.querySelectorAll('#probeChips [data-p]').forEach(b => b.classList.toggle('armed', armedProbe === b.dataset.p));
+  $('probeHelp').textContent = armedProbe ? `Now tap a terminal for ${armedProbe === 'gnd' ? 'the ground clip ⏚' : armedProbe === 'ch1' ? 'probe Y₁' : 'probe Y₂'} (tap its own terminal again to unplug).` : 'Tap a probe, then tap a terminal on the circuit.';
+}
+function loadExp(id, params) {
+  S.exp = id; const e = EXP[id];
+  S.p = Object.assign({}, e.def || {}, params || {});
+  $('expSelect').value = id;
+  S.probe = { ch1: null, ch2: null, gnd: null }; armedProbe = null;
+  $('expDesc').textContent = e.desc;
+  drawSchem(); buildExpCtrls(); afterWiring();
+}
+function drawSchem() {
+  $('schem').innerHTML = EXP[S.exp].svg(S.p);
+  $('schem').querySelectorAll('.node').forEach(n => n.addEventListener('click', () => {
+    const id = n.dataset.node;
+    if (!armedProbe) { toast('First tap a probe (Y₁, Y₂ or ⏚) above the circuit.'); return; }
+    S.probe[armedProbe] = S.probe[armedProbe] === id ? null : id;
+    click(2); armedProbe = null; afterWiring();
+  }));
+  markProbes();
+}
+function markProbes() {
+  const g = $('schem').querySelector('#probeMarks'); if (!g) return;
+  let h = '';
+  const off = { ch1: [-13, -24], ch2: [13, -24], gnd: [0, 26] };
+  Object.entries(S.probe).forEach(([p, node]) => {
+    if (!node) return;
+    const el = $('schem').querySelector(`.node[data-node="${node}"] circle.dot`); if (!el) return;
+    const x = +el.getAttribute('cx'), y = +el.getAttribute('cy'), [dx, dy] = off[p];
+    h += `<line x1="${x}" y1="${y}" x2="${x + dx}" y2="${y + dy}" stroke="${PROBE_COL[p]}" stroke-width="3"/><circle cx="${x + dx}" cy="${y + dy}" r="9" fill="${PROBE_COL[p]}"/><text x="${x + dx}" y="${y + dy + 4}" text-anchor="middle" font-size="10" font-weight="900" fill="#111">${p === 'ch1' ? 'Y₁' : p === 'ch2' ? 'Y₂' : '⏚'}</text>`;
+  });
+  g.innerHTML = h;
+}
+function afterWiring() { refreshProbeChips(); markProbes(); configChanged(); updateLeds(); }
+function buildExpCtrls() {
+  const e = EXP[S.exp], host = $('expCtrls');
+  host.innerHTML = '';
+  (e.ctrls || []).forEach(c => {
+    if (c.hideIfMystery && S.p.mystery) return;
+    if (S.p.mystery && S.exp === 'gbf' && (c.k === 'f' || c.k === 'Um')) return;
+    if (S.p.mystery && S.exp === 'gen2' && c.k === 'f2') return;
+    if (S.p.mystery && S.exp === 'battery') return;
+    if (S.p.lock && S.p.lock.includes(c.k)) return;
+    const d = document.createElement('div');
+    d.className = 'gbf p-3';
+    const show = () => c.fmt ? c.fmt(S.p[c.k]) : (typeof S.p[c.k] === 'number' ? sig(S.p[c.k]) : S.p[c.k]) + (c.unit ? ' ' + c.unit : '');
+    if (c.type === 'range') {
+      const toS = v => c.log ? Math.log(v / c.min) / Math.log(c.max / c.min) * 1000 : v, frS = s => c.log ? c.min * Math.pow(c.max / c.min, s / 1000) : +s;
+      d.innerHTML = `<div class="flex justify-between items-center mb-2"><span class="text-[11px] font-bold text-zinc-400 uppercase">${c.lab}</span><span class="seg7 text-sm">${show()}</span></div><input type="range" class="rng" min="${c.log ? 0 : c.min}" max="${c.log ? 1000 : c.max}" step="${c.log ? 1 : c.step}" value="${toS(S.p[c.k])}">
+        ${c.log ? `<div class="flex gap-1 mt-2">${[0.5, 0.9, 0.99, 1.01, 1.1, 2].map(m => `<button class="chip !px-2 !py-1" data-m="${m}">${m < 1 ? '÷' + sig(1 / m, 2) : '×' + m}</button>`).join('')}</div>` : ''}`;
+      const inp = d.querySelector('input'), lab = d.querySelector('.seg7');
+      const apply = v => { S.p[c.k] = v; lab.textContent = show(); configChanged(); if (c.redraw !== false) refreshSchemLabels(); };
+      inp.oninput = () => apply(frS(+inp.value));
+      d.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { const v = clamp(S.p[c.k] * +b.dataset.m, c.min, c.max); inp.value = toS(v); apply(v); click(0); });
+    } else if (c.type === 'buttons') {
+      d.innerHTML = `<div class="text-[11px] font-bold text-zinc-400 uppercase mb-2">${c.lab}</div><div class="flex flex-wrap gap-1">${c.opts.map(o => `<button class="chip ${S.p[c.k] === o ? 'sel' : ''}" data-o="${o}">${o}${c.unit ? ' ' + c.unit : ''}</button>`).join('')}</div>`;
+      d.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { const o = c.opts.find(x => String(x) === b.dataset.o); S.p[c.k] = o; d.querySelectorAll('[data-o]').forEach(x => x.classList.toggle('sel', x === b)); click(1); configChanged(); refreshSchemLabels(); });
+    } else if (c.type === 'toggle') {
+      d.innerHTML = `<div class="flex justify-between items-center"><span class="text-[11px] font-bold text-zinc-400 uppercase">${c.lab}</span><button class="chip ${S.p[c.k] ? 'sel' : ''}">${S.p[c.k] ? 'ON' : 'OFF'}</button></div>`;
+      const b = d.querySelector('button'); b.onclick = () => { S.p[c.k] = !S.p[c.k]; b.textContent = S.p[c.k] ? 'ON' : 'OFF'; b.classList.toggle('sel', S.p[c.k]); click(2); configChanged(); drawSchem(); };
+    }
+    host.appendChild(d);
+  });
+  if (!host.children.length) host.innerHTML = '<p class="text-xs text-zinc-500">No adjustable settings on this circuit.</p>';
+}
+let _schemT = null;
+function refreshSchemLabels() { clearTimeout(_schemT); _schemT = setTimeout(drawSchem, 120); }
+
+// ── Stopwatch ───────────────────────────────────────────────────
+const SW = { run: false, t0: 0, acc: 0, laps: [] };
+const swNow = () => SW.acc + (SW.run ? performance.now() - SW.t0 : 0);
+const swFmt = ms => { const s = ms / 1000; return String(Math.floor(s / 60)).padStart(2, '0') + ':' + (s % 60).toFixed(2).padStart(5, '0'); };
+function setupStopwatch() {
+  $('swStart').onclick = () => { if (SW.run) { SW.acc = swNow(); SW.run = false; $('swStart').textContent = 'Start'; } else { SW.t0 = performance.now(); SW.run = true; $('swStart').textContent = 'Stop'; } click(1); };
+  $('swLap').onclick = () => { SW.laps.unshift(swNow()); SW.laps = SW.laps.slice(0, 4); $('swLaps').innerHTML = SW.laps.map((l, i) => `<div>lap ${SW.laps.length - i}: ${swFmt(l)}</div>`).join(''); };
+  $('swReset').onclick = () => { SW.run = false; SW.acc = 0; SW.laps = []; $('swStart').textContent = 'Start'; $('swLaps').innerHTML = ''; };
+}
+
+// ── Main loop (paused when the bench is off-screen) ─────────────
+let scopeVisible = true, lastFrame = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - lastFrame) / 1000); lastFrame = now;
+  if (scopeVisible) renderCRT(dt); else S.t += dt;
+  $('swDisplay').textContent = swFmt(swNow());
+  requestAnimationFrame(loop);
+}
+function startScope() {
+  initCRT(); buildPanel(); buildBench(); setupStopwatch(); setupRuler();
+  new IntersectionObserver(es => es.forEach(e => { scopeVisible = e.isIntersecting; }), { rootMargin: '200px' }).observe($('scopeInstrument'));
+  requestAnimationFrame(t => { lastFrame = t; requestAnimationFrame(loop); });
+}
+
+// ════════════════════════════════════════════════════════════════
+// MISSIONS — auto-checked against the live instrument state
+// ════════════════════════════════════════════════════════════════
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const ready = () => S.power && warm() >= 0.99;
+const wired = (c1, c2, g) => (c1 === undefined || S.probe.ch1 === c1) && (c2 === undefined || S.probe.ch2 === c2) && (g === undefined || S.probe.gnd === g);
+const stable = () => !isXY() && S.sweepOn && performance.now() - S.lastTrig < 400;
+const calOK = () => S.ch[0].vvar === 1 && S.ch[1].vvar === 1 && S.tvar === 1;
+function yRange(ci) {      // displayed min/max (div) of a channel over one period
+  const P = (EXP[S.exp].rep ? EXP[S.exp].rep(S.p) : EXP[S.exp].per(S.p)) || 0.02; let lo = 1e9, hi = -1e9;
+  for (let i = 0; i < 160; i++) { const t = S.t + P * i / 160, V = nodeV(t); let v = chVolts(ci, V, t); if (ci === 1 && S.ch[1].inv) v = -v; const y = v * gainOf(ci) + S.ch[ci].pos; lo = Math.min(lo, y); hi = Math.max(hi, y); }
+  return { lo, hi };
+}
+const onScreen = ci => { const r = yRange(ci); return r.hi <= 4.05 && r.lo >= -4.05; };
+const periodsShown = P => Sh() ? 10 * Sh() / S.tvar / (S.mag ? 10 : 1) / P : 0;
+const phiDeg = () => rlcPhasor(S.p).phi * 180 / Math.PI;
+function centreOK() {
+  if (Math.abs(S.xpos) > 0.25) return false;
+  const ys = isXY() ? [S.ch[1].pos] : S.mode === 'CH2' ? [S.ch[1].pos] : S.mode === 'DUAL' ? [S.ch[0].pos, S.ch[1].pos] : [S.ch[0].pos];
+  return ys.every(y => Math.abs(y) < 0.25);
+}
+const MISSIONS = [
+  // ── GRADE 9 ──
+  { id: 'spot', lvl: 'G9', title: 'Wake the beast: find the spot',
+    story: 'Someone left this scope in a mess: power off, intensity at minimum, focus blurred, and the beam pushed off the screen. Bring a sharp luminous spot to the exact centre, with the sweep OFF.',
+    load() { loadExp('none'); S.power = false; panelSet({ intensity: 0.05, focus: 0.12, pos1: 6.5, pos2: 0, xpos: -3.6, sweepOn: true, mode: 'CH1', ti: 9 }); },
+    objs: [['Switch the POWER on and let the tube warm up', ready], ['Turn the SWEEP off (button in HORIZONTAL)', () => !S.sweepOn || isXY()], ['Raise INTENSITY until you can see it (hold BEAM FIND to locate a lost beam)', () => S.intensity >= 0.25], ['Turn FOCUS until the spot is a sharp dot', () => Math.abs(S.focus - FOCUS_OPT) < 0.06], ['Centre the spot with ⇕ and ⇔ POSITION', () => ready() && (!S.sweepOn || isXY()) && centreOK()]],
+    q: { mcq: { text: 'With the sweep OFF and no voltage applied, the screen shows…', opts: ['a horizontal line', 'a luminous spot at the centre', 'a vertical segment', 'a sine curve'], ans: 1 } },
+    hint: 'Lost beam? Press and hold BEAM FIND: the display shrinks so the spot is always on screen. Its position tells you which POSITION knob to turn.',
+    learn: 'The electron beam hits one point of the phosphor → a luminous spot. Never leave a bright spot still for long: it burns the screen.' },
+  { id: 'move', lvl: 'G9', title: 'Make the spot travel',
+    story: 'Switch the sweep ON at the slowest speed. The X-plates now drag the spot from left to right at constant speed. At the right edge it jumps back invisibly (flyback) and starts again.',
+    load() { loadExp('none'); },
+    objs: [['Power ready, spot visible', () => ready() && S.intensity >= 0.2], ['SWEEP on', () => S.sweepOn && !isXY()], ['TIME/DIV on 0.5 s/div (fully slow), VAR on CAL', () => S.ti === 1 && S.tvar === 1], ['Time one full crossing with the stopwatch', () => swNow() > 1500 && !SW.run]],
+    q: { fields: [{ label: 'Time for the spot to cross the 10 divisions', unit: 's', ans: () => 5, tol: 0.15 }] },
+    hint: 'Start the stopwatch when the spot appears at the left edge and stop it when it disappears at the right. Divide by 10: that is the time per division.',
+    learn: '10 div × 0.5 s/div = 5 s. The horizontal sensitivity Sh is the TIME the spot takes to cross ONE division.' },
+  { id: 'line', lvl: 'G9', title: 'From a spot to a line',
+    story: 'Now speed the sweep up, click by click. At some speed your eye can no longer follow the spot…',
+    load() { loadExp('none'); },
+    objs: [['Sweep on, spot visible', () => ready() && S.sweepOn && !isXY()], ['Reach 50 ms/div: notice the flicker', () => S.sweepOn && S.ti >= 4], ['Reach 1 ms/div or faster: a steady line', () => S.sweepOn && S.ti >= 9 && !isXY()]],
+    q: { mcq: { text: 'Why do you see a continuous line at 1 ms/div?', opts: ['The beam splits into many beams', 'The spot moves so fast that the phosphor glow and the persistence of vision join its positions into a line', 'The X-plates switch off', 'The intensity rises automatically'], ans: 1 } },
+    hint: 'Each point of the phosphor keeps glowing a few hundredths of a second, and your eye keeps an image for ~0.05 s.',
+    learn: 'A "line" is just a very fast spot. Everything you will see on a scope is drawn by one moving spot.' },
+  { id: 'dc', lvl: 'G9', title: 'The mystery battery',
+    story: 'A cell whose label was torn off 🩹. Find its voltage using only the oscilloscope. Professionals always set the zero reference first.',
+    load() { this.secret = { E: pick([1.5, 3, 4.5, 6, 9]) }; loadExp('battery', { E: this.secret.E, mystery: true }); panelSet({ v1: 2, pos1: 1.3, mode: 'CH1', sweepOn: true, ti: 9 }); },
+    objs: [['Power ready, sweep on (a line)', () => ready() && S.sweepOn && !isXY()], ['Coupling CH1 on GND → put the line exactly on the centre axis', () => S.ch[0].coup === 'GND' && Math.abs(S.ch[0].pos) < 0.12], ['Clip Y₁ on + and the ground ⏚ on −', () => wired('P', undefined, 'N')], ['Coupling back to DC', () => S.ch[0].coup === 'DC'], ['Choose VOLTS/DIV so the line is between 1.5 and 4 div high (VAR on CAL)', () => { if (!wired('P', undefined, 'N') || S.ch[0].coup !== 'DC' || S.ch[0].vvar !== 1) return false; const r = yRange(0); return r.hi <= 4.05 && r.lo >= 1.5; }]],
+    q: { fields: [{ label: 'Battery voltage U', unit: 'V', ans: m => m.secret.E, tol: 0.06 }] },
+    hint: 'Count the divisions y between the centre line and the trace, then U = y × Sv. If the line leaves the screen, increase VOLTS/DIV.',
+    learn: 'U = y × Sv. The line jumped UP because the + terminal is on Y₁: the scope measures u = V(Y₁) − V(ground).' },
+  { id: 'reverse', lvl: 'G9', title: 'Swap the wires',
+    story: 'Same 4.5 V cell. What if Y₁ goes on the − terminal and the ground on +?',
+    load() { loadExp('battery', { E: 4.5 }); },
+    objs: [['Power ready, sweep on', () => ready() && S.sweepOn && !isXY()], ['Y₁ on −, ground ⏚ on +', () => wired('N', undefined, 'P')], ['DC coupling, trace on screen', () => S.ch[0].coup === 'DC' && onScreen(0)]],
+    q: { mcq: { text: 'Compared to before, the line is now…', opts: ['higher than before', 'below the centre line: the scope reads U = −4.5 V', 'on the centre line', 'vertical'], ans: 1 } },
+    hint: 'u = V(Y₁) − V(⏚) = V(−) − V(+).',
+    learn: 'An oscilloscope shows the SIGN of a voltage: up = positive, down = negative.' },
+  { id: 'acoff', lvl: 'G9', title: 'AC with the sweep OFF',
+    story: "A sinusoidal generator at 50 Hz, its display covered with tape. Switch the sweep OFF and look: the spot can't decide where to stay.",
+    load() { this.secret = { Um: pick([3, 4, 5, 6]) }; loadExp('gbf', { wave: 'sine', f: 50, Um: this.secret.Um, mystery: true }); },
+    objs: [['Power ready', ready], ['Y₁ on OUT, ⏚ on COM', () => wired('O', undefined, 'C')], ['SWEEP off', () => !S.sweepOn && !isXY()], ['Coupling DC or AC (not GND)', () => S.ch[0].coup !== 'GND'], ['Whole segment visible on the screen', () => wired('O', undefined, 'C') && !S.sweepOn && S.ch[0].coup !== 'GND' && onScreen(0) && S.ch[0].vvar === 1]],
+    q: { fields: [{ label: 'Maximum voltage Um', unit: 'V', ans: m => m.secret.Um, tol: 0.08 }] },
+    hint: 'The segment goes from −Um to +Um, so its length is 2·Um/Sv divisions.',
+    learn: 'The spot moves up and down 50 times a second: you see a vertical segment of length 2Um/Sv.' },
+  { id: 'sine', lvl: 'G9', title: 'Decode the mystery generator',
+    story: 'Frequency AND amplitude hidden under tape 🩹. Make a stable sinusoid with 1 to 4 periods on the screen, then read f and Um.',
+    load() { this.secret = { f: pick([50, 80, 100, 125, 200, 250, 400, 500]), Um: pick([2, 2.5, 3, 4, 5, 6]) }; loadExp('gbf', { wave: 'sine', f: this.secret.f, Um: this.secret.Um, mystery: true }); },
+    objs: [['Power ready, Y₁ on OUT, ⏚ on COM', () => ready() && wired('O', undefined, 'C')], ['Sweep on, trace stable (TRIG\'D LED lit)', stable], ['Between 1 and 4 periods on screen', () => { const n = periodsShown(1 / S.p.f); return n >= 1 && n <= 4.2; }], ['Peaks inside the screen, VAR knobs on CAL', () => onScreen(0) && calOK() && S.ch[0].coup !== 'GND']],
+    q: { fields: [{ label: 'Frequency f', unit: 'Hz', ans: m => m.secret.f, tol: 0.08 }, { label: 'Maximum voltage Um', unit: 'V', ans: m => m.secret.Um, tol: 0.08 }] },
+    hint: 'Count x divisions for one period: T = x × Sh, then f = 1/T. Count y divisions from the centre to a peak: Um = y × Sv.',
+    learn: 'T = x·Sh · f = 1/T · Um = y·Sv. You just did what an electronics engineer does every day.' },
+  { id: 'mains', lvl: 'G9', title: 'The wall socket (safely!)',
+    story: 'Never connect a scope to 220 V directly. A step-down transformer gives you a safe copy of the mains. Lebanon runs at 50 Hz; let\'s check.',
+    load() { loadExp('mains'); },
+    objs: [['Power ready, probes on S1 and S2 (one each)', () => ready() && ((wired('S1', undefined, 'S2')) || (wired('S2', undefined, 'S1')))], ['Stable trace (try trigger source LINE)', stable], ['1 to 4 periods visible, peaks inside the screen', () => { const n = periodsShown(0.02); return n >= 1 && n <= 4.2 && onScreen(0) && calOK(); }]],
+    q: { fields: [{ label: 'Maximum voltage Um', unit: 'V', ans: () => MAINS_VP, tol: 0.07 }, { label: 'Effective voltage Ueff', unit: 'V', ans: () => 12, tol: 0.07 }] },
+    hint: 'Ueff = Um / √2. A good S_h is 5 ms/div: one period = 4 div.',
+    learn: 'Um ≈ 17 V, Ueff ≈ 12 V (what the transformer label says), T = 20 ms → f = 50 Hz. Notice the slightly flat top: that is real mains distortion.' },
+  // ── BRIDGE (G10–11) ──
+  { id: 'offset', lvl: 'Bridge', title: 'DC hiding under AC',
+    story: 'This generator adds a hidden DC offset to a square wave. AC coupling blocks DC with a capacitor; DC coupling shows everything. Use both to find the offset.',
+    load() { this.secret = { off: pick([1.5, 2, 2.5, 3]) }; loadExp('gbf', { wave: 'square', f: 200, Um: 2, off: this.secret.off, mystery: true, lock: ['off', 'wave'] }); },
+    objs: [['Power ready, Y₁ on OUT, ⏚ on COM', () => ready() && wired('O', undefined, 'C')], ['Look at it in DC coupling (stable)', () => S.ch[0].coup === 'DC' && stable()], ['Look at it in AC coupling (stable)', () => S.ch[0].coup === 'AC' && stable()]],
+    q: { fields: [{ label: 'DC offset of the signal', unit: 'V', ans: m => m.secret.off, tol: 0.1 }] },
+    hint: 'In AC coupling the square wave is centred on 0. In DC it is lifted by the offset. Measure the shift of its middle (or compare the zero with GND coupling).',
+    learn: 'DC coupling = whole signal. AC coupling = signal − its average. Engineers use AC coupling to zoom into a small ripple riding on a big DC level.' },
+  { id: 'lissajous', lvl: 'Bridge', title: 'Lissajous figures',
+    story: 'Two generators. LFG-1 at 100 Hz is on X, the mystery LFG-2 is on Y. Switch the time base to X-Y: the figure tells you the frequency ratio.',
+    load() { this.secret = { f2: pick([100, 150, 200, 300]) }; loadExp('gen2', { f1: 100, f2: this.secret.f2, mystery: true }); },
+    objs: [['Power ready, Y₁ → G1, Y₂ → G2, ⏚ → M', () => ready() && wired('G1', 'G2', 'M')], ['TIME/DIV fully anticlockwise: X-Y', isXY], ['Whole figure on the screen', () => isXY() && onScreen(1) && Math.abs(S.p.U1 * gainOf(0)) + Math.abs(S.xpos) <= 5.05]],
+    q: { fields: [{ label: 'Frequency of LFG-2', unit: 'Hz', ans: m => m.secret.f2, tol: 0.03 }] },
+    hint: 'Count where the figure touches a horizontal edge (n_h) and a vertical edge (n_v). f_Y / f_X = n_h / n_v.',
+    learn: 'f_Y/f_X = (horizontal tangent points)/(vertical tangent points). Before frequency counters, this was how frequencies were compared.' },
+  { id: 'rect', lvl: 'Bridge', title: 'Rectify and smooth',
+    story: 'A diode only lets current pass one way. Watch the 12 V sinusoid lose its negative halves, then add a capacitor and see the humps almost disappear.',
+    load() { loadExp('rect'); },
+    objs: [['Power ready, Y₁ on K, ⏚ on M', () => ready() && wired('K', undefined, 'M')], ['Stable half-wave pattern without the capacitor', () => !S.p.cap && stable()], ['Switch the smoothing capacitor ON', () => S.p.cap && stable()]],
+    q: { fields: [{ label: 'Peak voltage across R', unit: 'V', ans: () => MAINS_VP - 0.7, tol: 0.07 }] },
+    hint: 'The diode "eats" about 0.7 V. Read y at the top of a hump, U = y × Sv.',
+    learn: 'This is the first stage of every phone charger: transformer → diode → capacitor.' },
+  // ── GRADE 12 ──
+  { id: 'rc', lvl: 'G12', title: 'Time constant of an RC circuit',
+    story: 'R = 1 kΩ is known; C is hidden. Show u_G on Y₁ and u_C on Y₂, slow the generator until u_C reaches its plateau, then measure τ.',
+    load() { this.secret = { C: pick([0.47e-6, 1e-6, 2.2e-6, 4.7e-6]) }; loadExp('rc', { R: 1000, C: this.secret.C, mystery: true, lock: ['R'] }); },
+    objs: [['Power ready, Y₁ → A, Y₂ → B, ⏚ → M', () => ready() && wired('A', 'B', 'M')], ['DUAL mode, stable', () => S.mode === 'DUAL' && stable()], ['u_C reaches E before each edge (lower the generator frequency)', () => 1 / (2 * S.p.f) >= 5 * S.p.R * S.p.C], ['Both traces on screen, VAR on CAL', () => onScreen(0) && onScreen(1) && calOK()]],
+    q: { fields: [{ label: 'Time constant τ', unit: 'ms', ans: m => 1000 * 1000 * m.secret.C, tol: 0.12 }, { label: 'Capacitance C', unit: 'µF', ans: m => m.secret.C * 1e6, tol: 0.12 }] },
+    hint: 'At t = τ, u_C = 0.63 E. Find where the charging curve reaches 63 % of its height (×10 MAG helps), then C = τ / R.',
+    learn: 'τ = RC: at t = τ the capacitor has 63 % of its final voltage; after 5τ it is practically full.' },
+  { id: 'rl', lvl: 'G12', title: 'The coil slows the current',
+    story: 'R = 100 Ω, coil resistance r = 10 Ω, inductance hidden. Y₂ on B shows u_R = R·i, the image of the current. Measure τ and find L.',
+    load() { this.secret = { L: pick([0.1, 0.22, 0.47]) }; loadExp('rl', { R: 100, r: 10, L: this.secret.L, mystery: true, lock: ['R'] }); },
+    objs: [['Power ready, Y₂ → B, ⏚ → M', () => ready() && wired(undefined, 'B', 'M')], ['CH2 displayed, stable', () => (S.mode === 'CH2' || S.mode === 'DUAL') && stable()], ['The current reaches its plateau (lower the frequency)', () => 1 / (2 * S.p.f) >= 5 * S.p.L / (S.p.R + S.p.r)], ['Trace on screen, VAR on CAL', () => onScreen(1) && calOK()]],
+    q: { fields: [{ label: 'Time constant τ', unit: 'ms', ans: m => 1000 * m.secret.L / 110, tol: 0.12 }, { label: 'Inductance L', unit: 'H', ans: m => m.secret.L, tol: 0.12 }] },
+    hint: 'u_R reaches 63 % of its plateau at t = τ. Then L = τ · (R + r).',
+    learn: 'τ = L/(R+r). The coil opposes any change of current (self-induction), so i cannot jump.' },
+  { id: 'free', lvl: 'G12', title: 'Free damped oscillations',
+    story: 'Each edge of a slow square wave lets C discharge through the coil: energy sloshes between C and L while R slowly eats it. C is hidden.',
+    load() { this.secret = { C: pick([0.47e-6, 1e-6, 2.2e-6]) }; loadExp('rlcfree', { C: this.secret.C, mystery: true, R: 10, f: 10 }); },
+    objs: [['Power ready, Y₁ or Y₂ on B, ⏚ on M', () => ready() && (S.probe.ch1 === 'B' || S.probe.ch2 === 'B') && S.probe.gnd === 'M'], ['Stable trace showing at least 3 oscillations (slow signals need NORM trigger)', () => { const T0 = TAU * Math.sqrt(S.p.L * S.p.C); const n = periodsShown(T0); return stable() && n >= 3 && n <= 14; }], ['Increase R until the oscillations disappear (aperiodic regime)', () => S.p.R + S.p.r >= 2 * Math.sqrt(S.p.L / S.p.C)]],
+    q: { fields: [{ label: 'Pseudo-period T (with the small R = 10 Ω)', unit: 'ms', ans: m => { const l = 20 / 0.2, w0 = 1 / Math.sqrt(0.1 * m.secret.C); return 1000 * TAU / Math.sqrt(w0 * w0 - l * l); }, tol: 0.08 }] },
+    hint: 'Measure several oscillations at once (e.g. 3T) and divide: it is far more precise. Set R back to 10 Ω before measuring.',
+    learn: 'T ≈ T₀ = 2π√(LC) when damping is weak. Above the critical resistance R_c = 2√(L/C) there is no oscillation at all.' },
+  { id: 'phase', lvl: 'G12', title: 'Who leads: u_G or i?',
+    story: 'RLC series at 300 Hz. Y₁ on A shows u_G; Y₂ on B shows u_R = R·i, the image of the current. Measure the time shift between them.',
+    load() { loadExp('rlcac', { f: 300, C: 1e-6, R: 100, lock: ['f', 'C', 'R'] }); },
+    objs: [['Power ready, Y₁ → A, Y₂ → B, ⏚ → M', () => ready() && wired('A', 'B', 'M')], ['DUAL, stable, trigger on CH1', () => S.mode === 'DUAL' && stable() && S.trig.src === 'CH1'], ['1 to 2 periods shown, both traces on screen', () => { const n = periodsShown(1 / S.p.f); return n >= 0.9 && n <= 2.2 && onScreen(0) && onScreen(1) && calOK(); }]],
+    q: { fields: [{ label: '|φ| between u_G and i', unit: '°', ans: () => Math.abs(phiDeg()), tol: 0.1 }, { label: 'Which one leads?', select: ['u_G leads i', 'i leads u_G'], ans: () => (phiDeg() < 0 ? 1 : 0) }] },
+    hint: '|φ| = 360° × d / T, where d is the time shift between two corresponding peaks. The curve whose peak comes first (further LEFT) leads.',
+    learn: 'Below resonance the capacitor dominates: the current leads the voltage.' },
+  { id: 'resonance', lvl: 'G12', title: 'Hunt the resonance',
+    story: 'C is hidden. Turn the generator frequency until u_G and i are exactly in phase: that is current resonance. Then confirm it the pro way, in X-Y.',
+    load() { this.secret = { C: pick([0.47e-6, 1e-6, 2.2e-6]) }; loadExp('rlcac', { f: 150, C: this.secret.C, mystery: true }); },
+    objs: [['Power ready, Y₁ → A, Y₂ → B, ⏚ → M', () => ready() && wired('A', 'B', 'M')], ['Bring u_G and u_R in phase (|φ| < 3°)', () => wired('A', 'B', 'M') && Math.abs(phiDeg()) < 3], ['Confirm in X-Y: the ellipse closes into a straight line', () => isXY() && wired('A', 'B', 'M') && Math.abs(phiDeg()) < 5]],
+    q: { fields: [{ label: 'Resonance frequency f₀', unit: 'Hz', ans: m => 1 / (TAU * Math.sqrt(0.1 * m.secret.C)), tol: 0.04 }] },
+    hint: 'Watch two peaks: when they line up exactly, the amplitude of u_R is also at its maximum. Fine-tune with the ×1.01 buttons. Read f on the generator.',
+    learn: 'At resonance Lω = 1/(Cω), so f₀ = 1/(2π√(LC)): the impedance is just R + r and the current is maximal.' }
+];
+const MS = { cur: 0, lvl: 'G9', done: {}, ticks: {}, attempts: {}, points: {}, answers: {}, loaded: {} };
+const LVL = { G9: 'Grade 9', Bridge: 'Grade 10–11', G12: 'Grade 12' };
+function buildMissions() {
+  $('mMax').textContent = MISSIONS.length * 10;
+  $('levelTabs').innerHTML = Object.entries(LVL).map(([k, l]) => `<button class="chip" data-l="${k}">${l}</button>`).join('');
+  $('levelTabs').querySelectorAll('[data-l]').forEach(b => b.onclick = () => { MS.lvl = b.dataset.l; selectMission(MISSIONS.findIndex(m => m.lvl === MS.lvl)); });
+  $('mLoadBtn').onclick = () => { const m = MISSIONS[MS.cur]; m.load(); MS.loaded[m.id] = true; MS.ticks[m.id] = {}; renderObjs(); renderQuestion(); click(2); toast('Circuit loaded on the bench ↓'); };
+  $('mHintBtn').onclick = () => { const h = $('mHint'); h.textContent = '💡 ' + MISSIONS[MS.cur].hint; h.classList.toggle('hidden'); };
+  selectMission(0);
+  setInterval(tickMissions, 300);
+}
+function selectMission(i) {
+  MS.cur = i; const m = MISSIONS[i]; MS.lvl = m.lvl;
+  $('levelTabs').querySelectorAll('[data-l]').forEach(b => b.classList.toggle('sel', b.dataset.l === MS.lvl));
+  $('missionChips').innerHTML = MISSIONS.map((x, j) => x.lvl === MS.lvl ? `<button class="chip ${j === i ? 'sel' : ''} ${MS.done[x.id] ? 'done' : ''}" data-i="${j}">${MS.done[x.id] ? '✓ ' : ''}${j + 1}. ${x.title}</button>` : '').join('');
+  $('missionChips').querySelectorAll('[data-i]').forEach(b => b.onclick = () => selectMission(+b.dataset.i));
+  $('mTitle').textContent = `Mission ${i + 1} · ${m.title}`; $('mStory').textContent = m.story;
+  $('mHint').classList.add('hidden'); $('mFeedback').textContent = '';
+  $('mLoadBtn').textContent = MS.loaded[m.id] ? '↺ Reload the circuit' : '🔌 Load this mission\'s circuit';
+  MS.ticks[m.id] = MS.ticks[m.id] || {};
+  renderObjs(); renderQuestion();
+}
+function renderObjs() {
+  const m = MISSIONS[MS.cur], tk = MS.ticks[m.id] || {};
+  $('mObjs').innerHTML = m.objs.map(([txt], k) => `<div class="obj ${tk[k] || MS.done[m.id] ? 'ok' : ''}" data-k="${k}"><span class="tick">✓</span><span>${txt}</span></div>`).join('');
+}
+function tickMissions() {
+  const m = MISSIONS[MS.cur]; if (!m || MS.done[m.id] || !MS.loaded[m.id]) return;
+  const tk = MS.ticks[m.id]; let changed = false;
+  m.objs.forEach(([, fn], k) => { if (!tk[k]) { let ok = false; try { ok = fn(); } catch (e) {} if (ok) { tk[k] = true; changed = true; click(1); } } });
+  if (changed) { renderObjs(); renderQuestion(); }
+}
+function renderQuestion() {
+  const m = MISSIONS[MS.cur], host = $('mQuestion');
+  const allOk = m.objs.every((_, k) => (MS.ticks[m.id] || {})[k]);
+  if (MS.done[m.id]) { host.innerHTML = `<p class="text-emerald-300 font-bold">✓ Mission complete · +${MS.points[m.id]} pts</p><p class="text-sm text-zinc-300 mt-2">${m.learn}</p>${MS.cur < MISSIONS.length - 1 ? '<button class="chip mt-3" id="mNext">Next mission →</button>' : ''}`; const n = $('mNext'); if (n) n.onclick = () => selectMission(MS.cur + 1); return; }
+  if (!MS.loaded[m.id]) { host.innerHTML = `<p class="text-sm text-zinc-400">Press <b class="text-zinc-200">🔌 Load this mission's circuit</b> to put it on the bench. Then tick every objective using the real controls.</p>`; return; }
+  if (!allOk) { host.innerHTML = `<p class="text-sm text-zinc-400">Complete the objectives on the left. They tick themselves when the scope is set up correctly. Then the measurement unlocks.</p>`; return; }
+  let h = '';
+  if (m.q.mcq) h = `<p class="text-sm font-semibold text-white mb-2">${m.q.mcq.text}</p>` + m.q.mcq.opts.map((o, k) => `<label class="flex items-center gap-2 p-2 rounded-xl border border-zinc-700 mb-1 cursor-pointer hover:bg-zinc-800 text-sm text-zinc-300"><input type="radio" name="mq" value="${k}" class="accent-emerald-500">${o}</label>`).join('');
+  else h = m.q.fields.map((f, k) => f.select ? `<label class="block text-[11px] font-bold text-zinc-400 uppercase mb-1 mt-2">${f.label}</label><select class="num-in" data-f="${k}">${f.select.map((o, j) => `<option value="${j}">${o}</option>`).join('')}</select>` : `<label class="block text-[11px] font-bold text-zinc-400 uppercase mb-1 mt-2">${f.label} (${f.unit})</label><input class="num-in" data-f="${k}" inputmode="decimal" placeholder="your value">`).join('');
+  host.innerHTML = h + `<button id="mCheck" class="mt-3 w-full bg-emerald-600 hover:bg-emerald-500 rounded-xl py-2.5 font-bold text-sm">Check my measurement</button>`;
+  $('mCheck').onclick = checkMission;
+}
+function checkMission() {
+  const m = MISSIONS[MS.cur]; MS.attempts[m.id] = (MS.attempts[m.id] || 0) + 1;
+  let ok = true, given = [];
+  if (m.q.mcq) { const s = document.querySelector('input[name="mq"]:checked'); if (!s) { toast('Choose an answer first.'); MS.attempts[m.id]--; return; } given.push(m.q.mcq.opts[+s.value]); ok = +s.value === m.q.mcq.ans; }
+  else for (const [k, f] of m.q.fields.entries()) {
+    const el = document.querySelector(`[data-f="${k}"]`);
+    if (f.select) { given.push(f.select[+el.value]); if (+el.value !== f.ans(m)) ok = false; continue; }
+    const v = parseFloat(String(el.value).replace(',', '.'));
+    if (!isFinite(v)) { toast('Type a number in every box.'); MS.attempts[m.id]--; return; }
+    given.push(v + ' ' + f.unit);
+    const a = f.ans(m); if (Math.abs(v - a) > Math.abs(a) * f.tol + 1e-9) ok = false;
+  }
+  MS.answers[m.id] = given.join(' | ');
+  if (ok) {
+    const n = MS.attempts[m.id], pts = n === 1 ? 10 : n === 2 ? 7 : 5;
+    MS.done[m.id] = true; MS.points[m.id] = pts; click(2);
+    $('mFeedback').innerHTML = `<span class="text-emerald-400 font-bold">✓ Correct! +${pts} points</span>`;
+    updateMissionPoints(); selectMission(MS.cur); markE5();
+  } else {
+    $('mFeedback').innerHTML = `<span class="text-rose-400 font-bold">✗ Not quite (attempt ${MS.attempts[m.id]}).</span> <span class="text-zinc-400">Re-check your divisions and the sensitivity. ${MS.attempts[m.id] >= 2 ? 'Try the 💡 hint or ask the Scope Coach.' : ''}</span>`;
+  }
+}
+const missionScore = () => Object.values(MS.points).reduce((a, b) => a + b, 0);
+function updateMissionPoints() { $('mPoints').textContent = missionScore(); }
+
+// ════════════════════════════════════════════════════════════════
+// NOTEBOOK (Explain) — auto-filled table + live graph
+// ════════════════════════════════════════════════════════════════
+const NB = { tab: 'tf', tf: [], res: [] };
+function buildNotebook() {
+  document.querySelectorAll('[data-nb]').forEach(b => b.onclick = () => { NB.tab = b.dataset.nb; document.querySelectorAll('[data-nb]').forEach(x => x.classList.toggle('sel', x === b)); renderNB(); });
+  $('nbRecord').onclick = recordNB; $('nbIn').addEventListener('keydown', e => { if (e.key === 'Enter') recordNB(); });
+  renderNB();
+}
+function renderNB() {
+  const tf = NB.tab === 'tf';
+  $('nbIntro').innerHTML = tf ? 'Put the <b class="text-zinc-200">LFG</b> (not a mystery one) on the bench, sine, any frequency. Get a stable trace, count <b>x</b> = divisions for one period, then record. Repeat with at least 4 different frequencies.'
+    : 'Load <b class="text-zinc-200">RLC series — forced</b>. Y₂ on B, ⏚ on M. For each frequency, read <b>y</b> = peak height of u_R in divisions on CH2. Record at least 6 frequencies on both sides of the peak.';
+  $('nbInLabel').textContent = tf ? 'x = divisions for one period' : 'y = peak height of u_R (div, CH2)';
+  const rows = NB[NB.tab];
+  $('nbTable').innerHTML = tf
+    ? `<tr><th>#</th><th>f (LFG)</th><th>S_h</th><th>x (div)</th><th>T = x·S_h</th><th>f = 1/T</th><th>gap</th></tr>` + rows.map((r, i) => `<tr><td>${i + 1}</td><td>${fmtF(r.f)}</td><td>${fmtT(r.sh)}</td><td>${r.x}</td><td>${fmtT(r.T)}</td><td>${fmtF(1 / r.T)}</td><td>${sig(100 * Math.abs(1 / r.T - r.f) / r.f, 2)}%</td></tr>`).join('')
+    : `<tr><th>#</th><th>f</th><th>S_v (CH2)</th><th>y (div)</th><th>U_Rm</th><th>I_m = U_Rm/R</th></tr>` + rows.map((r, i) => `<tr><td>${i + 1}</td><td>${fmtF(r.f)}</td><td>${fmtVdiv(r.vi)}</td><td>${r.y}</td><td>${fmtV(r.U)}</td><td>${sig(r.I * 1000)} mA</td></tr>`).join('');
+  drawNBGraph(); nbConclusion();
+}
+function recordNB() {
+  const v = parseFloat(String($('nbIn').value).replace(',', '.')); const msg = $('nbMsg'); msg.textContent = '';
+  if (!isFinite(v) || v <= 0) { msg.textContent = 'Type the number of divisions you read on the screen.'; return; }
+  if (NB.tab === 'tf') {
+    if (S.exp !== 'gbf' || S.p.mystery) { msg.textContent = 'Put a normal LFG on the bench first (Circuit bench → Low-frequency generator).'; return; }
+    if (!Sh() || !S.sweepOn) { msg.textContent = 'Switch the sweep on and choose a TIME/DIV.'; return; }
+    if (S.tvar !== 1) { msg.textContent = 'Your SWP VAR knob is not on CAL: the time base is wrong!'; return; }
+    NB.tf.push({ f: S.p.f, sh: Sh() / (S.mag ? 10 : 1), x: v, T: v * Sh() / (S.mag ? 10 : 1) });
+  } else {
+    if (S.exp !== 'rlcac') { msg.textContent = 'Load "RLC series — forced (AC)" on the bench.'; return; }
+    if (!wired(undefined, 'B', 'M')) { msg.textContent = 'Y₂ must be on B and the ground on M.'; return; }
+    if (S.ch[1].vvar !== 1) { msg.textContent = 'CH2 VAR is not on CAL: your volts are wrong!'; return; }
+    const U = v * Sv(1) * (S.ch[1].x10 ? 10 : 1);
+    NB.res.push({ f: S.p.f, vi: S.ch[1].vi, y: v, U, I: U / S.p.R, R: S.p.R, L: S.p.L, C: S.p.C });
+    NB.res.sort((a, b) => a.f - b.f);
+  }
+  $('nbIn').value = ''; click(1); renderNB(); markE5();
+}
+function drawNBGraph() {
+  const c = $('nbGraph'), x = c.getContext('2d'), W = c.width, H = c.height, L = 62, B = 46, T = 16, R = 16;
+  x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+  const tf = NB.tab === 'tf', rows = NB[NB.tab];
+  const pts = tf ? rows.map(r => [r.f, 1 / r.T]) : rows.map(r => [r.f, r.I * 1000]);
+  let xmax = Math.max(1, ...pts.map(p => p[0])) * 1.12, ymax = Math.max(1e-9, ...pts.map(p => p[1])) * 1.15;
+  if (tf) xmax = ymax = Math.max(xmax, ymax);
+  const X = v => L + (W - L - R) * v / xmax, Y = v => H - B - (H - B - T) * v / ymax;
+  x.strokeStyle = '#27272a'; x.lineWidth = 1; x.fillStyle = '#71717a'; x.font = '11px JetBrains Mono';
+  for (let i = 0; i <= 5; i++) { const gx = L + (W - L - R) * i / 5, gy = H - B - (H - B - T) * i / 5; x.beginPath(); x.moveTo(gx, T); x.lineTo(gx, H - B); x.moveTo(L, gy); x.lineTo(W - R, gy); x.stroke(); x.textAlign = 'center'; x.fillText(sig(xmax * i / 5, 3), gx, H - B + 16); x.textAlign = 'right'; x.fillText(sig(ymax * i / 5, 3), L - 6, gy + 4); }
+  x.fillStyle = '#a1a1aa'; x.textAlign = 'center'; x.font = 'bold 12px Plus Jakarta Sans'; x.fillText(tf ? 'f set on the LFG (Hz)' : 'generator frequency f (Hz)', (L + W - R) / 2, H - 10);
+  x.save(); x.translate(16, (T + H - B) / 2); x.rotate(-Math.PI / 2); x.fillText(tf ? 'f = 1/T measured (Hz)' : 'I_m (mA)', 0, 0); x.restore();
+  if (tf) { x.strokeStyle = 'rgba(56,189,248,.5)'; x.setLineDash([6, 6]); x.beginPath(); x.moveTo(X(0), Y(0)); x.lineTo(X(xmax), Y(xmax)); x.stroke(); x.setLineDash([]); }
+  else if (pts.length > 1) { x.strokeStyle = 'rgba(52,211,153,.7)'; x.lineWidth = 2; x.beginPath(); pts.forEach((p, i) => i ? x.lineTo(X(p[0]), Y(p[1])) : x.moveTo(X(p[0]), Y(p[1]))); x.stroke(); }
+  pts.forEach(p => { x.fillStyle = tf ? '#38bdf8' : '#34d399'; x.shadowBlur = 10; x.shadowColor = x.fillStyle; x.beginPath(); x.arc(X(p[0]), Y(p[1]), 5, 0, TAU); x.fill(); x.shadowBlur = 0; });
+  if (!pts.length) { x.fillStyle = '#52525b'; x.textAlign = 'center'; x.font = '13px Plus Jakarta Sans'; x.fillText('Your recorded points will appear here.', W / 2, H / 2); }
+}
+function nbConclusion() {
+  const el = $('nbConclusion');
+  if (NB.tab === 'tf') {
+    if (NB.tf.length < 4) { el.textContent = `${NB.tf.length}/4 points so far.`; el.className = 'text-sm text-zinc-500 mt-3'; return; }
+    const e = NB.tf.reduce((s, r) => s + Math.abs(1 / r.T - r.f) / r.f, 0) / NB.tf.length * 100;
+    el.className = 'text-sm text-emerald-300 mt-3'; el.textContent = `Your points lie on the line y = x (mean gap ${sig(e, 2)} %): f = 1/T is verified. ${e > 10 ? 'Gaps above 10 % mean the period was read loosely. Spread one period over more divisions!' : 'Excellent reading precision.'}`;
+  } else {
+    if (NB.res.length < 6) { el.textContent = `${NB.res.length}/6 points so far.`; el.className = 'text-sm text-zinc-500 mt-3'; return; }
+    const best = NB.res.reduce((a, b) => b.I > a.I ? b : a), r0 = NB.res[NB.res.length - 1], f0 = 1 / (TAU * Math.sqrt(r0.L * r0.C));
+    el.className = 'text-sm text-emerald-300 mt-3'; el.textContent = `Your curve peaks near ${fmtF(best.f)}. Theory: f₀ = 1/(2π√(LC)) = ${fmtF(f0)}. At resonance I_m is maximal and equals Um/(R + r).`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// BONUS GAME — Ghost Match (Section J)
+// ════════════════════════════════════════════════════════════════
+const GL = [
+  { sig: { kind: 'dc', U: 3 }, tgt: { vi: 2, ti: 9, pos: 0 }, start: { vi: 0, ti: 9, pos: 0 }, ctrls: ['vi'], info: 'Signal: DC, U = 3 V', hint: 'The ghost is 3 div above the centre. U = y × Sv → Sv = 3 V ÷ 3 div.' },
+  { sig: { kind: 'sine', U: 4, f: 250 }, tgt: { vi: 1, ti: 9, pos: 0 }, start: { vi: 0, ti: 6, pos: 0 }, ctrls: ['vi', 'ti'], info: 'Signal: sine, Um = 4 V, f = 250 Hz', hint: 'Ghost: peak at 2 div → Sv = 4/2. One period over 4 div; T = 1/250 = 4 ms → Sh = 4 ms ÷ 4 div.' },
+  { sig: { kind: 'square', U: 6, f: 500 }, tgt: { vi: 1, ti: 10, pos: -1.5 }, start: { vi: 0, ti: 7, pos: 0 }, ctrls: ['vi', 'ti', 'pos'], info: 'Signal: square 0 → 6 V, f = 500 Hz', hint: 'Ghost: 3 div tall from −1.5 to +1.5 → Sv = 6/3 and POS = −1.5. Period over 4 div; T = 2 ms → Sh = 0.5 ms.' }
+];
+const G = { lvl: 0, score: 0, set: null, won: false };
+let _bonusRedrawFn = null, _bonusShowHint = false;
+window.toggleBonusHint = function () { _bonusShowHint = !_bonusShowHint; if (_bonusRedrawFn) _bonusRedrawFn(); };
+function initBonusActivity() { G.lvl = 0; G.score = 0; startGameLevel(); _bonusRedrawFn = drawGame; }
+function startGameLevel() {
+  const L = GL[G.lvl]; G.set = Object.assign({}, L.start); G.won = false; _bonusShowHint = false;
+  $('bonusLevel').textContent = G.lvl + 1; $('bonusScore').textContent = G.score;
+  const lab = { vi: 'VOLTS/DIV', ti: 'TIME/DIV', pos: '⇕ POSITION' };
+  const show = k => k === 'vi' ? fmtVdiv(G.set.vi) : k === 'ti' ? fmtT(TDIV[G.set.ti]) + '/div' : (G.set.pos >= 0 ? '+' : '') + G.set.pos.toFixed(1) + ' div';
+  $('gameCtrls').innerHTML = L.ctrls.map(k => `<div class="bg-zinc-800/80 rounded-xl border border-zinc-700 p-3"><div class="text-[10px] font-bold text-zinc-400 uppercase mb-2">${lab[k]}</div><div class="flex items-center gap-2"><button class="w-10 h-10 rounded-lg bg-zinc-700 font-black text-lg" data-k="${k}" data-d="-1">−</button><span class="seg7 flex-1 text-center text-sm" id="gv_${k}">${show(k)}</span><button class="w-10 h-10 rounded-lg bg-zinc-700 font-black text-lg" data-k="${k}" data-d="1">+</button></div></div>`).join('');
+  $('gameCtrls').querySelectorAll('button').forEach(b => b.onclick = () => {
+    if (G.won) return; const k = b.dataset.k, d = +b.dataset.d;
+    if (k === 'vi') G.set.vi = clamp(G.set.vi - d, 0, VDIV.length - 1);          // "+" = more sensitive (bigger trace)
+    if (k === 'ti') G.set.ti = clamp(G.set.ti - d, 1, TDIV.length - 1);          // "+" = slower sweep (more periods)
+    if (k === 'pos') G.set.pos = clamp(Math.round((G.set.pos + d * 0.5) * 10) / 10, -4, 4);
+    $('gv_' + k).textContent = show(k); click(0); drawGame(); checkGame();
+  });
+  drawGame();
+}
+function gameY(sigd, t, vi, pos) {
+  const U = sigd.kind === 'dc' ? sigd.U : sigd.kind === 'sine' ? sigd.U * Math.sin(TAU * sigd.f * t) : sigd.U * sq01(t, sigd.f);
+  return U / VDIV[vi] + pos;
+}
+function drawGame() {
+  const c = $('bonusCanvas'), x = c.getContext('2d'), W = c.width, H = c.height, d = 52, ox = (W - 10 * d) / 2, oy = (H - 6 * d) / 2;
+  const L = GL[G.lvl], X = xd => ox + (xd + 5) * d, Y = yd => oy + (3 - yd) * d;
+  x.fillStyle = '#050a07'; x.fillRect(0, 0, W, H);
+  x.strokeStyle = 'rgba(160,170,140,.25)'; x.lineWidth = 1; x.beginPath();
+  for (let i = 0; i <= 10; i++) { x.moveTo(X(i - 5), Y(3)); x.lineTo(X(i - 5), Y(-3)); }
+  for (let j = 0; j <= 6; j++) { x.moveTo(X(-5), Y(j - 3)); x.lineTo(X(5), Y(j - 3)); }
+  x.stroke();
+  const trace = (st, style, w, dash, glow) => {
+    x.save(); x.beginPath(); x.rect(X(-5), Y(3), 10 * d, 6 * d); x.clip();
+    x.strokeStyle = style; x.lineWidth = w; x.setLineDash(dash); x.shadowBlur = glow; x.shadowColor = style; x.beginPath();
+    const dur = 10 * TDIV[st.ti];
+    for (let i = 0; i <= 600; i++) { const t = dur * i / 600, xd = -5 + 10 * i / 600, yd = gameY(L.sig, t, st.vi, st.pos); i ? x.lineTo(X(xd), Y(yd)) : x.moveTo(X(xd), Y(yd)); }
+    x.stroke(); x.restore();
+  };
+  trace(L.tgt, 'rgba(251,191,36,.55)', 6, [10, 8], 0);
+  trace(G.set, '#5dff9a', 2.5, [], 12);
+  x.fillStyle = '#fbbf24'; x.font = 'bold 13px Plus Jakarta Sans'; x.textAlign = 'left'; x.fillText('👻 ghost', 10, 20);
+  x.fillStyle = '#5dff9a'; x.fillText('▬ your trace', 10, 38);
+  x.fillStyle = '#e4e4e7'; x.textAlign = 'right'; x.fillText(L.info, W - 10, 20);
+  if (_bonusShowHint) { x.fillStyle = 'rgba(0,0,0,.75)'; x.fillRect(0, H - 44, W, 44); x.fillStyle = '#fde68a'; x.textAlign = 'center'; x.font = '13px Plus Jakarta Sans'; x.fillText('💡 ' + L.hint, W / 2, H - 17); }
+  if (G.won) { x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(0, 0, W, H); x.fillStyle = '#34d399'; x.textAlign = 'center'; x.font = '900 34px Plus Jakarta Sans'; x.shadowBlur = 20; x.shadowColor = '#34d399'; x.fillText(G.lvl < 2 ? '🎯 LOCKED ON!' : '🏆 PERFECT MATCH!', W / 2, H / 2); x.shadowBlur = 0; }
+}
+function checkGame() {
+  const L = GL[G.lvl];
+  if (G.set.vi === L.tgt.vi && G.set.ti === L.tgt.ti && Math.abs(G.set.pos - L.tgt.pos) < 0.01) {
+    G.won = true; G.score++; $('bonusScore').textContent = G.score; click(2); drawGame(); markE5();
+    if (G.lvl < 2) setTimeout(() => { G.lvl++; startGameLevel(); }, 1500);
+    else $('bonusComplete').classList.remove('hidden');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// QUIZ (Section L) — 5 MCQ
+// ════════════════════════════════════════════════════════════════
+const questions = [
+  { id: 1, text: 'S_h = 2 ms/div and one period of a sinusoid covers 5 divisions. Its frequency is:', options: ['10 Hz', '100 Hz', '2.5 Hz', '400 Hz'], answer: 1 },
+  { id: 2, text: 'The sweep is OFF and an AC voltage is applied to Y₁. The screen shows:', options: ['a stationary spot', 'a horizontal line', 'a vertical segment', 'a sine curve'], answer: 2 },
+  { id: 3, text: 'S_v = 2 V/div; the peak of a sinusoid is 3 div above the centre. U_eff is about:', options: ['6 V', '4.2 V', '8.5 V', '3 V'], answer: 1 },
+  { id: 4, text: 'In an RLC series circuit, why do we connect Y₂ across the resistor R?', options: ['Because R has the largest voltage', 'Because u_R = R·i is the image of the current i', 'To protect the oscilloscope', 'Because the capacitor cannot be measured'], answer: 1 },
+  { id: 5, text: 'At current resonance in an RLC series circuit:', options: ['i leads u_G by 90°', 'u_G and i are in phase and I_m is maximal', 'the current is zero', 'the frequency equals 50 Hz'], answer: 1 }
+];
+let selectedAnswers = {};
+function initQuiz() {
+  const container = $('quizContainer'); container.innerHTML = '';
+  questions.forEach((q, i) => {
+    let html = `<div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800"><p class="font-bold text-white mb-4"><span class="text-rose-500">${i + 1}.</span> ${q.text}</p><div class="space-y-2">`;
+    q.options.forEach((opt, idx) => { html += `<label class="flex items-center gap-3 p-3 rounded-xl border border-zinc-700 cursor-pointer hover:bg-zinc-800 transition-colors"><input type="radio" name="q${q.id}" value="${idx}" class="w-4 h-4 accent-rose-500" onchange="selectedAnswers[${q.id}] = ${idx}"><span class="text-zinc-300 text-sm">${opt}</span></label>`; });
+    container.innerHTML += html + `</div></div>`;
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// LOGIN / START (Sections G, O)
+// ════════════════════════════════════════════════════════════════
+let currentUser = { section: '', name: '' }, uploadedBase64Image = null;
+const predictions = {};
+function loadStudents() {
+  const sec = $('sectionSelect').value, st = $('studentSelect');
+  const guest = sec === 'G12';
+  $('rosterWrap').classList.toggle('hidden', guest); $('guestWrap').classList.toggle('hidden', !guest);
+  st.innerHTML = '<option value="" disabled selected>Select your name...</option>';
+  if (sec && rosters[sec]) { st.disabled = false; rosters[sec].forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; st.appendChild(o); }); } else st.disabled = true;
+}
+function startLab() {
+  const sec = $('sectionSelect').value;
+  const name = sec === 'G12' ? $('guestName').value.trim() : $('studentSelect').value;
+  if (!sec || !name || name.length < 3) { toast('Please select your section and name first!'); return; }
+  currentUser = { section: sec, name };
+  try { sessionStorage.setItem('osc_user', JSON.stringify(currentUser)); } catch (e) {}
+  $('stage-login').style.display = 'none';
+  $('stage-lab').classList.remove('hidden');
+  $('studentBadge').classList.remove('hidden'); $('studentBadge').classList.add('flex');
+  $('displayStudentName').innerText = `${name} (${sec === 'G12' ? 'G12' : sec})`;
+  $('e5rail').classList.remove('hidden'); $('coachFab').classList.remove('hidden');
+  initQuiz(); buildPredict();
+  setTimeout(() => {
+    startScope(); buildMissions(); buildNotebook(); initBonusActivity(); setupReveal(); setupCoach();
+    window.__labStarted = true; if (window.initCRT3D) window.initCRT3D();
+  }, 100);
+  window.scrollTo({ top: 0 });
+}
+function setupReveal() {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) document.querySelectorAll('#e5rail a').forEach(a => a.classList.toggle('on', a.dataset.k === e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+  ['engage', 'explore', 'explain', 'elaborate', 'evaluate'].forEach(id => spy.observe($(id)));
+}
+function markE5() {
+  const done = { engage: !!predictions.plate, explore: Object.keys(MS.done).length >= 3, explain: NB.tf.length >= 4 || NB.res.length >= 6, elaborate: G.score >= 1, evaluate: false };
+  document.querySelectorAll('#e5rail a').forEach(a => a.classList.toggle('done', !!done[a.dataset.k]));
+}
+// ── Predict (Engage) ────────────────────────────────────────────
+function buildPredict() {
+  const opts = ['⬆ Up', '⬇ Down', '● Stays at centre', '⬅ Left'];
+  $('predictOpts').innerHTML = opts.map((o, i) => `<button class="chip !py-2" data-i="${i}">${o}</button>`).join('');
+  $('predictOpts').querySelectorAll('button').forEach(b => b.onclick = () => {
+    if (predictions.plate) return;
+    const i = +b.dataset.i; predictions.plate = { choice: opts[i], correct: i === 0, at: new Date().toISOString() };
+    b.classList.add('sel');
+    const fb = $('predictFb'); fb.classList.remove('hidden');
+    fb.innerHTML = i === 0 ? '<span class="text-emerald-400 font-bold">✓ Logged. Now test it below: move the Y-plate slider to + and watch.</span>' : '<span class="text-amber-300 font-bold">Logged. Now test it with the Y-plate slider below. Were you right?</span>';
+    $('crtControls').classList.remove('opacity-40', 'pointer-events-none'); markE5();
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// SCOPE COACH — Socratic AI tutor (SynapseLab Apps Script route)
+// ════════════════════════════════════════════════════════════════
+const coachLog = []; let coachHist = [];
+function openCoach() { $('coachPanel').classList.remove('closed'); $('coachFab').classList.add('hidden'); if (!coachLog.length) coachAppend('ai', "Hi! I'm your Scope Coach. I can see your knobs and wiring. Tell me what you see on the screen, or what's confusing you."); setTimeout(() => $('coachIn').focus(), 200); }
+function closeCoach() { $('coachPanel').classList.add('closed'); $('coachFab').classList.remove('hidden'); }
+function coachAppend(role, text) { const d = document.createElement('div'); d.className = 'chat-msg ' + role; d.textContent = text; $('coachLog').appendChild(d); $('coachLog').scrollTop = 1e6; }
+function scopeSummary() {
+  const m = MISSIONS[MS.cur], tk = MS.ticks[m.id] || {};
+  const ch = ci => `${fmtVdiv(S.ch[ci].vi)}${S.ch[ci].vvar < 1 ? ' (VAR UNCAL!)' : ''}, coupling ${S.ch[ci].coup}, position ${S.ch[ci].pos.toFixed(1)} div${S.ch[ci].x10 ? ', probe x10' : ''}`;
+  return `Power ${S.power ? 'ON' : 'OFF'}${S.power && warm() < 1 ? ' (warming up)' : ''}; intensity ${Math.round(S.intensity * 100)}%; focus ${Math.abs(S.focus - FOCUS_OPT) < 0.06 ? 'sharp' : 'blurred'}.
+CH1: ${ch(0)}. CH2: ${ch(1)}${S.ch[1].inv ? ', INVERTED' : ''}. Vertical mode ${S.mode}.
+Time base: ${isXY() ? 'X-Y mode' : !S.sweepOn ? 'SWEEP OFF' : fmtT(Sh()) + '/div' + (S.tvar < 1 ? ' (VAR UNCAL!)' : '') + (S.mag ? ' with x10 MAG' : '')}; horizontal position ${S.xpos.toFixed(1)} div.
+Trigger: source ${S.trig.src}, slope ${S.trig.slope > 0 ? '+' : '-'}, ${S.trig.mode}, level ${S.trig.level.toFixed(1)} div; currently ${stable() ? 'TRIGGERED (stable)' : 'not triggered'}.
+Bench circuit: ${EXP[S.exp].name}${S.p.mystery ? ' (hidden values)' : ''}. Probe Y1 on ${S.probe.ch1 || 'nothing'}, Y2 on ${S.probe.ch2 || 'nothing'}, ground clip on ${S.probe.gnd || 'nothing'}.${FAULT ? ' EARTH SHORT FAULT active.' : ''}
+Current mission: "${m.title}". Objectives: ${m.objs.map(([t], k) => (tk[k] ? '[done] ' : '[todo] ') + t).join('; ')}.`;
+}
+async function coachSend() {
+  const q = $('coachIn').value.trim(); if (!q) return;
+  $('coachIn').value = ''; coachAppend('user', q); coachLog.push({ role: 'student', text: q, t: new Date().toISOString() });
+  coachHist.push({ role: 'user', content: q }); coachHist = coachHist.slice(-8);
+  const system = `You are "Scope Coach", a warm Socratic physics tutor inside an analog oscilloscope simulation lab (Lebanese curriculum, Grade 9 to Grade 12). The student is ${currentUser.section === 'G12' ? 'in Grade 12 or a guest' : 'in Grade 9'}.
+RULES: 1) Never give final numeric answers or the mission answer; guide with one focused question or observation at a time. 2) Use the live instrument state below to spot their mistake (e.g. VAR not on CAL, coupling on GND, wrong probe node, unstable trigger, too few/many periods on screen). 3) Use Lebanese textbook notation: Sv (V/div), Sh (s/div), Um, Ueff, T, f, Y1, Y2. 4) Reply in the student's language (Arabic or English). 5) 2-4 short sentences max.
+LIVE INSTRUMENT STATE:
+${scopeSummary()}`;
+  const typing = document.createElement('div'); typing.className = 'chat-msg ai'; typing.textContent = '…'; $('coachLog').appendChild(typing);
+  $('coachSend').disabled = true;
+  let text = '';
+  try {
+    const r = await fetch(TUTOR_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'ai', system, messages: coachHist }) });
+    const data = JSON.parse(await r.text()); text = (data.text || '').trim();
+  } catch (e) { text = ''; }
+  if (!text || /^⚠|not found|not configured|error/i.test(text.slice(0, 60))) text = localCoach();   // server-side AI down → offline coach
+  typing.remove(); coachAppend('ai', text); coachHist.push({ role: 'assistant', content: text }); coachLog.push({ role: 'coach', text, t: new Date().toISOString() });
+  $('coachSend').disabled = false;
+}
+function localCoach() {      // offline fallback: diagnose the most common mistakes
+  if (!S.power) return 'Look at the POWER LED. Is the instrument actually on?';
+  if (warm() < 1) return 'Give the tube a couple of seconds: the cathode is still heating up.';
+  if (S.intensity < 0.15) return 'The beam may be there but too faint. Which knob controls brightness?';
+  if (S.ch[0].vvar < 1 || S.ch[1].vvar < 1 || S.tvar < 1) return 'One UNCAL light is on. What happens to your readings if a VAR knob is not fully clockwise?';
+  if (FAULT) return 'Look at the red warning on the bench. Where must the ground clip go in a circuit whose generator is earthed?';
+  if (S.exp !== 'none' && !S.probe.ch1 && !S.probe.ch2) return 'Your probes are not clipped to anything yet. Which terminal should Y₁ touch?';
+  if (S.ch[0].coup === 'GND' && S.mode !== 'CH2') return 'CH1 is on GND, so it ignores the input. Is that what you want right now?';
+  if (S.sweepOn && !isXY() && !stable() && S.exp !== 'none') return 'The trace isn\'t locked. Check the TRIG\'D light: is the LEVEL inside the signal\'s range, and is the trigger SOURCE the channel you are watching?';
+  return '💡 ' + MISSIONS[MS.cur].hint;
+}
+function setupCoach() { $('coachSend').onclick = coachSend; $('coachIn').addEventListener('keydown', e => { if (e.key === 'Enter') coachSend(); }); }
+
+// ════════════════════════════════════════════════════════════════
+// DRAWING + SUBMIT (Sections K, O)
+// ════════════════════════════════════════════════════════════════
+function handleImageUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); let w = img.width, h = img.height; if (w > 800) { h = Math.round(h * 800 / w); w = 800; } cv.width = w; cv.height = h; cv.getContext('2d').drawImage(img, 0, 0, w, h); uploadedBase64Image = cv.toDataURL('image/jpeg', 0.6); $('imagePreviewContainer').classList.remove('hidden'); $('imagePreview').src = uploadedBase64Image; }; img.src = e.target.result; };
+  reader.readAsDataURL(file);
+}
+function buildPayload() {
+  let score = 0; const qd = {};
+  questions.forEach(q => { const sel = selectedAnswers[q.id], ok = sel === q.answer; if (ok) score++; qd[q.id] = { answer: sel !== undefined ? q.options[sel] : 'Not answered', correct: ok }; });
+  const bonusScore = parseInt($('bonusScore').innerText || '0');
+  const missions = MISSIONS.map((m, i) => `M${i + 1} ${m.id}: ${MS.done[m.id] ? '✓ ' + MS.points[m.id] + 'pts' : '✗'} (tries ${MS.attempts[m.id] || 0}${MS.answers[m.id] ? ', ' + MS.answers[m.id] : ''})`).join('\n');
+  return {
+    labName: LAB_NAME, labId: LAB_ID, section: currentUser.section, studentName: currentUser.name,
+    score, total: questions.length,
+    q1Answer: qd[1].answer, q1Correct: qd[1].correct, q2Answer: qd[2].answer, q2Correct: qd[2].correct, q3Answer: qd[3].answer, q3Correct: qd[3].correct, q4Answer: qd[4].answer, q4Correct: qd[4].correct, q5Answer: qd[5].answer, q5Correct: qd[5].correct,
+    bonusScore,
+    missionScore: missionScore(), missionMax: MISSIONS.length * 10, missionsDone: Object.keys(MS.done).length, missionLog: missions,
+    prediction: predictions.plate ? predictions.plate.choice + (predictions.plate.correct ? ' ✓' : ' ✗') : 'none',
+    hot1: $('hot1').value.trim(), hot2: $('hot2').value.trim(),
+    notebookTF: NB.tf.map(r => `f=${sig(r.f)}Hz x=${r.x} T=${fmtT(r.T)}`).join('; '),
+    notebookRes: NB.res.map(r => `f=${sig(r.f)}Hz y=${r.y} Im=${sig(r.I * 1000)}mA`).join('; '),
+    tutorTurns: coachLog.filter(c => c.role === 'student').length,
+    tutorLog: coachLog.map(c => `[${c.role}] ${c.text}`).join('\n').slice(0, 45000),
+    timeOnLab_min: Math.round((Date.now() - LAB_START) / 60000),
+    timestamp: new Date().toISOString(),
+    imageBase64: uploadedBase64Image
+  };
+}
+async function submitFinalWork() {
+  if (Object.keys(selectedAnswers).length < questions.length) { toast('Please answer all 5 questions before submitting!'); return; }
+  if ($('hot1').value.trim().length < 15 || $('hot2').value.trim().length < 15) { toast('Answer both "Think deeper" questions (a few sentences each).'); return; }
+  if (!uploadedBase64Image) { toast('Please take a photo of your drawing before submitting!'); return; }
+  const payload = buildPayload();
+  const ov = $('loadingOverlay'); ov.classList.remove('hidden'); ov.classList.add('flex');
+  let sent = false;
+  try { localStorage.setItem('osc_last_submission', JSON.stringify(Object.assign({}, payload, { imageBase64: '(kept on device)' }))); } catch (e) {}
+  if (!GOOGLE_SCRIPT_URL.startsWith('PASTE')) {
+    try { await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }); sent = true; }
+    catch (e) { ov.classList.add('hidden'); ov.classList.remove('flex'); toast('Submission error. Check your internet connection and try again.'); return; }
+  }
+  setTimeout(() => {
+    ov.classList.add('hidden'); ov.classList.remove('flex');
+    $('stage-lab').classList.add('hidden'); $('stage-success').classList.remove('hidden');
+    $('finalScoreText').innerText = `${payload.score} / ${questions.length}`;
+    $('finalMissionText').innerText = `${payload.missionsDone}/${MISSIONS.length} · ${payload.missionScore} pts`;
+    $('finalBonusText').innerText = `${payload.bonusScore} / 3`;
+    if (!sent) {
+      $('successMsg').textContent = 'Your work is saved on this device. Your teacher\'s sheet is not connected yet, so download your results and send them to your teacher.';
+      $('successFoot').classList.add('hidden');
+      const b = $('dlResults'); b.classList.remove('hidden');
+      b.onclick = () => { const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `OscilloscopeLab_${currentUser.section}_${currentUser.name.replace(/\s+/g, '_')}.json`; a.click(); };
+    }
+    document.querySelectorAll('#e5rail a').forEach(a => a.classList.add('done'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 900);
+}
+</script>
+<script type="module">
+
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+window.initCRT3D = function () {
+  if (window.__crt3dDone) return; window.__crt3dDone = true;
+  const canvas = document.getElementById('crt3d'), wrap = document.getElementById('crt3dWrap');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false }); }
+  catch (e) { document.getElementById('crt3dFallback').classList.remove('hidden'); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x05070a);
+  scene.fog = new THREE.Fog(0x05070a, 14, 26);
+  const camera = new THREE.PerspectiveCamera(38, 16 / 10, 0.1, 100);
+  camera.position.set(6.4, 2.2, 6.2);
+  const controls = new OrbitControls(camera, canvas);
+  controls.target.set(-0.3, 0, 0); controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.minDistance = 4; controls.maxDistance = 14; controls.enablePan = false;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.6;
+  controls.addEventListener('start', () => { controls.autoRotate = false; });
+
+  scene.add(new THREE.AmbientLight(0x8899aa, 0.55));
+  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(4, 6, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x38bdf8, 1.2); rim.position.set(-6, 2, -5); scene.add(rim);
+  const heaterLight = new THREE.PointLight(0xff7a1a, 2.2, 3); heaterLight.position.set(-3.9, 0, 0); scene.add(heaterLight);
+
+  // ── glass envelope (lathe around the tube axis = world X) ──
+  const prof = [[0.0, -4.55], [0.40, -4.5], [0.46, -4.3], [0.46, -0.6], [1.0, 0.5], [1.8, 2.15], [2.05, 2.7], [2.0, 2.98], [1.2, 3.1], [0.0, 3.14]].map(([r, h]) => new THREE.Vector2(r, h));
+  const glassGeo = new THREE.LatheGeometry(prof, 72);
+  const glass = new THREE.Mesh(glassGeo, new THREE.MeshPhysicalMaterial({ color: 0x9fc4d6, transparent: true, opacity: 0.16, roughness: 0.04, metalness: 0, side: THREE.DoubleSide, depthWrite: false, clearcoat: 1 }));
+  glass.rotation.z = -Math.PI / 2; scene.add(glass);
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(glassGeo, 25), new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.18 }));
+  edges.rotation.z = -Math.PI / 2; scene.add(edges);
+  // base pins
+  const pinMat = new THREE.MeshStandardMaterial({ color: 0xb8a070, metalness: 0.9, roughness: 0.3 });
+  for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.35, 8), pinMat); pin.rotation.z = Math.PI / 2; pin.position.set(-4.7, Math.sin(a) * 0.28, Math.cos(a) * 0.28); scene.add(pin); }
+
+  // ── electron gun ──
+  const metal = new THREE.MeshStandardMaterial({ color: 0x9aa4ae, metalness: 0.85, roughness: 0.32, side: THREE.DoubleSide });
+  const tubeAlongX = (rTop, rBot, len, x, mat, open = true) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, len, 40, 1, open), mat); m.rotation.z = Math.PI / 2; m.position.x = x; scene.add(m); return m; };
+  const cathode = tubeAlongX(0.14, 0.14, 0.3, -3.95, new THREE.MeshStandardMaterial({ color: 0x331100, emissive: 0xff6a00, emissiveIntensity: 1.6 }), false);
+  tubeAlongX(0.24, 0.24, 0.22, -3.62, metal);          // Wehnelt grid
+  tubeAlongX(0.28, 0.28, 0.4, -3.15, metal);           // focusing anode
+  tubeAlongX(0.3, 0.3, 0.5, -2.55, metal);             // accelerating anode
+  const plateMat = new THREE.MeshStandardMaterial({ color: 0xd08a4a, metalness: 0.9, roughness: 0.25 });
+  const yPlus = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.04, 0.5), plateMat.clone()); yPlus.position.set(-1.6, 0.32, 0); scene.add(yPlus);
+  const yMinus = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.04, 0.5), plateMat.clone()); yMinus.position.set(-1.6, -0.32, 0); scene.add(yMinus);
+  const xA = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.5, 0.04), plateMat.clone()); xA.position.set(-0.35, 0, 0.32); scene.add(xA);
+  const xB = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.5, 0.04), plateMat.clone()); xB.position.set(-0.35, 0, -0.32); scene.add(xB);
+
+  // ── phosphor screen with live canvas texture ──
+  const SR = 1.96, texC = document.createElement('canvas'); texC.width = texC.height = 512;
+  const tx = texC.getContext('2d'); tx.fillStyle = '#020604'; tx.fillRect(0, 0, 512, 512);
+  const tex = new THREE.CanvasTexture(texC); tex.colorSpace = THREE.SRGBColorSpace;
+  const screen = new THREE.Mesh(new THREE.CircleGeometry(SR, 64), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  screen.rotation.y = Math.PI / 2; screen.position.x = 2.97; scene.add(screen);
+  const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, 'rgba(200,255,220,1)'); r.addColorStop(0.25, 'rgba(80,255,150,.7)'); r.addColorStop(1, 'rgba(0,255,100,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+  const spot = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  spot.scale.set(0.55, 0.55, 1); scene.add(spot);
+
+  // ── beam path & electrons ──
+  const X0 = -3.75, XS = 2.95, YA = -2.1, YB = -1.1, XA = -0.85, XB = 0.15, DMAX = 1.55;
+  const kOf = (a, b, D) => D / ((b - a) * ((b - a) / 2 + XS - b));
+  const defl = (x, a, b, k) => x <= a ? 0 : x <= b ? k * (x - a) * (x - a) / 2 : k * (b - a) * (b - a) / 2 + k * (b - a) * (x - b);
+  let Uy = 0, Ux = 0, sweep = false, ac = false;
+  const NB = 90, beamPos = new Float32Array(NB * 3);
+  const beamGeo = new THREE.BufferGeometry(); beamGeo.setAttribute('position', new THREE.BufferAttribute(beamPos, 3));
+  const beam = new THREE.Line(beamGeo, new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(beam);
+  const NE = 140, ePos = new Float32Array(NE * 3), ePh = Float32Array.from({ length: NE }, () => Math.random());
+  const eGeo = new THREE.BufferGeometry(); eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
+  const electrons = new THREE.Points(eGeo, new THREE.PointsMaterial({ color: 0xbfe9ff, size: 0.07, map: glowTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(electrons);
+  const pathAt = (x, ky, kx) => [x, defl(x, YA, YB, ky), defl(x, XA, XB, kx)];
+
+  // ── UI wiring ──
+  const uyS = document.getElementById('uySlider'), uxS = document.getElementById('uxSlider');
+  const setLab = () => { document.getElementById('uyVal').textContent = (Uy > 0 ? '+' : '') + Math.round(Uy) + ' V'; document.getElementById('uxVal').textContent = (Ux > 0 ? '+' : '') + Math.round(Ux) + ' V'; };
+  uyS.oninput = () => { if (!ac) Uy = +uyS.value; setLab(); };
+  uxS.oninput = () => { if (!sweep) Ux = +uxS.value; setLab(); };
+  const bS = document.getElementById('crtSweepBtn'), bA = document.getElementById('crtAcBtn');
+  bS.onclick = () => { sweep = !sweep; bS.classList.toggle('sel', sweep); uxS.disabled = sweep; if (!sweep) Ux = +uxS.value; };
+  bA.onclick = () => { ac = !ac; bA.classList.toggle('sel', ac); uyS.disabled = ac; if (!ac) Uy = +uyS.value; };
+
+  // ── hotspots ──
+  const HS = [
+    { p: new THREE.Vector3(-3.7, 0.45, 0), t: 'Electron gun', d: 'A heated cathode (like a tiny toaster) boils electrons off its surface. Anodes at high voltage accelerate them into a thin beam: thousands of km/s.' },
+    { p: new THREE.Vector3(-1.6, 0.62, 0), t: 'Y-plates (vertical deflection)', d: 'The voltage you MEASURE is applied here. The electrons are pulled toward the + plate, so the spot moves up or down in proportion to the voltage.' },
+    { p: new THREE.Vector3(-0.35, 0.45, 0.45), t: 'X-plates (horizontal deflection)', d: 'The TIME BASE applies a sawtooth voltage here: it sweeps the spot from left to right at constant speed, then snaps it back. That turns the screen\'s horizontal axis into a time axis.' },
+    { p: new THREE.Vector3(2.98, 1.45, 0), t: 'Phosphor screen', d: 'Where electrons hit, the phosphor coating glows green for a few hundredths of a second. A fast-moving spot leaves a glowing trail: the trace.' }
+  ];
+  const hsHost = document.getElementById('hotspots'), card = document.getElementById('hsCard');
+  HS.forEach((h, i) => { const b = document.createElement('button'); b.className = 'hotspot'; b.style.pointerEvents = 'auto'; b.textContent = i + 1; b.title = h.t; b.onclick = () => { card.innerHTML = `<p class="font-black text-sky-300 mb-1">${i + 1} · ${h.t}</p><p class="text-zinc-300">${h.d}</p><button class="chip mt-2" onclick="this.parentElement.classList.add('hidden')">Close</button>`; card.classList.remove('hidden'); controls.autoRotate = false; }; h.el = b; hsHost.appendChild(b); });
+
+  // ── resize / visibility ──
+  const resize = () => { const w = wrap.clientWidth, h = wrap.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+  new ResizeObserver(resize).observe(wrap); resize();
+  const clock = new THREE.Clock(); let t = 0, visible = true;
+  new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; renderer.setAnimationLoop(visible ? frame : null); })).observe(wrap);
+  const v3 = new THREE.Vector3();
+  function frame() {
+    const dt = Math.min(clock.getDelta(), 0.05); t += dt;
+    if (sweep) { const ph = (t / 1.6) % 1; Ux = -20 + 40 * ph; }
+    if (ac) Uy = 16 * Math.sin(2 * Math.PI * 2.5 * t);
+    if (sweep || ac) setLab();
+    const ky = kOf(YA, YB, DMAX * Uy / 20), kx = kOf(XA, XB, -DMAX * Ux / 20); // +Ux → spot to the viewer's right (−z)
+    for (let i = 0; i < NB; i++) { const x = X0 + (XS - X0) * i / (NB - 1), p = pathAt(x, ky, kx); beamPos.set(p, i * 3); }
+    beamGeo.attributes.position.needsUpdate = true;
+    for (let i = 0; i < NE; i++) { ePh[i] = (ePh[i] + dt * 0.9) % 1; const x = X0 + (XS - X0) * ePh[i], p = pathAt(x, ky, kx); ePos.set([p[0], p[1] + (Math.random() - 0.5) * 0.01, p[2] + (Math.random() - 0.5) * 0.01], i * 3); }
+    eGeo.attributes.position.needsUpdate = true;
+    const sy = defl(XS, YA, YB, ky), sz = defl(XS, XA, XB, kx);
+    spot.position.set(XS + 0.03, sy, sz);
+    // plate glow shows polarity
+    yPlus.material.emissive.setHex(Uy > 0.5 ? 0xff3b30 : Uy < -0.5 ? 0x2563eb : 0x000000); yPlus.material.emissiveIntensity = Math.min(1, Math.abs(Uy) / 14);
+    yMinus.material.emissive.setHex(Uy > 0.5 ? 0x2563eb : Uy < -0.5 ? 0xff3b30 : 0x000000); yMinus.material.emissiveIntensity = Math.min(1, Math.abs(Uy) / 14);
+    xA.material.emissive.setHex(Ux < -0.5 ? 0xff3b30 : Ux > 0.5 ? 0x2563eb : 0); xA.material.emissiveIntensity = Math.min(1, Math.abs(Ux) / 14);
+    xB.material.emissive.setHex(Ux > 0.5 ? 0xff3b30 : Ux < -0.5 ? 0x2563eb : 0); xB.material.emissiveIntensity = Math.min(1, Math.abs(Ux) / 14);
+    cathode.material.emissiveIntensity = 1.4 + Math.sin(t * 7) * 0.08; heaterLight.intensity = 2 + Math.sin(t * 7) * 0.2;
+    // phosphor texture: fade + write the spot
+    tx.fillStyle = 'rgba(2,6,4,0.035)'; tx.fillRect(0, 0, 512, 512);
+    tx.strokeStyle = 'rgba(120,140,110,.18)'; tx.lineWidth = 1; tx.beginPath();
+    for (let i = -5; i <= 5; i++) { tx.moveTo(256 + i * 36, 112); tx.lineTo(256 + i * 36, 400); } for (let j = -4; j <= 4; j++) { tx.moveTo(76, 256 + j * 36); tx.lineTo(436, 256 + j * 36); } tx.stroke();
+    const u = 256 - sz / SR * 256, vv = 256 - sy / SR * 256;
+    const g = tx.createRadialGradient(u, vv, 0, u, vv, 9); g.addColorStop(0, 'rgba(220,255,230,1)'); g.addColorStop(0.4, 'rgba(70,255,140,.9)'); g.addColorStop(1, 'rgba(0,255,100,0)');
+    tx.fillStyle = g; tx.beginPath(); tx.arc(u, vv, 9, 0, Math.PI * 2); tx.fill();
+    tex.needsUpdate = true;
+    controls.update(); renderer.render(scene, camera);
+    HS.forEach(h => { v3.copy(h.p).project(camera); const behind = v3.z > 1; h.el.style.display = behind ? 'none' : 'flex'; h.el.style.left = ((v3.x + 1) / 2 * 100) + '%'; h.el.style.top = ((1 - v3.y) / 2 * 100) + '%'; });
+  }
+  renderer.setAnimationLoop(frame);
+};
+if (window.__labStarted) window.initCRT3D();
+</script>
+</body>
+</html>
