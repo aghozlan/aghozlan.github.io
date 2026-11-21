@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GalvanicLab — Ahmad Ghozlan</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090b'/%3E%3Crect x='6' y='9' width='6' height='17' rx='1.5' fill='%239aa6b2'/%3E%3Crect x='20' y='9' width='6' height='17' rx='1.5' fill='%23c8774a'/%3E%3Cpath d='M9 9V5h14v4' fill='none' stroke='%23facc15' stroke-width='2'/%3E%3C/svg%3E">
+<meta name="description" content="The ultimate galvanic cell: a photoreal 3D lab with 11 electrodes, live Nernst equation, internal resistance, time-lapse discharge and 10 missions. Grade 9 → 12 Chemistry.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.neon-border { box-shadow: 0 0 10px rgba(250,204,21,0.45), inset 0 0 10px rgba(250,204,21,0.15); border: 1px solid rgba(250,204,21,0.5); }
+.neon-text-amber { text-shadow: 0 0 14px rgba(250,204,21,0.8); }
+.glass-panel { background: rgba(24,24,27,0.72); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+canvas { touch-action: none; }
+input[type="file"] { display: none; }
+.custom-file-upload { display: inline-block; cursor: pointer; }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+.e5 { display:flex; gap:4px; }
+.e5 a { flex:1; text-align:center; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#71717a; padding:6px 2px 4px; border-bottom:3px solid #27272a; transition:all .3s; text-decoration:none; }
+.e5 a.on { color:#e4e4e7; border-color:#facc15; }
+.e5 a.done { color:#34d399; border-color:#10b981; }
+
+/* ── 3D bench ── */
+.view { position:relative; width:100%; aspect-ratio: 16/10; min-height: 360px; border-radius: 24px; overflow:hidden; background: radial-gradient(120% 90% at 50% 0%, #1a1f2b 0%, #0b0d12 60%, #050608 100%); border:1px solid #27272a; box-shadow: 0 30px 80px -30px rgba(0,0,0,.9); }
+@media (max-width: 640px) { .view { aspect-ratio: 4/5; } .timebar { right:10px; } #atomInset { bottom: 108px; width: 62%; } .tools .tbtn { padding:5px 8px; font-size:10px; } .lbl { font-size:9.5px; padding:2px 6px; } .lbl.minor { display:none !important; } .meter-face .v { font-size:26px; } .hud .mini span { font-size:10px; padding:2px 6px; } }
+#gl3d { position:absolute; inset:0; }
+#gl3d canvas { display:block; width:100% !important; height:100% !important; }
+#lbl3d { position:absolute; inset:0; pointer-events:none; }
+.lbl { font-size:11px; font-weight:800; letter-spacing:.04em; padding:3px 8px; border-radius:999px; background:rgba(9,9,11,.78); border:1px solid rgba(255,255,255,.18); color:#e4e4e7; white-space:nowrap; pointer-events:auto; cursor:pointer; user-select:none; transition: opacity .3s; }
+.lbl.an { border-color:#fb7185; color:#fecdd3; }
+.lbl.ca { border-color:#38bdf8; color:#e0f2fe; }
+.lbl.br { border-color:#c084fc; color:#f3e8ff; }
+.lbl.el { border-color:#facc15; color:#fef9c3; }
+.lbl .pulse { display:inline-block; width:7px; height:7px; border-radius:50%; background:currentColor; margin-right:5px; animation: pulse 1.6s infinite; }
+@keyframes pulse { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+.hud { position:absolute; left:12px; top:12px; display:flex; flex-direction:column; gap:6px; pointer-events:none; }
+.meter-face { background: linear-gradient(#11151c,#0b0e13); border:1px solid #2b313b; border-radius:14px; padding:8px 14px 6px; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+.meter-face .v { font-family:'JetBrains Mono',monospace; font-size: clamp(26px, 4.6vw, 44px); font-weight:700; color:#facc15; text-shadow:0 0 18px rgba(250,204,21,.55); line-height:1; }
+.meter-face .v.neg { color:#fb7185; text-shadow:0 0 18px rgba(251,113,133,.55); }
+.meter-face .u { font-size:13px; color:#a1a1aa; font-weight:800; margin-left:4px; }
+.hud .mini { display:flex; gap:6px; flex-wrap:wrap; }
+.hud .mini span { font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(9,9,11,.75); border:1px solid #27272a; color:#d4d4d8; padding:3px 8px; border-radius:8px; }
+.dead { pointer-events:none; background:rgba(127,29,29,.85); border:1px solid #f87171; color:#fee2e2; font-size:12px; font-weight:800; padding:5px 10px; border-radius:10px; max-width: 320px; }
+.tools { position:absolute; right:10px; top:10px; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+.tbtn { font-size:11px; font-weight:800; padding:6px 10px; border-radius:10px; background:rgba(9,9,11,.78); border:1px solid #3f3f46; color:#d4d4d8; cursor:pointer; white-space:nowrap; }
+.tbtn:hover { border-color:#a1a1aa; color:#fff; }
+.tbtn.sel { background:#facc15; color:#0b0b0b; border-color:#facc15; }
+.timebar { position:absolute; left:10px; bottom:10px; display:flex; gap:5px; align-items:center; background:rgba(9,9,11,.82); border:1px solid #3f3f46; border-radius:14px; padding:6px; flex-wrap:wrap; justify-content:center; max-width: calc(100% - 20px); }
+.timebar .tbtn { padding:5px 9px; }
+#atomInset { position:absolute; right:12px; bottom:64px; width: min(340px, 46%); border-radius:14px; border:1px solid #3f3f46; background:#06080b; box-shadow:0 10px 30px rgba(0,0,0,.7); }
+#infoCard { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(380px, 88%); }
+#glLoading { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:#0b0d12; color:#a1a1aa; font-weight:700; font-size:13px; }
+
+/* ── console ── */
+.card { background: rgba(24,24,27,.78); border:1px solid #27272a; border-radius:22px; padding:16px; }
+.card h4 { font-size:11px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; color:#a1a1aa; }
+.mgrid { display:grid; grid-template-columns: repeat(auto-fill, minmax(62px,1fr)); gap:6px; }
+.mchip { display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 2px 5px; border-radius:12px; border:1px solid #3f3f46; background:#111114; cursor:pointer; transition: all .15s; }
+.mchip i { width:26px; height:10px; border-radius:3px; background: linear-gradient(180deg, color-mix(in srgb, var(--mc) 70%, white), var(--mc) 55%, color-mix(in srgb, var(--mc) 60%, black)); box-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.mchip b { font-size:13px; color:#f4f4f5; }
+.mchip small { font-family:'JetBrains Mono',monospace; font-size:9.5px; color:#a1a1aa; }
+.mchip:hover { border-color:#a1a1aa; }
+.mchip.sel { border-color:#facc15; background:#2a2410; box-shadow: 0 0 0 1px #facc15, 0 0 18px rgba(250,204,21,.25); }
+.role { font-size:11px; font-weight:900; letter-spacing:.06em; padding:3px 9px; border-radius:999px; }
+.role.an { background:rgba(251,113,133,.15); color:#fda4af; border:1px solid rgba(251,113,133,.5); }
+.role.ca { background:rgba(56,189,248,.15); color:#7dd3fc; border:1px solid rgba(56,189,248,.5); }
+input[type=range].rng { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:6px; background:#3f3f46; outline:none; }
+input[type=range].rng::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fafafa; border:3px solid #facc15; cursor:pointer; }
+input[type=range].rng::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#fafafa; border:3px solid #facc15; cursor:pointer; }
+.chip { font-size:11px; font-weight:800; padding:6px 10px; border-radius:999px; border:1px solid #3f3f46; color:#a1a1aa; background:#18181b; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.chip:hover { border-color:#71717a; color:#e4e4e7; }
+.chip.sel { border-color:#facc15; color:#0b0b0b; background:#facc15; }
+.chip.done { border-color:#10b981; color:#34d399; }
+.chip.sel.done { background:#10b981; color:#0b0b0b; }
+.bigbtn { font-size:13px; font-weight:900; padding:10px 14px; border-radius:14px; border:1px solid #3f3f46; background:#18181b; color:#e4e4e7; cursor:pointer; }
+.bigbtn.on { background: linear-gradient(90deg,#f59e0b,#facc15); color:#111; border-color:#facc15; box-shadow:0 0 18px rgba(250,204,21,.35); }
+.eq { font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#e4e4e7; background:#0b0d12; border:1px solid #1f2430; border-radius:10px; padding:8px 11px; line-height:1.55; overflow-x:auto; }
+.eq b { color:#facc15; }
+.obj { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#a1a1aa; padding:3px 0; }
+.obj .tick { width:18px; height:18px; flex:0 0 18px; border-radius:50%; border:2px solid #52525b; display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; transition:all .25s; }
+.obj.ok { color:#d1fae5; }
+.obj.ok .tick { border-color:#10b981; background:#10b981; color:#052e1a; transform: scale(1.1); }
+#mAsk.locked { opacity:.45; pointer-events:none; }
+.opt { text-align:left; font-size:13px; font-weight:600; color:#e4e4e7; background:#111114; border:1px solid #3f3f46; border-radius:12px; padding:9px 12px; cursor:pointer; }
+.opt:hover { border-color:#facc15; }
+.opt.wrong { border-color:#f43f5e; color:#fecdd3; }
+.btn-g { background:#facc15; color:#111; font-weight:900; border-radius:12px; padding:0 16px; }
+.num-in { background:#09090b; border:1px solid #3f3f46; border-radius:10px; padding:8px 10px; color:#fff; width:100%; font-family:'JetBrains Mono',monospace; }
+.num-in:focus { outline:none; border-color:#facc15; }
+.toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(30px); opacity:0; z-index:200; background:#18181b; border:1px solid #3f3f46; color:#e4e4e7; padding:10px 16px; border-radius:12px; font-size:14px; font-weight:600; transition:all .3s; max-width:92vw; text-align:center; pointer-events:none; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.chat-msg { padding:8px 12px; border-radius:12px; font-size:13px; line-height:1.5; max-width:88%; white-space:pre-wrap; }
+.chat-msg.user { background:#3b2f0e; color:#fef3c7; margin-left:auto; border-bottom-right-radius:4px; }
+.chat-msg.ai { background:#1f2937; color:#e5e7eb; border-bottom-left-radius:4px; }
+#coachPanel { transition: transform .3s ease, opacity .3s ease; }
+#coachPanel.closed { transform: translateY(20px); opacity:0; pointer-events:none; }
+table.nb { width:100%; border-collapse:collapse; font-size:12px; }
+table.nb th { text-align:left; color:#a1a1aa; font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:6px; border-bottom:1px solid #3f3f46; }
+table.nb td { padding:6px; border-bottom:1px solid #27272a; color:#e4e4e7; font-family:'JetBrains Mono',monospace; }
+.gbox { background:rgba(39,39,42,.8); border:1px solid #3f3f46; border-radius:14px; padding:10px; display:flex; flex-direction:column; gap:8px; }
+.glbl { font-size:10px; font-weight:900; color:#a1a1aa; text-transform:uppercase; letter-spacing:.12em; }
+#predictCard.answered { border-color: rgba(16,185,129,.4); }
+.concept { background:#111114; border:1px solid #27272a; border-radius:18px; padding:14px; }
+.concept h5 { font-weight:900; color:#fff; margin-bottom:4px; }
+.concept p { font-size:13px; color:#a1a1aa; line-height:1.6; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="w-full bg-zinc-900 border-b border-zinc-800 shadow-2xl sticky top-0 z-50">
+  <div class="h-1 w-full bg-gradient-to-r from-amber-500 via-sky-500 to-rose-500"></div>
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="p-2 bg-zinc-800 rounded-lg border border-zinc-700 neon-border shrink-0">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="5" height="13" rx="1.2" fill="#9aa6b2"/><rect x="16" y="7" width="5" height="13" rx="1.2" fill="#c8774a"/><path d="M5.5 7V3.5h13V7" stroke="#facc15" stroke-width="1.8"/></svg>
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-lg sm:text-xl font-black tracking-wide text-white truncate">Interactive <span class="text-amber-400">Chemistry</span> Lab</h1>
+        <p class="text-xs text-zinc-400 truncate">Grade 9 → 12 — The Galvanic Cell: from the Daniell cell to the Nernst equation</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="soundBtn" onclick="toggleSound()" title="Sound" class="glass-panel w-9 h-9 rounded-full text-base">🔇</button>
+      <div id="studentBadge" class="hidden glass-panel px-3 py-1.5 rounded-full items-center gap-2 max-w-[44vw]">
+        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+        <span id="displayStudentName" class="text-sm font-bold text-amber-200 truncate" dir="auto"></span>
+      </div>
+    </div>
+  </div>
+  <nav id="e5rail" class="hidden max-w-6xl mx-auto px-4 pb-1 e5">
+    <a href="#engage" data-k="engage">Engage</a><a href="#explore" data-k="explore">Explore</a><a href="#explain" data-k="explain">Explain</a><a href="#elaborate" data-k="elaborate">Elaborate</a><a href="#evaluate" data-k="evaluate">Evaluate</a>
+  </nav>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+
+<!-- ═══ LOGIN ═══ -->
+<section id="stage-login" class="max-w-lg mx-auto">
+  <div class="text-center mb-6">
+    <p class="text-xs font-black tracking-[.3em] text-amber-400 uppercase">GalvanicLab</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-white mt-2 leading-tight">Keep the reaction apart,<br><span class="text-amber-400 neon-text-amber">and it pays you in electrons.</span></h2>
+    <p class="text-sm text-zinc-400 mt-3">A photoreal 3D galvanic cell: 11 electrodes, any concentration, any temperature, real internal resistance, a live Nernst equation, and time-lapse discharge you can watch.</p>
+  </div>
+  <div class="glass-panel p-8 rounded-3xl shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="inline-flex w-14 h-14 rounded-full bg-amber-500/15 border border-amber-500/40 items-center justify-center text-2xl">🔋</div>
+      <h2 class="text-2xl font-black text-white mt-3">Lab Login</h2>
+      <p class="text-sm text-zinc-400 mt-1">Select your section and name to begin.</p>
+    </div>
+    <div class="space-y-5">
+      <div>
+        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Section</label>
+        <select id="sectionSelect" onchange="loadStudents()" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 transition-colors cursor-pointer">
+          <option value="" disabled selected>Select Section...</option>
+          <option value="9A">Class 9A</option><option value="9B">Class 9B</option><option value="9C">Class 9C</option><option value="9D">Class 9D</option>
+          <option value="G12">Grade 10–12 / Guest</option>
+        </select>
+      </div>
+      <div id="rosterWrap">
+        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Student Name</label>
+        <select id="studentSelect" dir="rtl" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 disabled:opacity-50 cursor-pointer font-semibold text-base" disabled>
+          <option value="" disabled selected>Select a section first...</option>
+        </select>
+      </div>
+      <div id="guestWrap" class="hidden">
+        <label class="block text-xs font-bold text-zinc-400 mb-2 uppercase">Full Name</label>
+        <input id="guestName" dir="auto" maxlength="60" placeholder="Type your full name" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 font-semibold text-base">
+      </div>
+      <button id="enterBtn" onclick="startLab()" class="w-full mt-2 bg-gradient-to-r from-amber-500 to-sky-600 hover:from-amber-400 hover:to-sky-500 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-amber-500/25 transition-all transform hover:scale-[1.02]">Enter the Lab →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LAB ═══ -->
+<div id="stage-lab" class="hidden space-y-14">
+
+<!-- 1 · ENGAGE: the 3D bench -->
+<section id="engage" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-sky-400 uppercase">1 · Engage</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white">Two metals, two solutions, one wire.</h2>
+  <p class="text-zinc-400 text-sm mt-1 mb-4 max-w-3xl">Drag to orbit, pinch or scroll to zoom, tap a label to learn what it is. The meter is real: it reads exactly what this cell produces right now.</p>
+  <div class="grid lg:grid-cols-[minmax(0,1fr)_300px] gap-4">
+    <div class="view" id="view">
+      <div id="gl3d"></div>
+      <div id="lbl3d"></div>
+      <div id="glLoading"><div class="w-12 h-12 border-4 border-zinc-700 border-t-amber-400 rounded-full animate-spin"></div>Setting up the bench…</div>
+      <div class="hud">
+        <div class="meter-face"><span class="text-[10px] font-black tracking-[.18em] text-zinc-500">MULTIMETER · DC</span><div><span id="hudV" class="v">1.100</span><span class="u">V</span></div></div>
+        <div class="mini"><span>I = <b id="hudI">0 A</b></span><span>⏱ <b id="hudT">0 s</b></span><span>Q = <b id="hudQ">0 mAh</b></span></div>
+        <div id="hudDead" class="dead hidden"></div>
+      </div>
+      <div class="tools">
+        <div class="flex gap-1 flex-wrap justify-end max-w-[220px]">
+          <button class="tbtn" data-cam="overview">🎥 Overview</button><button class="tbtn" data-cam="anode">Left</button><button class="tbtn" data-cam="cathode">Right</button><button class="tbtn" data-cam="bridge">Bridge</button><button class="tbtn" data-cam="load">Load</button>
+        </div>
+        <button id="lblBtn" class="tbtn sel">🏷 Labels</button>
+        <button id="atomBtn" class="tbtn">🔬 Atoms</button>
+        <button id="hdBtn" class="tbtn">✨ HD</button>
+      </div>
+      <canvas id="atomInset" class="hidden" width="680" height="440"></canvas>
+      <div id="infoCard" class="hidden glass-panel rounded-2xl p-4 border border-amber-500/30">
+        <div class="flex justify-between items-start gap-3"><h5 id="infoT" class="font-black text-amber-300"></h5><button onclick="document.getElementById('infoCard').classList.add('hidden')" class="text-zinc-400 font-black">✕</button></div>
+        <p id="infoP" class="text-sm text-zinc-300 mt-2 leading-relaxed"></p>
+      </div>
+      <div class="timebar">
+        <button id="runBtn" class="tbtn">❚❚ Pause</button>
+        <button class="tbtn" data-speed="1">×1</button><button class="tbtn" data-speed="60">×60</button><button class="tbtn" data-speed="600">×600</button><button class="tbtn" data-speed="3600">1 h/s</button><button class="tbtn" data-speed="36000">10 h/s</button>
+        <button id="resetBtn" class="tbtn">↺ Fresh cell</button>
+      </div>
+    </div>
+    <div id="predictCard" class="card border border-sky-500/30 h-fit">
+      <h4>🔮 Predict before you look</h4>
+      <p class="text-white font-bold mt-3 text-sm leading-relaxed">This is a Daniell cell: zinc in ZnSO₄, copper in CuSO₄. When it delivers current for a long time, <span class="text-amber-300">which electrode gains mass?</span></p>
+      <div id="predictOpts" class="flex flex-wrap gap-2 mt-3"></div>
+      <div id="predictFb" class="hidden text-sm mt-3"></div>
+      <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-zinc-400 space-y-1">
+        <p>⚡ <b class="text-zinc-200">Yellow sparks</b> = electrons (in the wire only)</p>
+        <p>🔵 <b class="text-zinc-200">Coloured spheres</b> = metal ions in solution</p>
+        <p>🟣 / 🟠 = K⁺ and NO₃⁻ ions moving in the salt bridge</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · EXPLORE: the console + missions -->
+<section id="explore" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-emerald-400 uppercase">2 · Explore</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white mb-1">Take control of the cell</h2>
+  <p class="text-zinc-400 text-sm mb-4">Every change appears on the 3D bench above and in the live equations below.</p>
+  <div class="flex flex-wrap gap-2 mb-4">
+    <span class="text-xs font-bold text-zinc-500 self-center mr-1">Quick set-ups:</span>
+    <button class="chip" data-preset="daniell">Daniell Zn | Cu</button><button class="chip" data-preset="silver">Zn | Ag</button><button class="chip" data-preset="power">Power cell Mg | Ag + bulb</button><button class="chip" data-preset="conc">Concentration cell Cu | Cu</button><button class="chip" data-preset="she">Hydrogen reference (SHE)</button>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-4">
+    <!-- left half-cell -->
+    <div class="card">
+      <div class="flex justify-between items-center gap-2"><h4>Left beaker</h4><span id="roleL"></span></div>
+      <div id="metalsL" class="mgrid mt-3"></div>
+      <p id="solL" class="text-xs text-zinc-400 mt-3"></p>
+      <div class="mt-3"><div class="flex justify-between text-xs font-bold text-zinc-400 mb-1"><span>Concentration</span><span id="concVL" class="mono text-amber-300"></span></div><input id="concL" type="range" class="rng" min="-3" max="0.3" step="0.01" value="0"></div>
+      <div class="grid grid-cols-2 gap-2 mt-3 text-[11px] mono">
+        <div class="bg-zinc-950 rounded-lg p-2 border border-zinc-800"><div class="text-zinc-500">half-cell</div><div id="halfEL" class="text-zinc-200"></div></div>
+        <div class="bg-zinc-950 rounded-lg p-2 border border-zinc-800"><div class="text-zinc-500">electrode</div><div id="massL" class="text-zinc-200"></div></div>
+      </div>
+      <p id="cnowL" class="mono text-[11px] text-zinc-400 mt-2"></p>
+    </div>
+    <!-- circuit -->
+    <div class="card space-y-4">
+      <div><h4>External circuit</h4>
+        <div class="flex flex-wrap gap-2 mt-3"><button class="chip" data-load="none">📟 Voltmeter only</button><button class="chip" data-load="bulb">💡 Bulb</button><button class="chip" data-load="led">🔴 LED</button><button class="chip" data-load="motor">🌀 Motor</button><button class="chip" data-load="res">〰️ Resistor</button></div>
+        <div id="rloadRow" class="hidden mt-3"><div class="flex justify-between text-xs font-bold text-zinc-400 mb-1"><span>Resistance</span><span id="rloadV" class="mono text-amber-300"></span></div><input id="rloadS" type="range" class="rng" min="0" max="4" step="0.01" value="2"></div>
+        <div class="flex gap-2 mt-3"><button id="swBtn" class="bigbtn flex-1">⭘ Switch OPEN</button><button id="swapBtn" class="bigbtn" title="Swap the meter leads">⇄ Swap leads</button></div>
+      </div>
+      <div><h4>Ionic path</h4><div class="flex flex-wrap gap-2 mt-2"><button class="chip" data-bridge="salt">🧪 Salt bridge</button><button class="chip" data-bridge="membrane">🧱 Porous membrane</button><button class="chip" data-bridge="none">✕ None</button></div></div>
+      <div><h4>Electrode size</h4><div class="flex flex-wrap gap-2 mt-2"><button class="chip" data-size="S">Small</button><button class="chip" data-size="M">Medium</button><button class="chip" data-size="L">Large</button></div></div>
+      <div><div class="flex justify-between text-xs font-bold text-zinc-400 mb-1"><span>🌡 Temperature</span><span id="tempV" class="mono text-amber-300"></span></div><input id="tempS" type="range" class="rng" min="0" max="80" step="1" value="25"></div>
+    </div>
+    <!-- right half-cell -->
+    <div class="card">
+      <div class="flex justify-between items-center gap-2"><h4>Right beaker</h4><span id="roleR"></span></div>
+      <div id="metalsR" class="mgrid mt-3"></div>
+      <p id="solR" class="text-xs text-zinc-400 mt-3"></p>
+      <div class="mt-3"><div class="flex justify-between text-xs font-bold text-zinc-400 mb-1"><span>Concentration</span><span id="concVR" class="mono text-amber-300"></span></div><input id="concR" type="range" class="rng" min="-3" max="0.3" step="0.01" value="0"></div>
+      <div class="grid grid-cols-2 gap-2 mt-3 text-[11px] mono">
+        <div class="bg-zinc-950 rounded-lg p-2 border border-zinc-800"><div class="text-zinc-500">half-cell</div><div id="halfER" class="text-zinc-200"></div></div>
+        <div class="bg-zinc-950 rounded-lg p-2 border border-zinc-800"><div class="text-zinc-500">electrode</div><div id="massR" class="text-zinc-200"></div></div>
+      </div>
+      <p id="cnowR" class="mono text-[11px] text-zinc-400 mt-2"></p>
+    </div>
+  </div>
+
+  <!-- live equations + graph -->
+  <div class="grid lg:grid-cols-2 gap-4 mt-4">
+    <div class="card space-y-2">
+      <h4>Live chemistry</h4>
+      <div id="eqOx" class="eq"></div><div id="eqRed" class="eq"></div><div id="eqAll" class="eq"></div>
+      <div class="eq"><span class="text-zinc-400">Cell notation:</span> <span id="eqNot"></span></div>
+      <div id="eqE0" class="eq"></div><div id="eqNernst" class="eq"></div><div id="eqG" class="eq"></div><div id="eqIR" class="eq"></div>
+      <p class="text-[11px] text-zinc-500">Simplifications: concentrations are used instead of activities, E° is taken as independent of temperature, H₂ is supplied at 1 bar.</p>
+    </div>
+    <div class="card">
+      <h4>Discharge recorder</h4>
+      <canvas id="liveGraph" width="900" height="300" class="w-full h-auto rounded-xl mt-3"></canvas>
+      <p class="text-[11px] text-zinc-500 mt-2"><span class="text-amber-300">━ V</span> terminal voltage · <span class="text-amber-300/50">━ E</span> EMF · <span class="text-sky-400">━ I</span> current</p>
+    </div>
+  </div>
+
+  <!-- missions -->
+  <div class="card mt-4 border border-emerald-500/20">
+    <div class="flex justify-between items-center flex-wrap gap-2"><h4>🎯 Missions</h4><span class="text-xs font-bold text-emerald-300 mono" id="mScore"></span></div>
+    <div id="missionTabs" class="flex gap-2 overflow-x-auto pb-2 mt-3"></div>
+    <div class="grid md:grid-cols-2 gap-4 mt-3">
+      <div>
+        <div class="flex items-center gap-2"><h3 id="mTitle" class="text-xl font-black text-white"></h3><span id="mLvl" class="chip !py-0.5 !text-[10px]"></span></div>
+        <p id="mIntro" class="text-sm text-zinc-400 mt-1"></p>
+        <div id="mObjs" class="mt-3"></div>
+        <button id="mHint" class="chip mt-3">💡 Hint</button>
+      </div>
+      <div class="bg-zinc-950/60 rounded-2xl border border-zinc-800 p-4"><div id="mAsk"></div><p id="mFb" class="text-xs text-zinc-400 mt-3"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · EXPLAIN -->
+<section id="explain" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-violet-400 uppercase">3 · Explain</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white mb-4">What is really happening</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    <div class="concept"><h5>⚡ Anode = oxidation</h5><p>The more reactive metal gives up electrons: Zn → Zn²⁺ + 2e⁻. In a galvanic cell it is the <b class="text-rose-300">negative pole</b>, and it loses mass.</p></div>
+    <div class="concept"><h5>🎯 Cathode = reduction</h5><p>Ions take those electrons: Cu²⁺ + 2e⁻ → Cu. It is the <b class="text-sky-300">positive pole</b>; metal deposits on it and its solution fades.</p></div>
+    <div class="concept"><h5>🌉 The salt bridge</h5><p>Electrons never enter it. K⁺ ions drift to the cathode side and NO₃⁻ to the anode side, so both solutions stay neutral and the loop closes.</p></div>
+    <div class="concept"><h5>📉 Why voltage changes</h5><p>E = E° − (0.0592/n)·log Q, and under load V = E − I·r. Concentration, temperature and internal resistance all matter.</p></div>
+  </div>
+  <div class="grid lg:grid-cols-2 gap-4">
+    <div class="card">
+      <div class="flex justify-between items-center gap-2 flex-wrap"><h4>Investigation A · Build the electrochemical series</h4><button id="recLadder" class="chip">● Record vs SHE</button></div>
+      <p class="text-xs text-zinc-400 mt-2">Put the hydrogen electrode (H₂) in one beaker and a metal in the other, 1.0 M at 25 °C. Record. Repeat with other metals to build the ladder.</p>
+      <div class="grid sm:grid-cols-[1fr_170px] gap-3 mt-3">
+        <canvas id="ladderCanvas" width="460" height="420" class="w-full h-auto rounded-xl"></canvas>
+        <table class="nb h-fit"><thead><tr><th>Couple</th><th>You</th><th>Table</th></tr></thead><tbody id="ladderRows"></tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="flex justify-between items-center gap-2 flex-wrap"><h4>Investigation B · The Nernst plot</h4><div class="flex gap-2"><button id="recNernst" class="chip">● Record point</button><button id="clrNernst" class="chip">Clear</button></div></div>
+      <p class="text-xs text-zinc-400 mt-2">Keep one pair of metals. Change the concentrations, record each EMF. Does E fall in a straight line with log Q?</p>
+      <canvas id="nernstCanvas" width="560" height="300" class="w-full h-auto rounded-xl mt-3"></canvas>
+      <p id="nernstFit" class="text-sm text-zinc-300 mt-2"></p>
+      <table class="nb mt-2"><thead><tr><th>#</th><th>log Q</th><th>EMF</th><th>T</th></tr></thead><tbody id="nernstRows"></tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · ELABORATE -->
+<section id="elaborate" class="reveal scroll-mt-28">
+  <p class="text-xs font-black tracking-[.25em] text-amber-400 uppercase">4 · Elaborate</p>
+  <h2 class="text-2xl sm:text-3xl font-black text-white mb-5">Bonus challenge</h2>
+  <div class="bg-gradient-to-br from-yellow-900/30 to-orange-900/30 p-1 rounded-3xl border border-yellow-500/30">
+    <div class="bg-zinc-900/90 rounded-[1.4rem] p-5 sm:p-6 backdrop-blur-xl">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4">
+        <div>
+          <h3 class="text-2xl font-black text-yellow-400 flex items-center gap-3"><span class="text-3xl">🔋</span> Battery Engineer</h3>
+          <p class="text-sm text-zinc-400 mt-1" id="gameInstr"></p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="bg-zinc-800 px-4 py-2 rounded-xl border border-zinc-700 text-sm font-bold">Score: <span id="bonusScore" class="text-yellow-400 text-lg">0</span><span class="text-zinc-500">/3</span></div>
+          <div class="bg-zinc-800 px-4 py-2 rounded-xl border border-zinc-700 text-sm font-bold">Level: <span id="bonusLevel" class="text-orange-400">1</span><span class="text-zinc-500">/3</span></div>
+        </div>
+      </div>
+      <div class="relative w-full bg-black rounded-2xl overflow-hidden border border-yellow-900/50 flex justify-center items-center touch-none">
+        <canvas id="bonusCanvas" width="750" height="330" class="w-full max-w-[750px] h-auto"></canvas>
+      </div>
+      <div id="gameCtrls" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4"></div>
+      <div class="flex items-center justify-between mt-4 gap-3 flex-wrap">
+        <button onclick="window.toggleBonusHint()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-bold rounded-xl border border-zinc-700 transition-colors">💡 Hint</button>
+        <p class="text-xs text-zinc-500 italic">E°cell = E°cathode − E°anode · E = E° − (0.0592/n)·log Q</p>
+      </div>
+      <div id="bonusComplete" class="hidden mt-4 p-5 bg-emerald-900/30 rounded-2xl border border-emerald-500/40 text-center">
+        <p class="text-2xl font-black text-emerald-400">🏆 Challenge Complete! Every order delivered.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · EVALUATE -->
+<section id="evaluate" class="reveal scroll-mt-28 space-y-8">
+  <div>
+    <p class="text-xs font-black tracking-[.25em] text-rose-400 uppercase">5 · Evaluate</p>
+    <h2 class="text-2xl sm:text-3xl font-black text-white">Show what you can do</h2>
+  </div>
+  <div class="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 p-1 rounded-3xl border border-indigo-500/30">
+    <div class="bg-zinc-900/90 rounded-[1.4rem] p-6 md:p-8 backdrop-blur-xl">
+      <h3 class="text-2xl font-black text-indigo-400 mb-4">Practical Challenge: Draw and Capture! 📸</h3>
+      <div class="space-y-4 text-zinc-300 text-sm leading-relaxed mb-6">
+        <p>Get a <strong>white paper, pencil, and ruler</strong> and draw the following:</p>
+        <ul class="list-disc list-inside space-y-2 text-indigo-200">
+          <li>A labelled <strong>Daniell cell</strong>: two beakers, the Zn and Cu electrodes, both solutions and the salt bridge.</li>
+          <li>Arrows for the <strong>electrons</strong> (in the wire) and for the <strong>ions</strong> (K⁺ and NO₃⁻ in the bridge). Mark the <strong>anode (−)</strong> and the <strong>cathode (+)</strong>.</li>
+          <li>Write both <strong>half-equations</strong>, the <strong>overall equation</strong>, the <strong>cell notation</strong> and E°<sub>cell</sub> = 1.10 V.</li>
+          <li><strong>Write your full name and section by hand on the same paper.</strong></li>
+        </ul>
+        <p class="text-emerald-400 font-bold mt-4">Take a clear photo of your drawing using the button below!</p>
+      </div>
+      <div class="flex flex-col items-center p-8 border-2 border-dashed border-indigo-500/50 rounded-2xl bg-indigo-950/20 hover:bg-indigo-900/40 transition-colors">
+        <label for="cameraInput" class="custom-file-upload flex flex-col items-center gap-3 cursor-pointer">
+          <div class="w-16 h-16 bg-indigo-500 rounded-full flex justify-center items-center shadow-lg shadow-indigo-500/50 hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <span class="font-bold text-indigo-300 text-lg">Take a Photo of Your Drawing</span>
+          <span class="text-xs text-zinc-500">(Opens your mobile camera)</span>
+        </label>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
+        <div id="imagePreviewContainer" class="hidden mt-6 flex flex-col items-center">
+          <p class="text-emerald-400 font-bold text-sm mb-2">✓ Photo captured!</p>
+          <img id="imagePreview" src="" alt="Your drawing" class="max-w-[200px] rounded-lg border-2 border-emerald-500/50 shadow-lg">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="glass-panel p-6 md:p-8 rounded-3xl border border-zinc-800 shadow-2xl">
+    <h3 class="text-2xl font-black text-amber-400 mb-6">Knowledge Evaluation</h3>
+    <div id="quizContainer" class="space-y-8"></div>
+    <div class="mt-8 space-y-6">
+      <h4 class="text-lg font-black text-amber-300">Think deeper (higher order)</h4>
+      <div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800">
+        <p class="font-bold text-white mb-3"><span class="text-amber-500">H1 · Analyze.</span> A student's Daniell cell reads 1.10 V on the voltmeter, but when a small bulb is connected the meter drops to 0.25 V and the bulb does not glow. Explain what is happening inside the cell, and propose <u>two</u> changes that would make the bulb glow. Justify each with the lab.</p>
+        <textarea id="hot1" dir="auto" rows="4" class="num-in" style="font-family:inherit" placeholder="Write your reasoning…"></textarea>
+      </div>
+      <div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800">
+        <p class="font-bold text-white mb-3"><span class="text-amber-500">H2 · Evaluate &amp; create.</span> Your school wants a classroom demo cell with the highest voltage possible, but it must be safe and affordable. Choose two half-cells from the lab, give the EMF, and evaluate your choice against at least <u>two</u> other criteria (safety, cost, reaction with water, how long it lasts).</p>
+        <textarea id="hot2" dir="auto" rows="4" class="num-in" style="font-family:inherit" placeholder="Write your design and evaluation…"></textarea>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-zinc-800">
+      <button id="submitBtn" onclick="submitFinalWork()" class="w-full bg-gradient-to-r from-amber-400 to-sky-500 text-black font-black text-lg py-4 rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] transition-transform flex justify-center items-center gap-2">Submit Final Work 🚀</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<section id="stage-success" class="hidden glass-panel p-10 rounded-3xl max-w-lg mx-auto text-center border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)]">
+  <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full mb-6" style="border:1px solid rgba(16,185,129,.5)">
+    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+  </div>
+  <h2 class="text-3xl font-black text-white mb-2">Great job, Champion!</h2>
+  <p id="successMsg" class="text-zinc-400 mb-6 text-sm">Your answers and drawing have been submitted to your teacher.</p>
+  <div class="bg-zinc-900/80 rounded-xl p-4 text-sm font-bold border border-zinc-800 mb-6">
+    <div class="flex justify-between text-zinc-300 py-1"><span>Quiz Score:</span><span id="finalScoreText" class="text-emerald-400">0/5</span></div>
+    <div class="flex justify-between text-zinc-300 py-1"><span>Missions:</span><span id="finalMissionText" class="text-sky-400">0</span></div>
+    <div class="flex justify-between text-zinc-300 py-1"><span>Bonus Challenge:</span><span id="finalBonusText" class="text-yellow-400">0/3</span></div>
+    <div class="flex justify-between text-zinc-300 py-1"><span>Drawing:</span><span class="text-blue-400">Uploaded ✓</span></div>
+  </div>
+  <button id="dlResults" class="hidden chip mx-auto mb-4">⬇ Download my results</button>
+  <p id="successFoot" class="text-xs text-zinc-500">Results are now visible on your teacher's dashboard.</p>
+</section>
+</main>
+
+<button id="coachFab" onclick="openCoach()" class="hidden fixed right-4 bottom-4 z-[90] bg-gradient-to-r from-amber-400 to-sky-500 text-black font-black rounded-full px-4 py-3 shadow-xl shadow-amber-500/30">🤖 Cell Coach</button>
+<div id="coachPanel" class="closed fixed right-3 bottom-3 left-3 sm:left-auto sm:w-[380px] z-[95] glass-panel rounded-2xl border border-zinc-700 shadow-2xl flex flex-col" style="max-height:min(560px,80vh)">
+  <div class="flex items-center justify-between p-3 border-b border-zinc-800">
+    <div><p class="font-black text-white text-sm">🤖 Cell Coach</p><p class="text-[11px] text-zinc-400">It can see your bench. It won't give you the answer.</p></div>
+    <button onclick="closeCoach()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-300">✕</button>
+  </div>
+  <div id="coachLog" class="flex-1 overflow-y-auto p-3 space-y-2" style="min-height:180px"></div>
+  <div class="p-3 border-t border-zinc-800 flex gap-2">
+    <input id="coachIn" dir="auto" class="num-in" style="font-family:inherit" placeholder="Ask about what you see…" maxlength="400">
+    <button id="coachSend" class="bg-amber-500 hover:bg-amber-400 text-black rounded-xl px-4 font-bold text-sm">Send</button>
+  </div>
+</div>
+<div id="loadingOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex-col justify-center items-center">
+  <div class="w-16 h-16 border-4 border-zinc-700 border-t-amber-400 rounded-full animate-spin"></div>
+  <p class="text-white mt-4 font-bold animate-pulse">Submitting your work...</p>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const rosters = {"9A":["إبراهيم فادي احمد مطر","أروى خالد محمود العريض","ابتسام محمد علي الجعجع","احمد عمر احمد الصالح","اماني بلال حامد ابو الهدى","امجد علي نايف حميد","براءة خالد محمود نوفل","تولين ايمن محمد قدسيه","جواد محمود غازي حسن","جود وسام جابر الصالح","حسن حسام علي العلي","حمزة هشام محمد نصر","خلود خالد اسماعيل قاسم","دانيال محمد عادل جواد","ريان ساري علي زيداني","ريان عفيف علي السيد","ريماس ايمن وليد الاشوح","سارة موسى محمد حمود","سامر احمد علي عبدالله","سلفانا ابراهيم عبد السلام قصقص","سلمان خالد ناصر عيشه","سيلين اسامة عبد الفتاح توسكا","سيلين عادل اسماعيل ابراهيم","عبد الرحمن الياس محمد الحسين","عزيزه مروان حسن حسن","علي محمود ديب حمّاد","كرم نادر احمد غيث","لارا خضر علي شراب","ليا محمد ابراهيم الحلو","ليمار خضر عبدالله بلاوني","لين محمود احمد احمد","مالك احمد علي الحاج علي","محمد ايمن وليد الاشوح","محمود محمد مصطفى ابو مايهه","ملك طارق محمود الاشقر","ملك محمد حسن ابو حمد","ميرا اياد وحيد حسن","نغم محمد جمعة بلال","نور ماهر مفيد العلي","هادي باسم عبد الرؤوف الحاج داود","ياسمين محمد شحادة ديب"],"9B":["إسراء خالد محمود مطر","أية احمد محمد مكية","ادم احمد غازي الجمل","ادم فادي كامل عبدالله","اميره محمد احمد الهندي","بلال زياد محمود عيسى","جاد سمير ابراهيم العلي","جمانه علي \"محي الدين\" دمشقي","حلا محمد اكرم عجاوي","حنان محمد جمال عبد اللطيف","حنين غسان محمد ابو ليل","دانيه حسين محمد حسين","رؤى رضوان اسعد ديب","رفيف محمد احمد ندوه","رهف محمود محمد دراج","رهف يوسف جمعة جمعة","روان احمد شحادة ديب","زهرة ابراهيم عارف ظاهر","ساره بهاء ابراهيم العيسى","سناء جهاد فؤاد الفقير","عبد الرحمن وليد احمد نفاع","عبد الهادي رضوان عيسى","عصام مصطفى منير توسكا","علاء علي غالب الساري","عمار احمد عصام كروم","عمر احمد جمال الاشبه","عمر حسان عمر كروم","غزل بلال \"محمد خضر\" عمر","ليا محمد خالد محمد","لينا احمد علي علي","محمد \"أحمد قاسم\" الصباهي","محمد زياد محمد عبود","محمد \"نور الدين\" علي قطف","محمود احمد محمود قدورة","محمود \"محمد علي\" محمد خليل","مريم محمد عبد الرحمن عبد الهادي","مطر علي احمد مطر","ملاك بسام احمد حشاش","ملك يوسف شحادة ديب","نادين سليمان صلاح نجم","نور محمد وليد الصالح","وسام هشام امين الطه","يوسف نضال يوسف العيساوي"],"9C":["إسراء مصطفى ممدوح سعد الدين","إسلام وليد عبد المطلب بلاوني","أسينات طلال زياد العباسي","آيه هاني سعود الميناوي","اروى محمد علي علي","امينة جميل علي الغرابلي","تالا احمد ابراهيم عطور","جميل احمد جميل الطاهره","حسين علاء احمد صيداوي","حمزة ابراهيم محمود ابو جبل","حمزه خليل محمد عثمان","خالد احمد صبحي رمضان","خليل ابراهيم حسين بلاوني","راما احمد محمد خزعل","راما حسان \"محمد تيسير\" منصور","رماس ايمن كايد خضره","رهف بسام محمد بلاوني","زياد طارق زياد الهبطه","سيرين عماد احمد عبد الحليم","ضحى محمد حسن حسن","عائشه خالد عزات يحيى","عبد الرحمن احمد موسى محمد","عبد الرحمن اسماعيل سميح حمو","عبدالرحمن جهاد عبد ابراهيم","علي محمد عبد بشر","عمر احمد محمد اسماعيل","عمر عبدالله عطا ابو شليح","فرح علي محمد ملحم","فيروز احسان عبدالله شاهين","قمر ابراهيم فوزي الميعاري","لميس سعيد محمد الخطيب","مجد فراس حسن سعيد","محمد رامي نزيه رمضان","محمد عبد المجيد محمد سالم","ملاك احمد محمد احمد","منى احسان عبدالله شاهين","مورة عدنان محمود فوراني","ميرا محمد خالد عبد الغني","نبيل محمود نبيل درويش","نورا خليل محمود المتولي","يوسف منتصر احمد جمعة"],"9D":["أشرف محمد حكمت غيث","احمد حسن \"محي الدين\" قاسم","احمد حسين محمد شعيب","ادم زياد علي وهبه","بلال احمد عيسى أبو الشباب","حسن عبد الوهاب حسن ابو شقير","حسن محمد حسن الفاعور","حلا حسن حسين الحسين","خالد وليد محمود العريض","رنا محمود محمد يعقوب","رهف اسماعيل علي لوباني","رهف سمير لطفي فهد","روان علي عبدالله بلاوني","رين سامر سعدو الحاج","سحر بسام احمد القط","سدره المنتهى احمد مختار الخالد","سعيد محمد سعيد سعيد","شيماء علي احمد محمد","عائشه وسام عبد الرحمن حمو","عمر احمد محمد عزيمه","عمر مالك جمعة بلال","غنى خضر فؤاد احمد","قمر محمد خالد ابو سعد","لمار محمد محمود حسين","ليا شادي ابراهيم عبد الهادي","ليال سعيد جهاد عكيله","ليان حسن احمد ابو عرب","ليان \"محمد خير\" احمد","لين زياد عاطف ابو الشباب","لين هاني احمد العيسى","ماجد بلال ماجد الخطيب","محمد امير فتان فضه","محمد سعيد محمود جربوع","محمد مصطفى ابراهيم الفقير","محمد وليد مصطفى خطاب","مرام جمال محمد ناصر","مريم يوسف فوزي الحاج","ملك ربيع علي عبد الرحمن","نور علي \"محمد زيد\" راجح","هبة فؤاد علي منصور","وليد محمد سرحان العلي","يارا يوسف محمد حسن"]};
+
+// ════════════════════════════════════════════════════════════════
+// GalvanicLab — The Ultimate Galvanic Cell · Ahmad Ghozlan · aghozlan.github.io
+// ════════════════════════════════════════════════════════════════
+// ── Config ──────────────────────────────────────────────────────
+// Submission: dedicated sheet (deploy GalvanicLab_AppScript.js, paste its /exec URL here).
+const GOOGLE_SCRIPT_URL = "PASTE_GALVANIC_APPS_SCRIPT_URL";
+// AI tutor: this lab's own script (action:'ai', Groq key in Script Properties). Until it is
+// deployed, the built-in offline Cell Coach answers.
+const TUTOR_URL = GOOGLE_SCRIPT_URL;
+const LAB_NAME = "Galvanic Lab — the ultimate galvanic cell";
+const LAB_ID = "galvaniclab";
+const LAB_START = Date.now();
+
+// ── Utils ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function sig(v, n = 3) { if (!isFinite(v)) return '—'; if (v === 0) return '0'; return String(+v.toPrecision(n)); }
+function fmtI(a) { const x = Math.abs(a); if (x >= 1) return sig(a) + ' A'; if (x >= 1e-3) return sig(a * 1e3) + ' mA'; if (x >= 1e-6) return sig(a * 1e6) + ' µA'; return '0 A'; }
+function fmtC(c) { if (c >= 0.1) return c.toFixed(c >= 1 ? 2 : 3) + ' M'; if (c >= 1e-3) return (c * 1e3).toFixed(1) + ' mM'; return sig(c * 1e3, 2) + ' mM'; }
+function fmtTime(s) { if (s < 60) return s.toFixed(0) + ' s'; if (s < 3600) return Math.floor(s / 60) + ' min ' + String(Math.floor(s % 60)).padStart(2, '0') + ' s'; const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h + ' h ' + String(m).padStart(2, '0') + ' min'; }
+function fmtSigned(v, d = 3) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(d); }
+let _toastT = null;
+function toast(msg, ms = 2800) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), ms); }
+const gcd = (a, b) => (b ? gcd(b, a % b) : a), lcm = (a, b) => (a * b) / gcd(a, b);
+
+// ── Sound (off by default) ──────────────────────────────────────
+let soundOn = false, actx = null;
+function toggleSound() { soundOn = !soundOn; $('soundBtn').textContent = soundOn ? '🔊' : '🔇'; if (soundOn) { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); click(1); } catch (e) { soundOn = false; } } }
+function click(kind = 0) {
+  if (!soundOn || !actx) return;
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.frequency.value = [900, 1300, 660][kind] || 900; o.type = kind === 2 ? 'triangle' : 'square';
+  g.gain.setValueAtTime(0.05, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + (kind === 2 ? 0.35 : 0.05));
+  o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.4);
+}
+
+// ════════════════════════════════════════════════════════════════
+// CHEMISTRY DATA — standard reduction potentials at 25 °C (V vs SHE)
+// ════════════════════════════════════════════════════════════════
+const F = 96485, RGAS = 8.314, VOL = 0.150;   // beaker volume (L)
+const METALS = {
+  Mg: { name: 'Magnesium', ion: 'Mg²⁺', n: 2, E0: -2.37, M: 24.31, rho: 1.74, salt: 'MgSO₄', col: '#cfd3d8', rough: 0.32, tint: null },
+  Al: { name: 'Aluminium', ion: 'Al³⁺', n: 3, E0: -1.66, M: 26.98, rho: 2.70, salt: 'Al₂(SO₄)₃', col: '#d9dde2', rough: 0.28, tint: null },
+  Zn: { name: 'Zinc', ion: 'Zn²⁺', n: 2, E0: -0.76, M: 65.38, rho: 7.14, salt: 'ZnSO₄', col: '#9aa6b2', rough: 0.42, tint: null },
+  Fe: { name: 'Iron', ion: 'Fe²⁺', n: 2, E0: -0.44, M: 55.85, rho: 7.87, salt: 'FeSO₄', col: '#7d8186', rough: 0.55, tint: [0.74, 0.9, 0.62] },
+  Ni: { name: 'Nickel', ion: 'Ni²⁺', n: 2, E0: -0.26, M: 58.69, rho: 8.91, salt: 'NiSO₄', col: '#b7b3a6', rough: 0.3, tint: [0.35, 0.82, 0.5] },
+  Sn: { name: 'Tin', ion: 'Sn²⁺', n: 2, E0: -0.14, M: 118.71, rho: 7.29, salt: 'SnSO₄', col: '#c9cbc8', rough: 0.36, tint: null },
+  Pb: { name: 'Lead', ion: 'Pb²⁺', n: 2, E0: -0.13, M: 207.2, rho: 11.34, salt: 'Pb(NO₃)₂', col: '#6f7682', rough: 0.6, tint: null },
+  H2: { name: 'Hydrogen (SHE)', ion: 'H⁺', n: 2, E0: 0.0, M: 2.016, rho: 0, salt: 'HCl', col: '#3a3d42', rough: 0.9, tint: null, gas: true },
+  Cu: { name: 'Copper', ion: 'Cu²⁺', n: 2, E0: 0.34, M: 63.55, rho: 8.96, salt: 'CuSO₄', col: '#c8774a', rough: 0.3, tint: [0.12, 0.45, 0.98] },
+  Ag: { name: 'Silver', ion: 'Ag⁺', n: 1, E0: 0.80, M: 107.87, rho: 10.49, salt: 'AgNO₃', col: '#e3e6ea', rough: 0.15, tint: null },
+  Au: { name: 'Gold', ion: 'Au³⁺', n: 3, E0: 1.50, M: 196.97, rho: 19.3, salt: 'AuCl₃', col: '#e7b84a', rough: 0.18, tint: [0.98, 0.84, 0.25] },
+};
+const METAL_KEYS = Object.keys(METALS);
+const SIZES = { S: { area: 4, label: 'Small · 4 cm²' }, M: { area: 10, label: 'Medium · 10 cm²' }, L: { area: 25, label: 'Large · 25 cm²' } };
+const BRIDGES = { salt: { r: 30, label: 'Salt bridge (KNO₃ U-tube)' }, membrane: { r: 3, label: 'Porous membrane' }, none: { r: Infinity, label: 'None (removed)' } };
+const LOADS = {
+  none: { label: 'Voltmeter only', icon: '📟' },
+  bulb: { label: 'Bulb', icon: '💡', R: 10 },
+  led: { label: 'Red LED', icon: '🔴', R: 47, Vf: 1.8 },
+  motor: { label: 'Motor', icon: '🌀', R: 8 },
+  res: { label: 'Resistor', icon: '〰️' },
+};
+
+// ════════════════════════════════════════════════════════════════
+// THE CELL — state + model
+// ════════════════════════════════════════════════════════════════
+const CELL = window.CELL = {
+  L: { m: 'Zn', c: 1.0 }, R: { m: 'Cu', c: 1.0 },
+  T: 25, size: 'M', bridge: 'salt', load: 'none', Rload: 100, sw: false, swapped: false,
+  run: true, speed: 1, t: 0, Q: 0, energy: 0,
+  // derived
+  EL: 0, ER: 0, emf: 0, E: 0, anode: 'L', I: 0, Vt: 0, Vmeter: 0, r: 0, P: 0, n: 2, dead: false, deadWhy: '',
+  glow: 0, hist: [], v: 0,
+};
+function initHalf(h) { const M = METALS[h.m]; h.mass0 = M.gas ? 0 : SIZES[CELL.size].area * 0.1 * M.rho; h.mass = h.mass0; h.c0 = h.c; h.dep = 0; }
+function resetRun() { ['L', 'R'].forEach(k => initHalf(CELL[k])); CELL.t = 0; CELL.Q = 0; CELL.energy = 0; CELL.dead = false; CELL.deadWhy = ''; CELL.hist = []; CELL.v++; }
+const kT = () => (RGAS * (CELL.T + 273.15)) / F;   // RT/F (V)
+/** half-cell reduction potential (Nernst, concentrations as activities, p(H₂) = 1 bar) */
+function halfE(h) {
+  const M = METALS[h.m], c = Math.max(h.c, 1e-9);
+  if (M.gas) return M.E0 + kT() * Math.log(c);          // 2H⁺ + 2e⁻ → H₂: E = (RT/2F) ln [H⁺]² = (RT/F) ln[H⁺]
+  return M.E0 + (kT() / M.n) * Math.log(c);
+}
+function internalR() {
+  const B = BRIDGES[CELL.bridge].r; if (!isFinite(B)) return Infinity;
+  const a = SIZES[CELL.size].area / 10, tf = 1 + 0.02 * (CELL.T - 25);
+  const rs = h => 4 / (a * Math.pow(Math.max(h.c, 1e-4), 0.7) * tf);
+  return B / tf + rs(CELL.L) + rs(CELL.R);
+}
+function solve() {
+  const C = CELL;
+  C.EL = halfE(C.L); C.ER = halfE(C.R);
+  C.emf = C.ER - C.EL;                      // signed: right electrode vs left
+  C.E = Math.abs(C.emf);
+  C.anode = C.emf >= 0 ? 'L' : 'R';
+  const an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'];
+  C.n = lcm(METALS[an.m].n, METALS[ca.m].n);
+  C.r = internalR();
+  const anodeGone = !METALS[an.m].gas && an.mass <= 0.0005;
+  let I = 0;
+  const L = LOADS[C.load];
+  if (isFinite(C.r) && !anodeGone && C.load !== 'none' && C.sw) {
+    const R = C.load === 'res' ? C.Rload : L.R;
+    if (C.load === 'led') I = Math.max(0, (C.E - L.Vf) / (C.r + R));
+    else I = C.E / (C.r + R);
+  }
+  if (C.E < 1e-4) I = 0;
+  C.I = I;
+  C.Vt = isFinite(C.r) ? C.E - I * C.r : 0;                         // terminal voltage
+  // the multimeter: red (V) lead on the right electrode, black (COM) on the left, unless swapped
+  const sign = (C.emf >= 0 ? 1 : -1) * (C.swapped ? -1 : 1);
+  C.Vmeter = isFinite(C.r) && !anodeGone ? sign * C.Vt * (1e7 / (1e7 + C.r)) : 0;
+  C.P = C.load === 'led' ? I * Math.max(0, C.Vt) : I * I * (C.load === 'res' ? C.Rload : (L.R || 0));
+  C.glow = C.load === 'bulb' ? clamp((I - 0.04) / 0.22, 0, 1) : C.load === 'led' ? clamp(I / 0.02, 0, 1) : C.load === 'motor' ? clamp((I - 0.05) / 0.25, 0, 1) : 0;
+}
+/** advance the chemistry by dt seconds of simulated time (sub-stepped) */
+function advance(dt) {
+  const C = CELL;
+  let left = dt, guard = 0;
+  while (left > 1e-9 && guard++ < 4000) {
+    solve();
+    if (C.I <= 0) { C.t += left; break; }
+    const an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'], Ma = METALS[an.m], Mc = METALS[ca.m];
+    // keep each step's change under ~1 % of the scarcest reactant
+    const molE = C.I / F;                           // mol e⁻ per second
+    const limC = (ca.c * VOL * (Mc.gas ? 1 : Mc.n)) / molE * 0.01;
+    const limA = Ma.gas ? Infinity : ((an.mass / Ma.M) * Ma.n) / molE * 0.01;
+    const h = Math.max(1e-3, Math.min(left, limC, limA, 600));
+    const ne = molE * h;
+    const ipeA = Ma.gas ? 1 : 1 / Ma.n, ipeC = Mc.gas ? 1 : 1 / Mc.n;   // ions per electron (2H⁺ + 2e⁻ ⇌ H₂)
+    an.c += ne * ipeA / VOL;
+    if (!Ma.gas) an.mass = Math.max(0, an.mass - (ne / Ma.n) * Ma.M);
+    ca.c = Math.max(1e-9, ca.c - ne * ipeC / VOL);
+    if (!Mc.gas) { ca.mass += (ne / Mc.n) * Mc.M; ca.dep += (ne / Mc.n) * Mc.M; }
+    C.Q += C.I * h; C.energy += C.I * C.Vt * h; C.t += h; left -= h;
+    if (!Ma.gas && an.mass <= 0.0005) { C.dead = true; C.deadWhy = `the ${Ma.name.toLowerCase()} anode dissolved completely`; }
+    else if (ca.c < 2e-6) { C.dead = true; C.deadWhy = `the ${Mc.ion} ions in the cathode beaker ran out`; }
+    if (C.dead) { C.t += left; break; }
+  }
+  solve();
+}
+/** equations for the current set-up (HTML) */
+function chemText() {
+  const C = CELL, an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'];
+  const A = METALS[an.m], K = METALS[ca.m];
+  const n = C.n, ka = n / A.n, kc = n / K.n;
+  const co = (k) => (k === 1 ? '' : k);
+  const oxid = A.gas ? `H₂(g) → 2H⁺(aq) + 2e⁻` : `${an.m}(s) → ${A.ion}(aq) + ${A.n}e⁻`;
+  const red = K.gas ? `2H⁺(aq) + 2e⁻ → H₂(g)` : `${K.ion}(aq) + ${K.n}e⁻ → ${ca.m}(s)`;
+  const same = an.m === ca.m;
+  let overall;
+  if (same) overall = `concentration cell: ${A.ion} (conc.) → ${A.ion} (dilute side is oxidised)`;
+  else {
+    const lhs = `${co(ka)}${A.gas ? 'H₂(g)' : an.m + '(s)'} + ${K.gas ? co(2 * kc) + 'H⁺(aq)' : co(kc) + K.ion + '(aq)'}`;
+    const rhs = `${A.gas ? co(2 * ka) + 'H⁺(aq)' : co(ka) + A.ion + '(aq)'} + ${co(kc)}${K.gas ? 'H₂(g)' : ca.m + '(s)'}`;
+    overall = `${lhs} → ${rhs}`;
+  }
+  const half = (h) => METALS[h.m].gas ? `Pt | H₂(1 bar) | H⁺(${fmtC(h.c)})` : `${h.m}(s) | ${METALS[h.m].ion}(${fmtC(h.c)})`;
+  const halfR = (h) => METALS[h.m].gas ? `H⁺(${fmtC(h.c)}) | H₂(1 bar) | Pt` : `${METALS[h.m].ion}(${fmtC(h.c)}) | ${h.m}(s)`;
+  const notation = `${half(an)} ‖ ${halfR(ca)}`;
+  const E0 = K.E0 - A.E0;
+  const Q = Math.pow(Math.max(an.c, 1e-9), A.gas ? 2 * ka : ka) / Math.pow(Math.max(ca.c, 1e-9), K.gas ? 2 * kc : kc);
+  return { oxid, red, overall, notation, E0, Q, n, A, K, an, ca, same };
+}
+
+// ════════════════════════════════════════════════════════════════
+// CONSOLE UI
+// ════════════════════════════════════════════════════════════════
+const C_LOG = (v) => Math.round(Math.log10(v) * 100) / 100;      // slider value ↔ concentration
+const cFromSlider = (s) => Math.pow(10, s);
+function buildConsole() {
+  ['L', 'R'].forEach(k => {
+    $('metals' + k).innerHTML = METAL_KEYS.map(m => `<button class="mchip" data-m="${m}" title="${METALS[m].name} · E° = ${fmtSigned(METALS[m].E0, 2)} V"><i style="--mc:${METALS[m].col}"></i><b>${m === 'H2' ? 'H₂' : m}</b><small>${fmtSigned(METALS[m].E0, 2)}</small></button>`).join('');
+    $('metals' + k).querySelectorAll('.mchip').forEach(b => b.onclick = () => setMetal(k, b.dataset.m));
+    const s = $('conc' + k); s.oninput = () => { CELL[k].c = cFromSlider(+s.value); CELL[k].c0 = CELL[k].c; afterChange(); };
+  });
+  $('tempS').oninput = () => { CELL.T = +$('tempS').value; afterChange(); };
+  $('rloadS').oninput = () => { CELL.Rload = Math.round(Math.pow(10, +$('rloadS').value)); afterChange(); };
+  document.querySelectorAll('[data-size]').forEach(b => b.onclick = () => { CELL.size = b.dataset.size; resetRun(); afterChange(true); });
+  document.querySelectorAll('[data-bridge]').forEach(b => b.onclick = () => setBridge(b.dataset.bridge));
+  document.querySelectorAll('[data-load]').forEach(b => b.onclick = () => setLoad(b.dataset.load));
+  document.querySelectorAll('[data-speed]').forEach(b => b.onclick = () => { CELL.speed = +b.dataset.speed; CELL.run = true; syncUI(); click(0); });
+  $('swBtn').onclick = toggleSwitch; $('swapBtn').onclick = swapLeads;
+  $('runBtn').onclick = () => { CELL.run = !CELL.run; syncUI(); };
+  $('resetBtn').onclick = () => { ['L', 'R'].forEach(k => { CELL[k].c = CELL[k].c0 = cFromSlider(+$('conc' + k).value); }); resetRun(); afterChange(true); toast('Fresh electrodes and solutions.'); };
+  document.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => preset(b.dataset.preset));
+  syncUI();
+}
+function setMetal(k, m) {
+  CELL[k].m = m; initHalf(CELL[k]); CELL.t = 0; CELL.Q = 0; CELL.energy = 0; CELL.dead = false; CELL.hist = []; CELL.v++;
+  ['L', 'R'].forEach(x => initHalf(CELL[x]));
+  click(0); afterChange(true);
+}
+function setBridge(b) { CELL.bridge = b; click(0); afterChange(); if (b === 'none') toast('Bridge removed: watch the meter.'); }
+function setLoad(l) { CELL.load = l; if (l === 'none') CELL.sw = false; click(0); afterChange(); }
+function toggleSwitch() { if (CELL.load === 'none') { toast('Choose a load first (bulb, LED, motor or resistor).'); return; } CELL.sw = !CELL.sw; click(CELL.sw ? 1 : 0); afterChange(); }
+function swapLeads() { CELL.swapped = !CELL.swapped; click(0); afterChange(); }
+function preset(p) {
+  const P = {
+    daniell: { L: ['Zn', 1], R: ['Cu', 1], bridge: 'salt', load: 'none', size: 'M', T: 25 },
+    silver: { L: ['Zn', 1], R: ['Ag', 1], bridge: 'salt', load: 'none', size: 'M', T: 25 },
+    power: { L: ['Mg', 1], R: ['Ag', 1], bridge: 'membrane', load: 'bulb', size: 'L', T: 25, sw: true },
+    conc: { L: ['Cu', 0.01], R: ['Cu', 2], bridge: 'salt', load: 'none', size: 'M', T: 25 },
+    she: { L: ['H2', 1], R: ['Zn', 1], bridge: 'salt', load: 'none', size: 'M', T: 25 },
+  }[p];
+  CELL.L.m = P.L[0]; CELL.L.c = P.L[1]; CELL.R.m = P.R[0]; CELL.R.c = P.R[1];
+  Object.assign(CELL, { bridge: P.bridge, load: P.load, size: P.size, T: P.T, sw: !!P.sw, swapped: false });
+  $('concL').value = C_LOG(CELL.L.c); $('concR').value = C_LOG(CELL.R.c); $('tempS').value = CELL.T;
+  resetRun(); afterChange(true); click(1);
+}
+function afterChange(reset) { solve(); syncUI(); if (reset && window.SCENE) window.SCENE.rebuild(); }
+function syncUI() {
+  solve();
+  const C = CELL;
+  ['L', 'R'].forEach(k => {
+    const h = C[k], M = METALS[h.m];
+    $('metals' + k).querySelectorAll('.mchip').forEach(b => b.classList.toggle('sel', b.dataset.m === h.m));
+    $('concV' + k).textContent = fmtC(h.c);
+    $('sol' + k).innerHTML = `${M.gas ? 'Pt electrode · H₂ gas at 1 bar · ' : M.name + ' electrode · '}<b>${M.salt}</b> solution`;
+  });
+  $('tempV').textContent = C.T + ' °C';
+  $('rloadV').textContent = C.Rload >= 1000 ? sig(C.Rload / 1000) + ' kΩ' : C.Rload + ' Ω';
+  $('rloadRow').classList.toggle('hidden', C.load !== 'res');
+  document.querySelectorAll('[data-size]').forEach(b => b.classList.toggle('sel', b.dataset.size === C.size));
+  document.querySelectorAll('[data-bridge]').forEach(b => b.classList.toggle('sel', b.dataset.bridge === C.bridge));
+  document.querySelectorAll('[data-load]').forEach(b => b.classList.toggle('sel', b.dataset.load === C.load));
+  document.querySelectorAll('[data-speed]').forEach(b => b.classList.toggle('sel', C.run && +b.dataset.speed === C.speed));
+  $('swBtn').textContent = C.sw ? '⏻ Switch CLOSED' : '⭘ Switch OPEN'; $('swBtn').classList.toggle('on', C.sw);
+  $('swapBtn').classList.toggle('on', C.swapped);
+  $('runBtn').textContent = C.run ? '❚❚ Pause' : '▶ Run';
+  updateReadouts(true);
+}
+let _lastEq = '';
+function updateReadouts(force) {
+  const C = CELL, t = chemText();
+  // HUD over the 3D view
+  const vm = C.Vmeter;
+  $('hudV').textContent = (vm < 0 ? '−' : '') + Math.abs(vm).toFixed(3);
+  $('hudV').classList.toggle('neg', vm < -1e-4);
+  $('hudI').textContent = fmtI(C.I);
+  $('hudT').textContent = fmtTime(C.t);
+  $('hudQ').textContent = sig(C.Q / 3.6, 3) + ' mAh';
+  $('hudDead').classList.toggle('hidden', !C.dead);
+  if (C.dead) $('hudDead').textContent = '🔋 Cell exhausted: ' + C.deadWhy;
+  // masses + concentrations
+  ['L', 'R'].forEach(k => {
+    const h = C[k], M = METALS[h.m];
+    $('mass' + k).textContent = M.gas ? 'H₂ supplied' : h.mass.toFixed(3) + ' g' + (h.mass0 ? ` (${fmtSigned(h.mass - h.mass0, 3)} g)` : '');
+    $('cnow' + k).textContent = `[${M.ion}] = ${fmtC(h.c)}`;
+    $('role' + k).innerHTML = C.E < 1e-4 ? '<span class="text-zinc-400 text-xs">no difference: no cell</span>' : C.anode === k ? '<span class="role an">ANODE (−) · oxidation</span>' : '<span class="role ca">CATHODE (+) · reduction</span>';
+    $('halfE' + k).textContent = `E = ${fmtSigned(k === 'L' ? C.EL : C.ER)} V`;
+  });
+  // equations (rebuild only when they change)
+  const T = C.T + 273.15, k59 = (RGAS * T * Math.LN10) / F;
+  const eq = `${C.anode}|${C.L.m}|${C.R.m}|${C.E < 1e-4}`;
+  if (force || eq !== _lastEq) {
+    _lastEq = eq;
+    if (C.E < 1e-4) { $('eqOx').innerHTML = '—'; $('eqRed').innerHTML = '—'; $('eqAll').innerHTML = 'Same metal, same concentration: no potential difference, so no cell.'; $('eqNot').innerHTML = '—'; }
+    else { $('eqOx').innerHTML = `<span class="text-rose-300">Anode (oxidation):</span> ${t.oxid}`; $('eqRed').innerHTML = `<span class="text-sky-300">Cathode (reduction):</span> ${t.red}`; $('eqAll').innerHTML = `<span class="text-amber-300">Overall (n = ${t.n}):</span> ${t.overall}`; $('eqNot').innerHTML = t.notation; }
+  }
+  const Ecell0 = t.K.E0 - t.A.E0;
+  $('eqE0').innerHTML = C.E < 1e-4 ? 'E°<sub>cell</sub> = 0 V' : `E°<sub>cell</sub> = E°<sub>cathode</sub> − E°<sub>anode</sub> = ${fmtSigned(t.K.E0, 2)} − (${fmtSigned(t.A.E0, 2)}) = <b>${Ecell0.toFixed(2)} V</b>`;
+  $('eqNernst').innerHTML = `E = E° − (${(k59).toFixed(4)}/${t.n}) · log Q = ${Ecell0.toFixed(3)} − ${(k59 / t.n).toFixed(4)} × log(${sig(t.Q, 3)}) = <b>${C.E.toFixed(3)} V</b>`;
+  const dG = -t.n * F * C.E / 1000;
+  const logK = (t.n * Ecell0) / k59;
+  $('eqG').innerHTML = `ΔG = −nFE = −${t.n} × 96485 × ${C.E.toFixed(3)} = <b>${dG.toFixed(1)} kJ/mol</b> · K = 10<sup>${logK.toFixed(1)}</sup> ${dG < 0 ? '→ spontaneous' : ''}`;
+  $('eqIR').innerHTML = !isFinite(C.r) ? 'Internal resistance r = ∞ (no ionic path): no current can flow.' : `r = ${sig(C.r, 3)} Ω · V = E − I·r = ${C.E.toFixed(3)} − ${fmtI(C.I)} × ${sig(C.r, 3)} Ω = <b>${C.Vt.toFixed(3)} V</b>${C.I > 0 ? ` · P<sub>load</sub> = ${sig(C.P * 1000, 3)} mW` : ''}`;
+}
+
+// ── fixed-timestep loop: chemistry + graphs + missions ──────────
+let _lastT = performance.now(), _acc = 0, _histT = 0, _misT = 0;
+function loop(now) {
+  const dt = Math.min(0.1, (now - _lastT) / 1000); _lastT = now; _acc += dt;
+  while (_acc >= 1 / 60) { _acc -= 1 / 60; if (CELL.run && !CELL.dead) advance(CELL.speed / 60); else solve(); }
+  _histT += dt; if (_histT > 0.2) { _histT = 0; pushHist(); updateReadouts(); drawGraph(); }
+  _misT += dt; if (_misT > 0.25) { _misT = 0; checkMissions(); }
+  requestAnimationFrame(loop);
+}
+function pushHist() {
+  const C = CELL, h = C.hist; const last = h[h.length - 1];
+  if (!last || C.t - last.t > 1e-6 || h.length < 2) { h.push({ t: C.t, V: C.Vt, E: C.E, I: C.I, cA: C[C.anode].c }); if (h.length > 400) h.splice(0, h.length - 400); }
+}
+function drawGraph() {
+  const cv = $('liveGraph'); if (!cv || !cv.offsetParent) return;
+  const x = cv.getContext('2d'), W = cv.width, H = cv.height, h = CELL.hist;
+  x.fillStyle = '#0a0d12'; x.fillRect(0, 0, W, H);
+  const pad = { l: 46, r: 46, t: 14, b: 26 };
+  x.strokeStyle = 'rgba(255,255,255,.07)'; x.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) { const y = pad.t + (H - pad.t - pad.b) * i / 4; x.beginPath(); x.moveTo(pad.l, y); x.lineTo(W - pad.r, y); x.stroke(); }
+  if (h.length < 2) { x.fillStyle = '#71717a'; x.font = '12px Plus Jakarta Sans'; x.fillText('Close the switch with a load and run the clock to see the cell discharge.', pad.l, H / 2); return; }
+  const t0 = h[0].t, t1 = Math.max(h[h.length - 1].t, t0 + 1e-6);
+  const Vmax = Math.max(0.2, ...h.map(p => p.E)) * 1.1, Imax = Math.max(1e-4, ...h.map(p => p.I)) * 1.15;
+  const X = t => pad.l + (W - pad.l - pad.r) * (t - t0) / (t1 - t0), YV = v => H - pad.b - (H - pad.t - pad.b) * v / Vmax, YI = i => H - pad.b - (H - pad.t - pad.b) * i / Imax;
+  const line = (fy, key, col) => { x.strokeStyle = col; x.lineWidth = 2.2; x.beginPath(); h.forEach((p, i) => { const px = X(p.t), py = fy(p[key]); i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.stroke(); };
+  line(YV, 'E', 'rgba(250,204,21,.45)'); line(YV, 'V', '#facc15'); line(YI, 'I', '#38bdf8');
+  x.font = '11px JetBrains Mono'; x.fillStyle = '#facc15'; x.textAlign = 'left'; x.fillText(Vmax.toFixed(2) + ' V', 4, pad.t + 8); x.fillText('V, E', 4, H - pad.b);
+  x.fillStyle = '#38bdf8'; x.textAlign = 'right'; x.fillText(fmtI(Imax), W - 2, pad.t + 8); x.fillText('I', W - 4, H - pad.b);
+  x.fillStyle = '#a1a1aa'; x.textAlign = 'center'; x.fillText(fmtTime(t0) + ' → ' + fmtTime(t1), W / 2, H - 6);
+}
+
+// ════════════════════════════════════════════════════════════════
+// MISSIONS — 10 self-checking tasks
+// ════════════════════════════════════════════════════════════════
+const has = (a, b) => (CELL.L.m === a && CELL.R.m === b) || (CELL.L.m === b && CELL.R.m === a);
+const std = () => Math.abs(CELL.L.c - 1) < 0.02 && Math.abs(CELL.R.c - 1) < 0.02 && Math.abs(CELL.T - 25) < 0.5;
+const MISSIONS = [
+  { id: 'daniell', title: 'The Daniell cell', lvl: 'G9', intro: 'The classic: zinc in zinc sulfate, copper in copper sulfate, joined by a salt bridge. Build it and read its EMF.',
+    objs: [['Zinc in one beaker, copper in the other', () => has('Zn', 'Cu')], ['Salt bridge in place', () => CELL.bridge !== 'none'], ['Both solutions 1.0 M at 25 °C', () => std()], ['The voltmeter reads more than 1 V', () => Math.abs(CELL.Vmeter) > 1]],
+    ask: { q: 'What EMF does the meter show (V)?', type: 'num', ans: 1.10, tol: 0.02 }, hint: 'Use the "Daniell" preset, or pick Zn on one side and Cu on the other at 1.0 M.' },
+  { id: 'bridge', title: 'No bridge, no battery', lvl: 'G9', intro: 'The salt bridge looks like a passive glass tube. Remove it and watch the meter, then put it back.',
+    objs: [['Remove the bridge (choose "None")', (s) => (s.f1 = s.f1 || CELL.bridge === 'none')], ['The meter reads 0 V without it', (s) => (s.f2 = s.f2 || (CELL.bridge === 'none' && Math.abs(CELL.Vmeter) < 1e-3))], ['Put an ionic path back', (s) => s.f2 && CELL.bridge !== 'none']],
+    ask: { q: 'Do electrons travel through the salt bridge?', type: 'mc', opts: ['Yes, electrons cross the bridge', 'No: ions move in the bridge, electrons move in the wire'], ans: 1 }, hint: 'Circuit: electrons in the metal wire, ions in the solutions and the bridge. Remove one and nothing flows.' },
+  { id: 'poles', title: 'Who is the negative pole?', lvl: 'G9', intro: 'A voltmeter reads positive only when its red lead is on the + pole. Make it read NEGATIVE.',
+    objs: [['Build any cell with |V| > 0.3 V', () => CELL.E > 0.3 && CELL.bridge !== 'none'], ['Make the meter read a negative value', () => CELL.Vmeter < -0.3]],
+    ask: { q: 'The meter reads negative. The red lead is on…', type: 'mc', opts: ['the anode (− pole)', 'the cathode (+ pole)'], ans: 0 }, hint: 'Press "⇄ Swap leads", or swap the two metals.' },
+  { id: 'run', title: 'Let it work', lvl: 'G9', intro: 'A voltmeter draws almost no current, so nothing reacts. Connect a load, close the switch and speed up time.',
+    objs: [['Connect a load and close the switch', () => CELL.load !== 'none' && CELL.sw && CELL.I > 0], ['Run the clock faster than ×60', () => CELL.speed >= 600 && CELL.run], ['The anode loses at least 0.10 g', () => { const a = CELL[CELL.anode]; return !METALS[a.m].gas && a.mass0 - a.mass >= 0.1; }]],
+    ask: { q: 'Which electrode GAINED mass?', type: 'mc', opts: ['The anode', 'The cathode', 'Neither'], ans: 1 }, hint: 'Choose the resistor at 10 Ω or the bulb, close the switch, then click ×3600.' },
+  { id: 'bulb', title: 'Light the bulb', lvl: 'G10', intro: 'A Daniell cell barely lights a bulb. Why? Engineer a cell bright enough (glow ≥ 50 %).',
+    objs: [['Load: bulb, switch closed', () => CELL.load === 'bulb' && CELL.sw], ['Bulb glow at least 50 %', () => CELL.glow >= 0.5]],
+    ask: { q: 'Besides choosing metals far apart, what else helped most?', type: 'mc', opts: ['Lowering the internal resistance (bigger electrodes, porous membrane)', 'Cooling the cell', 'Diluting both solutions'], ans: 0 }, hint: 'Large electrodes + porous membrane lower r. Pair a very reactive metal with a noble one.' },
+  { id: 'max', title: 'The strongest pair', lvl: 'G10', intro: 'Use the table of standard potentials: find a pair whose EMF is at least 3.0 V.',
+    objs: [['EMF ≥ 3.0 V (standard conditions)', () => std() && CELL.E >= 3.0 && CELL.bridge !== 'none']],
+    ask: { q: 'Which rule did you use?', type: 'mc', opts: ['E°cell = E°cathode − E°anode: pick the lowest E° as anode and the highest as cathode', 'Pick the two heaviest metals', 'Pick the two metals with the same charge'], ans: 0 }, hint: 'The anode should have the most negative E°; the cathode the most positive.' },
+  { id: 'nernst', title: 'Concentration counts', lvl: 'G12', intro: 'Keep the Daniell cell but change the concentrations. Push its EMF above 1.15 V, then below 1.05 V.',
+    objs: [['Zinc and copper half-cells', () => has('Zn', 'Cu')], ['EMF ≥ 1.15 V', (s) => (s.hi = s.hi || (has('Zn', 'Cu') && CELL.E >= 1.15))], ['EMF ≤ 1.05 V', (s) => (s.lo = s.lo || (has('Zn', 'Cu') && CELL.E <= 1.05))]],
+    ask: { q: 'To RAISE the EMF you should…', type: 'mc', opts: ['dilute Zn²⁺ and concentrate Cu²⁺', 'concentrate Zn²⁺ and dilute Cu²⁺', 'dilute both equally'], ans: 0 }, hint: 'E = E° − (0.0592/2)·log([Zn²⁺]/[Cu²⁺]). Make the fraction small.' },
+  { id: 'conc', title: 'A cell with ONE metal', lvl: 'G12', intro: 'Same metal on both sides, E°cell = 0… yet it can be a battery. Build a copper concentration cell above 0.05 V.',
+    objs: [['Copper on both sides', () => CELL.L.m === 'Cu' && CELL.R.m === 'Cu'], ['|V| ≥ 0.05 V', () => CELL.E >= 0.05 && CELL.bridge !== 'none']],
+    ask: { q: 'Which side is the anode?', type: 'mc', opts: ['The more dilute solution', 'The more concentrated solution'], ans: 0 }, hint: 'Set one beaker to 2 M and the other to 0.01 M.' },
+  { id: 'she', title: 'The hydrogen reference', lvl: 'G11', intro: 'Potentials are measured against the standard hydrogen electrode (SHE). Measure E° of Zn²⁺/Zn yourself.',
+    objs: [['SHE (H₂) on one side, zinc on the other', () => has('H2', 'Zn')], ['Standard conditions (1 M, 25 °C)', () => std()], ['The red lead is on the zinc', () => { const zk = CELL.L.m === 'Zn' ? 'L' : 'R'; return (zk === 'R') !== CELL.swapped; }]],
+    ask: { q: 'E°(Zn²⁺/Zn) = ? V (sign matters)', type: 'num', ans: -0.76, tol: 0.02 }, hint: 'Use the "SHE" preset. With the red lead on Zn the meter shows E(Zn) − E(SHE).' },
+  { id: 'flat', title: 'Run it flat', lvl: 'G12', intro: 'Every battery dies. Run a cell until it is exhausted and find out what ran out.',
+    objs: [['Run a cell with a load until it is exhausted', () => CELL.dead]],
+    ask: { q: 'What limited your cell?', type: 'mc', opts: ['The anode metal ran out', 'The cathode ions ran out', 'It depends on which one is scarcer'], ans: 2 }, hint: 'Small electrodes, a 1 Ω resistor and ×36000 make it quick. Try a dilute cathode solution too.' },
+];
+const MS = { cur: 0, done: {}, ticks: {}, flags: {}, attempts: {}, answers: {}, points: {} };
+function buildMissions() {
+  $('missionTabs').innerHTML = MISSIONS.map((m, i) => `<button class="chip" data-i="${i}">${i + 1}. ${m.title}</button>`).join('');
+  $('missionTabs').querySelectorAll('button').forEach(b => b.onclick = () => { MS.cur = +b.dataset.i; renderMission(); });
+  renderMission();
+}
+function renderMission() {
+  const m = MISSIONS[MS.cur], tk = MS.ticks[m.id] || {};
+  $('missionTabs').querySelectorAll('button').forEach((b, i) => { b.classList.toggle('sel', i === MS.cur); b.classList.toggle('done', !!MS.done[MISSIONS[i].id]); });
+  $('mTitle').textContent = `${MS.cur + 1}. ${m.title}`; $('mLvl').textContent = m.lvl; $('mIntro').textContent = m.intro;
+  $('mObjs').innerHTML = m.objs.map(([t], k) => `<div class="obj ${tk[k] ? 'ok' : ''}"><span class="tick">${tk[k] ? '✓' : ''}</span><span>${t}</span></div>`).join('');
+  const a = m.ask; const allObj = m.objs.every((_, k) => tk[k]);
+  let html = `<p class="text-sm font-bold text-white mb-2">${a.q}</p>`;
+  if (a.type === 'num') html += `<div class="flex gap-2"><input id="mAns" class="num-in" inputmode="decimal" placeholder="your value"><button id="mCheck" class="btn-g">Check</button></div>`;
+  else html += `<div class="flex flex-col gap-2">${a.opts.map((o, i) => `<button class="opt" data-i="${i}">${o}</button>`).join('')}</div>`;
+  $('mAsk').innerHTML = html; $('mAsk').classList.toggle('locked', !allObj && !MS.done[m.id]);
+  $('mFb').textContent = MS.done[m.id] ? `✓ Completed · ${MS.points[m.id]} pts` : allObj ? '' : 'Complete the objectives first.';
+  if (a.type === 'num') $('mCheck').onclick = () => answerMission(parseFloat(String($('mAns').value).replace(',', '.').replace('−', '-')));
+  else $('mAsk').querySelectorAll('.opt').forEach(b => b.onclick = () => answerMission(+b.dataset.i, b));
+  $('mHint').onclick = () => toast('💡 ' + m.hint, 5000);
+}
+function checkMissions() {
+  let changed = false;
+  MISSIONS.forEach(m => {
+    const tk = MS.ticks[m.id] = MS.ticks[m.id] || {}, fl = MS.flags[m.id] = MS.flags[m.id] || {};
+    m.objs.forEach(([, f], k) => { if (!tk[k] && f(fl)) { tk[k] = true; changed = true; if (MISSIONS[MS.cur] === m) click(1); } });
+  });
+  if (changed) { renderMission(); markE5(); }
+}
+function answerMission(v, btn) {
+  const m = MISSIONS[MS.cur], tk = MS.ticks[m.id] || {};
+  if (MS.done[m.id]) return;
+  if (!m.objs.every((_, k) => tk[k])) { toast('Finish the objectives first: the answer comes from your own measurement.'); return; }
+  MS.attempts[m.id] = (MS.attempts[m.id] || 0) + 1;
+  const ok = m.ask.type === 'num' ? Math.abs(v - m.ask.ans) <= m.ask.tol : v === m.ask.ans;
+  MS.answers[m.id] = m.ask.type === 'num' ? String(v) : m.ask.opts[v];
+  if (ok) { MS.done[m.id] = true; MS.points[m.id] = Math.max(4, 10 - 2 * (MS.attempts[m.id] - 1)); click(2); toast('✓ Correct! +' + MS.points[m.id] + ' pts'); renderMission(); markE5(); updateMissionScore(); }
+  else { if (btn) btn.classList.add('wrong'); click(0); $('mFb').textContent = m.ask.type === 'num' ? 'Not quite. Read the meter again (and check the sign).' : 'Not quite. Look at the bench again.'; }
+}
+const missionScore = () => Object.values(MS.points).reduce((a, b) => a + b, 0);
+function updateMissionScore() { $('mScore').textContent = `${Object.keys(MS.done).length}/${MISSIONS.length} · ${missionScore()} pts`; }
+
+// ════════════════════════════════════════════════════════════════
+// NOTEBOOK (Explain) — the electrochemical series + the Nernst plot
+// ════════════════════════════════════════════════════════════════
+const NB = { ladder: {}, nernst: [], pair: null };
+function buildNotebook() {
+  $('recLadder').onclick = recordLadder; $('recNernst').onclick = recordNernst;
+  $('clrNernst').onclick = () => { NB.nernst = []; NB.pair = null; drawNotebook(); };
+  drawNotebook();
+}
+function recordLadder() {
+  const C = CELL;
+  const sk = C.L.m === 'H2' ? 'L' : C.R.m === 'H2' ? 'R' : null;
+  if (!sk) { toast('Put the SHE (H₂) in one beaker: every potential is measured against it.'); return; }
+  const mk = sk === 'L' ? 'R' : 'L', m = C[mk].m;
+  if (m === 'H2') { toast('Put a metal in the other beaker.'); return; }
+  if (!std()) { toast('Standard conditions first: both solutions 1.0 M, 25 °C.'); return; }
+  if (C.bridge === 'none') { toast('No ionic path: the meter reads 0. Put a bridge in.'); return; }
+  const Ev = (mk === 'L' ? C.EL : C.ER) - (sk === 'L' ? C.EL : C.ER);
+  NB.ladder[m] = +Ev.toFixed(3); click(1); toast(`${METALS[m].name}: E = ${fmtSigned(Ev, 2)} V vs SHE recorded.`); drawNotebook(); markE5();
+}
+function recordNernst() {
+  const C = CELL, t = chemText();
+  if (C.E < 1e-4 || C.bridge === 'none') { toast('Build a working cell first.'); return; }
+  const key = [C[C.anode].m, C[C.anode === 'L' ? 'R' : 'L'].m].join('|');
+  if (NB.pair && NB.pair !== key) { toast('Keep the same pair for the whole plot (or press "Clear").'); return; }
+  NB.pair = key;
+  NB.nernst.push({ logQ: Math.log10(t.Q), E: C.E, n: t.n, T: C.T });
+  click(1); drawNotebook(); markE5();
+}
+function fitLine(pts) {
+  const n = pts.length; if (n < 2) return null;
+  const mx = pts.reduce((s, p) => s + p.x, 0) / n, my = pts.reduce((s, p) => s + p.y, 0) / n;
+  let sxx = 0, sxy = 0; pts.forEach(p => { sxx += (p.x - mx) ** 2; sxy += (p.x - mx) * (p.y - my); });
+  if (sxx < 1e-12) return null; const m = sxy / sxx; return { m, b: my - m * mx };
+}
+function drawNotebook() {
+  // table + ladder
+  const rows = Object.entries(NB.ladder).sort((a, b) => a[1] - b[1]);
+  $('ladderRows').innerHTML = rows.length ? rows.map(([m, e]) => `<tr><td>${METALS[m].ion}/${m}</td><td>${fmtSigned(e, 2)} V</td><td class="text-zinc-500">${fmtSigned(METALS[m].E0, 2)} V</td></tr>`).join('') : '<tr><td colspan="3" class="text-zinc-500">No measurements yet.</td></tr>';
+  const cv = $('ladderCanvas'), x = cv.getContext('2d'), W = cv.width, H = cv.height;
+  x.fillStyle = '#0a0d12'; x.fillRect(0, 0, W, H);
+  const Y = e => 20 + (H - 40) * (1.7 - e) / 4.3;
+  x.strokeStyle = '#3f3f46'; x.lineWidth = 2; x.beginPath(); x.moveTo(70, Y(1.7)); x.lineTo(70, Y(-2.6)); x.stroke();
+  x.font = '11px JetBrains Mono'; x.fillStyle = '#71717a'; x.textAlign = 'right';
+  for (let e = -2.5; e <= 1.5; e += 0.5) { x.fillText(e.toFixed(1), 62, Y(e) + 4); x.strokeStyle = 'rgba(255,255,255,.05)'; x.beginPath(); x.moveTo(72, Y(e)); x.lineTo(W - 10, Y(e)); x.stroke(); }
+  x.strokeStyle = '#facc15'; x.setLineDash([4, 4]); x.beginPath(); x.moveTo(72, Y(0)); x.lineTo(W - 10, Y(0)); x.stroke(); x.setLineDash([]);
+  x.fillStyle = '#facc15'; x.textAlign = 'left'; x.fillText('SHE  0.00 V', W - 110, Y(0) - 5);
+  rows.forEach(([m, e], i) => { const px = 90 + (i % 2) * 120; x.fillStyle = METALS[m].col; x.beginPath(); x.arc(px, Y(e), 7, 0, 7); x.fill(); x.fillStyle = '#e4e4e7'; x.font = 'bold 12px Plus Jakarta Sans'; x.fillText(`${METALS[m].ion}/${m}  ${fmtSigned(e, 2)}`, px + 12, Y(e) + 4); });
+  x.fillStyle = '#a1a1aa'; x.font = '11px Plus Jakarta Sans'; x.textAlign = 'left';
+  x.fillText('stronger reducing agents ↓', 78, H - 6); x.fillText('↑ stronger oxidising agents (ions)', 78, 14);
+  // Nernst
+  const g = $('nernstCanvas'), y = g.getContext('2d'), w = g.width, hh = g.height;
+  y.fillStyle = '#0a0d12'; y.fillRect(0, 0, w, hh);
+  $('nernstRows').innerHTML = NB.nernst.length ? NB.nernst.map((p, i) => `<tr><td>${i + 1}</td><td>${p.logQ.toFixed(2)}</td><td>${p.E.toFixed(4)} V</td><td>${p.T} °C</td></tr>`).join('') : '<tr><td colspan="4" class="text-zinc-500">Change concentrations, then record each point.</td></tr>';
+  const pts = NB.nernst.map(p => ({ x: p.logQ, y: p.E }));
+  if (pts.length) {
+    const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+    const x0 = Math.min(...xs, -1) - 0.5, x1 = Math.max(...xs, 1) + 0.5, y0 = Math.min(...ys) - 0.02, y1 = Math.max(...ys) + 0.02;
+    const PX = v => 50 + (w - 70) * (v - x0) / (x1 - x0), PY = v => hh - 30 - (hh - 50) * (v - y0) / (y1 - y0);
+    y.strokeStyle = '#3f3f46'; y.beginPath(); y.moveTo(50, 20); y.lineTo(50, hh - 30); y.lineTo(w - 20, hh - 30); y.stroke();
+    y.fillStyle = '#71717a'; y.font = '11px JetBrains Mono'; y.textAlign = 'center'; y.fillText('log Q', w / 2, hh - 8);
+    y.save(); y.translate(14, hh / 2); y.rotate(-Math.PI / 2); y.fillText('E (V)', 0, 0); y.restore();
+    y.textAlign = 'right'; y.fillText(y1.toFixed(3), 46, PY(y1) + 4); y.fillText(y0.toFixed(3), 46, PY(y0) + 4);
+    const fit = fitLine(pts);
+    if (fit) { y.strokeStyle = '#facc15'; y.lineWidth = 2; y.beginPath(); y.moveTo(PX(x0), PY(fit.m * x0 + fit.b)); y.lineTo(PX(x1), PY(fit.m * x1 + fit.b)); y.stroke(); }
+    pts.forEach(p => { y.fillStyle = '#38bdf8'; y.beginPath(); y.arc(PX(p.x), PY(p.y), 5, 0, 7); y.fill(); });
+    const n = NB.nernst[0].n, T = NB.nernst[0].T + 273.15, theo = -(RGAS * T * Math.LN10) / (n * F);
+    $('nernstFit').innerHTML = fit ? `Your slope: <b class="text-amber-300">${(fit.m * 1000).toFixed(1)} mV per decade</b> · theory −(2.303RT/nF) = <b class="text-sky-300">${(theo * 1000).toFixed(1)} mV</b> (n = ${n}). Intercept (log Q = 0) = <b>${fit.b.toFixed(3)} V</b> = E°<sub>cell</sub>.` : 'Record at least two points with different concentrations.';
+  } else { $('nernstFit').textContent = 'Record at least two points with different concentrations.'; y.fillStyle = '#71717a'; y.font = '12px Plus Jakarta Sans'; y.fillText('E vs log Q will appear here.', 20, hh / 2); }
+}
+
+// ════════════════════════════════════════════════════════════════
+// BONUS GAME (Section J) — Battery Engineer
+// ════════════════════════════════════════════════════════════════
+const GL = [
+  { title: 'Order: a 1.56 V cell', info: 'A client needs 1.55 V – 1.60 V at 1.0 M. Pick two metals.', lo: 1.55, hi: 1.60, metals: ['Mg', 'Zn', 'Fe', 'Pb', 'Cu', 'Ag'], conc: false, hint: 'Look for two E° values about 1.56 V apart: Zn (−0.76) and…?' },
+  { title: 'Order: 2.24 – 2.28 V', info: 'A bigger device: 2.24 V to 2.28 V, still at 1.0 M.', lo: 2.24, hi: 2.28, metals: ['Mg', 'Al', 'Zn', 'Ni', 'Sn', 'Pb', 'Cu', 'Au'], conc: false, hint: 'Two answers work: Mg with a metal near −0.13 V, or Zn with a metal near +1.50 V.' },
+  { title: 'Order: one metal only', info: 'Copper only. Use concentrations to reach 0.060 V – 0.064 V.', lo: 0.060, hi: 0.064, metals: ['Cu'], conc: true, hint: 'E = 0.0296 × log(c₁/c₂). You need a ratio of about 10^2.1 ≈ 125.' },
+];
+const G = { lvl: 0, score: 0, a: 'Zn', b: 'Cu', ca: 1, cb: 1, won: false, hint: false };
+window.toggleBonusHint = function () { G.hint = !G.hint; drawGame(); };
+function initBonusActivity() { G.lvl = 0; G.score = 0; startGameLevel(); }
+function startGameLevel() {
+  const L = GL[G.lvl]; G.won = false; G.hint = false;
+  G.a = L.metals[0]; G.b = L.metals[L.metals.length - 1]; G.ca = 1; G.cb = 1;
+  $('bonusLevel').textContent = G.lvl + 1; $('bonusScore').textContent = G.score; $('gameInstr').textContent = L.info;
+  const sel = (id, v) => `<select id="${id}" class="num-in">${L.metals.map(m => `<option value="${m}" ${m === v ? 'selected' : ''}>${METALS[m].name} (${fmtSigned(METALS[m].E0, 2)} V)</option>`).join('')}</select>`;
+  const cs = (id) => L.conc ? `<label class="text-[11px] text-zinc-400 font-bold">Concentration <span id="${id}V">1.00 M</span></label><input id="${id}" type="range" class="rng" min="-3" max="0.3" step="0.01" value="0">` : '';
+  $('gameCtrls').innerHTML = `<div class="gbox"><div class="glbl">Beaker A</div>${sel('gA', G.a)}${cs('gcA')}</div><div class="gbox"><div class="glbl">Beaker B</div>${sel('gB', G.b)}${cs('gcB')}</div>`;
+  $('gA').onchange = () => { G.a = $('gA').value; gameChanged(); }; $('gB').onchange = () => { G.b = $('gB').value; gameChanged(); };
+  if (L.conc) { ['A', 'B'].forEach(k => { $('gc' + k).oninput = () => { G['c' + k.toLowerCase()] = Math.pow(10, +$('gc' + k).value); $('gc' + k + 'V').textContent = fmtC(G['c' + k.toLowerCase()]); gameChanged(); }; }); }
+  drawGame();
+}
+function gameE() {
+  const T = 298.15, k = (RGAS * T) / F, e = (m, c) => METALS[m].E0 + (k / METALS[m].n) * Math.log(c);
+  return Math.abs(e(G.b, G.cb) - e(G.a, G.ca));
+}
+function gameChanged() { click(0); drawGame(); const L = GL[G.lvl], E = gameE(); if (!G.won && E >= L.lo && E <= L.hi) { G.won = true; G.score++; $('bonusScore').textContent = G.score; click(2); drawGame(); markE5(); if (G.lvl < GL.length - 1) setTimeout(() => { G.lvl++; startGameLevel(); }, 1700); else $('bonusComplete').classList.remove('hidden'); } }
+function drawGame() {
+  const c = $('bonusCanvas'), x = c.getContext('2d'), W = c.width, H = c.height, L = GL[G.lvl], E = gameE();
+  x.fillStyle = '#07090d'; x.fillRect(0, 0, W, H);
+  // analogue gauge 0 → 4 V
+  const cx = W / 2, cy = H - 40, R = 210, a0 = Math.PI * 1.05, a1 = Math.PI * 1.95, max = L.conc ? 0.12 : 4;
+  const A = v => a0 + (a1 - a0) * clamp(v / max, 0, 1);
+  x.lineWidth = 26; x.strokeStyle = '#18181b'; x.beginPath(); x.arc(cx, cy, R, a0, a1); x.stroke();
+  x.strokeStyle = 'rgba(52,211,153,.85)'; x.beginPath(); x.arc(cx, cy, R, A(L.lo), A(L.hi)); x.stroke();
+  x.lineWidth = 2; x.strokeStyle = '#52525b'; x.fillStyle = '#a1a1aa'; x.font = '12px JetBrains Mono'; x.textAlign = 'center';
+  for (let i = 0; i <= 8; i++) { const v = max * i / 8, a = A(v); x.beginPath(); x.moveTo(cx + Math.cos(a) * (R - 18), cy + Math.sin(a) * (R - 18)); x.lineTo(cx + Math.cos(a) * (R + 16), cy + Math.sin(a) * (R + 16)); x.stroke(); x.fillText((L.conc ? (v * 1000).toFixed(0) + 'm' : v.toFixed(1)), cx + Math.cos(a) * (R + 34), cy + Math.sin(a) * (R + 34) + 4); }
+  const an = A(E); x.strokeStyle = G.won ? '#34d399' : '#facc15'; x.lineWidth = 5; x.shadowBlur = 16; x.shadowColor = x.strokeStyle;
+  x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(an) * (R - 6), cy + Math.sin(an) * (R - 6)); x.stroke(); x.shadowBlur = 0;
+  x.fillStyle = '#e4e4e7'; x.beginPath(); x.arc(cx, cy, 10, 0, 7); x.fill();
+  x.font = '900 40px JetBrains Mono'; x.fillStyle = G.won ? '#34d399' : '#facc15'; x.fillText(E.toFixed(3) + ' V', cx, cy - 70);
+  x.font = 'bold 14px Plus Jakarta Sans'; x.fillStyle = '#e4e4e7'; x.fillText(L.title + `  ·  target ${L.lo.toFixed(L.conc ? 3 : 2)} – ${L.hi.toFixed(L.conc ? 3 : 2)} V`, cx, 26);
+  if (G.hint) { x.fillStyle = 'rgba(0,0,0,.8)'; x.fillRect(0, H - 38, W, 38); x.fillStyle = '#fde68a'; x.font = '13px Plus Jakarta Sans'; x.fillText('💡 ' + L.hint, cx, H - 14); }
+  if (G.won) { x.fillStyle = 'rgba(0,0,0,.5)'; x.fillRect(0, 0, W, H); x.fillStyle = '#34d399'; x.font = '900 34px Plus Jakarta Sans'; x.shadowBlur = 20; x.shadowColor = '#34d399'; x.fillText(G.lvl < GL.length - 1 ? '⚡ ORDER DELIVERED!' : '🏆 MASTER ENGINEER!', cx, H / 2); x.shadowBlur = 0; }
+}
+
+// ════════════════════════════════════════════════════════════════
+// QUIZ (Section L)
+// ════════════════════════════════════════════════════════════════
+const questions = [
+  { id: 1, text: 'In a Zn | Cu cell, electrons in the external wire flow…', options: ['from Cu to Zn', 'from Zn to Cu', 'through the salt bridge', 'in both directions'], answer: 1 },
+  { id: 2, text: 'The main role of the salt bridge is to…', options: ['carry electrons between the beakers', 'keep both solutions electrically neutral by letting ions migrate', 'supply metal atoms to the cathode', 'increase the EMF'], answer: 1 },
+  { id: 3, text: 'E°(Ag⁺/Ag) = +0.80 V and E°(Zn²⁺/Zn) = −0.76 V. The standard EMF of the Zn | Ag cell is:', options: ['0.04 V', '1.56 V', '0.80 V', '2.36 V'], answer: 1 },
+  { id: 4, text: 'While a Daniell cell delivers current, the mass of the copper electrode…', options: ['increases', 'decreases', 'stays the same', 'first decreases, then increases'], answer: 0 },
+  { id: 5, text: 'In a Daniell cell, diluting the Cu²⁺ solution (Zn²⁺ unchanged) makes the EMF…', options: ['increase', 'decrease slightly', 'drop to zero', 'unchanged, E° is a constant'], answer: 1 },
+];
+let selectedAnswers = {};
+function initQuiz() {
+  const box = $('quizContainer'); box.innerHTML = '';
+  questions.forEach((q, i) => {
+    let html = `<div class="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800"><p class="font-bold text-white mb-4"><span class="text-amber-400">${i + 1}.</span> ${q.text}</p><div class="space-y-2">`;
+    q.options.forEach((opt, idx) => { html += `<label class="flex items-center gap-3 p-3 rounded-xl border border-zinc-700 cursor-pointer hover:bg-zinc-800 transition-colors"><input type="radio" name="q${q.id}" value="${idx}" class="w-4 h-4 accent-amber-500" onchange="selectedAnswers[${q.id}] = ${idx}"><span class="text-zinc-300">${opt}</span></label>`; });
+    box.innerHTML += html + '</div></div>';
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// LOGIN / START (Sections G, O)
+// ════════════════════════════════════════════════════════════════
+let currentUser = { section: '', name: '' }, uploadedBase64Image = null;
+const predictions = {};
+function loadStudents() {
+  const sec = $('sectionSelect').value, st = $('studentSelect'), guest = sec === 'G12';
+  $('rosterWrap').classList.toggle('hidden', guest); $('guestWrap').classList.toggle('hidden', !guest);
+  st.innerHTML = '<option value="" disabled selected>Select your name...</option>';
+  if (sec && rosters[sec]) { st.disabled = false; rosters[sec].forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; st.appendChild(o); }); } else st.disabled = true;
+}
+function startLab() {
+  const sec = $('sectionSelect').value;
+  const name = sec === 'G12' ? $('guestName').value.trim() : $('studentSelect').value;
+  if (!sec || !name || name.length < 3) { toast('Please select your section and name first!'); return; }
+  currentUser = { section: sec, name };
+  try { sessionStorage.setItem('galv_user', JSON.stringify(currentUser)); } catch (e) {}
+  $('stage-login').style.display = 'none'; $('stage-lab').classList.remove('hidden');
+  $('studentBadge').classList.remove('hidden'); $('studentBadge').classList.add('flex');
+  $('displayStudentName').innerText = `${name} (${sec === 'G12' ? 'Guest' : sec})`;
+  $('e5rail').classList.remove('hidden'); $('coachFab').classList.remove('hidden');
+  initQuiz(); buildPredict();
+  resetRun(); buildConsole(); buildMissions(); updateMissionScore(); buildNotebook(); initBonusActivity(); setupReveal(); setupCoach();
+  requestAnimationFrame(loop);
+  window.__labStarted = true; if (window.initGalvanic3D) window.initGalvanic3D();
+  window.scrollTo({ top: 0 });
+}
+function setupReveal() {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) document.querySelectorAll('#e5rail a').forEach(a => a.classList.toggle('on', a.dataset.k === e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+  ['engage', 'explore', 'explain', 'elaborate', 'evaluate'].forEach(id => spy.observe($(id)));
+}
+function markE5() {
+  const done = { engage: !!predictions.mass, explore: Object.keys(MS.done).length >= 3, explain: Object.keys(NB.ladder).length >= 3 || NB.nernst.length >= 3, elaborate: G.score >= 1, evaluate: false };
+  document.querySelectorAll('#e5rail a').forEach(a => a.classList.toggle('done', !!done[a.dataset.k]));
+}
+function buildPredict() {
+  const opts = ['The zinc electrode', 'The copper electrode', 'Both', 'Neither'];
+  $('predictOpts').innerHTML = opts.map((o, i) => `<button class="chip !py-2" data-i="${i}">${o}</button>`).join('');
+  $('predictOpts').querySelectorAll('button').forEach(b => b.onclick = () => {
+    if (predictions.mass) return;
+    const i = +b.dataset.i; predictions.mass = { choice: opts[i], correct: i === 1, at: new Date().toISOString() };
+    b.classList.add('sel');
+    $('predictFb').classList.remove('hidden');
+    $('predictFb').innerHTML = (i === 1 ? '<span class="text-emerald-400 font-bold">✓ Logged.</span>' : '<span class="text-amber-300 font-bold">Logged.</span>') + ' Now test it: choose the <b>bulb</b>, close the switch and run the clock at ×3600. Watch the two masses.';
+    $('predictCard').classList.add('answered'); markE5();
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// CELL COACH — Socratic tutor (Apps Script route, offline fallback)
+// ════════════════════════════════════════════════════════════════
+const coachLog = []; let coachHist = [];
+function openCoach() { $('coachPanel').classList.remove('closed'); $('coachFab').classList.add('hidden'); if (!coachLog.length) coachAppend('ai', "Hi! I'm your Cell Coach. I can see your beakers, metals and meter. Tell me what you notice, or what confuses you."); setTimeout(() => $('coachIn').focus(), 200); }
+function closeCoach() { $('coachPanel').classList.add('closed'); $('coachFab').classList.remove('hidden'); }
+function coachAppend(role, text) { const d = document.createElement('div'); d.className = 'chat-msg ' + role; d.textContent = text; $('coachLog').appendChild(d); $('coachLog').scrollTop = 1e6; }
+function cellSummary() {
+  const C = CELL, m = MISSIONS[MS.cur], tk = MS.ticks[m.id] || {};
+  const h = k => `${METALS[C[k].m].name} in ${METALS[C[k].m].salt} ${fmtC(C[k].c)}${METALS[C[k].m].gas ? '' : `, electrode ${C[k].mass.toFixed(2)} g`}`;
+  return `Left beaker: ${h('L')}. Right beaker: ${h('R')}. Temperature ${C.T} °C. Electrodes ${SIZES[C.size].label}. Ionic path: ${BRIDGES[C.bridge].label}.
+Load: ${LOADS[C.load].label}${C.load === 'res' ? ' ' + C.Rload + ' ohm' : ''}, switch ${C.sw ? 'CLOSED' : 'OPEN'}. Meter leads ${C.swapped ? 'SWAPPED (red on left)' : 'normal (red on right)'}.
+Meter reads ${C.Vmeter.toFixed(3)} V; EMF ${C.E.toFixed(3)} V; current ${fmtI(C.I)}; internal resistance ${isFinite(C.r) ? sig(C.r) + ' ohm' : 'infinite'}; anode = ${C.anode === 'L' ? 'left' : 'right'}; simulated time ${fmtTime(C.t)}${C.dead ? '; CELL EXHAUSTED (' + C.deadWhy + ')' : ''}.
+Current mission: "${m.title}". Objectives: ${m.objs.map(([t], k) => (tk[k] ? '[done] ' : '[todo] ') + t).join('; ')}.`;
+}
+async function coachSend() {
+  const q = $('coachIn').value.trim(); if (!q) return;
+  $('coachIn').value = ''; coachAppend('user', q); coachLog.push({ role: 'student', text: q, t: new Date().toISOString() });
+  coachHist.push({ role: 'user', content: q }); coachHist = coachHist.slice(-8);
+  const system = `You are "Cell Coach", a warm Socratic chemistry tutor inside a 3D galvanic cell simulation (Lebanese curriculum, Grade 9 to Grade 12). The student is ${currentUser.section === 'G12' ? 'a senior student or a guest' : 'in Grade 9'}.
+RULES: 1) Never give final numeric answers or the mission answer; guide with ONE focused question or observation at a time. 2) Use the live bench state below to spot misconceptions (electrons do NOT cross the salt bridge; a voltmeter draws no current so nothing reacts; the anode is where oxidation happens and is the negative pole of a galvanic cell; terminal voltage drops under load because of internal resistance). 3) Use standard notation (E°, n, F, Nernst). 4) Max 3 short sentences. Reply in the student's language (English or Arabic).
+LIVE BENCH STATE:
+${cellSummary()}`;
+  const typing = document.createElement('div'); typing.className = 'chat-msg ai'; typing.textContent = '…'; $('coachLog').appendChild(typing);
+  $('coachSend').disabled = true;
+  let text = '';
+  if (!TUTOR_URL.startsWith('PASTE')) {
+    try {
+      const r = await fetch(TUTOR_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'ai', system, messages: coachHist }) });
+      const data = JSON.parse(await r.text()); text = (data.text || '').trim();
+    } catch (e) { text = ''; }
+  }
+  if (!text || /^⚠|not found|not configured|error/i.test(text.slice(0, 60))) text = localCoach(q);
+  setTimeout(() => { typing.remove(); coachAppend('ai', text); coachHist.push({ role: 'assistant', content: text }); coachLog.push({ role: 'coach', text, t: new Date().toISOString() }); $('coachSend').disabled = false; }, 450);
+}
+function localCoach(q) {
+  const C = CELL, s = (q || '').toLowerCase();
+  if (/bridge|جسر/.test(s)) return 'Think about what must move inside the solutions to keep them neutral. Is it electrons, or something with a charge that can swim?';
+  if (/electron|إلكترون/.test(s)) return 'Follow one electron: where is it released, and which path (metal or solution) can it actually travel through?';
+  if (C.bridge === 'none') return 'Look at the meter: 0 V. What is missing between the two beakers for charges to complete the loop?';
+  if (C.E < 1e-4) return 'Both half-cells are identical right now. What could you change so that one side "pushes" electrons harder than the other?';
+  if (C.load === 'none' && /react|mass|كتلة|تفاعل/.test(s)) return 'A voltmeter draws almost no current. Without current, can the electrodes change? What would make current flow?';
+  if (C.load !== 'none' && !C.sw) return 'Your load is connected, but look at the switch. Is the circuit closed?';
+  if (C.I > 0 && C.Vt < 0.7 * C.E) return `The meter shows less than the EMF while current flows. Where inside the cell could that "missing" voltage be lost?`;
+  if (C.dead) return 'Your cell stopped. Check the two masses and the two concentrations: which reactant reached zero first?';
+  return '💡 ' + MISSIONS[MS.cur].hint;
+}
+function setupCoach() { $('coachSend').onclick = coachSend; $('coachIn').addEventListener('keydown', e => { if (e.key === 'Enter') coachSend(); }); }
+
+// ════════════════════════════════════════════════════════════════
+// DRAWING + SUBMIT (Sections K, O)
+// ════════════════════════════════════════════════════════════════
+function handleImageUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); let w = img.width, h = img.height; if (w > 800) { h = Math.round(h * 800 / w); w = 800; } cv.width = w; cv.height = h; cv.getContext('2d').drawImage(img, 0, 0, w, h); uploadedBase64Image = cv.toDataURL('image/jpeg', 0.7); $('imagePreview').src = uploadedBase64Image; $('imagePreviewContainer').classList.remove('hidden'); }; img.src = e.target.result; };
+  reader.readAsDataURL(file);
+}
+function buildPayload() {
+  let score = 0; const qd = {};
+  questions.forEach(q => { const sel = selectedAnswers[q.id], ok = sel === q.answer; if (ok) score++; qd[q.id] = { answer: sel !== undefined ? q.options[sel] : 'Not answered', correct: ok }; });
+  const bonusScore = parseInt($('bonusScore').innerText || '0');
+  return {
+    labName: LAB_NAME, labId: LAB_ID, section: currentUser.section, studentName: currentUser.name,
+    score, total: questions.length,
+    q1Answer: qd[1].answer, q1Correct: qd[1].correct, q2Answer: qd[2].answer, q2Correct: qd[2].correct, q3Answer: qd[3].answer, q3Correct: qd[3].correct, q4Answer: qd[4].answer, q4Correct: qd[4].correct, q5Answer: qd[5].answer, q5Correct: qd[5].correct,
+    bonusScore,
+    missionScore: missionScore(), missionMax: MISSIONS.length * 10, missionsDone: Object.keys(MS.done).length,
+    missionLog: MISSIONS.map((m, i) => `M${i + 1} ${m.id}: ${MS.done[m.id] ? '✓ ' + MS.points[m.id] + 'pts' : '✗'} (tries ${MS.attempts[m.id] || 0}${MS.answers[m.id] ? ', ' + MS.answers[m.id] : ''})`).join('\n'),
+    prediction: predictions.mass ? predictions.mass.choice + (predictions.mass.correct ? ' ✓' : ' ✗') : 'none',
+    hot1: $('hot1').value.trim(), hot2: $('hot2').value.trim(),
+    notebookSeries: Object.entries(NB.ladder).map(([m, e]) => `${m}: ${e} V`).join('; '),
+    notebookNernst: NB.nernst.map(p => `logQ=${p.logQ.toFixed(2)} E=${p.E.toFixed(4)}V`).join('; '),
+    tutorTurns: coachLog.filter(c => c.role === 'student').length,
+    tutorLog: coachLog.map(c => `[${c.role}] ${c.text}`).join('\n').slice(0, 45000),
+    timeOnLab_min: Math.round((Date.now() - LAB_START) / 60000),
+    timestamp: new Date().toISOString(),
+    imageBase64: uploadedBase64Image,
+  };
+}
+async function submitFinalWork() {
+  if (Object.keys(selectedAnswers).length < questions.length) { toast('Please answer all 5 questions before submitting!'); return; }
+  if ($('hot1').value.trim().length < 15 || $('hot2').value.trim().length < 15) { toast('Answer both "Think deeper" questions (a few sentences each).'); return; }
+  if (!uploadedBase64Image) { toast('Please take a photo of your drawing before submitting!'); return; }
+  const payload = buildPayload();
+  const ov = $('loadingOverlay'); ov.classList.remove('hidden'); ov.classList.add('flex');
+  let sent = false;
+  try { localStorage.setItem('galv_last_submission', JSON.stringify(Object.assign({}, payload, { imageBase64: '(kept on device)' }))); } catch (e) {}
+  if (!GOOGLE_SCRIPT_URL.startsWith('PASTE')) {
+    try { await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }); sent = true; }
+    catch (e) { ov.classList.add('hidden'); ov.classList.remove('flex'); toast('Submission error. Check your internet connection and try again.'); return; }
+  }
+  setTimeout(() => {
+    ov.classList.add('hidden'); ov.classList.remove('flex');
+    $('stage-lab').classList.add('hidden'); $('stage-success').classList.remove('hidden');
+    $('finalScoreText').innerText = `${payload.score} / ${questions.length}`;
+    $('finalMissionText').innerText = `${payload.missionsDone}/${MISSIONS.length} · ${payload.missionScore} pts`;
+    $('finalBonusText').innerText = `${payload.bonusScore} / 3`;
+    if (!sent) {
+      $('successMsg').textContent = "Your work is saved on this device. Your teacher's sheet is not connected yet, so download your results and send them to your teacher.";
+      $('successFoot').classList.add('hidden');
+      const b = $('dlResults'); b.classList.remove('hidden');
+      b.onclick = () => { const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `GalvanicLab_${currentUser.section}_${currentUser.name.replace(/\s+/g, '_')}.json`; a.click(); };
+    }
+    document.querySelectorAll('#e5rail a').forEach(a => a.classList.add('done'));
+    window.__galvSubmitted = payload;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 900);
+}
+</script>
+<script type="module">
+
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+// ════════════════════════════════════════════════════════════════
+// GALVANIC CELL — the 3D bench (reads window.CELL every frame)
+// ════════════════════════════════════════════════════════════════
+const BX = 2.0, BR = 1.05, BH = 2.4, LIQ = 1.75;          // beaker x, radius, height, liquid level
+const EX = 2.36, ETOP = 3.0, EBOT = 0.3;                   // electrode x, top, bottom
+const ACC = 'rgb(250,204,21)';
+let renderer, scene, camera, controls, css, composer, bloom, running = true, inited = false;
+let HD = !(matchMedia('(max-width: 700px)').matches || (navigator.hardwareConcurrency || 8) <= 4);
+const half = { L: {}, R: {} };
+const tmpM = new THREE.Matrix4(), tmpV = new THREE.Vector3(), tmpQ = new THREE.Quaternion(), tmpS = new THREE.Vector3();
+let bridgeU, bridgeH, bridgeGroupU, bridgeGroupH, wireCurve, electrons, eU = [], kIons, nIons, kU = [], nU = [];
+let meterTex, meterCtx, meterLast = '', loads = {}, swBlade, bulbLight, propeller, thermoCol, bubbles, bubbleData = [];
+let labels = {}, showLabels = true, camTween = null, clock = new THREE.Clock(), lastV = -1;
+const raycastTargets = [];
+
+function noiseTex(w, h, streak) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+  const id = x.createImageData(w, h);
+  for (let j = 0; j < h; j++) { const row = Math.random() * 40; for (let i = 0; i < w; i++) { const v = 150 + (streak ? row : 0) + Math.random() * (streak ? 30 : 90); const k = (j * w + i) * 4; id.data[k] = id.data[k + 1] = id.data[k + 2] = v; id.data[k + 3] = 255; } }
+  x.putImageData(id, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+function woodTex() {
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, '#3a2414'); g.addColorStop(1, '#2a190d'); x.fillStyle = g; x.fillRect(0, 0, 1024, 512);
+  for (let i = 0; i < 260; i++) { const y = Math.random() * 512, a = 0.04 + Math.random() * 0.09; x.strokeStyle = `rgba(${Math.random() < 0.5 ? '90,58,32' : '20,10,4'},${a})`; x.lineWidth = 1 + Math.random() * 3; x.beginPath(); x.moveTo(0, y); for (let px = 0; px <= 1024; px += 32) x.lineTo(px, y + Math.sin(px * 0.01 + i) * 6); x.stroke(); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 1); return t;
+}
+function gradTex() {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 512; const x = c.getContext('2d');
+  x.clearRect(0, 0, 256, 512); x.strokeStyle = 'rgba(255,255,255,.75)'; x.fillStyle = 'rgba(255,255,255,.8)'; x.font = 'bold 22px Arial'; x.lineWidth = 3;
+  for (let i = 0; i <= 10; i++) { const y = 470 - i * 40; x.beginPath(); x.moveTo(20, y); x.lineTo(i % 2 ? 60 : 90, y); x.stroke(); if (i % 2 === 0 && i) x.fillText(String(i * 25), 100, y + 8); }
+  x.fillText('mL', 100, 40);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const glassMat = () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.08, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 0.7, side: THREE.DoubleSide, depthWrite: false });
+
+// ── build ───────────────────────────────────────────────────────
+function init() {
+  if (inited) return; inited = true;
+  const host = document.getElementById('gl3d'), view = document.getElementById('view');
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, HD ? 2 : 1.25));
+  renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  host.appendChild(renderer.domElement);
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0b0d12, 16, 34);
+  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.minDistance = 3.5; controls.maxDistance = 18; controls.maxPolarAngle = 1.48; controls.target.set(0, 1.4, 0.2);
+  controls.addEventListener('start', () => { camTween = null; });
+  css = new CSS2DRenderer({ element: document.getElementById('lbl3d') });
+
+  // lights
+  scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1208, 0.45));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(4, 9, 6); key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024); key.shadow.camera.left = -7; key.shadow.camera.right = 7; key.shadow.camera.top = 7; key.shadow.camera.bottom = -4; key.shadow.bias = -0.0005; key.shadow.radius = 4;
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x8fb7ff, 1.1); rim.position.set(-6, 4, -6); scene.add(rim);
+
+  // bench
+  const bench = new THREE.Mesh(new THREE.BoxGeometry(16, 0.4, 9), new THREE.MeshStandardMaterial({ map: woodTex(), roughness: 0.55, metalness: 0.05 }));
+  bench.position.set(0, -0.2, 0.6); bench.receiveShadow = true; scene.add(bench);
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(40, 20), new THREE.MeshStandardMaterial({ color: 0x10141c, roughness: 1 }));
+  back.position.set(0, 8, -5.5); scene.add(back);
+
+  // two half-cells
+  ['L', 'R'].forEach(k => buildHalf(k, k === 'L' ? -1 : 1));
+  buildBridges(); buildMeter(); buildLoads(); buildWires(); buildThermo(); buildLabels();
+
+  // post
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.7, 0.35, 1.0);   // only HDR emitters (e⁻, filament, LED) glow composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
+  // interaction: click the switch or the bridge
+  const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let downAt = null;
+  renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+  renderer.domElement.addEventListener('pointerup', e => {
+    if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6) return;
+    const r = renderer.domElement.getBoundingClientRect(); mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(mouse, camera); const hit = ray.intersectObjects(raycastTargets, true)[0];
+    if (!hit) return; let o = hit.object; while (o && !o.userData.act) o = o.parent;
+    if (o && o.userData.act === 'switch') window.toggleSwitch();
+    if (o && o.userData.act === 'bridge') window.setBridge(CELL.bridge === 'none' ? 'salt' : 'none');
+  });
+
+  // UI hooks
+  document.querySelectorAll('[data-cam]').forEach(b => b.onclick = () => flyTo(b.dataset.cam));
+  document.getElementById('lblBtn').onclick = () => { showLabels = !showLabels; document.getElementById('lblBtn').classList.toggle('sel', showLabels); document.getElementById('lbl3d').style.display = showLabels ? '' : 'none'; };
+  document.getElementById('atomBtn').onclick = () => { const c = document.getElementById('atomInset'); c.classList.toggle('hidden'); document.getElementById('atomBtn').classList.toggle('sel', !c.classList.contains('hidden')); };
+  document.getElementById('hdBtn').onclick = () => setHD(!HD);
+  setHD(HD, true);
+
+  const ro = new ResizeObserver(resize); ro.observe(view); resize();
+  new IntersectionObserver(es => { running = es[0].isIntersecting; }, { threshold: 0.01 }).observe(view);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) clock.getDelta(); });
+  rebuild(); flyTo('overview', true);
+  document.getElementById('glLoading').remove();
+  renderer.setAnimationLoop(frame);
+}
+function setHD(on, first) {
+  HD = on; document.getElementById('hdBtn').classList.toggle('sel', HD);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, HD ? 2 : 1.25)); renderer.shadowMap.enabled = HD;
+  ['L', 'R'].forEach(k => { const h = half[k]; if (!h.liquid) return; h.liquid.material = HD ? h.liqHD : h.liqLD; });
+  scene.traverse(o => { if (o.material) o.material.needsUpdate = true; });
+  if (!first) resize();
+}
+function resize() {
+  const v = document.getElementById('view'), w = v.clientWidth, h = v.clientHeight;
+  renderer.setSize(w, h, false); css.setSize(w, h); composer.setSize(w, h); bloom.setSize(w, h);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+
+function buildHalf(k, s) {
+  const h = half[k], g = new THREE.Group(); g.position.x = s * BX; scene.add(g); h.group = g; h.s = s;
+  // beaker (lathe with real wall thickness)
+  const prof = [[0, 0], [1.02, 0], [BR, 0.05], [BR, BH], [BR + 0.04, BH + 0.04], [BR - 0.02, BH + 0.04], [BR - 0.05, BH], [BR - 0.05, 0.08], [0, 0.08]].map(([r, y]) => new THREE.Vector2(r, y));
+  const beaker = new THREE.Mesh(new THREE.LatheGeometry(prof, 72), glassMat()); beaker.renderOrder = 5; g.add(beaker);
+  const grad = new THREE.Mesh(new THREE.CylinderGeometry(BR + 0.006, BR + 0.006, 2.2, 32, 1, true, -0.55, 1.1), new THREE.MeshBasicMaterial({ map: gradTex(), transparent: true, depthWrite: false, opacity: 0.8 }));
+  grad.position.y = 1.2; grad.rotation.y = s > 0 ? 0.25 : -0.25; grad.renderOrder = 6; g.add(grad);
+  // liquid: transmissive in HD, simple transparent otherwise
+  const liqGeo = new THREE.CylinderGeometry(BR - 0.06, BR - 0.06, LIQ, 64);
+  h.liqHD = new THREE.MeshPhysicalMaterial({ color: 0xdbeafe, transmission: 1, roughness: 0.04, thickness: 1.0, ior: 1.33, attenuationColor: new THREE.Color(0xdbeafe), attenuationDistance: 1.4, envMapIntensity: 0.22, specularIntensity: 0.25 });
+  h.liqLD = new THREE.MeshStandardMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.35, roughness: 0.1, depthWrite: false, envMapIntensity: 0.5 });
+  h.liquid = new THREE.Mesh(liqGeo, HD ? h.liqHD : h.liqLD); h.liquid.position.y = 0.08 + LIQ / 2; h.liquid.renderOrder = 2; g.add(h.liquid);
+  h.tint = new THREE.Mesh(new THREE.CylinderGeometry(BR - 0.054, BR - 0.054, LIQ + 0.004, 48), new THREE.MeshStandardMaterial({ color: 0x2563eb, transparent: true, opacity: 0, roughness: 0.25, depthWrite: false }));
+  h.tint.position.y = 0.08 + LIQ / 2; h.tint.renderOrder = 3; g.add(h.tint);
+  const men = new THREE.Mesh(new THREE.TorusGeometry(BR - 0.065, 0.025, 8, 64), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, roughness: 0.05 }));
+  men.rotation.x = Math.PI / 2; men.position.y = 0.08 + LIQ; g.add(men);
+  // electrode: a top (dry) part and a submerged part that dissolves / grows
+  const ex = s * (EX - BX);
+  h.elTop = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.3, roughnessMap: noiseTex(64, 256, true) }));
+  h.elBot = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.3, roughnessMap: noiseTex(64, 256, true), bumpMap: noiseTex(128, 256, false), bumpScale: 0 }));
+  h.dep = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ metalness: 0.9, roughness: 0.75, transparent: true, opacity: 0, bumpMap: noiseTex(128, 256, false), bumpScale: 2 }));
+  [h.elTop, h.elBot].forEach(m => { m.castShadow = true; m.position.x = ex; g.add(m); }); h.dep.position.x = ex; g.add(h.dep);
+  // crystals that grow on a cathode
+  h.crystals = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.035, 0), new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.35 }), 140);
+  h.crys = Array.from({ length: 140 }, () => ({ y: EBOT + 0.05 + Math.random() * (LIQ - 0.2), u: Math.random() - 0.5, side: Math.random() < 0.5 ? -1 : 1, s: 0.6 + Math.random() * 1.2 }));
+  h.crystals.position.x = ex; g.add(h.crystals);
+  // clip
+  h.clip = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.22, 0.18), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4, metalness: 0.3 }));
+  h.clip.position.set(ex, ETOP - 0.05, 0); g.add(h.clip);
+  // SHE: platinum plate in an inverted glass tube, fed with H₂
+  h.she = new THREE.Group(); h.she.position.x = s * (EX - BX - 0.1); g.add(h.she);
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.03), new THREE.MeshStandardMaterial({ color: 0x222326, metalness: 0.8, roughness: 0.9 })); plate.position.y = 0.75; h.she.add(plate);
+  const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 2.3), new THREE.MeshStandardMaterial({ color: 0xd9dde2, metalness: 1, roughness: 0.2 })); wire.position.y = 2.0; h.she.add(wire);
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 2.6, 40, 1, true), glassMat()); tube.position.y = 1.6; tube.renderOrder = 7; h.she.add(tube);
+  const hose = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, 2.9, 0), new THREE.Vector3(0.1 * s, 3.4, -0.2), new THREE.Vector3(0.6 * s, 3.5, -1.2), new THREE.Vector3(1.4 * s, 2.0, -2.2)]), 40, 0.05, 10), new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.35, transparent: true, opacity: 0.85 }));
+  h.she.add(hose);
+  h.bub = new THREE.InstancedMesh(new THREE.SphereGeometry(0.03, 8, 8), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.6, roughness: 0, transparent: true, opacity: 0.7 }), 40);
+  h.bubD = Array.from({ length: 40 }, () => ({ x: (Math.random() - 0.5) * 0.4, y: 0.6 + Math.random() * 1.1, z: (Math.random() - 0.5) * 0.2, v: 0.3 + Math.random() * 0.5 }));
+  h.she.add(h.bub);
+  // ions in solution
+  h.ionMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x1e3a8a, emissiveIntensity: 0.5, roughness: 0.3 });
+  h.ions = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 12, 12), h.ionMat, 70); g.add(h.ions);
+  h.anions = new THREE.InstancedMesh(new THREE.SphereGeometry(0.036, 10, 10), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0x7c2d12, emissiveIntensity: 0.4, roughness: 0.4 }), 40); g.add(h.anions);
+  const rnd = () => { const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random()) * (BR - 0.18); return [Math.cos(a) * r, 0.18 + Math.random() * (LIQ - 0.2), Math.sin(a) * r]; };
+  h.rnd = rnd;
+  h.P = Array.from({ length: 70 }, () => ({ p: rnd(), mode: 0, t: 0, to: null }));
+  h.A = Array.from({ length: 40 }, (_, i) => ({ p: i < 22 ? rnd() : [0, -9, 0] }));
+  h.spawnAcc = 0;
+}
+
+function buildBridges() {
+  const glass = glassMat();
+  // salt bridge U-tube (behind the electrodes)
+  bridgeU = new THREE.CatmullRomCurve3([[-1.5, 0.75], [-1.5, 2.8], [-1.25, 3.3], [-0.6, 3.45], [0.6, 3.45], [1.25, 3.3], [1.5, 2.8], [1.5, 0.75]].map(([x, y]) => new THREE.Vector3(x, y, -0.25)));
+  bridgeGroupU = new THREE.Group(); bridgeGroupU.userData.act = 'bridge';
+  const t1 = new THREE.Mesh(new THREE.TubeGeometry(bridgeU, 120, 0.15, 20), glass); t1.renderOrder = 8;
+  const gel = new THREE.Mesh(new THREE.TubeGeometry(bridgeU, 120, 0.115, 16), new THREE.MeshStandardMaterial({ color: 0xf1f5f9, transparent: true, opacity: 0.35, roughness: 0.6, depthWrite: false }));
+  const plugs = [0, 1].map(u => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0xf5f5f4, roughness: 1 })); const p = bridgeU.getPointAt(u); m.position.copy(p).add(new THREE.Vector3(0, 0.06, 0)); return m; });
+  bridgeGroupU.add(t1, gel, ...plugs); scene.add(bridgeGroupU); raycastTargets.push(bridgeGroupU);
+  // porous membrane: an H-cell side arm with a ceramic frit
+  bridgeH = new THREE.CatmullRomCurve3([new THREE.Vector3(-BX + BR - 0.1, 0.85, -0.1), new THREE.Vector3(BX - BR + 0.1, 0.85, -0.1)]);
+  bridgeGroupH = new THREE.Group(); bridgeGroupH.userData.act = 'bridge';
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 2 * (BX - BR) + 0.4, 40, 1, true), glass); arm.rotation.z = Math.PI / 2; arm.position.set(0, 0.85, -0.1); arm.renderOrder = 8;
+  const fill = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 2 * (BX - BR) + 0.3, 32), new THREE.MeshStandardMaterial({ color: 0xbfdbfe, transparent: true, opacity: 0.5, depthWrite: false })); fill.rotation.z = Math.PI / 2; fill.position.copy(arm.position);
+  const frit = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.14, 32), new THREE.MeshStandardMaterial({ color: 0xd6c9a8, roughness: 1, bumpMap: noiseTex(64, 64, false), bumpScale: 3 })); frit.rotation.z = Math.PI / 2; frit.position.copy(arm.position);
+  bridgeGroupH.add(arm, fill, frit); scene.add(bridgeGroupH); raycastTargets.push(bridgeGroupH);
+  // migrating ions: K⁺ (violet) to the cathode side, NO₃⁻ (orange) to the anode side
+  kIons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 10, 10), new THREE.MeshStandardMaterial({ color: 0xc084fc, emissive: 0x6b21a8, emissiveIntensity: 0.8 }), 18);
+  nIons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.04, 10, 10), new THREE.MeshStandardMaterial({ color: 0xfb923c, emissive: 0x9a3412, emissiveIntensity: 0.8 }), 18);
+  scene.add(kIons, nIons);
+  for (let i = 0; i < 18; i++) { kU.push(Math.random()); nU.push(Math.random()); }
+}
+
+function buildMeter() {
+  const g = new THREE.Group(); g.position.set(0, 0, -2.6); g.rotation.x = -0.18; scene.add(g);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.5, 0.42), new THREE.MeshStandardMaterial({ color: 0xf2b705, roughness: 0.55 })); body.position.y = 1.25; body.castShadow = true; g.add(body);
+  const face = new THREE.Mesh(new THREE.BoxGeometry(1.45, 2.2, 0.05), new THREE.MeshStandardMaterial({ color: 0x1f2329, roughness: 0.6 })); face.position.set(0, 1.27, 0.22); g.add(face);
+  const c = document.createElement('canvas'); c.width = 512; c.height = 240; meterCtx = c.getContext('2d');
+  meterTex = new THREE.CanvasTexture(c); meterTex.colorSpace = THREE.SRGBColorSpace;
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.56), new THREE.MeshBasicMaterial({ map: meterTex, color: 0xd8d8d8 })); scr.position.set(0, 1.95, 0.252); g.add(scr);
+  const dial = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.08, 40), new THREE.MeshStandardMaterial({ color: 0x2b2f36, roughness: 0.4, metalness: 0.3 })); dial.rotation.x = Math.PI / 2; dial.position.set(0, 1.15, 0.27); g.add(dial);
+  const ptr = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.03), new THREE.MeshStandardMaterial({ color: 0xffffff })); ptr.position.set(0, 1.27, 0.32); ptr.rotation.z = 0.5; g.add(ptr);
+  const jack = (x, col) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.1, 20), new THREE.MeshStandardMaterial({ color: col, roughness: 0.3 })); m.rotation.x = Math.PI / 2; m.position.set(x, 0.45, 0.27); g.add(m); return m; };
+  half.jackCom = jack(-0.35, 0x111111); half.jackV = jack(0.35, 0xdc2626);
+  half.meterGroup = g;
+}
+function drawMeter(v) {
+  const s = (v < 0 ? '-' : ' ') + Math.abs(v).toFixed(3);
+  if (s === meterLast) return; meterLast = s;
+  const x = meterCtx; x.fillStyle = '#a9bd98'; x.fillRect(0, 0, 512, 240);
+  const g = x.createLinearGradient(0, 0, 0, 240); g.addColorStop(0, 'rgba(255,255,255,.12)'); g.addColorStop(1, 'rgba(0,0,0,.12)'); x.fillStyle = g; x.fillRect(0, 0, 512, 240);
+  x.fillStyle = 'rgba(20,28,18,.12)'; x.font = '700 150px "JetBrains Mono", monospace'; x.textAlign = 'right'; x.fillText('8.888', 430, 175);
+  x.fillStyle = '#16200f'; x.fillText(s.trim().startsWith('-') ? s.trim() : s.trim(), 430, 175);
+  x.font = '800 44px "Plus Jakarta Sans", sans-serif'; x.textAlign = 'left'; x.fillText('V', 444, 175);
+  x.font = '800 26px "Plus Jakarta Sans", sans-serif'; x.fillText('DC', 26, 44); x.fillText('AUTO', 90, 44);
+  meterTex.needsUpdate = true;
+}
+function buildLoads() {
+  const base = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.14, 1.1), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 })); base.position.set(0, 0.07, 2.4); base.receiveShadow = true; base.castShadow = true; scene.add(base);
+  [-1.2, 1.2].forEach(x => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0xb08d57, metalness: 1, roughness: 0.3 })); t.position.set(x, 0.22, 2.4); scene.add(t); });
+  // bulb
+  const bulb = new THREE.Group(); bulb.position.set(-0.25, 0.14, 2.4);
+  const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.35, 24), new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 1, roughness: 0.25 })); holder.position.y = 0.18;
+  const glass = new THREE.Mesh(new THREE.SphereGeometry(0.32, 40, 30), new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0, transmission: 0.95, thickness: 0.05, transparent: true, opacity: 0.6 })); glass.position.y = 0.62;
+  const fil = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(Array.from({ length: 24 }, (_, i) => new THREE.Vector3(-0.12 + 0.24 * i / 23, 0.6 + 0.03 * Math.sin(i * 1.6), 0.03 * Math.cos(i * 1.6)))), 60, 0.008, 6), new THREE.MeshStandardMaterial({ color: 0x3f3f46, emissive: 0xffb347, emissiveIntensity: 0 }));
+  bulbLight = new THREE.PointLight(0xffc46b, 0, 6, 1.6); bulbLight.position.y = 0.62;
+  bulb.add(holder, glass, fil, bulbLight); bulb.userData.fil = fil; scene.add(bulb); loads.bulb = bulb;
+  // LED
+  const led = new THREE.Group(); led.position.set(-0.25, 0.14, 2.4);
+  const dome = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.16, 8, 20), new THREE.MeshPhysicalMaterial({ color: 0xff2d2d, emissive: 0xff1a1a, emissiveIntensity: 0, roughness: 0.15, transmission: 0.4, transparent: true, opacity: 0.9 })); dome.position.y = 0.42;
+  const legs = [-0.05, 0.05].map(x => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.3), new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 1 })); m.position.set(x, 0.16, 0); return m; });
+  led.add(dome, ...legs); led.userData.dome = dome; scene.add(led); loads.led = led;
+  // motor + fan
+  const motor = new THREE.Group(); motor.position.set(-0.25, 0.14, 2.4);
+  const can = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.5, 30), new THREE.MeshStandardMaterial({ color: 0xb6bcc4, metalness: 1, roughness: 0.25 })); can.rotation.z = Math.PI / 2; can.position.y = 0.34;
+  propeller = new THREE.Group(); propeller.position.set(0.36, 0.34, 0);
+  for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.5, 0.11), new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.4 })); b.position.y = 0.25; const p = new THREE.Group(); p.rotation.x = i * 2.094; b.rotation.y = 0.4; p.add(b); propeller.add(p); }
+  motor.add(can, propeller); scene.add(motor); loads.motor = motor;
+  // resistor
+  const res = new THREE.Group(); res.position.set(-0.25, 0.14, 2.4);
+  const rc = document.createElement('canvas'); rc.width = 256; rc.height = 64; const rx = rc.getContext('2d'); rx.fillStyle = '#d8c39a'; rx.fillRect(0, 0, 256, 64); ['#8b4513', '#111', '#c0392b', '#d4af37'].forEach((c, i) => { rx.fillStyle = c; rx.fillRect(50 + i * 42, 0, 18, 64); });
+  const rt = new THREE.CanvasTexture(rc); rt.colorSpace = THREE.SRGBColorSpace;
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.42, 8, 20), new THREE.MeshStandardMaterial({ map: rt, roughness: 0.5 })); body.rotation.z = Math.PI / 2; body.position.y = 0.3;
+  res.add(body); scene.add(res); loads.res = res;
+  // knife switch (click it)
+  const sw = new THREE.Group(); sw.position.set(0.75, 0.14, 2.4); sw.userData.act = 'switch';
+  const sb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 0.34), new THREE.MeshStandardMaterial({ color: 0x0f172a })); sb.position.y = 0.03;
+  const post = (x) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xc8a165, metalness: 1, roughness: 0.3 })); m.position.set(x, 0.13, 0); return m; };
+  swBlade = new THREE.Group(); swBlade.position.set(-0.27, 0.2, 0);
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.035, 0.07), new THREE.MeshStandardMaterial({ color: 0xd4a85a, metalness: 1, roughness: 0.25 })); blade.position.x = 0.29;
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 })); knob.position.x = 0.6;
+  swBlade.add(blade, knob); sw.add(sb, post(-0.27), post(0.27), swBlade); scene.add(sw); raycastTargets.push(sw);
+  half.switchGroup = sw;
+}
+function buildWires() {
+  // the load circuit: left clip → board → (load + switch) → right clip
+  const P = (x, y, z) => new THREE.Vector3(x, y, z);
+  wireCurve = new THREE.CatmullRomCurve3([P(-EX, ETOP + 0.05, 0), P(-EX - 0.15, ETOP + 0.6, 0.5), P(-2.1, 1.4, 2.2), P(-1.2, 0.3, 2.4), P(-0.25, 0.5, 2.4), P(0.75, 0.38, 2.4), P(1.2, 0.3, 2.4), P(2.1, 1.4, 2.2), P(EX + 0.15, ETOP + 0.6, 0.5), P(EX, ETOP + 0.05, 0)], false, 'catmullrom', 0.3);
+  const pts = wireCurve.getSpacedPoints(400);
+  const leftWire = new THREE.CatmullRomCurve3(pts.slice(0, 150)), rightWire = new THREE.CatmullRomCurve3(pts.slice(250));
+  const mk = (c, col) => { const m = new THREE.Mesh(new THREE.TubeGeometry(c, 160, 0.035, 10), new THREE.MeshStandardMaterial({ color: col, roughness: 0.45 })); m.castShadow = true; scene.add(m); return m; };
+  half.wireL = mk(leftWire, 0x1f6feb); half.wireR = mk(rightWire, 0x1f6feb);
+  // meter leads (black COM / red V), rebuilt when swapped
+  half.leads = [];
+  electrons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 10, 10), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 2.6, 0.6), toneMapped: false }), 44);
+  scene.add(electrons); for (let i = 0; i < 44; i++) eU.push(i / 44);
+}
+function buildLeads() {
+  half.leads.forEach(m => { scene.remove(m); m.geometry.dispose(); }); half.leads = [];
+  const jc = new THREE.Vector3(), jv = new THREE.Vector3(); half.jackCom.getWorldPosition(jc); half.jackV.getWorldPosition(jv);
+  const red = CELL.swapped ? 'L' : 'R', blk = CELL.swapped ? 'R' : 'L';
+  const lead = (k, to, col) => {
+    const s = k === 'L' ? -1 : 1, from = new THREE.Vector3(s * EX, ETOP + 0.08, -0.05);
+    const c = new THREE.CatmullRomCurve3([from, from.clone().add(new THREE.Vector3(0, 0.7, -0.5)), new THREE.Vector3(s * 1.4, 2.6, -2.0), new THREE.Vector3(to.x, to.y - 0.25, to.z + 0.5), to]);
+    const m = new THREE.Mesh(new THREE.TubeGeometry(c, 120, 0.028, 8), new THREE.MeshStandardMaterial({ color: col, roughness: 0.4 })); scene.add(m); half.leads.push(m);
+  };
+  lead(red, jv, 0xdc2626); lead(blk, jc, 0x111111);
+}
+function buildThermo() {
+  const g = new THREE.Group(); g.position.set(BX - 0.45, 0, -0.55); g.rotation.z = -0.12; scene.add(g);
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.0, 16), glassMat()); tube.position.y = 1.6; tube.renderOrder = 9;
+  const bulbT = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12), new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0x7f1d1d })); bulbT.position.y = 0.2;
+  thermoCol = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 1, 10), new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0x7f1d1d })); g.add(tube, bulbT, thermoCol);
+}
+function mkLabel(id, cls, html, onClick) {
+  const d = document.createElement('div'); d.className = 'lbl ' + cls; d.innerHTML = html;
+  d.addEventListener('pointerdown', e => e.stopPropagation()); d.addEventListener('click', onClick);
+  const o = new CSS2DObject(d); scene.add(o); labels[id] = { o, d }; return o;
+}
+const INFO = {
+  anode: ['Anode: oxidation (− pole)', 'The more reactive metal loses electrons: M → Mⁿ⁺ + n e⁻. Its atoms leave as ions, so it gets thinner. The electrons it releases push into the wire: this is the negative pole of a galvanic cell.'],
+  cathode: ['Cathode: reduction (+ pole)', 'Metal ions from the solution take electrons from the wire and become atoms: Mⁿ⁺ + n e⁻ → M. Metal deposits on this electrode and the solution slowly loses its ions (a copper sulfate solution fades from blue).'],
+  bridge: ['Salt bridge / porous membrane', 'Electrons never travel through it. Inside, K⁺ ions drift towards the cathode beaker and NO₃⁻ ions towards the anode beaker, so neither solution builds up charge. Remove it and the current stops instantly. (Tap the bridge in 3D to pull it out.)'],
+  electrons: ['Electrons in the wire', 'Electrons flow through the external circuit only, from the anode (−) to the cathode (+). Conventional current is drawn in the opposite direction. With only the voltmeter connected, almost no current flows, so nothing reacts.'],
+  meter: ['The multimeter', 'A voltmeter has a huge resistance (10 MΩ here), so it measures the EMF without letting current flow. Red lead on the + pole gives a positive reading; swap the leads and the sign flips.'],
+  load: ['The load and the switch', 'Close the switch (tap it in 3D) to let current flow through a bulb, LED, motor or resistor. Under load, the voltage between the terminals drops below the EMF: V = E − I·r, where r is the internal resistance of the cell.'],
+};
+function info(k) { const [t, p] = INFO[k]; document.getElementById('infoT').textContent = t; document.getElementById('infoP').textContent = p; document.getElementById('infoCard').classList.remove('hidden'); }
+function buildLabels() {
+  mkLabel('L', 'an', '', () => info(CELL.anode === 'L' ? 'anode' : 'cathode'));
+  mkLabel('R', 'ca', '', () => info(CELL.anode === 'R' ? 'anode' : 'cathode'));
+  mkLabel('solL', 'minor', '', () => info(CELL.anode === 'L' ? 'anode' : 'cathode'));
+  mkLabel('solR', 'minor', '', () => info(CELL.anode === 'R' ? 'anode' : 'cathode'));
+  mkLabel('bridge', 'br', '<span class="pulse"></span>Salt bridge · KNO₃', () => info('bridge'));
+  mkLabel('e', 'el', '', () => info('electrons'));
+  mkLabel('meter', 'minor', '📟 Voltmeter · 10 MΩ', () => info('meter'));
+  mkLabel('load', 'minor', '', () => info('load'));
+  labels.meter.o.position.set(1.25, 1.1, -2.45);
+  labels.load.o.position.set(0.2, 1.25, 2.6);
+}
+
+// ── camera ──────────────────────────────────────────────────────
+const CAMS = {
+  overview: [[0, 5.0, 10.5], [0, 1.3, 0.3]], anode: [[-6.6, 3.4, 2.6], [-2.0, 1.3, 0]], cathode: [[6.6, 3.4, 2.6], [2.0, 1.3, 0]],
+  bridge: [[0.4, 5.0, 4.2], [0, 2.8, -0.2]], load: [[0.6, 2.4, 6.4], [0, 0.5, 2.3]],
+};
+function flyTo(k, now) {
+  const [p, t] = CAMS[k], v = document.getElementById('view'), far = v.clientWidth / v.clientHeight < 1 ? 1.55 : 1;
+  const tgt = new THREE.Vector3(...t), pos = new THREE.Vector3(...p).sub(tgt).multiplyScalar(far).add(tgt);
+  if (far > 1) { tgt.y += 0.7; pos.y += 0.7; }
+  document.querySelectorAll('[data-cam]').forEach(b => b.classList.toggle('sel', b.dataset.cam === k));
+  if (now) { camera.position.copy(pos); controls.target.copy(tgt); controls.update(); return; }
+  camTween = { p0: camera.position.clone(), t0: controls.target.clone(), p1: pos, t1: tgt, u: 0 };
+}
+
+// ── rebuild on set-up changes ───────────────────────────────────
+const WATER = new THREE.Color(0.8, 0.88, 0.94);
+function solColor(h) {
+  const M = METALS[h.m], c = new THREE.Color().copy(WATER);
+  if (!M.tint) return c;
+  const t = clamp(Math.log10(Math.max(h.c, 1e-4) * 1000) / 3.3, 0, 1) * 0.95;
+  return c.lerp(new THREE.Color(...M.tint), t);
+}
+const IONCOL = { Mg: 0xe5e7eb, Al: 0xf1f5f9, Zn: 0xcbd5e1, Fe: 0x86efac, Ni: 0x4ade80, Sn: 0xe2e8f0, Pb: 0x94a3b8, H2: 0xffffff, Cu: 0x3b82f6, Ag: 0xf8fafc, Au: 0xfacc15 };
+function rebuild() {
+  if (!inited) return;
+  const sz = { S: 0.42, M: 0.62, L: 0.9 }[CELL.size];
+  ['L', 'R'].forEach(k => {
+    const h = half[k], H = CELL[k], M = METALS[H.m];
+    const gas = !!M.gas;
+    [h.elTop, h.elBot, h.dep, h.crystals, h.clip].forEach(m => m.visible = !gas);
+    h.she.visible = gas;
+    h.width = sz;
+    const topH = ETOP - (0.08 + LIQ), botH = 0.08 + LIQ - EBOT;
+    h.elTop.scale.set(sz, topH, 0.06); h.elTop.position.y = ETOP - topH / 2;
+    h.elBot.scale.set(sz, botH, 0.06); h.elBot.position.y = EBOT + botH / 2;
+    h.dep.scale.set(sz + 0.03, botH - 0.02, 0.085); h.dep.position.y = EBOT + botH / 2;
+    [h.elTop.material, h.elBot.material].forEach(m => { m.color.set(M.col); m.roughness = M.rough; });
+    h.ionMat.color.set(IONCOL[H.m]); h.ionMat.emissive.set(IONCOL[H.m]).multiplyScalar(0.25);
+    h.P.forEach(p => { p.p = h.rnd(); p.mode = 0; });
+    h.botH = botH;
+  });
+  bridgeGroupU.visible = CELL.bridge === 'salt'; bridgeGroupH.visible = CELL.bridge === 'membrane';
+  buildLeads();
+}
+
+// ── per-frame ───────────────────────────────────────────────────
+function frame() {
+  const dt = Math.min(0.05, clock.getDelta());
+  if (!running || document.hidden) return;
+  const C = CELL, t = clock.elapsedTime;
+  const sigNow = C.swapped + '|' + C.bridge;
+  if (sigNow !== frame.sig) { frame.sig = sigNow; bridgeGroupU.visible = C.bridge === 'salt'; bridgeGroupH.visible = C.bridge === 'membrane'; buildLeads(); }
+  if (camTween) { camTween.u = Math.min(1, camTween.u + dt / 1.1); const e = camTween.u < 0.5 ? 4 * camTween.u ** 3 : 1 - Math.pow(-2 * camTween.u + 2, 3) / 2; camera.position.lerpVectors(camTween.p0, camTween.p1, e); controls.target.lerpVectors(camTween.t0, camTween.t1, e); if (camTween.u >= 1) camTween = null; }
+  controls.update();
+  const flowing = C.I > 0, rate = flowing ? clamp(0.25 + Math.log10(C.I / 1e-4) / 3, 0.2, 1.6) : 0;
+  ['L', 'R'].forEach(k => {
+    const h = half[k], H = C[k], M = METALS[H.m], isAn = C.anode === k && C.E > 1e-4;
+    // solution colour follows the concentration
+    const col = solColor(H); h.liqHD.color.copy(col); h.liqHD.attenuationColor.copy(col); h.liqLD.color.copy(col);
+    if (M.tint) { const tt = clamp(Math.log10(Math.max(H.c, 1e-4) * 1000) / 3.3, 0, 1); h.tint.material.color.setRGB(...M.tint).multiplyScalar(0.8); h.tint.material.opacity = 0.1 + 0.6 * tt; h.tint.visible = true; } else h.tint.visible = false;
+    h.liqHD.attenuationDistance = M.tint ? 0.45 + 3 * (1 - clamp(Math.log10(Math.max(H.c, 1e-4) * 1000) / 3.3, 0, 1)) : 3;
+    if (!M.gas) {
+      // anode: the submerged part thins and roughens; cathode: a deposit grows
+      const loss = H.mass0 ? clamp(1 - H.mass / H.mass0, 0, 1) : 0;
+      h.elBot.scale.z = 0.06 * Math.max(0.15, 1 - loss); h.elBot.scale.x = h.width * Math.max(0.35, 1 - loss * 0.6);
+      h.elBot.material.roughness = clamp(M.rough + loss * 1.5, 0, 1); h.elBot.material.bumpScale = loss * 4;
+      h.elBot.material.color.set(M.col).multiplyScalar(1 - loss * 0.35);
+      const depF = H.mass0 ? clamp(H.dep / (H.mass0 * 0.25), 0, 1) : 0;
+      h.dep.material.opacity = depF * 0.85; h.dep.material.color.set(METALS[H.m].col).multiplyScalar(0.85); h.dep.visible = depF > 0.01;
+      h.crystals.material.color.set(M.col);
+      h.crys.forEach((c, i) => { const s = depF > 0 ? c.s * Math.min(1, depF * 1.6) : 0; tmpV.set(c.u * h.width, c.y, c.side * 0.05); tmpS.setScalar(s + 1e-4); tmpM.compose(tmpV, tmpQ.setFromEuler(new THREE.Euler(i, i * 2, 0)), tmpS); h.crystals.setMatrixAt(i, tmpM); });
+      h.crystals.instanceMatrix.needsUpdate = true;
+    } else {
+      h.bubD.forEach((b, i) => { b.y += b.v * dt * (0.6 + (flowing ? rate : 0)); if (b.y > 0.08 + LIQ - 0.05) { b.y = 0.6 + Math.random() * 0.2; b.x = (Math.random() - 0.5) * 0.4; } tmpV.set(b.x + Math.sin(t * 3 + i) * 0.02, b.y, b.z); tmpS.setScalar(1); tmpM.compose(tmpV, tmpQ.identity(), tmpS); h.bub.setMatrixAt(i, tmpM); });
+      h.bub.instanceMatrix.needsUpdate = true;
+    }
+    // ions: the number shown follows the concentration
+    const nVis = Math.round(clamp(6 + 13 * Math.log10(Math.max(H.c, 1e-4) * 1000), 3, 70));
+    const ex = h.s * (EX - BX) - (M.gas ? h.s * 0.1 : 0);
+    h.spawnAcc += dt * (flowing ? 6 * rate : 0);
+    while (h.spawnAcc >= 1) {
+      h.spawnAcc -= 1;
+      const p = h.P[Math.floor(Math.random() * nVis)];
+      if (isAn) { p.p = [ex + (Math.random() - 0.5) * 0.4, EBOT + 0.1 + Math.random() * (LIQ - 0.4), (Math.random() < 0.5 ? -1 : 1) * 0.06]; p.mode = 1; p.t = 0; }
+      else if (C.E > 1e-4) { p.mode = 2; p.t = 0; p.to = [ex + (Math.random() - 0.5) * 0.4, EBOT + 0.1 + Math.random() * (LIQ - 0.4), (Math.random() < 0.5 ? -1 : 1) * 0.07]; }
+    }
+    h.P.forEach((p, i) => {
+      if (i >= nVis) { tmpS.setScalar(0); tmpM.compose(tmpV.set(0, -5, 0), tmpQ.identity(), tmpS); h.ions.setMatrixAt(i, tmpM); return; }
+      const q = p.p, j = 0.12 * dt;
+      q[0] += (Math.random() - 0.5) * j * 3; q[1] += (Math.random() - 0.5) * j * 3; q[2] += (Math.random() - 0.5) * j * 3;
+      if (p.mode === 1) { p.t += dt; q[0] -= h.s * dt * 0.5; if (p.t > 1.4) p.mode = 0; }
+      if (p.mode === 2) { p.t += dt; for (let a = 0; a < 3; a++) q[a] += (p.to[a] - q[a]) * Math.min(1, dt * 1.8); if (p.t > 1.6) { p.p = h.rnd(); p.mode = 0; } }
+      const rr = Math.hypot(q[0], q[2]); if (rr > BR - 0.16) { q[0] *= (BR - 0.16) / rr; q[2] *= (BR - 0.16) / rr; }
+      q[1] = clamp(q[1], 0.15, 0.08 + LIQ - 0.06);
+      const s = p.mode === 2 && p.t > 1.2 ? Math.max(0.01, 1 - (p.t - 1.2) / 0.4) : p.mode === 1 && p.t < 0.3 ? p.t / 0.3 : 1;
+      tmpS.setScalar(s); tmpM.compose(tmpV.set(q[0], q[1], q[2]), tmpQ.identity(), tmpS); h.ions.setMatrixAt(i, tmpM);
+    });
+    h.ions.instanceMatrix.needsUpdate = true;
+    h.A.forEach((a, i) => { if (i >= 22) { tmpS.setScalar(0); tmpM.compose(tmpV.set(0, -9, 0), tmpQ.identity(), tmpS); h.anions.setMatrixAt(i, tmpM); return; } const q = a.p; q[0] += (Math.random() - 0.5) * 0.01; q[1] += (Math.random() - 0.5) * 0.01; q[2] += (Math.random() - 0.5) * 0.01; const rr = Math.hypot(q[0], q[2]); if (rr > BR - 0.16) { q[0] *= 0.98; q[2] *= 0.98; } q[1] = clamp(q[1], 0.15, 0.08 + LIQ - 0.06); tmpS.setScalar(1); tmpM.compose(tmpV.set(q[0], q[1], q[2]), tmpQ.identity(), tmpS); h.anions.setMatrixAt(i, tmpM); });
+    h.anions.instanceMatrix.needsUpdate = true;
+  });
+  // bridge: in, out, ions migrating
+  const curve = C.bridge === 'membrane' ? bridgeH : bridgeU, hasB = C.bridge !== 'none';
+  kIons.visible = nIons.visible = hasB;
+  if (hasB) {
+    const toCat = C.anode === 'L' ? 1 : -1, sp = flowing ? 0.05 + 0.25 * rate : 0;
+    for (let i = 0; i < 18; i++) {
+      kU[i] = (kU[i] + toCat * sp * dt + (Math.random() - 0.5) * 0.004 + 1) % 1; nU[i] = (nU[i] - toCat * sp * dt + (Math.random() - 0.5) * 0.004 + 1) % 1;
+      const pk = curve.getPointAt(kU[i]), pn = curve.getPointAt(nU[i]);
+      tmpS.setScalar(1); tmpM.compose(tmpV.copy(pk).add(new THREE.Vector3(0.04 * Math.sin(i), 0.04 * Math.cos(i * 1.7), 0.03)), tmpQ.identity(), tmpS); kIons.setMatrixAt(i, tmpM);
+      tmpM.compose(tmpV.copy(pn).add(new THREE.Vector3(-0.04 * Math.cos(i), -0.03 * Math.sin(i * 1.3), -0.03)), tmpQ.identity(), tmpS); nIons.setMatrixAt(i, tmpM);
+    }
+    kIons.instanceMatrix.needsUpdate = nIons.instanceMatrix.needsUpdate = true;
+  }
+  // electrons: anode → cathode through the wire, only when current flows
+  electrons.visible = flowing;
+  if (flowing) {
+    const dir = C.anode === 'L' ? 1 : -1, sp = 0.03 + 0.12 * rate;
+    for (let i = 0; i < eU.length; i++) { eU[i] = (eU[i] + dir * sp * dt + 1) % 1; const p = wireCurve.getPointAt(eU[i]); tmpS.setScalar(1); tmpM.compose(p, tmpQ.identity(), tmpS); electrons.setMatrixAt(i, tmpM); }
+    electrons.instanceMatrix.needsUpdate = true;
+  }
+  // loads
+  Object.entries(loads).forEach(([k, g]) => g.visible = C.load === k);
+  loads.bulb.userData.fil.material.emissiveIntensity = C.load === 'bulb' ? C.glow * 9 : 0; bulbLight.intensity = C.load === 'bulb' ? C.glow * 7 : 0;
+  loads.led.userData.dome.material.emissiveIntensity = C.load === 'led' ? C.glow * 6 : 0;
+  if (C.load === 'motor') propeller.rotation.x += dt * C.glow * 40;
+  swBlade.rotation.z += ((C.sw ? 0 : 0.9) - swBlade.rotation.z) * Math.min(1, dt * 10);
+  thermoCol.scale.y = 0.3 + 2.2 * (C.T / 80); thermoCol.position.y = 0.25 + thermoCol.scale.y / 2;
+  drawMeter(C.Vmeter);
+  // labels
+  const an = C.E > 1e-4 ? C.anode : null, narrow = renderer.domElement.clientWidth < 640;
+  ['L', 'R'].forEach(k => {
+    const s = k === 'L' ? -1 : 1, lb = labels[k], M = METALS[C[k].m], role = an === k ? 'an' : an ? 'ca' : '';
+    lb.o.position.set(s * EX, ETOP + 0.75, 0);
+    lb.d.className = 'lbl ' + role;
+    lb.d.innerHTML = `${role === 'an' ? '<span class="pulse"></span>' + (narrow ? '− ' : 'ANODE (−) · ') : role === 'ca' ? '<span class="pulse"></span>' + (narrow ? '+ ' : 'CATHODE (+) · ') : ''}${M.gas ? 'Pt / H₂' : C[k].m}`;
+    const ls = labels['sol' + k]; ls.o.position.set(s * BX, 0.45, BR + 0.05); ls.d.innerHTML = `${M.salt} · ${fmtC(C[k].c)}`;
+  });
+  labels.bridge.o.position.copy(C.bridge === 'membrane' ? new THREE.Vector3(0, 1.45, -0.1) : new THREE.Vector3(0, 3.85, -0.25));
+  labels.bridge.o.visible = C.bridge !== 'none' && !narrow;
+  labels.bridge.d.innerHTML = `<span class="pulse"></span>${C.bridge === 'membrane' ? 'Porous membrane' : 'Salt bridge · KNO₃'}`;
+  const em = wireCurve.getPointAt(0.18); labels.e.o.position.copy(em).add(new THREE.Vector3(0, 0.35, 0));
+  labels.e.o.visible = !(narrow && !flowing);
+  labels.e.d.innerHTML = flowing ? (C.anode === 'L' ? 'e⁻ ⟶ flowing' : '⟵ e⁻ flowing') : C.load === 'none' ? 'no current (open circuit)' : C.sw ? 'no current' : 'switch open: no current';
+  labels.load.d.innerHTML = C.load === 'none' ? '' : `${LOADS[C.load].icon} ${LOADS[C.load].label} · ${C.sw ? fmtI(C.I) : 'switch open (tap it)'}`;
+  labels.load.o.visible = C.load !== 'none';
+  // render
+  if (HD) composer.render(); else renderer.render(scene, camera);
+  css.render(scene, camera);
+  drawAtoms(dt);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ATOMIC ZOOM — 2D inset at the two electrode surfaces
+// ════════════════════════════════════════════════════════════════
+const AZ = { parts: [], acc: 0 };
+function drawAtoms(dt) {
+  const cv = document.getElementById('atomInset'); if (cv.classList.contains('hidden')) return;
+  const x = cv.getContext('2d'), W = cv.width, H = cv.height, C = CELL;
+  x.fillStyle = '#06080b'; x.fillRect(0, 0, W, H);
+  const anK = C.anode, caK = anK === 'L' ? 'R' : 'L', A = METALS[C[anK].m], K = METALS[C[caK].m];
+  const flowing = C.I > 0, rate = flowing ? clamp(0.3 + Math.log10(C.I / 1e-4) / 3, 0.2, 1.5) : 0;
+  const panel = (ox, M, title, eq, isAn) => {
+    x.save(); x.translate(ox, 0);
+    x.fillStyle = 'rgba(56,189,248,.05)'; x.fillRect(0, 40, W / 2 - 6, H - 80);
+    // electrode lattice on the left edge of each panel
+    for (let r = 0; r < 9; r++) for (let c = 0; c < 3; c++) { x.fillStyle = M.gas ? '#3f3f46' : M.col; x.beginPath(); x.arc(22 + c * 26 + (r % 2) * 13, 62 + r * 34, 12, 0, 7); x.fill(); }
+    x.fillStyle = isAn ? '#fda4af' : '#7dd3fc'; x.font = '900 18px Plus Jakarta Sans'; x.fillText(title, 10, 26);
+    x.fillStyle = '#e4e4e7'; x.font = '700 16px JetBrains Mono'; x.fillText(eq, 10, H - 14);
+    x.restore();
+  };
+  panel(0, A, 'ANODE · oxidation', A.gas ? 'H₂ → 2H⁺ + 2e⁻' : `${C[anK].m} → ${A.ion} + ${A.n}e⁻`, true);
+  panel(W / 2 + 6, K, 'CATHODE · reduction', K.gas ? '2H⁺ + 2e⁻ → H₂' : `${K.ion} + ${K.n}e⁻ → ${C[caK].m}`, false);
+  if (!flowing) { x.fillStyle = 'rgba(0,0,0,.6)'; x.fillRect(0, H / 2 - 30, W, 60); x.fillStyle = '#fde68a'; x.font = '800 18px Plus Jakarta Sans'; x.textAlign = 'center'; x.fillText(C.bridge === 'none' ? 'No ionic path: no reaction' : 'No current: no reaction (close the circuit)', W / 2, H / 2 + 6); x.textAlign = 'left'; return; }
+  AZ.acc += dt * rate * 2.2;
+  while (AZ.acc > 1) { AZ.acc -= 1; const y = 62 + Math.floor(Math.random() * 9) * 34;
+    AZ.parts.push({ k: 'ionOut', x: 100, y, t: 0 }, { k: 'eUp', x: 70, y, t: 0 }, { k: 'eUp', x: 76, y: y + 8, t: 0 });
+    AZ.parts.push({ k: 'ionIn', x: W / 2 + 300, y, t: 0 }, { k: 'eDown', x: W / 2 + 76, y: 40, ty: y, t: 0 }); }
+  AZ.parts = AZ.parts.filter(p => p.t < 2.2);
+  AZ.parts.forEach(p => {
+    p.t += dt;
+    if (p.k === 'ionOut') { p.x += dt * 90; x.fillStyle = METALS[C[anK].m].gas ? '#e5e7eb' : IONHEX(C[anK].m); x.beginPath(); x.arc(p.x, p.y, 11, 0, 7); x.fill(); x.fillStyle = '#111'; x.font = '900 12px Plus Jakarta Sans'; x.fillText('+', p.x - 4, p.y + 4); }
+    if (p.k === 'eUp') { p.y -= dt * 120; x.fillStyle = '#facc15'; x.shadowBlur = 10; x.shadowColor = '#facc15'; x.beginPath(); x.arc(p.x, p.y, 5, 0, 7); x.fill(); x.shadowBlur = 0; }
+    if (p.k === 'ionIn') { p.x -= dt * 100; if (p.x < W / 2 + 112) p.x = W / 2 + 112; x.fillStyle = IONHEX(C[caK].m); x.globalAlpha = Math.max(0, 1 - Math.max(0, p.t - 1.6) / 0.6); x.beginPath(); x.arc(p.x, p.y, 11, 0, 7); x.fill(); x.globalAlpha = 1; }
+    if (p.k === 'eDown') { p.y += (p.ty - p.y) * Math.min(1, dt * 2.2); x.fillStyle = '#facc15'; x.shadowBlur = 10; x.shadowColor = '#facc15'; x.beginPath(); x.arc(p.x + 30, p.y, 5, 0, 7); x.fill(); x.shadowBlur = 0; }
+  });
+  x.fillStyle = '#a1a1aa'; x.font = '12px Plus Jakarta Sans'; x.fillText('● ion   ● e⁻ (into the wire)', 10, H - 40);
+}
+const IONHEX = m => '#' + IONCOL[m].toString(16).padStart(6, '0');
+
+window.SCENE = { rebuild, flyTo };
+window.initGalvanic3D = init;
+if (window.__labStarted) init();
+</script>
+</body>
+</html>
