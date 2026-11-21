@@ -1020,7 +1020,13 @@ function toStage(e,el){ const r=el.getBoundingClientRect(); return {x:(e.clientX
 
 /* ---------- wiki HD images ---------- */
 async function loadWiki(){
-  const els=$$('[data-wiki]'); const titles=[...new Set(els.map(e=>e.dataset.wiki))]; const map={};
+  const els=$$('[data-wiki]'); let titles=[...new Set(els.map(e=>e.dataset.wiki))]; const map={};
+  // 1) photos cached on this site (fast, reliable) — see tools/fetch_images.py
+  try{ const man=await (await fetch('img/manifest.json',{cache:'no-cache'})).json();
+    Object.entries(man).forEach(([t,m])=>{ map[t]={src:'img/1920/'+m.slug+'.jpg',small:'img/960/'+m.slug+'.jpg',file:m.file,page:m.page}; });
+  }catch(err){ /* no local cache yet → use Wikipedia directly */ }
+  titles=titles.filter(t=>!map[t]);
+  // 2) anything missing: ask Wikipedia for its lead image
   for(let i=0;i<titles.length;i+=40){
     const chunk=titles.slice(i,i+40);
     const url='https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1&prop=pageimages&piprop=thumbnail%7Cname%7Coriginal&pithumbsize=1920&titles='+encodeURIComponent(chunk.join('|'));
@@ -1036,12 +1042,12 @@ async function loadWiki(){
 }
 /* priority loading queue: current slide first, max 4 at once, retry on failure */
 const imgQueue=[]; let imgActive=0;
-function sizedSrc(d,hd){ return (!hd && /\/1920px-/.test(d.src)) ? d.src.replace('/1920px-','/960px-') : d.src; }
+function sizedSrc(d,hd){ if(!hd && d.small) return d.small; return (!hd && /\/1920px-/.test(d.src)) ? d.src.replace('/1920px-','/960px-') : d.src; }
 function slideIdx(el){ const s=el.closest('.slide'); return s? slides.indexOf(s) : 99; }
 function pump(){
   const c=Math.max(0,cur);
   imgQueue.sort((a,b)=>Math.abs(slideIdx(a.el)-c)+(slideIdx(a.el)<c?.5:0) - (Math.abs(slideIdx(b.el)-c)+(slideIdx(b.el)<c?.5:0)));
-  while(imgActive<4 && imgQueue.length){ const job=imgQueue.shift(); imgActive++; job.run(()=>{ imgActive--; pump(); }); }
+  while(imgActive<6 && imgQueue.length){ const job=imgQueue.shift(); imgActive++; job.run(()=>{ imgActive--; pump(); }); }
 }
 function applyImg(el,d,urgent){
   if(!d){ el.classList.add('noimg'); return; }
