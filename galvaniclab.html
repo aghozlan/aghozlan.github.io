@@ -46,6 +46,7 @@ input[type="file"] { display: none; }
 .meter-face .u { font-size:13px; color:#a1a1aa; font-weight:800; margin-left:4px; }
 .hud .mini { display:flex; gap:6px; flex-wrap:wrap; }
 .hud .mini span { font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(9,9,11,.75); border:1px solid #27272a; color:#d4d4d8; padding:3px 8px; border-radius:8px; }
+.eta { pointer-events:none; background:rgba(24,24,27,.82); border:1px solid rgba(250,204,21,.35); color:#fde68a; font-size:11px; font-weight:700; padding:4px 9px; border-radius:10px; max-width:320px; }
 .dead { pointer-events:none; background:rgba(127,29,29,.85); border:1px solid #f87171; color:#fee2e2; font-size:12px; font-weight:800; padding:5px 10px; border-radius:10px; max-width: 320px; }
 .tools { position:absolute; right:10px; top:10px; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
 .tbtn { font-size:11px; font-weight:800; padding:6px 10px; border-radius:10px; background:rgba(9,9,11,.78); border:1px solid #3f3f46; color:#d4d4d8; cursor:pointer; white-space:nowrap; }
@@ -193,6 +194,7 @@ table.nb td { padding:6px; border-bottom:1px solid #27272a; color:#e4e4e7; font-
       <div class="hud">
         <div class="meter-face"><span class="text-[10px] font-black tracking-[.18em] text-zinc-500">MULTIMETER · DC</span><div><span id="hudV" class="v">1.100</span><span class="u">V</span></div></div>
         <div class="mini"><span>I = <b id="hudI">0 A</b></span><span>⏱ <b id="hudT">0 s</b></span><span>Q = <b id="hudQ">0 mAh</b></span></div>
+        <div id="hudEta" class="eta hidden"></div>
         <div id="hudDead" class="dead hidden"></div>
       </div>
       <div class="tools">
@@ -479,6 +481,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function sig(v, n = 3) { if (!isFinite(v)) return '—'; if (v === 0) return '0'; return String(+v.toPrecision(n)); }
 function fmtI(a) { const x = Math.abs(a); if (x >= 1) return sig(a) + ' A'; if (x >= 1e-3) return sig(a * 1e3) + ' mA'; if (x >= 1e-6) return sig(a * 1e6) + ' µA'; return '0 A'; }
 function fmtC(c) { if (c >= 0.1) return c.toFixed(c >= 1 ? 2 : 3) + ' M'; if (c >= 1e-3) return (c * 1e3).toFixed(1) + ' mM'; return sig(c * 1e3, 2) + ' mM'; }
+function fmtLong(s) { if (s >= 2 * 86400) return (s / 86400).toFixed(s >= 20 * 86400 ? 0 : 1) + ' days'; if (s >= 3 * 3600) return (s / 3600).toFixed(0) + ' h'; return fmtTime(s); }
 function fmtTime(s) { if (s < 60) return s.toFixed(0) + ' s'; if (s < 3600) return Math.floor(s / 60) + ' min ' + String(Math.floor(s % 60)).padStart(2, '0') + ' s'; const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h + ' h ' + String(m).padStart(2, '0') + ' min'; }
 function fmtSigned(v, d = 3) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(d); }
 let _toastT = null;
@@ -703,6 +706,15 @@ function updateReadouts(force) {
   $('hudI').textContent = fmtI(C.I);
   $('hudT').textContent = fmtTime(C.t);
   $('hudQ').textContent = sig(C.Q / 3.6, 3) + ' mAh';
+  // time left before one reactant runs out (lower bound: the current falls as the cell runs)
+  let eta = Infinity;
+  if (!C.dead && C.I > 0 && C.E > 1e-4) {
+    const an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'], Ma = METALS[an.m], Mc = METALS[ca.m];
+    const molA = Ma.gas ? Infinity : (an.mass / Ma.M) * Ma.n, molC = Mc.gas ? ca.c * VOL : ca.c * VOL * Mc.n;
+    eta = F * Math.min(molA, molC) / C.I;
+  }
+  $('hudEta').classList.toggle('hidden', !isFinite(eta));
+  if (isFinite(eta)) $('hudEta').textContent = '⌛ at least ' + fmtLong(eta) + ' until it runs flat' + (C.run && C.speed > 1 ? ` · ≈ ${fmtLong(eta / C.speed)} on screen at ×${C.speed}` : ' (real time)');
   $('hudDead').classList.toggle('hidden', !C.dead);
   if (C.dead) $('hudDead').textContent = '🔋 Cell exhausted: ' + C.deadWhy;
   // masses + concentrations
@@ -1388,24 +1400,43 @@ function buildLoads() {
   const rt = new THREE.CanvasTexture(rc); rt.colorSpace = THREE.SRGBColorSpace;
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.42, 8, 20), new THREE.MeshStandardMaterial({ map: rt, roughness: 0.5 })); body.rotation.z = Math.PI / 2; body.position.y = 0.3;
   res.add(body); scene.add(res); loads.res = res;
+  // leads from the two sockets (local x = ±0.5, top y = 0.17) into each load
+  const leadMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 1, roughness: 0.3 });
+  const plug = (g, ends) => [-1, 1].forEach(s => { const [ex, ey] = ends; const c = new THREE.CatmullRomCurve3([new THREE.Vector3(0.5 * s, 0.17, 0), new THREE.Vector3((0.5 + ex) / 2 * s, Math.max(0.2, ey * 0.6), 0), new THREE.Vector3(ex * s, ey, 0)]); g.add(new THREE.Mesh(new THREE.TubeGeometry(c, 16, 0.014, 6), leadMat)); });
+  plug(bulb, [0.17, 0.12]); plug(led, [0.05, 0.03]); plug(motor, [0.27, 0.3]); [-1, 1].forEach(s => { const tab = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.08), new THREE.MeshStandardMaterial({ color: 0xc8a165, metalness: 1, roughness: 0.3 })); tab.position.set(0.265 * s, 0.3, 0); motor.add(tab); }); plug(res, [0.38, 0.3]);
   // knife switch (click it)
   const sw = new THREE.Group(); sw.position.set(0.75, 0.14, 2.4); sw.userData.act = 'switch';
   const sb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 0.34), new THREE.MeshStandardMaterial({ color: 0x0f172a })); sb.position.y = 0.03;
-  const post = (x) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xc8a165, metalness: 1, roughness: 0.3 })); m.position.set(x, 0.13, 0); return m; };
-  swBlade = new THREE.Group(); swBlade.position.set(-0.27, 0.2, 0);
+  const post = (x) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xc8a165, metalness: 1, roughness: 0.3 })); m.position.set(x, 0.13, 0); return m; };
+  swBlade = new THREE.Group(); swBlade.position.set(-0.27, 0.245, 0);
   const blade = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.035, 0.07), new THREE.MeshStandardMaterial({ color: 0xd4a85a, metalness: 1, roughness: 0.25 })); blade.position.x = 0.29;
   const knob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 })); knob.position.x = 0.6;
   swBlade.add(blade, knob); sw.add(sb, post(-0.27), post(0.27), swBlade); scene.add(sw); raycastTargets.push(sw);
   half.switchGroup = sw;
 }
 function buildWires() {
-  // the load circuit: left clip → board → (load + switch) → right clip
-  const P = (x, y, z) => new THREE.Vector3(x, y, z);
-  wireCurve = new THREE.CatmullRomCurve3([P(-EX, ETOP + 0.05, 0), P(-EX - 0.15, ETOP + 0.6, 0.5), P(-2.1, 1.4, 2.2), P(-1.2, 0.3, 2.4), P(-0.25, 0.5, 2.4), P(0.75, 0.38, 2.4), P(1.2, 0.3, 2.4), P(2.1, 1.4, 2.2), P(EX + 0.15, ETOP + 0.6, 0.5), P(EX, ETOP + 0.05, 0)], false, 'catmullrom', 0.3);
-  const pts = wireCurve.getSpacedPoints(400);
-  const leftWire = new THREE.CatmullRomCurve3(pts.slice(0, 150)), rightWire = new THREE.CatmullRomCurve3(pts.slice(250));
-  const mk = (c, col) => { const m = new THREE.Mesh(new THREE.TubeGeometry(c, 160, 0.035, 10), new THREE.MeshStandardMaterial({ color: col, roughness: 0.45 })); m.castShadow = true; scene.add(m); return m; };
-  half.wireL = mk(leftWire, 0x1f6feb); half.wireR = mk(rightWire, 0x1f6feb);
+  // every wire ends on a real terminal: left electrode → board post → load socket ⟶ load ⟶ load socket → switch post ⟶ blade ⟶ switch post → board post → right electrode
+  const P = (x, y, z) => new THREE.Vector3(x, y, z), Z = 2.4;
+  const segs = [
+    [P(-EX, ETOP + 0.05, 0), P(-EX - 0.15, ETOP + 0.6, 0.5), P(-2.1, 1.4, 2.2), P(-1.35, 0.55, Z), P(-1.2, 0.31, Z)],
+    [P(-1.2, 0.31, Z), P(-1.05, 0.2, Z), P(-0.9, 0.2, Z), P(-0.75, 0.31, Z)],
+    [P(0.25, 0.31, Z), P(0.33, 0.21, Z), P(0.42, 0.24, Z), P(0.48, 0.37, Z)],
+    [P(1.02, 0.37, Z), P(1.08, 0.22, Z), P(1.15, 0.21, Z), P(1.2, 0.31, Z)],
+    [P(1.2, 0.31, Z), P(1.35, 0.55, Z), P(2.1, 1.4, 2.2), P(EX + 0.15, ETOP + 0.6, 0.5), P(EX, ETOP + 0.05, 0)],
+  ].map(p => new THREE.CatmullRomCurve3(p, false, 'catmullrom', 0.3));
+  const mk = (c, n) => { const m = new THREE.Mesh(new THREE.TubeGeometry(c, n, 0.035, 10), new THREE.MeshStandardMaterial({ color: 0x1f6feb, roughness: 0.45 })); m.castShadow = true; scene.add(m); return m; };
+  half.wires = segs.map((c, i) => mk(c, i === 0 || i === 4 ? 160 : 40));
+  // brass sockets the loads plug into (x = −0.75 and +0.25)
+  [-0.75, 0.25].forEach(x => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0xb08d57, metalness: 1, roughness: 0.3 })); t.position.set(x, 0.22, Z); scene.add(t); });
+  // the path electrons travel: wires + through the load + along the closed blade
+  const path = [];
+  const add = (c, n) => { const q = c.getSpacedPoints(n); if (path.length) q.shift(); path.push(...q); };
+  add(segs[0], 120); add(segs[1], 12);
+  add(new THREE.CatmullRomCurve3([P(-0.75, 0.31, Z), P(-0.25, 0.5, Z), P(0.25, 0.31, Z)]), 20);
+  add(segs[2], 8);
+  add(new THREE.LineCurve3(P(0.48, 0.37, Z), P(1.02, 0.37, Z)), 10);
+  add(segs[3], 8); add(segs[4], 120);
+  wireCurve = new THREE.CatmullRomCurve3(path, false, 'centripetal');
   // meter leads (black COM / red V), rebuilt when swapped
   half.leads = [];
   electrons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 10, 10), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 2.6, 0.6), toneMapped: false }), 44);
