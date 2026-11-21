@@ -443,7 +443,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:30px}
     </div>
   </div>
   <div class="float-cards" id="floatCards">
-    <div class="fc fc1"><div class="rv rv-z" style="--i:2;width:100%;height:100%"><div class="fcb"><figure class="pic" data-wiki="Coral reef" data-emoji="🪸" data-zoom></figure><span class="lbl">Coral reef</span></div></div></div>
+    <div class="fc fc1"><div class="rv rv-z" style="--i:2;width:100%;height:100%"><div class="fcb"><figure class="pic" data-hd data-wiki="Coral reef" data-emoji="🪸" data-zoom></figure><span class="lbl">Coral reef</span></div></div></div>
     <div class="fc fc2"><div class="rv rv-z" style="--i:3;width:100%;height:100%"><div class="fcb"><figure class="pic" data-wiki="Green sea turtle" data-emoji="🐢" data-zoom></figure><span class="lbl">Green sea turtle</span></div></div></div>
     <div class="fc fc3"><div class="rv rv-z" style="--i:4;width:100%;height:100%"><div class="fcb"><figure class="pic" data-wiki="Humpback whale" data-emoji="🐋" data-zoom></figure><span class="lbl">Humpback whale</span></div></div></div>
     <div class="fc fc4"><div class="rv rv-z" style="--i:5;width:100%;height:100%"><div class="fcb"><figure class="pic" data-wiki="Aurelia aurita" data-emoji="🪼" data-zoom></figure><span class="lbl">Moon jellyfish</span></div></div></div>
@@ -494,7 +494,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:30px}
   <div class="kicker rv">Our blue planet</div>
   <h2 class="t rv" style="--i:1">Why is Earth called the Blue Planet?</h2>
   <div class="grid planet">
-    <div class="globe-wrap rv rv-z" style="--i:2"><div class="orbit"></div><div class="globe"><figure class="pic" data-wiki="Earth" data-emoji="🌍" data-zoom></figure></div></div>
+    <div class="globe-wrap rv rv-z" style="--i:2"><div class="orbit"></div><div class="globe"><figure class="pic" data-hd data-wiki="Earth" data-emoji="🌍" data-zoom></figure></div></div>
     <div>
       <div class="grid stats">
         <div class="glass stat rv" style="--i:3"><div class="n" data-count="71">0</div><p>% of Earth's surface is covered by ocean</p></div>
@@ -648,7 +648,7 @@ input[type=range]{width:100%;accent-color:var(--sun);height:30px}
   <div class="kicker rv">Weather &amp; the ocean</div>
   <h2 class="t rv" style="--i:1">How does the ocean make a hurricane?</h2>
   <div class="grid storm">
-    <div class="cyclone rv rv-z" style="--i:2"><figure class="pic" data-wiki="Hurricane Isabel" data-emoji="🌀" data-zoom></figure><span class="eye">the eye 👁️ calm centre</span></div>
+    <div class="cyclone rv rv-z" style="--i:2"><figure class="pic" data-hd data-wiki="Hurricane Isabel" data-emoji="🌀" data-zoom></figure><span class="eye">the eye 👁️ calm centre</span></div>
     <div>
       <div class="ssteps" id="sSteps">
         <div class="glass sstep show"><span class="e">🌡️</span><div><b>1 · Warm water</b><p>The Sun heats tropical sea water to more than about 27 °C.</p></div></div>
@@ -1031,24 +1031,37 @@ async function loadWiki(){
         if(p&&(p.thumbnail||p.original)) map[t]={src:(p.thumbnail||p.original).source,orig:p.original&&p.original.source,file:p.pageimage,page:p.title}; });
     }catch(err){ console.warn('image batch failed',err); }
   }
-  els.forEach(el=>applyImg(el,map[el.dataset.wiki]));
+  els.filter(el=>el.closest('.slide')).forEach(el=>applyImg(el,map[el.dataset.wiki]));
   window.__wikiMap=map;
 }
-function applyImg(el,d){
+/* priority loading queue: current slide first, max 4 at once, retry on failure */
+const imgQueue=[]; let imgActive=0;
+function sizedSrc(d,hd){ return (!hd && /\/1920px-/.test(d.src)) ? d.src.replace('/1920px-','/960px-') : d.src; }
+function slideIdx(el){ const s=el.closest('.slide'); return s? slides.indexOf(s) : 99; }
+function pump(){
+  const c=Math.max(0,cur);
+  imgQueue.sort((a,b)=>Math.abs(slideIdx(a.el)-c)+(slideIdx(a.el)<c?.5:0) - (Math.abs(slideIdx(b.el)-c)+(slideIdx(b.el)<c?.5:0)));
+  while(imgActive<4 && imgQueue.length){ const job=imgQueue.shift(); imgActive++; job.run(()=>{ imgActive--; pump(); }); }
+}
+function applyImg(el,d,urgent){
   if(!d){ el.classList.add('noimg'); return; }
   if(el.querySelector('img')) return;
-  const img=new Image(); img.alt=el.dataset.alt||el.dataset.wiki; img.decoding='async';
-  img.onload=()=>el.classList.add('loaded');
-  img.onerror=()=>{ if(d.orig&&img.src!==d.orig&&!/\.svg$/i.test(d.orig)) img.src=d.orig; else el.classList.add('noimg'); };
-  img.src=d.src; if(el.dataset.pos) img.style.objectPosition=el.dataset.pos; el.appendChild(img);
   el.dataset.file=d.file||''; el.dataset.page=d.page||'';
+  const hd=el.hasAttribute('data-hd')||el.classList.contains('mpic');
+  const img=new Image(); img.alt=el.dataset.alt||el.dataset.wiki; img.decoding='async';
+  if(el.dataset.pos) img.style.objectPosition=el.dataset.pos; el.appendChild(img);
+  const job={el,run(done){ let tries=0; const src=sizedSrc(d,hd);
+    img.onload=()=>{ el.classList.add('loaded'); done(); };
+    img.onerror=()=>{ tries++; if(tries<3) setTimeout(()=>{ img.src=src+(src.includes('?')?'&':'?')+'r='+tries; },1500*tries); else { el.classList.add('noimg'); done(); } };
+    img.src=src; }};
+  if(urgent){ imgActive++; job.run(()=>{ imgActive--; pump(); }); } else { imgQueue.push(job); pump(); }
 }
 
 /* ---------- modal ---------- */
 const modal=$('#modal'), mPic=$('#mPic'), mText=$('#mText');
 function openModal(title,emoji,html,tag){
   const d=(window.__wikiMap||{})[title];
-  mPic.className='pic mpic'; mPic.innerHTML=''; mPic.dataset.emoji=emoji||'🌊'; applyImg(mPic,d);
+  mPic.className='pic mpic'; mPic.innerHTML=''; mPic.dataset.emoji=emoji||'🌊'; applyImg(mPic,d,true);
   const src=d&&d.file?`<span class="src">📷 Photo: <a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(d.file)}" target="_blank" rel="noopener">Wikimedia Commons</a> · <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(d.page)}" target="_blank" rel="noopener">Wikipedia: ${d.page}</a></span>`:'';
   mText.innerHTML=(tag?`<div class="tag">${tag}</div>`:'')+html+src; modal.classList.add('open');
 }
@@ -1078,7 +1091,7 @@ function go(i){
   $$('#dots button').forEach((d,k)=>d.classList.toggle('on',k===i));
   $('#count').textContent=`${i+1} / ${slides.length}`; $('#progress').style.width=((i+1)/slides.length*100)+'%';
   history.replaceState(null,'','#'+(i+1));
-  const h=hooks[slides[i].id]; if(h) setTimeout(h,60);
+  const h=hooks[slides[i].id]; if(h) setTimeout(h,60); pump();
 }
 window.next=()=>go(cur+1); window.prev=()=>go(cur-1);
 $('#prevB').onclick=prev; $('#nextB').onclick=next;
@@ -1289,7 +1302,7 @@ const ANIMALS=[
     const band=$$('#zcol .zband')[i]; $('#subm').style.top=(band.offsetTop+band.offsetHeight/2)+'px'; $('#subm').textContent=['🐠','🦑','🐙','🦐','🤖'][i];
     $('#zname').textContent=d[0]; $('#zdepth').textContent=d[1]; $('#ztemp').textContent=d[2]; $('#zlight').style.width=d[3]+'%'; $('#ztext').textContent=d[5];
     const za=$('#zanimals'); za.innerHTML=d[6].map(([w,e,n])=>`<figure><div class="pic" data-wiki="${w}" data-emoji="${e}" data-zoom></div><figcaption>${n}</figcaption></figure>`).join('');
-    $$('.pic',za).forEach(p=>applyImg(p,(window.__wikiMap||{})[p.dataset.wiki]));
+    $$('.pic',za).forEach(p=>applyImg(p,(window.__wikiMap||{})[p.dataset.wiki],true));
     za.animate([{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'none'}],{duration:500});
     if(slides[cur]&&slides[cur].id==='s-zones') setDepth(d[4]); }
   $$('#zcol .zband').forEach(b=>b.onclick=()=>show(+b.dataset.z)); $('#zDive').onclick=()=>show((z+1)%5);
