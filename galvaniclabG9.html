@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GalvanicLab Easy — Ahmad Ghozlan</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090b'/%3E%3Crect x='6' y='9' width='6' height='17' rx='1.5' fill='%239aa6b2'/%3E%3Crect x='20' y='9' width='6' height='17' rx='1.5' fill='%23c8774a'/%3E%3Cpath d='M9 9V5h14v4' fill='none' stroke='%23facc15' stroke-width='2'/%3E%3C/svg%3E">
+<meta name="description" content="GalvanicLab Easy: build a battery from two metals in 3D. Three big steps, plain words, ready for a Grade 9 chemistry class.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.neon-border { box-shadow: 0 0 10px rgba(250,204,21,0.45), inset 0 0 10px rgba(250,204,21,0.15); border: 1px solid rgba(250,204,21,0.5); }
+.neon-text-amber { text-shadow: 0 0 14px rgba(250,204,21,0.8); }
+.glass-panel { background: rgba(24,24,27,0.72); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+canvas { touch-action: none; }
+input[type="file"] { display: none; }
+.custom-file-upload { display: inline-block; cursor: pointer; }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+.e5 { display:flex; gap:4px; }
+.e5 a { flex:1; text-align:center; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#71717a; padding:6px 2px 4px; border-bottom:3px solid #27272a; transition:all .3s; text-decoration:none; }
+.e5 a.on { color:#e4e4e7; border-color:#facc15; }
+.e5 a.done { color:#34d399; border-color:#10b981; }
+
+/* ── 3D bench ── */
+.view { position:relative; width:100%; aspect-ratio: 16/10; min-height: 360px; border-radius: 24px; overflow:hidden; background: radial-gradient(120% 90% at 50% 0%, #1a1f2b 0%, #0b0d12 60%, #050608 100%); border:1px solid #27272a; box-shadow: 0 30px 80px -30px rgba(0,0,0,.9); }
+@media (max-width: 640px) { .view { aspect-ratio: 4/5; } .timebar { right:10px; } #atomInset { bottom: 108px; width: 62%; } .tools .tbtn { padding:5px 8px; font-size:10px; } .lbl { font-size:9.5px; padding:2px 6px; } .lbl.minor { display:none !important; } .meter-face .v { font-size:26px; } .hud .mini span { font-size:10px; padding:2px 6px; } }
+#gl3d { position:absolute; inset:0; }
+#gl3d canvas { display:block; width:100% !important; height:100% !important; }
+#lbl3d { position:absolute; inset:0; pointer-events:none; }
+.lbl { font-size:11px; font-weight:800; letter-spacing:.04em; padding:3px 8px; border-radius:999px; background:rgba(9,9,11,.78); border:1px solid rgba(255,255,255,.18); color:#e4e4e7; white-space:nowrap; pointer-events:auto; cursor:pointer; user-select:none; transition: opacity .3s; }
+.lbl.an { border-color:#fb7185; color:#fecdd3; }
+.lbl.ca { border-color:#38bdf8; color:#e0f2fe; }
+.lbl.br { border-color:#c084fc; color:#f3e8ff; }
+.lbl.el { border-color:#facc15; color:#fef9c3; }
+.lbl .pulse { display:inline-block; width:7px; height:7px; border-radius:50%; background:currentColor; margin-right:5px; animation: pulse 1.6s infinite; }
+@keyframes pulse { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+.hud { position:absolute; left:12px; top:12px; display:flex; flex-direction:column; gap:6px; pointer-events:none; }
+.meter-face { background: linear-gradient(#11151c,#0b0e13); border:1px solid #2b313b; border-radius:14px; padding:8px 14px 6px; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+.meter-face .v { font-family:'JetBrains Mono',monospace; font-size: clamp(26px, 4.6vw, 44px); font-weight:700; color:#facc15; text-shadow:0 0 18px rgba(250,204,21,.55); line-height:1; }
+.meter-face .v.neg { color:#fb7185; text-shadow:0 0 18px rgba(251,113,133,.55); }
+.meter-face .u { font-size:13px; color:#a1a1aa; font-weight:800; margin-left:4px; }
+.hud .mini { display:flex; gap:6px; flex-wrap:wrap; }
+.hud .mini span { font-family:'JetBrains Mono',monospace; font-size:11px; background:rgba(9,9,11,.75); border:1px solid #27272a; color:#d4d4d8; padding:3px 8px; border-radius:8px; }
+.eta { pointer-events:none; background:rgba(24,24,27,.82); border:1px solid rgba(250,204,21,.35); color:#fde68a; font-size:11px; font-weight:700; padding:4px 9px; border-radius:10px; max-width:320px; }
+.dead { pointer-events:none; background:rgba(127,29,29,.85); border:1px solid #f87171; color:#fee2e2; font-size:12px; font-weight:800; padding:5px 10px; border-radius:10px; max-width: 320px; }
+.tools { position:absolute; right:10px; top:10px; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+.tbtn { font-size:11px; font-weight:800; padding:6px 10px; border-radius:10px; background:rgba(9,9,11,.78); border:1px solid #3f3f46; color:#d4d4d8; cursor:pointer; white-space:nowrap; }
+.tbtn:hover { border-color:#a1a1aa; color:#fff; }
+.tbtn.sel { background:#facc15; color:#0b0b0b; border-color:#facc15; }
+.timebar { position:absolute; left:10px; bottom:10px; display:flex; gap:5px; align-items:center; background:rgba(9,9,11,.82); border:1px solid #3f3f46; border-radius:14px; padding:6px; flex-wrap:wrap; justify-content:center; max-width: calc(100% - 20px); }
+.timebar .tbtn { padding:5px 9px; }
+#atomInset { position:absolute; right:12px; bottom:64px; width: min(340px, 46%); border-radius:14px; border:1px solid #3f3f46; background:#06080b; box-shadow:0 10px 30px rgba(0,0,0,.7); }
+#infoCard { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(380px, 88%); }
+#glLoading { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:#0b0d12; color:#a1a1aa; font-weight:700; font-size:13px; }
+
+/* ── console ── */
+.card { background: rgba(24,24,27,.78); border:1px solid #27272a; border-radius:22px; padding:16px; }
+.card h4 { font-size:11px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; color:#a1a1aa; }
+.mgrid { display:grid; grid-template-columns: repeat(auto-fill, minmax(62px,1fr)); gap:6px; }
+.mchip { display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 2px 5px; border-radius:12px; border:1px solid #3f3f46; background:#111114; cursor:pointer; transition: all .15s; }
+.mchip i { width:26px; height:10px; border-radius:3px; background: linear-gradient(180deg, color-mix(in srgb, var(--mc) 70%, white), var(--mc) 55%, color-mix(in srgb, var(--mc) 60%, black)); box-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.mchip b { font-size:13px; color:#f4f4f5; }
+.mchip small { font-family:'JetBrains Mono',monospace; font-size:9.5px; color:#a1a1aa; }
+.mchip:hover { border-color:#a1a1aa; }
+.mchip.sel { border-color:#facc15; background:#2a2410; box-shadow: 0 0 0 1px #facc15, 0 0 18px rgba(250,204,21,.25); }
+.role { font-size:11px; font-weight:900; letter-spacing:.06em; padding:3px 9px; border-radius:999px; }
+.role.an { background:rgba(251,113,133,.15); color:#fda4af; border:1px solid rgba(251,113,133,.5); }
+.role.ca { background:rgba(56,189,248,.15); color:#7dd3fc; border:1px solid rgba(56,189,248,.5); }
+input[type=range].rng { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:6px; background:#3f3f46; outline:none; }
+input[type=range].rng::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fafafa; border:3px solid #facc15; cursor:pointer; }
+input[type=range].rng::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:#fafafa; border:3px solid #facc15; cursor:pointer; }
+.chip { font-size:11px; font-weight:800; padding:6px 10px; border-radius:999px; border:1px solid #3f3f46; color:#a1a1aa; background:#18181b; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.chip:hover { border-color:#71717a; color:#e4e4e7; }
+.chip.sel { border-color:#facc15; color:#0b0b0b; background:#facc15; }
+.chip.done { border-color:#10b981; color:#34d399; }
+.chip.sel.done { background:#10b981; color:#0b0b0b; }
+.bigbtn { font-size:13px; font-weight:900; padding:10px 14px; border-radius:14px; border:1px solid #3f3f46; background:#18181b; color:#e4e4e7; cursor:pointer; }
+.bigbtn.on { background: linear-gradient(90deg,#f59e0b,#facc15); color:#111; border-color:#facc15; box-shadow:0 0 18px rgba(250,204,21,.35); }
+.eq { font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#e4e4e7; background:#0b0d12; border:1px solid #1f2430; border-radius:10px; padding:8px 11px; line-height:1.55; overflow-x:auto; }
+.eq b { color:#facc15; }
+.obj { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#a1a1aa; padding:3px 0; }
+.obj .tick { width:18px; height:18px; flex:0 0 18px; border-radius:50%; border:2px solid #52525b; display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; transition:all .25s; }
+.obj.ok { color:#d1fae5; }
+.obj.ok .tick { border-color:#10b981; background:#10b981; color:#052e1a; transform: scale(1.1); }
+#mAsk.locked { opacity:.45; pointer-events:none; }
+.opt { text-align:left; font-size:13px; font-weight:600; color:#e4e4e7; background:#111114; border:1px solid #3f3f46; border-radius:12px; padding:9px 12px; cursor:pointer; }
+.opt:hover { border-color:#facc15; }
+.opt.wrong { border-color:#f43f5e; color:#fecdd3; }
+.btn-g { background:#facc15; color:#111; font-weight:900; border-radius:12px; padding:0 16px; }
+.num-in { background:#09090b; border:1px solid #3f3f46; border-radius:10px; padding:8px 10px; color:#fff; width:100%; font-family:'JetBrains Mono',monospace; }
+.num-in:focus { outline:none; border-color:#facc15; }
+.toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(30px); opacity:0; z-index:200; background:#18181b; border:1px solid #3f3f46; color:#e4e4e7; padding:10px 16px; border-radius:12px; font-size:14px; font-weight:600; transition:all .3s; max-width:92vw; text-align:center; pointer-events:none; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.chat-msg { padding:8px 12px; border-radius:12px; font-size:13px; line-height:1.5; max-width:88%; white-space:pre-wrap; }
+.chat-msg.user { background:#3b2f0e; color:#fef3c7; margin-left:auto; border-bottom-right-radius:4px; }
+.chat-msg.ai { background:#1f2937; color:#e5e7eb; border-bottom-left-radius:4px; }
+#coachPanel { transition: transform .3s ease, opacity .3s ease; }
+#coachPanel.closed { transform: translateY(20px); opacity:0; pointer-events:none; }
+table.nb { width:100%; border-collapse:collapse; font-size:12px; }
+table.nb th { text-align:left; color:#a1a1aa; font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:6px; border-bottom:1px solid #3f3f46; }
+table.nb td { padding:6px; border-bottom:1px solid #27272a; color:#e4e4e7; font-family:'JetBrains Mono',monospace; }
+.gbox { background:rgba(39,39,42,.8); border:1px solid #3f3f46; border-radius:14px; padding:10px; display:flex; flex-direction:column; gap:8px; }
+.glbl { font-size:10px; font-weight:900; color:#a1a1aa; text-transform:uppercase; letter-spacing:.12em; }
+#predictCard.answered { border-color: rgba(16,185,129,.4); }
+.concept { background:#111114; border:1px solid #27272a; border-radius:18px; padding:14px; }
+.concept h5 { font-weight:900; color:#fff; margin-bottom:4px; }
+.concept p { font-size:13px; color:#a1a1aa; line-height:1.6; }
+
+/* ── EASY MODE ── */
+body { font-size: 16px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 16px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 0; flex-wrap:wrap; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:900; font-size:18px; color:#fff; }
+.brand em { font-style:normal; font-size:11px; letter-spacing:.14em; text-transform:uppercase; background:#10b981; color:#04130c; padding:3px 8px; border-radius:999px; }
+.pill { font-size:13px; font-weight:800; padding:9px 14px; border-radius:999px; border:1px solid #3f3f46; background:#18181b; color:#e4e4e7; cursor:pointer; text-decoration:none; white-space:nowrap; }
+.pill:hover { border-color:#facc15; color:#fff; }
+.hero h1 { font-size: clamp(26px, 4vw, 42px); font-weight:900; line-height:1.1; letter-spacing:-.02em; color:#fff; }
+.hero h1 span { color:#facc15; }
+.hero p { color:#a1a1aa; margin-top:6px; font-size:16px; max-width: 760px; }
+.easy-grid { display:grid; gap:16px; margin-top:16px; }
+.g-view { order:1; } .g-steps { order:2; } .g-info { order:3; }
+@media (min-width: 1024px) { .easy-grid { grid-template-columns: minmax(0,1fr) 390px; grid-template-areas: "v s" "i s"; align-items:start; } .g-view { grid-area: v; } .g-steps { grid-area: s; } .g-info { grid-area: i; } }
+.steps { display:flex; flex-direction:column; gap:12px; }
+.step { background:rgba(24,24,27,.85); border:1px solid #27272a; border-radius:22px; padding:16px; }
+.step h3 { display:flex; align-items:center; gap:10px; font-size:17px; font-weight:900; color:#fff; }
+.step h3 .n { width:32px; height:32px; flex:0 0 32px; border-radius:50%; background:#facc15; color:#111; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.step .hint { color:#a1a1aa; font-size:13.5px; margin:4px 0 10px 42px; }
+.side-lbl { font-size:12px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:#a1a1aa; margin:8px 0 6px; }
+.tiles { display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; }
+.tile { display:flex; flex-direction:column; align-items:center; gap:4px; padding:9px 2px 7px; border-radius:14px; border:2px solid #3f3f46; background:#111114; cursor:pointer; transition: all .15s; }
+.tile i { width:30px; height:30px; border-radius:8px; background: linear-gradient(135deg, color-mix(in srgb, var(--mc) 65%, white), var(--mc) 55%, color-mix(in srgb, var(--mc) 55%, black)); box-shadow: 0 2px 6px rgba(0,0,0,.6); }
+.tile b { font-size:12px; color:#f4f4f5; }
+.tile small { font-size:9px; color:#facc15; letter-spacing:-1px; } .tile small span { color:#3f3f46; }
+.tile:hover { border-color:#a1a1aa; }
+.tile.sel { border-color:#facc15; background:#2a2410; box-shadow:0 0 18px rgba(250,204,21,.25); }
+.ladder { margin-top:12px; display:flex; flex-direction:column; gap:3px; position:relative; padding-left:26px; }
+.ladder::before { content:'more reactive'; position:absolute; left:0; top:0; bottom:0; writing-mode: vertical-rl; transform: rotate(180deg); font-size:10px; font-weight:800; color:#71717a; text-align:end; letter-spacing:.08em; border-left: 2px solid #3f3f46; padding-left:4px; }
+.rung { display:flex; align-items:center; gap:8px; font-size:13px; color:#71717a; padding:3px 8px; border-radius:8px; border:1px solid transparent; }
+.rung i { width:14px; height:14px; border-radius:4px; background:var(--mc); opacity:.45; }
+.rung.an { color:#fecdd3; border-color:#fb7185; background:rgba(251,113,133,.1); font-weight:800; } .rung.an i, .rung.ca i { opacity:1; }
+.rung.ca { color:#e0f2fe; border-color:#38bdf8; background:rgba(56,189,248,.1); font-weight:800; }
+.huge { width:100%; display:flex; flex-direction:column; align-items:center; gap:2px; font-size:19px; font-weight:900; padding:16px; border-radius:18px; border:2px solid #3f3f46; background:#18181b; color:#fff; cursor:pointer; transition: all .2s; }
+.huge small { font-size:12px; font-weight:700; opacity:.75; }
+.huge:hover { border-color:#facc15; }
+.huge.on { background: linear-gradient(90deg,#f59e0b,#facc15); color:#111; border-color:#facc15; box-shadow:0 0 30px rgba(250,204,21,.35); }
+.duo { display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+.duo .huge { font-size:15px; padding:13px 8px; }
+.clockline { margin-top:10px; text-align:center; color:#a1a1aa; font-size:14px; } .clockline b { color:#fde68a; font-family:'JetBrains Mono',monospace; }
+.again { width:100%; margin-top:2px; font-size:14px; font-weight:800; padding:11px; border-radius:14px; border:1px dashed #52525b; background:transparent; color:#d4d4d8; cursor:pointer; }
+.again:hover { border-color:#facc15; color:#fff; }
+.voltcard { position:absolute; left:12px; top:12px; pointer-events:none; background: linear-gradient(#11151c,#0b0e13); border:1px solid #2b313b; border-radius:16px; padding:8px 16px 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+.voltcard .cap { font-size:11px; font-weight:900; letter-spacing:.14em; color:#71717a; }
+.voltcard .v { font-family:'JetBrains Mono',monospace; font-size: clamp(30px, 5vw, 52px); font-weight:700; color:#facc15; text-shadow:0 0 18px rgba(250,204,21,.55); line-height:1; }
+.voltcard .u { font-size:18px; color:#a1a1aa; font-weight:800; margin-left:4px; }
+.voltcard .bw { font-size:12px; color:#d4d4d8; margin-top:4px; } .voltcard .bw b { color:#fde68a; }
+.flat { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); width:min(560px, 80%); background:rgba(127,29,29,.92); border:1px solid #f87171; color:#fee2e2; font-size:14px; padding:9px 14px; border-radius:14px; text-align:center; pointer-events:none; }
+.mass-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px; }
+.mass { background:rgba(24,24,27,.85); border:1px solid #27272a; border-radius:20px; padding:14px 16px; }
+.mass .t { font-size:12px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:#a1a1aa; }
+.mass .val { font-family:'JetBrains Mono',monospace; font-size: clamp(22px, 3vw, 30px); font-weight:700; color:#fff; }
+.mass .s { font-size:13px; color:#71717a; }
+.mdelta { font-size:15px; font-weight:900; color:#71717a; }
+.mdelta.up { color:#34d399; } .mdelta.down { color:#fb7185; }
+.story { background:rgba(24,24,27,.85); border:1px solid #27272a; border-radius:22px; padding:16px 18px; margin-top:12px; }
+.story h3 { font-size:13px; font-weight:900; letter-spacing:.14em; text-transform:uppercase; color:#a1a1aa; }
+#storyHead { font-size:19px; color:#fff; margin-top:6px; } #storyHead b { color:#facc15; }
+#storyWhen { font-size:13px; color:#a1a1aa; margin-top:10px; font-weight:700; }
+#storyLines { margin-top:8px; display:flex; flex-direction:column; gap:8px; } #storyLines li { list-style:none; font-size:15.5px; color:#e4e4e7; line-height:1.55; } #storyLines b { color:#fff; }
+#storyLines.dim li { color:#a1a1aa; }
+.eqs { margin-top:12px; display:grid; gap:6px; }
+.eqs div { font-family:'JetBrains Mono',monospace; font-size:14px; background:#0b0d12; border:1px solid #1f2430; border-radius:10px; padding:8px 12px; color:#e4e4e7; overflow-x:auto; white-space:nowrap; }
+.eqs span { font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:#71717a; margin-right:8px; }
+.askgrid { display:grid; gap:12px; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); margin-top:14px; }
+.ask { background:rgba(24,24,27,.85); border:1px solid #27272a; border-radius:20px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+.askN { width:30px; height:30px; border-radius:50%; background:#1e3a5f; color:#7dd3fc; font-weight:900; display:flex; align-items:center; justify-content:center; }
+.askQ { font-size:16px; font-weight:800; color:#fff; line-height:1.4; }
+.askTry { font-size:13px; color:#fde68a; }
+.askBtn { align-self:flex-start; font-size:13px; font-weight:800; padding:8px 14px; border-radius:999px; border:1px solid #38bdf8; color:#7dd3fc; background:transparent; cursor:pointer; margin-top:auto; }
+.askA { font-size:14.5px; color:#d1fae5; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.35); border-radius:12px; padding:10px 12px; line-height:1.55; }
+#welcome { position:fixed; inset:0; z-index:300; background:rgba(5,6,8,.82); backdrop-filter: blur(6px); display:flex; align-items:center; justify-content:center; padding:16px; }
+#welcome.hidden { display:none; }
+#welcome .box { width:min(620px,100%); background:#18181b; border:1px solid #3f3f46; border-radius:26px; padding:24px; max-height: 92vh; overflow:auto; }
+#welcome h2 { font-size:26px; font-weight:900; color:#fff; }
+.wstep { display:flex; gap:14px; align-items:flex-start; margin-top:14px; }
+.wstep .ic { font-size:28px; width:52px; height:52px; flex:0 0 52px; border-radius:16px; background:#27272a; display:flex; align-items:center; justify-content:center; }
+.wstep b { color:#fff; font-size:16px; } .wstep p { color:#a1a1aa; font-size:14px; }
+@media (max-width: 640px) { .tiles { grid-template-columns: repeat(5, 1fr); gap:4px; } .tile b { font-size:10px; } .tile i { width:24px; height:24px; } .mass-row { grid-template-columns: 1fr 1fr; gap:8px; } .voltcard { padding:6px 10px; } }
+</style>
+</head>
+<body class="min-h-screen">
+<div id="toast" class="toast"></div>
+
+<div id="welcome">
+  <div class="box">
+    <p class="text-xs font-black tracking-[.25em] text-emerald-400 uppercase">Welcome · nothing to install, nothing to break</p>
+    <h2 class="mt-1">A battery you can build with two metals.</h2>
+    <div class="wstep"><div class="ic">🧪</div><div><b>1. Choose two metals</b><p>Tap a metal for each beaker. The meter shows the voltage at once.</p></div></div>
+    <div class="wstep"><div class="ic">💡</div><div><b>2. Switch the bulb ON</b><p>One big button. Electrons start to flow and the bulb lights up.</p></div></div>
+    <div class="wstep"><div class="ic">⏩</div><div><b>3. Fast-forward time</b><p>Watch one plate get thinner, the other heavier, and the blue colour fade.</p></div></div>
+    <div class="wstep"><div class="ic">🖐️</div><div><b>The 3D bench</b><p>Drag to turn it, pinch or scroll to zoom. Tap any label to read what it is. You cannot break anything: “Start again” fixes everything.</p></div></div>
+    <button id="startBtn" class="huge on mt-5">Let’s start</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#18181b"/><rect x="6" y="9" width="6" height="17" rx="1.5" fill="#9aa6b2"/><rect x="20" y="9" width="6" height="17" rx="1.5" fill="#c8774a"/><path d="M9 9V5h14v4" fill="none" stroke="#facc15" stroke-width="2"/></svg>GalvanicLab <em>Easy</em></div>
+    <div class="flex gap-2 flex-wrap">
+      <button id="helpBtn" class="pill">❓ How to use</button>
+      <button id="soundBtn" class="pill" title="Sound">🔇</button>
+      <a class="pill" href="galvaniclab.html">Full version (Grade 9 → 12) →</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>Make electricity from <span>two metals</span>.</h1>
+    <p>A real galvanic cell in 3D. Choose the metals, switch on the bulb and watch the chemistry happen.</p>
+  </div>
+
+  <div class="easy-grid">
+    <div class="g-view">
+      <div class="view" id="view">
+        <div id="gl3d"></div>
+        <div id="lbl3d"></div>
+        <div id="glLoading"><div class="w-12 h-12 border-4 border-zinc-700 border-t-amber-400 rounded-full animate-spin"></div>Setting up the bench…</div>
+        <div class="voltcard"><div class="cap">VOLTAGE</div><div><span id="voltBig" class="v">1.10</span><span class="u">V</span></div><div class="bw">Bulb: <b id="bulbWord">off</b></div></div>
+        <div id="flat" class="flat hidden"></div>
+        <div class="tools">
+          <div class="flex gap-1 flex-wrap justify-end max-w-[230px]">
+            <button class="tbtn" data-cam="overview">🎥 Whole cell</button><button class="tbtn" data-cam="anode">Left beaker</button><button class="tbtn" data-cam="cathode">Right beaker</button>
+          </div>
+          <button id="atomBtn" class="tbtn">🔬 See the atoms</button>
+          <button id="fsBtn" class="tbtn">⛶ Full screen</button>
+          <button id="lblBtn" class="tbtn sel hidden">Labels</button>
+          <button id="hdBtn" class="tbtn hidden">HD</button>
+        </div>
+        <canvas id="atomInset" class="hidden" width="680" height="440"></canvas>
+        <div id="infoCard" class="hidden glass-panel rounded-2xl p-4 border border-amber-500/30">
+          <div class="flex justify-between items-start gap-3"><h5 id="infoT" class="font-black text-amber-300"></h5><button onclick="document.getElementById('infoCard').classList.add('hidden')" class="text-zinc-400 font-black">✕</button></div>
+          <p id="infoP" class="text-sm text-zinc-300 mt-2 leading-relaxed"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="g-info">
+      <div class="mass-row" style="margin-top:0">
+        <div class="mass"><div class="t">Left · <span id="mNameL">Zinc plate</span></div><div class="val" id="mValL">7.14 g</div><div id="mDeltaL" class="mdelta">no change yet</div><div class="s" id="solL">ZnSO₄ solution</div></div>
+        <div class="mass"><div class="t">Right · <span id="mNameR">Copper plate</span></div><div class="val" id="mValR">8.96 g</div><div id="mDeltaR" class="mdelta">no change yet</div><div class="s" id="solR">CuSO₄ solution</div></div>
+      </div>
+
+      <div class="story">
+        <h3>What is happening?</h3>
+        <p id="storyHead"></p>
+        <p id="storyWhen">When the bulb is ON, this is what happens:</p>
+        <ul id="storyLines"></ul>
+        <div id="eqBox" class="eqs">
+          <div><span>at the − pole</span><b id="eqOx"></b></div>
+          <div><span>at the + pole</span><b id="eqRed"></b></div>
+          <div><span>overall</span><b id="eqAll"></b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps g-steps">
+      <div class="step">
+        <h3><span class="n">1</span>Choose two metals</h3>
+        <p class="hint">Each metal sits in a solution of its own ions. ★ = how reactive it is.</p>
+        <div class="side-lbl">Left beaker</div><div id="tilesL" class="tiles"></div>
+        <div class="side-lbl">Right beaker</div><div id="tilesR" class="tiles"></div>
+        <div class="side-lbl" style="margin-top:14px">Reactivity ladder</div>
+        <div id="ladder" class="ladder"></div>
+      </div>
+      <div class="step">
+        <h3><span class="n">2</span>Close the circuit</h3>
+        <p class="hint">You can also tap the switch in the 3D bench.</p>
+        <button id="bulbBtn" class="huge">💡 Switch the bulb ON</button>
+      </div>
+      <div class="step">
+        <h3><span class="n">3</span>Fast-forward time</h3>
+        <p class="hint">Real cells are slow. Speed up time to see the plates change.</p>
+        <div class="duo"><button id="fastBtn" class="huge">⏩ Fast<small>1 hour every second</small></button><button id="fasterBtn" class="huge">⏩⏩ Very fast<small>1 day every second</small></button></div>
+        <p class="clockline">Time passed: <b id="clock">0 seconds</b></p>
+      </div>
+      <button id="againBtn" class="again">↺ Start again (fresh plates and solutions)</button>
+    </div>
+  </div>
+
+  <section class="mt-14">
+    <p class="text-xs font-black tracking-[.25em] text-sky-400 uppercase">For the teacher</p>
+    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Ask your class</h2>
+    <p class="text-zinc-400 mt-1">Read a question aloud, let students try it on the bench, then tap to show the answer.</p>
+    <div id="askGrid" class="askgrid"></div>
+  </section>
+
+  <footer class="mt-14 mb-10 pt-6 border-t border-zinc-800 text-sm text-zinc-500 flex flex-wrap justify-between gap-3">
+    <span>Simplified model: 1 mol/L solutions, 25 °C, large plates, a wide salt bridge and a small bulb, so the meter stays close to the standard cell voltage.</span>
+    <span>GalvanicLab Easy · Ahmad Ghozlan · <a class="text-amber-400" href="https://aghozlan.github.io">aghozlan.github.io</a></span>
+  </footer>
+</div>
+<script>
+
+// ════════════════════════════════════════════════════════════════
+// GalvanicLab — The Ultimate Galvanic Cell · Ahmad Ghozlan · aghozlan.github.io
+// ════════════════════════════════════════════════════════════════
+// ── Config ──────────────────────────────────────────────────────
+// Submission: dedicated sheet (deploy GalvanicLab_AppScript.js, paste its /exec URL here).
+const GOOGLE_SCRIPT_URL = "PASTE_GALVANIC_APPS_SCRIPT_URL";
+// AI tutor: this lab's own script (action:'ai', Groq key in Script Properties). Until it is
+// deployed, the built-in offline Cell Coach answers.
+const TUTOR_URL = GOOGLE_SCRIPT_URL;
+const LAB_NAME = "Galvanic Lab — the ultimate galvanic cell";
+const LAB_ID = "galvaniclab";
+const LAB_START = Date.now();
+
+// ── Utils ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function sig(v, n = 3) { if (!isFinite(v)) return '—'; if (v === 0) return '0'; return String(+v.toPrecision(n)); }
+function fmtI(a) { const x = Math.abs(a); if (x >= 1) return sig(a) + ' A'; if (x >= 1e-3) return sig(a * 1e3) + ' mA'; if (x >= 1e-6) return sig(a * 1e6) + ' µA'; return '0 A'; }
+function fmtC(c) { if (c >= 0.1) return c.toFixed(c >= 1 ? 2 : 3) + ' M'; if (c >= 1e-3) return (c * 1e3).toFixed(1) + ' mM'; return sig(c * 1e3, 2) + ' mM'; }
+function fmtLong(s) { if (s >= 2 * 86400) return (s / 86400).toFixed(s >= 20 * 86400 ? 0 : 1) + ' days'; if (s >= 3 * 3600) return (s / 3600).toFixed(0) + ' h'; return fmtTime(s); }
+function fmtTime(s) { if (s < 60) return s.toFixed(0) + ' s'; if (s < 3600) return Math.floor(s / 60) + ' min ' + String(Math.floor(s % 60)).padStart(2, '0') + ' s'; const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h + ' h ' + String(m).padStart(2, '0') + ' min'; }
+function fmtSigned(v, d = 3) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(d); }
+let _toastT = null;
+function toast(msg, ms = 2800) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(_toastT); _toastT = setTimeout(() => t.classList.remove('show'), ms); }
+const gcd = (a, b) => (b ? gcd(b, a % b) : a), lcm = (a, b) => (a * b) / gcd(a, b);
+
+// ── Sound (off by default) ──────────────────────────────────────
+let soundOn = false, actx = null;
+function toggleSound() { soundOn = !soundOn; $('soundBtn').textContent = soundOn ? '🔊' : '🔇'; if (soundOn) { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); click(1); } catch (e) { soundOn = false; } } }
+function click(kind = 0) {
+  if (!soundOn || !actx) return;
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.frequency.value = [900, 1300, 660][kind] || 900; o.type = kind === 2 ? 'triangle' : 'square';
+  g.gain.setValueAtTime(0.05, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + (kind === 2 ? 0.35 : 0.05));
+  o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.4);
+}
+
+// ════════════════════════════════════════════════════════════════
+// CHEMISTRY DATA — standard reduction potentials at 25 °C (V vs SHE)
+// ════════════════════════════════════════════════════════════════
+const F = 96485, RGAS = 8.314, VOL = 0.150;   // beaker volume (L)
+const METALS = {
+  Mg: { name: 'Magnesium', ion: 'Mg²⁺', n: 2, E0: -2.37, M: 24.31, rho: 1.74, salt: 'MgSO₄', col: '#cfd3d8', rough: 0.32, tint: null },
+  Al: { name: 'Aluminium', ion: 'Al³⁺', n: 3, E0: -1.66, M: 26.98, rho: 2.70, salt: 'Al₂(SO₄)₃', col: '#d9dde2', rough: 0.28, tint: null },
+  Zn: { name: 'Zinc', ion: 'Zn²⁺', n: 2, E0: -0.76, M: 65.38, rho: 7.14, salt: 'ZnSO₄', col: '#9aa6b2', rough: 0.42, tint: null },
+  Fe: { name: 'Iron', ion: 'Fe²⁺', n: 2, E0: -0.44, M: 55.85, rho: 7.87, salt: 'FeSO₄', col: '#7d8186', rough: 0.55, tint: [0.74, 0.9, 0.62] },
+  Ni: { name: 'Nickel', ion: 'Ni²⁺', n: 2, E0: -0.26, M: 58.69, rho: 8.91, salt: 'NiSO₄', col: '#b7b3a6', rough: 0.3, tint: [0.35, 0.82, 0.5] },
+  Sn: { name: 'Tin', ion: 'Sn²⁺', n: 2, E0: -0.14, M: 118.71, rho: 7.29, salt: 'SnSO₄', col: '#c9cbc8', rough: 0.36, tint: null },
+  Pb: { name: 'Lead', ion: 'Pb²⁺', n: 2, E0: -0.13, M: 207.2, rho: 11.34, salt: 'Pb(NO₃)₂', col: '#6f7682', rough: 0.6, tint: null },
+  H2: { name: 'Hydrogen (SHE)', ion: 'H⁺', n: 2, E0: 0.0, M: 2.016, rho: 0, salt: 'HCl', col: '#3a3d42', rough: 0.9, tint: null, gas: true },
+  Cu: { name: 'Copper', ion: 'Cu²⁺', n: 2, E0: 0.34, M: 63.55, rho: 8.96, salt: 'CuSO₄', col: '#c8774a', rough: 0.3, tint: [0.12, 0.45, 0.98] },
+  Ag: { name: 'Silver', ion: 'Ag⁺', n: 1, E0: 0.80, M: 107.87, rho: 10.49, salt: 'AgNO₃', col: '#e3e6ea', rough: 0.15, tint: null },
+  Au: { name: 'Gold', ion: 'Au³⁺', n: 3, E0: 1.50, M: 196.97, rho: 19.3, salt: 'AuCl₃', col: '#e7b84a', rough: 0.18, tint: [0.98, 0.84, 0.25] },
+};
+const METAL_KEYS = Object.keys(METALS);
+const SIZES = { S: { area: 4, label: 'Small · 4 cm²' }, M: { area: 10, label: 'Medium · 10 cm²' }, L: { area: 25, label: 'Large · 25 cm²' } };
+const BRIDGES = { salt: { r: 30, label: 'Salt bridge (KNO₃ U-tube)' }, membrane: { r: 3, label: 'Porous membrane' }, none: { r: Infinity, label: 'None (removed)' } };
+const LOADS = {
+  none: { label: 'Voltmeter only', icon: '📟' },
+  bulb: { label: 'Bulb', icon: '💡', R: 10 },
+  led: { label: 'Red LED', icon: '🔴', R: 47, Vf: 1.8 },
+  motor: { label: 'Motor', icon: '🌀', R: 8 },
+  res: { label: 'Resistor', icon: '〰️' },
+};
+
+// ════════════════════════════════════════════════════════════════
+// THE CELL — state + model
+// ════════════════════════════════════════════════════════════════
+const CELL = window.CELL = {
+  L: { m: 'Zn', c: 1.0 }, R: { m: 'Cu', c: 1.0 },
+  T: 25, size: 'M', bridge: 'salt', load: 'none', Rload: 100, sw: false, swapped: false,
+  run: true, speed: 1, t: 0, Q: 0, energy: 0,
+  // derived
+  EL: 0, ER: 0, emf: 0, E: 0, anode: 'L', I: 0, Vt: 0, Vmeter: 0, r: 0, P: 0, n: 2, dead: false, deadWhy: '',
+  glow: 0, hist: [], v: 0,
+};
+function initHalf(h) { const M = METALS[h.m]; h.mass0 = M.gas ? 0 : SIZES[CELL.size].area * 0.1 * M.rho; h.mass = h.mass0; h.c0 = h.c; h.dep = 0; }
+function resetRun() { ['L', 'R'].forEach(k => initHalf(CELL[k])); CELL.t = 0; CELL.Q = 0; CELL.energy = 0; CELL.dead = false; CELL.deadWhy = ''; CELL.hist = []; CELL.v++; }
+const kT = () => (RGAS * (CELL.T + 273.15)) / F;   // RT/F (V)
+/** half-cell reduction potential (Nernst, concentrations as activities, p(H₂) = 1 bar) */
+function halfE(h) {
+  const M = METALS[h.m], c = Math.max(h.c, 1e-9);
+  if (M.gas) return M.E0 + kT() * Math.log(c);          // 2H⁺ + 2e⁻ → H₂: E = (RT/2F) ln [H⁺]² = (RT/F) ln[H⁺]
+  return M.E0 + (kT() / M.n) * Math.log(c);
+}
+function internalR() {
+  const B = BRIDGES[CELL.bridge].r; if (!isFinite(B)) return Infinity;
+  const a = SIZES[CELL.size].area / 10, tf = 1 + 0.02 * (CELL.T - 25);
+  const rs = h => 4 / (a * Math.pow(Math.max(h.c, 1e-4), 0.7) * tf);
+  return B / tf + rs(CELL.L) + rs(CELL.R);
+}
+function solve() {
+  const C = CELL;
+  C.EL = halfE(C.L); C.ER = halfE(C.R);
+  C.emf = C.ER - C.EL;                      // signed: right electrode vs left
+  C.E = Math.abs(C.emf);
+  C.anode = C.emf >= 0 ? 'L' : 'R';
+  const an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'];
+  C.n = lcm(METALS[an.m].n, METALS[ca.m].n);
+  C.r = internalR();
+  const anodeGone = !METALS[an.m].gas && an.mass <= 0.0005;
+  let I = 0;
+  const L = LOADS[C.load];
+  if (isFinite(C.r) && !anodeGone && C.load !== 'none' && C.sw) {
+    const R = C.load === 'res' ? C.Rload : L.R;
+    if (C.load === 'led') I = Math.max(0, (C.E - L.Vf) / (C.r + R));
+    else I = C.E / (C.r + R);
+  }
+  if (C.E < 1e-4) I = 0;
+  C.I = I;
+  C.Vt = isFinite(C.r) ? C.E - I * C.r : 0;                         // terminal voltage
+  // the multimeter: red (V) lead on the right electrode, black (COM) on the left, unless swapped
+  const sign = (C.emf >= 0 ? 1 : -1) * (C.swapped ? -1 : 1);
+  C.Vmeter = isFinite(C.r) && !anodeGone ? sign * C.Vt * (1e7 / (1e7 + C.r)) : 0;
+  C.P = C.load === 'led' ? I * Math.max(0, C.Vt) : I * I * (C.load === 'res' ? C.Rload : (L.R || 0));
+  C.glow = C.load === 'bulb' ? clamp((I - 0.04) / 0.22, 0, 1) : C.load === 'led' ? clamp(I / 0.02, 0, 1) : C.load === 'motor' ? clamp((I - 0.05) / 0.25, 0, 1) : 0;
+}
+/** advance the chemistry by dt seconds of simulated time (sub-stepped) */
+function advance(dt) {
+  const C = CELL;
+  let left = dt, guard = 0;
+  while (left > 1e-9 && guard++ < 4000) {
+    solve();
+    if (C.I <= 0) { C.t += left; break; }
+    const an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'], Ma = METALS[an.m], Mc = METALS[ca.m];
+    // keep each step's change under ~1 % of the scarcest reactant
+    const molE = C.I / F;                           // mol e⁻ per second
+    const limC = (ca.c * VOL * (Mc.gas ? 1 : Mc.n)) / molE * 0.01;
+    const limA = Ma.gas ? Infinity : ((an.mass / Ma.M) * Ma.n) / molE * 0.01;
+    const h = Math.max(1e-3, Math.min(left, limC, limA, 600));
+    const ne = molE * h;
+    const ipeA = Ma.gas ? 1 : 1 / Ma.n, ipeC = Mc.gas ? 1 : 1 / Mc.n;   // ions per electron (2H⁺ + 2e⁻ ⇌ H₂)
+    an.c += ne * ipeA / VOL;
+    if (!Ma.gas) an.mass = Math.max(0, an.mass - (ne / Ma.n) * Ma.M);
+    ca.c = Math.max(1e-9, ca.c - ne * ipeC / VOL);
+    if (!Mc.gas) { ca.mass += (ne / Mc.n) * Mc.M; ca.dep += (ne / Mc.n) * Mc.M; }
+    C.Q += C.I * h; C.energy += C.I * C.Vt * h; C.t += h; left -= h;
+    if (!Ma.gas && an.mass <= 0.0005) { C.dead = true; C.deadWhy = `the ${Ma.name.toLowerCase()} anode dissolved completely`; }
+    else if (ca.c < 2e-6) { C.dead = true; C.deadWhy = `the ${Mc.ion} ions in the cathode beaker ran out`; }
+    if (C.dead) { C.t += left; break; }
+  }
+  solve();
+}
+/** equations for the current set-up (HTML) */
+function chemText() {
+  const C = CELL, an = C[C.anode], ca = C[C.anode === 'L' ? 'R' : 'L'];
+  const A = METALS[an.m], K = METALS[ca.m];
+  const n = C.n, ka = n / A.n, kc = n / K.n;
+  const co = (k) => (k === 1 ? '' : k);
+  const oxid = A.gas ? `H₂(g) → 2H⁺(aq) + 2e⁻` : `${an.m}(s) → ${A.ion}(aq) + ${A.n}e⁻`;
+  const red = K.gas ? `2H⁺(aq) + 2e⁻ → H₂(g)` : `${K.ion}(aq) + ${K.n}e⁻ → ${ca.m}(s)`;
+  const same = an.m === ca.m;
+  let overall;
+  if (same) overall = `concentration cell: ${A.ion} (conc.) → ${A.ion} (dilute side is oxidised)`;
+  else {
+    const lhs = `${co(ka)}${A.gas ? 'H₂(g)' : an.m + '(s)'} + ${K.gas ? co(2 * kc) + 'H⁺(aq)' : co(kc) + K.ion + '(aq)'}`;
+    const rhs = `${A.gas ? co(2 * ka) + 'H⁺(aq)' : co(ka) + A.ion + '(aq)'} + ${co(kc)}${K.gas ? 'H₂(g)' : ca.m + '(s)'}`;
+    overall = `${lhs} → ${rhs}`;
+  }
+  const half = (h) => METALS[h.m].gas ? `Pt | H₂(1 bar) | H⁺(${fmtC(h.c)})` : `${h.m}(s) | ${METALS[h.m].ion}(${fmtC(h.c)})`;
+  const halfR = (h) => METALS[h.m].gas ? `H⁺(${fmtC(h.c)}) | H₂(1 bar) | Pt` : `${METALS[h.m].ion}(${fmtC(h.c)}) | ${h.m}(s)`;
+  const notation = `${half(an)} ‖ ${halfR(ca)}`;
+  const E0 = K.E0 - A.E0;
+  const Q = Math.pow(Math.max(an.c, 1e-9), A.gas ? 2 * ka : ka) / Math.pow(Math.max(ca.c, 1e-9), K.gas ? 2 * kc : kc);
+  return { oxid, red, overall, notation, E0, Q, n, A, K, an, ca, same };
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// EASY MODE — three big steps, plain words, the same 3D bench and model
+// ════════════════════════════════════════════════════════════════
+// Simplified on purpose: 1 mol/L solutions, 25 °C, medium plates, a wide salt bridge.
+BRIDGES.salt.r = 0.3; LOADS.bulb.R = 100;      // a small torch bulb, large plates: the meter stays close to the textbook voltage
+const _solveFull = solve;
+solve = function () {            // bulb brightness follows the power it receives
+  _solveFull();
+  if (CELL.load === 'bulb') CELL.glow = clamp(Math.sqrt((CELL.I * CELL.I * LOADS.bulb.R) / 0.1), 0, 1);
+};
+const EASY_METALS = [
+  { m: 'Mg', word: 'very reactive', stars: 5 },
+  { m: 'Zn', word: 'reactive', stars: 4 },
+  { m: 'Fe', word: 'fairly reactive', stars: 3 },
+  { m: 'Cu', word: 'not very reactive', stars: 2 },
+  { m: 'Ag', word: 'hardly reactive', stars: 1 },
+];
+const COLOUR = { Cu: 'blue', Fe: 'pale green' };
+const lower = s => s.toLowerCase();
+function fmtDays(s) {
+  if (s < 60) return Math.round(s) + ' seconds';
+  if (s < 3600) return Math.floor(s / 60) + ' min';
+  if (s < 86400) return Math.floor(s / 3600) + ' h ' + Math.floor((s % 3600) / 60) + ' min';
+  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600);
+  return d + (d === 1 ? ' day ' : ' days ') + h + ' h';
+}
+
+function pickMetal(k, m) {
+  CELL[k].m = m; CELL[k].c = CELL[k].c0 = 1;
+  freshCell(true);
+}
+function freshCell(rebuild) {
+  ['L', 'R'].forEach(k => { CELL[k].c = CELL[k].c0 = 1; });
+  resetRun(); CELL.speed = 1; CELL.run = true;
+  solve(); CELL.swapped = CELL.emf < 0;      // the red lead always goes to the + pole
+  click(0); solve(); render(true);
+  if (rebuild && window.SCENE) window.SCENE.rebuild();
+}
+function toggleBulb() {
+  if (CELL.dead) { toast('This cell is flat. Press "Start again" for fresh plates.'); return; }
+  CELL.load = 'bulb'; CELL.sw = !CELL.sw; click(CELL.sw ? 1 : 0); solve(); render(true);
+  if (CELL.sw && CELL.bridge === 'none') toast('No salt bridge: the circuit is still open. Tap the bridge spot to put it back.');
+}
+// the 3D bench calls these two
+function toggleSwitch() { toggleBulb(); }
+function setBridge(b) {
+  CELL.bridge = b; click(0); solve(); render(true);
+  toast(b === 'none' ? 'Salt bridge removed: the circuit is open, nothing flows. Tap it again to put it back.' : 'Salt bridge back in place.');
+}
+function setSpeed(s) {
+  if (CELL.dead) { toast('This cell is flat. Press "Start again".'); return; }
+  CELL.speed = CELL.speed === s ? 1 : s; CELL.run = true; click(0);
+  if (CELL.speed > 1 && !CELL.sw) toast('Time is racing, but nothing changes until the bulb is ON.');
+  render(true);
+}
+
+function buildEasy() {
+  ['L', 'R'].forEach(k => {
+    $('tiles' + k).innerHTML = EASY_METALS.map(x => {
+      const M = METALS[x.m];
+      return `<button class="tile" data-k="${k}" data-m="${x.m}" style="--mc:${M.col}"><i></i><b>${M.name}</b><small>${'★'.repeat(x.stars)}<span>${'★'.repeat(5 - x.stars)}</span></small></button>`;
+    }).join('');
+  });
+  document.querySelectorAll('.tile').forEach(b => b.onclick = () => pickMetal(b.dataset.k, b.dataset.m));
+  $('bulbBtn').onclick = toggleBulb;
+  $('fastBtn').onclick = () => setSpeed(3600);
+  $('fasterBtn').onclick = () => setSpeed(86400);
+  $('againBtn').onclick = () => { CELL.sw = false; freshCell(true); toast('Fresh plates and fresh solutions.'); };
+  $('ladder').innerHTML = EASY_METALS.map(x => `<div class="rung" data-m="${x.m}" style="--mc:${METALS[x.m].col}"><i></i><span>${METALS[x.m].name}</span></div>`).join('');
+  $('fsBtn').onclick = () => { const v = $('view'); try { if (document.fullscreenElement) document.exitFullscreen(); else v.requestFullscreen(); } catch (e) {} };
+  $('helpBtn').onclick = () => $('welcome').classList.remove('hidden');
+  $('startBtn').onclick = () => { $('welcome').classList.add('hidden'); try { localStorage.setItem('galvEasySeen', '1'); } catch (e) {} };
+  let seen = false; try { seen = localStorage.getItem('galvEasySeen') === '1'; } catch (e) {}
+  if (seen) $('welcome').classList.add('hidden');
+  $('soundBtn').onclick = toggleSound;
+  // ask-your-class cards
+  $('askGrid').innerHTML = ASK.map((q, i) => `<div class="ask"><div class="askN">${i + 1}</div><p class="askQ">${q.q}</p>${q.try ? `<p class="askTry">👉 ${q.try}</p>` : ''}<button class="askBtn" data-i="${i}">Show the answer</button><p class="askA hidden" id="ans${i}">${q.a}</p></div>`).join('');
+  document.querySelectorAll('.askBtn').forEach(b => b.onclick = () => { const a = $('ans' + b.dataset.i); a.classList.toggle('hidden'); b.textContent = a.classList.contains('hidden') ? 'Show the answer' : 'Hide the answer'; });
+}
+
+let _lastSig = '';
+function render(force) {
+  const C = CELL, on = C.sw && C.I > 0, same = C.E < 1e-4;
+  // tiles + ladder
+  document.querySelectorAll('.tile').forEach(b => b.classList.toggle('sel', C[b.dataset.k].m === b.dataset.m));
+  document.querySelectorAll('.rung').forEach(r => {
+    const m = r.dataset.m, isL = C.L.m === m, isR = C.R.m === m, isAn = !same && C[C.anode].m === m && (isL || isR), isCa = !same && !isAn && (isL || isR);
+    r.classList.toggle('an', isAn); r.classList.toggle('ca', isCa);
+    r.querySelector('span').textContent = METALS[m].name + (isAn ? '  (−)' : isCa ? '  (+)' : '');
+  });
+  // big readouts
+  $('voltBig').textContent = Math.abs(C.Vmeter).toFixed(2);
+  $('bulbBtn').classList.toggle('on', C.sw);
+  $('bulbBtn').innerHTML = C.sw ? '💡 Bulb is ON <small>tap to switch off</small>' : '💡 Switch the bulb ON';
+  const glowWord = C.dead ? 'off (the cell is flat)' : !C.sw ? 'off' : C.bridge === 'none' ? 'off (no salt bridge)' : same ? 'off (no voltage)' : C.glow > 0.75 ? 'very bright' : C.glow > 0.45 ? 'bright' : C.glow > 0.15 ? 'dim' : 'glowing faintly';
+  $('bulbWord').textContent = glowWord;
+  $('fastBtn').classList.toggle('on', C.speed === 3600);
+  $('fasterBtn').classList.toggle('on', C.speed === 86400);
+  $('clock').textContent = fmtDays(C.t);
+  // masses
+  ['L', 'R'].forEach(k => {
+    const h = C[k], M = METALS[h.m], d = h.mass - h.mass0;
+    $('mName' + k).textContent = M.name + ' plate';
+    $('mVal' + k).textContent = h.mass.toFixed(2) + ' g';
+    const el = $('mDelta' + k);
+    el.textContent = Math.abs(d) < 0.005 ? 'no change yet' : (d > 0 ? '▲ +' : '▼ −') + Math.abs(d).toFixed(2) + ' g';
+    el.className = 'mdelta ' + (Math.abs(d) < 0.005 ? '' : d > 0 ? 'up' : 'down');
+    $('sol' + k).textContent = M.salt + ' solution';
+  });
+  // the story
+  const sig = [C.L.m, C.R.m, C.sw, C.bridge, C.dead, same, on].join('|');
+  if (force || sig !== _lastSig) { _lastSig = sig; story(); }
+  $('flat').classList.toggle('hidden', !C.dead);
+  if (C.dead) $('flat').innerHTML = '🔋 <b>The cell is flat.</b> ' + (C.deadWhy.includes('anode') ? `The ${lower(METALS[C[C.anode].m].name)} plate is used up, like a dead battery.` : `All the ${METALS[C[C.anode === 'L' ? 'R' : 'L'].m].ion} ions have become metal, like a dead battery.`) + ' Press <b>Start again</b>.';
+}
+
+function story() {
+  const C = CELL, t = chemText(), same = C.E < 1e-4;
+  const A = METALS[C[C.anode].m], K = METALS[C[C.anode === 'L' ? 'R' : 'L'].m];
+  const sideA = C.anode === 'L' ? 'left' : 'right', sideK = C.anode === 'L' ? 'right' : 'left';
+  let head, lines = [];
+  if (same) {
+    head = 'Same metal on both sides: <b>no voltage</b>.';
+    lines = ['Both plates push electrons equally hard, so nothing flows. A cell needs <b>two different metals</b>. Pick another metal for one beaker.'];
+    $('eqBox').classList.add('hidden');
+  } else {
+    const on = C.sw && C.I > 0;
+    head = C.dead ? `🔋 <b>The cell is flat.</b> The reaction has used up ${C.deadWhy.includes('anode') ? 'the ' + lower(A.name) + ' plate' : 'the ' + K.ion + ' ions'}. Press <b>Start again</b>.`
+      : C.bridge === 'none' ? '<b>The salt bridge is out</b>: the circuit is open, so nothing flows.'
+      : on ? `<b>Electricity is flowing!</b> ${A.name} → wire → bulb → ${lower(K.name)}.`
+      : `The meter shows a <b>voltage</b>, but nothing flows yet. <b>Switch the bulb ON.</b>`;
+    lines.push(`🔻 <b>${A.name}</b> is more reactive, so it is the <b>negative pole (−)</b>. Its atoms lose electrons and dissolve as ${A.ion} ions: the plate gets <b>thinner</b>.`);
+    lines.push(`🔺 <b>${K.ion}</b> ions in the ${sideK} beaker take those electrons and become ${lower(K.name)} metal on the <b>positive pole (+)</b>: that plate gets <b>heavier</b>.`);
+    const mK = C[C.anode === 'L' ? 'R' : 'L'].m, mA = C[C.anode].m;
+    if (COLOUR[mK]) lines.push(`🎨 The ${COLOUR[mK]} colour of the ${sideK} beaker <b>fades</b>, because its coloured ${K.ion} ions are leaving the solution.`);
+    if (COLOUR[mA]) lines.push(`🎨 The ${sideA} beaker slowly turns more ${COLOUR[mA]}, because coloured ${A.ion} ions are added to it.`);
+    if (!COLOUR[mK] && !COLOUR[mA]) lines.push('🎨 The ions here have no colour, so both solutions stay clear.');
+    lines.push('⚡ Electrons travel only in the wire, from − to +. In the salt bridge, <b>ions</b> move to keep both beakers neutral.');
+    lines.push(`📏 Metals far apart on the ladder give a bigger voltage. This pair gives <b>${C.E.toFixed(2)} V</b>.`);
+    $('eqBox').classList.remove('hidden');
+    $('eqOx').textContent = t.oxid; $('eqRed').textContent = t.red; $('eqAll').textContent = t.overall;
+  }
+  $('storyHead').innerHTML = head;
+  $('storyLines').innerHTML = lines.map(l => `<li>${l}</li>`).join('');
+  $('storyLines').classList.toggle('dim', !same && !(C.sw && C.I > 0));
+  $('storyWhen').classList.toggle('hidden', same || C.dead || (C.sw && C.I > 0));
+}
+
+const ASK = [
+  { q: 'In the zinc–copper cell, which metal is the negative pole (−)? Why?', a: 'Zinc. It is more reactive than copper, so it loses electrons more easily: Zn → Zn²⁺ + 2e⁻. Those electrons leave through the wire, so zinc is the negative pole (the anode).' },
+  { q: 'After a long time, which plate is heavier than at the start?', try: 'Switch the bulb ON and press “Very fast”.', a: 'The copper plate. Cu²⁺ ions take electrons and stick to it as copper metal: Cu²⁺ + 2e⁻ → Cu. The zinc plate gets lighter because its atoms dissolve.' },
+  { q: 'Why does the blue colour of the copper sulfate solution fade?', a: 'The blue colour comes from Cu²⁺ ions. They are turned into copper metal on the plate, so fewer Cu²⁺ ions are left in the solution.' },
+  { q: 'What happens if we take the salt bridge away?', try: 'Tap the salt bridge (the glass U-tube) in the 3D bench.', a: 'The bulb goes out and the meter falls to zero. Without the bridge, ions cannot move between the beakers to keep them neutral, so the circuit is open and the electrons stop.' },
+  { q: 'Which two metals give the biggest voltage?', try: 'Try different pairs and watch the meter.', a: 'Magnesium and silver: about 3.2 V. The further apart two metals are on the reactivity ladder, the bigger the voltage.' },
+  { q: 'Put zinc in both beakers. Why is there no voltage?', a: 'Both plates have the same tendency to lose electrons, so nothing pushes the electrons one way. A cell needs two different metals.' },
+  { q: 'Electrons flow in the wire. What carries the charge inside the solutions and the salt bridge?', a: 'Ions. In the bridge, positive ions (K⁺) move towards the + beaker and negative ions (NO₃⁻) towards the − beaker. Electrons never travel through the solution.' },
+  { q: 'Put copper on the left and zinc on the right. What changes?', a: 'The metals swap roles: now the right plate (zinc) is the negative pole and electrons flow the other way in the wire. The voltage stays the same, 1.10 V.' },
+];
+
+// ── loop: fixed time-step, same model as the full lab ──
+let _eLast = performance.now(), _eAcc = 0, _eUi = 0;
+function easyLoop(now) {
+  const dt = Math.min(0.1, (now - _eLast) / 1000); _eLast = now; _eAcc += dt;
+  while (_eAcc >= 1 / 60) { _eAcc -= 1 / 60; if (CELL.run && !CELL.dead) advance(CELL.speed / 60); else solve(); }
+  if (CELL.dead && CELL.speed !== 1) CELL.speed = 1;
+  _eUi += dt; if (_eUi > 0.2) { _eUi = 0; render(); }
+  requestAnimationFrame(easyLoop);
+}
+function startEasy() {
+  CELL.load = 'bulb'; CELL.sw = false; CELL.size = 'L';
+  buildEasy(); freshCell(false);
+  requestAnimationFrame(easyLoop);
+  window.__labStarted = true; if (window.initGalvanic3D) window.initGalvanic3D();
+}
+document.addEventListener('DOMContentLoaded', startEasy);
+</script>
+<script type="module">
+
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+// ════════════════════════════════════════════════════════════════
+// GALVANIC CELL — the 3D bench (reads window.CELL every frame)
+// ════════════════════════════════════════════════════════════════
+const BX = 2.0, BR = 1.05, BH = 2.4, LIQ = 1.75;          // beaker x, radius, height, liquid level
+const EX = 2.36, ETOP = 3.0, EBOT = 0.3;                   // electrode x, top, bottom
+const ACC = 'rgb(250,204,21)';
+let renderer, scene, camera, controls, css, composer, bloom, running = true, inited = false;
+let HD = !(matchMedia('(max-width: 700px)').matches || (navigator.hardwareConcurrency || 8) <= 4);
+const half = { L: {}, R: {} };
+const tmpM = new THREE.Matrix4(), tmpV = new THREE.Vector3(), tmpQ = new THREE.Quaternion(), tmpS = new THREE.Vector3();
+let bridgeU, bridgeH, bridgeGroupU, bridgeGroupH, wireCurve, electrons, eU = [], kIons, nIons, kU = [], nU = [];
+let meterTex, meterCtx, meterLast = '', loads = {}, swBlade, bulbLight, propeller, thermoCol, bubbles, bubbleData = [];
+let labels = {}, showLabels = true, camTween = null, clock = new THREE.Clock(), lastV = -1;
+const raycastTargets = [];
+
+function noiseTex(w, h, streak) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+  const id = x.createImageData(w, h);
+  for (let j = 0; j < h; j++) { const row = Math.random() * 40; for (let i = 0; i < w; i++) { const v = 150 + (streak ? row : 0) + Math.random() * (streak ? 30 : 90); const k = (j * w + i) * 4; id.data[k] = id.data[k + 1] = id.data[k + 2] = v; id.data[k + 3] = 255; } }
+  x.putImageData(id, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+function woodTex() {
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, '#3a2414'); g.addColorStop(1, '#2a190d'); x.fillStyle = g; x.fillRect(0, 0, 1024, 512);
+  for (let i = 0; i < 260; i++) { const y = Math.random() * 512, a = 0.04 + Math.random() * 0.09; x.strokeStyle = `rgba(${Math.random() < 0.5 ? '90,58,32' : '20,10,4'},${a})`; x.lineWidth = 1 + Math.random() * 3; x.beginPath(); x.moveTo(0, y); for (let px = 0; px <= 1024; px += 32) x.lineTo(px, y + Math.sin(px * 0.01 + i) * 6); x.stroke(); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 1); return t;
+}
+function gradTex() {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 512; const x = c.getContext('2d');
+  x.clearRect(0, 0, 256, 512); x.strokeStyle = 'rgba(255,255,255,.75)'; x.fillStyle = 'rgba(255,255,255,.8)'; x.font = 'bold 22px Arial'; x.lineWidth = 3;
+  for (let i = 0; i <= 10; i++) { const y = 470 - i * 40; x.beginPath(); x.moveTo(20, y); x.lineTo(i % 2 ? 60 : 90, y); x.stroke(); if (i % 2 === 0 && i) x.fillText(String(i * 25), 100, y + 8); }
+  x.fillText('mL', 100, 40);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const glassMat = () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.08, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 0.7, side: THREE.DoubleSide, depthWrite: false });
+
+// ── build ───────────────────────────────────────────────────────
+function init() {
+  if (inited) return; inited = true;
+  const host = document.getElementById('gl3d'), view = document.getElementById('view');
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, HD ? 2 : 1.25));
+  renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  host.appendChild(renderer.domElement);
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0b0d12, 16, 34);
+  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.minDistance = 3.5; controls.maxDistance = 18; controls.maxPolarAngle = 1.48; controls.target.set(0, 1.4, 0.2);
+  controls.addEventListener('start', () => { camTween = null; });
+  css = new CSS2DRenderer({ element: document.getElementById('lbl3d') });
+
+  // lights
+  scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x1a1208, 0.45));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(4, 9, 6); key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024); key.shadow.camera.left = -7; key.shadow.camera.right = 7; key.shadow.camera.top = 7; key.shadow.camera.bottom = -4; key.shadow.bias = -0.0005; key.shadow.radius = 4;
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x8fb7ff, 1.1); rim.position.set(-6, 4, -6); scene.add(rim);
+
+  // bench
+  const bench = new THREE.Mesh(new THREE.BoxGeometry(16, 0.4, 9), new THREE.MeshStandardMaterial({ map: woodTex(), roughness: 0.55, metalness: 0.05 }));
+  bench.position.set(0, -0.2, 0.6); bench.receiveShadow = true; scene.add(bench);
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(40, 20), new THREE.MeshStandardMaterial({ color: 0x10141c, roughness: 1 }));
+  back.position.set(0, 8, -5.5); scene.add(back);
+
+  // two half-cells
+  ['L', 'R'].forEach(k => buildHalf(k, k === 'L' ? -1 : 1));
+  buildBridges(); buildMeter(); buildLoads(); buildWires(); buildThermo(); buildLabels();
+
+  // post
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.7, 0.35, 1.0);   // bloom pass intentionally not added: the clean look (no halo on glass/meter) is the approved one
+  composer.addPass(new OutputPass());
+
+  // interaction: click the switch or the bridge
+  const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let downAt = null;
+  renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+  renderer.domElement.addEventListener('pointerup', e => {
+    if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6) return;
+    const r = renderer.domElement.getBoundingClientRect(); mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(mouse, camera); const hit = ray.intersectObjects(raycastTargets, true)[0];
+    if (!hit) return; let o = hit.object; while (o && !o.userData.act) o = o.parent;
+    if (o && o.userData.act === 'switch') window.toggleSwitch();
+    if (o && o.userData.act === 'bridge') window.setBridge(CELL.bridge === 'none' ? 'salt' : 'none');
+  });
+
+  // UI hooks
+  document.querySelectorAll('[data-cam]').forEach(b => b.onclick = () => flyTo(b.dataset.cam));
+  document.getElementById('lblBtn').onclick = () => { showLabels = !showLabels; document.getElementById('lblBtn').classList.toggle('sel', showLabels); document.getElementById('lbl3d').style.display = showLabels ? '' : 'none'; };
+  document.getElementById('atomBtn').onclick = () => { const c = document.getElementById('atomInset'); c.classList.toggle('hidden'); document.getElementById('atomBtn').classList.toggle('sel', !c.classList.contains('hidden')); };
+  document.getElementById('hdBtn').onclick = () => setHD(!HD);
+  setHD(HD, true);
+
+  const ro = new ResizeObserver(resize); ro.observe(view); resize();
+  new IntersectionObserver(es => { running = es[0].isIntersecting; }, { threshold: 0.01 }).observe(view);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) clock.getDelta(); });
+  rebuild(); flyTo('overview', true);
+  document.getElementById('glLoading').remove();
+  renderer.setAnimationLoop(frame);
+}
+function setHD(on, first) {
+  HD = on; document.getElementById('hdBtn').classList.toggle('sel', HD);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, HD ? 2 : 1.25)); renderer.shadowMap.enabled = HD;
+  ['L', 'R'].forEach(k => { const h = half[k]; if (!h.liquid) return; h.liquid.material = HD ? h.liqHD : h.liqLD; });
+  scene.traverse(o => { if (o.material) o.material.needsUpdate = true; });
+  if (!first) resize();
+}
+function resize() {
+  const v = document.getElementById('view'), w = v.clientWidth, h = v.clientHeight;
+  renderer.setSize(w, h, false); css.setSize(w, h); composer.setSize(w, h); bloom.setSize(w, h);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+
+function buildHalf(k, s) {
+  const h = half[k], g = new THREE.Group(); g.position.x = s * BX; scene.add(g); h.group = g; h.s = s;
+  // beaker (lathe with real wall thickness)
+  const prof = [[0, 0], [1.02, 0], [BR, 0.05], [BR, BH], [BR + 0.04, BH + 0.04], [BR - 0.02, BH + 0.04], [BR - 0.05, BH], [BR - 0.05, 0.08], [0, 0.08]].map(([r, y]) => new THREE.Vector2(r, y));
+  const beaker = new THREE.Mesh(new THREE.LatheGeometry(prof, 72), glassMat()); beaker.renderOrder = 5; g.add(beaker);
+  const grad = new THREE.Mesh(new THREE.CylinderGeometry(BR + 0.006, BR + 0.006, 2.2, 32, 1, true, -0.55, 1.1), new THREE.MeshBasicMaterial({ map: gradTex(), transparent: true, depthWrite: false, opacity: 0.8 }));
+  grad.position.y = 1.2; grad.rotation.y = s > 0 ? 0.25 : -0.25; grad.renderOrder = 6; g.add(grad);
+  // liquid: transmissive in HD, simple transparent otherwise
+  const liqGeo = new THREE.CylinderGeometry(BR - 0.06, BR - 0.06, LIQ, 64);
+  h.liqHD = new THREE.MeshPhysicalMaterial({ color: 0xdbeafe, transmission: 1, roughness: 0.04, thickness: 1.0, ior: 1.33, attenuationColor: new THREE.Color(0xdbeafe), attenuationDistance: 1.4, envMapIntensity: 0.22, specularIntensity: 0.25 });
+  h.liqLD = new THREE.MeshStandardMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.35, roughness: 0.1, depthWrite: false, envMapIntensity: 0.5 });
+  h.liquid = new THREE.Mesh(liqGeo, HD ? h.liqHD : h.liqLD); h.liquid.position.y = 0.08 + LIQ / 2; h.liquid.renderOrder = 2; g.add(h.liquid);
+  h.tint = new THREE.Mesh(new THREE.CylinderGeometry(BR - 0.054, BR - 0.054, LIQ + 0.004, 48), new THREE.MeshStandardMaterial({ color: 0x2563eb, transparent: true, opacity: 0, roughness: 0.25, depthWrite: false }));
+  h.tint.position.y = 0.08 + LIQ / 2; h.tint.renderOrder = 3; g.add(h.tint);
+  const men = new THREE.Mesh(new THREE.TorusGeometry(BR - 0.065, 0.025, 8, 64), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, roughness: 0.05 }));
+  men.rotation.x = Math.PI / 2; men.position.y = 0.08 + LIQ; g.add(men);
+  // electrode: a top (dry) part and a submerged part that dissolves / grows
+  const ex = s * (EX - BX);
+  h.elTop = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.3, roughnessMap: noiseTex(64, 256, true) }));
+  h.elBot = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.3, roughnessMap: noiseTex(64, 256, true), bumpMap: noiseTex(128, 256, false), bumpScale: 0 }));
+  h.dep = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ metalness: 0.9, roughness: 0.75, transparent: true, opacity: 0, bumpMap: noiseTex(128, 256, false), bumpScale: 2 }));
+  [h.elTop, h.elBot].forEach(m => { m.castShadow = true; m.position.x = ex; g.add(m); }); h.dep.position.x = ex; g.add(h.dep);
+  // crystals that grow on a cathode
+  h.crystals = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.035, 0), new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.35 }), 140);
+  h.crys = Array.from({ length: 140 }, () => ({ y: EBOT + 0.05 + Math.random() * (LIQ - 0.2), u: Math.random() - 0.5, side: Math.random() < 0.5 ? -1 : 1, s: 0.6 + Math.random() * 1.2 }));
+  h.crystals.position.x = ex; g.add(h.crystals);
+  // clip
+  h.clip = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.22, 0.18), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4, metalness: 0.3 }));
+  h.clip.position.set(ex, ETOP - 0.05, 0); g.add(h.clip);
+  // SHE: platinum plate in an inverted glass tube, fed with H₂
+  h.she = new THREE.Group(); h.she.position.x = s * (EX - BX - 0.1); g.add(h.she);
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.03), new THREE.MeshStandardMaterial({ color: 0x222326, metalness: 0.8, roughness: 0.9 })); plate.position.y = 0.75; h.she.add(plate);
+  const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 2.3), new THREE.MeshStandardMaterial({ color: 0xd9dde2, metalness: 1, roughness: 0.2 })); wire.position.y = 2.0; h.she.add(wire);
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 2.6, 40, 1, true), glassMat()); tube.position.y = 1.6; tube.renderOrder = 7; h.she.add(tube);
+  const hose = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, 2.9, 0), new THREE.Vector3(0.1 * s, 3.4, -0.2), new THREE.Vector3(0.6 * s, 3.5, -1.2), new THREE.Vector3(1.4 * s, 2.0, -2.2)]), 40, 0.05, 10), new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.35, transparent: true, opacity: 0.85 }));
+  h.she.add(hose);
+  h.bub = new THREE.InstancedMesh(new THREE.SphereGeometry(0.03, 8, 8), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.6, roughness: 0, transparent: true, opacity: 0.7 }), 40);
+  h.bubD = Array.from({ length: 40 }, () => ({ x: (Math.random() - 0.5) * 0.4, y: 0.6 + Math.random() * 1.1, z: (Math.random() - 0.5) * 0.2, v: 0.3 + Math.random() * 0.5 }));
+  h.she.add(h.bub);
+  // ions in solution
+  h.ionMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x1e3a8a, emissiveIntensity: 0.5, roughness: 0.3 });
+  h.ions = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 12, 12), h.ionMat, 70); g.add(h.ions);
+  h.anions = new THREE.InstancedMesh(new THREE.SphereGeometry(0.036, 10, 10), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0x7c2d12, emissiveIntensity: 0.4, roughness: 0.4 }), 40); g.add(h.anions);
+  const rnd = () => { const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random()) * (BR - 0.18); return [Math.cos(a) * r, 0.18 + Math.random() * (LIQ - 0.2), Math.sin(a) * r]; };
+  h.rnd = rnd;
+  h.P = Array.from({ length: 70 }, () => ({ p: rnd(), mode: 0, t: 0, to: null }));
+  h.A = Array.from({ length: 40 }, (_, i) => ({ p: i < 22 ? rnd() : [0, -9, 0] }));
+  h.spawnAcc = 0;
+}
+
+function buildBridges() {
+  const glass = glassMat();
+  // salt bridge U-tube (behind the electrodes)
+  bridgeU = new THREE.CatmullRomCurve3([[-1.5, 0.75], [-1.5, 2.8], [-1.25, 3.3], [-0.6, 3.45], [0.6, 3.45], [1.25, 3.3], [1.5, 2.8], [1.5, 0.75]].map(([x, y]) => new THREE.Vector3(x, y, -0.25)));
+  bridgeGroupU = new THREE.Group(); bridgeGroupU.userData.act = 'bridge';
+  const t1 = new THREE.Mesh(new THREE.TubeGeometry(bridgeU, 120, 0.15, 20), glass); t1.renderOrder = 8;
+  const gel = new THREE.Mesh(new THREE.TubeGeometry(bridgeU, 120, 0.115, 16), new THREE.MeshStandardMaterial({ color: 0xf1f5f9, transparent: true, opacity: 0.35, roughness: 0.6, depthWrite: false }));
+  const plugs = [0, 1].map(u => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0xf5f5f4, roughness: 1 })); const p = bridgeU.getPointAt(u); m.position.copy(p).add(new THREE.Vector3(0, 0.06, 0)); return m; });
+  bridgeGroupU.add(t1, gel, ...plugs); scene.add(bridgeGroupU); raycastTargets.push(bridgeGroupU);
+  // porous membrane: an H-cell side arm with a ceramic frit
+  bridgeH = new THREE.CatmullRomCurve3([new THREE.Vector3(-BX + BR - 0.1, 0.85, -0.1), new THREE.Vector3(BX - BR + 0.1, 0.85, -0.1)]);
+  bridgeGroupH = new THREE.Group(); bridgeGroupH.userData.act = 'bridge';
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 2 * (BX - BR) + 0.4, 40, 1, true), glass); arm.rotation.z = Math.PI / 2; arm.position.set(0, 0.85, -0.1); arm.renderOrder = 8;
+  const fill = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 2 * (BX - BR) + 0.3, 32), new THREE.MeshStandardMaterial({ color: 0xbfdbfe, transparent: true, opacity: 0.5, depthWrite: false })); fill.rotation.z = Math.PI / 2; fill.position.copy(arm.position);
+  const frit = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.14, 32), new THREE.MeshStandardMaterial({ color: 0xd6c9a8, roughness: 1, bumpMap: noiseTex(64, 64, false), bumpScale: 3 })); frit.rotation.z = Math.PI / 2; frit.position.copy(arm.position);
+  bridgeGroupH.add(arm, fill, frit); scene.add(bridgeGroupH); raycastTargets.push(bridgeGroupH);
+  // migrating ions: K⁺ (violet) to the cathode side, NO₃⁻ (orange) to the anode side
+  kIons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 10, 10), new THREE.MeshStandardMaterial({ color: 0xc084fc, emissive: 0x6b21a8, emissiveIntensity: 0.8 }), 18);
+  nIons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.04, 10, 10), new THREE.MeshStandardMaterial({ color: 0xfb923c, emissive: 0x9a3412, emissiveIntensity: 0.8 }), 18);
+  scene.add(kIons, nIons);
+  for (let i = 0; i < 18; i++) { kU.push(Math.random()); nU.push(Math.random()); }
+}
+
+function buildMeter() {
+  const g = new THREE.Group(); g.position.set(0, 0, -2.6); g.rotation.x = -0.18; scene.add(g);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.5, 0.42), new THREE.MeshStandardMaterial({ color: 0xf2b705, roughness: 0.55 })); body.position.y = 1.25; body.castShadow = true; g.add(body);
+  const face = new THREE.Mesh(new THREE.BoxGeometry(1.45, 2.2, 0.05), new THREE.MeshStandardMaterial({ color: 0x1f2329, roughness: 0.6 })); face.position.set(0, 1.27, 0.22); g.add(face);
+  const c = document.createElement('canvas'); c.width = 512; c.height = 240; meterCtx = c.getContext('2d');
+  meterTex = new THREE.CanvasTexture(c); meterTex.colorSpace = THREE.SRGBColorSpace;
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.56), new THREE.MeshBasicMaterial({ map: meterTex, color: 0xd8d8d8 })); scr.position.set(0, 1.95, 0.252); g.add(scr);
+  const dial = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.08, 40), new THREE.MeshStandardMaterial({ color: 0x2b2f36, roughness: 0.4, metalness: 0.3 })); dial.rotation.x = Math.PI / 2; dial.position.set(0, 1.15, 0.27); g.add(dial);
+  const ptr = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.03), new THREE.MeshStandardMaterial({ color: 0xffffff })); ptr.position.set(0, 1.27, 0.32); ptr.rotation.z = 0.5; g.add(ptr);
+  const jack = (x, col) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.1, 20), new THREE.MeshStandardMaterial({ color: col, roughness: 0.3 })); m.rotation.x = Math.PI / 2; m.position.set(x, 0.45, 0.27); g.add(m); return m; };
+  half.jackCom = jack(-0.35, 0x111111); half.jackV = jack(0.35, 0xdc2626);
+  half.meterGroup = g;
+}
+function drawMeter(v) {
+  const s = (v < 0 ? '-' : ' ') + Math.abs(v).toFixed(3);
+  if (s === meterLast) return; meterLast = s;
+  const x = meterCtx; x.fillStyle = '#a9bd98'; x.fillRect(0, 0, 512, 240);
+  const g = x.createLinearGradient(0, 0, 0, 240); g.addColorStop(0, 'rgba(255,255,255,.12)'); g.addColorStop(1, 'rgba(0,0,0,.12)'); x.fillStyle = g; x.fillRect(0, 0, 512, 240);
+  x.fillStyle = 'rgba(20,28,18,.12)'; x.font = '700 150px "JetBrains Mono", monospace'; x.textAlign = 'right'; x.fillText('8.888', 430, 175);
+  x.fillStyle = '#16200f'; x.fillText(s.trim().startsWith('-') ? s.trim() : s.trim(), 430, 175);
+  x.font = '800 44px "Plus Jakarta Sans", sans-serif'; x.textAlign = 'left'; x.fillText('V', 444, 175);
+  x.font = '800 26px "Plus Jakarta Sans", sans-serif'; x.fillText('DC', 26, 44); x.fillText('AUTO', 90, 44);
+  meterTex.needsUpdate = true;
+}
+function buildLoads() {
+  const base = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.14, 1.1), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 })); base.position.set(0, 0.07, 2.4); base.receiveShadow = true; base.castShadow = true; scene.add(base);
+  [-1.2, 1.2].forEach(x => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0xb08d57, metalness: 1, roughness: 0.3 })); t.position.set(x, 0.22, 2.4); scene.add(t); });
+  // bulb
+  const bulb = new THREE.Group(); bulb.position.set(-0.25, 0.14, 2.4);
+  const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.35, 24), new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 1, roughness: 0.25 })); holder.position.y = 0.18;
+  const glass = new THREE.Mesh(new THREE.SphereGeometry(0.32, 40, 30), new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0, transmission: 0.95, thickness: 0.05, transparent: true, opacity: 0.6 })); glass.position.y = 0.62;
+  const fil = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(Array.from({ length: 24 }, (_, i) => new THREE.Vector3(-0.12 + 0.24 * i / 23, 0.6 + 0.03 * Math.sin(i * 1.6), 0.03 * Math.cos(i * 1.6)))), 60, 0.008, 6), new THREE.MeshStandardMaterial({ color: 0x3f3f46, emissive: 0xffb347, emissiveIntensity: 0 }));
+  bulbLight = new THREE.PointLight(0xffc46b, 0, 6, 1.6); bulbLight.position.y = 0.62;
+  bulb.add(holder, glass, fil, bulbLight); bulb.userData.fil = fil; scene.add(bulb); loads.bulb = bulb;
+  // LED
+  const led = new THREE.Group(); led.position.set(-0.25, 0.14, 2.4);
+  const dome = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.16, 8, 20), new THREE.MeshPhysicalMaterial({ color: 0xff2d2d, emissive: 0xff1a1a, emissiveIntensity: 0, roughness: 0.15, transmission: 0.4, transparent: true, opacity: 0.9 })); dome.position.y = 0.42;
+  const legs = [-0.05, 0.05].map(x => { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.3), new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 1 })); m.position.set(x, 0.16, 0); return m; });
+  led.add(dome, ...legs); led.userData.dome = dome; scene.add(led); loads.led = led;
+  // motor + fan
+  const motor = new THREE.Group(); motor.position.set(-0.25, 0.14, 2.4);
+  const can = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.5, 30), new THREE.MeshStandardMaterial({ color: 0xb6bcc4, metalness: 1, roughness: 0.25 })); can.rotation.z = Math.PI / 2; can.position.y = 0.34;
+  propeller = new THREE.Group(); propeller.position.set(0.36, 0.34, 0);
+  for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.5, 0.11), new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.4 })); b.position.y = 0.25; const p = new THREE.Group(); p.rotation.x = i * 2.094; b.rotation.y = 0.4; p.add(b); propeller.add(p); }
+  motor.add(can, propeller); scene.add(motor); loads.motor = motor;
+  // resistor
+  const res = new THREE.Group(); res.position.set(-0.25, 0.14, 2.4);
+  const rc = document.createElement('canvas'); rc.width = 256; rc.height = 64; const rx = rc.getContext('2d'); rx.fillStyle = '#d8c39a'; rx.fillRect(0, 0, 256, 64); ['#8b4513', '#111', '#c0392b', '#d4af37'].forEach((c, i) => { rx.fillStyle = c; rx.fillRect(50 + i * 42, 0, 18, 64); });
+  const rt = new THREE.CanvasTexture(rc); rt.colorSpace = THREE.SRGBColorSpace;
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.42, 8, 20), new THREE.MeshStandardMaterial({ map: rt, roughness: 0.5 })); body.rotation.z = Math.PI / 2; body.position.y = 0.3;
+  res.add(body); scene.add(res); loads.res = res;
+  // leads from the two sockets (local x = ±0.5, top y = 0.17) into each load
+  const leadMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 1, roughness: 0.3 });
+  const plug = (g, ends) => [-1, 1].forEach(s => { const [ex, ey] = ends; const c = new THREE.CatmullRomCurve3([new THREE.Vector3(0.5 * s, 0.17, 0), new THREE.Vector3((0.5 + ex) / 2 * s, Math.max(0.2, ey * 0.6), 0), new THREE.Vector3(ex * s, ey, 0)]); g.add(new THREE.Mesh(new THREE.TubeGeometry(c, 16, 0.014, 6), leadMat)); });
+  plug(bulb, [0.17, 0.12]); plug(led, [0.05, 0.03]); plug(motor, [0.27, 0.3]); [-1, 1].forEach(s => { const tab = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.08), new THREE.MeshStandardMaterial({ color: 0xc8a165, metalness: 1, roughness: 0.3 })); tab.position.set(0.265 * s, 0.3, 0); motor.add(tab); }); plug(res, [0.38, 0.3]);
+  // knife switch (click it)
+  const sw = new THREE.Group(); sw.position.set(0.75, 0.14, 2.4); sw.userData.act = 'switch';
+  const sb = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 0.34), new THREE.MeshStandardMaterial({ color: 0x0f172a })); sb.position.y = 0.03;
+  const post = (x) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xc8a165, metalness: 1, roughness: 0.3 })); m.position.set(x, 0.13, 0); return m; };
+  swBlade = new THREE.Group(); swBlade.position.set(-0.27, 0.245, 0);
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.035, 0.07), new THREE.MeshStandardMaterial({ color: 0xd4a85a, metalness: 1, roughness: 0.25 })); blade.position.x = 0.29;
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 })); knob.position.x = 0.6;
+  swBlade.add(blade, knob); sw.add(sb, post(-0.27), post(0.27), swBlade); scene.add(sw); raycastTargets.push(sw);
+  half.switchGroup = sw;
+}
+function buildWires() {
+  // every wire ends on a real terminal: left electrode → board post → load socket ⟶ load ⟶ load socket → switch post ⟶ blade ⟶ switch post → board post → right electrode
+  const P = (x, y, z) => new THREE.Vector3(x, y, z), Z = 2.4;
+  const segs = [
+    [P(-EX, ETOP + 0.05, 0), P(-EX - 0.15, ETOP + 0.6, 0.5), P(-2.1, 1.4, 2.2), P(-1.35, 0.55, Z), P(-1.2, 0.31, Z)],
+    [P(-1.2, 0.31, Z), P(-1.05, 0.2, Z), P(-0.9, 0.2, Z), P(-0.75, 0.31, Z)],
+    [P(0.25, 0.31, Z), P(0.33, 0.21, Z), P(0.42, 0.24, Z), P(0.48, 0.37, Z)],
+    [P(1.02, 0.37, Z), P(1.08, 0.22, Z), P(1.15, 0.21, Z), P(1.2, 0.31, Z)],
+    [P(1.2, 0.31, Z), P(1.35, 0.55, Z), P(2.1, 1.4, 2.2), P(EX + 0.15, ETOP + 0.6, 0.5), P(EX, ETOP + 0.05, 0)],
+  ].map(p => new THREE.CatmullRomCurve3(p, false, 'catmullrom', 0.3));
+  const mk = (c, n) => { const m = new THREE.Mesh(new THREE.TubeGeometry(c, n, 0.035, 10), new THREE.MeshStandardMaterial({ color: 0x1f6feb, roughness: 0.45 })); m.castShadow = true; scene.add(m); return m; };
+  half.wires = segs.map((c, i) => mk(c, i === 0 || i === 4 ? 160 : 40));
+  // brass sockets the loads plug into (x = −0.75 and +0.25)
+  [-0.75, 0.25].forEach(x => { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.16, 16), new THREE.MeshStandardMaterial({ color: 0xb08d57, metalness: 1, roughness: 0.3 })); t.position.set(x, 0.22, Z); scene.add(t); });
+  // the path electrons travel: wires + through the load + along the closed blade
+  const path = [];
+  const add = (c, n) => { const q = c.getSpacedPoints(n); if (path.length) q.shift(); path.push(...q); };
+  add(segs[0], 120); add(segs[1], 12);
+  add(new THREE.CatmullRomCurve3([P(-0.75, 0.31, Z), P(-0.25, 0.5, Z), P(0.25, 0.31, Z)]), 20);
+  add(segs[2], 8);
+  add(new THREE.LineCurve3(P(0.48, 0.37, Z), P(1.02, 0.37, Z)), 10);
+  add(segs[3], 8); add(segs[4], 120);
+  wireCurve = new THREE.CatmullRomCurve3(path, false, 'centripetal');
+  // meter leads (black COM / red V), rebuilt when swapped
+  half.leads = [];
+  electrons = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 10, 10), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 2.6, 0.6), toneMapped: false }), 44);
+  scene.add(electrons); for (let i = 0; i < 44; i++) eU.push(i / 44);
+}
+function buildLeads() {
+  half.leads.forEach(m => { scene.remove(m); m.geometry.dispose(); }); half.leads = [];
+  const jc = new THREE.Vector3(), jv = new THREE.Vector3(); half.jackCom.getWorldPosition(jc); half.jackV.getWorldPosition(jv);
+  const red = CELL.swapped ? 'L' : 'R', blk = CELL.swapped ? 'R' : 'L';
+  const lead = (k, to, col) => {
+    const s = k === 'L' ? -1 : 1, from = new THREE.Vector3(s * EX, ETOP + 0.08, -0.05);
+    const c = new THREE.CatmullRomCurve3([from, from.clone().add(new THREE.Vector3(0, 0.7, -0.5)), new THREE.Vector3(s * 1.4, 2.6, -2.0), new THREE.Vector3(to.x, to.y - 0.25, to.z + 0.5), to]);
+    const m = new THREE.Mesh(new THREE.TubeGeometry(c, 120, 0.028, 8), new THREE.MeshStandardMaterial({ color: col, roughness: 0.4 })); scene.add(m); half.leads.push(m);
+  };
+  lead(red, jv, 0xdc2626); lead(blk, jc, 0x111111);
+}
+function buildThermo() {
+  const g = new THREE.Group(); g.position.set(BX - 0.45, 0, -0.55); g.rotation.z = -0.12; scene.add(g);
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.0, 16), glassMat()); tube.position.y = 1.6; tube.renderOrder = 9;
+  const bulbT = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12), new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0x7f1d1d })); bulbT.position.y = 0.2;
+  thermoCol = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 1, 10), new THREE.MeshStandardMaterial({ color: 0xdc2626, emissive: 0x7f1d1d })); g.add(tube, bulbT, thermoCol);
+}
+function mkLabel(id, cls, html, onClick) {
+  const d = document.createElement('div'); d.className = 'lbl ' + cls; d.innerHTML = html;
+  d.addEventListener('pointerdown', e => e.stopPropagation()); d.addEventListener('click', onClick);
+  const o = new CSS2DObject(d); scene.add(o); labels[id] = { o, d }; return o;
+}
+const INFO = {
+  anode: ['Anode: oxidation (− pole)', 'The more reactive metal loses electrons: M → Mⁿ⁺ + n e⁻. Its atoms leave as ions, so it gets thinner. The electrons it releases push into the wire: this is the negative pole of a galvanic cell.'],
+  cathode: ['Cathode: reduction (+ pole)', 'Metal ions from the solution take electrons from the wire and become atoms: Mⁿ⁺ + n e⁻ → M. Metal deposits on this electrode and the solution slowly loses its ions (a copper sulfate solution fades from blue).'],
+  bridge: ['Salt bridge / porous membrane', 'Electrons never travel through it. Inside, K⁺ ions drift towards the cathode beaker and NO₃⁻ ions towards the anode beaker, so neither solution builds up charge. Remove it and the current stops instantly. (Tap the bridge in 3D to pull it out.)'],
+  electrons: ['Electrons in the wire', 'Electrons flow through the external circuit only, from the anode (−) to the cathode (+). Conventional current is drawn in the opposite direction. With only the voltmeter connected, almost no current flows, so nothing reacts.'],
+  meter: ['The multimeter', 'A voltmeter has a huge resistance (10 MΩ here), so it measures the EMF without letting current flow. Red lead on the + pole gives a positive reading; swap the leads and the sign flips.'],
+  load: ['The load and the switch', 'Close the switch (tap it in 3D) to let current flow through a bulb, LED, motor or resistor. Under load, the voltage between the terminals drops below the EMF: V = E − I·r, where r is the internal resistance of the cell.'],
+};
+function info(k) { const [t, p] = INFO[k]; document.getElementById('infoT').textContent = t; document.getElementById('infoP').textContent = p; document.getElementById('infoCard').classList.remove('hidden'); }
+function buildLabels() {
+  mkLabel('L', 'an', '', () => info(CELL.anode === 'L' ? 'anode' : 'cathode'));
+  mkLabel('R', 'ca', '', () => info(CELL.anode === 'R' ? 'anode' : 'cathode'));
+  mkLabel('solL', 'minor', '', () => info(CELL.anode === 'L' ? 'anode' : 'cathode'));
+  mkLabel('solR', 'minor', '', () => info(CELL.anode === 'R' ? 'anode' : 'cathode'));
+  mkLabel('bridge', 'br', '<span class="pulse"></span>Salt bridge · KNO₃', () => info('bridge'));
+  mkLabel('e', 'el', '', () => info('electrons'));
+  mkLabel('meter', 'minor', '📟 Voltmeter · 10 MΩ', () => info('meter'));
+  mkLabel('load', 'minor', '', () => info('load'));
+  labels.meter.o.position.set(1.25, 1.1, -2.45);
+  labels.load.o.position.set(0.2, 1.25, 2.6);
+}
+
+// ── camera ──────────────────────────────────────────────────────
+const CAMS = {
+  overview: [[0, 5.0, 10.5], [0, 1.3, 0.3]], anode: [[-6.6, 3.4, 2.6], [-2.0, 1.3, 0]], cathode: [[6.6, 3.4, 2.6], [2.0, 1.3, 0]],
+  bridge: [[0.4, 5.0, 4.2], [0, 2.8, -0.2]], load: [[0.6, 2.4, 6.4], [0, 0.5, 2.3]],
+};
+function flyTo(k, now) {
+  const [p, t] = CAMS[k], v = document.getElementById('view'), far = v.clientWidth / v.clientHeight < 1 ? 1.55 : 1;
+  const tgt = new THREE.Vector3(...t), pos = new THREE.Vector3(...p).sub(tgt).multiplyScalar(far).add(tgt);
+  if (far > 1) { tgt.y += 0.7; pos.y += 0.7; }
+  document.querySelectorAll('[data-cam]').forEach(b => b.classList.toggle('sel', b.dataset.cam === k));
+  if (now) { camera.position.copy(pos); controls.target.copy(tgt); controls.update(); return; }
+  camTween = { p0: camera.position.clone(), t0: controls.target.clone(), p1: pos, t1: tgt, u: 0 };
+}
+
+// ── rebuild on set-up changes ───────────────────────────────────
+const WATER = new THREE.Color(0.8, 0.88, 0.94);
+function solColor(h) {
+  const M = METALS[h.m], c = new THREE.Color().copy(WATER);
+  if (!M.tint) return c;
+  const t = clamp(Math.log10(Math.max(h.c, 1e-4) * 1000) / 3.3, 0, 1) * 0.95;
+  return c.lerp(new THREE.Color(...M.tint), t);
+}
+const IONCOL = { Mg: 0xe5e7eb, Al: 0xf1f5f9, Zn: 0xcbd5e1, Fe: 0x86efac, Ni: 0x4ade80, Sn: 0xe2e8f0, Pb: 0x94a3b8, H2: 0xffffff, Cu: 0x3b82f6, Ag: 0xf8fafc, Au: 0xfacc15 };
+function rebuild() {
+  if (!inited) return;
+  const sz = { S: 0.42, M: 0.62, L: 0.9 }[CELL.size];
+  ['L', 'R'].forEach(k => {
+    const h = half[k], H = CELL[k], M = METALS[H.m];
+    const gas = !!M.gas;
+    [h.elTop, h.elBot, h.dep, h.crystals, h.clip].forEach(m => m.visible = !gas);
+    h.she.visible = gas;
+    h.width = sz;
+    const topH = ETOP - (0.08 + LIQ), botH = 0.08 + LIQ - EBOT;
+    h.elTop.scale.set(sz, topH, 0.06); h.elTop.position.y = ETOP - topH / 2;
+    h.elBot.scale.set(sz, botH, 0.06); h.elBot.position.y = EBOT + botH / 2;
+    h.dep.scale.set(sz + 0.03, botH - 0.02, 0.085); h.dep.position.y = EBOT + botH / 2;
+    [h.elTop.material, h.elBot.material].forEach(m => { m.color.set(M.col); m.roughness = M.rough; });
+    h.ionMat.color.set(IONCOL[H.m]); h.ionMat.emissive.set(IONCOL[H.m]).multiplyScalar(0.25);
+    h.P.forEach(p => { p.p = h.rnd(); p.mode = 0; });
+    h.botH = botH;
+  });
+  bridgeGroupU.visible = CELL.bridge === 'salt'; bridgeGroupH.visible = CELL.bridge === 'membrane';
+  buildLeads();
+}
+
+// ── per-frame ───────────────────────────────────────────────────
+function frame() {
+  const dt = Math.min(0.05, clock.getDelta());
+  if (!running || document.hidden) return;
+  const C = CELL, t = clock.elapsedTime;
+  const sigNow = C.swapped + '|' + C.bridge;
+  if (sigNow !== frame.sig) { frame.sig = sigNow; bridgeGroupU.visible = C.bridge === 'salt'; bridgeGroupH.visible = C.bridge === 'membrane'; buildLeads(); }
+  if (camTween) { camTween.u = Math.min(1, camTween.u + dt / 1.1); const e = camTween.u < 0.5 ? 4 * camTween.u ** 3 : 1 - Math.pow(-2 * camTween.u + 2, 3) / 2; camera.position.lerpVectors(camTween.p0, camTween.p1, e); controls.target.lerpVectors(camTween.t0, camTween.t1, e); if (camTween.u >= 1) camTween = null; }
+  controls.update();
+  const flowing = C.I > 0, rate = flowing ? clamp(0.25 + Math.log10(C.I / 1e-4) / 3, 0.2, 1.6) : 0;
+  ['L', 'R'].forEach(k => {
+    const h = half[k], H = C[k], M = METALS[H.m], isAn = C.anode === k && C.E > 1e-4;
+    // solution colour follows the concentration
+    const col = solColor(H); h.liqHD.color.copy(col); h.liqHD.attenuationColor.copy(col); h.liqLD.color.copy(col);
+    if (M.tint) { const tt = clamp(Math.log10(Math.max(H.c, 1e-4) * 1000) / 3.3, 0, 1); h.tint.material.color.setRGB(...M.tint).multiplyScalar(0.8); h.tint.material.opacity = 0.1 + 0.6 * tt; h.tint.visible = true; } else h.tint.visible = false;
+    h.liqHD.attenuationDistance = M.tint ? 0.45 + 3 * (1 - clamp(Math.log10(Math.max(H.c, 1e-4) * 1000) / 3.3, 0, 1)) : 3;
+    if (!M.gas) {
+      // anode: the submerged part thins and roughens; cathode: a deposit grows
+      const loss = H.mass0 ? clamp(1 - H.mass / H.mass0, 0, 1) : 0;
+      h.elBot.scale.z = 0.06 * Math.max(0.15, 1 - loss); h.elBot.scale.x = h.width * Math.max(0.35, 1 - loss * 0.6);
+      h.elBot.material.roughness = clamp(M.rough + loss * 1.5, 0, 1); h.elBot.material.bumpScale = loss * 4;
+      h.elBot.material.color.set(M.col).multiplyScalar(1 - loss * 0.35);
+      const depF = H.mass0 ? clamp(H.dep / (H.mass0 * 0.25), 0, 1) : 0;
+      h.dep.material.opacity = depF * 0.85; h.dep.material.color.set(METALS[H.m].col).multiplyScalar(0.85); h.dep.visible = depF > 0.01;
+      h.crystals.material.color.set(M.col);
+      h.crys.forEach((c, i) => { const s = depF > 0 ? c.s * Math.min(1, depF * 1.6) : 0; tmpV.set(c.u * h.width, c.y, c.side * 0.05); tmpS.setScalar(s + 1e-4); tmpM.compose(tmpV, tmpQ.setFromEuler(new THREE.Euler(i, i * 2, 0)), tmpS); h.crystals.setMatrixAt(i, tmpM); });
+      h.crystals.instanceMatrix.needsUpdate = true;
+    } else {
+      h.bubD.forEach((b, i) => { b.y += b.v * dt * (0.6 + (flowing ? rate : 0)); if (b.y > 0.08 + LIQ - 0.05) { b.y = 0.6 + Math.random() * 0.2; b.x = (Math.random() - 0.5) * 0.4; } tmpV.set(b.x + Math.sin(t * 3 + i) * 0.02, b.y, b.z); tmpS.setScalar(1); tmpM.compose(tmpV, tmpQ.identity(), tmpS); h.bub.setMatrixAt(i, tmpM); });
+      h.bub.instanceMatrix.needsUpdate = true;
+    }
+    // ions: the number shown follows the concentration
+    const nVis = Math.round(clamp(6 + 13 * Math.log10(Math.max(H.c, 1e-4) * 1000), 3, 70));
+    const ex = h.s * (EX - BX) - (M.gas ? h.s * 0.1 : 0);
+    h.spawnAcc += dt * (flowing ? 6 * rate : 0);
+    while (h.spawnAcc >= 1) {
+      h.spawnAcc -= 1;
+      const p = h.P[Math.floor(Math.random() * nVis)];
+      if (isAn) { p.p = [ex + (Math.random() - 0.5) * 0.4, EBOT + 0.1 + Math.random() * (LIQ - 0.4), (Math.random() < 0.5 ? -1 : 1) * 0.06]; p.mode = 1; p.t = 0; }
+      else if (C.E > 1e-4) { p.mode = 2; p.t = 0; p.to = [ex + (Math.random() - 0.5) * 0.4, EBOT + 0.1 + Math.random() * (LIQ - 0.4), (Math.random() < 0.5 ? -1 : 1) * 0.07]; }
+    }
+    h.P.forEach((p, i) => {
+      if (i >= nVis) { tmpS.setScalar(0); tmpM.compose(tmpV.set(0, -5, 0), tmpQ.identity(), tmpS); h.ions.setMatrixAt(i, tmpM); return; }
+      const q = p.p, j = 0.12 * dt;
+      q[0] += (Math.random() - 0.5) * j * 3; q[1] += (Math.random() - 0.5) * j * 3; q[2] += (Math.random() - 0.5) * j * 3;
+      if (p.mode === 1) { p.t += dt; q[0] -= h.s * dt * 0.5; if (p.t > 1.4) p.mode = 0; }
+      if (p.mode === 2) { p.t += dt; for (let a = 0; a < 3; a++) q[a] += (p.to[a] - q[a]) * Math.min(1, dt * 1.8); if (p.t > 1.6) { p.p = h.rnd(); p.mode = 0; } }
+      const rr = Math.hypot(q[0], q[2]); if (rr > BR - 0.16) { q[0] *= (BR - 0.16) / rr; q[2] *= (BR - 0.16) / rr; }
+      q[1] = clamp(q[1], 0.15, 0.08 + LIQ - 0.06);
+      const s = p.mode === 2 && p.t > 1.2 ? Math.max(0.01, 1 - (p.t - 1.2) / 0.4) : p.mode === 1 && p.t < 0.3 ? p.t / 0.3 : 1;
+      tmpS.setScalar(s); tmpM.compose(tmpV.set(q[0], q[1], q[2]), tmpQ.identity(), tmpS); h.ions.setMatrixAt(i, tmpM);
+    });
+    h.ions.instanceMatrix.needsUpdate = true;
+    h.A.forEach((a, i) => { if (i >= 22) { tmpS.setScalar(0); tmpM.compose(tmpV.set(0, -9, 0), tmpQ.identity(), tmpS); h.anions.setMatrixAt(i, tmpM); return; } const q = a.p; q[0] += (Math.random() - 0.5) * 0.01; q[1] += (Math.random() - 0.5) * 0.01; q[2] += (Math.random() - 0.5) * 0.01; const rr = Math.hypot(q[0], q[2]); if (rr > BR - 0.16) { q[0] *= 0.98; q[2] *= 0.98; } q[1] = clamp(q[1], 0.15, 0.08 + LIQ - 0.06); tmpS.setScalar(1); tmpM.compose(tmpV.set(q[0], q[1], q[2]), tmpQ.identity(), tmpS); h.anions.setMatrixAt(i, tmpM); });
+    h.anions.instanceMatrix.needsUpdate = true;
+  });
+  // bridge: in, out, ions migrating
+  const curve = C.bridge === 'membrane' ? bridgeH : bridgeU, hasB = C.bridge !== 'none';
+  kIons.visible = nIons.visible = hasB;
+  if (hasB) {
+    const toCat = C.anode === 'L' ? 1 : -1, sp = flowing ? 0.05 + 0.25 * rate : 0;
+    for (let i = 0; i < 18; i++) {
+      kU[i] = (kU[i] + toCat * sp * dt + (Math.random() - 0.5) * 0.004 + 1) % 1; nU[i] = (nU[i] - toCat * sp * dt + (Math.random() - 0.5) * 0.004 + 1) % 1;
+      const pk = curve.getPointAt(kU[i]), pn = curve.getPointAt(nU[i]);
+      tmpS.setScalar(1); tmpM.compose(tmpV.copy(pk).add(new THREE.Vector3(0.04 * Math.sin(i), 0.04 * Math.cos(i * 1.7), 0.03)), tmpQ.identity(), tmpS); kIons.setMatrixAt(i, tmpM);
+      tmpM.compose(tmpV.copy(pn).add(new THREE.Vector3(-0.04 * Math.cos(i), -0.03 * Math.sin(i * 1.3), -0.03)), tmpQ.identity(), tmpS); nIons.setMatrixAt(i, tmpM);
+    }
+    kIons.instanceMatrix.needsUpdate = nIons.instanceMatrix.needsUpdate = true;
+  }
+  // electrons: anode → cathode through the wire, only when current flows
+  electrons.visible = flowing;
+  if (flowing) {
+    const dir = C.anode === 'L' ? 1 : -1, sp = 0.03 + 0.12 * rate;
+    for (let i = 0; i < eU.length; i++) { eU[i] = (eU[i] + dir * sp * dt + 1) % 1; const p = wireCurve.getPointAt(eU[i]); tmpS.setScalar(1); tmpM.compose(p, tmpQ.identity(), tmpS); electrons.setMatrixAt(i, tmpM); }
+    electrons.instanceMatrix.needsUpdate = true;
+  }
+  // loads
+  Object.entries(loads).forEach(([k, g]) => g.visible = C.load === k);
+  loads.bulb.userData.fil.material.emissiveIntensity = C.load === 'bulb' ? C.glow * 9 : 0; bulbLight.intensity = C.load === 'bulb' ? C.glow * 7 : 0;
+  loads.led.userData.dome.material.emissiveIntensity = C.load === 'led' ? C.glow * 6 : 0;
+  if (C.load === 'motor') propeller.rotation.x += dt * C.glow * 40;
+  swBlade.rotation.z += ((C.sw ? 0 : 0.9) - swBlade.rotation.z) * Math.min(1, dt * 10);
+  thermoCol.scale.y = 0.3 + 2.2 * (C.T / 80); thermoCol.position.y = 0.25 + thermoCol.scale.y / 2;
+  drawMeter(C.Vmeter);
+  // labels
+  const an = C.E > 1e-4 ? C.anode : null, narrow = renderer.domElement.clientWidth < 640;
+  ['L', 'R'].forEach(k => {
+    const s = k === 'L' ? -1 : 1, lb = labels[k], M = METALS[C[k].m], role = an === k ? 'an' : an ? 'ca' : '';
+    lb.o.position.set(s * EX, ETOP + 0.75, 0);
+    lb.d.className = 'lbl ' + role;
+    lb.d.innerHTML = `${role === 'an' ? '<span class="pulse"></span>' + (narrow ? '− ' : 'ANODE (−) · ') : role === 'ca' ? '<span class="pulse"></span>' + (narrow ? '+ ' : 'CATHODE (+) · ') : ''}${M.gas ? 'Pt / H₂' : C[k].m}`;
+    const ls = labels['sol' + k]; ls.o.position.set(s * BX, 0.45, BR + 0.05); ls.d.innerHTML = `${M.salt} · ${fmtC(C[k].c)}`;
+  });
+  labels.bridge.o.position.copy(C.bridge === 'membrane' ? new THREE.Vector3(0, 1.45, -0.1) : new THREE.Vector3(0, 3.85, -0.25));
+  labels.bridge.o.visible = C.bridge !== 'none' && !narrow;
+  labels.bridge.d.innerHTML = `<span class="pulse"></span>${C.bridge === 'membrane' ? 'Porous membrane' : 'Salt bridge · KNO₃'}`;
+  const em = wireCurve.getPointAt(0.18); labels.e.o.position.copy(em).add(new THREE.Vector3(0, 0.35, 0));
+  labels.e.o.visible = !(narrow && !flowing);
+  labels.e.d.innerHTML = flowing ? (C.anode === 'L' ? 'e⁻ ⟶ flowing' : '⟵ e⁻ flowing') : C.load === 'none' ? 'no current (open circuit)' : C.sw ? 'no current' : 'switch open: no current';
+  labels.load.d.innerHTML = C.load === 'none' ? '' : `${LOADS[C.load].icon} ${LOADS[C.load].label} · ${C.sw ? fmtI(C.I) : 'switch open (tap it)'}`;
+  labels.load.o.visible = C.load !== 'none';
+  // render
+  if (HD) composer.render(); else renderer.render(scene, camera);
+  css.render(scene, camera);
+  drawAtoms(dt);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ATOMIC ZOOM — 2D inset at the two electrode surfaces
+// ════════════════════════════════════════════════════════════════
+const AZ = { parts: [], acc: 0 };
+function drawAtoms(dt) {
+  const cv = document.getElementById('atomInset'); if (cv.classList.contains('hidden')) return;
+  const x = cv.getContext('2d'), W = cv.width, H = cv.height, C = CELL;
+  x.fillStyle = '#06080b'; x.fillRect(0, 0, W, H);
+  const anK = C.anode, caK = anK === 'L' ? 'R' : 'L', A = METALS[C[anK].m], K = METALS[C[caK].m];
+  const flowing = C.I > 0, rate = flowing ? clamp(0.3 + Math.log10(C.I / 1e-4) / 3, 0.2, 1.5) : 0;
+  const panel = (ox, M, title, eq, isAn) => {
+    x.save(); x.translate(ox, 0);
+    x.fillStyle = 'rgba(56,189,248,.05)'; x.fillRect(0, 40, W / 2 - 6, H - 80);
+    // electrode lattice on the left edge of each panel
+    for (let r = 0; r < 9; r++) for (let c = 0; c < 3; c++) { x.fillStyle = M.gas ? '#3f3f46' : M.col; x.beginPath(); x.arc(22 + c * 26 + (r % 2) * 13, 62 + r * 34, 12, 0, 7); x.fill(); }
+    x.fillStyle = isAn ? '#fda4af' : '#7dd3fc'; x.font = '900 18px Plus Jakarta Sans'; x.fillText(title, 10, 26);
+    x.fillStyle = '#e4e4e7'; x.font = '700 16px JetBrains Mono'; x.fillText(eq, 10, H - 14);
+    x.restore();
+  };
+  panel(0, A, 'ANODE · oxidation', A.gas ? 'H₂ → 2H⁺ + 2e⁻' : `${C[anK].m} → ${A.ion} + ${A.n}e⁻`, true);
+  panel(W / 2 + 6, K, 'CATHODE · reduction', K.gas ? '2H⁺ + 2e⁻ → H₂' : `${K.ion} + ${K.n}e⁻ → ${C[caK].m}`, false);
+  if (!flowing) { x.fillStyle = 'rgba(0,0,0,.6)'; x.fillRect(0, H / 2 - 30, W, 60); x.fillStyle = '#fde68a'; x.font = '800 18px Plus Jakarta Sans'; x.textAlign = 'center'; x.fillText(C.bridge === 'none' ? 'No ionic path: no reaction' : 'No current: no reaction (close the circuit)', W / 2, H / 2 + 6); x.textAlign = 'left'; return; }
+  AZ.acc += dt * rate * 2.2;
+  while (AZ.acc > 1) { AZ.acc -= 1; const y = 62 + Math.floor(Math.random() * 9) * 34;
+    AZ.parts.push({ k: 'ionOut', x: 100, y, t: 0 }, { k: 'eUp', x: 70, y, t: 0 }, { k: 'eUp', x: 76, y: y + 8, t: 0 });
+    AZ.parts.push({ k: 'ionIn', x: W / 2 + 300, y, t: 0 }, { k: 'eDown', x: W / 2 + 76, y: 40, ty: y, t: 0 }); }
+  AZ.parts = AZ.parts.filter(p => p.t < 2.2);
+  AZ.parts.forEach(p => {
+    p.t += dt;
+    if (p.k === 'ionOut') { p.x += dt * 90; x.fillStyle = METALS[C[anK].m].gas ? '#e5e7eb' : IONHEX(C[anK].m); x.beginPath(); x.arc(p.x, p.y, 11, 0, 7); x.fill(); x.fillStyle = '#111'; x.font = '900 12px Plus Jakarta Sans'; x.fillText('+', p.x - 4, p.y + 4); }
+    if (p.k === 'eUp') { p.y -= dt * 120; x.fillStyle = '#facc15'; x.shadowBlur = 10; x.shadowColor = '#facc15'; x.beginPath(); x.arc(p.x, p.y, 5, 0, 7); x.fill(); x.shadowBlur = 0; }
+    if (p.k === 'ionIn') { p.x -= dt * 100; if (p.x < W / 2 + 112) p.x = W / 2 + 112; x.fillStyle = IONHEX(C[caK].m); x.globalAlpha = Math.max(0, 1 - Math.max(0, p.t - 1.6) / 0.6); x.beginPath(); x.arc(p.x, p.y, 11, 0, 7); x.fill(); x.globalAlpha = 1; }
+    if (p.k === 'eDown') { p.y += (p.ty - p.y) * Math.min(1, dt * 2.2); x.fillStyle = '#facc15'; x.shadowBlur = 10; x.shadowColor = '#facc15'; x.beginPath(); x.arc(p.x + 30, p.y, 5, 0, 7); x.fill(); x.shadowBlur = 0; }
+  });
+  x.fillStyle = '#a1a1aa'; x.font = '12px Plus Jakarta Sans'; x.fillText('● ion   ● e⁻ (into the wire)', 10, H - 40);
+}
+const IONHEX = m => '#' + IONCOL[m].toString(16).padStart(6, '0');
+
+window.SCENE = { rebuild, flyTo };
+window.initGalvanic3D = init;
+if (window.__labStarted) init();
+</script>
+</body>
+</html>
