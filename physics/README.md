@@ -48,3 +48,9 @@ physics/
 
 - One sheet: `https://aghozlan.github.io/physics/#r=<id>`
 - One grade: `https://aghozlan.github.io/physics/#g=g9`
+
+## Premium (hidden) items
+
+Items for a future paid plan go in `physics/premium/<grade>/<item>/` and are listed only in `physics/premium/premium.json`, never in `catalog.json`.
+They are not linked from the platform and their pages carry `noindex`, but this repository is public, so anyone with the exact link can still open them.
+Answer keys are never uploaded here.
