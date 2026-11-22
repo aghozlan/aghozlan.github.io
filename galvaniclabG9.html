@@ -7,6 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090b'/%3E%3Crect x='6' y='9' width='6' height='17' rx='1.5' fill='%239aa6b2'/%3E%3Crect x='20' y='9' width='6' height='17' rx='1.5' fill='%23c8774a'/%3E%3Cpath d='M9 9V5h14v4' fill='none' stroke='%23facc15' stroke-width='2'/%3E%3C/svg%3E">
 <meta name="description" content="GalvanicLab Easy: build a battery from two metals in 3D. Three big steps, plain words, ready for a Grade 9 chemistry class.">
 <script src="https://cdn.tailwindcss.com"></script>
+<script async src="https://cdn.jsdelivr.net/npm/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
@@ -648,6 +649,20 @@ function startEasy() {
 }
 document.addEventListener('DOMContentLoaded', startEasy);
 </script>
+<script>
+window.__glFail = function (why) {
+  var el = document.getElementById('glLoading'); if (!el) return;
+  el.innerHTML = '<div style="max-width:340px;padding:0 18px;text-align:center;line-height:1.5">'
+    + '<div style="font-size:30px">🧪</div><b style="color:#fde68a">The 3D bench could not start on this device.</b><br>'
+    + '<span style="font-weight:500">' + (why || 'On iPhone/iPad: Settings → General → Software Update, then reopen this page.') + ' The voltage card and all buttons still work.</span><br>'
+    + '<button onclick="location.reload()" style="margin-top:12px;background:#facc15;color:#111;font-weight:800;padding:8px 18px;border-radius:12px">Try again</button></div>';
+};
+(function () { var t0 = null, iv = setInterval(function () {
+  if (window.__gl3dReady) { clearInterval(iv); return; }
+  if (!window.__labStarted) return; if (t0 === null) t0 = Date.now();
+  if (Date.now() - t0 > 20000) { clearInterval(iv); window.__glFail(); }
+}, 1000); })();
+</script>
 <script type="module">
 
 import * as THREE from 'three';
@@ -697,16 +712,23 @@ const glassMat = () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalne
 
 // ── build ───────────────────────────────────────────────────────
 function init() {
-  if (inited) return; inited = true;
+  if (inited) return;
+  try { init3D(); window.__gl3dReady = true; }
+  catch (e) { console.error(e); window.__glFail('Error: ' + (e && e.message ? e.message : e) + '.'); }
+}
+function init3D() {
+  inited = true;
   const host = document.getElementById('gl3d'), view = document.getElementById('view');
-  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ antialias: HD, powerPreference: 'high-performance' });
+  renderer.domElement.addEventListener('webglcontextlost', e => { e.preventDefault(); running = false; const v = document.getElementById('view'); if (v && !document.getElementById('glLost')) v.insertAdjacentHTML('beforeend', '<div id="glLost" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(11,13,18,.85);color:#fde68a;font-weight:800;text-align:center;padding:20px;z-index:5">The phone paused the 3D view to save memory.<br>Tap to bring it back.</div>'), document.getElementById('glLost').onclick = () => location.reload(); });
+  renderer.domElement.addEventListener('webglcontextrestored', () => { running = true; const g = document.getElementById('glLost'); if (g) g.remove(); });
   renderer.setPixelRatio(Math.min(devicePixelRatio, HD ? 2 : 1.25));
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   host.appendChild(renderer.domElement);
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0b0d12, 16, 34);
-  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose();
   camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true; controls.dampingFactor = 0.08; controls.minDistance = 3.5; controls.maxDistance = 18; controls.maxPolarAngle = 1.48; controls.target.set(0, 1.4, 0.2);
@@ -731,10 +753,7 @@ function init() {
   buildBridges(); buildMeter(); buildLoads(); buildWires(); buildThermo(); buildLabels();
 
   // post
-  composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.7, 0.35, 1.0);   // bloom pass intentionally not added: the clean look (no halo on glass/meter) is the approved one
-  composer.addPass(new OutputPass());
+  // composer is built lazily (only when HD is on) to save GPU memory on phones
 
   // interaction: click the switch or the bridge
   const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let downAt = null;
@@ -762,16 +781,24 @@ function init() {
   document.getElementById('glLoading').remove();
   renderer.setAnimationLoop(frame);
 }
+function ensureComposer() {
+  if (composer) return;
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new OutputPass());
+}
 function setHD(on, first) {
-  HD = on; document.getElementById('hdBtn').classList.toggle('sel', HD);
+  HD = on; if (HD) ensureComposer(); document.getElementById('hdBtn').classList.toggle('sel', HD);
   renderer.setPixelRatio(Math.min(devicePixelRatio, HD ? 2 : 1.25)); renderer.shadowMap.enabled = HD;
   ['L', 'R'].forEach(k => { const h = half[k]; if (!h.liquid) return; h.liquid.material = HD ? h.liqHD : h.liqLD; });
-  scene.traverse(o => { if (o.material) o.material.needsUpdate = true; });
+  scene.traverse(o => { const m = o.material; if (!m) return;
+    if (m.isMeshPhysicalMaterial) { if (m.userData.tx === undefined) m.userData.tx = m.transmission; m.transmission = HD ? m.userData.tx : 0; }
+    m.needsUpdate = true; });
   if (!first) resize();
 }
 function resize() {
   const v = document.getElementById('view'), w = v.clientWidth, h = v.clientHeight;
-  renderer.setSize(w, h, false); css.setSize(w, h); composer.setSize(w, h); bloom.setSize(w, h);
+  renderer.setSize(w, h, false); css.setSize(w, h); if (composer) composer.setSize(w, h);
   camera.aspect = w / h; camera.updateProjectionMatrix();
 }
 
